@@ -132,20 +132,34 @@ async function fetchLivePrice(symbol) {
   const enc = encodeURIComponent(symbol);
   const url = `https://query1.finance.yahoo.com/v8/finance/chart/${enc}`;
   const res = await axios.get(url, {
-    params: { interval: '1m', range: '1d', includePrePost: false },
+    // Fetch 5 daily bars instead of 1-day intraday.
+    // meta.regularMarketPrice is always live regardless of interval.
+    // Using closes[n-2] as prevClose is more accurate than chartPreviousClose,
+    // which can reflect an expired futures contract after a roll (GC=F, CL=F).
+    params: { interval: '1d', range: '5d', includePrePost: false },
     headers: YAHOO_HEADERS,
     timeout: 8000,
   });
-  const meta = res.data?.chart?.result?.[0]?.meta;
+  const result = res.data?.chart?.result?.[0];
+  const meta = result?.meta;
   if (!meta) return null;
+
+  // Derive prevClose from the daily bars array so futures contract rolls don't
+  // create a spurious large daily change.
+  const closes = result?.indicators?.quote?.[0]?.close ?? [];
+  const valid   = closes.filter(c => c != null);
+  const prevClose = valid.length >= 2
+    ? valid[valid.length - 2]
+    : (meta.chartPreviousClose ?? meta.previousClose ?? null);
+
   return {
     price:         meta.regularMarketPrice ?? null,
-    prevClose:     meta.chartPreviousClose ?? meta.previousClose ?? null,
+    prevClose,
     dayHigh:       meta.regularMarketDayHigh ?? null,
     dayLow:        meta.regularMarketDayLow ?? null,
     open:          meta.regularMarketOpen ?? null,
     volume:        meta.regularMarketVolume ?? null,
-    marketState:   meta.marketState ?? 'CLOSED',  // PRE, REGULAR, POST, CLOSED
+    marketState:   meta.marketState ?? 'CLOSED',
     exchangeName:  meta.exchangeName ?? '',
     timestamp:     Date.now(),
   };
