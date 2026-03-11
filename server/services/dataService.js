@@ -247,7 +247,18 @@ export async function getGoldPrices(timespan = 'day', limit = 90) {
   const cached = cache.get(cacheKey);
   if (cached) { console.log('📦 Returning cached gold data'); return cached; }
 
-  // Try Polygon first
+  // Primary: Yahoo Finance GC=F (gold futures) — same unit ($/oz) as the live
+  // price card so chart axis, period High/Low, and live spot are all consistent.
+  try {
+    const data = await fetchFromYahoo('GC=F', limit);
+    cache.set(cacheKey, data);
+    console.log(`✅ Fetched ${data.length} gold price points (Yahoo GC=F, $/oz)`);
+    return data;
+  } catch (gcfErr) {
+    console.warn(`⚠️  Yahoo GC=F failed (${gcfErr.message}), trying GLD via Polygon...`);
+  }
+
+  // Fallback: Polygon GLD ETF (different unit — only shown if GC=F unavailable)
   try {
     const ticker = 'GLD';
     const to   = new Date().toISOString().split('T')[0];
@@ -263,19 +274,19 @@ export async function getGoldPrices(timespan = 'day', limit = 90) {
       low: item.l, close: item.c, volume: item.v, value: item.c,
     }));
     cache.set(cacheKey, data);
-    console.log(`✅ Fetched ${data.length} gold price points (Polygon)`);
+    console.log(`✅ Fetched ${data.length} gold price points (Polygon GLD ETF - fallback)`);
     return data;
   } catch (polygonErr) {
-    console.warn(`⚠️  Polygon gold failed (${polygonErr.message}), trying Yahoo Finance...`);
+    console.warn(`⚠️  Polygon GLD also failed (${polygonErr.message}), trying Yahoo GLD...`);
   }
 
-  // Yahoo Finance fallback — GLD ETF
+  // Last resort: Yahoo Finance GLD ETF
   try {
     const data = await fetchFromYahoo('GLD', limit);
     cache.set(cacheKey, data);
     return data;
   } catch (yahooErr) {
-    console.error('❌ Both Polygon and Yahoo failed for gold:', yahooErr.message);
+    console.error('❌ All gold data sources failed:', yahooErr.message);
     throw new Error(`Failed to fetch gold data: ${yahooErr.message}`);
   }
 }

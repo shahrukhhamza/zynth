@@ -498,7 +498,7 @@ export default function EconomicDashboard() {
               <div>
                 <h3 className="font-bold text-lg" style={{ color: '#f59e0b' }}>Gold Price — {tf} Movement</h3>
                 <p className="text-xs mt-0.5" style={{ color: theme.muted }}>
-                  Chart: GLD ETF daily closes &nbsp;|&nbsp; Spot price: GC=F futures (live)
+                  Chart: GC=F futures ($/oz) &nbsp;|&nbsp; Live spot updated every 10s
                 </p>
               </div>
               <div className="text-right">
