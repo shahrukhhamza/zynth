@@ -157,14 +157,16 @@ export default function EconomicDashboard() {
     if (data) {
       setLiveData(prev => {
         if (!prev) return data;
-        // Merge: Yahoo provides full context; preserve any Finnhub real-time prices
-        // that arrived after this Yahoo snapshot was taken.
+        // Merge: Yahoo provides full context (DXY, VIX, dayHigh/Low, marketState).
+        // But Yahoo futures prices are 10-15 min delayed — NEVER let them overwrite
+        // a live Finnhub WS tick that arrived within the last 15 seconds.
+        const WS_FRESH_MS = 15_000;
         const merged = { ...data };
         Object.keys(FINNHUB_TO_DASH).forEach(sym => {
           const id = FINNHUB_TO_DASH[sym];
           if (!prev[id]?.lastFinnhub) return;
-          // Keep Finnhub price if it's newer than what Yahoo returned
-          const useFinPrice = prev[id].lastFinnhub > (data[id]?.timestamp ?? 0);
+          // WS is "fresh" if we got a real tick within the last 15 s
+          const wsFresh = (Date.now() - prev[id].lastFinnhub) < WS_FRESH_MS;
           // Yahoo futures data is ~10-15 min delayed — Finnhub may have seen a more
           // extreme intraday high/low already; keep whichever is more extreme.
           const bestHigh = (prev[id].dayHigh != null && data[id]?.dayHigh != null)
@@ -175,7 +177,7 @@ export default function EconomicDashboard() {
             : (prev[id].dayLow  ?? data[id]?.dayLow  ?? null);
           merged[id] = {
             ...data[id],
-            ...(useFinPrice ? {
+            ...(wsFresh ? {
               price:      prev[id].price,
               change:     prev[id].change,
               changePct:  prev[id].changePct,
