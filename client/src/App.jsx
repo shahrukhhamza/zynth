@@ -41,6 +41,17 @@ function AppShell() {
   });
   const [autoRefresh, setAutoRefresh] = useState(true);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
+    try { return localStorage.getItem('sidebarCollapsed') === 'true'; } catch { return false; }
+  });
+
+  const handleToggleCollapse = () => {
+    setSidebarCollapsed(prev => {
+      const next = !prev;
+      try { localStorage.setItem('sidebarCollapsed', String(next)); } catch {}
+      return next;
+    });
+  };
 
   useAutoCloseSidebarOnDesktop(setMobileSidebarOpen);
 
@@ -131,6 +142,8 @@ function AppShell() {
         onRefresh={() => currentView === 'news' ? loadNews() : window.location.reload()}
         onToggleSidebar={() => setMobileSidebarOpen(o => !o)}
         mobileSidebarOpen={mobileSidebarOpen}
+        onToggleSidebarCollapse={handleToggleCollapse}
+        sidebarCollapsed={sidebarCollapsed}
       />
       
       <div className="flex h-[calc(100vh-64px)] relative">
@@ -153,29 +166,32 @@ function AppShell() {
           onViewChange={(view) => { setCurrentView(view); setMobileSidebarOpen(false); }}
           mobileOpen={mobileSidebarOpen}
           onClose={() => setMobileSidebarOpen(false)}
+          collapsed={sidebarCollapsed}
+          onToggleCollapse={handleToggleCollapse}
         />
         
         {/* Main Content Area */}
         {currentView === 'data' ? (
-          <EconomicDashboard />
+          <EconomicDashboard key="data" />
         ) : currentView === 'calendar' ? (
-          <div className="flex-1 overflow-y-auto p-6">
+          <div key="calendar" className="flex-1 overflow-y-auto p-6 page-enter">
             <EconomicCalendar />
           </div>
         ) : currentView === 'intelligence' ? (
-          <div className="flex-1 overflow-y-auto p-6">
+          <div key="intelligence" className="flex-1 overflow-y-auto p-6 page-enter">
             <EconomicIntelligence />
           </div>
         ) : currentView === 'journal' ? (
-          <div className="flex-1 overflow-y-auto"><TradeJournal /></div>
+          <div key="journal" className="flex-1 overflow-y-auto page-enter"><TradeJournal /></div>
         ) : currentView === 'screenshot' ? (
-          <div className="flex-1 overflow-y-auto"><ScreenshotImportDashboard /></div>
+          <div key="screenshot" className="flex-1 overflow-y-auto page-enter"><ScreenshotImportDashboard /></div>
         ) : currentView === 'markets' ? (
-          <LiveMarketTicker />
+          <LiveMarketTicker key="markets" />
         ) : (
           <>
             {/* News Feed */}
-            <NewsFeed 
+            <NewsFeed
+              key="news"
               news={getFilteredNews()}
               loading={loading}
               error={error}

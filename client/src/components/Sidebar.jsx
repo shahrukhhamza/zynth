@@ -1,7 +1,7 @@
-import { Search, Filter, Calendar, TrendingUp, X, BarChart3, Newspaper, Brain, BookOpen, Wifi, Camera } from 'lucide-react';
+import { Search, Filter, Calendar, X, BarChart3, Newspaper, Brain, BookOpen, Wifi, Camera, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 
-function Sidebar({ filters, onFilterChange, onApplyFilters, onResetFilters, currentView, onViewChange, mobileOpen, onClose }) {
+function Sidebar({ filters, onFilterChange, onApplyFilters, onResetFilters, currentView, onViewChange, mobileOpen, onClose, collapsed, onToggleCollapse }) {
   const theme = useTheme();
 
   const handleKeywordChange = (e) => {
@@ -23,18 +23,20 @@ function Sidebar({ filters, onFilterChange, onApplyFilters, onResetFilters, curr
   return (
     <aside
       className={[
-        // Desktop: always visible, static in flow
-        'hidden md:flex md:flex-col md:w-64 md:border-r md:overflow-y-auto md:relative md:z-auto',
-        // Mobile: fixed overlay, slide in from left
-        'fixed top-0 left-0 h-full w-72 z-40 overflow-y-auto flex flex-col',
-        'transition-transform duration-300 ease-in-out',
-        mobileOpen ? 'translate-x-0' : '-translate-x-full',
-        // On md+ always show (override mobile transform)
-        'md:translate-x-0',
+        // Base: always a flex column
+        'flex flex-col border-r overflow-hidden transition-[width] duration-300 ease-in-out',
+        // Desktop: static in flow, collapsible width
+        'hidden md:flex relative z-auto',
+        collapsed ? 'md:w-14' : 'md:w-64',
+        // Mobile: fixed overlay from left (ignores collapsed)
+        'fixed top-0 left-0 h-full w-72 z-40',
+        'md:static md:h-auto md:z-auto',
+        mobileOpen ? 'flex' : 'hidden md:flex',
+        mobileOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0',
       ].join(' ')}
       style={{ backgroundColor: theme.surface, borderColor: theme.border }}
     >
-      {/* Mobile header row inside sidebar */}
+      {/* Mobile header row */}
       <div className="flex items-center justify-between px-4 pt-5 pb-2 md:hidden">
         <span className="text-sm font-bold" style={{ color: theme.text }}>Navigation</span>
         <button
@@ -46,289 +48,246 @@ function Sidebar({ filters, onFilterChange, onApplyFilters, onResetFilters, curr
           <X className="w-5 h-5" />
         </button>
       </div>
-      <div className="p-4 flex-1 overflow-y-auto">
-        {/* Navigation */}
-        <nav className="mb-6">
-          <h2 className="hidden md:block text-xs font-semibold uppercase mb-3" style={{ color: theme.muted }}>
-            Navigation
-          </h2>
-          <ul className="space-y-1">
-            <li 
-              onClick={() => onViewChange('data')}
-              className="flex items-center gap-2 px-3 py-2 rounded-lg cursor-pointer transition-colors"
-              style={{
-                backgroundColor: currentView === 'data' ? `${theme.accent}20` : 'transparent',
-                color: currentView === 'data' ? theme.text : theme.muted
-              }}
-              onMouseOver={(e) => {
-                if (currentView !== 'data') e.currentTarget.style.backgroundColor = theme.bg;
-              }}
-              onMouseOut={(e) => {
-                if (currentView !== 'data') e.currentTarget.style.backgroundColor = 'transparent';
-              }}
-            >
-              <BarChart3 className="w-4 h-4" />
-              <span className="text-sm">Economic Data</span>
-            </li>
-            <li 
-              onClick={() => onViewChange('calendar')}
-              className="flex items-center gap-2 px-3 py-2 rounded-lg cursor-pointer transition-colors"
-              style={{
-                backgroundColor: currentView === 'calendar' ? `${theme.accent}20` : 'transparent',
-                color: currentView === 'calendar' ? theme.text : theme.muted
-              }}
-              onMouseOver={(e) => {
-                if (currentView !== 'calendar') e.currentTarget.style.backgroundColor = theme.bg;
-              }}
-              onMouseOut={(e) => {
-                if (currentView !== 'calendar') e.currentTarget.style.backgroundColor = 'transparent';
-              }}
-            >
-              <Calendar className="w-4 h-4" />
-              <span className="text-sm">Economic Calendar</span>
-            </li>
-            <li 
-              onClick={() => onViewChange('intelligence')}
-              className="flex items-center gap-2 px-3 py-2 rounded-lg cursor-pointer transition-colors"
-              style={{
-                backgroundColor: currentView === 'intelligence' ? `${theme.accent}20` : 'transparent',
-                color: currentView === 'intelligence' ? theme.text : theme.muted
-              }}
-              onMouseOver={(e) => {
-                if (currentView !== 'intelligence') e.currentTarget.style.backgroundColor = theme.bg;
-              }}
-              onMouseOut={(e) => {
-                if (currentView !== 'intelligence') e.currentTarget.style.backgroundColor = 'transparent';
-              }}
-            >
-              <Brain className="w-4 h-4" />
-              <span className="text-sm">Intelligence</span>
-            </li>
-            <li 
-              onClick={() => onViewChange('news')}
-              className="flex items-center gap-2 px-3 py-2 rounded-lg cursor-pointer transition-colors"
-              style={{
-                backgroundColor: currentView === 'news' ? `${theme.accent}20` : 'transparent',
-                color: currentView === 'news' ? theme.text : theme.muted
-              }}
-              onMouseOver={(e) => {
-                if (currentView !== 'news') e.currentTarget.style.backgroundColor = theme.bg;
-              }}
-              onMouseOut={(e) => {
-                if (currentView !== 'news') e.currentTarget.style.backgroundColor = 'transparent';
-              }}
-            >
-              <Newspaper className="w-4 h-4" />
-              <span className="text-sm">Market News</span>
-            </li>
-            <li 
-              onClick={() => onViewChange('markets')}
-              className="flex items-center gap-2 px-3 py-2 rounded-lg cursor-pointer transition-colors"
-              style={{
-                backgroundColor: currentView === 'markets' ? `${theme.accent}20` : 'transparent',
-                color: currentView === 'markets' ? theme.text : theme.muted
-              }}
-              onMouseOver={(e) => {
-                if (currentView !== 'markets') e.currentTarget.style.backgroundColor = theme.bg;
-              }}
-              onMouseOut={(e) => {
-                if (currentView !== 'markets') e.currentTarget.style.backgroundColor = 'transparent';
-              }}
-            >
-              <Wifi className="w-4 h-4" />
-              <span className="text-sm">Live Markets</span>
-              <span className="ml-auto text-xs px-1.5 py-0.5 rounded-full font-bold" style={{ backgroundColor: 'rgba(34,197,94,0.2)', color: '#22c55e' }}>LIVE</span>
-            </li>
-            <li 
-              onClick={() => onViewChange('journal')}
-              className="flex items-center gap-2 px-3 py-2 rounded-lg cursor-pointer transition-colors"
-              style={{
-                backgroundColor: currentView === 'journal' ? `${theme.accent}20` : 'transparent',
-                color: currentView === 'journal' ? theme.text : theme.muted
-              }}
-              onMouseOver={(e) => {
-                if (currentView !== 'journal') e.currentTarget.style.backgroundColor = theme.bg;
-              }}
-              onMouseOut={(e) => {
-                if (currentView !== 'journal') e.currentTarget.style.backgroundColor = 'transparent';
-              }}
-            >
-              <BookOpen className="w-4 h-4" />
-              <span className="text-sm">Trade Journal</span>
-            </li>
-            <li 
-              onClick={() => onViewChange('screenshot')}
-              className="flex items-center gap-2 px-3 py-2 rounded-lg cursor-pointer transition-colors"
-              style={{
-                backgroundColor: currentView === 'screenshot' ? `${theme.accent}20` : 'transparent',
-                color: currentView === 'screenshot' ? theme.text : theme.muted
-              }}
-              onMouseOver={(e) => {
-                if (currentView !== 'screenshot') e.currentTarget.style.backgroundColor = theme.bg;
-              }}
-              onMouseOut={(e) => {
-                if (currentView !== 'screenshot') e.currentTarget.style.backgroundColor = 'transparent';
-              }}
-            >
-              <Camera className="w-4 h-4" />
-              <span className="text-sm">Screenshot Analysis</span>
-              <span className="ml-auto text-xs px-1.5 py-0.5 rounded-full font-bold" style={{ backgroundColor: 'rgba(168,85,247,0.2)', color: '#a855f7' }}>AI</span>
-            </li>
-          </ul>
-        </nav>
 
-        {/* Filters Section - Only show for News view */}
-        {currentView === 'news' && (
-          <>
-            <div className="border-t pt-4" style={{ borderColor: theme.border }}>
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="text-xs font-semibold uppercase flex items-center gap-2" style={{ color: theme.muted }}>
-              <Filter className="w-4 h-4" />
-              Filters
-            </h2>
-            <button
-              onClick={onResetFilters}
-              className="text-xs flex items-center gap-1 transition-opacity"
-              style={{ color: theme.accent }}
-              onMouseOver={(e) => e.currentTarget.style.opacity = '0.8'}
-              onMouseOut={(e) => e.currentTarget.style.opacity = '1'}
-            >
-              <X className="w-3 h-3" />
-              Clear
-            </button>
+      {/* Scrollable body */}
+      <div className="flex-1 overflow-y-auto overflow-x-hidden">
+        {/* Brand area — desktop only */}
+        <div
+          className={[
+            'hidden md:flex items-center border-b px-3 py-4',
+            collapsed ? 'justify-center' : 'gap-3',
+          ].join(' ')}
+          style={{ borderColor: theme.border }}
+        >
+          <div
+            className="flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center"
+            style={{
+              background: 'linear-gradient(135deg, #3b82f6 0%, #6366f1 100%)',
+              boxShadow: '0 0 12px rgba(59,130,246,0.4)',
+            }}
+          >
+            <BarChart3 className="w-4 h-4 text-white" />
           </div>
-
-          {/* Keyword Search */}
-          <div className="mb-4">
-            <label className="text-xs mb-2 block" style={{ color: theme.muted }}>
-              <Search className="w-3 h-3 inline mr-1" />
-              Keyword
-            </label>
-            <input
-              type="text"
-              value={filters.keyword}
-              onChange={handleKeywordChange}
-              placeholder="Search news..."
-              className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none"
-              style={{ 
-                backgroundColor: theme.bg, 
-                borderColor: theme.border,
-                color: theme.text 
-              }}
-              onFocus={(e) => e.currentTarget.style.borderColor = theme.accent}
-              onBlur={(e) => e.currentTarget.style.borderColor = theme.border}
-            />
-          </div>
-
-          {/* Date Range */}
-          <div className="mb-4">
-            <label className="text-xs mb-2 block" style={{ color: theme.muted }}>
-              <Calendar className="w-3 h-3 inline mr-1" />
-              Date Range
-            </label>
-            <div className="space-y-2">
-              <input
-                type="date"
-                value={filters.startDate}
-                onChange={handleStartDateChange}
-                className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none"
-                style={{ 
-                  backgroundColor: theme.bg, 
-                  borderColor: theme.border,
-                  color: theme.text 
-                }}
-                onFocus={(e) => e.currentTarget.style.borderColor = theme.accent}
-                onBlur={(e) => e.currentTarget.style.borderColor = theme.border}
-              />
-              <input
-                type="date"
-                value={filters.endDate}
-                onChange={handleEndDateChange}
-                className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none"
-                style={{ 
-                  backgroundColor: theme.bg, 
-                  borderColor: theme.border,
-                  color: theme.text 
-                }}
-                onFocus={(e) => e.currentTarget.style.borderColor = theme.accent}
-                onBlur={(e) => e.currentTarget.style.borderColor = theme.border}
-              />
+          {!collapsed && (
+            <div className="min-w-0">
+              <p className="text-sm font-bold leading-tight truncate" style={{ color: theme.text }}>News Terminal</p>
+              <p className="text-[10px] leading-tight truncate" style={{ color: theme.muted }}>Market Intelligence</p>
             </div>
-          </div>
+          )}
+        </div>
 
-          {/* Impact Level */}
-          <div className="mb-4">
-            <label className="text-xs mb-2 block" style={{ color: theme.muted }}>
-              Impact Level
-            </label>
-            <div className="space-y-1">
-              {['All', 'High', 'Medium', 'Low'].map((level) => (
+        {/* Nav label */}
+        {!collapsed && (
+          <div className="px-4 pt-4 pb-1">
+            <span className="text-[10px] font-semibold uppercase tracking-widest" style={{ color: theme.muted }}>
+              Navigation
+            </span>
+          </div>
+        )}
+
+        {/* Navigation */}
+        <nav className={collapsed ? 'px-1.5 py-3 space-y-1' : 'px-3 py-2 space-y-0.5'}>
+          {[
+            { key: 'data',        icon: BarChart3,  label: 'Economic Data',      badge: null },
+            { key: 'calendar',    icon: Calendar,   label: 'Economic Calendar',  badge: null },
+            { key: 'intelligence',icon: Brain,       label: 'Intelligence',        badge: null },
+            { key: 'news',        icon: Newspaper,  label: 'Market News',         badge: null },
+            { key: 'markets',     icon: Wifi,        label: 'Live Markets',        badge: { text: 'LIVE', color: '#22c55e', bg: 'rgba(34,197,94,0.15)' } },
+            { key: 'journal',     icon: BookOpen,   label: 'Trade Journal',       badge: null },
+            { key: 'screenshot',  icon: Camera,     label: 'Screenshot Analysis', badge: { text: 'AI', color: '#a855f7', bg: 'rgba(168,85,247,0.15)' } },
+          ].map(({ key, icon: Icon, label, badge }) => {
+            const active = currentView === key;
+            return (
+              <div key={key} className="sidebar-nav-item-wrapper relative group">
                 <button
-                  key={level}
-                  onClick={() => handleImpactChange(level)}
-                  className="w-full px-3 py-2 rounded-lg text-sm text-left transition-colors"
+                  onClick={() => { onViewChange(key); }}
+                  className={[
+                    'w-full flex items-center rounded-xl transition-all duration-150 text-left',
+                    collapsed ? 'justify-center p-2.5' : 'gap-3 px-3 py-2.5',
+                  ].join(' ')}
                   style={{
-                    backgroundColor: filters.impactLevel === level ? theme.accent : theme.bg,
-                    color: filters.impactLevel === level ? '#fff' : theme.text
+                    backgroundColor: active
+                      ? theme.isDark ? 'rgba(59,130,246,0.18)' : 'rgba(59,130,246,0.1)'
+                      : 'transparent',
+                    color: active ? theme.accent : theme.muted,
+                    borderLeft: active && !collapsed ? `3px solid ${theme.accent}` : 'none',
+                    paddingLeft: active && !collapsed ? 'calc(0.75rem - 3px)' : undefined,
+                    boxShadow: active ? 'inset 0 0 0 0 transparent' : 'none',
                   }}
-                  onMouseOver={(e) => {
-                    if (filters.impactLevel !== level) {
-                      e.currentTarget.style.backgroundColor = theme.border;
-                    }
+                  onMouseEnter={e => {
+                    if (!active) e.currentTarget.style.backgroundColor = theme.isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)';
+                    if (!active) e.currentTarget.style.color = theme.text;
                   }}
-                  onMouseOut={(e) => {
-                    if (filters.impactLevel !== level) {
-                      e.currentTarget.style.backgroundColor = theme.bg;
-                    }
+                  onMouseLeave={e => {
+                    if (!active) e.currentTarget.style.backgroundColor = 'transparent';
+                    if (!active) e.currentTarget.style.color = theme.muted;
                   }}
                 >
-                  {level}
+                  <Icon className={collapsed ? 'w-5 h-5 flex-shrink-0' : 'w-4 h-4 flex-shrink-0'} />
+                  {!collapsed && (
+                    <>
+                      <span className="text-sm font-medium flex-1 truncate">{label}</span>
+                      {badge && (
+                        <span
+                          className="text-[10px] px-1.5 py-0.5 rounded-full font-bold leading-none"
+                          style={{ backgroundColor: badge.bg, color: badge.color }}
+                        >
+                          {badge.text}
+                        </span>
+                      )}
+                    </>
+                  )}
                 </button>
-              ))}
+                {/* Tooltip — collapsed desktop only */}
+                {collapsed && (
+                  <div className="sidebar-tooltip">
+                    <span>{label}</span>
+                    {badge && (
+                      <span
+                        className="ml-1.5 text-[10px] px-1 py-0.5 rounded-full font-bold"
+                        style={{ backgroundColor: badge.bg, color: badge.color }}
+                      >
+                        {badge.text}
+                      </span>
+                    )}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </nav>
+
+        {/* Filters — only in expanded + news view */}
+        {!collapsed && currentView === 'news' && (
+          <div className="px-3 pb-4">
+            <div className="border-t pt-4" style={{ borderColor: theme.border }}>
+              <div className="flex items-center justify-between mb-3">
+                <h2 className="text-[10px] font-semibold uppercase tracking-widest flex items-center gap-1.5" style={{ color: theme.muted }}>
+                  <Filter className="w-3 h-3" />
+                  Filters
+                </h2>
+                <button
+                  onClick={onResetFilters}
+                  className="text-xs flex items-center gap-1 opacity-70 hover:opacity-100 transition-opacity"
+                  style={{ color: theme.accent }}
+                >
+                  <X className="w-3 h-3" />
+                  Clear
+                </button>
+              </div>
+
+              {/* Keyword */}
+              <div className="mb-3">
+                <label className="text-xs mb-1.5 flex items-center gap-1" style={{ color: theme.muted }}>
+                  <Search className="w-3 h-3" />
+                  Keyword
+                </label>
+                <input
+                  type="text"
+                  value={filters.keyword}
+                  onChange={e => onFilterChange({ keyword: e.target.value })}
+                  placeholder="Search news..."
+                  className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none transition-colors"
+                  style={{ backgroundColor: theme.bg, borderColor: theme.border, color: theme.text }}
+                  onFocus={e => e.currentTarget.style.borderColor = theme.accent}
+                  onBlur={e => e.currentTarget.style.borderColor = theme.border}
+                />
+              </div>
+
+              {/* Date Range */}
+              <div className="mb-3">
+                <label className="text-xs mb-1.5 flex items-center gap-1" style={{ color: theme.muted }}>
+                  <Calendar className="w-3 h-3" />
+                  Date Range
+                </label>
+                <div className="space-y-2">
+                  {['startDate', 'endDate'].map(field => (
+                    <input
+                      key={field}
+                      type="date"
+                      value={filters[field]}
+                      onChange={e => onFilterChange({ [field]: e.target.value })}
+                      className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none transition-colors"
+                      style={{ backgroundColor: theme.bg, borderColor: theme.border, color: theme.text }}
+                      onFocus={e => e.currentTarget.style.borderColor = theme.accent}
+                      onBlur={e => e.currentTarget.style.borderColor = theme.border}
+                    />
+                  ))}
+                </div>
+              </div>
+
+              {/* Impact Level */}
+              <div className="mb-3">
+                <label className="text-xs mb-1.5 block" style={{ color: theme.muted }}>Impact Level</label>
+                <div className="grid grid-cols-2 gap-1">
+                  {['All', 'High', 'Medium', 'Low'].map(level => (
+                    <button
+                      key={level}
+                      onClick={() => onFilterChange({ impactLevel: level })}
+                      className="px-2 py-1.5 rounded-lg text-xs font-medium transition-all"
+                      style={{
+                        backgroundColor: filters.impactLevel === level ? theme.accent : theme.bg,
+                        color: filters.impactLevel === level ? '#fff' : theme.muted,
+                        border: `1px solid ${filters.impactLevel === level ? theme.accent : theme.border}`,
+                      }}
+                    >
+                      {level}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <button
+                onClick={onApplyFilters}
+                className="w-full px-4 py-2 text-white rounded-lg text-sm font-semibold transition-opacity hover:opacity-90 active:scale-[0.98]"
+                style={{ background: 'linear-gradient(135deg, #3b82f6, #6366f1)' }}
+              >
+                Apply Filters
+              </button>
+
+              {/* Quick tags */}
+              <div className="mt-3">
+                <p className="text-[10px] uppercase font-semibold tracking-wider mb-2" style={{ color: theme.muted }}>Quick Tags</p>
+                <div className="flex flex-wrap gap-1.5">
+                  {['Gold', 'Inflation', 'Fed', 'USD', 'Geopolitics'].map(tag => (
+                    <button
+                      key={tag}
+                      onClick={() => { onFilterChange({ keyword: tag }); onApplyFilters(); }}
+                      className="px-2 py-1 border rounded-full text-xs transition-all hover:scale-105"
+                      style={{ backgroundColor: theme.bg, borderColor: theme.border, color: theme.muted }}
+                      onMouseEnter={e => { e.currentTarget.style.borderColor = theme.accent; e.currentTarget.style.color = theme.accent; }}
+                      onMouseLeave={e => { e.currentTarget.style.borderColor = theme.border; e.currentTarget.style.color = theme.muted; }}
+                    >
+                      {tag}
+                    </button>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
-
-          {/* Apply Button */}
-          <button
-            onClick={onApplyFilters}
-            className="w-full px-4 py-2 text-white rounded-lg text-sm font-medium transition-opacity"
-            style={{ backgroundColor: theme.success }}
-            onMouseOver={(e) => e.currentTarget.style.opacity = '0.9'}
-            onMouseOut={(e) => e.currentTarget.style.opacity = '1'}
-          >
-            Apply Filters
-          </button>
-        </div>
-
-        {/* Quick Filters */}
-        <div className="border-t pt-4 mt-4" style={{ borderColor: theme.border }}>
-          <h2 className="text-xs font-semibold uppercase mb-3" style={{ color: theme.muted }}>
-            Quick Filters
-          </h2>
-          <div className="flex flex-wrap gap-2">
-            {['Gold', 'Inflation', 'Fed', 'USD', 'Geopolitics'].map((tag) => (
-              <button
-                key={tag}
-                onClick={() => {
-                  onFilterChange({ keyword: tag });
-                  onApplyFilters();
-                }}
-                className="px-3 py-1 border rounded-full text-xs transition-colors"
-                style={{ 
-                  backgroundColor: theme.bg, 
-                  borderColor: theme.border,
-                  color: theme.text 
-                }}
-                onMouseOver={(e) => e.currentTarget.style.borderColor = theme.accent}
-                onMouseOut={(e) => e.currentTarget.style.borderColor = theme.border}
-              >
-                {tag}
-              </button>
-            ))}
-          </div>
-        </div>
-        </>
         )}
+      </div>
+
+      {/* Collapse toggle — desktop only */}
+      <div
+        className="hidden md:flex items-center border-t px-3 py-3"
+        style={{
+          borderColor: theme.border,
+          justifyContent: collapsed ? 'center' : 'flex-end',
+        }}
+      >
+        <button
+          onClick={onToggleCollapse}
+          className="p-1.5 rounded-lg transition-all hover:scale-110"
+          style={{
+            color: theme.muted,
+            backgroundColor: theme.isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)',
+          }}
+          title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+          aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+        >
+          {collapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
+        </button>
       </div>
     </aside>
   );

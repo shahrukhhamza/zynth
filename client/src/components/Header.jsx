@@ -1,4 +1,4 @@
-import { Activity, Sun, Moon, Globe, LogOut, ChevronDown, User, Settings, Shield, Menu, X } from 'lucide-react';
+import { Activity, Sun, Moon, Globe, LogOut, ChevronDown, User, Settings, Shield, Menu, X, PanelLeft } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 import { useTimezone, TIMEZONES } from '../contexts/TimezoneContext';
 import { useAuth } from '../contexts/AuthContext';
@@ -6,7 +6,7 @@ import { useState, useRef, useEffect } from 'react';
 import ProfileModal from './ProfileModal';
 import SettingsModal from './SettingsModal';
 
-function Header({ autoRefresh, onToggleAutoRefresh, onToggleSidebar, mobileSidebarOpen }) {
+function Header({ autoRefresh, onToggleAutoRefresh, onToggleSidebar, mobileSidebarOpen, onToggleSidebarCollapse, sidebarCollapsed }) {
   const theme = useTheme();
   const { selectedTimezone, changeTimezone, getTimezoneInfo, timezones } = useTimezone();
   const { user, logout } = useAuth();
@@ -41,7 +41,7 @@ function Header({ autoRefresh, onToggleAutoRefresh, onToggleSidebar, mobileSideb
       backgroundColor: theme.surface, 
       borderColor: theme.border 
     }}>
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2">
         {/* Hamburger — mobile only */}
         <button
           onClick={onToggleSidebar}
@@ -52,6 +52,22 @@ function Header({ autoRefresh, onToggleAutoRefresh, onToggleSidebar, mobileSideb
           {mobileSidebarOpen
             ? <X className="w-5 h-5" />
             : <Menu className="w-5 h-5" />}
+        </button>
+
+        {/* Panel toggle — desktop only */}
+        <button
+          onClick={onToggleSidebarCollapse}
+          className="hidden md:flex p-2 rounded-lg transition-all hover:scale-105"
+          style={{
+            color: sidebarCollapsed ? theme.accent : theme.muted,
+            backgroundColor: sidebarCollapsed
+              ? (theme.isDark ? 'rgba(59,130,246,0.15)' : 'rgba(59,130,246,0.08)')
+              : 'transparent',
+          }}
+          title={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+          aria-label={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+        >
+          <PanelLeft className="w-5 h-5" />
         </button>
 
         <Activity className="w-7 h-7 hidden sm:block" style={{ color: theme.accent }} />
