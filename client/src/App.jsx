@@ -23,6 +23,7 @@ import LiveMarketTicker from './components/LiveMarketTicker'
 import TradeJournal from './components/TradeJournal'
 import LoginPage from './components/LoginPage'
 import SignupPage from './components/SignupPage'
+import LandingPage from './components/LandingPage'
 import { fetchNews } from './services/api'
 import { Loader2 } from 'lucide-react'
 
@@ -208,8 +209,8 @@ export default function App() {
 }
 
 function AuthGate() {
-  const { user, loading, logout } = useAuth()
-  const [authView, setAuthView] = useState('login') // 'login' | 'signup'
+  const { user, loading } = useAuth()
+  const [view, setView] = useState('landing') // 'landing' | 'login' | 'signup'
 
   if (loading) {
     return (
@@ -219,11 +220,18 @@ function AuthGate() {
     )
   }
 
-  if (!user) {
-    return authView === 'signup'
-      ? <SignupPage onSwitchToLogin={() => setAuthView('login')} />
-      : <LoginPage  onSwitchToSignup={() => setAuthView('signup')} />
-  }
+  if (user) return <AppShell />
 
-  return <AppShell />
+  if (view === 'signup')
+    return <SignupPage onSwitchToLogin={() => setView('login')} onBack={() => setView('landing')} />
+
+  if (view === 'login')
+    return <LoginPage onSwitchToSignup={() => setView('signup')} onBack={() => setView('landing')} />
+
+  return (
+    <LandingPage
+      onSignIn={() => setView('login')}
+      onGetStarted={() => setView('signup')}
+    />
+  )
 }

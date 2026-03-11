@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { Eye, EyeOff, TrendingUp, TrendingDown, AlertCircle, CheckCircle2, Loader2, User, Mail, Lock, ArrowRight, Shield, Zap, BarChart2, Activity } from 'lucide-react';
+import { Eye, EyeOff, TrendingUp, TrendingDown, AlertCircle, CheckCircle2, Loader2, User, Mail, Lock, ArrowRight, ArrowLeft, Shield, Zap, BarChart2, Activity } from 'lucide-react';
 
 const TICKERS = [
   { sym: 'GOLD', val: '$5,168',  chg: '+0.82%', up: true,  top: '7%',  left: '5%',  delay: '0s',   dur: '4.2s' },
@@ -17,7 +17,7 @@ const BENEFITS = [
   { Icon: Zap,      text: 'Instant analytics'    },
 ];
 
-export default function SignupPage({ onSwitchToLogin }) {
+export default function SignupPage({ onSwitchToLogin, onBack }) {
   const { register } = useAuth();
   const [form, setForm]       = useState({ name: '', email: '', password: '', confirm: '' });
   const [showPass, setShowPass] = useState(false);
@@ -170,6 +170,14 @@ export default function SignupPage({ onSwitchToLogin }) {
              style={{background:'radial-gradient(ellipse,rgba(16,185,129,0.13) 0%,transparent 70%)'}} />
 
         <div className="w-full max-w-[340px] px-2 py-8">
+          {/* Back to home */}
+          {onBack && (
+            <button onClick={onBack}
+                    className="flex items-center gap-1.5 text-[12px] text-gray-600 hover:text-gray-400 transition-colors mb-5">
+              <ArrowLeft className="w-3.5 h-3.5" />
+              Back to home
+            </button>
+          )}
           {/* Compact logo */}
           <div className="flex flex-col items-center mb-5 select-none">
             <div className="relative mb-2.5">

@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { Eye, EyeOff, TrendingUp, TrendingDown, AlertCircle, Loader2, Mail, Lock, ArrowRight, Shield, Zap, BarChart2, Activity } from 'lucide-react';
+import { Eye, EyeOff, TrendingUp, TrendingDown, AlertCircle, Loader2, Mail, Lock, ArrowRight, ArrowLeft, Shield, Zap, BarChart2, Activity } from 'lucide-react';
 
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || '';
 
@@ -18,7 +18,7 @@ const FEATURES = [
   { Icon: BarChart2,title: 'AI-powered insights',  desc: 'Smart trade analysis'        },
 ];
 
-export default function LoginPage({ onSwitchToSignup }) {
+export default function LoginPage({ onSwitchToSignup, onBack }) {
   const { login, loginWithGoogle } = useAuth();
   const [email, setEmail]         = useState('');
   const [password, setPassword]   = useState('');
@@ -206,6 +206,14 @@ export default function LoginPage({ onSwitchToSignup }) {
              style={{background:'radial-gradient(ellipse,rgba(16,185,129,0.13) 0%,transparent 70%)'}} />
 
         <div className="w-full max-w-[340px] px-2">
+          {/* Back to home */}
+          {onBack && (
+            <button onClick={onBack}
+                    className="flex items-center gap-1.5 text-[12px] text-gray-600 hover:text-gray-400 transition-colors mb-5">
+              <ArrowLeft className="w-3.5 h-3.5" />
+              Back to home
+            </button>
+          )}
           {/* Compact logo */}
           <div className="flex flex-col items-center mb-6 select-none">
             <div className="relative mb-3">
