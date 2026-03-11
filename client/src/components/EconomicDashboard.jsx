@@ -8,7 +8,7 @@ import { finnhubWs } from '../services/finnhubWs';
 
 // ── Config ─────────────────────────────────────────────────────────────────
 // Yahoo Finance polls less frequently now — Finnhub WS handles real-time prices
-const LIVE_POLL_MS   = 30000;   // poll Yahoo every 30s (for DXY/VIX + context refresh)
+const LIVE_POLL_MS   = 10000;   // poll Yahoo every 10s (fast REST fallback when WS is idle)
 const CHART_REFRESH_MS = 300000; // re-fetch period chart data every 5 min (keeps 3M High/Low/Chg current)
 const FLASH_MS       = 800;     // price flash duration
 

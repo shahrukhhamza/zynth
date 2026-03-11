@@ -36,12 +36,14 @@ class FinnhubWsClient {
 
   /** Build WS URL — works in both dev (Vite proxy) and production (Render) */
   _url() {
-    // In dev, API_URL is empty so fall back to the Vite-proxied /ws path on the same host.
-    // In production (Vercel), API_URL = https://ai-dashboard-backend-kunc.onrender.com
-    //   so we convert https → wss and point directly at the Render backend.
-    if (API_URL) {
-      return API_URL.replace(/^http/, 'ws') + '/ws/market';
+    // Only use the explicit env var — NOT the localhost fallback.
+    // If VITE_API_URL is not set we're in dev and Vite's proxy handles /ws.
+    const explicitApi = import.meta.env.VITE_API_URL;
+    if (explicitApi) {
+      // https://... → wss://...   |   http://... → ws://...
+      return explicitApi.replace(/^http/, 'ws') + '/ws/market';
     }
+    // Dev: let Vite proxy forward /ws → localhost:5000
     const proto = window.location.protocol === 'https:' ? 'wss' : 'ws';
     return `${proto}://${window.location.host}/ws/market`;
   }

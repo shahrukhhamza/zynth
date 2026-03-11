@@ -212,5 +212,17 @@ httpServer.listen(PORT, () => {
   } else {
     console.warn('⚠️  FINNHUB_API_KEY not set — live market data disabled');
   }
+
+  // ── Keep-alive: ping self every 4 min to prevent Render free-tier sleep ──
+  const SELF_URL = process.env.RENDER_EXTERNAL_URL || `http://localhost:${PORT}`;
+  if (process.env.RENDER_EXTERNAL_URL) {
+    setInterval(async () => {
+      try {
+        const { default: axios } = await import('axios');
+        await axios.get(`${SELF_URL}/api/health`, { timeout: 10000 });
+        console.log('🏓 Keep-alive ping OK');
+      } catch (_) { /* ignore — server may have just restarted */ }
+    }, 4 * 60 * 1000); // every 4 minutes
+  }
 });
 
