@@ -8,6 +8,7 @@ import {
   TrendingUp, TrendingDown, Activity, Loader2, AlertCircle,
   RefreshCcw, Brain,
 } from 'lucide-react';
+import { API_URL } from '../config/api';
 import { useTheme } from '../contexts/ThemeContext';
 import { Line } from 'react-chartjs-2';
 import {
@@ -207,7 +208,7 @@ function EconomicIntelligence() {
   const loadDashboard = async () => {
     try {
       setError(null);
-      const res = await fetch('/api/economic/dashboard');
+      const res = await fetch(`${API_URL}/api/economic/dashboard`);
       if (!res.ok) throw new Error('Failed to load economic intelligence');
       setDashboard(await res.json());
     } catch (err) {
@@ -220,7 +221,7 @@ function EconomicIntelligence() {
   const handleRefresh = async () => {
     try {
       setRefreshing(true);
-      await fetch('/api/economic/refresh', { method: 'POST' });
+      await fetch(`${API_URL}/api/economic/refresh`, { method: 'POST' });
       setLoading(true);
       await loadDashboard();
     } finally {

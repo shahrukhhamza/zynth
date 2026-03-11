@@ -3,6 +3,49 @@ import { format } from 'date-fns';
 import { useTheme } from '../contexts/ThemeContext';
 import { useTimezone } from '../contexts/TimezoneContext';
 
+// ── Stable Recharts sub-components (defined at module level to keep a stable
+//    reference across renders — avoids React error #31 / unmount-remount loops)
+function ChartTooltip({ active, payload, theme, formatDate, dataKey, formatValue }) {
+  if (!active || !payload?.length) return null;
+  const d = payload[0].payload;
+  return (
+    <div className="border rounded-lg p-3 shadow-lg" style={{
+      backgroundColor: theme.surface,
+      borderColor: theme.border,
+      boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.3)'
+    }}>
+      <p className="text-xs mb-1" style={{ color: theme.muted }}>
+        {formatDate(new Date(d.date), 'MMM dd, yyyy')}
+      </p>
+      <p className="text-sm font-semibold" style={{ color: theme.text }}>
+        {formatValue(d[dataKey])}
+      </p>
+      {d.high && d.low && (
+        <div className="text-xs mt-1" style={{ color: theme.muted }}>
+          <div>High: {formatValue(d.high)}</div>
+          <div>Low: {formatValue(d.low)}</div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function ChartLabel({ x, y, value, index, theme, formatValue }) {
+  if (index % 3 !== 0) return null;
+  return (
+    <text
+      x={x}
+      y={y - 10}
+      fill={theme.text}
+      fontSize="11"
+      fontWeight="600"
+      textAnchor="middle"
+    >
+      {formatValue(value)}
+    </text>
+  );
+}
+
 function DataChart({ 
   data, 
   title, 
@@ -37,52 +80,6 @@ function DataChart({
   const firstValue   = data[0]?.[dataKey];
   const change = firstValue ? ((latestValue - firstValue) / firstValue) * 100 : 0;
   const isPositive = change >= 0;
-
-  const CustomTooltip = ({ active, payload }) => {
-    if (active && payload && payload.length) {
-      const data = payload[0].payload;
-      return (
-        <div className="border rounded-lg p-3 shadow-lg" style={{ 
-          backgroundColor: theme.surface, 
-          borderColor: theme.border,
-          boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.3)'
-        }}>
-          <p className="text-xs mb-1" style={{ color: theme.muted }}>
-            {formatDateWithTimezone(new Date(data.date), 'MMM dd, yyyy')}
-          </p>
-          <p className="text-sm font-semibold" style={{ color: theme.text }}>
-            {formatValue(data[dataKey])}
-          </p>
-          {data.high && data.low && (
-            <div className="text-xs mt-1" style={{ color: theme.muted }}>
-              <div>High: {formatValue(data.high)}</div>
-              <div>Low: {formatValue(data.low)}</div>
-            </div>
-          )}
-        </div>
-      );
-    }
-    return null;
-  };
-
-  const CustomLabel = (props) => {
-    const { x, y, value, index } = props;
-    // Only show labels for every 3rd point to avoid clutter
-    if (index % 3 !== 0) return null;
-    
-    return (
-      <text 
-        x={x} 
-        y={y - 10} 
-        fill={theme.text} 
-        fontSize="11" 
-        fontWeight="600"
-        textAnchor="middle"
-      >
-        {formatValue(value)}
-      </text>
-    );
-  };
 
   const ChartComponent = type === 'area' ? AreaChart : LineChart;
   const DataComponent = type === 'area' ? Area : Line;
@@ -129,7 +126,7 @@ function DataChart({
             tick={{ fill: theme.chartAxis, fontSize: 11 }}
             tickFormatter={(value) => formatValue(value)}
           />
-          <Tooltip content={<CustomTooltip />} cursor={{ fill: theme.isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)' }} />
+          <Tooltip content={<ChartTooltip theme={theme} formatDate={formatDateWithTimezone} dataKey={dataKey} formatValue={formatValue} />} cursor={{ fill: theme.isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)' }} />
           {type === 'area' ? (
             <Area
               type="monotone"
@@ -138,7 +135,7 @@ function DataChart({
               fill={`${color}33`}
               strokeWidth={2}
             >
-              {showLabels && <LabelList content={<CustomLabel />} />}
+              {showLabels && <LabelList content={<ChartLabel theme={theme} formatValue={formatValue} />} />}
             </Area>
           ) : (
             <Line
@@ -149,7 +146,7 @@ function DataChart({
               dot={false}
               activeDot={{ r: 4 }}
             >
-              {showLabels && <LabelList content={<CustomLabel />} />}
+              {showLabels && <LabelList content={<ChartLabel theme={theme} formatValue={formatValue} />} />}
             </Line>
           )}
         </ChartComponent>

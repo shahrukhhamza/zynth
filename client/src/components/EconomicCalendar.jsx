@@ -5,6 +5,53 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import { useTheme } from '../contexts/ThemeContext';
 import { useTimezone } from '../contexts/TimezoneContext';
 
+// ── Stable Recharts sub-components (defined at module level to keep a stable
+//    reference across renders — avoids React error #31 / unmount-remount loops)
+function CalendarTooltip({ active, payload, theme, formatDate }) {
+  if (!active || !payload?.length) return null;
+  const data = payload[0].payload;
+  return (
+    <div className="border p-3 rounded-lg shadow-lg" style={{
+      backgroundColor: theme.surface,
+      borderColor: theme.border,
+      boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.3)'
+    }}>
+      <p className="text-xs mb-1" style={{ color: theme.muted }}>
+        {formatDate(new Date(data.date), 'MMM dd, yyyy')}
+      </p>
+      <div className="space-y-1">
+        <p className="text-sm">
+          <span style={{ color: theme.success }}>Actual:</span>{' '}
+          <span className="font-semibold" style={{ color: theme.text }}>{data.actual}</span>
+        </p>
+        <p className="text-sm">
+          <span style={{ color: theme.accent }}>Forecast:</span>{' '}
+          <span className="font-semibold" style={{ color: theme.text }}>{data.forecast}</span>
+        </p>
+        <p className="text-sm">
+          <span style={{ color: theme.muted }}>Previous:</span>{' '}
+          <span className="font-semibold" style={{ color: theme.text }}>{data.previous}</span>
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function CalendarBarLabel({ x, y, width, value, theme }) {
+  return (
+    <text
+      x={x + width / 2}
+      y={y - 5}
+      fill={theme.text}
+      fontSize="10"
+      fontWeight="600"
+      textAnchor="middle"
+    >
+      {value}
+    </text>
+  );
+}
+
 function EconomicCalendar() {
   const theme = useTheme();
   const { formatDateWithTimezone } = useTimezone();
@@ -255,54 +302,6 @@ function EconomicCalendar() {
     a.click();
     URL.revokeObjectURL(url);
     setPrintModal(false);
-  };
-
-  const CustomTooltip = ({ active, payload }) => {
-    if (active && payload && payload.length) {
-      const data = payload[0].payload;
-      return (
-        <div className="border p-3 rounded-lg shadow-lg" style={{ 
-          backgroundColor: theme.surface, 
-          borderColor: theme.border,
-          boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.3)'
-        }}>
-          <p className="text-xs mb-1" style={{ color: theme.muted }}>
-            {formatDateWithTimezone(new Date(data.date), 'MMM dd, yyyy')}
-          </p>
-          <div className="space-y-1">
-            <p className="text-sm">
-              <span style={{ color: theme.success }}>Actual:</span>{' '}
-              <span className="font-semibold" style={{ color: theme.text }}>{data.actual}</span>
-            </p>
-            <p className="text-sm">
-              <span style={{ color: theme.accent }}>Forecast:</span>{' '}
-              <span className="font-semibold" style={{ color: theme.text }}>{data.forecast}</span>
-            </p>
-            <p className="text-sm">
-              <span style={{ color: theme.muted }}>Previous:</span>{' '}
-              <span className="font-semibold" style={{ color: theme.text }}>{data.previous}</span>
-            </p>
-          </div>
-        </div>
-      );
-    }
-    return null;
-  };
-
-  const CustomBarLabel = (props) => {
-    const { x, y, width, height, value } = props;
-    return (
-      <text 
-        x={x + width / 2} 
-        y={y - 5} 
-        fill={theme.text} 
-        fontSize="10" 
-        fontWeight="600"
-        textAnchor="middle"
-      >
-        {value}
-      </text>
-    );
   };
 
   if (loading) {
@@ -718,13 +717,13 @@ function EconomicCalendar() {
                                 fontSize={10}
                                 tickFormatter={(value) => `${value}${indicator.unit}`}
                               />
-                              <Tooltip content={<CustomTooltip />} cursor={{ fill: theme.isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)' }} />
+                              <Tooltip content={<CalendarTooltip theme={theme} formatDate={formatDateWithTimezone} />} cursor={{ fill: theme.isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)' }} />
                               <ReferenceLine y={0} stroke={theme.chartAxis} />
                               <Bar dataKey="actual" fill="#22C55E" name="Actual" radius={[4, 4, 0, 0]}>
-                                <LabelList content={<CustomBarLabel />} />
+                                <LabelList content={<CalendarBarLabel theme={theme} />} />
                               </Bar>
                               <Bar dataKey="forecast" fill="#3B82F6" name="Forecast" radius={[4, 4, 0, 0]}>
-                                <LabelList content={<CustomBarLabel />} />
+                                <LabelList content={<CalendarBarLabel theme={theme} />} />
                               </Bar>
                             </BarChart>
                           </ResponsiveContainer>

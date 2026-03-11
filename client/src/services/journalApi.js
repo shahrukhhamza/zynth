@@ -1,7 +1,8 @@
 import axios from 'axios';
+import { API_URL } from '../config/api';
 
 const api = axios.create({
-  baseURL: (import.meta.env.VITE_API_URL || '/api') + '/journal',
+  baseURL: `${API_URL}/api/journal`,
   timeout: 45000,
 });
 
