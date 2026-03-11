@@ -142,8 +142,6 @@ function AppShell() {
         onRefresh={() => currentView === 'news' ? loadNews() : window.location.reload()}
         onToggleSidebar={() => setMobileSidebarOpen(o => !o)}
         mobileSidebarOpen={mobileSidebarOpen}
-        onToggleSidebarCollapse={handleToggleCollapse}
-        sidebarCollapsed={sidebarCollapsed}
       />
       
       <div className="flex h-[calc(100vh-64px)] relative">

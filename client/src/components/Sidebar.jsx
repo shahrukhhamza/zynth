@@ -54,7 +54,7 @@ function Sidebar({ filters, onFilterChange, onApplyFilters, onResetFilters, curr
         {/* Brand area — desktop only */}
         <div
           className={[
-            'hidden md:flex items-center border-b px-3 py-4',
+            'hidden md:flex items-center border-b px-3 py-3',
             collapsed ? 'justify-center' : 'gap-3',
           ].join(' ')}
           style={{ borderColor: theme.border }}
@@ -69,10 +69,32 @@ function Sidebar({ filters, onFilterChange, onApplyFilters, onResetFilters, curr
             <BarChart3 className="w-4 h-4 text-white" />
           </div>
           {!collapsed && (
-            <div className="min-w-0">
-              <p className="text-sm font-bold leading-tight truncate tracking-tight" style={{ color: theme.text }}>Zynth</p>
-              <p className="text-[10px] leading-tight truncate" style={{ color: theme.muted }}>Market Intelligence</p>
-            </div>
+            <>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-bold leading-tight truncate tracking-tight" style={{ color: theme.text }}>Zynth</p>
+                <p className="text-[10px] leading-tight truncate" style={{ color: theme.muted }}>Market Intelligence</p>
+              </div>
+              <button
+                onClick={onToggleCollapse}
+                className="flex-shrink-0 flex items-center justify-center w-7 h-7 rounded-lg transition-all"
+                style={{ color: theme.muted, backgroundColor: theme.isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)' }}
+                title="Collapse sidebar"
+                aria-label="Collapse sidebar"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+            </>
+          )}
+          {collapsed && (
+            <button
+              onClick={onToggleCollapse}
+              className="flex items-center justify-center w-7 h-7 rounded-lg transition-all mt-1"
+              style={{ color: theme.muted, backgroundColor: theme.isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)' }}
+              title="Expand sidebar"
+              aria-label="Expand sidebar"
+            >
+              <ChevronRight className="w-4 h-4" />
+            </button>
           )}
         </div>
 
@@ -266,28 +288,6 @@ function Sidebar({ filters, onFilterChange, onApplyFilters, onResetFilters, curr
             </div>
           </div>
         )}
-      </div>
-
-      {/* Collapse toggle — desktop only */}
-      <div
-        className="hidden md:flex items-center border-t px-3 py-3"
-        style={{
-          borderColor: theme.border,
-          justifyContent: collapsed ? 'center' : 'flex-end',
-        }}
-      >
-        <button
-          onClick={onToggleCollapse}
-          className="p-1.5 rounded-lg transition-all hover:scale-110"
-          style={{
-            color: theme.muted,
-            backgroundColor: theme.isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)',
-          }}
-          title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-          aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-        >
-          {collapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
-        </button>
       </div>
     </aside>
   );
