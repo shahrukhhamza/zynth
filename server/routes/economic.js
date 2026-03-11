@@ -1,0 +1,215 @@
+/**
+ * Economic Intelligence API Routes
+ * 
+ * Provides endpoints for:
+ * - Individual economic indicators (NFP, CPI, Unemployment)
+ * - Complete economic dashboard
+ * - Gemini AI macro analysis
+ */
+
+import express from 'express';
+import {
+  analyzeNFP,
+  analyzeCPI,
+  analyzeUnemployment,
+  analyzeFedRate,
+  analyzeGDP,
+  analyzeCorePCE,
+  analyzeJoblessClaims,
+  analyzeRetailSales,
+  analyzeISMManufacturing,
+  analyzeConsumerConfidence,
+  getEconomicDashboard,
+  clearEconomicCache,
+} from '../services/economicIntelligenceService.js';
+import { analyzeMacroeconomicImpact } from '../services/geminiAnalysisService.js';
+
+const router = express.Router();
+
+/**
+ * GET /api/economic/nfp
+ * Fetch Non-Farm Payrolls analysis with surprise calculation
+ */
+router.get('/nfp', async (req, res) => {
+  try {
+    const analysis = await analyzeNFP();
+    
+    if (analysis.error) {
+      return res.status(503).json({
+        error: 'Failed to analyze NFP',
+        details: analysis.error,
+      });
+    }
+
+    res.json(analysis);
+  } catch (error) {
+    console.error('NFP endpoint error:', error);
+    res.status(500).json({
+      error: 'Internal server error',
+      message: error.message,
+    });
+  }
+});
+
+/**
+ * GET /api/economic/cpi
+ * Fetch Consumer Price Index analysis with surprise calculation
+ */
+router.get('/cpi', async (req, res) => {
+  try {
+    const analysis = await analyzeCPI();
+    
+    if (analysis.error) {
+      return res.status(503).json({
+        error: 'Failed to analyze CPI',
+        details: analysis.error,
+      });
+    }
+
+    res.json(analysis);
+  } catch (error) {
+    console.error('CPI endpoint error:', error);
+    res.status(500).json({
+      error: 'Internal server error',
+      message: error.message,
+    });
+  }
+});
+
+/**
+ * GET /api/economic/unemployment
+ * Fetch Unemployment Rate analysis with surprise calculation
+ */
+router.get('/unemployment', async (req, res) => {
+  try {
+    const analysis = await analyzeUnemployment();
+    
+    if (analysis.error) {
+      return res.status(503).json({
+        error: 'Failed to analyze Unemployment',
+        details: analysis.error,
+      });
+    }
+
+    res.json(analysis);
+  } catch (error) {
+    console.error('Unemployment endpoint error:', error);
+    res.status(500).json({
+      error: 'Internal server error',
+      message: error.message,
+    });
+  }
+});
+
+// ── New high-impact indicator routes ────────────────────────────────────────
+
+const newIndicators = [
+  { path: '/fed-rate',          fn: analyzeFedRate,           name: 'Fed Rate' },
+  { path: '/gdp',               fn: analyzeGDP,               name: 'GDP' },
+  { path: '/core-pce',          fn: analyzeCorePCE,           name: 'Core PCE' },
+  { path: '/jobless-claims',    fn: analyzeJoblessClaims,     name: 'Jobless Claims' },
+  { path: '/retail-sales',      fn: analyzeRetailSales,       name: 'Retail Sales' },
+  { path: '/ism-manufacturing', fn: analyzeISMManufacturing,  name: 'ISM Manufacturing' },
+  { path: '/consumer-confidence',fn: analyzeConsumerConfidence,name: 'Consumer Confidence' },
+];
+
+newIndicators.forEach(({ path, fn, name }) => {
+  router.get(path, async (req, res) => {
+    try {
+      const analysis = await fn();
+      if (analysis.error) {
+        return res.status(503).json({ error: `Failed to analyze ${name}`, details: analysis.error });
+      }
+      res.json(analysis);
+    } catch (error) {
+      console.error(`${name} endpoint error:`, error);
+      res.status(500).json({ error: 'Internal server error', message: error.message });
+    }
+  });
+});
+
+/**
+ * GET /api/economic/dashboard
+ * Fetch complete economic intelligence dashboard
+ * 
+ * Includes:
+ * - All three indicators (NFP, CPI, Unemployment)
+ * - Overall market sentiment
+ * - Gemini AI macro analysis (if enabled)
+ */
+router.get('/dashboard', async (req, res) => {
+  try {
+    const dashboard = await getEconomicDashboard();
+    
+    if (dashboard.error) {
+      return res.status(503).json({
+        error: 'Failed to build dashboard',
+        details: dashboard.error,
+      });
+    }
+
+    // Add Gemini AI macro analysis if enabled
+    if (process.env.USE_GEMINI_AI !== 'false' && process.env.GEMINI_API_KEY) {
+      try {
+        const macroAnalysis = await analyzeMacroeconomicImpact(dashboard);
+        dashboard.aiAnalysis = macroAnalysis;
+        console.log('✓ Added Gemini AI macro analysis to dashboard');
+      } catch (error) {
+        console.log('⚠️  Gemini analysis failed (non-critical):', error.message);
+        // Don't block dashboard if Gemini fails - it's an enhancement
+        dashboard.aiAnalysis = {
+          error: 'AI analysis unavailable',
+          message: error.message,
+        };
+      }
+    }
+
+    res.json(dashboard);
+  } catch (error) {
+    console.error('Dashboard endpoint error:', error);
+    res.status(500).json({
+      error: 'Internal server error',
+      message: error.message,
+    });
+  }
+});
+
+/**
+ * POST /api/economic/refresh
+ * Clear cache and force fresh data fetch
+ */
+router.post('/refresh', async (req, res) => {
+  try {
+    clearEconomicCache();
+    
+    res.json({
+      success: true,
+      message: 'Economic intelligence cache cleared',
+      timestamp: new Date().toISOString(),
+    });
+  } catch (error) {
+    console.error('Cache refresh error:', error);
+    res.status(500).json({
+      error: 'Failed to refresh cache',
+      message: error.message,
+    });
+  }
+});
+
+/**
+ * GET /api/economic/health
+ * Check if economic intelligence service is operational
+ */
+router.get('/health', (req, res) => {
+  const fredKey = process.env.FRED_API_KEY;
+  const geminiKey = process.env.GEMINI_API_KEY;
+
+  res.json({
+    status: 'operational',
+    fredApi: fredKey ? 'configured' : 'missing',
+    geminiAi: geminiKey ? 'configured' : 'missing',
+    timestamp: new Date().toISOString(),
+  });
+});
+
+export default router;

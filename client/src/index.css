@@ -1,0 +1,87 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #ffffff;
+  color: #1e293b;
+}
+
+.dark body {
+  background-color: #0a0e27;
+  color: #e4e9f0;
+}
+
+code {
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+}
+
+/* Custom scrollbar — light theme (default) */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Custom scrollbar — dark theme */
+html.dark ::-webkit-scrollbar-track {
+  background: #131829;
+  border-radius: 4px;
+}
+
+html.dark ::-webkit-scrollbar-thumb {
+  background: #2a3557;
+  border-radius: 4px;
+}
+
+html.dark ::-webkit-scrollbar-thumb:hover {
+  background: #3b82f6;
+}
+
+/* Loading animation */
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+.animate-shimmer {
+  animation: shimmer 2s infinite linear;
+  background: linear-gradient(
+    to right,
+    #f1f5f9 4%,
+    #e2e8f0 25%,
+    #f1f5f9 36%
+  );
+  background-size: 1000px 100%;
+}
+
+html.dark .animate-shimmer {
+  background: linear-gradient(
+    to right,
+    #131829 4%,
+    #1e2538 25%,
+    #131829 36%
+  );
+  background-size: 1000px 100%;
+}
