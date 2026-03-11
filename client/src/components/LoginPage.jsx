@@ -8,8 +8,8 @@ const TICKERS = [
   { sym: 'GOLD', val: '$5,168', chg: '+0.82%', up: true,  top: '8%',  left: '5%',  delay: '0s',   dur: '4.2s' },
   { sym: 'BTC',  val: '$70,855',chg: '+1.28%', up: true,  top: '26%', left: '50%', delay: '0.9s', dur: '5.1s' },
   { sym: 'SPY',  val: '$675.31',chg: '-0.28%', up: false, top: '48%', left: '8%',  delay: '1.6s', dur: '3.9s' },
-  { sym: 'DXY',  val: '99.26',  chg: '+0.44%', up: true,  top: '65%', left: '52%', delay: '0.4s', dur: '4.7s' },
-  { sym: 'OIL',  val: '$88.07', chg: '+5.54%', up: true,  top: '80%', left: '14%', delay: '2.1s', dur: '4.0s' },
+  { sym: 'DXY',  val: '99.26',  chg: '+0.44%', up: true,  top: '48%', left: '54%', delay: '0.4s', dur: '4.7s' },
+  { sym: 'OIL',  val: '$88.07', chg: '+5.54%', up: true,  top: '42%', left: '28%', delay: '2.1s', dur: '4.0s' },
 ];
 
 const FEATURES = [
@@ -81,7 +81,7 @@ export default function LoginPage({ onSwitchToSignup, onBack }) {
   }
 
   return (
-    <div className="h-screen overflow-hidden flex bg-[#060a12]">
+    <div className="h-screen overflow-hidden flex flex-col bg-[#060a12]">
       <style>{`
         @keyframes floatCard {
           0%,100% { transform: translateY(0px);   }
@@ -110,6 +110,27 @@ export default function LoginPage({ onSwitchToSignup, onBack }) {
         }
       `}</style>
 
+      {/* ── Top navigation bar ─────────────────────────────────────────── */}
+      <div className="shrink-0 flex items-center justify-between px-8 h-[52px] border-b border-white/[0.06]"
+           style={{background:'rgba(6,10,18,0.98)'}}>
+        {onBack ? (
+          <button onClick={onBack}
+                  className="group flex items-center gap-2 text-[13px] font-medium text-gray-400 hover:text-white transition-all duration-200 px-3 py-1.5 rounded-lg hover:bg-white/[0.05]">
+            <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-0.5" />
+            Back to home
+          </button>
+        ) : <div />}
+        <div className="flex items-center gap-2 select-none">
+          <div className="w-7 h-7 rounded-[9px] flex items-center justify-center"
+               style={{background:'linear-gradient(145deg,#059669,#0d9488)'}}>
+            <TrendingUp className="w-3.5 h-3.5 text-white" strokeWidth={2.5} />
+          </div>
+          <span className="text-[15px] font-bold text-white tracking-tight">Zynth</span>
+        </div>
+      </div>
+
+      {/* ── Panels ───────────────────────────────────────────────────────── */}
+      <div className="flex flex-1 overflow-hidden">
       {/* ── LEFT: Decorative animated panel ──────────────────────────────── */}
       <div className="hidden lg:flex flex-col flex-1 relative overflow-hidden"
            style={{background:'linear-gradient(150deg,#060e1c 0%,#060c18 55%,#07111f 100%)'}}>
@@ -164,8 +185,12 @@ export default function LoginPage({ onSwitchToSignup, onBack }) {
           </div>
         ))}
 
+        {/* Gradient scrim — fades tickers into bottom content cleanly */}
+        <div className="absolute bottom-0 left-0 right-0 h-60 pointer-events-none z-[5]"
+             style={{background:'linear-gradient(to bottom, transparent 0%, rgba(6,12,24,0.85) 60%, #060c18 100%)'}} />
+
         {/* Bottom content */}
-        <div className="absolute bottom-0 left-0 right-0 p-10">
+        <div className="absolute bottom-0 left-0 right-0 p-10 z-10">
           <div className="flex items-center gap-2 mb-5">
             <span className="w-2 h-2 rounded-full bg-emerald-400 shrink-0"
                   style={{animation:'liveBlip 1.5s ease-in-out infinite'}} />
@@ -206,14 +231,6 @@ export default function LoginPage({ onSwitchToSignup, onBack }) {
              style={{background:'radial-gradient(ellipse,rgba(16,185,129,0.13) 0%,transparent 70%)'}} />
 
         <div className="w-full max-w-[340px] px-2">
-          {/* Back to home */}
-          {onBack && (
-            <button onClick={onBack}
-                    className="flex items-center gap-1.5 text-[12px] text-gray-600 hover:text-gray-400 transition-colors mb-5">
-              <ArrowLeft className="w-3.5 h-3.5" />
-              Back to home
-            </button>
-          )}
           {/* Compact logo */}
           <div className="flex flex-col items-center mb-6 select-none">
             <div className="relative mb-3">
@@ -323,6 +340,7 @@ export default function LoginPage({ onSwitchToSignup, onBack }) {
             256-bit SSL encrypted · © 2026 Zynth
           </p>
         </div>
+      </div>
       </div>
     </div>
   );
