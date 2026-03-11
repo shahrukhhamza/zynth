@@ -5,11 +5,11 @@ import { Eye, EyeOff, TrendingUp, TrendingDown, AlertCircle, Loader2, Mail, Lock
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || '';
 
 const TICKERS = [
-  { sym: 'GOLD', val: '$5,168', chg: '+0.82%', up: true,  top: '6%',  left: '4%',  delay: '0s',   dur: '4.2s' },
-  { sym: 'BTC',  val: '$70,855',chg: '+1.28%', up: true,  top: '14%', left: '54%', delay: '0.9s', dur: '5.1s' },
-  { sym: 'OIL',  val: '$88.07', chg: '+5.54%', up: true,  top: '26%', left: '20%', delay: '2.1s', dur: '4.0s' },
-  { sym: 'SPY',  val: '$675.31',chg: '-0.28%', up: false, top: '34%', left: '4%',  delay: '1.6s', dur: '3.9s' },
-  { sym: 'DXY',  val: '99.26',  chg: '+0.44%', up: true,  top: '30%', left: '56%', delay: '0.4s', dur: '4.7s' },
+  { sym: 'GOLD', val: '$5,168', chg: '+0.82%', up: true,  top: '5%',  left: '4%',  delay: '0s',   dur: '4.2s' },
+  { sym: 'BTC',  val: '$70,855',chg: '+1.28%', up: true,  top: '11%', left: '54%', delay: '0.9s', dur: '5.1s' },
+  { sym: 'OIL',  val: '$88.07', chg: '+5.54%', up: true,  top: '18%', left: '20%', delay: '2.1s', dur: '4.0s' },
+  { sym: 'DXY',  val: '99.26',  chg: '+0.44%', up: true,  top: '24%', left: '56%', delay: '0.4s', dur: '4.7s' },
+  { sym: 'SPY',  val: '$675.31',chg: '-0.28%', up: false, top: '28%', left: '4%',  delay: '1.6s', dur: '3.9s' },
 ];
 
 const FEATURES = [
@@ -20,6 +20,7 @@ const FEATURES = [
 
 export default function LoginPage({ onSwitchToSignup, onBack }) {
   const { login, loginWithGoogle } = useAuth();
+  useEffect(() => { window.scrollTo(0, 0); }, []);
   const [email, setEmail]         = useState('');
   const [password, setPassword]   = useState('');
   const [showPass, setShowPass]   = useState(false);
@@ -230,30 +231,17 @@ export default function LoginPage({ onSwitchToSignup, onBack }) {
         <div className="pointer-events-none absolute -top-16 left-1/2 -translate-x-1/2 w-64 h-36"
              style={{background:'radial-gradient(ellipse,rgba(16,185,129,0.13) 0%,transparent 70%)'}} />
 
-        <div className="w-full max-w-[340px] px-2">
-          {/* Compact logo */}
-          <div className="flex flex-col items-center mb-6 select-none">
-            <div className="relative mb-3 overflow-hidden" style={{width:'56px',height:'56px'}}>
-              <div className="absolute inset-0 rounded-[14px]"
-                   style={{background:'linear-gradient(135deg,#059669,#0d9488)',filter:'blur(10px)',opacity:0.5}} />
-              <div className="relative w-full h-full rounded-[14px] flex items-center justify-center"
-                   style={{background:'linear-gradient(145deg,#059669 0%,#0d9488 100%)',boxShadow:'0 0 0 1px rgba(255,255,255,0.1) inset'}}>
-                <TrendingUp className="w-5 h-5 text-white" strokeWidth={2.5} />
-              </div>
-            </div>
-            <h1 className="text-[21px] font-bold text-white tracking-tight">Zynth</h1>
-            <p className="text-gray-600 text-[11px] mt-0.5">Professional Trading Analytics</p>
-          </div>
+        <div className="w-full max-w-[340px] px-4">
 
           {/* Card */}
           <div className="rounded-2xl p-px"
                style={{background:'linear-gradient(135deg,rgba(16,185,129,0.18) 0%,rgba(255,255,255,0.04) 50%,rgba(59,130,246,0.09) 100%)',boxShadow:'0 24px 60px rgba(0,0,0,0.55)'}}>
-            <div className="relative rounded-2xl px-6 py-6 bg-[#0b1322]">
+            <div className="relative rounded-2xl px-5 py-5 bg-[#0b1322]">
               <div className="absolute top-0 left-[12%] right-[12%] h-px"
                    style={{background:'linear-gradient(90deg,transparent,rgba(16,185,129,0.35),transparent)'}} />
 
-              <h2 className="text-[17px] font-semibold text-white">Welcome back</h2>
-              <p className="text-gray-500 text-[12px] mt-0.5 mb-5">Sign in to your account to continue</p>
+              <h2 className="text-[16px] font-semibold text-white">Welcome back</h2>
+              <p className="text-gray-500 text-[11px] mt-0.5 mb-4">Sign in to your account to continue</p>
 
               {error && (
                 <div className="flex items-start gap-2 rounded-xl px-3 py-2.5 mb-4"
@@ -263,7 +251,7 @@ export default function LoginPage({ onSwitchToSignup, onBack }) {
                 </div>
               )}
 
-              <form onSubmit={handleSubmit} className="space-y-3.5">
+              <form onSubmit={handleSubmit} className="space-y-3">
                 <div className="space-y-1">
                   <label className="block text-[10px] font-bold text-gray-600 uppercase tracking-widest">Email address</label>
                   <div className="relative">
@@ -271,7 +259,7 @@ export default function LoginPage({ onSwitchToSignup, onBack }) {
                     <input
                       type="email" autoComplete="email" value={email}
                       onChange={e => setEmail(e.target.value)} required placeholder="you@example.com"
-                      className="w-full pl-8 pr-4 py-[10px] rounded-xl text-[13px] text-white placeholder-gray-700 bg-[#0d1728] border border-white/[0.06] focus:outline-none focus:border-emerald-500/40 focus:ring-2 focus:ring-emerald-500/[0.09] transition-all duration-200"
+                      className="w-full pl-8 pr-4 py-[8px] rounded-xl text-[13px] text-white placeholder-gray-700 bg-[#0d1728] border border-white/[0.06] focus:outline-none focus:border-emerald-500/40 focus:ring-2 focus:ring-emerald-500/[0.09] transition-all duration-200"
                     />
                   </div>
                 </div>
@@ -286,7 +274,7 @@ export default function LoginPage({ onSwitchToSignup, onBack }) {
                     <input
                       type={showPass ? 'text' : 'password'} autoComplete="current-password"
                       value={password} onChange={e => setPassword(e.target.value)} required placeholder="••••••••••"
-                      className="w-full pl-8 pr-10 py-[10px] rounded-xl text-[13px] text-white placeholder-gray-700 bg-[#0d1728] border border-white/[0.06] focus:outline-none focus:border-emerald-500/40 focus:ring-2 focus:ring-emerald-500/[0.09] transition-all duration-200"
+                      className="w-full pl-8 pr-10 py-[8px] rounded-xl text-[13px] text-white placeholder-gray-700 bg-[#0d1728] border border-white/[0.06] focus:outline-none focus:border-emerald-500/40 focus:ring-2 focus:ring-emerald-500/[0.09] transition-all duration-200"
                     />
                     <button type="button" onClick={() => setShowPass(v => !v)} tabIndex={-1}
                             className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-600 hover:text-gray-400 transition-colors">
@@ -297,7 +285,7 @@ export default function LoginPage({ onSwitchToSignup, onBack }) {
 
                 <button
                   type="submit" disabled={loading}
-                  className="group w-full flex items-center justify-center gap-2 text-white font-semibold text-[13px] rounded-xl py-[12px] transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed hover:brightness-110 hover:shadow-[0_6px_24px_rgba(16,185,129,0.38)]"
+                  className="group w-full flex items-center justify-center gap-2 text-white font-semibold text-[13px] rounded-xl py-[10px] transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed hover:brightness-110 hover:shadow-[0_6px_24px_rgba(16,185,129,0.38)]"
                   style={{background:'linear-gradient(135deg,#059669 0%,#0d9488 100%)',boxShadow:'0 4px 16px rgba(16,185,129,0.22),0 1px 0 rgba(255,255,255,0.07) inset'}}
                 >
                   {loading
@@ -306,7 +294,7 @@ export default function LoginPage({ onSwitchToSignup, onBack }) {
                 </button>
               </form>
 
-              <div className="flex items-center gap-3 my-4">
+              <div className="flex items-center gap-3 my-3">
                 <div className="flex-1 h-px bg-white/[0.05]" />
                 <span className="text-[10px] font-bold text-gray-700 tracking-[0.2em]">OR</span>
                 <div className="flex-1 h-px bg-white/[0.05]" />
@@ -327,7 +315,7 @@ export default function LoginPage({ onSwitchToSignup, onBack }) {
                 </button>
               )}
 
-              <p className="text-center text-[12px] text-gray-600 mt-4">
+              <p className="text-center text-[12px] text-gray-600 mt-3">
                 Don't have an account?{' '}
                 <button onClick={onSwitchToSignup} className="text-emerald-400 hover:text-emerald-300 font-semibold transition-colors">
                   Create one
@@ -336,7 +324,7 @@ export default function LoginPage({ onSwitchToSignup, onBack }) {
             </div>
           </div>
 
-          <p className="text-center text-[10px] text-gray-800 mt-4 tracking-wide">
+          <p className="text-center text-[10px] text-gray-800 mt-2 tracking-wide">
             256-bit SSL encrypted · © 2026 Zynth
           </p>
         </div>

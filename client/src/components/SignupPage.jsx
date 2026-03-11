@@ -1,13 +1,13 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { Eye, EyeOff, TrendingUp, TrendingDown, AlertCircle, CheckCircle2, Loader2, User, Mail, Lock, ArrowRight, ArrowLeft, Shield, Zap, BarChart2, Activity } from 'lucide-react';
 
 const TICKERS = [
-  { sym: 'GOLD', val: '$5,168',  chg: '+0.82%', up: true,  top: '6%',  left: '4%',  delay: '0s',   dur: '4.2s' },
-  { sym: 'BTC',  val: '$70,855', chg: '+1.28%', up: true,  top: '14%', left: '54%', delay: '0.9s', dur: '5.1s' },
-  { sym: 'OIL',  val: '$88.07',  chg: '+5.54%', up: true,  top: '26%', left: '20%', delay: '2.1s', dur: '4.0s' },
-  { sym: 'SPY',  val: '$675.31', chg: '-0.28%', up: false, top: '34%', left: '4%',  delay: '1.6s', dur: '3.9s' },
-  { sym: 'DXY',  val: '99.26',   chg: '+0.44%', up: true,  top: '30%', left: '56%', delay: '0.4s', dur: '4.7s' },
+  { sym: 'GOLD', val: '$5,168', chg: '+0.82%', up: true,  top: '5%',  left: '4%',  delay: '0s',   dur: '4.2s' },
+  { sym: 'BTC',  val: '$70,855',chg: '+1.28%', up: true,  top: '11%', left: '54%', delay: '0.9s', dur: '5.1s' },
+  { sym: 'OIL',  val: '$88.07', chg: '+5.54%', up: true,  top: '18%', left: '20%', delay: '2.1s', dur: '4.0s' },
+  { sym: 'DXY',  val: '99.26',  chg: '+0.44%', up: true,  top: '24%', left: '56%', delay: '0.4s', dur: '4.7s' },
+  { sym: 'SPY',  val: '$675.31',chg: '-0.28%', up: false, top: '28%', left: '4%',  delay: '1.6s', dur: '3.9s' },
 ];
 
 const BENEFITS = [
@@ -19,6 +19,7 @@ const BENEFITS = [
 
 export default function SignupPage({ onSwitchToLogin, onBack }) {
   const { register } = useAuth();
+  useEffect(() => { window.scrollTo(0, 0); }, []);
   const [form, setForm]       = useState({ name: '', email: '', password: '', confirm: '' });
   const [showPass, setShowPass] = useState(false);
   const [error, setError]     = useState('');
