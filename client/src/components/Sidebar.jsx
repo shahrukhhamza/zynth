@@ -70,7 +70,7 @@ function Sidebar({ filters, onFilterChange, onApplyFilters, onResetFilters, curr
           </div>
           {!collapsed && (
             <div className="min-w-0">
-              <p className="text-sm font-bold leading-tight truncate" style={{ color: theme.text }}>News Terminal</p>
+              <p className="text-sm font-bold leading-tight truncate tracking-tight" style={{ color: theme.text }}>Zynth</p>
               <p className="text-[10px] leading-tight truncate" style={{ color: theme.muted }}>Market Intelligence</p>
             </div>
           )}

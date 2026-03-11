@@ -41,12 +41,12 @@ function Header({ autoRefresh, onToggleAutoRefresh, onToggleSidebar, mobileSideb
       backgroundColor: theme.surface, 
       borderColor: theme.border 
     }}>
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-1">
         {/* Hamburger — mobile only */}
         <button
           onClick={onToggleSidebar}
           className="md:hidden p-2 rounded-lg transition-colors"
-          style={{ color: theme.text }}
+          style={{ color: theme.muted }}
           aria-label="Toggle navigation"
         >
           {mobileSidebarOpen
@@ -57,7 +57,7 @@ function Header({ autoRefresh, onToggleAutoRefresh, onToggleSidebar, mobileSideb
         {/* Panel toggle — desktop only */}
         <button
           onClick={onToggleSidebarCollapse}
-          className="hidden md:flex p-2 rounded-lg transition-all hover:scale-105"
+          className="hidden md:flex items-center justify-center w-9 h-9 rounded-lg transition-all"
           style={{
             color: sidebarCollapsed ? theme.accent : theme.muted,
             backgroundColor: sidebarCollapsed
@@ -67,17 +67,19 @@ function Header({ autoRefresh, onToggleAutoRefresh, onToggleSidebar, mobileSideb
           title={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           aria-label={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
         >
-          <PanelLeft className="w-5 h-5" />
+          <PanelLeft className="w-[18px] h-[18px]" />
         </button>
 
-        <Activity className="w-7 h-7 hidden sm:block" style={{ color: theme.accent }} />
-        <div>
-          <h1 className="text-base md:text-xl font-bold leading-tight" style={{ color: theme.text }}>
-            News Terminal
-          </h1>
-          <p className="text-xs hidden sm:block" style={{ color: theme.muted }}>
-            Real-time Market Intelligence
-          </p>
+        {/* Divider */}
+        <div className="hidden md:block w-px h-6 mx-1" style={{ backgroundColor: theme.border }} />
+
+        <div className="hidden sm:flex items-center gap-2">
+          <Activity className="w-6 h-6" style={{ color: theme.accent }} />
+          <div>
+            <h1 className="text-base md:text-lg font-bold leading-tight tracking-tight" style={{ color: theme.text }}>Zynth</h1>
+            <p className="text-[10px] leading-tight" style={{ color: theme.muted }}>Real-time Market Intelligence</p>
+          </div>
+        </div>
         </div>
       </div>
       
