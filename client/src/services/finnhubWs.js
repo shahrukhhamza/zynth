@@ -1,7 +1,9 @@
 /**
  * finnhubWs.js — singleton WebSocket client
  * ─────────────────────────────────────────────────────────────
- * Connects to ws://<host>/ws/market (proxied to Node server in dev).
+ * Connects to wss://<backend>/ws/market.
+ * In dev, Vite proxies /ws → localhost:5000 so window.location.host works.
+ * In production (Vercel), VITE_API_URL must point to the Render backend.
  * Receives:
  *   { type: 'snapshot', data: {...}, symbols: [...], status, ts }
  *   { type: 'price', data: { symbol, price, change, changePct, volume }, ts }
@@ -14,6 +16,8 @@
  *   const unsubStatus = finnhubWs.onStatus((status) => { ... });
  *   // cleanup: unsub(); unsubStatus();
  */
+
+import { API_URL } from '../config/api';
 
 const RECONNECT_DELAYS = [1_000, 2_000, 5_000, 10_000, 30_000];
 
@@ -30,8 +34,14 @@ class FinnhubWsClient {
     this._statusListeners  = new Set();
   }
 
-  /** Build WS URL — works in both dev (Vite proxy) and production */
+  /** Build WS URL — works in both dev (Vite proxy) and production (Render) */
   _url() {
+    // In dev, API_URL is empty so fall back to the Vite-proxied /ws path on the same host.
+    // In production (Vercel), API_URL = https://ai-dashboard-backend-kunc.onrender.com
+    //   so we convert https → wss and point directly at the Render backend.
+    if (API_URL) {
+      return API_URL.replace(/^http/, 'ws') + '/ws/market';
+    }
     const proto = window.location.protocol === 'https:' ? 'wss' : 'ws';
     return `${proto}://${window.location.host}/ws/market`;
   }
