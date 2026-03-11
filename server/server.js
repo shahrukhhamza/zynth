@@ -6,6 +6,7 @@ import { dirname, join } from 'path';
 import { createServer } from 'http';
 import { WebSocketServer } from 'ws';
 import { request as httpRequest } from 'http';
+import { request as httpsRequest } from 'https';
 import { pipeline } from 'stream';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -81,18 +82,24 @@ app.use('/api/auth', authRouter);
 app.use('/api/finnhub', finnhubRouter);
 app.use('/api/journal', journalRouter);
 
-// ── /mt5 proxy → Python screenshot service on port 8000 ─────────────────────
-// Strips /mt5 prefix and forwards to http://localhost:8000
+// ── /mt5 proxy → Python screenshot service ──────────────────────────────────
+// In production set PYTHON_SERVICE_URL=https://ai-dashboard-python.onrender.com
+// In dev it falls back to http://localhost:8000
+const _PYTHON_SERVICE_URL = process.env.PYTHON_SERVICE_URL || 'http://localhost:8000';
+const _pythonTarget = new URL(_PYTHON_SERVICE_URL);
+const _pythonIsHttps = _pythonTarget.protocol === 'https:';
+
 app.all('/mt5/*', (req, res) => {
   const targetPath = req.url.replace(/^\/mt5/, '') || '/';
   const options = {
-    hostname: '127.0.0.1',
-    port: 8000,
+    hostname: _pythonTarget.hostname,
+    port: _pythonTarget.port || (_pythonIsHttps ? 443 : 80),
     path: targetPath,
     method: req.method,
-    headers: { ...req.headers, host: '127.0.0.1:8000' },
+    headers: { ...req.headers, host: _pythonTarget.host },
   };
-  const proxy = httpRequest(options, (proxyRes) => {
+  const requester = _pythonIsHttps ? httpsRequest : httpRequest;
+  const proxy = requester(options, (proxyRes) => {
     res.writeHead(proxyRes.statusCode, proxyRes.headers);
     pipeline(proxyRes, res, () => {});
   });
@@ -100,7 +107,6 @@ app.all('/mt5/*', (req, res) => {
     if (!res.headersSent) {
       res.status(503).json({
         error: 'Screenshot analysis service unavailable',
-        detail: 'The Python MT5 service is not running on port 8000. Please start it with: cd mt5_service && python main.py',
       });
     }
   });
@@ -213,7 +219,7 @@ httpServer.listen(PORT, () => {
     console.warn('⚠️  FINNHUB_API_KEY not set — live market data disabled');
   }
 
-  // ── Keep-alive: ping self every 4 min to prevent Render free-tier sleep ──
+  // ── Keep-alive: ping self + Python service every 4 min (Render free-tier) ──
   const SELF_URL = process.env.RENDER_EXTERNAL_URL || `http://localhost:${PORT}`;
   if (process.env.RENDER_EXTERNAL_URL) {
     setInterval(async () => {
@@ -221,7 +227,15 @@ httpServer.listen(PORT, () => {
         const { default: axios } = await import('axios');
         await axios.get(`${SELF_URL}/api/health`, { timeout: 10000 });
         console.log('🏓 Keep-alive ping OK');
-      } catch (_) { /* ignore — server may have just restarted */ }
+      } catch (_) { /* ignore */ }
+      // Also keep the Python screenshot service alive
+      if (process.env.PYTHON_SERVICE_URL) {
+        try {
+          const { default: axios } = await import('axios');
+          await axios.get(`${process.env.PYTHON_SERVICE_URL}/health`, { timeout: 10000 });
+          console.log('🏓 Python service ping OK');
+        } catch (_) { /* ignore */ }
+      }
     }, 4 * 60 * 1000); // every 4 minutes
   }
 });

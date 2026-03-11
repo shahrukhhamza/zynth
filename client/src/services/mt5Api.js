@@ -7,7 +7,11 @@
  */
 import axios from 'axios';
 
-const BASE = import.meta.env.VITE_MT5_API_URL || '/mt5';
+// In production: route through the Express backend (VITE_API_URL already set in Vercel).
+// In dev: Vite proxies /mt5 → localhost:8000 directly.
+const BASE =
+  import.meta.env.VITE_MT5_API_URL ||
+  (import.meta.env.VITE_API_URL ? `${import.meta.env.VITE_API_URL}/mt5` : '/mt5');
 
 const client = axios.create({
   baseURL: BASE,

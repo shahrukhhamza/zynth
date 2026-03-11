@@ -145,15 +145,6 @@ function AppShell() {
       />
       
       <div className="flex h-[calc(100vh-64px)] relative">
-        {/* Mobile backdrop */}
-        {mobileSidebarOpen && (
-          <div
-            className="fixed inset-0 z-30 md:hidden"
-            style={{ backgroundColor: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(2px)' }}
-            onClick={() => setMobileSidebarOpen(false)}
-          />
-        )}
-
         {/* Left Sidebar */}
         <Sidebar 
           filters={filters}

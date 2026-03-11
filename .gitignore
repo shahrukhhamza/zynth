@@ -29,5 +29,29 @@ yarn-error.log*
 *.swo
 *~
 
+# Runtime logs — generated at runtime, not source code
+logs/
+*.log
+economic_calendar/logs/
+
+# SQLite runtime files
+*.db-wal
+*.db-shm
+# Keep *.db committed (persistent data), but ignore temp files above
+
+# Runtime cache & generated output
+economic_calendar/cache/
+economic_calendar/output/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+*.egg-info/
+
+# Test/temp output
+test_output.json
+
 # OS
 Thumbs.db
