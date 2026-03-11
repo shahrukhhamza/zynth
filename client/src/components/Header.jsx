@@ -80,7 +80,6 @@ function Header({ autoRefresh, onToggleAutoRefresh, onToggleSidebar, mobileSideb
             <p className="text-[10px] leading-tight" style={{ color: theme.muted }}>Real-time Market Intelligence</p>
           </div>
         </div>
-        </div>
       </div>
       
       <div className="flex items-center gap-4">
