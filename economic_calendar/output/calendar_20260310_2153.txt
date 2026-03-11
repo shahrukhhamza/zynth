@@ -1,0 +1,9 @@
+US ECONOMIC CALENDAR  2026-03-10 21:53
+
+ Indicator                   Actual    Forecast    Previous   Period          Source                     Verified 
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+ CPI m/m                     +0.17%         N/A       0.30%   January 2026    BLS                           ✓✓    
+ PPI m/m                     +0.27%         N/A      -0.25%   2026-01-01      FRED                          ✓     
+ Unemployment Rate            4.40%         N/A       4.30%   February 2026   BLS                           ✓✓    
+ Fed Interest Rate            3.64%         N/A       3.64%   2026-02-01      Federal Reserve (FRED)        ✓     
+ Retail Sales m/m            -0.16%         N/A      -0.00%   2026-01-01      Census Bureau (FRED)          ✓     

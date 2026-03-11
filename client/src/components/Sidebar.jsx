@@ -1,7 +1,7 @@
 import { Search, Filter, Calendar, TrendingUp, X, BarChart3, Newspaper, Brain, BookOpen, Wifi, Camera } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 
-function Sidebar({ filters, onFilterChange, onApplyFilters, onResetFilters, currentView, onViewChange }) {
+function Sidebar({ filters, onFilterChange, onApplyFilters, onResetFilters, currentView, onViewChange, mobileOpen, onClose }) {
   const theme = useTheme();
 
   const handleKeywordChange = (e) => {
@@ -21,14 +21,35 @@ function Sidebar({ filters, onFilterChange, onApplyFilters, onResetFilters, curr
   };
 
   return (
-    <aside className="w-64 border-r overflow-y-auto" style={{ 
-      backgroundColor: theme.surface, 
-      borderColor: theme.border 
-    }}>
-      <div className="p-4">
+    <aside
+      className={[
+        // Desktop: always visible, static in flow
+        'hidden md:flex md:flex-col md:w-64 md:border-r md:overflow-y-auto md:relative md:z-auto',
+        // Mobile: fixed overlay, slide in from left
+        'fixed top-0 left-0 h-full w-72 z-40 overflow-y-auto flex flex-col',
+        'transition-transform duration-300 ease-in-out',
+        mobileOpen ? 'translate-x-0' : '-translate-x-full',
+        // On md+ always show (override mobile transform)
+        'md:translate-x-0',
+      ].join(' ')}
+      style={{ backgroundColor: theme.surface, borderColor: theme.border }}
+    >
+      {/* Mobile header row inside sidebar */}
+      <div className="flex items-center justify-between px-4 pt-5 pb-2 md:hidden">
+        <span className="text-sm font-bold" style={{ color: theme.text }}>Navigation</span>
+        <button
+          onClick={onClose}
+          className="p-1.5 rounded-lg"
+          style={{ color: theme.muted }}
+          aria-label="Close menu"
+        >
+          <X className="w-5 h-5" />
+        </button>
+      </div>
+      <div className="p-4 flex-1 overflow-y-auto">
         {/* Navigation */}
         <nav className="mb-6">
-          <h2 className="text-xs font-semibold uppercase mb-3" style={{ color: theme.muted }}>
+          <h2 className="hidden md:block text-xs font-semibold uppercase mb-3" style={{ color: theme.muted }}>
             Navigation
           </h2>
           <ul className="space-y-1">

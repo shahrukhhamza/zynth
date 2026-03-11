@@ -1,0 +1,36 @@
+{
+  "cached_at": 1773161490.6738434,
+  "ttl": 1800,
+  "data": [
+    {
+      "realtime_start": "2026-03-06",
+      "realtime_end": "2026-03-06",
+      "date": "2026-01-01",
+      "value": "733537.0"
+    },
+    {
+      "realtime_start": "2026-03-06",
+      "realtime_end": "2026-03-06",
+      "date": "2025-12-01",
+      "value": "734685.0"
+    },
+    {
+      "realtime_start": "2026-03-06",
+      "realtime_end": "2026-03-06",
+      "date": "2025-11-01",
+      "value": "734718.0"
+    },
+    {
+      "realtime_start": "2026-03-06",
+      "realtime_end": "2026-03-06",
+      "date": "2025-10-01",
+      "value": "731051.0"
+    },
+    {
+      "realtime_start": "2026-03-06",
+      "realtime_end": "2026-03-06",
+      "date": "2025-09-01",
+      "value": "732192.0"
+    }
+  ]
+}

@@ -1,0 +1,736 @@
+2026-03-07 22:42:29: ❌ Error fetching TLT data: Request failed with status code 401
+2026-03-07 22:42:29: Error: Error: Failed to fetch TLT data: Request failed with status code 401
+2026-03-07 22:42:29:     at getEquityData (file:///D:/US%20DATA/server/services/dataService.js:148:11)
+2026-03-07 22:42:29:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-03-07 22:42:29:     at async file:///D:/US%20DATA/server/routes/data.js:28:18
+2026-03-07 22:45:02: ❌ Error fetching TLT data: Request failed with status code 401
+2026-03-07 22:45:02: Error: Error: Failed to fetch TLT data: Request failed with status code 401
+2026-03-07 22:45:02:     at getEquityData (file:///D:/US%20DATA/server/services/dataService.js:148:11)
+2026-03-07 22:45:02:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-03-07 22:45:02:     at async file:///D:/US%20DATA/server/routes/data.js:28:18
+2026-03-07 22:45:25: ❌ Error fetching TLT data: Request failed with status code 401
+2026-03-07 22:45:25: Error: Error: Failed to fetch TLT data: Request failed with status code 401
+2026-03-07 22:45:25:     at getEquityData (file:///D:/US%20DATA/server/services/dataService.js:148:11)
+2026-03-07 22:45:25:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-03-07 22:45:25:     at async file:///D:/US%20DATA/server/routes/data.js:28:18
+2026-03-07 22:45:25: ❌ Error fetching SPY data: Request failed with status code 401
+2026-03-07 22:45:25: Error: Error: Failed to fetch SPY data: Request failed with status code 401
+2026-03-07 22:45:25:     at getEquityData (file:///D:/US%20DATA/server/services/dataService.js:148:11)
+2026-03-07 22:45:25:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-03-07 22:45:25:     at async file:///D:/US%20DATA/server/routes/data.js:28:18
+2026-03-07 22:45:25: ❌ Error fetching UUP data: Request failed with status code 401
+2026-03-07 22:45:25: Error: Error: Failed to fetch UUP data: Request failed with status code 401
+2026-03-07 22:45:25:     at getEquityData (file:///D:/US%20DATA/server/services/dataService.js:148:11)
+2026-03-07 22:45:25:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-03-07 22:45:25:     at async file:///D:/US%20DATA/server/routes/data.js:28:18
+2026-03-07 22:45:25: ❌ Error fetching USO data: Request failed with status code 401
+2026-03-07 22:45:25: Error: Error: Failed to fetch USO data: Request failed with status code 401
+2026-03-07 22:45:25:     at getEquityData (file:///D:/US%20DATA/server/services/dataService.js:148:11)
+2026-03-07 22:45:25:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-03-07 22:45:25:     at async file:///D:/US%20DATA/server/routes/data.js:28:18
+2026-03-07 22:45:25: ❌ Error fetching GLD data: Request failed with status code 401
+2026-03-07 22:45:25: Error: Error: Failed to fetch GLD data: Request failed with status code 401
+2026-03-07 22:45:25:     at getEquityData (file:///D:/US%20DATA/server/services/dataService.js:148:11)
+2026-03-07 22:45:25:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-03-07 22:45:25:     at async file:///D:/US%20DATA/server/routes/data.js:28:18
+2026-03-07 22:45:25: ❌ Error fetching VIXY data: Request failed with status code 401
+2026-03-07 22:45:25: Error: Error: Failed to fetch VIXY data: Request failed with status code 401
+2026-03-07 22:45:25:     at getEquityData (file:///D:/US%20DATA/server/services/dataService.js:148:11)
+2026-03-07 22:45:25:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-03-07 22:45:25:     at async file:///D:/US%20DATA/server/routes/data.js:28:18
+2026-03-07 22:45:28: ❌ Error fetching TLT data: Request failed with status code 401
+2026-03-07 22:45:28: Error: Error: Failed to fetch TLT data: Request failed with status code 401
+2026-03-07 22:45:28:     at getEquityData (file:///D:/US%20DATA/server/services/dataService.js:148:11)
+2026-03-07 22:45:28:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-03-07 22:45:28:     at async file:///D:/US%20DATA/server/routes/data.js:28:18
+2026-03-07 22:45:36: ❌ Error fetching gold data: Request failed with status code 401
+2026-03-07 22:45:36: Error: Error: Failed to fetch gold data: Request failed with status code 401
+2026-03-07 22:45:36:     at getGoldPrices (file:///D:/US%20DATA/server/services/dataService.js:102:11)
+2026-03-07 22:45:36:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-03-07 22:45:36:     at async file:///D:/US%20DATA/server/routes/data.js:16:18
+2026-03-07 22:45:46: ❌ Error fetching GLD data: Request failed with status code 401
+2026-03-07 22:45:46: Error: Error: Failed to fetch GLD data: Request failed with status code 401
+2026-03-07 22:45:46:     at getEquityData (file:///D:/US%20DATA/server/services/dataService.js:148:11)
+2026-03-07 22:45:46:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-03-07 22:45:46:     at async file:///D:/US%20DATA/server/routes/data.js:28:18
+2026-03-07 22:45:46: ❌ Error fetching TLT data: Request failed with status code 401
+2026-03-07 22:45:46: Error: Error: Failed to fetch TLT data: Request failed with status code 401
+2026-03-07 22:45:46:     at getEquityData (file:///D:/US%20DATA/server/services/dataService.js:148:11)
+2026-03-07 22:45:46:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-03-07 22:45:46:     at async file:///D:/US%20DATA/server/routes/data.js:28:18
+2026-03-07 22:47:39: ❌ Error fetching SPY data: Request failed with status code 401
+2026-03-07 22:47:39: Error: Error: Failed to fetch SPY data: Request failed with status code 401
+2026-03-07 22:47:39:     at getEquityData (file:///D:/US%20DATA/server/services/dataService.js:148:11)
+2026-03-07 22:47:39:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-03-07 22:47:39:     at async file:///D:/US%20DATA/server/routes/data.js:28:18
+2026-03-07 22:47:40: ❌ Error fetching gold data: Request failed with status code 401
+2026-03-07 22:47:40: Error: Error: Failed to fetch gold data: Request failed with status code 401
+2026-03-07 22:47:40:     at getGoldPrices (file:///D:/US%20DATA/server/services/dataService.js:102:11)
+2026-03-07 22:47:40:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-03-07 22:47:40:     at async file:///D:/US%20DATA/server/routes/data.js:16:18
+2026-03-07 22:47:40: ❌ Error fetching USO data: Request failed with status code 401
+2026-03-07 22:47:40: Error: Error: Failed to fetch USO data: Request failed with status code 401
+2026-03-07 22:47:40:     at getEquityData (file:///D:/US%20DATA/server/services/dataService.js:148:11)
+2026-03-07 22:47:40:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-03-07 22:47:40:     at async file:///D:/US%20DATA/server/routes/data.js:28:18
+2026-03-07 22:48:53: ❌ Error fetching SPY data: Request failed with status code 401
+2026-03-07 22:48:53: Error: Error: Failed to fetch SPY data: Request failed with status code 401
+2026-03-07 22:48:53:     at getEquityData (file:///D:/US%20DATA/server/services/dataService.js:148:11)
+2026-03-07 22:48:53:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-03-07 22:48:53:     at async file:///D:/US%20DATA/server/routes/data.js:28:18
+2026-03-07 22:48:53: ❌ Error fetching gold data: Request failed with status code 401
+2026-03-07 22:48:53: Error: Error: Failed to fetch gold data: Request failed with status code 401
+2026-03-07 22:48:53:     at getGoldPrices (file:///D:/US%20DATA/server/services/dataService.js:102:11)
+2026-03-07 22:48:53:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-03-07 22:48:53:     at async file:///D:/US%20DATA/server/routes/data.js:16:18
+2026-03-07 22:48:53: ❌ Error fetching USO data: Request failed with status code 401
+2026-03-07 22:48:53: Error: Error: Failed to fetch USO data: Request failed with status code 401
+2026-03-07 22:48:53:     at getEquityData (file:///D:/US%20DATA/server/services/dataService.js:148:11)
+2026-03-07 22:48:53:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-03-07 22:48:53:     at async file:///D:/US%20DATA/server/routes/data.js:28:18
+2026-03-07 22:49:40: ❌ Error fetching SPY data: Request failed with status code 401
+2026-03-07 22:49:40: Error: Error: Failed to fetch SPY data: Request failed with status code 401
+2026-03-07 22:49:40:     at getEquityData (file:///D:/US%20DATA/server/services/dataService.js:148:11)
+2026-03-07 22:49:40:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-03-07 22:49:40:     at async file:///D:/US%20DATA/server/routes/data.js:28:18
+2026-03-07 22:49:40: ❌ Error fetching USO data: Request failed with status code 401
+2026-03-07 22:49:40: Error: Error: Failed to fetch USO data: Request failed with status code 401
+2026-03-07 22:49:40:     at getEquityData (file:///D:/US%20DATA/server/services/dataService.js:148:11)
+2026-03-07 22:49:40:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-03-07 22:49:40:     at async file:///D:/US%20DATA/server/routes/data.js:28:18
+2026-03-07 22:49:40: ❌ Error fetching gold data: Request failed with status code 401
+2026-03-07 22:49:40: Error: Error: Failed to fetch gold data: Request failed with status code 401
+2026-03-07 22:49:40:     at getGoldPrices (file:///D:/US%20DATA/server/services/dataService.js:102:11)
+2026-03-07 22:49:40:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-03-07 22:49:40:     at async file:///D:/US%20DATA/server/routes/data.js:16:18
+2026-03-07 22:50:53: ❌ Error fetching USO data: Request failed with status code 401
+2026-03-07 22:50:53: Error: Error: Failed to fetch USO data: Request failed with status code 401
+2026-03-07 22:50:53:     at getEquityData (file:///D:/US%20DATA/server/services/dataService.js:148:11)
+2026-03-07 22:50:53:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-03-07 22:50:53:     at async file:///D:/US%20DATA/server/routes/data.js:28:18
+2026-03-07 22:50:53: ❌ Error fetching gold data: Request failed with status code 401
+2026-03-07 22:50:53: Error: Error: Failed to fetch gold data: Request failed with status code 401
+2026-03-07 22:50:53:     at getGoldPrices (file:///D:/US%20DATA/server/services/dataService.js:102:11)
+2026-03-07 22:50:53:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-03-07 22:50:53:     at async file:///D:/US%20DATA/server/routes/data.js:16:18
+2026-03-07 22:50:53: ❌ Error fetching SPY data: Request failed with status code 401
+2026-03-07 22:50:53: Error: Error: Failed to fetch SPY data: Request failed with status code 401
+2026-03-07 22:50:53:     at getEquityData (file:///D:/US%20DATA/server/services/dataService.js:148:11)
+2026-03-07 22:50:53:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-03-07 22:50:53:     at async file:///D:/US%20DATA/server/routes/data.js:28:18
+2026-03-07 22:51:39: ❌ Error fetching USO data: Request failed with status code 401
+2026-03-07 22:51:39: Error: Error: Failed to fetch USO data: Request failed with status code 401
+2026-03-07 22:51:39:     at getEquityData (file:///D:/US%20DATA/server/services/dataService.js:148:11)
+2026-03-07 22:51:39:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-03-07 22:51:39:     at async file:///D:/US%20DATA/server/routes/data.js:28:18
+2026-03-07 22:51:39: ❌ Error fetching gold data: Request failed with status code 401
+2026-03-07 22:51:39: Error: Error: Failed to fetch gold data: Request failed with status code 401
+2026-03-07 22:51:39:     at getGoldPrices (file:///D:/US%20DATA/server/services/dataService.js:102:11)
+2026-03-07 22:51:39:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-03-07 22:51:39:     at async file:///D:/US%20DATA/server/routes/data.js:16:18
+2026-03-07 22:51:39: ❌ Error fetching SPY data: Request failed with status code 401
+2026-03-07 22:51:39: Error: Error: Failed to fetch SPY data: Request failed with status code 401
+2026-03-07 22:51:39:     at getEquityData (file:///D:/US%20DATA/server/services/dataService.js:148:11)
+2026-03-07 22:51:39:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-03-07 22:51:39:     at async file:///D:/US%20DATA/server/routes/data.js:28:18
+2026-03-07 22:53:15: ❌ Error fetching VIXY data: Request failed with status code 401
+2026-03-07 22:53:15: Error: Error: Failed to fetch VIXY data: Request failed with status code 401
+2026-03-07 22:53:15:     at getEquityData (file:///D:/US%20DATA/server/services/dataService.js:148:11)
+2026-03-07 22:53:15:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-03-07 22:53:15:     at async file:///D:/US%20DATA/server/routes/data.js:28:18
+2026-03-07 22:53:36: ❌ Error fetching UUP data: Request failed with status code 401
+2026-03-07 22:53:36: Error: Error: Failed to fetch UUP data: Request failed with status code 401
+2026-03-07 22:53:36:     at getEquityData (file:///D:/US%20DATA/server/services/dataService.js:148:11)
+2026-03-07 22:53:36:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-03-07 22:53:36:     at async file:///D:/US%20DATA/server/routes/data.js:28:18
+2026-03-07 22:53:36: ❌ Error fetching gold data: Request failed with status code 401
+2026-03-07 22:53:36: Error: Error: Failed to fetch gold data: Request failed with status code 401
+2026-03-07 22:53:36:     at getGoldPrices (file:///D:/US%20DATA/server/services/dataService.js:102:11)
+2026-03-07 22:53:36:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-03-07 22:53:36:     at async file:///D:/US%20DATA/server/routes/data.js:16:18
+2026-03-07 22:53:36: ❌ Error fetching TLT data: Request failed with status code 401
+2026-03-07 22:53:36: Error: Error: Failed to fetch TLT data: Request failed with status code 401
+2026-03-07 22:53:36:     at getEquityData (file:///D:/US%20DATA/server/services/dataService.js:148:11)
+2026-03-07 22:53:36:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-03-07 22:53:36:     at async file:///D:/US%20DATA/server/routes/data.js:28:18
+2026-03-07 22:53:36: ❌ Error fetching SPY data: Request failed with status code 401
+2026-03-07 22:53:36: Error: Error: Failed to fetch SPY data: Request failed with status code 401
+2026-03-07 22:53:36:     at getEquityData (file:///D:/US%20DATA/server/services/dataService.js:148:11)
+2026-03-07 22:53:36:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-03-07 22:53:36:     at async file:///D:/US%20DATA/server/routes/data.js:28:18
+2026-03-07 22:53:36: ❌ Error fetching USO data: Request failed with status code 401
+2026-03-07 22:53:36: Error: Error: Failed to fetch USO data: Request failed with status code 401
+2026-03-07 22:53:36:     at getEquityData (file:///D:/US%20DATA/server/services/dataService.js:148:11)
+2026-03-07 22:53:36:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-03-07 22:53:36:     at async file:///D:/US%20DATA/server/routes/data.js:28:18
+2026-03-07 22:53:36: ❌ Error fetching VIXY data: Request failed with status code 401
+2026-03-07 22:53:36: Error: Error: Failed to fetch VIXY data: Request failed with status code 401
+2026-03-07 22:53:36:     at getEquityData (file:///D:/US%20DATA/server/services/dataService.js:148:11)
+2026-03-07 22:53:36:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-03-07 22:53:36:     at async file:///D:/US%20DATA/server/routes/data.js:28:18
+2026-03-07 22:53:40: ❌ Error fetching UUP data: Request failed with status code 401
+2026-03-07 22:53:40: Error: Error: Failed to fetch UUP data: Request failed with status code 401
+2026-03-07 22:53:40:     at getEquityData (file:///D:/US%20DATA/server/services/dataService.js:148:11)
+2026-03-07 22:53:40:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-03-07 22:53:40:     at async file:///D:/US%20DATA/server/routes/data.js:28:18
+2026-03-07 22:53:40: ❌ Error fetching TLT data: Request failed with status code 401
+2026-03-07 22:53:40: Error: Error: Failed to fetch TLT data: Request failed with status code 401
+2026-03-07 22:53:40:     at getEquityData (file:///D:/US%20DATA/server/services/dataService.js:148:11)
+2026-03-07 22:53:40:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-03-07 22:53:40:     at async file:///D:/US%20DATA/server/routes/data.js:28:18
+2026-03-07 22:53:40: ❌ Error fetching VIXY data: Request failed with status code 401
+2026-03-07 22:53:40: Error: Error: Failed to fetch VIXY data: Request failed with status code 401
+2026-03-07 22:53:40:     at getEquityData (file:///D:/US%20DATA/server/services/dataService.js:148:11)
+2026-03-07 22:53:40:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-03-07 22:53:40:     at async file:///D:/US%20DATA/server/routes/data.js:28:18
+2026-03-07 22:53:56: ❌ Error fetching USO data: Request failed with status code 401
+2026-03-07 22:53:56: Error: Error: Failed to fetch USO data: Request failed with status code 401
+2026-03-07 22:53:56:     at getEquityData (file:///D:/US%20DATA/server/services/dataService.js:148:11)
+2026-03-07 22:53:56:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-03-07 22:53:56:     at async file:///D:/US%20DATA/server/routes/data.js:28:18
+2026-03-07 22:53:56: ❌ Error fetching gold data: Request failed with status code 401
+2026-03-07 22:53:56: Error: Error: Failed to fetch gold data: Request failed with status code 401
+2026-03-07 22:53:56:     at getGoldPrices (file:///D:/US%20DATA/server/services/dataService.js:102:11)
+2026-03-07 22:53:56:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-03-07 22:53:56:     at async file:///D:/US%20DATA/server/routes/data.js:16:18
+2026-03-07 22:53:56: ❌ Error fetching SPY data: Request failed with status code 401
+2026-03-07 22:53:56: Error: Error: Failed to fetch SPY data: Request failed with status code 401
+2026-03-07 22:53:56:     at getEquityData (file:///D:/US%20DATA/server/services/dataService.js:148:11)
+2026-03-07 22:53:56:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-03-07 22:53:56:     at async file:///D:/US%20DATA/server/routes/data.js:28:18
+2026-03-07 22:53:56: ❌ Error fetching TLT data: Request failed with status code 401
+2026-03-07 22:53:56: Error: Error: Failed to fetch TLT data: Request failed with status code 401
+2026-03-07 22:53:56:     at getEquityData (file:///D:/US%20DATA/server/services/dataService.js:148:11)
+2026-03-07 22:53:56:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-03-07 22:53:56:     at async file:///D:/US%20DATA/server/routes/data.js:28:18
+2026-03-07 22:53:56: ❌ Error fetching VIXY data: Request failed with status code 401
+2026-03-07 22:53:56: Error: Error: Failed to fetch VIXY data: Request failed with status code 401
+2026-03-07 22:53:56:     at getEquityData (file:///D:/US%20DATA/server/services/dataService.js:148:11)
+2026-03-07 22:53:56:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-03-07 22:53:56:     at async file:///D:/US%20DATA/server/routes/data.js:28:18
+2026-03-07 22:53:56: ❌ Error fetching UUP data: Request failed with status code 401
+2026-03-07 22:53:56: Error: Error: Failed to fetch UUP data: Request failed with status code 401
+2026-03-07 22:53:56:     at getEquityData (file:///D:/US%20DATA/server/services/dataService.js:148:11)
+2026-03-07 22:53:56:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-03-07 22:53:56:     at async file:///D:/US%20DATA/server/routes/data.js:28:18
+2026-03-07 22:54:05: ❌ Error fetching gold data: Request failed with status code 401
+2026-03-07 22:54:05: Error: Error: Failed to fetch gold data: Request failed with status code 401
+2026-03-07 22:54:05:     at getGoldPrices (file:///D:/US%20DATA/server/services/dataService.js:102:11)
+2026-03-07 22:54:05:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-03-07 22:54:05:     at async file:///D:/US%20DATA/server/routes/data.js:16:18
+2026-03-07 22:54:05: ❌ Error fetching UUP data: Request failed with status code 401
+2026-03-07 22:54:05: Error: Error: Failed to fetch UUP data: Request failed with status code 401
+2026-03-07 22:54:05:     at getEquityData (file:///D:/US%20DATA/server/services/dataService.js:148:11)
+2026-03-07 22:54:05:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-03-07 22:54:05:     at async file:///D:/US%20DATA/server/routes/data.js:28:18
+2026-03-07 22:54:05: ❌ Error fetching VIXY data: Request failed with status code 401
+2026-03-07 22:54:05: Error: Error: Failed to fetch VIXY data: Request failed with status code 401
+2026-03-07 22:54:05:     at getEquityData (file:///D:/US%20DATA/server/services/dataService.js:148:11)
+2026-03-07 22:54:05:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-03-07 22:54:05:     at async file:///D:/US%20DATA/server/routes/data.js:28:18
+2026-03-07 22:54:05: ❌ Error fetching TLT data: Request failed with status code 401
+2026-03-07 22:54:05: Error: Error: Failed to fetch TLT data: Request failed with status code 401
+2026-03-07 22:54:05:     at getEquityData (file:///D:/US%20DATA/server/services/dataService.js:148:11)
+2026-03-07 22:54:05:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-03-07 22:54:05:     at async file:///D:/US%20DATA/server/routes/data.js:28:18
+2026-03-07 22:54:05: ❌ Error fetching USO data: Request failed with status code 401
+2026-03-07 22:54:05: Error: Error: Failed to fetch USO data: Request failed with status code 401
+2026-03-07 22:54:05:     at getEquityData (file:///D:/US%20DATA/server/services/dataService.js:148:11)
+2026-03-07 22:54:05:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-03-07 22:54:05:     at async file:///D:/US%20DATA/server/routes/data.js:28:18
+2026-03-07 22:54:05: ❌ Error fetching SPY data: Request failed with status code 401
+2026-03-07 22:54:05: Error: Error: Failed to fetch SPY data: Request failed with status code 401
+2026-03-07 22:54:05:     at getEquityData (file:///D:/US%20DATA/server/services/dataService.js:148:11)
+2026-03-07 22:54:05:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-03-07 22:54:05:     at async file:///D:/US%20DATA/server/routes/data.js:28:18
+2026-03-07 22:54:13: ❌ Error fetching VIXY data: Request failed with status code 401
+2026-03-07 22:54:13: Error: Error: Failed to fetch VIXY data: Request failed with status code 401
+2026-03-07 22:54:13:     at getEquityData (file:///D:/US%20DATA/server/services/dataService.js:148:11)
+2026-03-07 22:54:13:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-03-07 22:54:13:     at async file:///D:/US%20DATA/server/routes/data.js:28:18
+2026-03-07 22:55:25: ❌ Error fetching VIXY data: Request failed with status code 401
+2026-03-07 22:55:25: Error: Error: Failed to fetch VIXY data: Request failed with status code 401
+2026-03-07 22:55:25:     at getEquityData (file:///D:/US%20DATA/server/services/dataService.js:148:11)
+2026-03-07 22:55:25:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-03-07 22:55:25:     at async file:///D:/US%20DATA/server/routes/data.js:28:18
+2026-03-07 22:58:53: ❌ Error fetching SPY data: Request failed with status code 401
+2026-03-07 22:58:53: Error: Error: Failed to fetch SPY data: Request failed with status code 401
+2026-03-07 22:58:53:     at getEquityData (file:///D:/US%20DATA/server/services/dataService.js:148:11)
+2026-03-07 22:58:53:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-03-07 22:58:53:     at async file:///D:/US%20DATA/server/routes/data.js:28:18
+2026-03-07 22:58:53: ❌ Error fetching gold data: Request failed with status code 401
+2026-03-07 22:58:53: Error: Error: Failed to fetch gold data: Request failed with status code 401
+2026-03-07 22:58:53:     at getGoldPrices (file:///D:/US%20DATA/server/services/dataService.js:102:11)
+2026-03-07 22:58:53:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-03-07 22:58:53:     at async file:///D:/US%20DATA/server/routes/data.js:16:18
+2026-03-07 22:58:53: ❌ Error fetching USO data: Request failed with status code 401
+2026-03-07 22:58:53: Error: Error: Failed to fetch USO data: Request failed with status code 401
+2026-03-07 22:58:53:     at getEquityData (file:///D:/US%20DATA/server/services/dataService.js:148:11)
+2026-03-07 22:58:53:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-03-07 22:58:53:     at async file:///D:/US%20DATA/server/routes/data.js:28:18
+2026-03-07 22:59:40: ❌ Error fetching SPY data: Request failed with status code 401
+2026-03-07 22:59:40: Error: Error: Failed to fetch SPY data: Request failed with status code 401
+2026-03-07 22:59:40:     at getEquityData (file:///D:/US%20DATA/server/services/dataService.js:148:11)
+2026-03-07 22:59:40:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-03-07 22:59:40:     at async file:///D:/US%20DATA/server/routes/data.js:28:18
+2026-03-07 22:59:40: ❌ Error fetching USO data: Request failed with status code 401
+2026-03-07 22:59:40: Error: Error: Failed to fetch USO data: Request failed with status code 401
+2026-03-07 22:59:40:     at getEquityData (file:///D:/US%20DATA/server/services/dataService.js:148:11)
+2026-03-07 22:59:40:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-03-07 22:59:40:     at async file:///D:/US%20DATA/server/routes/data.js:28:18
+2026-03-07 22:59:40: ❌ Error fetching gold data: Request failed with status code 401
+2026-03-07 22:59:40: Error: Error: Failed to fetch gold data: Request failed with status code 401
+2026-03-07 22:59:40:     at getGoldPrices (file:///D:/US%20DATA/server/services/dataService.js:102:11)
+2026-03-07 22:59:40:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-03-07 22:59:40:     at async file:///D:/US%20DATA/server/routes/data.js:16:18
+2026-03-07 23:00:53: ❌ Error fetching gold data: Request failed with status code 401
+2026-03-07 23:00:53: Error: Error: Failed to fetch gold data: Request failed with status code 401
+2026-03-07 23:00:53:     at getGoldPrices (file:///D:/US%20DATA/server/services/dataService.js:102:11)
+2026-03-07 23:00:53:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-03-07 23:00:53:     at async file:///D:/US%20DATA/server/routes/data.js:16:18
+2026-03-07 23:00:53: ❌ Error fetching USO data: Request failed with status code 401
+2026-03-07 23:00:53: Error: Error: Failed to fetch USO data: Request failed with status code 401
+2026-03-07 23:00:53:     at getEquityData (file:///D:/US%20DATA/server/services/dataService.js:148:11)
+2026-03-07 23:00:53:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-03-07 23:00:53:     at async file:///D:/US%20DATA/server/routes/data.js:28:18
+2026-03-07 23:00:53: ❌ Error fetching SPY data: Request failed with status code 401
+2026-03-07 23:00:53: Error: Error: Failed to fetch SPY data: Request failed with status code 401
+2026-03-07 23:00:53:     at getEquityData (file:///D:/US%20DATA/server/services/dataService.js:148:11)
+2026-03-07 23:00:53:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-03-07 23:00:53:     at async file:///D:/US%20DATA/server/routes/data.js:28:18
+2026-03-07 23:01:39: ❌ Error fetching gold data: Request failed with status code 401
+2026-03-07 23:01:39: Error: Error: Failed to fetch gold data: Request failed with status code 401
+2026-03-07 23:01:39:     at getGoldPrices (file:///D:/US%20DATA/server/services/dataService.js:102:11)
+2026-03-07 23:01:39:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-03-07 23:01:39:     at async file:///D:/US%20DATA/server/routes/data.js:16:18
+2026-03-07 23:01:39: ❌ Error fetching SPY data: Request failed with status code 401
+2026-03-07 23:01:39: Error: Error: Failed to fetch SPY data: Request failed with status code 401
+2026-03-07 23:01:39:     at getEquityData (file:///D:/US%20DATA/server/services/dataService.js:148:11)
+2026-03-07 23:01:39:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-03-07 23:01:39:     at async file:///D:/US%20DATA/server/routes/data.js:28:18
+2026-03-07 23:01:39: ❌ Error fetching USO data: Request failed with status code 401
+2026-03-07 23:01:39: Error: Error: Failed to fetch USO data: Request failed with status code 401
+2026-03-07 23:01:39:     at getEquityData (file:///D:/US%20DATA/server/services/dataService.js:148:11)
+2026-03-07 23:01:39:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-03-07 23:01:39:     at async file:///D:/US%20DATA/server/routes/data.js:28:18
+2026-03-07 23:02:53: ❌ Error fetching SPY data: Request failed with status code 401
+2026-03-07 23:02:53: Error: Error: Failed to fetch SPY data: Request failed with status code 401
+2026-03-07 23:02:53:     at getEquityData (file:///D:/US%20DATA/server/services/dataService.js:148:11)
+2026-03-07 23:02:53:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-03-07 23:02:53:     at async file:///D:/US%20DATA/server/routes/data.js:28:18
+2026-03-07 23:02:53: ❌ Error fetching gold data: Request failed with status code 401
+2026-03-07 23:02:53: Error: Error: Failed to fetch gold data: Request failed with status code 401
+2026-03-07 23:02:53:     at getGoldPrices (file:///D:/US%20DATA/server/services/dataService.js:102:11)
+2026-03-07 23:02:53:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-03-07 23:02:53:     at async file:///D:/US%20DATA/server/routes/data.js:16:18
+2026-03-07 23:02:53: ❌ Error fetching USO data: Request failed with status code 401
+2026-03-07 23:02:53: Error: Error: Failed to fetch USO data: Request failed with status code 401
+2026-03-07 23:02:53:     at getEquityData (file:///D:/US%20DATA/server/services/dataService.js:148:11)
+2026-03-07 23:02:53:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-03-07 23:02:53:     at async file:///D:/US%20DATA/server/routes/data.js:28:18
+2026-03-07 23:03:39: ❌ Error fetching USO data: Request failed with status code 401
+2026-03-07 23:03:39: Error: Error: Failed to fetch USO data: Request failed with status code 401
+2026-03-07 23:03:39:     at getEquityData (file:///D:/US%20DATA/server/services/dataService.js:148:11)
+2026-03-07 23:03:39:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-03-07 23:03:39:     at async file:///D:/US%20DATA/server/routes/data.js:28:18
+2026-03-07 23:03:39: ❌ Error fetching gold data: Request failed with status code 401
+2026-03-07 23:03:39: Error: Error: Failed to fetch gold data: Request failed with status code 401
+2026-03-07 23:03:39:     at getGoldPrices (file:///D:/US%20DATA/server/services/dataService.js:102:11)
+2026-03-07 23:03:39:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-03-07 23:03:39:     at async file:///D:/US%20DATA/server/routes/data.js:16:18
+2026-03-07 23:03:39: ❌ Error fetching SPY data: Request failed with status code 401
+2026-03-07 23:03:39: Error: Error: Failed to fetch SPY data: Request failed with status code 401
+2026-03-07 23:03:39:     at getEquityData (file:///D:/US%20DATA/server/services/dataService.js:148:11)
+2026-03-07 23:03:39:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-03-07 23:03:39:     at async file:///D:/US%20DATA/server/routes/data.js:28:18
+2026-03-07 23:04:53: ❌ Error fetching SPY data: Request failed with status code 401
+2026-03-07 23:04:53: Error: Error: Failed to fetch SPY data: Request failed with status code 401
+2026-03-07 23:04:53:     at getEquityData (file:///D:/US%20DATA/server/services/dataService.js:148:11)
+2026-03-07 23:04:53:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-03-07 23:04:53:     at async file:///D:/US%20DATA/server/routes/data.js:28:18
+2026-03-07 23:04:53: ❌ Error fetching gold data: Request failed with status code 401
+2026-03-07 23:04:53: Error: Error: Failed to fetch gold data: Request failed with status code 401
+2026-03-07 23:04:53:     at getGoldPrices (file:///D:/US%20DATA/server/services/dataService.js:102:11)
+2026-03-07 23:04:53:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-03-07 23:04:53:     at async file:///D:/US%20DATA/server/routes/data.js:16:18
+2026-03-07 23:04:53: ❌ Error fetching USO data: Request failed with status code 401
+2026-03-07 23:04:53: Error: Error: Failed to fetch USO data: Request failed with status code 401
+2026-03-07 23:04:53:     at getEquityData (file:///D:/US%20DATA/server/services/dataService.js:148:11)
+2026-03-07 23:04:53:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-03-07 23:04:53:     at async file:///D:/US%20DATA/server/routes/data.js:28:18
+2026-03-07 23:05:40: ❌ Error fetching gold data: Request failed with status code 401
+2026-03-07 23:05:40: Error: Error: Failed to fetch gold data: Request failed with status code 401
+2026-03-07 23:05:40:     at getGoldPrices (file:///D:/US%20DATA/server/services/dataService.js:102:11)
+2026-03-07 23:05:40:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-03-07 23:05:40:     at async file:///D:/US%20DATA/server/routes/data.js:16:18
+2026-03-07 23:05:40: ❌ Error fetching USO data: Request failed with status code 401
+2026-03-07 23:05:40: Error: Error: Failed to fetch USO data: Request failed with status code 401
+2026-03-07 23:05:40:     at getEquityData (file:///D:/US%20DATA/server/services/dataService.js:148:11)
+2026-03-07 23:05:40:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-03-07 23:05:40:     at async file:///D:/US%20DATA/server/routes/data.js:28:18
+2026-03-07 23:05:40: ❌ Error fetching SPY data: Request failed with status code 401
+2026-03-07 23:05:40: Error: Error: Failed to fetch SPY data: Request failed with status code 401
+2026-03-07 23:05:40:     at getEquityData (file:///D:/US%20DATA/server/services/dataService.js:148:11)
+2026-03-07 23:05:40:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-03-07 23:05:40:     at async file:///D:/US%20DATA/server/routes/data.js:28:18
+2026-03-07 23:08:17: ⚠️  Polygon VIXY failed (Request failed with status code 401), trying Yahoo Finance...
+2026-03-07 23:08:30: ⚠️  Polygon TLT failed (Request failed with status code 401), trying Yahoo Finance...
+2026-03-07 23:08:30: ⚠️  Polygon SPY failed (Request failed with status code 401), trying Yahoo Finance...
+2026-03-07 23:08:30: ⚠️  Polygon UUP failed (Request failed with status code 401), trying Yahoo Finance...
+2026-03-07 23:08:30: ⚠️  Polygon USO failed (Request failed with status code 401), trying Yahoo Finance...
+2026-03-07 23:08:30: ⚠️  Polygon VIXY failed (Request failed with status code 401), trying Yahoo Finance...
+2026-03-07 23:11:52: ⚠️  Polygon GLD failed (Request failed with status code 401), trying Yahoo Finance...
+2026-03-07 23:11:54: ⚠️  Polygon UUP failed (Request failed with status code 401), trying Yahoo Finance...
+2026-03-07 23:11:54: ⚠️  Polygon TLT failed (Request failed with status code 401), trying Yahoo Finance...
+2026-03-07 23:11:55: ⚠️  Polygon SPY failed (Request failed with status code 401), trying Yahoo Finance...
+2026-03-07 23:11:56: ⚠️  Polygon USO failed (Request failed with status code 401), trying Yahoo Finance...
+2026-03-07 23:11:57: ⚠️  Polygon VIXY failed (Request failed with status code 401), trying Yahoo Finance...
+2026-03-07 23:12:53: ⚠️  Polygon USO failed (Request failed with status code 401), trying Yahoo Finance...
+2026-03-07 23:12:53: ⚠️  Polygon SPY failed (Request failed with status code 401), trying Yahoo Finance...
+2026-03-07 23:12:53: ⚠️  Polygon gold failed (Request failed with status code 401), trying Yahoo Finance...
+2026-03-07 23:18:54: ⚠️  Polygon gold failed (Request failed with status code 401), trying Yahoo Finance...
+2026-03-07 23:18:54: ⚠️  Polygon USO failed (Request failed with status code 401), trying Yahoo Finance...
+2026-03-07 23:18:54: ⚠️  Polygon SPY failed (Request failed with status code 401), trying Yahoo Finance...
+2026-03-07 23:24:54: ⚠️  Polygon SPY failed (Request failed with status code 400), trying Yahoo Finance...
+2026-03-07 23:24:54: ⚠️  Polygon TLT failed (Request failed with status code 400), trying Yahoo Finance...
+2026-03-07 23:38:35: ⚠️  Polygon TLT failed (Request failed with status code 400), trying Yahoo Finance...
+2026-03-07 23:38:36: ⚠️  Polygon SPY failed (Request failed with status code 400), trying Yahoo Finance...
+2026-03-07 23:45:47: ⚠️  Polygon TLT failed (Request failed with status code 400), trying Yahoo Finance...
+2026-03-07 23:45:47: ⚠️  Polygon SPY failed (Request failed with status code 400), trying Yahoo Finance...
+2026-03-07 23:45:48: ⚠️  Polygon gold failed (Request failed with status code 401), trying Yahoo Finance...
+2026-03-07 23:50:53: ⚠️  Polygon gold failed (Request failed with status code 401), trying Yahoo Finance...
+2026-03-07 23:50:53: ⚠️  Polygon USO failed (Request failed with status code 401), trying Yahoo Finance...
+2026-03-07 23:50:53: ⚠️  Polygon SPY failed (Request failed with status code 401), trying Yahoo Finance...
+2026-03-07 23:55:51: ⚠️  Polygon SPY failed (Request failed with status code 400), trying Yahoo Finance...
+2026-03-07 23:55:51: ⚠️  Polygon TLT failed (Request failed with status code 400), trying Yahoo Finance...
+2026-03-08 00:08:07: ⚠️  Polygon TLT failed (Request failed with status code 400), trying Yahoo Finance...
+2026-03-08 00:08:07: ⚠️  Polygon SPY failed (Request failed with status code 400), trying Yahoo Finance...
+2026-03-08 00:08:54: ⚠️  Polygon gold failed (Request failed with status code 401), trying Yahoo Finance...
+2026-03-08 00:14:53: ⚠️  Polygon gold failed (Request failed with status code 401), trying Yahoo Finance...
+2026-03-08 00:14:53: ⚠️  Polygon USO failed (Request failed with status code 401), trying Yahoo Finance...
+2026-03-08 00:14:53: ⚠️  Polygon SPY failed (Request failed with status code 401), trying Yahoo Finance...
+2026-03-08 00:20:15: ⚠️  Polygon SPY failed (Request failed with status code 400), trying Yahoo Finance...
+2026-03-08 00:20:15: ⚠️  Polygon TLT failed (Request failed with status code 400), trying Yahoo Finance...
+2026-03-08 00:20:53: ⚠️  Polygon SPY failed (Request failed with status code 401), trying Yahoo Finance...
+2026-03-08 05:17:46: ⚠️  Polygon SPY failed (Request failed with status code 400), trying Yahoo Finance...
+2026-03-08 05:17:46: ⚠️  Polygon TLT failed (Request failed with status code 400), trying Yahoo Finance...
+2026-03-08 05:28:56: ⚠️  Polygon SPY failed (Request failed with status code 400), trying Yahoo Finance...
+2026-03-08 05:28:56: ⚠️  Polygon TLT failed (Request failed with status code 400), trying Yahoo Finance...
+2026-03-08 05:34:01: ⚠️  Polygon TLT failed (Request failed with status code 400), trying Yahoo Finance...
+2026-03-08 05:34:01: ⚠️  Polygon SPY failed (Request failed with status code 400), trying Yahoo Finance...
+2026-03-08 05:42:21: ⚠️  Polygon SPY failed (Request failed with status code 400), trying Yahoo Finance...
+2026-03-08 05:42:21: ⚠️  Polygon TLT failed (Request failed with status code 400), trying Yahoo Finance...
+2026-03-08 05:55:10: ⚠️  Polygon SPY failed (Request failed with status code 400), trying Yahoo Finance...
+2026-03-08 05:55:10: ⚠️  Polygon TLT failed (Request failed with status code 400), trying Yahoo Finance...
+2026-03-08 06:21:23: ⚠️  Polygon TLT failed (Request failed with status code 400), trying Yahoo Finance...
+2026-03-08 06:21:23: ⚠️  Polygon SPY failed (Request failed with status code 400), trying Yahoo Finance...
+2026-03-08 06:28:55: ⚠️  Polygon TLT failed (Request failed with status code 400), trying Yahoo Finance...
+2026-03-08 06:28:55: ⚠️  Polygon SPY failed (Request failed with status code 400), trying Yahoo Finance...
+2026-03-08 11:57:48: ⚠️  Polygon SPY failed (Request failed with status code 400), trying Yahoo Finance...
+2026-03-08 11:57:48: ⚠️  Polygon TLT failed (Request failed with status code 400), trying Yahoo Finance...
+2026-03-08 12:20:07: ⚠️  Polygon SPY failed (Request failed with status code 400), trying Yahoo Finance...
+2026-03-08 12:20:07: ⚠️  Polygon TLT failed (Request failed with status code 400), trying Yahoo Finance...
+2026-03-08 12:27:48: ⚠️  Polygon TLT failed (Request failed with status code 400), trying Yahoo Finance...
+2026-03-08 12:27:48: ⚠️  Polygon SPY failed (Request failed with status code 400), trying Yahoo Finance...
+2026-03-08 12:33:53: ⚠️  Polygon TLT failed (Request failed with status code 400), trying Yahoo Finance...
+2026-03-08 12:33:53: ⚠️  Polygon SPY failed (Request failed with status code 400), trying Yahoo Finance...
+2026-03-08 12:50:02: ⚠️  Polygon TLT failed (Request failed with status code 400), trying Yahoo Finance...
+2026-03-08 12:50:02: ⚠️  Polygon SPY failed (Request failed with status code 400), trying Yahoo Finance...
+2026-03-08 13:06:48: ⚠️  Polygon TLT failed (Request failed with status code 400), trying Yahoo Finance...
+2026-03-08 13:06:48: ⚠️  Polygon SPY failed (Request failed with status code 400), trying Yahoo Finance...
+2026-03-08 13:20:21: ⚠️  Polygon SPY failed (Request failed with status code 400), trying Yahoo Finance...
+2026-03-08 13:20:21: ⚠️  Polygon TLT failed (Request failed with status code 400), trying Yahoo Finance...
+2026-03-08 13:31:24: ⚠️  Polygon TLT failed (Request failed with status code 400), trying Yahoo Finance...
+2026-03-08 13:31:24: ⚠️  Polygon SPY failed (Request failed with status code 400), trying Yahoo Finance...
+2026-03-08 13:43:22: ⚠️  Polygon TLT failed (Request failed with status code 400), trying Yahoo Finance...
+2026-03-08 13:43:22: ⚠️  Polygon SPY failed (Request failed with status code 400), trying Yahoo Finance...
+2026-03-08 13:50:25: ⚠️  Polygon TLT failed (Request failed with status code 400), trying Yahoo Finance...
+2026-03-08 13:50:25: ⚠️  Polygon SPY failed (Request failed with status code 400), trying Yahoo Finance...
+2026-03-08 14:05:06: ⚠️  Polygon TLT failed (Request failed with status code 400), trying Yahoo Finance...
+2026-03-08 14:05:06: ⚠️  Polygon SPY failed (Request failed with status code 400), trying Yahoo Finance...
+2026-03-08 14:31:05: Error: listen EADDRINUSE: address already in use :::5000
+2026-03-08 14:31:05:     at Server.setupListenHandle [as _listen2] (node:net:1948:16)
+2026-03-08 14:31:05:     at listenInCluster (node:net:2005:12)
+2026-03-08 14:31:05:     at Server.listen (node:net:2110:7)
+2026-03-08 14:31:05:     at app.listen (D:\US DATA\server\node_modules\express\lib\application.js:635:24)
+2026-03-08 14:31:05:     at file:///D:/US%20DATA/server/server.js:75:5
+2026-03-08 14:31:05:     at ModuleJob.run (node:internal/modules/esm/module_job:430:25)
+2026-03-08 14:31:05:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-03-08 14:31:05:     at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:661:26) {
+2026-03-08 14:31:05:   code: 'EADDRINUSE',
+2026-03-08 14:31:05:   errno: -4091,
+2026-03-08 14:31:05:   syscall: 'listen',
+2026-03-08 14:31:05:   address: '::',
+2026-03-08 14:31:05:   port: 5000
+2026-03-08 14:31:05: }
+2026-03-08 14:31:21: Error: listen EADDRINUSE: address already in use :::5000
+2026-03-08 14:31:21:     at Server.setupListenHandle [as _listen2] (node:net:1948:16)
+2026-03-08 14:31:21:     at listenInCluster (node:net:2005:12)
+2026-03-08 14:31:21:     at Server.listen (node:net:2110:7)
+2026-03-08 14:31:21:     at app.listen (D:\US DATA\server\node_modules\express\lib\application.js:635:24)
+2026-03-08 14:31:21:     at file:///D:/US%20DATA/server/server.js:75:5
+2026-03-08 14:31:21:     at ModuleJob.run (node:internal/modules/esm/module_job:430:25)
+2026-03-08 14:31:21:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-03-08 14:31:21:     at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:661:26) {
+2026-03-08 14:31:21:   code: 'EADDRINUSE',
+2026-03-08 14:31:21:   errno: -4091,
+2026-03-08 14:31:21:   syscall: 'listen',
+2026-03-08 14:31:21:   address: '::',
+2026-03-08 14:31:21:   port: 5000
+2026-03-08 14:31:21: }
+2026-03-08 14:31:31: Error: listen EADDRINUSE: address already in use :::5000
+2026-03-08 14:31:31:     at Server.setupListenHandle [as _listen2] (node:net:1948:16)
+2026-03-08 14:31:31:     at listenInCluster (node:net:2005:12)
+2026-03-08 14:31:31:     at Server.listen (node:net:2110:7)
+2026-03-08 14:31:31:     at app.listen (D:\US DATA\server\node_modules\express\lib\application.js:635:24)
+2026-03-08 14:31:31:     at file:///D:/US%20DATA/server/server.js:75:5
+2026-03-08 14:31:31:     at ModuleJob.run (node:internal/modules/esm/module_job:430:25)
+2026-03-08 14:31:31:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-03-08 14:31:31:     at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:661:26) {
+2026-03-08 14:31:31:   code: 'EADDRINUSE',
+2026-03-08 14:31:31:   errno: -4091,
+2026-03-08 14:31:31:   syscall: 'listen',
+2026-03-08 14:31:31:   address: '::',
+2026-03-08 14:31:31:   port: 5000
+2026-03-08 14:31:31: }
+2026-03-08 14:31:38: Error: listen EADDRINUSE: address already in use :::5000
+2026-03-08 14:31:38:     at Server.setupListenHandle [as _listen2] (node:net:1948:16)
+2026-03-08 14:31:38:     at listenInCluster (node:net:2005:12)
+2026-03-08 14:31:38:     at Server.listen (node:net:2110:7)
+2026-03-08 14:31:38:     at app.listen (D:\US DATA\server\node_modules\express\lib\application.js:635:24)
+2026-03-08 14:31:38:     at file:///D:/US%20DATA/server/server.js:75:5
+2026-03-08 14:31:38:     at ModuleJob.run (node:internal/modules/esm/module_job:430:25)
+2026-03-08 14:31:38:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-03-08 14:31:38:     at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:661:26) {
+2026-03-08 14:31:38:   code: 'EADDRINUSE',
+2026-03-08 14:31:38:   errno: -4091,
+2026-03-08 14:31:38:   syscall: 'listen',
+2026-03-08 14:31:38:   address: '::',
+2026-03-08 14:31:38:   port: 5000
+2026-03-08 14:31:38: }
+2026-03-08 14:31:44: Error: listen EADDRINUSE: address already in use :::5000
+2026-03-08 14:31:44:     at Server.setupListenHandle [as _listen2] (node:net:1948:16)
+2026-03-08 14:31:44:     at listenInCluster (node:net:2005:12)
+2026-03-08 14:31:44:     at Server.listen (node:net:2110:7)
+2026-03-08 14:31:44:     at app.listen (D:\US DATA\server\node_modules\express\lib\application.js:635:24)
+2026-03-08 14:31:44:     at file:///D:/US%20DATA/server/server.js:75:5
+2026-03-08 14:31:44:     at ModuleJob.run (node:internal/modules/esm/module_job:430:25)
+2026-03-08 14:31:44:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-03-08 14:31:44:     at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:661:26) {
+2026-03-08 14:31:44:   code: 'EADDRINUSE',
+2026-03-08 14:31:44:   errno: -4091,
+2026-03-08 14:31:44:   syscall: 'listen',
+2026-03-08 14:31:44:   address: '::',
+2026-03-08 14:31:44:   port: 5000
+2026-03-08 14:31:44: }
+2026-03-08 14:31:52: Error: listen EADDRINUSE: address already in use :::5000
+2026-03-08 14:31:52:     at Server.setupListenHandle [as _listen2] (node:net:1948:16)
+2026-03-08 14:31:52:     at listenInCluster (node:net:2005:12)
+2026-03-08 14:31:52:     at Server.listen (node:net:2110:7)
+2026-03-08 14:31:52:     at app.listen (D:\US DATA\server\node_modules\express\lib\application.js:635:24)
+2026-03-08 14:31:52:     at file:///D:/US%20DATA/server/server.js:75:5
+2026-03-08 14:31:52:     at ModuleJob.run (node:internal/modules/esm/module_job:430:25)
+2026-03-08 14:31:52:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-03-08 14:31:52:     at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:661:26) {
+2026-03-08 14:31:52:   code: 'EADDRINUSE',
+2026-03-08 14:31:52:   errno: -4091,
+2026-03-08 14:31:52:   syscall: 'listen',
+2026-03-08 14:31:52:   address: '::',
+2026-03-08 14:31:52:   port: 5000
+2026-03-08 14:31:52: }
+2026-03-08 14:31:57: Error: listen EADDRINUSE: address already in use :::5000
+2026-03-08 14:31:57:     at Server.setupListenHandle [as _listen2] (node:net:1948:16)
+2026-03-08 14:31:57:     at listenInCluster (node:net:2005:12)
+2026-03-08 14:31:57:     at Server.listen (node:net:2110:7)
+2026-03-08 14:31:57:     at app.listen (D:\US DATA\server\node_modules\express\lib\application.js:635:24)
+2026-03-08 14:31:57:     at file:///D:/US%20DATA/server/server.js:75:5
+2026-03-08 14:31:57:     at ModuleJob.run (node:internal/modules/esm/module_job:430:25)
+2026-03-08 14:31:57:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-03-08 14:31:57:     at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:661:26) {
+2026-03-08 14:31:57:   code: 'EADDRINUSE',
+2026-03-08 14:31:57:   errno: -4091,
+2026-03-08 14:31:57:   syscall: 'listen',
+2026-03-08 14:31:57:   address: '::',
+2026-03-08 14:31:57:   port: 5000
+2026-03-08 14:31:57: }
+2026-03-08 14:32:04: Error: listen EADDRINUSE: address already in use :::5000
+2026-03-08 14:32:04:     at Server.setupListenHandle [as _listen2] (node:net:1948:16)
+2026-03-08 14:32:04:     at listenInCluster (node:net:2005:12)
+2026-03-08 14:32:04:     at Server.listen (node:net:2110:7)
+2026-03-08 14:32:04:     at app.listen (D:\US DATA\server\node_modules\express\lib\application.js:635:24)
+2026-03-08 14:32:04:     at file:///D:/US%20DATA/server/server.js:75:5
+2026-03-08 14:32:04:     at ModuleJob.run (node:internal/modules/esm/module_job:430:25)
+2026-03-08 14:32:04:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-03-08 14:32:04:     at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:661:26) {
+2026-03-08 14:32:04:   code: 'EADDRINUSE',
+2026-03-08 14:32:04:   errno: -4091,
+2026-03-08 14:32:04:   syscall: 'listen',
+2026-03-08 14:32:04:   address: '::',
+2026-03-08 14:32:04:   port: 5000
+2026-03-08 14:32:04: }
+2026-03-08 14:32:10: Error: listen EADDRINUSE: address already in use :::5000
+2026-03-08 14:32:10:     at Server.setupListenHandle [as _listen2] (node:net:1948:16)
+2026-03-08 14:32:10:     at listenInCluster (node:net:2005:12)
+2026-03-08 14:32:10:     at Server.listen (node:net:2110:7)
+2026-03-08 14:32:10:     at app.listen (D:\US DATA\server\node_modules\express\lib\application.js:635:24)
+2026-03-08 14:32:10:     at file:///D:/US%20DATA/server/server.js:75:5
+2026-03-08 14:32:10:     at ModuleJob.run (node:internal/modules/esm/module_job:430:25)
+2026-03-08 14:32:10:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-03-08 14:32:10:     at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:661:26) {
+2026-03-08 14:32:10:   code: 'EADDRINUSE',
+2026-03-08 14:32:10:   errno: -4091,
+2026-03-08 14:32:10:   syscall: 'listen',
+2026-03-08 14:32:10:   address: '::',
+2026-03-08 14:32:10:   port: 5000
+2026-03-08 14:32:10: }
+2026-03-08 14:32:17: Error: listen EADDRINUSE: address already in use :::5000
+2026-03-08 14:32:17:     at Server.setupListenHandle [as _listen2] (node:net:1948:16)
+2026-03-08 14:32:17:     at listenInCluster (node:net:2005:12)
+2026-03-08 14:32:17:     at Server.listen (node:net:2110:7)
+2026-03-08 14:32:17:     at app.listen (D:\US DATA\server\node_modules\express\lib\application.js:635:24)
+2026-03-08 14:32:17:     at file:///D:/US%20DATA/server/server.js:75:5
+2026-03-08 14:32:17:     at ModuleJob.run (node:internal/modules/esm/module_job:430:25)
+2026-03-08 14:32:17:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-03-08 14:32:17:     at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:661:26) {
+2026-03-08 14:32:17:   code: 'EADDRINUSE',
+2026-03-08 14:32:17:   errno: -4091,
+2026-03-08 14:32:17:   syscall: 'listen',
+2026-03-08 14:32:17:   address: '::',
+2026-03-08 14:32:17:   port: 5000
+2026-03-08 14:32:17: }
+2026-03-08 14:32:24: Error: listen EADDRINUSE: address already in use :::5000
+2026-03-08 14:32:24:     at Server.setupListenHandle [as _listen2] (node:net:1948:16)
+2026-03-08 14:32:24:     at listenInCluster (node:net:2005:12)
+2026-03-08 14:32:24:     at Server.listen (node:net:2110:7)
+2026-03-08 14:32:24:     at app.listen (D:\US DATA\server\node_modules\express\lib\application.js:635:24)
+2026-03-08 14:32:24:     at file:///D:/US%20DATA/server/server.js:75:5
+2026-03-08 14:32:24:     at ModuleJob.run (node:internal/modules/esm/module_job:430:25)
+2026-03-08 14:32:24:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-03-08 14:32:24:     at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:661:26) {
+2026-03-08 14:32:24:   code: 'EADDRINUSE',
+2026-03-08 14:32:24:   errno: -4091,
+2026-03-08 14:32:24:   syscall: 'listen',
+2026-03-08 14:32:24:   address: '::',
+2026-03-08 14:32:24:   port: 5000
+2026-03-08 14:32:24: }
+2026-03-08 14:32:30: Error: listen EADDRINUSE: address already in use :::5000
+2026-03-08 14:32:30:     at Server.setupListenHandle [as _listen2] (node:net:1948:16)
+2026-03-08 14:32:30:     at listenInCluster (node:net:2005:12)
+2026-03-08 14:32:30:     at Server.listen (node:net:2110:7)
+2026-03-08 14:32:30:     at app.listen (D:\US DATA\server\node_modules\express\lib\application.js:635:24)
+2026-03-08 14:32:30:     at file:///D:/US%20DATA/server/server.js:75:5
+2026-03-08 14:32:30:     at ModuleJob.run (node:internal/modules/esm/module_job:430:25)
+2026-03-08 14:32:30:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-03-08 14:32:30:     at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:661:26) {
+2026-03-08 14:32:30:   code: 'EADDRINUSE',
+2026-03-08 14:32:30:   errno: -4091,
+2026-03-08 14:32:30:   syscall: 'listen',
+2026-03-08 14:32:30:   address: '::',
+2026-03-08 14:32:30:   port: 5000
+2026-03-08 14:32:30: }
+2026-03-08 14:32:37: Error: listen EADDRINUSE: address already in use :::5000
+2026-03-08 14:32:37:     at Server.setupListenHandle [as _listen2] (node:net:1948:16)
+2026-03-08 14:32:37:     at listenInCluster (node:net:2005:12)
+2026-03-08 14:32:37:     at Server.listen (node:net:2110:7)
+2026-03-08 14:32:37:     at app.listen (D:\US DATA\server\node_modules\express\lib\application.js:635:24)
+2026-03-08 14:32:37:     at file:///D:/US%20DATA/server/server.js:75:5
+2026-03-08 14:32:37:     at ModuleJob.run (node:internal/modules/esm/module_job:430:25)
+2026-03-08 14:32:37:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-03-08 14:32:37:     at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:661:26) {
+2026-03-08 14:32:37:   code: 'EADDRINUSE',
+2026-03-08 14:32:37:   errno: -4091,
+2026-03-08 14:32:37:   syscall: 'listen',
+2026-03-08 14:32:37:   address: '::',
+2026-03-08 14:32:37:   port: 5000
+2026-03-08 14:32:37: }
+2026-03-08 14:32:42: Error: listen EADDRINUSE: address already in use :::5000
+2026-03-08 14:32:42:     at Server.setupListenHandle [as _listen2] (node:net:1948:16)
+2026-03-08 14:32:42:     at listenInCluster (node:net:2005:12)
+2026-03-08 14:32:42:     at Server.listen (node:net:2110:7)
+2026-03-08 14:32:42:     at app.listen (D:\US DATA\server\node_modules\express\lib\application.js:635:24)
+2026-03-08 14:32:42:     at file:///D:/US%20DATA/server/server.js:75:5
+2026-03-08 14:32:42:     at ModuleJob.run (node:internal/modules/esm/module_job:430:25)
+2026-03-08 14:32:42:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-03-08 14:32:42:     at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:661:26) {
+2026-03-08 14:32:42:   code: 'EADDRINUSE',
+2026-03-08 14:32:42:   errno: -4091,
+2026-03-08 14:32:42:   syscall: 'listen',
+2026-03-08 14:32:42:   address: '::',
+2026-03-08 14:32:42:   port: 5000
+2026-03-08 14:32:42: }
+2026-03-08 14:32:49: Error: listen EADDRINUSE: address already in use :::5000
+2026-03-08 14:32:49:     at Server.setupListenHandle [as _listen2] (node:net:1948:16)
+2026-03-08 14:32:49:     at listenInCluster (node:net:2005:12)
+2026-03-08 14:32:49:     at Server.listen (node:net:2110:7)
+2026-03-08 14:32:49:     at app.listen (D:\US DATA\server\node_modules\express\lib\application.js:635:24)
+2026-03-08 14:32:49:     at file:///D:/US%20DATA/server/server.js:75:5
+2026-03-08 14:32:49:     at ModuleJob.run (node:internal/modules/esm/module_job:430:25)
+2026-03-08 14:32:49:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-03-08 14:32:49:     at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:661:26) {
+2026-03-08 14:32:49:   code: 'EADDRINUSE',
+2026-03-08 14:32:49:   errno: -4091,
+2026-03-08 14:32:49:   syscall: 'listen',
+2026-03-08 14:32:49:   address: '::',
+2026-03-08 14:32:49:   port: 5000
+2026-03-08 14:32:49: }
+2026-03-08 14:32:54: Error: listen EADDRINUSE: address already in use :::5000
+2026-03-08 14:32:54:     at Server.setupListenHandle [as _listen2] (node:net:1948:16)
+2026-03-08 14:32:54:     at listenInCluster (node:net:2005:12)
+2026-03-08 14:32:54:     at Server.listen (node:net:2110:7)
+2026-03-08 14:32:54:     at app.listen (D:\US DATA\server\node_modules\express\lib\application.js:635:24)
+2026-03-08 14:32:54:     at file:///D:/US%20DATA/server/server.js:75:5
+2026-03-08 14:32:54:     at ModuleJob.run (node:internal/modules/esm/module_job:430:25)
+2026-03-08 14:32:54:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-03-08 14:32:54:     at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:661:26) {
+2026-03-08 14:32:54:   code: 'EADDRINUSE',
+2026-03-08 14:32:54:   errno: -4091,
+2026-03-08 14:32:54:   syscall: 'listen',
+2026-03-08 14:32:54:   address: '::',
+2026-03-08 14:32:54:   port: 5000
+2026-03-08 14:32:54: }
+2026-03-08 14:33:34: ⚠️  Polygon TLT failed (Request failed with status code 400), trying Yahoo Finance...
+2026-03-08 14:33:34: ⚠️  Polygon SPY failed (Request failed with status code 400), trying Yahoo Finance...
+2026-03-08 14:36:24: ⚠️  Polygon TLT failed (Request failed with status code 400), trying Yahoo Finance...
+2026-03-08 14:36:25: ⚠️  Polygon SPY failed (Request failed with status code 400), trying Yahoo Finance...
+2026-03-08 14:48:56: ⚠️  Polygon TLT failed (Request failed with status code 400), trying Yahoo Finance...
+2026-03-08 14:48:56: ⚠️  Polygon SPY failed (Request failed with status code 400), trying Yahoo Finance...
+2026-03-08 14:48:57: ⚠️  Polygon TLT failed (Request failed with status code 400), trying Yahoo Finance...
+2026-03-08 14:48:57: ⚠️  Polygon SPY failed (Request failed with status code 401), trying Yahoo Finance...
+2026-03-08 14:59:35: ⚠️  Polygon SPY failed (Request failed with status code 401), trying Yahoo Finance...
+2026-03-08 14:59:35: ⚠️  Polygon gold failed (Request failed with status code 401), trying Yahoo Finance...
+2026-03-08 14:59:35: ⚠️  Polygon TLT failed (Request failed with status code 401), trying Yahoo Finance...
+2026-03-08 15:05:56: ⚠️  Polygon SPY failed (Request failed with status code 401), trying Yahoo Finance...
+2026-03-08 15:05:56: ⚠️  Polygon gold failed (Request failed with status code 401), trying Yahoo Finance...
+2026-03-08 15:05:56: ⚠️  Polygon TLT failed (Request failed with status code 401), trying Yahoo Finance...
+2026-03-08 15:29:42: ⚠️  Polygon SPY failed (Request failed with status code 401), trying Yahoo Finance...
+2026-03-08 15:29:42: ⚠️  Polygon TLT failed (Request failed with status code 401), trying Yahoo Finance...
+2026-03-08 15:29:42: ⚠️  Polygon gold failed (Request failed with status code 401), trying Yahoo Finance...
+2026-03-08 16:13:30: ⚠️  Polygon SPY failed (Request failed with status code 400), trying Yahoo Finance...
+2026-03-08 16:13:30: ⚠️  Polygon TLT failed (Request failed with status code 400), trying Yahoo Finance...
+2026-03-08 16:17:56: ⚠️  Polygon TLT failed (Request failed with status code 400), trying Yahoo Finance...
+2026-03-08 16:17:56: ⚠️  Polygon SPY failed (Request failed with status code 400), trying Yahoo Finance...
+2026-03-08 16:19:22: ⚠️  Polygon TLT failed (Request failed with status code 400), trying Yahoo Finance...
+2026-03-08 16:19:22: ⚠️  Polygon SPY failed (Request failed with status code 400), trying Yahoo Finance...
+2026-03-08 16:58:52: ⚠️  Polygon TLT failed (Request failed with status code 400), trying Yahoo Finance...
+2026-03-08 16:58:52: ⚠️  Polygon SPY failed (Request failed with status code 400), trying Yahoo Finance...
+2026-03-08 17:08:21: ⚠️  Polygon TLT failed (Request failed with status code 400), trying Yahoo Finance...
+2026-03-08 17:08:21: ⚠️  Polygon SPY failed (Request failed with status code 400), trying Yahoo Finance...
+2026-03-08 17:11:51: Report generation error: Request failed with status code 404
+2026-03-08 17:23:34: ⚠️  Polygon TLT failed (Request failed with status code 400), trying Yahoo Finance...
+2026-03-08 17:23:34: ⚠️  Polygon SPY failed (Request failed with status code 400), trying Yahoo Finance...
+2026-03-08 17:40:38: ⚠️  Polygon SPY failed (Request failed with status code 400), trying Yahoo Finance...
+2026-03-08 17:40:39: ⚠️  Polygon TLT failed (Request failed with status code 400), trying Yahoo Finance...
+2026-03-08 17:44:35: ⚠️  Polygon TLT failed (Request failed with status code 400), trying Yahoo Finance...
+2026-03-08 17:44:35: ⚠️  Polygon SPY failed (Request failed with status code 400), trying Yahoo Finance...
+2026-03-08 17:50:11: ⚠️  Polygon TLT failed (Request failed with status code 400), trying Yahoo Finance...
+2026-03-08 17:50:11: ⚠️  Polygon SPY failed (Request failed with status code 400), trying Yahoo Finance...
+2026-03-08 17:54:02: ⚠️  Polygon SPY failed (Request failed with status code 400), trying Yahoo Finance...
+2026-03-08 17:54:02: ⚠️  Polygon TLT failed (Request failed with status code 400), trying Yahoo Finance...
+2026-03-08 17:59:44: ⚠️  Polygon SPY failed (Request failed with status code 400), trying Yahoo Finance...
+2026-03-08 17:59:44: ⚠️  Polygon TLT failed (Request failed with status code 400), trying Yahoo Finance...
+2026-03-08 18:04:37: ⚠️  Polygon TLT failed (Request failed with status code 400), trying Yahoo Finance...
+2026-03-08 18:04:37: ⚠️  Polygon SPY failed (Request failed with status code 400), trying Yahoo Finance...
+2026-03-08 18:48:17: ⚠️  Polygon TLT failed (Request failed with status code 400), trying Yahoo Finance...
+2026-03-08 18:48:18: ⚠️  Polygon SPY failed (Request failed with status code 400), trying Yahoo Finance...
+2026-03-08 18:55:40: ⚠️  Polygon TLT failed (Request failed with status code 400), trying Yahoo Finance...
+2026-03-08 18:55:40: ⚠️  Polygon SPY failed (Request failed with status code 400), trying Yahoo Finance...

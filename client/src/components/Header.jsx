@@ -1,4 +1,4 @@
-import { Activity, Sun, Moon, Globe, LogOut, ChevronDown, User, Settings, Shield } from 'lucide-react';
+import { Activity, Sun, Moon, Globe, LogOut, ChevronDown, User, Settings, Shield, Menu, X } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 import { useTimezone, TIMEZONES } from '../contexts/TimezoneContext';
 import { useAuth } from '../contexts/AuthContext';
@@ -6,7 +6,7 @@ import { useState, useRef, useEffect } from 'react';
 import ProfileModal from './ProfileModal';
 import SettingsModal from './SettingsModal';
 
-function Header({ autoRefresh, onToggleAutoRefresh }) {
+function Header({ autoRefresh, onToggleAutoRefresh, onToggleSidebar, mobileSidebarOpen }) {
   const theme = useTheme();
   const { selectedTimezone, changeTimezone, getTimezoneInfo, timezones } = useTimezone();
   const { user, logout } = useAuth();
@@ -37,17 +37,29 @@ function Header({ autoRefresh, onToggleAutoRefresh }) {
 
   return (
   <>
-    <header className="border-b h-16 flex items-center justify-between px-6" style={{ 
+    <header className="border-b h-16 flex items-center justify-between px-4 md:px-6" style={{ 
       backgroundColor: theme.surface, 
       borderColor: theme.border 
     }}>
       <div className="flex items-center gap-3">
-        <Activity className="w-8 h-8" style={{ color: theme.accent }} />
+        {/* Hamburger — mobile only */}
+        <button
+          onClick={onToggleSidebar}
+          className="md:hidden p-2 rounded-lg transition-colors"
+          style={{ color: theme.text }}
+          aria-label="Toggle navigation"
+        >
+          {mobileSidebarOpen
+            ? <X className="w-5 h-5" />
+            : <Menu className="w-5 h-5" />}
+        </button>
+
+        <Activity className="w-7 h-7 hidden sm:block" style={{ color: theme.accent }} />
         <div>
-          <h1 className="text-xl font-bold" style={{ color: theme.text }}>
-            Financial News Terminal
+          <h1 className="text-base md:text-xl font-bold leading-tight" style={{ color: theme.text }}>
+            News Terminal
           </h1>
-          <p className="text-xs" style={{ color: theme.muted }}>
+          <p className="text-xs hidden sm:block" style={{ color: theme.muted }}>
             Real-time Market Intelligence
           </p>
         </div>

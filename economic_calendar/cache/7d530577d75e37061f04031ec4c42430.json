@@ -1,0 +1,24 @@
+{
+  "cached_at": 1773161490.0286667,
+  "ttl": 1800,
+  "data": [
+    {
+      "realtime_start": "2026-03-06",
+      "realtime_end": "2026-03-06",
+      "date": "2026-02-01",
+      "value": "4.4"
+    },
+    {
+      "realtime_start": "2026-03-06",
+      "realtime_end": "2026-03-06",
+      "date": "2026-01-01",
+      "value": "4.3"
+    },
+    {
+      "realtime_start": "2026-03-06",
+      "realtime_end": "2026-03-06",
+      "date": "2025-12-01",
+      "value": "4.4"
+    }
+  ]
+}

@@ -3,6 +3,16 @@ import { useTheme } from './contexts/ThemeContext'
 import { AuthProvider, useAuth } from './contexts/AuthContext'
 import Header from './components/Header'
 import Sidebar from './components/Sidebar'
+
+// Close sidebar when window resizes to desktop width
+function useAutoCloseSidebarOnDesktop(setSidebarOpen) {
+  useEffect(() => {
+    const mq = window.matchMedia('(min-width: 768px)');
+    const handler = (e) => { if (e.matches) setSidebarOpen(false); };
+    mq.addEventListener('change', handler);
+    return () => mq.removeEventListener('change', handler);
+  }, [setSidebarOpen]);
+}
 import NewsFeed from './components/NewsFeed'
 import RightPanel from './components/RightPanel'
 import EconomicDashboard from './components/EconomicDashboard'
@@ -30,6 +40,9 @@ function AppShell() {
     impactLevel: 'All'
   });
   const [autoRefresh, setAutoRefresh] = useState(true);
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+
+  useAutoCloseSidebarOnDesktop(setMobileSidebarOpen);
 
   // Keep a ref in sync so loadNews always reads current filters (avoids stale closure)
   const filtersRef = useRef(filters);
@@ -116,9 +129,20 @@ function AppShell() {
         autoRefresh={autoRefresh}
         onToggleAutoRefresh={() => setAutoRefresh(!autoRefresh)}
         onRefresh={() => currentView === 'news' ? loadNews() : window.location.reload()}
+        onToggleSidebar={() => setMobileSidebarOpen(o => !o)}
+        mobileSidebarOpen={mobileSidebarOpen}
       />
       
-      <div className="flex h-[calc(100vh-64px)]">
+      <div className="flex h-[calc(100vh-64px)] relative">
+        {/* Mobile backdrop */}
+        {mobileSidebarOpen && (
+          <div
+            className="fixed inset-0 z-30 md:hidden"
+            style={{ backgroundColor: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(2px)' }}
+            onClick={() => setMobileSidebarOpen(false)}
+          />
+        )}
+
         {/* Left Sidebar */}
         <Sidebar 
           filters={filters}
@@ -126,7 +150,9 @@ function AppShell() {
           onApplyFilters={applyFilters}
           onResetFilters={resetFilters}
           currentView={currentView}
-          onViewChange={setCurrentView}
+          onViewChange={(view) => { setCurrentView(view); setMobileSidebarOpen(false); }}
+          mobileOpen={mobileSidebarOpen}
+          onClose={() => setMobileSidebarOpen(false)}
         />
         
         {/* Main Content Area */}

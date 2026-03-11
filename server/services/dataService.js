@@ -309,48 +309,39 @@ export async function getEquityData(ticker, timespan = 'day', limit = 90) {
 export async function getForexData(pair, timespan = 'day', limit = 90) {
   const cacheKey = `forex_${pair}_${timespan}_${limit}`;
   const cached = cache.get(cacheKey);
-  
   if (cached) return cached;
 
+  // Try Polygon first
   try {
-    const multiplier = 1;
-    const to = new Date().toISOString().split('T')[0];
+    const to   = new Date().toISOString().split('T')[0];
     const from = new Date(Date.now() - limit * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
-    
-    const response = await axios.get(
-      `${BASE_URL}/v2/aggs/ticker/C:${pair}/range/${multiplier}/${timespan}/${from}/${to}`,
-      {
-        params: {
-          apiKey: getApiKey(),
-          adjusted: true,
-          sort: 'asc',
-          limit: 5000
-        }
-      }
+    const response = await makeApiCallWithFallback(
+      `${BASE_URL}/v2/aggs/ticker/C:${pair}/range/1/${timespan}/${from}/${to}`,
+      { adjusted: true, sort: 'asc', limit: 5000 }
     );
-
-    if (!response.data || !response.data.results) {
-      throw new Error('Invalid response from Polygon API');
-    }
-
+    if (!response.data?.results) throw new Error('Invalid Polygon response');
     const data = response.data.results.map(item => ({
       date: new Date(item.t).toISOString().split('T')[0],
-      timestamp: item.t,
-      open: item.o,
-      high: item.h,
-      low: item.l,
-      close: item.c,
-      volume: item.v,
-      value: item.c
+      timestamp: item.t, open: item.o, high: item.h,
+      low: item.l, close: item.c, volume: item.v, value: item.c,
     }));
-
     cache.set(cacheKey, data);
-    console.log(`✅ Fetched ${data.length} forex data points for ${pair}`);
-    
+    console.log(`✅ Fetched ${data.length} forex data points for ${pair} (Polygon)`);
     return data;
-  } catch (error) {
-    console.error(`❌ Error fetching forex ${pair} data:`, error.message);
-    throw new Error(`Failed to fetch forex ${pair} data: ${error.message}`);
+  } catch (polygonErr) {
+    console.warn(`⚠️  Polygon forex ${pair} failed (${polygonErr.message}), trying Yahoo Finance...`);
+  }
+
+  // Yahoo Finance fallback — convert pair like EURUSD → EUR=X, GBPUSD → GBP=X
+  try {
+    const yahooSymbol = pair.length === 6 ? `${pair.slice(0, 3)}${pair.slice(3)}=X` : `${pair}=X`;
+    const data = await fetchFromYahoo(yahooSymbol, limit);
+    cache.set(cacheKey, data);
+    console.log(`✅ Fetched ${data.length} forex data points for ${pair} (Yahoo Finance)`);
+    return data;
+  } catch (yahooErr) {
+    console.error(`❌ Both Polygon and Yahoo failed for forex ${pair}:`, yahooErr.message);
+    throw new Error(`Failed to fetch forex ${pair} data: ${yahooErr.message}`);
   }
 }
 
