@@ -30,8 +30,9 @@ export const TRACKED_SYMBOLS = [
   { symbol: 'OANDA:EUR_USD',     display: 'EUR/USD',  label: 'Euro / USD',    category: 'forex',  unit: '',   dec: 5 },
   { symbol: 'OANDA:GBP_USD',     display: 'GBP/USD',  label: 'Pound / USD',   category: 'forex',  unit: '',   dec: 5 },
   { symbol: 'OANDA:USD_JPY',     display: 'USD/JPY',  label: 'USD / Yen',     category: 'forex',  unit: '',   dec: 3 },
-  { symbol: 'OANDA:XAU_USD',     display: 'XAU/USD',  label: 'Gold / USD',    category: 'forex',  unit: '$',  dec: 2 },
-  { symbol: 'OANDA:WTICO_USD',   display: 'WTI',      label: 'WTI Crude Oil', category: 'forex',  unit: '$',  dec: 2 },
+  // NOTE: OANDA:XAU_USD (spot gold) and OANDA:WTICO_USD (spot WTI) are NOT tracked here.
+  // The dashboard uses Yahoo Finance GC=F / CL=F futures for gold and oil — mixing OANDA
+  // OTC spot prices (~$10-20 basis) with futures causes persistent price discrepancies.
   // Crypto
   { symbol: 'BINANCE:BTCUSDT',   display: 'BTC/USDT', label: 'Bitcoin',       category: 'crypto', unit: '$',  dec: 2 },
   { symbol: 'BINANCE:ETHUSDT',   display: 'ETH/USDT', label: 'Ethereum',      category: 'crypto', unit: '$',  dec: 2 },

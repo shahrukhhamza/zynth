@@ -12,13 +12,16 @@ const LIVE_POLL_MS   = 10000;   // poll Yahoo every 10s (fast REST fallback when
 const CHART_REFRESH_MS = 300000; // re-fetch period chart data every 5 min (keeps 3M High/Low/Chg current)
 const FLASH_MS       = 800;     // price flash duration
 
-// Maps Finnhub WebSocket symbols → EconomicDashboard liveData keys
+// Maps Finnhub WebSocket symbols → EconomicDashboard liveData keys.
+// NOTE: OANDA:XAU_USD (spot gold) and OANDA:WTICO_USD (spot WTI) are intentionally
+// excluded — these are OTC spot prices which trade $10-20 away from the exchange-traded
+// futures contracts (GC=F, CL=F) that Yahoo Finance and TradingView quote. Mixing them
+// causes persistent price discrepancies. Yahoo Finance is the sole price authority for
+// gold and oil; Finnhub handles ETFs and crypto where symbols match exactly.
 const FINNHUB_TO_DASH = {
-  'OANDA:XAU_USD':   'gold',
   'GLD':             'gld',
   'TLT':             'tlt',
   'SPY':             'spy',
-  'OANDA:WTICO_USD': 'oil',
   'BINANCE:BTCUSDT': 'btc',
 };
 
@@ -157,18 +160,17 @@ export default function EconomicDashboard() {
     if (data) {
       setLiveData(prev => {
         if (!prev) return data;
-        // Merge: Yahoo provides full context (DXY, VIX, dayHigh/Low, marketState).
-        // But Yahoo futures prices are 10-15 min delayed — NEVER let them overwrite
-        // a live Finnhub WS tick that arrived within the last 15 seconds.
-        const WS_FRESH_MS = 15_000;
+        // Merge: Yahoo REST provides full context (DXY, VIX, dayHigh/Low, marketState).
+        // For symbols where Finnhub WS also provides prices (GLD, TLT, SPY, BTC), prefer
+        // a fresh WS tick (<10 s old) over the REST poll result to avoid visual stutter.
+        // Gold and oil are intentionally excluded from FINNHUB_TO_DASH so Yahoo's
+        // GC=F/CL=F futures prices are never overwritten by OANDA spot prices.
+        const WS_FRESH_MS = 10_000;
         const merged = { ...data };
         Object.keys(FINNHUB_TO_DASH).forEach(sym => {
           const id = FINNHUB_TO_DASH[sym];
           if (!prev[id]?.lastFinnhub) return;
-          // WS is "fresh" if we got a real tick within the last 15 s
           const wsFresh = (Date.now() - prev[id].lastFinnhub) < WS_FRESH_MS;
-          // Yahoo futures data is ~10-15 min delayed — Finnhub may have seen a more
-          // extreme intraday high/low already; keep whichever is more extreme.
           const bestHigh = (prev[id].dayHigh != null && data[id]?.dayHigh != null)
             ? Math.max(prev[id].dayHigh, data[id].dayHigh)
             : (prev[id].dayHigh ?? data[id]?.dayHigh ?? null);
