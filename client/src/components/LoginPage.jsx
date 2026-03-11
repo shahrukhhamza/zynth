@@ -5,11 +5,11 @@ import { Eye, EyeOff, TrendingUp, TrendingDown, AlertCircle, Loader2, Mail, Lock
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || '';
 
 const TICKERS = [
-  { sym: 'GOLD', val: '$5,168', chg: '+0.82%', up: true,  top: '8%',  left: '5%',  delay: '0s',   dur: '4.2s' },
-  { sym: 'BTC',  val: '$70,855',chg: '+1.28%', up: true,  top: '26%', left: '50%', delay: '0.9s', dur: '5.1s' },
-  { sym: 'SPY',  val: '$675.31',chg: '-0.28%', up: false, top: '48%', left: '8%',  delay: '1.6s', dur: '3.9s' },
-  { sym: 'DXY',  val: '99.26',  chg: '+0.44%', up: true,  top: '48%', left: '54%', delay: '0.4s', dur: '4.7s' },
-  { sym: 'OIL',  val: '$88.07', chg: '+5.54%', up: true,  top: '42%', left: '28%', delay: '2.1s', dur: '4.0s' },
+  { sym: 'GOLD', val: '$5,168', chg: '+0.82%', up: true,  top: '6%',  left: '4%',  delay: '0s',   dur: '4.2s' },
+  { sym: 'BTC',  val: '$70,855',chg: '+1.28%', up: true,  top: '14%', left: '54%', delay: '0.9s', dur: '5.1s' },
+  { sym: 'OIL',  val: '$88.07', chg: '+5.54%', up: true,  top: '26%', left: '20%', delay: '2.1s', dur: '4.0s' },
+  { sym: 'SPY',  val: '$675.31',chg: '-0.28%', up: false, top: '34%', left: '4%',  delay: '1.6s', dur: '3.9s' },
+  { sym: 'DXY',  val: '99.26',  chg: '+0.44%', up: true,  top: '30%', left: '56%', delay: '0.4s', dur: '4.7s' },
 ];
 
 const FEATURES = [
@@ -233,10 +233,10 @@ export default function LoginPage({ onSwitchToSignup, onBack }) {
         <div className="w-full max-w-[340px] px-2">
           {/* Compact logo */}
           <div className="flex flex-col items-center mb-6 select-none">
-            <div className="relative mb-3">
-              <div className="absolute inset-0 rounded-[14px] scale-125 opacity-55"
-                   style={{background:'linear-gradient(135deg,#059669,#0d9488)',filter:'blur(14px)'}} />
-              <div className="relative w-12 h-12 rounded-[14px] flex items-center justify-center"
+            <div className="relative mb-3 overflow-hidden" style={{width:'56px',height:'56px'}}>
+              <div className="absolute inset-0 rounded-[14px]"
+                   style={{background:'linear-gradient(135deg,#059669,#0d9488)',filter:'blur(10px)',opacity:0.5}} />
+              <div className="relative w-full h-full rounded-[14px] flex items-center justify-center"
                    style={{background:'linear-gradient(145deg,#059669 0%,#0d9488 100%)',boxShadow:'0 0 0 1px rgba(255,255,255,0.1) inset'}}>
                 <TrendingUp className="w-5 h-5 text-white" strokeWidth={2.5} />
               </div>
