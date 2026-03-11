@@ -80,11 +80,10 @@ export default function ScreenshotImportDashboard() {
       setServiceOnline(false);
       const status = err?.response?.status;
       if (status === 401) {
-        setServiceError('Session expired. Please log out and log in again.');
+        setServiceError('Your session has expired. Please sign out and sign back in.');
       } else {
         setServiceError(
-          'The MT5 analysis service is not running. ' +
-          'Start it with: cd mt5_service && python main.py'
+          'The analysis service is temporarily unavailable. Please try again in a moment.'
         );
       }
       console.warn('[ScreenshotDashboard] Could not reach analysis service:', err.message);
@@ -231,19 +230,19 @@ export default function ScreenshotImportDashboard() {
         )}
       </div>
 
-      {/* ── Service offline banner ─────────────────────────────────────── */}
-      {!serviceOnline && (
+      {/* ── Service offline banner — only show when there's no data to display ── */}
+      {!serviceOnline && !hasData && (
         <div
           className="mx-6 mt-4 flex items-start gap-3 rounded-xl px-4 py-3 border"
           style={{
-            backgroundColor: theme.isDark ? 'rgba(239,68,68,0.1)' : 'rgba(239,68,68,0.08)',
-            borderColor: 'rgba(239,68,68,0.4)',
+            backgroundColor: theme.isDark ? 'rgba(234,179,8,0.08)' : 'rgba(234,179,8,0.06)',
+            borderColor: 'rgba(234,179,8,0.3)',
           }}
         >
-          <WifiOff className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: '#ef4444' }} />
+          <WifiOff className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: '#eab308' }} />
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold" style={{ color: '#ef4444' }}>
-              MT5 Analysis Service Offline
+            <p className="text-sm font-semibold" style={{ color: '#eab308' }}>
+              Analysis Service Unavailable
             </p>
             <p className="text-xs mt-0.5" style={{ color: theme.muted }}>
               {serviceError}
@@ -262,7 +261,7 @@ export default function ScreenshotImportDashboard() {
             onClick={loadExisting}
             disabled={loadingInit}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium flex-shrink-0"
-            style={{ backgroundColor: 'rgba(239,68,68,0.15)', color: '#ef4444' }}
+            style={{ backgroundColor: 'rgba(234,179,8,0.15)', color: '#eab308' }}
           >
             {loadingInit
               ? <Loader2 className="w-3.5 h-3.5 animate-spin" />
