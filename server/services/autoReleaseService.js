@@ -26,11 +26,34 @@ import fs           from 'fs';
 import path         from 'path';
 import EventEmitter from 'events';
 import { fileURLToPath } from 'url';
-import { cache } from './economicIntelligenceService.js';
+import {
+  cache,
+  clearEconomicCache,
+  analyzeNFP,
+  analyzeCPI,
+  analyzeUnemployment,
+  analyzeGDP,
+  analyzeCorePCE,
+  analyzeJoblessClaims,
+  analyzeRetailSales,
+} from './economicIntelligenceService.js';
 
 const __filename         = fileURLToPath(import.meta.url);
 const __dirname          = path.dirname(__filename);
 const ECONOMIC_DATA_PATH = path.resolve(__dirname, '../config/economicData.js');
+
+// ─── FRED-backed indicators ──────────────────────────────────────────────────
+// These indicators have live FRED series. Instead of hitting Gemini,
+// checkAndUpdateRelease() will call the corresponding analyze function directly.
+const FRED_ANALYZE_MAP = {
+  nfp:           analyzeNFP,
+  cpi:           analyzeCPI,
+  unemployment:  analyzeUnemployment,
+  gdp:           analyzeGDP,
+  core_pce:      analyzeCorePCE,
+  jobless_claims: analyzeJoblessClaims,
+  retail_sales:  analyzeRetailSales,
+};
 
 // ─── Cache key map ────────────────────────────────────────────────────────────
 // Maps indicator id → the NodeCache key used in economicIntelligenceService.js.
@@ -449,6 +472,32 @@ export const releaseEvents = new EventEmitter();
 export async function checkAndUpdateRelease(indicatorId, indicatorName, unit) {
   console.log(`🔍 autoRelease: checking ${indicatorName} (${indicatorId})...`);
 
+  // ── FRED path: call analyze function directly, no Gemini needed ──────────
+  const fredAnalyze = FRED_ANALYZE_MAP[indicatorId];
+  if (fredAnalyze) {
+    console.log(`📡 autoRelease: ${indicatorId} is FRED-backed — calling analyze function directly`);
+    try {
+      // Flush stale cache so the analyze function re-fetches from FRED
+      clearEconomicCache();
+
+      // Re-fetch and re-cache fresh data from FRED
+      const result = await fredAnalyze();
+      if (!result || result.error) {
+        console.warn(`⚠️  autoRelease: analyze failed for ${indicatorId}: ${result?.error ?? 'no result'}`);
+        return false;
+      }
+
+      console.log(`✅ autoRelease: ${indicatorName} refreshed from FRED — current: ${result.current}`);
+      releaseEvents.emit('data_updated', { indicatorId, data: result });
+      return true;
+    } catch (err) {
+      console.error(`❌ autoRelease: FRED analyze error for ${indicatorId}: ${err.message}`);
+      return false;
+    }
+  }
+
+  // ── Gemini path: for fed_rate, ism_manufacturing, consumer_confidence ────
+  // (and any future config-only indicators without a FRED series)
   const data = await fetchLatestRelease(indicatorId, indicatorName, unit);
   if (!data) {
     console.warn(`⚠️  autoRelease: no data returned for ${indicatorId} — skipping`);
