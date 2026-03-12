@@ -28,6 +28,7 @@ import { errorHandler } from './middleware/errorHandler.js';
 import { getApiKeyManager } from './utils/apiKeyManager.js';
 import { finnhubService, TRACKED_SYMBOLS } from './services/finnhubService.js';
 import { startAutoReleaseScheduler, manualTrigger } from './services/autoReleaseService.js';
+import adminRouter from './routes/admin.js';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -104,6 +105,7 @@ app.post('/api/economic/trigger-update', async (req, res) => {
   }
 });
 app.use('/api/auth', authRouter);
+app.use('/api/admin', adminRouter);
 app.use('/api/finnhub', finnhubRouter);
 app.use('/api/journal', journalRouter);
 

@@ -6,6 +6,21 @@ import { signToken, requireAuth } from '../middleware/authMiddleware.js';
 
 const router = Router();
 
+/** Build a safe JWT/response user object from a DB row. */
+function buildUser(row) {
+  return {
+    id:                  row.id,
+    name:                row.name,
+    email:               row.email,
+    avatar:              row.avatar ?? null,
+    plan:                row.plan ?? 'free',
+    plan_expires_at:     row.plan_expires_at ?? null,
+    ai_analysis_tries:   row.ai_analysis_tries ?? 0,
+    screenshot_tries:    row.screenshot_tries ?? 0,
+    is_admin:            row.is_admin ?? 0,
+  };
+}
+
 // ── POST /api/auth/register ────────────────────────────────────────────────
 router.post('/register', async (req, res) => {
   try {
@@ -25,7 +40,8 @@ router.post('/register', async (req, res) => {
 
     const password_hash = await bcrypt.hash(password, 12);
     const result = Users.createUser({ name: name.trim(), email, password_hash });
-    const user = { id: result.lastInsertRowid, name: name.trim(), email: email.toLowerCase().trim(), avatar: null };
+    const row = Users.findById(result.lastInsertRowid);
+    const user = buildUser(row);
     const token = signToken(user);
 
     res.status(201).json({ user, token });
@@ -45,7 +61,6 @@ router.post('/login', async (req, res) => {
 
     const row = Users.findByEmail(email);
     if (!row || !row.password_hash) {
-      // Same message whether user doesn't exist or has no password (Google-only account)
       return res.status(401).json({ error: 'Invalid email or password.' });
     }
 
@@ -53,7 +68,8 @@ router.post('/login', async (req, res) => {
     if (!valid)
       return res.status(401).json({ error: 'Invalid email or password.' });
 
-    const user = { id: row.id, name: row.name, email: row.email, avatar: row.avatar };
+    const freshRow = Users.findById(row.id);
+    const user = buildUser(freshRow);
     const token = signToken(user);
     res.json({ user, token });
   } catch (err) {
@@ -63,7 +79,6 @@ router.post('/login', async (req, res) => {
 });
 
 // ── POST /api/auth/google ──────────────────────────────────────────────────
-// Receives a Google id_token (credential) from the Google Identity Services SDK
 router.post('/google', async (req, res) => {
   try {
     const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || '';
@@ -79,22 +94,19 @@ router.post('/google', async (req, res) => {
     const payload = ticket.getPayload();
     const { sub: googleId, email, name, picture } = payload;
 
-    // Find or create user
     let row = Users.findByGoogleId(googleId);
     if (!row) {
       row = Users.findByEmail(email);
       if (row) {
-        // Link Google ID to existing email account
         Users.linkGoogleId(row.id, googleId, picture);
       } else {
-        // Brand new user via Google
         const result = Users.createUser({ name, email, google_id: googleId, avatar: picture });
         row = Users.findById(result.lastInsertRowid);
       }
     }
 
     const freshRow = Users.findById(row.id);
-    const user = { id: freshRow.id, name: freshRow.name, email: freshRow.email, avatar: picture || freshRow.avatar };
+    const user = buildUser({ ...freshRow, avatar: picture || freshRow.avatar });
     const token = signToken(user);
     res.json({ user, token });
   } catch (err) {
@@ -105,9 +117,29 @@ router.post('/google', async (req, res) => {
 
 // ── GET /api/auth/me ───────────────────────────────────────────────────────
 router.get('/me', requireAuth, (req, res) => {
-  const user = Users.findById(req.user.id);
-  if (!user) return res.status(404).json({ error: 'User not found.' });
-  res.json({ user });
+  const row = Users.findById(req.user.id);
+  if (!row) return res.status(404).json({ error: 'User not found.' });
+  res.json({ user: buildUser(row) });
+});
+
+// ── POST /api/auth/upgrade-plan ───────────────────────────────────────────
+router.post('/upgrade-plan', requireAuth, (req, res) => {
+  try {
+    const { plan, expiresAt = null } = req.body;
+    const validPlans = ['free', 'pro', 'elite'];
+    if (!validPlans.includes(plan))
+      return res.status(400).json({ error: `Invalid plan. Must be one of: ${validPlans.join(', ')}` });
+
+    Users.updateUserPlan(req.user.id, plan, expiresAt);
+    const row = Users.findById(req.user.id);
+    if (!row) return res.status(404).json({ error: 'User not found.' });
+    const user = buildUser(row);
+    const token = signToken(user);
+    res.json({ user, token });
+  } catch (err) {
+    console.error('upgrade-plan error:', err);
+    res.status(500).json({ error: 'Plan upgrade failed.' });
+  }
 });
 
 export default router;
