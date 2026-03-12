@@ -37,14 +37,32 @@ import {
   analyzeJoblessClaims,
   analyzeRetailSales,
 } from './economicIntelligenceService.js';
+import {
+  fetchLatestNFP,
+  fetchLatestCPI,
+  fetchLatestCoreCPI,
+  fetchLatestUnemployment,
+  fetchLatestGDP,
+  fetchLatestCorePCE,
+} from './blsBeaService.js';
 
 const __filename         = fileURLToPath(import.meta.url);
 const __dirname          = path.dirname(__filename);
 const ECONOMIC_DATA_PATH = path.resolve(__dirname, '../config/economicData.js');
 
-// ─── FRED-backed indicators ──────────────────────────────────────────────────
-// These indicators have live FRED series. Instead of hitting Gemini,
-// checkAndUpdateRelease() will call the corresponding analyze function directly.
+// ─── BLS/BEA primary sources ─────────────────────────────────────────────────
+// Official government APIs tried first. If they return null, fall back to FRED.
+const BLS_BEA_MAP = {
+  nfp:           fetchLatestNFP,
+  cpi:           fetchLatestCPI,
+  core_cpi:      fetchLatestCoreCPI,
+  unemployment:  fetchLatestUnemployment,
+  gdp:           fetchLatestGDP,
+  core_pce:      fetchLatestCorePCE,
+};
+
+// ─── FRED fallback analyze functions ─────────────────────────────────────────
+// Called when BLS/BEA returns null (API down, quota, lag, etc.).
 const FRED_ANALYZE_MAP = {
   nfp:           analyzeNFP,
   cpi:           analyzeCPI,
@@ -472,28 +490,57 @@ export const releaseEvents = new EventEmitter();
 export async function checkAndUpdateRelease(indicatorId, indicatorName, unit) {
   console.log(`🔍 autoRelease: checking ${indicatorName} (${indicatorId})...`);
 
-  // ── FRED path: call analyze function directly, no Gemini needed ──────────
-  const fredAnalyze = FRED_ANALYZE_MAP[indicatorId];
-  if (fredAnalyze) {
-    console.log(`📡 autoRelease: ${indicatorId} is FRED-backed — calling analyze function directly`);
-    try {
-      // Flush stale cache so the analyze function re-fetches from FRED
-      clearEconomicCache();
+  // ── BLS/BEA → FRED fallback path ─────────────────────────────────────────
+  const blsBeaFetch  = BLS_BEA_MAP[indicatorId];
+  const fredAnalyze  = FRED_ANALYZE_MAP[indicatorId];
 
-      // Re-fetch and re-cache fresh data from FRED
-      const result = await fredAnalyze();
-      if (!result || result.error) {
-        console.warn(`⚠️  autoRelease: analyze failed for ${indicatorId}: ${result?.error ?? 'no result'}`);
+  if (blsBeaFetch || fredAnalyze) {
+    // 1. Try BLS/BEA first
+    if (blsBeaFetch) {
+      try {
+        const blsData = await blsBeaFetch();
+        if (blsData && typeof blsData.actual === 'number' && isFinite(blsData.actual)) {
+          console.log(`📡 autoRelease [BLS/BEA]: ${indicatorName} → ${blsData.actual} (${blsData.date})`);
+
+          // Write the new value into config and refresh cache
+          await updateIndicatorInConfig(indicatorId, {
+            actual:   blsData.actual,
+            forecast: null,  // BLS/BEA don't provide forecasts; keep existing
+            previous: null,
+            date:     blsData.date,
+          });
+          clearEconomicCache();
+          releaseEvents.emit('data_updated', { indicatorId, data: blsData });
+          return true;
+        }
+        console.warn(`⚠️  autoRelease: BLS/BEA returned no data for ${indicatorId} — trying FRED fallback`);
+      } catch (err) {
+        console.warn(`⚠️  autoRelease: BLS/BEA error for ${indicatorId}: ${err.message} — trying FRED fallback`);
+      }
+    }
+
+    // 2. Fall back to FRED analyze function
+    if (fredAnalyze) {
+      try {
+        console.log(`📡 autoRelease [FRED fallback]: fetching ${indicatorName} via analyze function`);
+        clearEconomicCache();
+        const result = await fredAnalyze();
+        if (!result || result.error) {
+          console.warn(`⚠️  autoRelease: FRED analyze failed for ${indicatorId}: ${result?.error ?? 'no result'}`);
+          return false;
+        }
+        console.log(`✅ autoRelease [FRED fallback]: ${indicatorName} refreshed`);
+        releaseEvents.emit('data_updated', { indicatorId, data: result });
+        return true;
+      } catch (err) {
+        console.error(`❌ autoRelease: FRED analyze error for ${indicatorId}: ${err.message}`);
         return false;
       }
-
-      console.log(`✅ autoRelease: ${indicatorName} refreshed from FRED — current: ${result.current}`);
-      releaseEvents.emit('data_updated', { indicatorId, data: result });
-      return true;
-    } catch (err) {
-      console.error(`❌ autoRelease: FRED analyze error for ${indicatorId}: ${err.message}`);
-      return false;
     }
+
+    // BLS/BEA had no data and there's no FRED fallback (e.g. core_cpi)
+    console.warn(`⚠️  autoRelease: no data source succeeded for ${indicatorId}`);
+    return false;
   }
 
   // ── Gemini path: for fed_rate, ism_manufacturing, consumer_confidence ────
