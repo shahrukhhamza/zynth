@@ -165,14 +165,57 @@ wss.on('error', (err) => {
 wss.on('connection', (ws) => {
   console.log(`📡 Market WS client connected (total: ${wss.clients.size})`);
 
-  // 1. Send full price snapshot immediately so the client has initial data
-  ws.send(JSON.stringify({
-    type:    'snapshot',
-    data:    finnhubService.getPriceSnapshot(),
-    symbols: TRACKED_SYMBOLS,
-    status:  finnhubService.getStatus(),
-    ts:      Date.now(),
-  }));
+  // Helper — sends the full price snapshot to this browser client
+  const sendSnapshot = () => {
+    if (ws.readyState !== ws.OPEN) return;
+    ws.send(JSON.stringify({
+      type:    'snapshot',
+      data:    finnhubService.getPriceSnapshot(),
+      symbols: TRACKED_SYMBOLS,
+      status:  finnhubService.getStatus(),
+      ts:      Date.now(),
+    }));
+  };
+
+  // 1. Decide when to send the initial snapshot to this browser client.
+  //    Two deferred cases — checked in priority order:
+  //
+  //    a) Price cache is empty (seedFromRest not yet complete) →
+  //       wait for the 'snapshot' event emitted at end of seedFromRest(),
+  //       then send. This ensures the browser gets a fully-populated baseline.
+  //
+  //    b) Cache is seeded but no live WS tick has arrived yet →
+  //       wait for the first 'price' event so the snapshot contains at least
+  //       one real-time price before being delivered.
+  //
+  //    If neither condition applies (cache has data AND live ticks are flowing)
+  //    send immediately.
+  //
+  //    In all deferred cases, a 'close' guard cleans up the one-time listener
+  //    if the client disconnects before the trigger fires.
+
+  const priceCache = finnhubService.getPriceSnapshot();
+  const cacheEmpty = Object.keys(priceCache).length === 0;
+
+  if (cacheEmpty) {
+    // Case a: wait for REST seed to complete
+    const onSeeded = () => {
+      sendSnapshot();
+    };
+    finnhubService.once('snapshot', onSeeded);
+    ws.once('close', () => finnhubService.off('snapshot', onSeeded));
+  } else if (!finnhubService.hasLiveTick) {
+    // Case b: cache seeded but no live tick yet — wait for first trade
+    const onFirstTick = () => {
+      sendSnapshot();
+      finnhubService.off('price', onFirstTick);
+    };
+    finnhubService.once('price', onFirstTick);
+    ws.once('close', () => finnhubService.off('price', onFirstTick));
+  } else {
+    // Normal path: cache populated + live ticks flowing — send immediately
+    sendSnapshot();
+  }
 
   // 2. Forward every live price tick to this client
   const onPrice = (update) => {
@@ -210,6 +253,7 @@ httpServer.listen(PORT, () => {
       try {
         await finnhubService.seedFromRest();
         finnhubService.connect();
+        finnhubService.startPolling();
         console.log('📈 Finnhub live market data service started');
       } catch (err) {
         console.warn('⚠️  Finnhub init error (non-fatal):', err.message);

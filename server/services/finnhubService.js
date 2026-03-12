@@ -15,30 +15,29 @@ import axios from 'axios';
 
 // ── Tracked symbols ──────────────────────────────────────────────────────────
 export const TRACKED_SYMBOLS = [
-  // Stocks
-  { symbol: 'AAPL',              display: 'AAPL',     label: 'Apple',         category: 'stocks', unit: '$',  dec: 2 },
-  { symbol: 'TSLA',              display: 'TSLA',     label: 'Tesla',         category: 'stocks', unit: '$',  dec: 2 },
-  { symbol: 'MSFT',              display: 'MSFT',     label: 'Microsoft',     category: 'stocks', unit: '$',  dec: 2 },
-  { symbol: 'AMZN',              display: 'AMZN',     label: 'Amazon',        category: 'stocks', unit: '$',  dec: 2 },
-  { symbol: 'NVDA',              display: 'NVDA',     label: 'NVIDIA',        category: 'stocks', unit: '$',  dec: 2 },
-  { symbol: 'GOOGL',             display: 'GOOGL',    label: 'Alphabet',      category: 'stocks', unit: '$',  dec: 2 },
-  // Market Terminal ETFs/indices (also used by EconomicDashboard)
-  { symbol: 'GLD',               display: 'GLD',      label: 'Gold ETF',      category: 'stocks', unit: '$',  dec: 2 },
-  { symbol: 'TLT',               display: 'TLT',      label: '20Y Treasuries',category: 'stocks', unit: '$',  dec: 2 },
-  { symbol: 'SPY',               display: 'SPY',      label: 'S&P 500 ETF',   category: 'stocks', unit: '$',  dec: 2 },
-  // Forex
-  { symbol: 'OANDA:EUR_USD',     display: 'EUR/USD',  label: 'Euro / USD',    category: 'forex',  unit: '',   dec: 5 },
-  { symbol: 'OANDA:GBP_USD',     display: 'GBP/USD',  label: 'Pound / USD',   category: 'forex',  unit: '',   dec: 5 },
-  { symbol: 'OANDA:USD_JPY',     display: 'USD/JPY',  label: 'USD / Yen',     category: 'forex',  unit: '',   dec: 3 },
-  // NOTE: OANDA:XAU_USD (spot gold) and OANDA:WTICO_USD (spot WTI) are NOT tracked here.
-  // The dashboard uses Yahoo Finance GC=F / CL=F futures for gold and oil — mixing OANDA
-  // OTC spot prices (~$10-20 basis) with futures causes persistent price discrepancies.
-  // Crypto
-  { symbol: 'BINANCE:BTCUSDT',   display: 'BTC/USDT', label: 'Bitcoin',       category: 'crypto', unit: '$',  dec: 2 },
-  { symbol: 'BINANCE:ETHUSDT',   display: 'ETH/USDT', label: 'Ethereum',      category: 'crypto', unit: '$',  dec: 2 },
-  { symbol: 'BINANCE:XRPUSDT',   display: 'XRP/USDT', label: 'Ripple',        category: 'crypto', unit: '$',  dec: 4 },
-  { symbol: 'BINANCE:BNBUSDT',   display: 'BNB/USDT', label: 'BNB',           category: 'crypto', unit: '$',  dec: 2 },
-  { symbol: 'BINANCE:SOLUSDT',   display: 'SOL/USDT', label: 'Solana',        category: 'crypto', unit: '$',  dec: 2 },
+  // ── Tier 1: real-time WebSocket subscriptions ─────────────────────────────
+  { symbol: 'OANDA:XAU_USD',   display: 'XAU/USD',  label: 'Gold Spot',      category: 'forex',  unit: '$', dec: 2, tier: 1 },
+  { symbol: 'OANDA:EUR_USD',   display: 'EUR/USD',  label: 'Euro / USD',     category: 'forex',  unit: '',  dec: 5, tier: 1 },
+  { symbol: 'BINANCE:BTCUSDT', display: 'BTC/USDT', label: 'Bitcoin',        category: 'crypto', unit: '$', dec: 2, tier: 1 },
+
+  // ── Tier 2: REST-polled every 15 minutes ──────────────────────────────────
+  { symbol: 'OANDA:GBP_USD',   display: 'GBP/USD',  label: 'Pound / USD',    category: 'forex',  unit: '',  dec: 5, tier: 2 },
+  { symbol: 'OANDA:USD_JPY',   display: 'USD/JPY',  label: 'USD / Yen',      category: 'forex',  unit: '',  dec: 3, tier: 2 },
+  { symbol: 'BINANCE:ETHUSDT', display: 'ETH/USDT', label: 'Ethereum',       category: 'crypto', unit: '$', dec: 2, tier: 2 },
+  { symbol: 'BINANCE:XRPUSDT', display: 'XRP/USDT', label: 'Ripple',         category: 'crypto', unit: '$', dec: 4, tier: 2 },
+  { symbol: 'BINANCE:BNBUSDT', display: 'BNB/USDT', label: 'BNB',            category: 'crypto', unit: '$', dec: 2, tier: 2 },
+  { symbol: 'BINANCE:SOLUSDT', display: 'SOL/USDT', label: 'Solana',         category: 'crypto', unit: '$', dec: 2, tier: 2 },
+  { symbol: 'GLD',             display: 'GLD',      label: 'Gold ETF',       category: 'stocks', unit: '$', dec: 2, tier: 2 },
+  { symbol: 'TLT',             display: 'TLT',      label: '20Y Treasuries', category: 'stocks', unit: '$', dec: 2, tier: 2 },
+  { symbol: 'SPY',             display: 'SPY',      label: 'S&P 500 ETF',    category: 'stocks', unit: '$', dec: 2, tier: 2 },
+
+  // ── Tier 3: REST-polled every 60 minutes ──────────────────────────────────
+  { symbol: 'AAPL',            display: 'AAPL',     label: 'Apple',          category: 'stocks', unit: '$', dec: 2, tier: 3 },
+  { symbol: 'TSLA',            display: 'TSLA',     label: 'Tesla',          category: 'stocks', unit: '$', dec: 2, tier: 3 },
+  { symbol: 'MSFT',            display: 'MSFT',     label: 'Microsoft',      category: 'stocks', unit: '$', dec: 2, tier: 3 },
+  { symbol: 'AMZN',            display: 'AMZN',     label: 'Amazon',         category: 'stocks', unit: '$', dec: 2, tier: 3 },
+  { symbol: 'NVDA',            display: 'NVDA',     label: 'NVIDIA',         category: 'stocks', unit: '$', dec: 2, tier: 3 },
+  { symbol: 'GOOGL',           display: 'GOOGL',    label: 'Alphabet',       category: 'stocks', unit: '$', dec: 2, tier: 3 },
 ];
 
 const FINNHUB_WS  = 'wss://ws.finnhub.io';
@@ -57,6 +56,7 @@ class FinnhubService extends EventEmitter {
     this.reconnectTimer = null;
     this.connected      = false;
     this.isConnecting   = false;
+    this.hasLiveTick    = false;  // true after first _onTrade() fires
   }
 
   _key() { return process.env.FINNHUB_API_KEY || ''; }
@@ -79,9 +79,12 @@ class FinnhubService extends EventEmitter {
       this.reconnectDelay = 2_000;
       console.log('✅ Finnhub WS connected');
       this.emit('status', 'connected');
-      TRACKED_SYMBOLS.forEach(({ symbol }) =>
-        this.ws.send(JSON.stringify({ type: 'subscribe', symbol }))
-      );
+      // Only subscribe tier-1 symbols over WebSocket (real-time feed)
+      TRACKED_SYMBOLS
+        .filter(({ tier }) => tier === 1)
+        .forEach(({ symbol }) =>
+          this.ws.send(JSON.stringify({ type: 'subscribe', symbol }))
+        );
     });
 
     this.ws.on('message', (raw) => {
@@ -116,6 +119,7 @@ class FinnhubService extends EventEmitter {
 
   _onTrade({ p: price, s: symbol, t: timestamp, v: volume }) {
     if (!price || !symbol) return;
+    this.hasLiveTick = true;
     const prev      = this.prices[symbol] || {};
     const prevClose = prev.prevClose ?? prev.price ?? null;   // best known baseline
     const change    = prevClose != null ? +(price - prevClose).toFixed(6) : null;
@@ -213,6 +217,71 @@ class FinnhubService extends EventEmitter {
     this.prices[symbol] = { ...(this.prices[symbol] || {}), ...result, source: 'rest', lastUpdate: Date.now() };
 
     return result;
+  }
+
+  // ── Tiered REST polling (tier 2: 15 min, tier 3: 60 min) ─────────────────
+
+  async _pollTier(tier) {
+    const key = this._key();
+    if (!key) return;
+    const symbols = TRACKED_SYMBOLS.filter(s => s.tier === tier);
+    console.log(`🔄 Polling tier ${tier} (${symbols.length} symbols) via REST…`);
+
+    const batches = [];
+    for (let i = 0; i < symbols.length; i += 5)
+      batches.push(symbols.slice(i, i + 5));
+
+    for (const batch of batches) {
+      await Promise.allSettled(batch.map(async ({ symbol }) => {
+        try {
+          const d = await this._restQuoteRaw(symbol, key);
+          if (d?.c) {
+            const prev      = this.prices[symbol] || {};
+            const prevClose = d.pc ?? prev.prevClose ?? null;
+            const price     = d.c;
+            const change    = prevClose != null ? +(price - prevClose).toFixed(6) : (d.d ?? null);
+            const changePct = prevClose != null && prevClose !== 0
+              ? +(change / prevClose * 100).toFixed(4) : (d.dp ?? null);
+
+            this.prices[symbol] = {
+              ...prev,
+              price,
+              change,
+              changePct,
+              high:      d.h,
+              low:       d.l,
+              open:      d.o,
+              prevClose,
+              timestamp: d.t ? d.t * 1000 : Date.now(),
+              lastUpdate: Date.now(),
+              source: 'rest-poll',
+            };
+
+            this.emit('price', { symbol, price, change, changePct, ts: Date.now() });
+          }
+        } catch (_) { /* ignore individual symbol failures */ }
+      }));
+      await new Promise(r => setTimeout(r, 250));
+    }
+    console.log(`✅ Tier ${tier} poll complete`);
+  }
+
+  startPolling() {
+    const TIER2_MS = 15 * 60 * 1000;  // 15 minutes
+    const TIER3_MS = 60 * 60 * 1000;  // 60 minutes
+
+    // Stagger initial polls slightly so they don't fire simultaneously
+    setTimeout(() => {
+      this._pollTier(2);
+      setInterval(() => this._pollTier(2), TIER2_MS);
+    }, 5_000);  // 5s after startPolling() is called
+
+    setTimeout(() => {
+      this._pollTier(3);
+      setInterval(() => this._pollTier(3), TIER3_MS);
+    }, 10_000); // 10s after startPolling() is called
+
+    console.log('⏰ Tiered REST polling started (tier 2: 15 min, tier 3: 60 min)');
   }
 
   // ── Accessors ────────────────────────────────────────────────────────────

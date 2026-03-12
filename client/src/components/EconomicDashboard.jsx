@@ -13,12 +13,11 @@ const CHART_REFRESH_MS = 300000; // re-fetch period chart data every 5 min (keep
 const FLASH_MS       = 800;     // price flash duration
 
 // Maps Finnhub WebSocket symbols → EconomicDashboard liveData keys.
-// NOTE: OANDA:XAU_USD (spot gold) and OANDA:WTICO_USD (spot WTI) are intentionally
-// excluded — these are OTC spot prices which trade $10-20 away from the exchange-traded
-// futures contracts (GC=F, CL=F) that Yahoo Finance and TradingView quote. Mixing them
-// causes persistent price discrepancies. Yahoo Finance is the sole price authority for
-// gold and oil; Finnhub handles ETFs and crypto where symbols match exactly.
+// OANDA:XAU_USD streams real-time spot gold via Finnhub WS. Yahoo Finance GC=F
+// REST poll (every 10s) continues to seed prevClose / dayHigh / dayLow context;
+// WS ticks (<10s old) take precedence for the live price.
 const FINNHUB_TO_DASH = {
+  'OANDA:XAU_USD':   'gold',
   'GLD':             'gld',
   'TLT':             'tlt',
   'SPY':             'spy',
@@ -161,10 +160,8 @@ export default function EconomicDashboard() {
       setLiveData(prev => {
         if (!prev) return data;
         // Merge: Yahoo REST provides full context (DXY, VIX, dayHigh/Low, marketState).
-        // For symbols where Finnhub WS also provides prices (GLD, TLT, SPY, BTC), prefer
-        // a fresh WS tick (<10 s old) over the REST poll result to avoid visual stutter.
-        // Gold and oil are intentionally excluded from FINNHUB_TO_DASH so Yahoo's
-        // GC=F/CL=F futures prices are never overwritten by OANDA spot prices.
+        // For all symbols in FINNHUB_TO_DASH (incl. OANDA:XAU_USD → gold), prefer a
+        // fresh WS tick (<10 s old) over the REST poll result to avoid visual stutter.
         const WS_FRESH_MS = 10_000;
         const merged = { ...data };
         Object.keys(FINNHUB_TO_DASH).forEach(sym => {
@@ -449,7 +446,7 @@ export default function EconomicDashboard() {
               </div>
             </div>
             <div className="text-base font-bold tabular-nums" style={{ color: theme.text }}>
-              {spotPrice ? `$${Math.round(spotPrice).toLocaleString()}` : '—'}
+              {spotPrice ? `$${spotPrice.toFixed(2)}` : '—'}
             </div>
             <div className="text-xs" style={{ color: '#f59e0b' }}>per troy oz</div>
             {liveGold?.changePct != null && (
@@ -498,14 +495,14 @@ export default function EconomicDashboard() {
               <div>
                 <h3 className="font-bold text-lg" style={{ color: '#f59e0b' }}>Gold Price — {tf} Movement</h3>
                 <p className="text-xs mt-0.5" style={{ color: theme.muted }}>
-                  Chart: GC=F futures ($/oz) &nbsp;|&nbsp; Live spot updated every 10s
+                  Chart: GC=F futures ($/oz) &nbsp;|&nbsp; Live spot: Finnhub WS (OANDA:XAU_USD) · REST fallback every 10s
                 </p>
               </div>
               <div className="text-right">
                 {spotPrice && (
                   <div className="text-2xl font-bold tabular-nums transition-colors duration-300"
                     style={{ color: '#f59e0b', ...(flashMap['gold'] ? { backgroundColor: flashMap['gold'] === 'up' ? (theme.isDark ? '#22c55e22' : '#22c55e38') : (theme.isDark ? '#ef444422' : '#ef444438') } : {}) }}>
-                    ${Math.round(spotPrice).toLocaleString()}
+                    ${spotPrice.toFixed(2)}
                     <span className="text-sm font-normal ml-1" style={{ color: theme.muted }}>/oz</span>
                   </div>
                 )}
@@ -531,7 +528,7 @@ export default function EconomicDashboard() {
               { l: `${tf} High`,  v: goldStats ? `$${goldStats.periodHigh}` : '—', c: null },
               { l: `${tf} Low`,   v: goldStats ? `$${goldStats.periodLow}` : '—',  c: null },
               { l: `${tf} Chg`,   v: goldStats ? fmtPct(goldStats.periodChange) : '—', c: goldStats?.periodChange != null ? (goldStats.periodChange >= 0 ? bull : bear) : null },
-              { l: 'Prev Close',  v: liveGold?.prevClose ? `$${Math.round(liveGold.prevClose).toLocaleString()}` : '—', c: null },
+              { l: 'Prev Close',  v: liveGold?.prevClose ? `$${liveGold.prevClose?.toFixed(2)}` : '—', c: null },
             ].map(item => (
               <div key={item.l} className="px-3 py-2" style={{ borderRight: `1px solid ${theme.border}` }}>
                 <div className="text-xs whitespace-nowrap" style={{ color: theme.muted }}>{item.l}</div>

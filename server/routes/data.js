@@ -5,22 +5,15 @@ import {
   getForexData,
   getCommodityData,
   getEconomicIndicators,
-  getGoldSpotPrice,
+  // getGoldSpotPrice removed — gold price now streams via Finnhub WS (OANDA:XAU_USD)
   getMarketData,
   getLivePrices,
 } from '../services/dataService.js';
 
 const router = express.Router();
 
-// Get actual gold spot price (GC=F futures via Yahoo Finance)
-router.get('/gold/spot', async (req, res, next) => {
-  try {
-    const data = await getGoldSpotPrice();
-    res.json({ success: true, data });
-  } catch (error) {
-    next(error);
-  }
-});
+// GET /gold/spot removed — gold price is now delivered in real-time via
+// Finnhub WebSocket (OANDA:XAU_USD → /ws/market). See finnhubService.js.
 
 // Live price snapshot — all instruments, fast, 8s server cache
 router.get('/prices/live', async (req, res, next) => {

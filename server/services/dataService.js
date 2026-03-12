@@ -71,33 +71,10 @@ async function fetchSpotFromYahoo(ticker) {
   return result.meta?.regularMarketPrice ?? null;
 }
 
-// ── Gold spot via XAUUSD or GC=F ───────────────────────────────────────────
-export async function getGoldSpotPrice() {
-  const cacheKey = 'gold_spot_price';
-  const cached = cache.get(cacheKey);
-  if (cached) return cached;
-
-  // Try GC=F (gold futures — trades near spot price)
-  try {
-    const price = await fetchSpotFromYahoo('GC=F');
-    if (price) {
-      cache.set(cacheKey, { price, source: 'Yahoo Finance (GC=F futures)', currency: 'USD' }, 120);
-      console.log(`✅ Gold spot (GC=F): $${price}/oz`);
-      return { price, source: 'Yahoo Finance (GC=F futures)', currency: 'USD' };
-    }
-  } catch (e) { console.warn('GC=F failed, trying XAUUSD:', e.message); }
-
-  // Fallback: XAUUSD forex
-  try {
-    const price = await fetchSpotFromYahoo('XAUUSD=X');
-    if (price) {
-      cache.set(cacheKey, { price, source: 'Yahoo Finance (XAUUSD)', currency: 'USD' }, 120);
-      return { price, source: 'Yahoo Finance (XAUUSD)', currency: 'USD' };
-    }
-  } catch (e) { console.warn('XAUUSD failed:', e.message); }
-
-  return null;
-}
+// getGoldSpotPrice() removed — gold price is now streamed in real-time via
+// Finnhub WebSocket (OANDA:XAU_USD). The /api/data/gold/spot route has been
+// disabled. getLivePrices() (GC=F via Yahoo) still provides context data
+// (prevClose, dayHigh, dayLow) as a REST fallback for EconomicDashboard.
 
 // Generic market data fetch — any Yahoo Finance symbol (CL=F, ^VIX, DX-Y.NYB, etc.)
 export async function getMarketData(symbol, limit = 90) {

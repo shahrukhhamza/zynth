@@ -194,6 +194,176 @@ function HistoricalChart({ data, code, unit, isDark, color, title }) {
 }
 
 /*
+ * MacroScoreWidget — composite gold impact score from all indicators
+ */
+function MacroScoreWidget({ macroScore, theme }) {
+  if (!macroScore) {
+    return (
+      <div
+        className="rounded-xl border px-6 py-5 animate-pulse"
+        style={{ backgroundColor: theme.surface, borderColor: theme.border }}
+      >
+        <div className="h-3 rounded-full w-40 mb-4" style={{ backgroundColor: theme.border }} />
+        <div className="h-12 rounded-full w-28 mb-5" style={{ backgroundColor: theme.border }} />
+        <div className="h-2 rounded-full w-full mb-2" style={{ backgroundColor: theme.border }} />
+        <div className="h-2 rounded-full w-3/4"       style={{ backgroundColor: theme.border }} />
+      </div>
+    );
+  }
+
+  const { score, label, contributors = [], updatedAt } = macroScore;
+  const scoreColor = score > 0 ? '#22c55e' : score < 0 ? '#ef4444' : '#9ca3af';
+
+  // Progress bar geometry: 0% = score -10, 50% = 0, 100% = +10
+  const fillPct  = ((score + 10) / 20) * 100;
+  const barLeft  = score >= 0 ? 50 : fillPct;
+  const barWidth = Math.abs(fillPct - 50);
+
+  const minutesAgo = updatedAt != null
+    ? Math.floor((Date.now() - updatedAt) / 60000)
+    : null;
+
+  const top5 = contributors.slice(0, 5);
+
+  return (
+    <div
+      className="rounded-xl border-2 overflow-hidden"
+      style={{
+        backgroundColor: theme.surface,
+        borderColor: scoreColor + '55',
+        boxShadow: `0 0 28px ${scoreColor}12`,
+      }}
+    >
+      {/* Accent stripe */}
+      <div style={{ height: 3, backgroundColor: scoreColor }} />
+
+      <div className="flex flex-col lg:flex-row gap-6 px-6 py-5">
+
+        {/* ── Left: big score + progress bar ───────────── */}
+        <div className="shrink-0 lg:w-60">
+          <p className="text-xs font-bold uppercase tracking-widest" style={{ color: scoreColor }}>
+            Macro Surprise Score
+          </p>
+          <p className="text-xs mt-0.5 mb-4" style={{ color: theme.muted }}>
+            Real-time gold impact score
+          </p>
+
+          {/* Score number */}
+          <div className="flex items-end gap-1 mb-3">
+            <span
+              className="text-5xl font-extrabold tabular-nums leading-none"
+              style={{ color: scoreColor }}
+            >
+              {score > 0 ? '+' : ''}{score}
+            </span>
+            <span className="text-lg font-semibold pb-1" style={{ color: theme.muted }}>/ 10</span>
+          </div>
+
+          {/* Label badge */}
+          <span
+            className="inline-block text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full"
+            style={{ backgroundColor: scoreColor + '22', color: scoreColor }}
+          >
+            {label}
+          </span>
+
+          {/* Progress bar -10…0…+10 */}
+          <div className="mt-5">
+            <div
+              className="relative rounded-full overflow-hidden"
+              style={{ height: 8, backgroundColor: theme.border }}
+            >
+              {/* Zero-centre tick */}
+              <div
+                className="absolute inset-y-0"
+                style={{ left: '50%', width: 2, transform: 'translateX(-50%)', backgroundColor: theme.muted, opacity: 0.35 }}
+              />
+              {/* Coloured fill */}
+              {barWidth > 0 && (
+                <div
+                  className="absolute inset-y-0 rounded-full"
+                  style={{ left: `${barLeft}%`, width: `${barWidth}%`, backgroundColor: scoreColor }}
+                />
+              )}
+            </div>
+            <div className="flex justify-between mt-1.5 text-xs" style={{ opacity: 0.7 }}>
+              <span style={{ color: '#ef4444' }}>−10</span>
+              <span style={{ color: theme.muted }}>0</span>
+              <span style={{ color: '#22c55e' }}>+10</span>
+            </div>
+          </div>
+        </div>
+
+        {/* ── Right: top contributors ───────────────────── */}
+        <div className="flex-1 min-w-0">
+          <p className="text-xs font-bold uppercase tracking-wider mb-3" style={{ color: theme.muted }}>
+            Top Drivers
+          </p>
+
+          <div className="space-y-2.5">
+            {top5.map(c => {
+              const cc          = c.contribution > 0 ? '#22c55e' : c.contribution < 0 ? '#ef4444' : '#9ca3af';
+              const miniPct     = Math.min(50, Math.abs(c.contribution) / 20 * 50);
+              const miniLeft    = c.contribution >= 0 ? 50 : 50 - miniPct;
+              const badgeText   = c.impact.includes('Bull') ? 'Bull' : c.impact.includes('Bear') ? 'Bear' : 'Neut';
+
+              return (
+                <div key={c.code} className="flex items-center gap-3">
+                  {/* Name */}
+                  <span
+                    className="text-xs font-medium truncate shrink-0"
+                    style={{ color: theme.text, width: 108 }}
+                  >
+                    {c.code}
+                  </span>
+
+                  {/* Mini bar */}
+                  <div className="flex-1 relative" style={{ height: 6, maxWidth: 160 }}>
+                    <div className="absolute inset-0 rounded-full" style={{ backgroundColor: theme.border }} />
+                    <div
+                      className="absolute inset-y-0"
+                      style={{ left: '50%', width: 1, backgroundColor: theme.muted, opacity: 0.4 }}
+                    />
+                    {miniPct > 0 && (
+                      <div
+                        className="absolute inset-y-0 rounded-full"
+                        style={{ left: `${miniLeft}%`, width: `${miniPct}%`, backgroundColor: cc, opacity: 0.8 }}
+                      />
+                    )}
+                  </div>
+
+                  {/* Value */}
+                  <span
+                    className="text-xs font-bold tabular-nums shrink-0"
+                    style={{ color: cc, width: 40, textAlign: 'right' }}
+                  >
+                    {c.contribution > 0 ? '+' : ''}{c.contribution}
+                  </span>
+
+                  {/* Badge */}
+                  <span
+                    className="shrink-0 text-xs font-semibold px-1.5 py-0.5 rounded"
+                    style={{ backgroundColor: cc + '22', color: cc, fontSize: '0.65rem' }}
+                  >
+                    {badgeText}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+
+          {minutesAgo !== null && (
+            <p className="text-xs mt-5" style={{ color: theme.muted }}>
+              Updated {minutesAgo === 0 ? 'just now' : `${minutesAgo} min ago`}
+            </p>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/*
  * Main component
  */
 function EconomicIntelligence() {
@@ -204,13 +374,18 @@ function EconomicIntelligence() {
   const [loading, setLoading]       = useState(true);
   const [error, setError]           = useState(null);
   const [refreshing, setRefreshing] = useState(false);
+  const [macroScore, setMacroScore] = useState(null);
 
   const loadDashboard = async () => {
     try {
       setError(null);
-      const res = await fetch(`${API_URL}/api/economic/dashboard`);
-      if (!res.ok) throw new Error('Failed to load economic intelligence');
-      setDashboard(await res.json());
+      const [dashRes, scoreRes] = await Promise.all([
+        fetch(`${API_URL}/api/economic/dashboard`),
+        fetch(`${API_URL}/api/economic/macro-score`),
+      ]);
+      if (!dashRes.ok) throw new Error('Failed to load economic intelligence');
+      setDashboard(await dashRes.json());
+      if (scoreRes.ok) setMacroScore(await scoreRes.json());
     } catch (err) {
       setError(err.message);
     } finally {
@@ -289,6 +464,9 @@ function EconomicIntelligence() {
             Refresh
           </button>
         </div>
+
+        {/* Macro Surprise Score widget */}
+        <MacroScoreWidget macroScore={macroScore} theme={theme} />
 
         {/* Overall Sentiment banner */}
         <div

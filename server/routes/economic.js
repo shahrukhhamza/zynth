@@ -20,6 +20,7 @@ import {
   analyzeISMManufacturing,
   analyzeConsumerConfidence,
   getEconomicDashboard,
+  calculateMacroSurpriseScore,
   clearEconomicCache,
 } from '../services/economicIntelligenceService.js';
 import { analyzeMacroeconomicImpact } from '../services/geminiAnalysisService.js';
@@ -193,6 +194,23 @@ router.post('/refresh', async (req, res) => {
       error: 'Failed to refresh cache',
       message: error.message,
     });
+  }
+});
+
+/**
+ * GET /api/economic/macro-score
+ * Composite macro surprise score for gold (-10 to +10)
+ */
+router.get('/macro-score', async (req, res) => {
+  try {
+    const result = await calculateMacroSurpriseScore();
+    if (result.error) {
+      return res.status(503).json({ error: 'Failed to calculate macro score', details: result.error });
+    }
+    res.json(result);
+  } catch (error) {
+    console.error('Macro score endpoint error:', error);
+    res.status(500).json({ error: 'Internal server error', message: error.message });
   }
 });
 

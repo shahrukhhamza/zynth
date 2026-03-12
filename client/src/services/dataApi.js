@@ -11,17 +11,9 @@ const api = axios.create({
   }
 });
 
-// Fetch actual gold spot price (GC=F via Yahoo Finance)
-export async function fetchGoldSpot() {
-  try {
-    const response = await api.get('/data/gold/spot');
-    if (response.data.success) return response.data.data;
-    throw new Error('Failed to fetch gold spot price');
-  } catch (error) {
-    console.error('API Error:', error);
-    return null; // non-fatal
-  }
-}
+// fetchGoldSpot() removed — gold price is now streamed in real-time via
+// Finnhub WebSocket (OANDA:XAU_USD). Use finnhubWs.onPrice() instead.
+// The /api/data/gold/spot REST endpoint has also been disabled server-side.
 
 // Fetch live price snapshot for all instruments (polls every ~10s on client)
 export async function fetchLivePrices() {

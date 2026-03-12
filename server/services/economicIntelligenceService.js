@@ -833,6 +833,90 @@ export async function getEconomicDashboard() {
 }
 
 /**
+ * Composite macro surprise score for gold (-10 to +10)
+ *
+ * Weights reflect each indicator's typical market-moving impact on XAUUSD.
+ * Raw contribution per indicator = surprisePercentage * weight, signed by impactColor.
+ * Each contribution is capped at ±20 before summing, then normalized.
+ */
+export async function calculateMacroSurpriseScore() {
+  const cacheKey = 'macro_surprise_score';
+  const cached = cache.get(cacheKey);
+  if (cached) return cached;
+
+  try {
+    const dashboard = await getEconomicDashboard();
+    if (dashboard.error) return { error: dashboard.error };
+
+    const WEIGHTS = {
+      'CPI':              2.0,
+      'NFP':              1.8,
+      'FedRate':          1.8,
+      'CorePCE':          1.6,
+      'UNEMPLOYMENT':     1.2,
+      'GDP':              1.2,
+      'JoblessClaims':    0.8,
+      'RetailSales':      0.8,
+      'ISMManufacturing': 0.7,
+      'ConsumerConf':     0.7,
+    };
+
+    const totalWeight = Object.values(WEIGHTS).reduce((a, b) => a + b, 0); // 12.6
+    const contributors = [];
+    let rawSum = 0;
+
+    for (const data of Object.values(dashboard.indicators)) {
+      if (data.error) continue;
+      const weight = WEIGHTS[data.code];
+      if (weight == null) continue;
+
+      const sp = data.surprisePercentage ?? 0;
+      let raw = 0;
+      if      (data.impactColor === 'green') raw =  sp * weight;
+      else if (data.impactColor === 'red')   raw = -(sp * weight);
+      // gray → 0
+
+      const contribution = Math.max(-20, Math.min(20, raw));
+      rawSum += contribution;
+
+      contributors.push({
+        code:         data.code,
+        indicator:    data.indicator,
+        contribution: Math.round(contribution * 100) / 100,
+        impact:       data.impact,
+        surprise:     data.surprise,
+        unit:         data.unit,
+      });
+    }
+
+    // Normalize: max possible rawSum = 20 * totalWeight → maps to ±10
+    const maxRaw = 20 * totalWeight;
+    const normalized = maxRaw > 0 ? (rawSum / maxRaw) * 10 : 0;
+    const score = Math.round(Math.max(-10, Math.min(10, normalized)) * 10) / 10;
+
+    let label;
+    if      (score >=  6) label = 'Strongly Bullish for Gold';
+    else if (score >=  2) label = 'Bullish for Gold';
+    else if (score >  -2) label = 'Neutral';
+    else if (score >  -6) label = 'Bearish for Gold';
+    else                  label = 'Strongly Bearish for Gold';
+
+    // Sort by absolute contribution so the biggest movers appear first
+    contributors.sort((a, b) => Math.abs(b.contribution) - Math.abs(a.contribution));
+
+    const result = { score, label, contributors, updatedAt: Date.now() };
+
+    cache.set(cacheKey, result, 3600);
+    console.log(`✅ Macro Surprise Score: ${score} (${label})`);
+    return result;
+
+  } catch (err) {
+    console.error('✗ Macro surprise score error:', err.message);
+    return { error: err.message };
+  }
+}
+
+/**
  * Clear cache (for testing/manual refresh)
  */
 export function clearEconomicCache() {
@@ -852,5 +936,6 @@ export default {
   analyzeISMManufacturing,
   analyzeConsumerConfidence,
   getEconomicDashboard,
+  calculateMacroSurpriseScore,
   clearEconomicCache,
 };
