@@ -74,6 +74,21 @@ router.delete('/users/:id', (req, res) => {
   }
 });
 
+// ── POST /api/admin/users/:id/reset-tries ───────────────────────────────
+router.post('/users/:id/reset-tries', (req, res) => {
+  try {
+    const id = Number(req.params.id);
+    const existing = Users.findById(id);
+    if (!existing) return res.status(404).json({ error: 'User not found.' });
+    Users.resetTries(id);
+    const row = Users.findById(id);
+    res.json({ user: row });
+  } catch (err) {
+    console.error('admin/reset-tries error:', err);
+    res.status(500).json({ error: 'Failed to reset tries.' });
+  }
+});
+
 // ── GET /api/admin/stats ──────────────────────────────────────────────────
 router.get('/stats', (req, res) => {
   try {

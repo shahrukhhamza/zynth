@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, lazy, Suspense } from 'react'
 import { useTheme } from './contexts/ThemeContext'
 import { AuthProvider, useAuth } from './contexts/AuthContext'
 import Header from './components/Header'
@@ -27,9 +27,14 @@ import LandingPage from './components/LandingPage'
 import { fetchNews } from './services/api'
 import { Loader2 } from 'lucide-react'
 
+// Lazily loaded — chunk is only downloaded when an admin user navigates to the admin view.
+// Non-admin users will never trigger this import.
+const AdminDashboard = lazy(() => import('./components/AdminDashboard'))
+
 // The main dashboard shell (only shown when authenticated)
 function AppShell() {
   const theme = useTheme();
+  const { user } = useAuth();
   const [currentView, setCurrentView] = useState('data'); // Start with data view
   const [news, setNews] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -153,7 +158,12 @@ function AppShell() {
           onApplyFilters={applyFilters}
           onResetFilters={resetFilters}
           currentView={currentView}
-          onViewChange={(view) => { setCurrentView(view); setMobileSidebarOpen(false); }}
+          onViewChange={(view) => {
+            // Hard guard: silently reject any attempt to navigate to admin
+            // from a non-admin account (belt + backend requireAdmin middleware)
+            if (view === 'admin' && user?.is_admin !== 1) return;
+            setCurrentView(view); setMobileSidebarOpen(false);
+          }}
           mobileOpen={mobileSidebarOpen}
           onClose={() => setMobileSidebarOpen(false)}
           collapsed={sidebarCollapsed}
@@ -161,7 +171,16 @@ function AppShell() {
         />
         
         {/* Main Content Area */}
-        {currentView === 'data' ? (
+        {currentView === 'admin' && user?.is_admin === 1 ? (
+          // Suspense boundary — AdminDashboard chunk loads on-demand only for admins
+          <Suspense fallback={
+            <div className="flex-1 flex items-center justify-center">
+              <Loader2 className="w-8 h-8 animate-spin" style={{ color: theme.accent }} />
+            </div>
+          }>
+            <AdminDashboard />
+          </Suspense>
+        ) : currentView === 'data' ? (
           <EconomicDashboard key="data" />
         ) : currentView === 'calendar' ? (
           <div key="calendar" className="flex-1 overflow-y-auto p-6 page-enter">

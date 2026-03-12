@@ -1,5 +1,6 @@
-import { Search, Filter, Calendar, X, BarChart3, Newspaper, Brain, BookOpen, Wifi, Camera, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Search, Filter, Calendar, X, BarChart3, Newspaper, Brain, BookOpen, Wifi, Camera, ChevronLeft, ChevronRight, Crown } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
+import { useAuth } from '../contexts/AuthContext';
 
 const NAV_ITEMS = [
   { key: 'data',         icon: BarChart3,  label: 'Economic Data',       badge: null },
@@ -24,6 +25,7 @@ function SidebarBody({
   onToggleCollapse,
   showBrand = false,
 }) {
+  const { user } = useAuth();
   return (
     <div className="flex-1 overflow-y-auto overflow-x-hidden flex flex-col">
 
@@ -143,6 +145,45 @@ function SidebarBody({
             </div>
           );
         })}
+
+        {/* Admin — only rendered when user.is_admin === 1; completely absent from DOM for all others */}
+        {user?.is_admin === 1 && (
+          <div className="sidebar-nav-item-wrapper relative group">
+            <button
+              onClick={() => onViewChange('admin')}
+              className={[
+                'w-full flex items-center rounded-xl transition-all duration-150 text-left',
+                collapsed ? 'justify-center p-2.5' : 'gap-3 px-3 py-2.5',
+              ].join(' ')}
+              style={{
+                backgroundColor: currentView === 'admin'
+                  ? (theme.isDark ? 'rgba(139,92,246,0.18)' : 'rgba(139,92,246,0.1)')
+                  : 'transparent',
+                color: currentView === 'admin' ? '#a78bfa' : theme.muted,
+                borderLeft: currentView === 'admin' && !collapsed ? '3px solid #a78bfa' : 'none',
+                paddingLeft: currentView === 'admin' && !collapsed ? 'calc(0.75rem - 3px)' : undefined,
+              }}
+              onMouseEnter={e => {
+                if (currentView !== 'admin') {
+                  e.currentTarget.style.backgroundColor = theme.isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)';
+                  e.currentTarget.style.color = theme.text;
+                }
+              }}
+              onMouseLeave={e => {
+                if (currentView !== 'admin') {
+                  e.currentTarget.style.backgroundColor = 'transparent';
+                  e.currentTarget.style.color = theme.muted;
+                }
+              }}
+            >
+              <Crown className={collapsed ? 'w-5 h-5 flex-shrink-0' : 'w-4 h-4 flex-shrink-0'} />
+              {!collapsed && <span className="text-sm font-medium flex-1 truncate">Admin</span>}
+            </button>
+            {collapsed && (
+              <div className="sidebar-tooltip"><span>Admin</span></div>
+            )}
+          </div>
+        )}
       </nav>
 
       {/* News filters — expanded + news view only */}
