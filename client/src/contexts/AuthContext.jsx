@@ -61,8 +61,18 @@ export function AuthProvider({ children }) {
     clearSession();
   }, []);
 
+  /** Call after a successful plan upgrade to refresh user in context + storage. */
+  const refreshUser = useCallback(async () => {
+    if (!token) return;
+    try {
+      const { data } = await api.get('/auth/me', { headers: { Authorization: `Bearer ${token}` } });
+      setUser(data.user);
+      localStorage.setItem(USER_KEY, JSON.stringify(data.user));
+    } catch { /* silent */ }
+  }, [token]);
+
   return (
-    <AuthContext.Provider value={{ user, token, loading, login, register, loginWithGoogle, logout }}>
+    <AuthContext.Provider value={{ user, token, loading, login, register, loginWithGoogle, logout, refreshUser }}>
       {children}
     </AuthContext.Provider>
   );

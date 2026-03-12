@@ -1,9 +1,12 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   TrendingUp, BarChart2, BookOpen, Shield, Zap, Brain, Users,
   Calendar, ChevronDown, ChevronUp, Check, ArrowRight, Menu, X,
   RefreshCw, Bot, Trophy, Activity, Bell, Star,
 } from 'lucide-react';
+import { API_URL } from '../config/api';
+
+const TOTAL_FOUNDING = 100;
 
 const NAV_LINKS = ['Features', 'Pricing', 'FAQ'];
 
@@ -191,11 +194,60 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [annual, setAnnual] = useState(true);
   const [openFaq, setOpenFaq] = useState(null);
+  const [bannerDismissed, setBannerDismissed] = useState(
+    () => sessionStorage.getItem('bannerDismissed') === '1'
+  );
+  const [spotsLeft, setSpotsLeft] = useState(72); // optimistic default
+
+  useEffect(() => {
+    fetch(`${API_URL}/api/admin/stats`)
+      .then(r => r.ok ? r.json() : null)
+      .then(d => { if (d?.totalUsers != null) setSpotsLeft(Math.max(0, TOTAL_FOUNDING - d.totalUsers)); })
+      .catch(() => {});
+  }, []);
+
+  function dismissBanner() {
+    setBannerDismissed(true);
+    sessionStorage.setItem('bannerDismissed', '1');
+  }
 
   return (
     <div className="min-h-screen bg-[#07090f] text-white overflow-x-hidden">
 
-      {/* ═══════════════════════════ NAV ═══════════════════════════ */}
+      {/* ═══════════════════════ FOUNDING MEMBER BANNER ═══════════════════════ */}
+      {!bannerDismissed && (
+        <div
+          className="relative flex items-center justify-center text-center px-12 py-3 text-[13px] font-semibold"
+          style={{
+            background: 'linear-gradient(90deg, #065f46 0%, #064e3b 40%, #0f766e 80%, #065f46 100%)',
+            borderBottom: '1px solid rgba(52,211,153,0.2)',
+          }}
+        >
+          <span>
+            🔥{' '}
+            <span className="text-emerald-300 font-bold">FOUNDING MEMBER OFFER</span>
+            {' '}—{' '}
+            First 100 users get Pro for{' '}
+            <span className="text-white font-bold">$1.99/month</span>
+            {' '}(regularly{' '}
+            <span className="line-through text-emerald-600">$9</span>)
+            {' '}·{' '}
+            <span className="text-amber-300 font-bold">Only {spotsLeft} spots remaining!</span>
+          </span>
+          <button
+            onClick={dismissBanner}
+            className="absolute right-3 top-1/2 -translate-y-1/2 w-7 h-7 flex items-center justify-center rounded-lg transition-colors"
+            style={{ color: 'rgba(167,243,208,0.6)' }}
+            onMouseOver={e => { e.currentTarget.style.color = '#fff'; e.currentTarget.style.background = 'rgba(255,255,255,0.08)'; }}
+            onMouseOut={e => { e.currentTarget.style.color = 'rgba(167,243,208,0.6)'; e.currentTarget.style.background = 'transparent'; }}
+            aria-label="Dismiss banner"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+      )}
+
+      {/* ═══════════════════════════════════════════════════════════════════ */}
       <header className="sticky top-0 z-50 border-b border-white/[0.05]"
               style={{background:'rgba(7,9,15,0.92)', backdropFilter:'blur(16px)'}}>
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
@@ -546,48 +598,97 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
             </div>
           </div>
 
+          {/* Founding member callout above grid */}
+          <div
+            className="flex items-center justify-center gap-3 mb-8 py-3 px-6 rounded-2xl border mx-auto max-w-xl"
+            style={{ background: 'rgba(245,158,11,0.07)', borderColor: 'rgba(245,158,11,0.25)' }}
+          >
+            <span className="text-lg">🔥</span>
+            <p className="text-[13px]" style={{ color: '#fbbf24' }}>
+              <span className="font-bold">FOUNDING MEMBER OFFER:</span>{' '}
+              First 100 users get Pro for{' '}
+              <span className="text-white font-bold">$1.99/month</span>{' '}
+              (regularly <span className="line-through opacity-60">$9</span>) ·{' '}
+              <span className="font-bold">Only {spotsLeft} spots left!</span>
+            </p>
+          </div>
+
           <div className="grid md:grid-cols-3 gap-6">
             {PLANS.map(plan => (
               <div key={plan.name}
-                   className={`relative rounded-2xl overflow-visible border transition-all hover:-translate-y-1 ${plan.highlight ? 'border-blue-500/40' : 'border-white/[0.06]'}`}
+                   className={`relative rounded-2xl overflow-visible border transition-all hover:-translate-y-1 ${plan.highlight ? 'border-emerald-500/40' : 'border-white/[0.06]'}`}
                    style={plan.highlight
-                     ? {background:'#0d1a36', boxShadow:'0 0 0 1px rgba(59,130,246,0.12), 0 24px 60px rgba(0,0,0,0.5)'}
+                     ? {background:'#08180f', boxShadow:'0 0 0 1px rgba(16,185,129,0.18), 0 24px 60px rgba(0,0,0,0.5)'}
                      : {background:'#0c1527'}}>
-                {plan.badge && (
+                {/* Badge row: FOUNDING MEMBER for Pro, original badge otherwise */}
+                {plan.highlight ? (
+                  <div className="absolute -top-4 left-0 right-0 flex justify-center gap-2">
+                    <span className="px-3 py-1 rounded-full text-[11px] font-bold text-white"
+                          style={{background:'linear-gradient(90deg,#059669,#0d9488)'}}>
+                      ✦ FOUNDING MEMBER
+                    </span>
+                  </div>
+                ) : plan.badge ? (
                   <div className="absolute -top-4 left-0 right-0 flex justify-center">
                     <span className="px-4 py-1 rounded-full text-[11px] font-bold text-white"
                           style={{background:'linear-gradient(90deg,#3b82f6,#6366f1)'}}>
                       {plan.badge}
                     </span>
                   </div>
-                )}
+                ) : null}
+
                 <div className="p-8 pt-10">
-                  <h3 className={`text-[22px] font-bold mb-1 ${plan.highlight ? 'text-blue-400' : 'text-white'}`}>{plan.name}</h3>
+                  <h3 className={`text-[22px] font-bold mb-1 ${plan.highlight ? 'text-emerald-400' : 'text-white'}`}>{plan.name}</h3>
                   <p className="text-[13px] text-gray-500 mb-4">{plan.desc}</p>
-                  <div className="flex items-end gap-1 mb-1">
-                    <span className="text-[16px] text-gray-400 mb-2">$</span>
-                    <span className="text-[48px] font-extrabold text-white leading-none">
-                      {annual ? plan.yearly : plan.monthly}
-                    </span>
-                    <span className="text-[13px] text-gray-500 mb-2">/month</span>
-                  </div>
-                  <p className="text-[11px] text-gray-600 mb-6">
-                    {plan.yearly === 0 ? 'Free forever' : annual ? 'if billed yearly' : 'billed monthly'}
-                  </p>
+
+                  {/* Price — Pro shows discount */}
+                  {plan.highlight ? (
+                    <div className="mb-1">
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="text-[15px] line-through text-gray-600">$9</span>
+                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-md"
+                              style={{background:'rgba(245,158,11,0.18)', color:'#fbbf24'}}>
+                          80% OFF
+                        </span>
+                      </div>
+                      <div className="flex items-end gap-1">
+                        <span className="text-[16px] text-gray-400 mb-2">$</span>
+                        <span className="text-[48px] font-extrabold text-white leading-none">1.99</span>
+                        <span className="text-[13px] text-gray-500 mb-2">/month</span>
+                      </div>
+                      <p className="text-[11px] text-amber-500/80 mb-6 font-semibold">
+                        🔥 Founding price · {spotsLeft} spots left
+                      </p>
+                    </div>
+                  ) : (
+                    <>
+                      <div className="flex items-end gap-1 mb-1">
+                        <span className="text-[16px] text-gray-400 mb-2">$</span>
+                        <span className="text-[48px] font-extrabold text-white leading-none">
+                          {annual ? plan.yearly : plan.monthly}
+                        </span>
+                        <span className="text-[13px] text-gray-500 mb-2">/month</span>
+                      </div>
+                      <p className="text-[11px] text-gray-600 mb-6">
+                        {plan.yearly === 0 ? 'Free forever' : annual ? 'if billed yearly' : 'billed monthly'}
+                      </p>
+                    </>
+                  )}
+
                   <div className="space-y-3 mb-8">
                     {plan.features.map(f => (
                       <div key={f} className="flex items-center gap-3">
-                        <Check className={`w-4 h-4 shrink-0 ${plan.highlight ? 'text-blue-400' : 'text-emerald-400'}`} />
+                        <Check className={`w-4 h-4 shrink-0 ${plan.highlight ? 'text-emerald-400' : 'text-emerald-400'}`} />
                         <span className="text-[13px] text-gray-300">{f}</span>
                       </div>
                     ))}
                   </div>
                   <button onClick={onGetStarted}
-                          className={`w-full py-3 rounded-xl text-[14px] font-semibold transition-all hover:brightness-110 ${plan.highlight ? 'text-white' : 'text-white'}`}
+                          className="w-full py-3 rounded-xl text-[14px] font-semibold transition-all hover:brightness-110 text-white"
                           style={plan.highlight
-                            ? {background:'linear-gradient(135deg,#3b82f6,#6366f1)', boxShadow:'0 4px 16px rgba(59,130,246,0.3)'}
+                            ? {background:'linear-gradient(135deg,#059669,#0d9488)', boxShadow:'0 4px 16px rgba(16,185,129,0.35)'}
                             : {background:'rgba(255,255,255,0.05)', border:'1px solid rgba(255,255,255,0.08)'}}>
-                    {plan.cta}
+                    {plan.highlight ? '🔥 Claim Founding Price' : plan.cta}
                   </button>
                 </div>
               </div>

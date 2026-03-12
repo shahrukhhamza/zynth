@@ -1,0 +1,32 @@
+import { usePlanGate } from '../hooks/usePlanGate';
+
+const PLAN_STYLES = {
+  free:  { bg: 'rgba(107,114,128,0.15)', color: '#9ca3af', border: 'rgba(107,114,128,0.3)', label: 'FREE' },
+  pro:   { bg: 'rgba(16,185,129,0.15)',  color: '#34d399', border: 'rgba(16,185,129,0.4)',  label: 'PRO' },
+  elite: { bg: 'rgba(245,158,11,0.15)',  color: '#fbbf24', border: 'rgba(245,158,11,0.4)',  label: 'ELITE' },
+  admin: { bg: 'rgba(139,92,246,0.15)',  color: '#a78bfa', border: 'rgba(139,92,246,0.4)',  label: 'ADMIN' },
+};
+
+/**
+ * Small pill badge showing the current user's plan.
+ * Renders nothing when there is no authenticated user.
+ */
+export default function PlanBadge({ className = '' }) {
+  const { plan, isAdmin } = usePlanGate();
+  const key = isAdmin ? 'admin' : (plan in PLAN_STYLES ? plan : 'free');
+  const s = PLAN_STYLES[key];
+
+  return (
+    <span
+      className={`inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold tracking-wider select-none ${className}`}
+      style={{
+        background: s.bg,
+        color: s.color,
+        border: `1px solid ${s.border}`,
+        letterSpacing: '0.1em',
+      }}
+    >
+      {s.label}
+    </span>
+  );
+}

@@ -5,6 +5,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { useState, useRef, useEffect } from 'react';
 import ProfileModal from './ProfileModal';
 import SettingsModal from './SettingsModal';
+import PlanBadge from './PlanBadge';
 
 function Header({ autoRefresh, onToggleAutoRefresh, onToggleSidebar, mobileSidebarOpen }) {
   const theme = useTheme();
@@ -200,9 +201,7 @@ function Header({ autoRefresh, onToggleAutoRefresh, onToggleSidebar, mobileSideb
                 <span className="text-sm font-semibold" style={{ color: theme.text, lineHeight: 1.2 }}>
                   {user.name?.split(' ').slice(0, 2).join(' ')}
                 </span>
-                <span className="text-xs" style={{ color: theme.muted, lineHeight: 1.2 }}>
-                  Trader
-                </span>
+                <PlanBadge className="mt-0.5" />
               </div>
 
               <ChevronDown
@@ -259,11 +258,9 @@ function Header({ autoRefresh, onToggleAutoRefresh, onToggleSidebar, mobileSideb
                         {user.email}
                       </p>
                       <div
-                        className="inline-flex items-center gap-1 mt-1.5 px-1.5 py-0.5 rounded text-xs font-medium"
-                        style={{ backgroundColor: 'rgba(59,130,246,0.15)', color: '#60a5fa' }}
+                        className="inline-flex items-center gap-1 mt-1.5"
                       >
-                        <Shield className="w-2.5 h-2.5" />
-                        Pro Trader
+                        <PlanBadge />
                       </div>
                     </div>
                   </div>
