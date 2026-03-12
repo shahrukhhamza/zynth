@@ -938,6 +938,8 @@ export function clearEconomicCache() {
   console.log('✓ Economic intelligence cache cleared');
 }
 
+export { cache };
+
 export default {
   analyzeNFP,
   analyzeCPI,

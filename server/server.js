@@ -27,6 +27,7 @@ import { getDb } from './services/journalDb.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import { getApiKeyManager } from './utils/apiKeyManager.js';
 import { finnhubService, TRACKED_SYMBOLS } from './services/finnhubService.js';
+import { startAutoReleaseScheduler, manualTrigger } from './services/autoReleaseService.js';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -78,6 +79,30 @@ app.use('/api/news', newsRouter);
 app.use('/api/data', dataRouter);
 app.use('/api/calendar', calendarRouter);
 app.use('/api/economic', economicRouter);
+
+// ── Manual economic data release trigger (admin only) ────────────────────────
+app.post('/api/economic/trigger-update', async (req, res) => {
+  const secret = req.headers['x-admin-secret'];
+  if (!process.env.ADMIN_SECRET || secret !== process.env.ADMIN_SECRET) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  const { indicatorId } = req.body;
+  if (!indicatorId || typeof indicatorId !== 'string') {
+    return res.status(400).json({ error: 'indicatorId is required' });
+  }
+
+  try {
+    const result = await manualTrigger(indicatorId, wss);
+    if (!result.success) {
+      return res.status(422).json(result);
+    }
+    return res.json(result);
+  } catch (err) {
+    console.error('trigger-update error:', err.message);
+    return res.status(500).json({ error: err.message });
+  }
+});
 app.use('/api/auth', authRouter);
 app.use('/api/finnhub', finnhubRouter);
 app.use('/api/journal', journalRouter);
@@ -255,6 +280,7 @@ httpServer.listen(PORT, () => {
         finnhubService.connect();
         finnhubService.startPolling();
         console.log('📈 Finnhub live market data service started');
+        startAutoReleaseScheduler(wss);
       } catch (err) {
         console.warn('⚠️  Finnhub init error (non-fatal):', err.message);
       }
