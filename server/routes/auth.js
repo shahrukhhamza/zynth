@@ -35,8 +35,16 @@ router.post('/register', async (req, res) => {
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
       return res.status(400).json({ error: 'Please enter a valid email address.' });
 
-    if (Users.findByEmail(email))
+    if (Users.findByEmail(email)) {
+      const existing = Users.findByEmail(email);
+      if (!existing.password_hash) {
+        return res.status(409).json({
+          error: "This email is registered via Google Sign-In. Please use 'Continue with Google' to login, or click 'Forgot Password' to set a password.",
+          code: 'GOOGLE_ONLY_ACCOUNT',
+        });
+      }
       return res.status(409).json({ error: 'An account with this email already exists.' });
+    }
 
     const password_hash = await bcrypt.hash(password, 12);
     const result = Users.createUser({ name: name.trim(), email, password_hash });
@@ -60,8 +68,14 @@ router.post('/login', async (req, res) => {
       return res.status(400).json({ error: 'Email and password are required.' });
 
     const row = Users.findByEmail(email);
-    if (!row || !row.password_hash) {
+    if (!row) {
       return res.status(401).json({ error: 'Invalid email or password.' });
+    }
+    if (!row.password_hash) {
+      return res.status(401).json({
+        error: "This account was created with Google. Please use 'Continue with Google' button to login.",
+        code: 'GOOGLE_ONLY_ACCOUNT',
+      });
     }
 
     const valid = await bcrypt.compare(password, row.password_hash);
