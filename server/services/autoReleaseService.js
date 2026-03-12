@@ -207,9 +207,37 @@ const RELEASE_SCHEDULE = [
   },
 ];
 
-// ─── Gemini fetch (with web-search grounding) ─────────────────────────────────
+// ─── Gemini API key pool + rotation ──────────────────────────────────────────
 
-// Model priority list — same pattern as geminiWebSearchService.js
+// All available keys, read once at startup (falsy values filtered out)
+const GEMINI_KEYS = [
+  process.env.GEMINI_API_KEY,
+  process.env.GEMINI_API_KEY_2,
+  process.env.GEMINI_API_KEY_3,
+].filter(Boolean);
+
+// Tracks keys that hit a 429. Maps apiKey → timestamp of exhaustion.
+// Keys are considered available again after 24 hours.
+const exhaustedKeys = new Map();
+const EXHAUSTION_TTL_MS = 24 * 60 * 60 * 1000;
+
+/**
+ * Returns the first API key that has not been rate-limited in the last 24 h,
+ * or null if every key is currently exhausted.
+ */
+function getAvailableKey() {
+  const now = Date.now();
+  for (const key of GEMINI_KEYS) {
+    const exhaustedAt = exhaustedKeys.get(key);
+    if (!exhaustedAt || now - exhaustedAt >= EXHAUSTION_TTL_MS) {
+      return key;
+    }
+  }
+  return null;
+}
+
+// ─── Gemini model priority list ───────────────────────────────────────────────
+
 const GEMINI_MODELS = [
   {
     id:   'gemini-2.0-flash',
@@ -225,9 +253,12 @@ const GEMINI_MODELS = [
   },
 ];
 
+// ─── Gemini fetch (with web-search grounding + key rotation) ─────────────────
+
 /**
  * Query Gemini (with Google Search grounding) for the latest released value
  * of a US economic indicator.
+ * Rotates through all configured API keys on 429 errors before giving up.
  *
  * @param {string} indicatorId   - e.g. 'nfp'
  * @param {string} indicatorName - human name, e.g. 'Non-Farm Payrolls'
@@ -235,9 +266,8 @@ const GEMINI_MODELS = [
  * @returns {{ actual: number, forecast: number, previous: number, date: string }|null}
  */
 export async function fetchLatestRelease(indicatorId, indicatorName, unit) {
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey || apiKey === 'demo' || apiKey === 'your_gemini_api_key_here') {
-    console.warn(`⚠️  autoRelease: GEMINI_API_KEY not configured — skipping ${indicatorName}`);
+  if (GEMINI_KEYS.length === 0) {
+    console.warn(`⚠️  autoRelease: no GEMINI_API_KEY configured — skipping ${indicatorName}`);
     return null;
   }
 
@@ -250,46 +280,72 @@ export async function fetchLatestRelease(indicatorId, indicatorName, unit) {
     `Return ONLY a JSON object with these exact fields (no markdown, no explanation): ` +
     `{ "actual": <number>, "forecast": <number>, "previous": <number>, "date": "<YYYY-MM-DD>" }`;
 
-  let lastError = null;
-
-  for (const model of GEMINI_MODELS) {
-    try {
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/${model.id}:generateContent?key=${apiKey}`;
-
-      const body = {
-        contents: [{ role: 'user', parts: [{ text: prompt }] }],
-        tools: [model.tool],
-        generationConfig: {
-          temperature:    0.05,
-          maxOutputTokens: 256,
-        },
-      };
-
-      const resp = await axios.post(url, body, {
-        headers: { 'Content-Type': 'application/json' },
-        timeout: 25000,
-      });
-
-      const raw = resp.data?.candidates?.[0]?.content?.parts
-        ?.map(p => p.text || '').join('') ?? '';
-
-      // Strip markdown fences Gemini sometimes adds
-      const cleaned = raw.replace(/```[a-z]*\n?/gi, '').replace(/```/g, '').trim();
-      const match   = cleaned.match(/\{[\s\S]*?\}/);
-      if (!match) throw new Error('No JSON object found in Gemini response');
-
-      const parsed = JSON.parse(match[0]);
-      console.log(`✅ autoRelease (${model.id}): ${indicatorName} → ${JSON.stringify(parsed)}`);
-      return parsed;
-
-    } catch (err) {
-      console.warn(`  ⚠️  autoRelease model ${model.id} failed for ${indicatorName}: ${err.message}`);
-      lastError = err;
+  // Outer loop: rotate through available API keys
+  // eslint-disable-next-line no-constant-condition
+  while (true) {
+    const apiKey = getAvailableKey();
+    if (!apiKey) {
+      console.error(`❌ autoRelease: all ${GEMINI_KEYS.length} Gemini keys exhausted (429) — skipping ${indicatorName}`);
+      return null;
     }
-  }
 
-  console.error(`❌ autoRelease: all Gemini models failed for ${indicatorName} — ${lastError?.message}`);
-  return null;
+    const keyIndex = GEMINI_KEYS.indexOf(apiKey) + 1;
+    console.log(`  🔑 autoRelease: using key ${keyIndex} of ${GEMINI_KEYS.length} for ${indicatorName}`);
+
+    let keyExhausted = false;
+
+    // Inner loop: try each model with this key
+    for (const model of GEMINI_MODELS) {
+      try {
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/${model.id}:generateContent?key=${apiKey}`;
+
+        const body = {
+          contents: [{ role: 'user', parts: [{ text: prompt }] }],
+          tools: [model.tool],
+          generationConfig: {
+            temperature:     0.05,
+            maxOutputTokens: 256,
+          },
+        };
+
+        const resp = await axios.post(url, body, {
+          headers: { 'Content-Type': 'application/json' },
+          timeout: 25000,
+        });
+
+        const raw = resp.data?.candidates?.[0]?.content?.parts
+          ?.map(p => p.text || '').join('') ?? '';
+
+        // Strip markdown fences Gemini sometimes adds
+        const cleaned = raw.replace(/```[a-z]*\n?/gi, '').replace(/```/g, '').trim();
+        const match   = cleaned.match(/\{[\s\S]*?\}/);
+        if (!match) throw new Error('No JSON object found in Gemini response');
+
+        const parsed = JSON.parse(match[0]);
+        console.log(`✅ autoRelease (key ${keyIndex}, ${model.id}): ${indicatorName} → ${JSON.stringify(parsed)}`);
+        return parsed;
+
+      } catch (err) {
+        const status = err.response?.status;
+        if (status === 429) {
+          // This key is rate-limited — mark it and break out of model loop to try next key
+          exhaustedKeys.set(apiKey, Date.now());
+          console.warn(`  ⚠️  autoRelease: key ${keyIndex} exhausted (429) — trying key ${keyIndex + 1 <= GEMINI_KEYS.length ? keyIndex + 1 : 'none'}`);
+          keyExhausted = true;
+          break;
+        }
+        // Non-429 failure: try next model with the same key
+        console.warn(`  ⚠️  autoRelease: key ${keyIndex}, model ${model.id} failed for ${indicatorName}: ${err.message}`);
+      }
+    }
+
+    // If the key wasn't exhausted (i.e. all models gave non-429 errors), give up
+    if (!keyExhausted) {
+      console.error(`❌ autoRelease: all models failed for ${indicatorName} with key ${keyIndex}`);
+      return null;
+    }
+    // Otherwise loop back and try the next available key
+  }
 }
 
 // ─── Config file updater ──────────────────────────────────────────────────────
