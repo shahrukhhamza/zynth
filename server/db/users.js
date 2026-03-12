@@ -24,7 +24,9 @@ db.exec(`
     plan_expires_at      TEXT    DEFAULT NULL,
     ai_analysis_tries    INTEGER DEFAULT 0,
     screenshot_tries     INTEGER DEFAULT 0,
-    is_admin             INTEGER DEFAULT 0
+    is_admin             INTEGER DEFAULT 0,
+    reset_token          TEXT    DEFAULT NULL,
+    reset_token_expires  TEXT    DEFAULT NULL
   )
 `);
 
@@ -35,6 +37,8 @@ const migrations = [
   'ALTER TABLE users ADD COLUMN ai_analysis_tries INTEGER DEFAULT 0',
   'ALTER TABLE users ADD COLUMN screenshot_tries INTEGER DEFAULT 0',
   'ALTER TABLE users ADD COLUMN is_admin INTEGER DEFAULT 0',
+  'ALTER TABLE users ADD COLUMN reset_token TEXT DEFAULT NULL',
+  'ALTER TABLE users ADD COLUMN reset_token_expires TEXT DEFAULT NULL',
 ];
 for (const sql of migrations) {
   try { db.exec(sql); } catch { /* column already exists — safe to ignore */ }
@@ -82,5 +86,18 @@ export const deleteUser = (id) =>
 
 export const resetTries = (id) =>
   db.prepare('UPDATE users SET ai_analysis_tries = 0, screenshot_tries = 0 WHERE id = ?').run(id);
+
+export const setResetToken = (email, token, expires) =>
+  db.prepare('UPDATE users SET reset_token = ?, reset_token_expires = ? WHERE email = ?')
+    .run(token, expires, email.toLowerCase().trim());
+
+export const findByResetToken = (token) =>
+  db.prepare('SELECT * FROM users WHERE reset_token = ?').get(token);
+
+export const clearResetToken = (id) =>
+  db.prepare('UPDATE users SET reset_token = NULL, reset_token_expires = NULL WHERE id = ?').run(id);
+
+export const setPassword = (id, password_hash) =>
+  db.prepare('UPDATE users SET password_hash = ? WHERE id = ?').run(password_hash, id);
 
 export default db;

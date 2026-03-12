@@ -24,6 +24,8 @@ import TradeJournal from './components/TradeJournal'
 import LoginPage from './components/LoginPage'
 import SignupPage from './components/SignupPage'
 import LandingPage from './components/LandingPage'
+import ForgotPasswordPage from './components/ForgotPasswordPage'
+import ResetPasswordPage from './components/ResetPasswordPage'
 import { fetchNews } from './services/api'
 import { Loader2 } from 'lucide-react'
 
@@ -229,7 +231,12 @@ export default function App() {
 
 function AuthGate() {
   const { user, loading } = useAuth()
-  const [view, setView] = useState('landing') // 'landing' | 'login' | 'signup'
+  const [view, setView] = useState(() => {
+    const path = window.location.pathname;
+    if (path === '/reset-password') return 'resetPassword';
+    if (path === '/forgot-password') return 'forgotPassword';
+    return 'landing';
+  })
 
   if (loading) {
     return (
@@ -245,7 +252,17 @@ function AuthGate() {
     return <SignupPage onSwitchToLogin={() => setView('login')} onBack={() => setView('landing')} />
 
   if (view === 'login')
-    return <LoginPage onSwitchToSignup={() => setView('signup')} onBack={() => setView('landing')} />
+    return <LoginPage
+      onSwitchToSignup={() => setView('signup')}
+      onBack={() => setView('landing')}
+      onForgotPassword={() => setView('forgotPassword')}
+    />
+
+  if (view === 'forgotPassword')
+    return <ForgotPasswordPage onBack={() => setView('login')} />
+
+  if (view === 'resetPassword')
+    return <ResetPasswordPage onBack={() => setView('login')} />
 
   return (
     <LandingPage

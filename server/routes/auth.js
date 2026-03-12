@@ -1,8 +1,10 @@
 import { Router } from 'express';
 import bcrypt from 'bcryptjs';
+import crypto from 'crypto';
 import { OAuth2Client } from 'google-auth-library';
 import * as Users from '../db/users.js';
 import { signToken, requireAuth } from '../middleware/authMiddleware.js';
+import { sendPasswordResetEmail } from '../services/emailService.js';
 
 const router = Router();
 
@@ -153,6 +155,60 @@ router.post('/upgrade-plan', requireAuth, (req, res) => {
   } catch (err) {
     console.error('upgrade-plan error:', err);
     res.status(500).json({ error: 'Plan upgrade failed.' });
+  }
+});
+
+// ── POST /api/auth/forgot-password ────────────────────────────────────────
+router.post('/forgot-password', async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email?.trim())
+      return res.status(400).json({ error: 'Email is required.' });
+
+    const row = Users.findByEmail(email);
+    if (row) {
+      const token   = crypto.randomBytes(32).toString('hex');
+      const expires = new Date(Date.now() + 3_600_000).toISOString(); // 1 hour
+      Users.setResetToken(email, token, expires);
+
+      const resetLink = `${process.env.CLIENT_URL}/reset-password?token=${token}`;
+      await sendPasswordResetEmail(email, resetLink, row.name);
+    }
+
+    // Always respond the same way — never reveal whether the email exists
+    res.json({ message: 'If this email exists you will receive a reset link.' });
+  } catch (err) {
+    console.error('forgot-password error:', err);
+    res.status(500).json({ error: 'Failed to process request. Please try again.' });
+  }
+});
+
+// ── POST /api/auth/reset-password ─────────────────────────────────────────
+router.post('/reset-password', async (req, res) => {
+  try {
+    const { token, newPassword } = req.body;
+
+    if (!token || !newPassword)
+      return res.status(400).json({ error: 'Token and new password are required.' });
+
+    if (newPassword.length < 8)
+      return res.status(400).json({ error: 'Password must be at least 8 characters.' });
+
+    const row = Users.findByResetToken(token);
+    if (!row)
+      return res.status(400).json({ error: 'Invalid or expired reset link.' });
+
+    if (new Date(row.reset_token_expires) < new Date())
+      return res.status(400).json({ error: 'Reset link has expired. Please request a new one.' });
+
+    const password_hash = await bcrypt.hash(newPassword, 12);
+    Users.setPassword(row.id, password_hash);
+    Users.clearResetToken(row.id);
+
+    res.json({ message: 'Password updated successfully.' });
+  } catch (err) {
+    console.error('reset-password error:', err);
+    res.status(500).json({ error: 'Failed to reset password. Please try again.' });
   }
 });
 

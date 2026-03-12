@@ -18,7 +18,7 @@ const FEATURES = [
   { Icon: BarChart2,title: 'AI-powered insights',  desc: 'Smart trade analysis'        },
 ];
 
-export default function LoginPage({ onSwitchToSignup, onBack }) {
+export default function LoginPage({ onSwitchToSignup, onBack, onForgotPassword }) {
   const { login, loginWithGoogle } = useAuth();
   useEffect(() => { window.scrollTo(0, 0); }, []);
   const [email, setEmail]         = useState('');
@@ -290,7 +290,7 @@ export default function LoginPage({ onSwitchToSignup, onBack }) {
                 <div className="space-y-1">
                   <div className="flex justify-between items-center">
                     <label className="block text-[10px] font-bold text-gray-600 uppercase tracking-widest">Password</label>
-                    <button type="button" className="text-[11px] text-emerald-500 hover:text-emerald-400 font-medium transition-colors">Forgot password?</button>
+                    <button type="button" onClick={onForgotPassword} className="text-[11px] text-emerald-500 hover:text-emerald-400 font-medium transition-colors">Forgot password?</button>
                   </div>
                   <div className="relative">
                     <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-[13px] h-[13px] text-gray-600 pointer-events-none" />
