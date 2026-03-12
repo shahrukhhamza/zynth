@@ -209,25 +209,31 @@ const RELEASE_SCHEDULE = [
 
 // ─── Gemini API key pool + rotation ──────────────────────────────────────────
 
-// All available keys, read once at startup (falsy values filtered out)
-const GEMINI_KEYS = [
-  process.env.GEMINI_API_KEY,
-  process.env.GEMINI_API_KEY_2,
-  process.env.GEMINI_API_KEY_3,
-].filter(Boolean);
-
 // Tracks keys that hit a 429. Maps apiKey → timestamp of exhaustion.
 // Keys are considered available again after 24 hours.
 const exhaustedKeys = new Map();
 const EXHAUSTION_TTL_MS = 24 * 60 * 60 * 1000;
 
 /**
+ * Reads all configured Gemini keys at call time (after dotenv has loaded).
+ * Filters out falsy values.
+ */
+function getGeminiKeys() {
+  return [
+    process.env.GEMINI_API_KEY,
+    process.env.GEMINI_API_KEY_2,
+    process.env.GEMINI_API_KEY_3,
+  ].filter(Boolean);
+}
+
+/**
  * Returns the first API key that has not been rate-limited in the last 24 h,
  * or null if every key is currently exhausted.
  */
 function getAvailableKey() {
+  const keys = getGeminiKeys();
   const now = Date.now();
-  for (const key of GEMINI_KEYS) {
+  for (const key of keys) {
     const exhaustedAt = exhaustedKeys.get(key);
     if (!exhaustedAt || now - exhaustedAt >= EXHAUSTION_TTL_MS) {
       return key;
@@ -266,7 +272,8 @@ const GEMINI_MODELS = [
  * @returns {{ actual: number, forecast: number, previous: number, date: string }|null}
  */
 export async function fetchLatestRelease(indicatorId, indicatorName, unit) {
-  if (GEMINI_KEYS.length === 0) {
+  const geminiKeys = getGeminiKeys();
+  if (geminiKeys.length === 0) {
     console.warn(`⚠️  autoRelease: no GEMINI_API_KEY configured — skipping ${indicatorName}`);
     return null;
   }
@@ -285,12 +292,12 @@ export async function fetchLatestRelease(indicatorId, indicatorName, unit) {
   while (true) {
     const apiKey = getAvailableKey();
     if (!apiKey) {
-      console.error(`❌ autoRelease: all ${GEMINI_KEYS.length} Gemini keys exhausted (429) — skipping ${indicatorName}`);
+      console.error(`❌ autoRelease: all ${geminiKeys.length} Gemini keys exhausted (429) — skipping ${indicatorName}`);
       return null;
     }
 
-    const keyIndex = GEMINI_KEYS.indexOf(apiKey) + 1;
-    console.log(`  🔑 autoRelease: using key ${keyIndex} of ${GEMINI_KEYS.length} for ${indicatorName}`);
+    const keyIndex = geminiKeys.indexOf(apiKey) + 1;
+    console.log(`  🔑 autoRelease: using key ${keyIndex} of ${geminiKeys.length} for ${indicatorName}`);
 
     let keyExhausted = false;
 
@@ -330,7 +337,7 @@ export async function fetchLatestRelease(indicatorId, indicatorName, unit) {
         if (status === 429) {
           // This key is rate-limited — mark it and break out of model loop to try next key
           exhaustedKeys.set(apiKey, Date.now());
-          console.warn(`  ⚠️  autoRelease: key ${keyIndex} exhausted (429) — trying key ${keyIndex + 1 <= GEMINI_KEYS.length ? keyIndex + 1 : 'none'}`);
+          console.warn(`  ⚠️  autoRelease: key ${keyIndex} exhausted (429) — trying key ${keyIndex + 1 <= geminiKeys.length ? keyIndex + 1 : 'none'}`);
           keyExhausted = true;
           break;
         }
