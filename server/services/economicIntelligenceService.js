@@ -836,8 +836,11 @@ export async function getEconomicDashboard() {
  * Composite macro surprise score for gold (-10 to +10)
  *
  * Weights reflect each indicator's typical market-moving impact on XAUUSD.
- * Raw contribution per indicator = surprisePercentage * weight, signed by impactColor.
- * Each contribution is capped at ±20 before summing, then normalized.
+ * Contribution per indicator uses a tiered magnitude based on |surprisePercentage|:
+ *   >= 20% → 3 (large), >= 10% → 2 (medium), >= 3% → 1 (small), < 3% → 0.3 (tiny)
+ *   surprise === null or 0 → 0
+ * contribution = magnitude * weight * direction  (direction: +1 green, -1 red, 0 gray)
+ * Normalized over max possible rawSum = 3 * 12.6 = 37.8
  */
 export async function calculateMacroSurpriseScore() {
   const cacheKey = 'macro_surprise_score';
@@ -861,7 +864,10 @@ export async function calculateMacroSurpriseScore() {
       'ConsumerConf':     0.7,
     };
 
-    const totalWeight = Object.values(WEIGHTS).reduce((a, b) => a + b, 0); // 12.6
+    const MAX_MAGNITUDE  = 3;    // used for normalisation
+    const TOTAL_WEIGHT   = Object.values(WEIGHTS).reduce((a, b) => a + b, 0); // 12.6
+    const MAX_RAW        = MAX_MAGNITUDE * TOTAL_WEIGHT; // 37.8
+
     const contributors = [];
     let rawSum = 0;
 
@@ -870,13 +876,22 @@ export async function calculateMacroSurpriseScore() {
       const weight = WEIGHTS[data.code];
       if (weight == null) continue;
 
-      const sp = data.surprisePercentage ?? 0;
-      let raw = 0;
-      if      (data.impactColor === 'green') raw =  sp * weight;
-      else if (data.impactColor === 'red')   raw = -(sp * weight);
-      // gray → 0
+      // Tiered magnitude
+      let magnitude = 0;
+      if (data.surprise !== null && data.surprise !== 0) {
+        const absSP = Math.abs(data.surprisePercentage ?? 0);
+        if      (absSP >= 20) magnitude = 3;
+        else if (absSP >= 10) magnitude = 2;
+        else if (absSP >= 3)  magnitude = 1;
+        else                  magnitude = 0.3;
+      }
 
-      const contribution = Math.max(-20, Math.min(20, raw));
+      // Direction
+      let direction = 0;
+      if      (data.impactColor === 'green') direction =  1;
+      else if (data.impactColor === 'red')   direction = -1;
+
+      const contribution = magnitude * weight * direction;
       rawSum += contribution;
 
       contributors.push({
@@ -889,9 +904,8 @@ export async function calculateMacroSurpriseScore() {
       });
     }
 
-    // Normalize: max possible rawSum = 20 * totalWeight → maps to ±10
-    const maxRaw = 20 * totalWeight;
-    const normalized = maxRaw > 0 ? (rawSum / maxRaw) * 10 : 0;
+    // Normalize: max rawSum = MAX_MAGNITUDE * TOTAL_WEIGHT = 37.8 → maps to ±10
+    const normalized = MAX_RAW > 0 ? (rawSum / MAX_RAW) * 10 : 0;
     const score = Math.round(Math.max(-10, Math.min(10, normalized)) * 10) / 10;
 
     let label;
