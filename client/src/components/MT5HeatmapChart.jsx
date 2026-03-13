@@ -128,12 +128,12 @@ function CellModal({ cell, onClose }) {
       style={{ backgroundColor: 'rgba(0,0,0,0.65)', backdropFilter: 'blur(4px)' }}
       onClick={onClose}>
       <div className="rounded-xl shadow-2xl w-80 overflow-hidden"
-        style={{ backgroundColor: '#0f1729', border: '1px solid #1e2d4a' }}
+        style={{ backgroundColor: '#161616', border: '1px solid #2a2a2a' }}
         onClick={e => e.stopPropagation()}>
 
-        <div className="flex items-center justify-between px-4 py-3 border-b" style={{ borderColor: '#1e2d4a' }}>
+        <div className="flex items-center justify-between px-4 py-3 border-b" style={{ borderColor: '#2a2a2a' }}>
           <div>
-            <span className="font-bold text-sm" style={{ color: '#e2e8f0' }}>
+            <span className="font-bold text-sm" style={{ color: '#e8e8e8' }}>
               {cell.day_name}&nbsp;
             </span>
             <span className="text-sm font-mono" style={{ color: session.color }}>
@@ -144,10 +144,10 @@ function CellModal({ cell, onClose }) {
             </div>
           </div>
           <button onClick={onClose} className="rounded-md px-2 py-1 text-xs"
-            style={{ color: '#64748b', backgroundColor: '#1e2d4a' }}>ESC</button>
+            style={{ color: '#64748b', backgroundColor: '#2a2a2a' }}>ESC</button>
         </div>
 
-        <div className="grid grid-cols-2 gap-px" style={{ backgroundColor: '#1e2d4a' }}>
+        <div className="grid grid-cols-2 gap-px" style={{ backgroundColor: '#2a2a2a' }}>
           {[
             { label: 'Total Trades', val: cell.count,                                  color: '#94a3b8' },
             { label: 'Total P&L',    val: fmt$(cell.profit),                            color: cell.profit >= 0 ? '#22c55e' : '#ef4444' },
@@ -156,7 +156,7 @@ function CellModal({ cell, onClose }) {
             { label: 'Wins',         val: cell.wins ?? '--',                            color: '#22c55e' },
             { label: 'Losses',       val: cell.losses ?? '--',                          color: '#ef4444' },
           ].map(s => (
-            <div key={s.label} className="px-4 py-3" style={{ backgroundColor: '#0f1729' }}>
+            <div key={s.label} className="px-4 py-3" style={{ backgroundColor: '#161616' }}>
               <div className="text-xs mb-1" style={{ color: '#475569' }}>{s.label}</div>
               <div className="text-base font-bold tabular-nums" style={{ color: s.color }}>{s.val}</div>
             </div>
@@ -164,7 +164,7 @@ function CellModal({ cell, onClose }) {
         </div>
 
         {cell.wins != null && cell.count > 0 && (
-          <div className="px-4 py-3 border-t" style={{ borderColor: '#1e2d4a' }}>
+          <div className="px-4 py-3 border-t" style={{ borderColor: '#2a2a2a' }}>
             <div className="text-xs mb-2" style={{ color: '#475569' }}>Win / Loss Distribution</div>
             <div className="flex rounded-sm overflow-hidden h-2">
               <div style={{ width: `${(cell.wins / cell.count) * 100}%`, backgroundColor: '#22c55e' }} />
@@ -239,24 +239,24 @@ export default function MT5HeatmapChart({ heatmap }) {
   if (!heatmap?.length) {
     return (
       <div className="rounded-xl p-12 text-center"
-        style={{ backgroundColor: '#0b1120', border: '1px solid #1e2d4a' }}>
-        <div style={{ width: 40, height: 40, borderRadius: 10, border: '2px solid #1e2d4a', margin: '0 auto 12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        style={{ backgroundColor: theme.surface, border: `1px solid ${theme.border}` }}>
+        <div style={{ width: 40, height: 40, borderRadius: 10, border: `2px solid ${theme.border}`, margin: '0 auto 12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,7px)', gap: 2 }}>
-            {[...Array(9)].map((_,i) => <div key={i} style={{ height: 7, borderRadius: 1, backgroundColor: '#1e2d4a' }} />)}
+            {[...Array(9)].map((_,i) => <div key={i} style={{ height: 7, borderRadius: 1, backgroundColor: theme.border }} />)}
           </div>
         </div>
-        <p className="text-sm font-medium" style={{ color: '#475569' }}>No heatmap data yet</p>
-        <p className="text-xs mt-1" style={{ color: '#334155' }}>Import trades to see performance patterns</p>
+        <p className="text-sm font-medium" style={{ color: theme.muted }}>No heatmap data yet</p>
+        <p className="text-xs mt-1" style={{ color: theme.muted }}>Import trades to see performance patterns</p>
       </div>
     );
   }
 
-  const BG   = '#0b1120';
-  const SURF = '#0f1729';
-  const BORD = '#1e2d4a';
-  const MUTE = '#475569';
-  const TEXT = '#e2e8f0';
-  const SUBT = '#94a3b8';
+  const BG   = theme.bg;
+  const SURF = theme.surface;
+  const BORD = theme.border;
+  const MUTE = theme.muted;
+  const TEXT = theme.text;
+  const SUBT = theme.textMuted;
 
   return (
     <>
@@ -282,7 +282,7 @@ export default function MT5HeatmapChart({ heatmap }) {
               <button key={m.key} onClick={() => setMode(m.key)}
                 className="px-3 py-1 text-xs font-semibold tracking-wide transition-all duration-200"
                 style={{
-                  backgroundColor: mode === m.key ? '#1d4ed8' : 'transparent',
+                  backgroundColor: mode === m.key ? theme.accent : 'transparent',
                   color: mode === m.key ? '#fff' : MUTE,
                   borderRight: `1px solid ${BORD}`,
                 }}>
@@ -547,13 +547,13 @@ export default function MT5HeatmapChart({ heatmap }) {
             top: tooltip.y - 125,
             left: tooltip.x,
             transform: 'translateX(-50%)',
-            backgroundColor: '#0f1729',
-            border: '1px solid #1e2d4a',
+            backgroundColor: SURF,
+            border: `1px solid ${BORD}`,
             padding: '8px 12px',
             minWidth: 152,
             boxShadow: '0 8px 32px rgba(0,0,0,0.6)',
           }}>
-          <div style={{ position: 'absolute', bottom: -5, left: '50%', transform: 'translateX(-50%)', width: 8, height: 8, backgroundColor: '#0f1729', border: '1px solid #1e2d4a', borderTop: 'none', borderLeft: 'none', rotate: '45deg' }} />
+          <div style={{ position: 'absolute', bottom: -5, left: '50%', transform: 'translateX(-50%)', width: 8, height: 8, backgroundColor: SURF, border: `1px solid ${BORD}`, borderTop: 'none', borderLeft: 'none', rotate: '45deg' }} />
           <div className="flex items-center justify-between mb-2">
             <span className="font-bold" style={{ color: TEXT, fontSize: 12 }}>
               {tooltip.cell.day_name}{' '}
@@ -561,7 +561,7 @@ export default function MT5HeatmapChart({ heatmap }) {
                 {String(tooltip.cell.hour).padStart(2,'0')}:00
               </span>
             </span>
-            <span className="text-xs px-1.5 py-0.5 rounded" style={{ backgroundColor: '#1e2d4a', color: MUTE }}>
+            <span className="text-xs px-1.5 py-0.5 rounded" style={{ backgroundColor: BORD, color: MUTE }}>
               {sessionOf(tooltip.cell.hour).label}
             </span>
           </div>
@@ -578,7 +578,7 @@ export default function MT5HeatmapChart({ heatmap }) {
               <strong style={{ fontSize: 11, color, fontFamily: 'monospace' }}>{val}</strong>
             </div>
           ))}
-          <div className="mt-1.5 pt-1.5" style={{ borderTop: '1px solid #1e2d4a', fontSize: 9, color: '#334155', textAlign: 'center' }}>
+          <div className="mt-1.5 pt-1.5" style={{ borderTop: `1px solid ${BORD}`, fontSize: 9, color: MUTE, textAlign: 'center' }}>
             Click cell for full details
           </div>
         </div>

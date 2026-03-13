@@ -8,6 +8,7 @@
  */
 
 import express from 'express';
+import { requireAuth, requirePro } from '../middleware/authMiddleware.js';
 import {
   analyzeNFP,
   analyzeCPI,
@@ -26,6 +27,9 @@ import {
 import { analyzeMacroeconomicImpact } from '../services/geminiAnalysisService.js';
 
 const router = express.Router();
+
+// All economic intelligence endpoints require a Pro or Elite plan
+router.use(requireAuth, requirePro);
 
 /**
  * GET /api/economic/nfp

@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react';
 import { X, Check, Zap, Lock } from 'lucide-react';
+import { useTheme } from '../contexts/ThemeContext';
 
 const TOTAL_FOUNDING = 100;
 
 const PRO_FEATURES = [
-  'Unlimited AI trade analysis',
-  'Unlimited screenshot OCR imports',
-  'MT4 / MT5 real-time sync',
+  'AI Trade Analysis: 50/month',
+  'Screenshot OCR: 35/month',
+  'Unlimited journal entries',
   'Live market feeds',
   'Advanced journaling & charting',
   'Priority support',
@@ -22,6 +23,7 @@ const PRO_FEATURES = [
  *   spotsUsed     — number (current user count fetched from /api/admin/stats)
  */
 export default function UpgradeModal({ open, onClose, onUpgrade, spotsUsed = 0 }) {
+  const theme = useTheme();
   const [visible, setVisible] = useState(open);
 
   useEffect(() => {
@@ -52,7 +54,7 @@ export default function UpgradeModal({ open, onClose, onUpgrade, spotsUsed = 0 }
           boxShadow: '0 40px 120px rgba(0,0,0,0.9), 0 0 60px rgba(16,185,129,0.15)',
         }}
       >
-        <div className="rounded-2xl overflow-hidden" style={{ background: '#07111e' }}>
+        <div className="rounded-2xl overflow-hidden" style={{ background: theme.surface }}>
 
           {/* Close */}
           <button
@@ -107,7 +109,7 @@ export default function UpgradeModal({ open, onClose, onUpgrade, spotsUsed = 0 }
                   <span className="text-[28px] font-extrabold text-white">$0</span>
                   <span className="text-[12px] mb-1.5" style={{ color: '#6b7280' }}>/mo</span>
                 </div>
-                {['3 AI analyses total', '2 screenshot imports', 'Basic analytics', 'Community access'].map(f => (
+                {['3 AI analyses/month', '2 screenshot imports/month', 'Basic analytics', 'Community access'].map(f => (
                   <div key={f} className="flex items-center gap-2 mb-2">
                     <div className="w-1.5 h-1.5 rounded-full bg-gray-600 shrink-0" />
                     <span className="text-[12px]" style={{ color: '#6b7280' }}>{f}</span>

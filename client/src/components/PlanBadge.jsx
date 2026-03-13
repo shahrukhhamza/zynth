@@ -1,10 +1,10 @@
 import { usePlanGate } from '../hooks/usePlanGate';
 
 const PLAN_STYLES = {
-  free:  { bg: 'rgba(107,114,128,0.15)', color: '#9ca3af', border: 'rgba(107,114,128,0.3)', label: 'FREE' },
-  pro:   { bg: 'rgba(16,185,129,0.15)',  color: '#34d399', border: 'rgba(16,185,129,0.4)',  label: 'PRO' },
-  elite: { bg: 'rgba(245,158,11,0.15)',  color: '#fbbf24', border: 'rgba(245,158,11,0.4)',  label: 'ELITE' },
-  admin: { bg: 'rgba(139,92,246,0.15)',  color: '#a78bfa', border: 'rgba(139,92,246,0.4)',  label: 'ADMIN' },
+  free:  { bg: 'rgba(107,114,128,0.15)', color: '#9ca3af', border: 'rgba(107,114,128,0.3)', label: 'Basic' },
+  pro:   { bg: 'rgba(16,185,129,0.15)',  color: '#34d399', border: 'rgba(16,185,129,0.4)',  label: 'Pro' },
+  elite: { bg: 'rgba(245,158,11,0.15)',  color: '#fbbf24', border: 'rgba(245,158,11,0.4)',  label: 'Elite' },
+  admin: { bg: 'rgba(139,92,246,0.15)',  color: '#a78bfa', border: 'rgba(139,92,246,0.4)',  label: 'Admin' },
 };
 
 /**

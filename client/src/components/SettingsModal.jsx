@@ -86,9 +86,9 @@ export default function SettingsModal({ onClose, autoRefresh, onToggleAutoRefres
           <div className="flex items-center gap-3">
             <div
               className="w-9 h-9 rounded-xl flex items-center justify-center"
-              style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)' }}
+              style={{ backgroundColor: theme.accentGlow, border: `1px solid ${theme.accent}40` }}
             >
-              <Settings className="w-5 h-5" style={{ color: '#fff' }} />
+              <Settings className="w-5 h-5" style={{ color: theme.accent }} />
             </div>
             <div>
               <h2 className="text-base font-bold" style={{ color: theme.text }}>Settings</h2>

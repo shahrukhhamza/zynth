@@ -29,6 +29,7 @@ import { getApiKeyManager } from './utils/apiKeyManager.js';
 import { finnhubService, TRACKED_SYMBOLS } from './services/finnhubService.js';
 import { startAutoReleaseScheduler, manualTrigger } from './services/autoReleaseService.js';
 import adminRouter from './routes/admin.js';
+import { requireAuth, checkScreenshotTries } from './middleware/authMiddleware.js';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -54,7 +55,8 @@ app.use(cors({
   preflightContinue: false,
   optionsSuccessStatus: 204,
 }));
-app.use(express.json());
+app.use(express.json({ limit: '5mb' }));
+app.use(express.urlencoded({ extended: true, limit: '5mb' }));
 
 // Routes
 app.get('/api/health', (req, res) => {
@@ -112,6 +114,12 @@ app.use('/api/journal', journalRouter);
 // ── /mt5 proxy → Python screenshot service ──────────────────────────────────
 // In production set PYTHON_SERVICE_URL=https://ai-dashboard-python.onrender.com
 // In dev it falls back to http://localhost:8000
+
+// Auth guard — all MT5 endpoints require a valid JWT
+app.use('/mt5', requireAuth);
+// Screenshot OCR endpoint — also check per-plan try budget BEFORE proxying
+app.post('/mt5/upload-trade-screenshot', checkScreenshotTries, (_req, _res, next) => next());
+
 const _PYTHON_SERVICE_URL = process.env.PYTHON_SERVICE_URL || 'http://localhost:8000';
 const _pythonTarget = new URL(_PYTHON_SERVICE_URL);
 const _pythonIsHttps = _pythonTarget.protocol === 'https:';
@@ -147,12 +155,15 @@ app.all('/mt5/*', (req, res) => {
 // Serve screenshot uploads
 app.use('/uploads', express.static(join(__dirname, 'uploads')));
 
+// Ensure avatar upload directory exists on startup
+mkdirSync(join(__dirname, 'uploads', 'avatars'), { recursive: true });
+
 // Init journal DB on startup
 try { getDb(); } catch (e) { console.error('Journal DB init error:', e.message); }
 
 // Serve React frontend static build (production)
 const clientBuildPath = join(__dirname, '..', 'client', 'dist');
-import { existsSync } from 'fs';
+import { existsSync, mkdirSync } from 'fs';
 if (existsSync(clientBuildPath)) {
   app.use(express.static(clientBuildPath));
   // For React Router — send index.html for any non-API route

@@ -127,6 +127,15 @@ export function countTrades(userId = 'default') {
   return getDb().prepare('SELECT COUNT(*) AS n FROM trades WHERE user_id = ?').get(userId).n;
 }
 
+export function countTradesThisMonth(userId = 'default') {
+  const start = new Date();
+  start.setUTCDate(1);
+  start.setUTCHours(0, 0, 0, 0);
+  return getDb()
+    .prepare("SELECT COUNT(*) AS n FROM trades WHERE user_id = ? AND created_at >= ?")
+    .get(userId, start.toISOString()).n;
+}
+
 // ── Trade Journals ────────────────────────────────────────────────────────────
 export function upsertJournal(tradeId, data) {
   const db  = getDb();

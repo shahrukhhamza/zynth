@@ -16,6 +16,8 @@ import {
   Database,
 } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
+import { useTimezone } from '../contexts/TimezoneContext';
+import { usePlanGate } from '../hooks/usePlanGate';
 import { getScreenshotReport } from '../services/mt5Api';
 import ScreenshotUpload from './ScreenshotUpload';
 import MT5PerformanceStats   from './MT5PerformanceStats';
@@ -24,6 +26,8 @@ import MT5AIInsights         from './MT5AIInsights';
 import MT5BehaviorInsights   from './MT5BehaviorInsights';
 import MT5HeatmapChart       from './MT5HeatmapChart';
 import MT5TradeHistory       from './MT5TradeHistory';
+import PlanGateBanner from './PlanGateBanner';
+import ProfileModal from './ProfileModal';
 
 // ── Tab definitions ────────────────────────────────────────────────────────
 const TABS = [
@@ -51,6 +55,9 @@ function saveCache(result) {
 
 export default function ScreenshotImportDashboard() {
   const theme = useTheme();
+  const { formatDateWithTimezone } = useTimezone();
+  const { isFree, screenshotTriesLeft } = usePlanGate();
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
 
   // Seed state from localStorage cache immediately — data visible before service responds
   const [data,          setData]          = useState(() => loadCache());
@@ -129,6 +136,18 @@ export default function ScreenshotImportDashboard() {
 
   return (
     <div className="flex-1 overflow-y-auto">
+      {/* Plan gate banner for free users */}
+      {isFree && (
+        <div className="px-6 pt-4">
+          <PlanGateBanner
+            feature="Screenshot Analysis"
+            requiredPlan="Pro"
+            description={`You have ${screenshotTriesLeft} free AI analysis ${screenshotTriesLeft === 1 ? 'try' : 'tries'} remaining. Upgrade for unlimited screenshot analysis.`}
+            onUpgradeClick={() => setShowUpgradeModal(true)}
+          />
+        </div>
+      )}
+      {showUpgradeModal && <ProfileModal onClose={() => setShowUpgradeModal(false)} />}
       {/* ── Header ── */}
       <div
         className="sticky top-0 z-10 px-6 py-4 border-b"
@@ -251,9 +270,7 @@ export default function ScreenshotImportDashboard() {
               <p className="text-xs mt-1 flex items-center gap-1" style={{ color: theme.muted }}>
                 <Database className="w-3 h-3" />
                 Showing data cached on{' '}
-                {new Date(cachedAt).toLocaleString([], {
-                  month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit',
-                })}
+                {formatDateWithTimezone(new Date(cachedAt), 'MMM dd, yyyy HH:mm')}
               </p>
             )}
           </div>

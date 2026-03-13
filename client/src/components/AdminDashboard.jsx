@@ -3,8 +3,11 @@ import { useTheme } from '../contexts/ThemeContext';
 import { useAuth } from '../contexts/AuthContext';
 import { API_URL } from '../config/api';
 import {
+  BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell,
+} from 'recharts';
+import {
   Users, Crown, Trash2, Search, RefreshCw,
-  DollarSign, Zap, Shield, X, TrendingUp,
+  DollarSign, Zap, Shield, X, TrendingUp, Download, CalendarDays, CalendarCheck,
 } from 'lucide-react';
 
 /* ── helpers ─────────────────────────────────────────────────────── */
@@ -165,12 +168,28 @@ function AdminDashboardInner() {
 
   const estRevenue = stats ? stats.proUsers * 9 + stats.eliteUsers * 25 : 0;
 
+  async function exportCSV() {
+    try {
+      const r = await fetch(`${API_URL}/api/admin/export-emails`, { headers: authH() });
+      if (!r.ok) throw new Error('Export failed');
+      const blob = await r.blob();
+      const url  = URL.createObjectURL(blob);
+      const a    = document.createElement('a');
+      a.href     = url;
+      a.download = `users-${new Date().toISOString().slice(0, 10)}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch (e) { showToast('err', e.message); }
+  }
+
   const STAT_CARDS = [
-    { label: 'Total Users',  value: stats?.totalUsers  ?? '—', color: '#60a5fa', Icon: Users      },
-    { label: 'Pro Users',    value: stats?.proUsers    ?? '—', color: '#34d399', Icon: Zap        },
-    { label: 'Elite Users',  value: stats?.eliteUsers  ?? '—', color: '#fbbf24', Icon: Crown      },
-    { label: 'Free Users',   value: stats?.freeUsers   ?? '—', color: '#9ca3af', Icon: Shield     },
-    { label: 'Est. Revenue', value: stats ? `$${estRevenue}/mo` : '—', color: '#a78bfa', Icon: DollarSign },
+    { label: 'Total Signups', value: stats?.totalUsers  ?? '—', color: '#60a5fa', Icon: Users         },
+    { label: 'Today',        value: stats?.todaySignups ?? '—', color: '#34d399', Icon: CalendarCheck  },
+    { label: 'This Week',    value: stats?.weekSignups  ?? '—', color: '#a78bfa', Icon: CalendarDays   },
+    { label: 'Pro Users',    value: stats?.proUsers     ?? '—', color: '#10b981', Icon: Zap            },
+    { label: 'Elite Users',  value: stats?.eliteUsers   ?? '—', color: '#fbbf24', Icon: Crown          },
+    { label: 'Free Users',   value: stats?.freeUsers    ?? '—', color: '#9ca3af', Icon: Shield         },
+    { label: 'Est. Revenue', value: stats ? `$${estRevenue}/mo` : '—', color: '#f59e0b', Icon: DollarSign },
   ];
 
   const QA_ACTIONS = [
@@ -213,18 +232,28 @@ function AdminDashboardInner() {
               Manage users, plans and platform settings
             </p>
           </div>
-          <button
-            onClick={() => { loadStats(); loadUsers(); }}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-[13px] font-semibold border transition-all hover:brightness-110"
-            style={{ background: theme.isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)', color: theme.text, borderColor: theme.border }}
-          >
-            <RefreshCw className="w-4 h-4" />
-            Refresh
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={exportCSV}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-[13px] font-semibold border transition-all hover:brightness-110"
+              style={{ background: 'rgba(16,185,129,0.10)', color: '#34d399', borderColor: 'rgba(16,185,129,0.3)' }}
+            >
+              <Download className="w-4 h-4" />
+              Export CSV
+            </button>
+            <button
+              onClick={() => { loadStats(); loadUsers(); }}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-[13px] font-semibold border transition-all hover:brightness-110"
+              style={{ background: theme.isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)', color: theme.text, borderColor: theme.border }}
+            >
+              <RefreshCw className="w-4 h-4" />
+              Refresh
+            </button>
+          </div>
         </div>
 
         {/* Stats bar */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-5 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-4 xl:grid-cols-7 gap-3">
           {STAT_CARDS.map(({ label, value, color, Icon }) => (
             <div key={label} className="rounded-2xl p-4 border" style={{ background: theme.surface, borderColor: theme.border }}>
               <div className="flex items-center justify-between mb-3">
@@ -239,6 +268,52 @@ function AdminDashboardInner() {
               }
             </div>
           ))}
+        </div>
+
+        {/* Signup chart — last 30 days */}
+        <div className="rounded-2xl border p-5" style={{ background: theme.surface, borderColor: theme.border }}>
+          <h2 className="text-[14px] font-bold mb-4" style={{ color: theme.text }}>New Signups — Last 30 Days</h2>
+          {statsLoading ? (
+            <div className="h-40 rounded-xl animate-pulse" style={{ background: theme.border }} />
+          ) : (
+            <ResponsiveContainer width="100%" height={160}>
+              <BarChart data={stats?.signupsByDay ?? []} margin={{ top: 4, right: 4, left: -28, bottom: 0 }}>
+                <XAxis
+                  dataKey="label"
+                  tick={{ fill: theme.muted, fontSize: 10 }}
+                  tickLine={false}
+                  axisLine={false}
+                  interval={4}
+                />
+                <YAxis
+                  tick={{ fill: theme.muted, fontSize: 10 }}
+                  tickLine={false}
+                  axisLine={false}
+                  allowDecimals={false}
+                />
+                <Tooltip
+                  cursor={{ fill: theme.isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)' }}
+                  contentStyle={{
+                    background: theme.surface2 ?? theme.surface,
+                    border: `1px solid ${theme.border}`,
+                    borderRadius: 10,
+                    fontSize: 12,
+                    color: theme.text,
+                  }}
+                  formatter={(v) => [v, 'Signups']}
+                  labelFormatter={(l) => l}
+                />
+                <Bar dataKey="count" radius={[4, 4, 0, 0]} maxBarSize={28}>
+                  {(stats?.signupsByDay ?? []).map((entry, i) => (
+                    <Cell
+                      key={i}
+                      fill={entry.count > 0 ? '#10b981' : (theme.isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.08)')}
+                    />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          )}
         </div>
 
         {/* Main layout: table + quick actions */}

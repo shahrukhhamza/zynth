@@ -17,8 +17,10 @@ import multer from 'multer';
 import { join, dirname, extname } from 'path';
 import { fileURLToPath } from 'url';
 import { existsSync, mkdirSync } from 'fs';
+import { requireAuth, checkAiTries, requirePro } from '../middleware/authMiddleware.js';
 import {
   insertTrade, getTrades, getTradeById, updateTrade, deleteTrade, countTrades,
+  countTradesThisMonth,
   upsertJournal, setJournalAiAnalysis,
   getAllTradesForUser, insertReport, getReports,
 } from '../services/journalDb.js';
@@ -52,10 +54,23 @@ function getUserId(req) {
   return req.user?.userId || req.user?.id || 'default';
 }
 
+/** Free users: max 10 journal entries per calendar month. Pro/Elite/Admin: unlimited. */
+function checkJournalLimit(req, res, next) {
+  const { plan, is_admin } = req.user || {};
+  if (is_admin === 1 || plan === 'pro' || plan === 'elite') return next();
+  const count = countTradesThisMonth(getUserId(req));
+  if (count >= 10)
+    return res.status(403).json({ error: 'journal_limit_reached', limit: 10, upgrade: true });
+  next();
+}
+
 const router = Router();
 
+// All journal routes require authentication
+router.use(requireAuth);
+
 // ── POST /trades ──────────────────────────────────────────────────────────────
-router.post('/trades', upload.single('screenshot'), async (req, res) => {
+router.post('/trades', checkJournalLimit, upload.single('screenshot'), async (req, res) => {
   try {
     const body = req.body;
     const userId = getUserId(req);
@@ -160,7 +175,7 @@ router.delete('/trades/:id', (req, res) => {
 });
 
 // ── POST /trades/:id/analyze — AI journal analysis ────────────────────────────
-router.post('/trades/:id/analyze', async (req, res) => {
+router.post('/trades/:id/analyze', checkAiTries, async (req, res) => {
   try {
     const id    = parseInt(req.params.id);
     const trade = getTradeById(id);
@@ -211,8 +226,8 @@ router.get('/reports', (req, res) => {
   }
 });
 
-// ── POST /reports — generate report ──────────────────────────────────────────
-router.post('/reports', async (req, res) => {
+// ── POST /reports — generate report (Pro/Elite only, counts as an AI try) ──────
+router.post('/reports', requirePro, checkAiTries, async (req, res) => {
   try {
     const userId     = getUserId(req);
     const reportType = req.body.type || 'custom'; // weekly | monthly | custom

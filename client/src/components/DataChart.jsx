@@ -103,12 +103,12 @@ function DataChart({
               style={{ color: isPositive ? theme.bullish : theme.bearish }}
             >
               {isPositive ? '+' : ''}{change.toFixed(2)}%
-              <span className="text-xs font-normal ml-1" style={{ color: theme.muted }}>(period)</span>
+              <span className="text-xs font-normal ml-1" style={{ color: theme.muted }}>(period change)</span>
             </span>
           </div>
         </div>
         <div className="text-xs" style={{ color: theme.muted }}>
-          {data.length} data points
+          {data.length} trading days
         </div>
       </div>
 

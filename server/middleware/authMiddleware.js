@@ -36,19 +36,31 @@ export function requireAdmin(req, res, next) {
   return res.status(403).json({ error: 'Admin access required.' });
 }
 
-/** Gate AI analysis tries for free-plan users (max 3). */
+/** Gate AI analysis tries — free: 3, pro: 50, elite/admin: unlimited. */
 export function checkAiTries(req, res, next) {
   const { plan, is_admin, ai_analysis_tries = 0 } = req.user || {};
-  if (is_admin === 1 || plan === 'pro' || plan === 'elite') return next();
+  if (is_admin === 1 || plan === 'elite') return next();
+  if (plan === 'pro') {
+    if (ai_analysis_tries >= 50)
+      return res.status(403).json({ error: 'limit_reached', limit: 50, upgrade: true });
+    return next();
+  }
+  // free
   if (ai_analysis_tries >= 3)
     return res.status(403).json({ error: 'limit_reached', limit: 3, upgrade: true });
   next();
 }
 
-/** Gate screenshot OCR tries for free-plan users (max 2). */
+/** Gate screenshot OCR tries — free: 2, pro: 35, elite/admin: unlimited. */
 export function checkScreenshotTries(req, res, next) {
   const { plan, is_admin, screenshot_tries = 0 } = req.user || {};
-  if (is_admin === 1 || plan === 'pro' || plan === 'elite') return next();
+  if (is_admin === 1 || plan === 'elite') return next();
+  if (plan === 'pro') {
+    if (screenshot_tries >= 35)
+      return res.status(403).json({ error: 'limit_reached', limit: 35, upgrade: true });
+    return next();
+  }
+  // free
   if (screenshot_tries >= 2)
     return res.status(403).json({ error: 'limit_reached', limit: 2, upgrade: true });
   next();

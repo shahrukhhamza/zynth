@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { TrendingUp, TrendingDown, Loader2, AlertCircle, RefreshCw, Radio, Wifi } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 import { useTimezone } from '../contexts/TimezoneContext';
@@ -294,6 +294,38 @@ export default function EconomicDashboard() {
   const flashIds = ['gold', 'dxy', 'tlt', 'spy', 'oil', 'vix', 'btc'];
   const flashMap = usePriceFlash(liveData, flashIds);
 
+  // ── Live-inject last bar with current WS price so charts update in real-time
+  // goldChartData holds daily OHLC bars (refreshes every 5 min from Yahoo).
+  // liveData.gold.price updates sub-second via Finnhub WS.
+  // Patching the last element keeps the chart tip live without re-fetching.
+  const displayGoldChartData = useMemo(() => {
+    if (!goldChartData.length) return goldChartData;
+    const livePrice = liveData?.gold?.price;
+    if (!livePrice) return goldChartData;
+    const arr  = [...goldChartData];
+    const last = { ...arr[arr.length - 1], close: livePrice };
+    if (liveData.gold.dayHigh != null) last.high = Math.max(last.high ?? 0, liveData.gold.dayHigh);
+    if (liveData.gold.dayLow  != null) last.low  = Math.min(last.low  ?? Infinity, liveData.gold.dayLow);
+    arr[arr.length - 1] = last;
+    return arr;
+  }, [goldChartData, liveData?.gold?.price, liveData?.gold?.dayHigh, liveData?.gold?.dayLow]);
+
+  const displayCorrChartData = useMemo(() => {
+    const result = {};
+    CORR_ASSETS.forEach(a => {
+      const src  = corrChartData[a.id] || [];
+      const live = liveData?.[a.id];
+      if (!src.length || !live?.price) { result[a.id] = src; return; }
+      const arr  = [...src];
+      const last = { ...arr[arr.length - 1], close: live.price };
+      if (live.dayHigh != null) last.high = Math.max(last.high ?? 0, live.dayHigh);
+      if (live.dayLow  != null) last.low  = Math.min(last.low  ?? Infinity, live.dayLow);
+      arr[arr.length - 1] = last;
+      result[a.id] = arr;
+    });
+    return result;
+  }, [corrChartData, liveData]);
+
   // ── Derived ──────────────────────────────────────────────────────────────
   const goldStats    = calcPeriodStats(goldChartData);
   const goldCloses   = goldChartData.map(d => d.close).filter(Boolean);
@@ -396,20 +428,17 @@ export default function EconomicDashboard() {
               {wsStatus === 'connected' ? (
                 <span className="flex items-center gap-1" style={{ color: '#22c55e' }}>
                   <Wifi className="w-3 h-3" />
-                  Live Streaming
+                  Prices updating live
                 </span>
               ) : (
-                <span>Polling · every {LIVE_POLL_MS / 1000}s</span>
+                <span>Prices update automatically</span>
               )}
               &nbsp;·&nbsp;
               {lastTick
-                ? `Tick: ${formatDateWithTimezone(lastTick, 'HH:mm:ss')}`
+                ? `Last update: ${formatDateWithTimezone(lastTick, 'HH:mm:ss')}`
                 : lastPoll
-                ? `Polled: ${formatDateWithTimezone(lastPoll, 'HH:mm:ss')}`
+                ? `Updated: ${formatDateWithTimezone(lastPoll, 'HH:mm:ss')}`
                 : 'Connecting...'}
-              {wsTickCount > 0 && (
-                <span style={{ color: '#22c55e' }}>&nbsp;·&nbsp; {wsTickCount} ticks</span>
-              )}
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -435,7 +464,7 @@ export default function EconomicDashboard() {
 
           {/* Gold card */}
           <div className="rounded-lg p-3 border transition-colors duration-300"
-            style={{ backgroundColor: theme.surface, borderColor: '#f59e0b55', ...getFlashStyle('gold') }}>
+            style={{ backgroundColor: theme.surface, borderTopColor: '#f59e0b55', borderRightColor: '#f59e0b55', borderBottomColor: '#f59e0b55', ...getFlashStyle('gold') }}>
             <div className="flex items-center justify-between mb-0.5">
               <span className="text-xs font-bold" style={{ color: '#f59e0b' }}>GOLD</span>
               <div className="flex items-center gap-1">
@@ -466,7 +495,7 @@ export default function EconomicDashboard() {
             const flash = getFlashStyle(a.id);
             return (
               <div key={a.id} className="rounded-lg p-3 border transition-colors duration-300"
-                style={{ backgroundColor: theme.surface, borderColor: theme.border, ...flash }}>
+                style={{ backgroundColor: theme.surface, borderTopColor: theme.border, borderRightColor: theme.border, borderBottomColor: theme.border, ...flash }}>
                 <div className="flex items-center justify-between mb-0.5">
                   <span className="text-xs font-bold" style={{ color: a.color }}>{a.displayTicker}</span>
                   <div className="flex items-center gap-1">
@@ -495,7 +524,7 @@ export default function EconomicDashboard() {
               <div>
                 <h3 className="font-bold text-lg" style={{ color: '#f59e0b' }}>Gold Price — {tf} Movement</h3>
                 <p className="text-xs mt-0.5" style={{ color: theme.muted }}>
-                  Chart: GC=F futures ($/oz) &nbsp;|&nbsp; Live spot: Finnhub WS (OANDA:XAU_USD) · REST fallback every 10s
+                  Real-time gold spot price &nbsp;·&nbsp; Select a time range to view historical price movement
                 </p>
               </div>
               <div className="text-right">
@@ -537,8 +566,14 @@ export default function EconomicDashboard() {
             ))}
           </div>
 
-          <div className="p-4">
-            <DataChart data={goldChartData} dataKey="close" color="#f59e0b" type="area"
+          <div className="p-4 relative">
+            {chartLoading && (
+              <div className="absolute inset-0 flex items-center justify-center z-10 rounded-b-lg"
+                style={{ backgroundColor: `${theme.surface}cc` }}>
+                <RefreshCw className="w-6 h-6 animate-spin" style={{ color: theme.accent }} />
+              </div>
+            )}
+            <DataChart data={displayGoldChartData} dataKey="close" color="#f59e0b" type="area"
               height={300} showGrid={true} formatValue={v => `$${v.toFixed(2)}`} />
           </div>
         </div>
@@ -551,12 +586,12 @@ export default function EconomicDashboard() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {correlations.map(a => {
               const ld = liveData?.[a.id];
-              const hasChart = (corrChartData[a.id] || []).length > 0;
+              const hasChart = (displayCorrChartData[a.id] || []).length > 0;
               const corrColor = a.corr === null ? theme.muted : a.corr > 0.5 ? bull : a.corr < -0.5 ? bear : '#eab308';
               const up = ld?.changePct != null ? ld.changePct >= 0 : true;
               return (
                 <div key={a.id} className="rounded-lg border transition-colors duration-300"
-                  style={{ backgroundColor: theme.surface, borderColor: theme.border, ...getFlashStyle(a.id) }}>
+                  style={{ backgroundColor: theme.surface, borderTopColor: theme.border, borderRightColor: theme.border, borderBottomColor: theme.border, ...getFlashStyle(a.id) }}>
                   <div className="flex items-center justify-between px-4 py-3 border-b" style={{ borderColor: theme.border }}>
                     <div>
                       <span className="font-bold text-sm" style={{ color: a.color }}>{a.displayTicker}</span>
@@ -589,7 +624,7 @@ export default function EconomicDashboard() {
                   </div>
                   <div className="p-4 pt-1">
                     {hasChart
-                      ? <DataChart data={corrChartData[a.id]} dataKey="close" color={a.color}
+                      ? <DataChart data={displayCorrChartData[a.id]} dataKey="close" color={a.color}
                           type="line" height={150} showGrid={false}
                           formatValue={v => a.unit === '$' ? `$${v.toFixed(2)}` : v.toFixed(2)} />
                       : <div className="flex items-center justify-center h-36 text-xs rounded"
@@ -611,7 +646,7 @@ export default function EconomicDashboard() {
               <div>
                 <h3 className="font-semibold text-sm" style={{ color: theme.text }}>Gold Correlation Matrix — {tf}</h3>
                 <p className="text-xs mt-0.5" style={{ color: theme.muted }}>
-                  Pearson r coefficient vs gold over the selected period. Values above ±0.5 indicate meaningful co-movement.
+                  Shows how closely each asset tracks gold prices over the {tf} period. High positive = moves together; negative = moves opposite.
                 </p>
               </div>
               <div className="flex items-center gap-1.5 text-xs" style={{ color: isLive ? bull : theme.muted }}>
@@ -685,7 +720,7 @@ export default function EconomicDashboard() {
 
         {/* Footer */}
         <div className="flex items-center justify-between text-xs py-2" style={{ color: theme.muted }}>
-          <span>Data: Yahoo Finance. Gold spot: GC=F futures. Oil: WTI CL=F. VIX: CBOE ^VIX. DXY: DX-Y.NYB.</span>
+          <span>Market data refreshed in real-time. Gold: Spot. Oil: WTI. Indices: Live.</span>
           <span>{lastPoll ? formatDateWithTimezone(lastPoll, 'HH:mm:ss') : '—'}</span>
         </div>
 

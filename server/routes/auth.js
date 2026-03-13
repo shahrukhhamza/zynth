@@ -1,10 +1,17 @@
 import { Router } from 'express';
 import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
+import { writeFileSync, mkdirSync, existsSync } from 'fs';
+import { join, dirname } from 'path';
+import { fileURLToPath } from 'url';
 import { OAuth2Client } from 'google-auth-library';
 import * as Users from '../db/users.js';
 import { signToken, requireAuth } from '../middleware/authMiddleware.js';
 import { sendPasswordResetEmail } from '../services/emailService.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+const AVATARS_DIR = join(__dirname, '..', 'uploads', 'avatars');
 
 const router = Router();
 
@@ -15,11 +22,17 @@ function buildUser(row) {
     name:                row.name,
     email:               row.email,
     avatar:              row.avatar ?? null,
+    avatar_url:          row.avatar_url ?? null,
     plan:                row.plan ?? 'free',
     plan_expires_at:     row.plan_expires_at ?? null,
     ai_analysis_tries:   row.ai_analysis_tries ?? 0,
     screenshot_tries:    row.screenshot_tries ?? 0,
     is_admin:            row.is_admin ?? 0,
+    trading_experience:  row.trading_experience ?? null,
+    markets_traded:      row.markets_traded ?? null,
+    goals:               row.goals ?? null,
+    avatar_color:        row.avatar_color ?? 'emerald',
+    onboarding_done:     row.onboarding_done ?? 0,
   };
 }
 
@@ -210,6 +223,62 @@ router.post('/reset-password', async (req, res) => {
   } catch (err) {
     console.error('reset-password error:', err);
     res.status(500).json({ error: 'Failed to reset password. Please try again.' });
+  }
+});
+
+// ── PUT /api/auth/update-profile ─────────────────────────────────────────
+router.put('/update-profile', requireAuth, (req, res) => {
+  try {
+    const { trading_experience, markets_traded, goals, avatar_color, name, avatar_base64 } = req.body;
+
+    // Validate avatar_color against allowed values
+    const allowedColors = ['emerald', 'blue', 'purple', 'orange', 'rose', 'amber', 'cyan', 'indigo'];
+    const safeColor = allowedColors.includes(avatar_color) ? avatar_color : 'emerald';
+
+    // Handle avatar image upload
+    if (avatar_base64) {
+      console.log('[avatar] received — length:', avatar_base64?.length, 'type check:', avatar_base64?.substring(0, 30));
+      const matches = avatar_base64.match(/^data:image\/(\w+);base64,(.+)$/);
+      console.log('[avatar] regex match:', !!matches, 'format:', matches?.[1]);
+      if (matches) {
+        const buffer = Buffer.from(matches[2], 'base64');
+        console.log('[avatar] buffer size:', buffer.length, 'bytes (limit 2097152)');
+        if (buffer.length > 2 * 1024 * 1024)
+          return res.status(400).json({ error: 'Image too large. Max size is 2MB.' });
+        if (!existsSync(AVATARS_DIR)) mkdirSync(AVATARS_DIR, { recursive: true });
+        const ext = matches[1] === 'png' ? 'png' : 'jpg';
+        const filename = `${req.user.id}.${ext}`;
+        const filePath = join(AVATARS_DIR, filename);
+        console.log('[avatar] writing to:', filePath);
+        writeFileSync(filePath, buffer);
+        Users.updateAvatarUrl(req.user.id, `/uploads/avatars/${filename}`);
+        console.log('[avatar] saved OK — url: /uploads/avatars/' + filename);
+      } else {
+        console.warn('[avatar] WARNING: base64 regex did not match — data URL prefix may be missing or corrupted');
+      }
+    }
+
+    Users.updateProfile(req.user.id, {
+      trading_experience: trading_experience ?? null,
+      markets_traded: Array.isArray(markets_traded) ? markets_traded.join(',') : (markets_traded ?? null),
+      goals: Array.isArray(goals) ? goals.join(',') : (goals ?? null),
+      avatar_color: safeColor,
+    });
+
+    if (name?.trim()) {
+      Users.updateName(req.user.id, name.trim());
+    }
+
+    Users.setOnboardingDone(req.user.id);
+
+    const row = Users.findById(req.user.id);
+    if (!row) return res.status(404).json({ error: 'User not found.' });
+    const user = buildUser(row);
+    const token = signToken(user);
+    res.json({ user, token });
+  } catch (err) {
+    console.error('update-profile error:', err);
+    res.status(500).json({ error: 'Profile update failed.' });
   }
 });
 

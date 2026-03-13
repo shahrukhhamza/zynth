@@ -45,6 +45,7 @@ function fmtPct(pct) {
 
 function StatusBar({ status, connectedCount, lastUpdate, theme }) {
   const meta = STATUS_META[status] || STATUS_META.idle;
+  const { formatDateWithTimezone } = useTimezone();
   return (
     <div className="flex items-center gap-3 flex-wrap">
       <div className="flex items-center gap-2 px-3 py-1.5 rounded-full"
@@ -60,7 +61,7 @@ function StatusBar({ status, connectedCount, lastUpdate, theme }) {
       )}
       {lastUpdate && (
         <span className="text-xs" style={{ color: theme.muted }}>
-          Updated {new Date(lastUpdate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+          Updated {formatDateWithTimezone(new Date(lastUpdate), 'HH:mm:ss')}
         </span>
       )}
     </div>
@@ -397,8 +398,7 @@ export default function LiveMarketTicker() {
 
         {/* ── Disclaimer ───────────────────────────────────────────────── */}
         <p className="text-center text-xs pb-2" style={{ color: theme.muted }}>
-          Prices are indicative. Powered by Finnhub.io via secure server-side WebSocket proxy.
-          API key is never exposed to the browser.
+          Prices are indicative. Sourced via real-time server-side data streams.
         </p>
       </div>
     </div>

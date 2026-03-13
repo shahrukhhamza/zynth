@@ -39,6 +39,12 @@ const migrations = [
   'ALTER TABLE users ADD COLUMN is_admin INTEGER DEFAULT 0',
   'ALTER TABLE users ADD COLUMN reset_token TEXT DEFAULT NULL',
   'ALTER TABLE users ADD COLUMN reset_token_expires TEXT DEFAULT NULL',
+  'ALTER TABLE users ADD COLUMN trading_experience TEXT DEFAULT NULL',
+  'ALTER TABLE users ADD COLUMN markets_traded TEXT DEFAULT NULL',
+  'ALTER TABLE users ADD COLUMN goals TEXT DEFAULT NULL',
+  "ALTER TABLE users ADD COLUMN avatar_color TEXT DEFAULT 'emerald'",
+  'ALTER TABLE users ADD COLUMN onboarding_done INTEGER DEFAULT 0',
+  'ALTER TABLE users ADD COLUMN avatar_url TEXT DEFAULT NULL',
 ];
 for (const sql of migrations) {
   try { db.exec(sql); } catch { /* column already exists — safe to ignore */ }
@@ -49,7 +55,7 @@ export const findByEmail = (email) =>
 
 export const findById = (id) =>
   db.prepare(
-    'SELECT id, name, email, avatar, created_at, plan, plan_expires_at, ai_analysis_tries, screenshot_tries, is_admin FROM users WHERE id = ?'
+    'SELECT id, name, email, avatar, created_at, plan, plan_expires_at, ai_analysis_tries, screenshot_tries, is_admin, trading_experience, markets_traded, goals, avatar_color, onboarding_done, avatar_url FROM users WHERE id = ?'
   ).get(id);
 
 export const findByGoogleId = (googleId) =>
@@ -99,5 +105,19 @@ export const clearResetToken = (id) =>
 
 export const setPassword = (id, password_hash) =>
   db.prepare('UPDATE users SET password_hash = ? WHERE id = ?').run(password_hash, id);
+
+export const updateProfile = (id, { trading_experience, markets_traded, goals, avatar_color }) =>
+  db.prepare(
+    'UPDATE users SET trading_experience = ?, markets_traded = ?, goals = ?, avatar_color = ? WHERE id = ?'
+  ).run(trading_experience, markets_traded, goals, avatar_color, id);
+
+export const updateName = (id, name) =>
+  db.prepare('UPDATE users SET name = ? WHERE id = ?').run(name, id);
+
+export const updateAvatarUrl = (id, avatar_url) =>
+  db.prepare('UPDATE users SET avatar_url = ? WHERE id = ?').run(avatar_url, id);
+
+export const setOnboardingDone = (id) =>
+  db.prepare('UPDATE users SET onboarding_done = 1 WHERE id = ?').run(id);
 
 export default db;

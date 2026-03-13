@@ -35,7 +35,7 @@ function AccountModal({ open, onClose, account, onChange }) {
     >
       <div
         className="w-full max-w-sm rounded-2xl shadow-2xl overflow-hidden"
-        style={{ backgroundColor: '#0f1117', border: '1px solid rgba(255,255,255,0.08)' }}
+        style={{ backgroundColor: theme.surface, border: `1px solid ${theme.border}` }}
       >
         {/* Header with gradient accent bar */}
         <div style={{ background: `linear-gradient(135deg, ${theme.accent}22, ${theme.accent}08)`, borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
@@ -45,14 +45,14 @@ function AccountModal({ open, onClose, account, onChange }) {
                 <Wallet className="w-4 h-4" style={{ color: theme.accent }} />
               </div>
               <div>
-                <h3 className="font-semibold text-sm" style={{ color: '#f1f5f9' }}>Account Settings</h3>
-                <p className="text-xs" style={{ color: 'rgba(255,255,255,0.4)' }}>ROI & growth tracking</p>
+                <h3 className="font-semibold text-sm" style={{ color: theme.text }}>Account Settings</h3>
+                <p className="text-xs" style={{ color: theme.muted }}>ROI & growth tracking</p>
               </div>
             </div>
             <button
               onClick={onClose}
               className="w-7 h-7 rounded-lg flex items-center justify-center transition-all"
-              style={{ color: 'rgba(255,255,255,0.4)', backgroundColor: 'rgba(255,255,255,0.05)' }}
+              style={{ color: theme.muted, backgroundColor: theme.surface2 }}
             >
               <X className="w-3.5 h-3.5" />
             </button>
@@ -63,19 +63,19 @@ function AccountModal({ open, onClose, account, onChange }) {
         <div className="px-5 pt-5 pb-4 space-y-4">
           {fields.map(({ key, label, icon: Icon, placeholder, hint }) => (
             <div key={key}>
-              <label className="flex items-center gap-1.5 text-xs font-medium mb-2" style={{ color: 'rgba(255,255,255,0.55)' }}>
+              <label className="flex items-center gap-1.5 text-xs font-medium mb-2" style={{ color: theme.muted }}>
                 <Icon className="w-3 h-3" style={{ color: theme.accent }} />
                 {label}
               </label>
               <div
                 className="flex items-center rounded-xl overflow-hidden transition-all"
                 style={{
-                  backgroundColor: 'rgba(255,255,255,0.04)',
-                  border: `1px solid ${focused === key ? theme.accent + '80' : 'rgba(255,255,255,0.08)'}`,
+                  backgroundColor: theme.isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.03)',
+                  border: `1px solid ${focused === key ? theme.accent + '80' : theme.border}`,
                   boxShadow: focused === key ? `0 0 0 3px ${theme.accent}18` : 'none',
                 }}
               >
-                <span className="pl-3.5 pr-2 text-sm font-semibold" style={{ color: 'rgba(255,255,255,0.3)' }}>$</span>
+                <span className="pl-3.5 pr-2 text-sm font-semibold" style={{ color: theme.muted }}>$</span>
                 <input
                   type="number"
                   min="0"
@@ -85,10 +85,10 @@ function AccountModal({ open, onClose, account, onChange }) {
                   onBlur={() => setFocused(null)}
                   onChange={e => setLocal(p => ({ ...p, [key]: e.target.value }))}
                   className="flex-1 py-3 pr-3.5 text-sm bg-transparent outline-none"
-                  style={{ color: '#f1f5f9' }}
+                  style={{ color: theme.text }}
                 />
               </div>
-              <p className="text-xs mt-1.5 ml-1" style={{ color: 'rgba(255,255,255,0.25)' }}>{hint}</p>
+              <p className="text-xs mt-1.5 ml-1" style={{ color: theme.muted }}>{hint}</p>
             </div>
           ))}
         </div>
@@ -98,7 +98,7 @@ function AccountModal({ open, onClose, account, onChange }) {
           <button
             onClick={onClose}
             className="flex-1 py-2.5 rounded-xl text-sm font-medium transition-all"
-            style={{ backgroundColor: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.5)' }}
+            style={{ backgroundColor: theme.surface2, border: `1px solid ${theme.border}`, color: theme.muted }}
           >
             Cancel
           </button>

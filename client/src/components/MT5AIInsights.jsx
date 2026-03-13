@@ -111,7 +111,7 @@ export default function MT5AIInsights({ aiSummary }) {
               color: theme.muted,
             }}
           >
-            {generated_by === 'gemini' ? '✦ Gemini AI' : 'Rule Engine'}
+            {generated_by === 'gemini' ? '✦ Zynth AI' : 'Rule Engine'}
           </span>
         </div>
       </div>

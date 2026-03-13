@@ -131,7 +131,7 @@ function HistoricalChart({ data, code, unit, isDark, color, title }) {
 
   const gridColor = isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.06)';
   const tickColor = isDark ? '#9ca3af' : '#6b7280';
-  const bgSurface = isDark ? '#0f172a' : '#ffffff';
+  const bgSurface = isDark ? '#161616' : '#ffffff';
 
   const chartData = {
     labels: data.map(d => (d.date ? d.date.slice(0, 7) : '')),
@@ -155,8 +155,8 @@ function HistoricalChart({ data, code, unit, isDark, color, title }) {
     plugins: {
       legend: { display: false },
       tooltip: {
-        backgroundColor: isDark ? '#1e293b' : '#ffffff',
-        titleColor: isDark ? '#e2e8f0' : '#1e293b',
+        backgroundColor: isDark ? '#161616' : '#ffffff',
+        titleColor: isDark ? '#e8e8e8' : '#0f172a',
         bodyColor:  isDark ? '#cbd5e1' : '#475569',
         borderColor: isDark ? '#334155' : '#e2e8f0',
         borderWidth: 1,
@@ -574,7 +574,7 @@ function EconomicIntelligence() {
         })}
 
         <p className="text-xs text-center pb-2" style={{ color: theme.muted }}>
-          Primary source: FRED (Federal Reserve Bank of St. Louis). Monetary policy, ISM and Consumer Confidence via verified analyst consensus. Auto-refreshes every 5 minutes.
+          Data sourced from official government releases and verified analyst consensus. Auto-refreshes every 5 minutes.
         </p>
       </div>
     </div>

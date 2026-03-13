@@ -37,10 +37,10 @@ const PLANS = [
     discountBadge: '78% OFF',
     features: [
       'Unlimited journal entries',
-      'AI-powered trade analysis',
+      'AI Trade Analysis: 50 analyses/month',
+      'Screenshot OCR Analysis: 35/month',
       'Full Economic Intelligence',
       'Macro Surprise Score',
-      'Screenshot & OCR analysis',
       'Live market feeds',
       'Advanced journaling',
       'Priority support',
@@ -57,9 +57,11 @@ const PLANS = [
     discountBadge: '80% OFF',
     features: [
       'Everything in Pro',
+      'Unlimited AI Trade Analysis',
+      'Unlimited Screenshot OCR',
       'Custom AI reports',
       'Dedicated support',
-      'Early access to new features',
+      'Beta access to new features before public release',
       'Direct founder support on WhatsApp',
       'API access (coming soon)',
     ],
@@ -73,7 +75,7 @@ const FAQS = [
   { q: 'Is my data safe?', a: 'Yes. All data is encrypted in transit (TLS 1.3) and stored securely. We never share or sell your trading data to anyone.' },
   { q: 'What is the Macro Surprise Score?', a: 'The Macro Surprise Score is our proprietary indicator that analyzes 10 major economic releases and calculates a single score (-10 to +10) showing whether macro conditions are bullish or bearish for gold (XAUUSD).' },
   { q: 'Is there a free plan?', a: 'Absolutely. The Free plan gives you access to core features including live markets, economic calendar, and even 3 free AI analysis tries — no credit card required.' },
-  { q: 'What does the AI analysis include?', a: 'Our AI powered by Gemini reads your trade history and journal entries to surface patterns, identify mistakes, and give you personalized improvement suggestions.' },
+  { q: 'What does the AI analysis include?', a: 'Our AI reads your trade history and journal entries to surface patterns, identify mistakes, and give you personalized improvement suggestions.' },
   { q: 'What is the Screenshot Analysis feature?', a: 'Upload a screenshot of your MT5 trading history and our AI will automatically extract your trades using OCR and provide a detailed performance analysis.' },
   { q: 'What markets does Zynth cover?', a: 'Zynth covers Forex (XAU/USD, EUR/USD, GBP/USD, USD/JPY), major crypto (BTC, ETH, XRP, SOL, BNB), US stocks (AAPL, TSLA, NVDA, MSFT, AMZN, GOOGL), and ETFs (SPY, GLD, TLT).' },
   { q: 'How do I get the Founding Member price?', a: 'Simply sign up and upgrade to Pro during our launch period. The first 100 users lock in $1.99/month forever — even after we raise prices.' },
@@ -96,7 +98,7 @@ const FEATURE_CARDS = [
     Icon: Brain,
     title: '🤖 AI Trade Coaching',
     desc: 'Upload your trades or journal entries and get personalized AI feedback on your patterns, mistakes, and improvement areas.',
-    bullets: ['Powered by Gemini AI', 'Screenshot & OCR trade extraction', 'Personalized to your trading style'],
+    bullets: ['Advanced AI analysis', 'Screenshot & OCR trade extraction', 'Personalized to your trading style'],
   },
 ];
 
@@ -298,10 +300,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
 
           {/* Logo */}
           <div className="flex items-center gap-2.5 select-none">
-            <div className="w-9 h-9 rounded-[11px] flex items-center justify-center shrink-0"
-                 style={{background:'linear-gradient(145deg,#059669 0%,#0d9488 100%)'}}>
-              <TrendingUp className="w-[18px] h-[18px] text-white" strokeWidth={2.5} />
-            </div>
+            <img src="/logo.png" alt="Zynth" className="w-9 h-9 object-contain" />
             <span className="text-[20px] font-bold tracking-tight">Zynth</span>
           </div>
 
@@ -374,7 +373,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-8 border"
                style={{background:'rgba(16,185,129,0.07)', borderColor:'rgba(16,185,129,0.22)'}}>
             <Trophy className="w-3.5 h-3.5 text-emerald-400" />
-            <span className="text-[11px] font-bold tracking-[0.18em] text-emerald-400">THE TRADING INTELLIGENCE PLATFORM</span>
+            <span className="text-[11px] font-bold tracking-[0.18em] text-emerald-400">INTELLIGENCE BEHIND EVERY TRADE</span>
           </div>
 
           {/* Headline */}
@@ -886,6 +885,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
             <span className="text-[16px] font-bold text-white">Zynth</span>
           </div>
           <p className="text-[12px] text-gray-700">© 2026 Zynth. All rights reserved.</p>
+          <p className="text-[11px] italic" style={{color:'rgba(52,211,153,0.35)'}}>Intelligence Behind Every Trade</p>
           <div className="flex gap-6">
             {['Privacy', 'Terms', 'Contact'].map(l => (
               <a key={l} href="#" className="text-[12px] text-gray-600 hover:text-gray-400 transition-colors">{l}</a>

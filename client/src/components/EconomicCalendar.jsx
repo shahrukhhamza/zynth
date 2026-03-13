@@ -4,6 +4,9 @@ import { Calendar, TrendingUp, AlertCircle, ChevronDown, ChevronUp, Activity, Li
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine, LabelList } from 'recharts';
 import { useTheme } from '../contexts/ThemeContext';
 import { useTimezone } from '../contexts/TimezoneContext';
+import { usePlanGate } from '../hooks/usePlanGate';
+import PlanGateBanner from './PlanGateBanner';
+import ProfileModal from './ProfileModal';
 
 // ── Stable Recharts sub-components (defined at module level to keep a stable
 //    reference across renders — avoids React error #31 / unmount-remount loops)
@@ -55,9 +58,11 @@ function CalendarBarLabel({ x, y, width, value, theme }) {
 function EconomicCalendar() {
   const theme = useTheme();
   const { formatDateWithTimezone } = useTimezone();
+  const { isFree } = usePlanGate();
   const [indicators, setIndicators] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const [expandedRow, setExpandedRow] = useState(null);
   const [filterImpact, setFilterImpact] = useState('all');
   const [printModal, setPrintModal] = useState(false);
@@ -251,11 +256,11 @@ function EconomicCalendar() {
     .indicator-block { margin-bottom: 32px; page-break-inside: avoid; }
     .indicator-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; flex-wrap: wrap; gap: 4px; }
     .indicator-title { display: flex; align-items: center; gap: 10px; }
-    .ind-name { font-size: 14px; font-weight: 700; color: #1e293b; }
+    .ind-name { font-size: 14px; font-weight: 700; color: #2a2a2a; }
     .ind-meta { font-size: 11px; color: #64748b; }
     .ind-summary { font-size: 11px; color: #475569; }
     table { width: 100%; border-collapse: collapse; }
-    th { background: #1e293b; color: #fff; padding: 7px 10px; text-align: left; font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em; }
+    th { background: #2a2a2a; color: #fff; padding: 7px 10px; text-align: left; font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em; }
     th.num, td.num { text-align: right; }
     td { padding: 6px 10px; border-bottom: 1px solid #e2e8f0; }
     tr:nth-child(even) td { background: #f8fafc; }
@@ -275,7 +280,7 @@ function EconomicCalendar() {
   <h1>Economic Calendar</h1>
   <p class="subtitle">Generated: ${new Date().toLocaleString()} &nbsp;·&nbsp; ${selectedForPrint.length} indicator${selectedForPrint.length !== 1 ? 's' : ''} with full release history</p>
   ${sections}
-  <p class="footer">Source: Gemini AI + Google Search &nbsp;·&nbsp; Data for informational purposes only.</p>
+  <p class="footer">Source: AI-powered analysis &nbsp;·&nbsp; Data for informational purposes only.</p>
 </body>
 </html>`;
   };
@@ -336,6 +341,17 @@ function EconomicCalendar() {
 
   return (
     <div className="space-y-6">
+
+      {/* Plan gate banner for free users */}
+      {isFree && (
+        <PlanGateBanner
+          feature="AI-Powered Insights"
+          requiredPlan="Pro"
+          description="Upgrade to Pro or Elite to unlock AI-generated macro analysis, impact predictions, and surprise scoring for every release."
+          onUpgradeClick={() => setShowUpgradeModal(true)}
+        />
+      )}
+      {showUpgradeModal && <ProfileModal onClose={() => setShowUpgradeModal(false)} />}
 
       {/* Print Selection Modal */}
       {printModal && (

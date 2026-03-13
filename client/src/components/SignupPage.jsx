@@ -102,10 +102,7 @@ export default function SignupPage({ onSwitchToLogin, onBack }) {
           </button>
         ) : <div />}
         <div className="flex items-center gap-2 select-none">
-          <div className="w-7 h-7 rounded-[9px] flex items-center justify-center"
-               style={{background:'linear-gradient(145deg,#059669,#0d9488)'}}>
-            <TrendingUp className="w-3.5 h-3.5 text-white" strokeWidth={2.5} />
-          </div>
+          <img src="/logo.png" alt="Zynth" className="w-7 h-7 object-contain" />
           <span className="text-[15px] font-bold text-white tracking-tight">Zynth</span>
         </div>
       </div>
@@ -181,7 +178,7 @@ export default function SignupPage({ onSwitchToLogin, onBack }) {
             </span>
           </h2>
           <p className="text-gray-500 text-[13px] mb-7 max-w-[280px] leading-relaxed">
-            Join thousands of traders using Zynth for smarter, data-driven decisions.
+            Intelligence Behind Every Trade.
           </p>
           <div className="grid grid-cols-2 gap-2.5">
             {BENEFITS.map(({ Icon, text }) => (

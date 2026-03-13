@@ -93,17 +93,70 @@ router.post('/users/:id/reset-tries', (req, res) => {
 router.get('/stats', (req, res) => {
   try {
     const users = Users.findAll();
-    const stats = {
-      totalUsers:  users.length,
-      freeUsers:   users.filter(u => u.plan === 'free').length,
-      proUsers:    users.filter(u => u.plan === 'pro').length,
-      eliteUsers:  users.filter(u => u.plan === 'elite').length,
-      adminUsers:  users.filter(u => u.is_admin === 1).length,
-    };
-    res.json(stats);
+
+    // Timezone-agnostic day boundaries in UTC
+    const now     = new Date();
+    const todayStr = now.toISOString().slice(0, 10);                // "YYYY-MM-DD"
+    const weekAgo  = new Date(now - 7 * 24 * 60 * 60 * 1000);
+
+    const todaySignups = users.filter(u => u.created_at && u.created_at.slice(0, 10) === todayStr).length;
+    const weekSignups  = users.filter(u => u.created_at && new Date(u.created_at) >= weekAgo).length;
+
+    // Signup chart: last 30 days, one entry per day
+    const days = 30;
+    const dayMap = {};
+    for (let i = days - 1; i >= 0; i--) {
+      const d = new Date(now);
+      d.setUTCDate(d.getUTCDate() - i);
+      dayMap[d.toISOString().slice(0, 10)] = 0;
+    }
+    users.forEach(u => {
+      if (!u.created_at) return;
+      const day = u.created_at.slice(0, 10);
+      if (day in dayMap) dayMap[day]++;
+    });
+    const signupsByDay = Object.entries(dayMap).map(([date, count]) => ({
+      date,
+      label: new Date(date + 'T00:00:00Z').toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' }),
+      count,
+    }));
+
+    res.json({
+      totalUsers:   users.length,
+      freeUsers:    users.filter(u => u.plan === 'free').length,
+      proUsers:     users.filter(u => u.plan === 'pro').length,
+      eliteUsers:   users.filter(u => u.plan === 'elite').length,
+      adminUsers:   users.filter(u => u.is_admin === 1).length,
+      todaySignups,
+      weekSignups,
+      signupsByDay,
+    });
   } catch (err) {
     console.error('admin/stats error:', err);
     res.status(500).json({ error: 'Failed to fetch stats.' });
+  }
+});
+
+// ── GET /api/admin/export-emails ─────────────────────────────────────────
+router.get('/export-emails', (req, res) => {
+  try {
+    const users = Users.findAll();
+
+    // Build CSV — escape any commas / quotes in field values
+    const esc = (v) => `"${String(v ?? '').replace(/"/g, '""')}"`;
+    const header = 'email,name,plan,created_at,ai_tries,screenshot_tries';
+    const rows = users.map(u =>
+      [u.email, u.name, u.plan ?? 'free', u.created_at ?? '', u.ai_analysis_tries ?? 0, u.screenshot_tries ?? 0]
+        .map(esc).join(',')
+    );
+    const csv = [header, ...rows].join('\r\n');
+
+    res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+    res.setHeader('Content-Disposition', `attachment; filename="users-${new Date().toISOString().slice(0, 10)}.csv"`);
+    res.send(csv);
+  } catch (err) {
+    console.error('admin/export-emails error:', err);
+    res.status(500).json({ error: 'Failed to export users.' });
   }
 });
 

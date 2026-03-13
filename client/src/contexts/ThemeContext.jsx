@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect, useLayoutEffect } from 'react';
 
 const ThemeContext = createContext();
 
@@ -11,18 +11,17 @@ export const useTheme = () => {
 };
 
 export const ThemeProvider = ({ children }) => {
-  const [isDark, setIsDark] = useState(true);
+  // Initialise from localStorage synchronously so the very first render
+  // is already in the correct theme (avoids a light→dark flash on load).
+  const [isDark, setIsDark] = useState(() => {
+    const saved = localStorage.getItem('theme');
+    return saved ? saved === 'dark' : true; // default dark
+  });
 
-  useEffect(() => {
-    // Load saved theme preference
-    const savedTheme = localStorage.getItem('theme');
-    if (savedTheme) {
-      setIsDark(savedTheme === 'dark');
-    }
-  }, []);
-
-  // Keep <html> class in sync so Tailwind dark: variants work everywhere
-  useEffect(() => {
+  // Keep <html> class in sync synchronously (useLayoutEffect) so the class
+  // toggle and the React inline-style updates land in the same browser frame,
+  // enabling CSS transitions to animate from old → new values smoothly.
+  useLayoutEffect(() => {
     if (isDark) {
       document.documentElement.classList.add('dark');
     } else {
@@ -42,26 +41,31 @@ export const ThemeProvider = ({ children }) => {
     isDark,
     toggleTheme,
     // Background colors
-    bg: isDark ? '#0a0e27' : '#ffffff',
-    surface: isDark ? '#131829' : '#f8fafc',
-    border: isDark ? '#1e2538' : '#e2e8f0',
-    
+    bg:       isDark ? '#0d0d0d' : '#f0f2f5',
+    surface:  isDark ? '#161616' : '#ffffff',
+    surface2: isDark ? '#1f1f1f' : '#f8f9fa',
+    border:   isDark ? '#2a2a2a' : '#d1d5db',
+
     // Text colors
-    text: isDark ? '#e4e9f0' : '#1e293b',
-    muted: isDark ? '#8892a6' : '#64748b',
-    
-    // Accent colors
-    accent: '#3b82f6',
+    text:     isDark ? '#e8e8e8' : '#111827',
+    muted:    isDark ? '#64748b' : '#4b5563',   // kept as alias
+    textMuted: isDark ? '#64748b' : '#4b5563',
+
+    // Accent colors (emerald)
+    accent:      isDark ? '#10b981' : '#059669',
+    accentHover: isDark ? '#059669' : '#047857',
+    accentGlow:  isDark ? 'rgba(16,185,129,0.15)' : 'rgba(5,150,105,0.1)',
     success: '#22c55e',
-    warning: '#eab308',
-    danger: '#ef4444',
+    warning: isDark ? '#f59e0b' : '#d97706',
+    gold:    isDark ? '#f59e0b' : '#b45309',
+    danger:  isDark ? '#ef4444' : '#dc2626',
     bullish: '#22c55e',
-    bearish: '#ef4444',
-    neutral: isDark ? '#8892a6' : '#64748b',
-    
+    bearish: isDark ? '#ef4444' : '#dc2626',
+    neutral: isDark ? '#64748b' : '#4b5563',
+
     // Chart colors
-    chartGrid: isDark ? '#1e2538' : '#e2e8f0',
-    chartAxis: isDark ? '#8892a6' : '#64748b',
+    chartGrid: isDark ? '#2a2a2a' : '#d1d5db',
+    chartAxis: isDark ? '#64748b' : '#4b5563',
   };
 
   return (

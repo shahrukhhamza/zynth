@@ -1,0 +1,15 @@
+⚠️  Finnhub WS closed — reconnecting in 2000ms
+⚠️  Finnhub WS closed — reconnecting in 2000ms
+⚠️  Finnhub WS closed — reconnecting in 2000ms
+⚠️  Finnhub WS closed — reconnecting in 2000ms
+⚠️  Finnhub WS closed — reconnecting in 2000ms
+❌ Finnhub WS error: Unexpected server response: 429
+⚠️  Finnhub WS closed — reconnecting in 4000ms
+❌ Finnhub WS error: Unexpected server response: 429
+⚠️  Finnhub WS closed — reconnecting in 8000ms
+❌ Finnhub WS error: Unexpected server response: 429
+⚠️  Finnhub WS closed — reconnecting in 16000ms
+❌ Finnhub WS error: Unexpected server response: 429
+⚠️  Finnhub WS closed — reconnecting in 30000ms
+⚠️  Finnhub WS closed — reconnecting in 2000ms
+⚠️  Finnhub WS closed — reconnecting in 2000ms

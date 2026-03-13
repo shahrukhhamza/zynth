@@ -7,13 +7,25 @@ body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #ffffff;
-  color: #1e293b;
+  background-color: #f0f2f5;
+  color: #111827;
 }
 
 .dark body {
-  background-color: #0a0e27;
-  color: #e4e9f0;
+  background-color: #0d0d0d;
+  color: #e8e8e8;
+}
+
+/* Smooth theme transition — applied globally so light↔dark toggle feels premium */
+*, *::before, *::after {
+  transition:
+    background-color 0.25s ease-in-out,
+    border-color     0.25s ease-in-out,
+    color            0.25s ease-in-out,
+    fill             0.25s ease-in-out,
+    stroke           0.25s ease-in-out,
+    box-shadow       0.25s ease-in-out,
+    opacity          0.25s ease-in-out;
 }
 
 code {
@@ -42,17 +54,17 @@ code {
 
 /* Custom scrollbar — dark theme */
 html.dark ::-webkit-scrollbar-track {
-  background: #131829;
+  background: #161616;
   border-radius: 4px;
 }
 
 html.dark ::-webkit-scrollbar-thumb {
-  background: #2a3557;
+  background: #2a2a2a;
   border-radius: 4px;
 }
 
 html.dark ::-webkit-scrollbar-thumb:hover {
-  background: #3b82f6;
+  background: #10b981;
 }
 
 /* Loading animation */
@@ -79,9 +91,9 @@ html.dark ::-webkit-scrollbar-thumb:hover {
 html.dark .animate-shimmer {
   background: linear-gradient(
     to right,
-    #131829 4%,
-    #1e2538 25%,
-    #131829 36%
+    #1a1a1a 4%,
+    #222222 25%,
+    #1a1a1a 36%
   );
   background-size: 1000px 100%;
 }
@@ -113,9 +125,9 @@ aside {
   visibility: hidden;
   transition: opacity 0.15s ease, visibility 0.15s ease, transform 0.15s ease;
   z-index: 9999;
-  background: #1e2538;
+  background: #1f1f1f;
   color: #e4e9f0;
-  border: 1px solid #2a3557;
+  border: 1px solid #2a2a2a;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
   transform: translateY(-50%) translateX(-4px);
 }
@@ -127,7 +139,7 @@ aside {
   top: 50%;
   transform: translateY(-50%);
   border: 5px solid transparent;
-  border-right-color: #1e2538;
+  border-right-color: #1f1f1f;
 }
 
 .sidebar-nav-item-wrapper:hover .sidebar-tooltip {
@@ -137,14 +149,14 @@ aside {
 }
 
 html:not(.dark) .sidebar-tooltip {
-  background: #1e293b;
+  background: #2a2a2a;
   color: #f8fafc;
-  border-color: #334155;
+  border-color: #3a3a3a;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
 }
 
 html:not(.dark) .sidebar-tooltip::before {
-  border-right-color: #1e293b;
+  border-right-color: #2a2a2a;
 }
 
 /* ── Nav active glow ─────────────────────────────────────────────────────── */

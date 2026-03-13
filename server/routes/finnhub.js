@@ -1,7 +1,11 @@
 import { Router } from 'express';
+import { requireAuth, requirePro } from '../middleware/authMiddleware.js';
 import { finnhubService, TRACKED_SYMBOLS } from '../services/finnhubService.js';
 
 const router = Router();
+
+// Live market feeds are a Pro/Elite feature
+router.use(requireAuth, requirePro);
 
 // GET /api/finnhub/symbols — metadata for all tracked symbols
 router.get('/symbols', (_req, res) => {

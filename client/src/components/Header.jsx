@@ -1,4 +1,4 @@
-import { Activity, Sun, Moon, Globe, LogOut, ChevronDown, User, Settings, Shield, Menu, X } from 'lucide-react';
+import { Activity, BarChart3, Sun, Moon, Globe, LogOut, ChevronDown, User, Settings, Shield, Menu, X } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 import { useTimezone, TIMEZONES } from '../contexts/TimezoneContext';
 import { useAuth } from '../contexts/AuthContext';
@@ -6,8 +6,15 @@ import { useState, useRef, useEffect } from 'react';
 import ProfileModal from './ProfileModal';
 import SettingsModal from './SettingsModal';
 import PlanBadge from './PlanBadge';
+import { API_URL } from '../config/api';
 
-function Header({ autoRefresh, onToggleAutoRefresh, onToggleSidebar, mobileSidebarOpen }) {
+const AVATAR_COLOR_MAP = {
+  emerald: '#10b981', blue: '#3b82f6', purple: '#a855f7',
+  orange: '#f97316', rose: '#f43f5e', amber: '#f59e0b',
+  cyan: '#06b6d4', indigo: '#6366f1',
+};
+
+function Header({ autoRefresh, onToggleAutoRefresh, onToggleSidebar, mobileSidebarOpen, sidebarCollapsed = false }) {
   const theme = useTheme();
   const { selectedTimezone, changeTimezone, getTimezoneInfo, timezones } = useTimezone();
   const { user, logout } = useAuth();
@@ -16,6 +23,8 @@ function Header({ autoRefresh, onToggleAutoRefresh, onToggleSidebar, mobileSideb
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
   const [avatarError, setAvatarError] = useState(false);
+  const avatarBg = AVATAR_COLOR_MAP[user?.avatar_color] ?? '#10b981';
+  const avatarSrc = user?.avatar_url ? `${API_URL}${user.avatar_url}` : (user?.avatar ?? null);
   const dropdownRef = useRef(null);
   const userMenuRef = useRef(null);
 
@@ -42,7 +51,7 @@ function Header({ autoRefresh, onToggleAutoRefresh, onToggleSidebar, mobileSideb
       backgroundColor: theme.surface, 
       borderColor: theme.border 
     }}>
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-3">
         {/* Hamburger — mobile only */}
         <button
           onClick={onToggleSidebar}
@@ -54,13 +63,12 @@ function Header({ autoRefresh, onToggleAutoRefresh, onToggleSidebar, mobileSideb
             ? <X className="w-5 h-5" />
             : <Menu className="w-5 h-5" />}
         </button>
-
-        <div className="hidden sm:flex items-center gap-2">
-          <Activity className="w-6 h-6" style={{ color: theme.accent }} />
-          <div>
-            <h1 className="text-base md:text-lg font-bold leading-tight tracking-tight" style={{ color: theme.text }}>Zynth</h1>
-            <p className="text-[10px] leading-tight" style={{ color: theme.muted }}>Real-time Market Intelligence</p>
+        {/* Logo — always visible in top banner, single source of truth */}
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 rounded-xl overflow-hidden flex-shrink-0" style={{ boxShadow: `0 0 0 1px ${theme.border}` }}>
+            <img src="/logo.png" alt="Zynth" className="w-full h-full object-contain" />
           </div>
+          <span className="text-[17px] font-bold tracking-tight" style={{ color: theme.text }}>Zynth</span>
         </div>
       </div>
       
@@ -70,7 +78,8 @@ function Header({ autoRefresh, onToggleAutoRefresh, onToggleSidebar, mobileSideb
           onClick={theme.toggleTheme}
           className="p-2 rounded-lg transition-all hover:bg-opacity-80"
           style={{ 
-            backgroundColor: theme.isDark ? 'rgba(59, 130, 246, 0.1)' : 'rgba(59, 130, 246, 0.1)',
+            backgroundColor: theme.isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.05)',
+            border: `1px solid ${theme.border}`,
             color: theme.accent 
           }}
           title={theme.isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
@@ -84,7 +93,7 @@ function Header({ autoRefresh, onToggleAutoRefresh, onToggleSidebar, mobileSideb
             onClick={() => setShowTimezoneDropdown(!showTimezoneDropdown)}
             className="flex items-center gap-2 px-3 py-2 rounded-lg transition-all"
             style={{ 
-              backgroundColor: theme.isDark ? 'rgba(59, 130, 246, 0.1)' : 'rgba(59, 130, 246, 0.1)',
+              backgroundColor: theme.isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.05)',
               color: theme.text,
               border: `1px solid ${theme.border}`
             }}
@@ -144,20 +153,6 @@ function Header({ autoRefresh, onToggleAutoRefresh, onToggleSidebar, mobileSideb
           )}
         </div>
 
-        <div className="flex items-center gap-2" title="Auto-refresh">
-          <button
-            onClick={onToggleAutoRefresh}
-            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors`}
-            style={{ backgroundColor: autoRefresh ? theme.accent : theme.border }}
-          >
-            <span
-              className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                autoRefresh ? 'translate-x-6' : 'translate-x-1'
-              }`}
-            />
-          </button>
-        </div>
-
         {/* User Profile */}
         {user && (
           <div className="relative" ref={userMenuRef}>
@@ -166,17 +161,17 @@ function Header({ autoRefresh, onToggleAutoRefresh, onToggleSidebar, mobileSideb
               className="flex items-center gap-2.5 pl-1 pr-3 py-1 rounded-xl transition-all duration-200"
               style={{
                 backgroundColor: showUserMenu
-                  ? (theme.isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.07)')
-                  : 'transparent',
-                border: `1px solid ${showUserMenu ? theme.accent + '60' : theme.border}`,
-              }}
-              onMouseOver={e => { if (!showUserMenu) e.currentTarget.style.backgroundColor = theme.isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.04)'; }}
-              onMouseOut={e => { if (!showUserMenu) e.currentTarget.style.backgroundColor = 'transparent'; }}
+                ? (theme.isDark ? 'rgba(255,255,255,0.10)' : 'rgba(0,0,0,0.08)')
+                : (theme.isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.05)'),
+              border: `1px solid ${showUserMenu ? theme.accent + '60' : theme.border}`,
+            }}
+            onMouseOver={e => { if (!showUserMenu) e.currentTarget.style.backgroundColor = theme.isDark ? 'rgba(255,255,255,0.09)' : 'rgba(0,0,0,0.07)'; }}
+            onMouseOut={e => { if (!showUserMenu) e.currentTarget.style.backgroundColor = theme.isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.05)'; }}
             >
               {/* Avatar */}
-              {user.avatar && !avatarError ? (
+              {avatarSrc && !avatarError ? (
                 <img
-                  src={user.avatar}
+                  src={avatarSrc}
                   alt={user.name}
                   className="w-8 h-8 rounded-lg object-cover"
                   style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.3)' }}
@@ -186,8 +181,8 @@ function Header({ autoRefresh, onToggleAutoRefresh, onToggleSidebar, mobileSideb
                 <div
                   className="w-8 h-8 rounded-lg flex items-center justify-center text-white text-sm font-bold select-none"
                   style={{
-                    background: 'linear-gradient(135deg, #3b82f6 0%, #6366f1 100%)',
-                    boxShadow: '0 1px 4px rgba(99,102,241,0.4)',
+                    backgroundColor: avatarBg,
+                    boxShadow: `0 1px 4px ${avatarBg}66`,
                     fontFamily: 'system-ui, sans-serif',
                     letterSpacing: '0.02em',
                   }}
@@ -226,15 +221,18 @@ function Header({ autoRefresh, onToggleAutoRefresh, onToggleSidebar, mobileSideb
                     : '0 20px 60px rgba(0,0,0,0.15), 0 0 0 1px rgba(0,0,0,0.06)',
                 }}
               >
-                {/* Profile header */}
-                <div
-                  className="px-4 pt-4 pb-3"
-                  style={{ background: theme.isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)' }}
+                {/* Profile header — clickable, opens Profile modal */}
+                <button
+                  onClick={() => { setShowUserMenu(false); setShowProfileModal(true); }}
+                  className="w-full text-left px-4 pt-4 pb-3 transition-colors"
+                  style={{ background: theme.isDark ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.02)' }}
+                  onMouseEnter={e => e.currentTarget.style.background = theme.isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.04)'}
+                  onMouseLeave={e => e.currentTarget.style.background = theme.isDark ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.02)'}
                 >
                   <div className="flex items-center gap-3">
-                    {user.avatar ? (
+                    {avatarSrc && !avatarError ? (
                       <img
-                        src={user.avatar}
+                        src={avatarSrc}
                         alt={user.name}
                         className="w-11 h-11 rounded-xl object-cover"
                         style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.3)' }}
@@ -243,8 +241,8 @@ function Header({ autoRefresh, onToggleAutoRefresh, onToggleSidebar, mobileSideb
                       <div
                         className="w-11 h-11 rounded-xl flex items-center justify-center text-white text-lg font-bold select-none"
                         style={{
-                          background: 'linear-gradient(135deg, #3b82f6 0%, #6366f1 100%)',
-                          boxShadow: '0 2px 8px rgba(99,102,241,0.4)',
+                          backgroundColor: avatarBg,
+                          boxShadow: `0 2px 8px ${avatarBg}66`,
                         }}
                       >
                         {user.name?.charAt(0).toUpperCase()}
@@ -264,7 +262,7 @@ function Header({ autoRefresh, onToggleAutoRefresh, onToggleSidebar, mobileSideb
                       </div>
                     </div>
                   </div>
-                </div>
+                </button>
 
                 {/* Divider */}
                 <div style={{ height: '1px', backgroundColor: theme.border, margin: '0' }} />

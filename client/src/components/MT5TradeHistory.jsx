@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
 import { useTheme } from '../contexts/ThemeContext';
+import { useTimezone } from '../contexts/TimezoneContext';
 import { ChevronUp, ChevronDown, ChevronsUpDown, Search } from 'lucide-react';
 import { format } from 'date-fns';
 
@@ -19,6 +20,7 @@ function fmtDate(iso) {
 
 export default function MT5TradeHistory({ trades }) {
   const theme = useTheme();
+  const { formatDateWithTimezone } = useTimezone();
   const [page, setPage] = useState(1);
   const [query, setQuery] = useState('');
   const [sort, setSort] = useState({ key: 'close_time', dir: 'desc' });
@@ -166,8 +168,8 @@ export default function MT5TradeHistory({ trades }) {
                       </td>
                       <td style={td({ textAlign: 'right', color: theme.muted })}>{t.swap?.toFixed(2)}</td>
                       <td style={td({ textAlign: 'right', color: theme.muted })}>{t.commission?.toFixed(2)}</td>
-                      <td style={td()}>{fmtDate(t.open_time)}</td>
-                      <td style={td()}>{fmtDate(t.close_time)}</td>
+                      <td style={td()}>{formatDateWithTimezone(new Date(t.open_time), 'MMM dd, yyyy HH:mm')}</td>
+                      <td style={td()}>{formatDateWithTimezone(new Date(t.close_time), 'MMM dd, yyyy HH:mm')}</td>
                       <td style={td({ textAlign: 'right', color: theme.muted })}>{t.duration}</td>
                     </tr>
                   );
