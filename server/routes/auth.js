@@ -178,7 +178,8 @@ router.post('/forgot-password', async (req, res) => {
     // Always respond the same way — never reveal whether the email exists
     res.json({ message: 'If this email exists you will receive a reset link.' });
   } catch (err) {
-    console.error('forgot-password error:', err);
+    const detail = err.response?.data ?? err.message;
+    console.error('forgot-password error:', JSON.stringify(detail));
     res.status(500).json({ error: 'Failed to process request. Please try again.' });
   }
 });

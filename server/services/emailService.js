@@ -1,6 +1,4 @@
-import { Resend } from 'resend';
-
-const resend = new Resend(process.env.RESEND_API_KEY);
+import axios from 'axios';
 
 export async function sendPasswordResetEmail(toEmail, resetLink, userName) {
   const displayName = userName || 'Trader';
@@ -96,10 +94,24 @@ export async function sendPasswordResetEmail(toEmail, resetLink, userName) {
 </body>
 </html>`;
 
-  return resend.emails.send({
-    from: 'Zynth <noreply@zynth.app>',
-    to: toEmail,
-    subject: 'Reset your Zynth password',
-    html,
-  });
+  const body = {
+    sender:      { name: 'Zynth', email: 'shahrukhhamza770@gmail.com' },
+    to:          [{ email: toEmail }],
+    subject:     'Reset your Zynth password',
+    htmlContent: html,
+  };
+
+  const response = await axios.post(
+    'https://api.brevo.com/v3/smtp/email',
+    body,
+    {
+      headers: {
+        'api-key':      process.env.BREVO_API_KEY,
+        'Content-Type': 'application/json',
+      },
+    }
+  );
+
+  console.log('[Brevo] Email send response:', JSON.stringify(response.data));
+  return response.data;
 }
