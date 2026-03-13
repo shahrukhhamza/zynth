@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import { API_URL } from '../config/api';
 import { Eye, EyeOff, TrendingUp, TrendingDown, AlertCircle, CheckCircle2, Loader2, User, Mail, Lock, ArrowRight, ArrowLeft, Shield, Zap, BarChart2, Activity } from 'lucide-react';
 
 const TICKERS = [
@@ -24,6 +25,14 @@ export default function SignupPage({ onSwitchToLogin, onBack }) {
   const [showPass, setShowPass] = useState(false);
   const [error, setError]     = useState('');
   const [loading, setLoading] = useState(false);
+  const [spotsLeft, setSpotsLeft] = useState(null);
+
+  useEffect(() => {
+    fetch(`${API_URL}/api/admin/stats`)
+      .then(r => r.ok ? r.json() : null)
+      .then(d => { if (d?.totalUsers != null) setSpotsLeft(Math.max(0, 100 - d.totalUsers)); })
+      .catch(() => {});
+  }, []);
 
   const strength = (() => {
     const p = form.password;
@@ -194,6 +203,16 @@ export default function SignupPage({ onSwitchToLogin, onBack }) {
              style={{background:'radial-gradient(ellipse,rgba(16,185,129,0.13) 0%,transparent 70%)'}} />
 
         <div className="w-full max-w-[340px] px-4">
+
+          {/* Founding member banner */}
+          {spotsLeft != null && spotsLeft > 0 && (
+            <div className="mb-4 px-4 py-2.5 rounded-xl text-center text-[12px] font-semibold"
+                 style={{background:'linear-gradient(90deg,rgba(5,150,105,0.2),rgba(13,148,136,0.15))',border:'1px solid rgba(16,185,129,0.25)'}}>
+              🔥 <span className="text-emerald-300">{spotsLeft} founding spots left</span>{' '}
+              <span className="text-gray-400">at</span>{' '}
+              <span className="text-white font-bold">$1.99/month</span>
+            </div>
+          )}
 
           {/* Card */}
           <div className="rounded-2xl p-px"

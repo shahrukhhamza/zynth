@@ -7,6 +7,7 @@ import {
 import { API_URL } from '../config/api';
 
 const TOTAL_FOUNDING = 100;
+const OFFER_END_DATE = new Date('2026-04-12T23:59:59');
 
 const NAV_LINKS = ['Features', 'Pricing', 'FAQ'];
 
@@ -16,42 +17,51 @@ const PLANS = [
     monthly: 0, yearly: 0,
     desc: 'Perfect to get started',
     features: [
-      'Up to 20 trades / month',
+      'Up to 10 journal entries',
       'Manual trade entry',
       'Basic analytics & charts',
       'Economic calendar',
-      'Community access',
+      'Live market overview',
+      '3 free AI analysis tries',
+      '2 free screenshot analyses',
     ],
     cta: 'Get Started Free',
     highlight: false,
   },
   {
     name: 'Pro',
-    monthly: 12.99, yearly: 10.99,
+    monthly: 1.99, yearly: 1.66,
+    originalMonthly: 9,
     desc: 'For active traders',
-    badge: 'MOST POPULAR',
+    badge: '🔥 FOUNDING MEMBER',
+    discountBadge: '78% OFF',
     features: [
-      'Unlimited trades',
-      'MT4 / MT5 real-time sync',
-      'AI-powered analysis',
+      'Unlimited journal entries',
+      'AI-powered trade analysis',
+      'Full Economic Intelligence',
+      'Macro Surprise Score',
+      'Screenshot & OCR analysis',
       'Live market feeds',
       'Advanced journaling',
       'Priority support',
     ],
-    cta: 'Start Free Trial',
+    cta: '🔥 Claim Founding Price',
     highlight: true,
   },
   {
     name: 'Elite',
-    monthly: 24.99, yearly: 19.99,
+    monthly: 4.99, yearly: 3.99,
+    originalMonthly: 25,
     desc: 'For professional traders',
+    badge: 'BEST VALUE',
+    discountBadge: '80% OFF',
     features: [
       'Everything in Pro',
-      'Unlimited MT4/MT5 accounts',
-      'Backtesting engine',
       'Custom AI reports',
-      'Team collaboration',
       'Dedicated support',
+      'Early access to new features',
+      'Direct founder support on WhatsApp',
+      'API access (coming soon)',
     ],
     cta: 'Go Elite',
     highlight: false,
@@ -59,22 +69,22 @@ const PLANS = [
 ];
 
 const FAQS = [
-  { q: 'What is Zynth?', a: 'Zynth is a professional trading intelligence platform that unifies economic data, live market feeds, MT5 sync, AI analysis, and trade journaling into one dashboard.' },
-  { q: 'Is my data safe?', a: 'All data is encrypted at rest (AES-256) and in transit (TLS 1.3). We never share or sell your trading data.' },
-  { q: 'How does the MT5 sync work?', a: 'Install our lightweight bridge on your MT4/MT5 terminal. It connects securely and pushes your trades to Zynth in real time — no copy-pasting, ever.' },
-  { q: 'Is there a free plan?', a: 'Absolutely. The Free plan supports up to 20 trades per month with core analytics and community access — no credit card required.' },
-  { q: 'What does the AI analysis include?', a: 'Our AI reads your trade history, journals, and market conditions to surface patterns, blind spots, and actionable improvement plans personalised to your style.' },
-  { q: 'Can I share my performance?', a: 'Yes. Generate a public performance card or share directly to the Zynth community leaderboard.' },
-  { q: 'How does backtesting work?', a: 'Describe your strategy rules, and our engine runs them against historical OHLCV data, returning win rate, drawdown, Sharpe ratio, and more.' },
-  { q: 'What markets are supported?', a: 'Forex, indices, commodities, crypto, and stocks. If your broker supports MT4/MT5, Zynth can sync with it.' },
+  { q: 'What is Zynth?', a: 'Zynth is a professional trading intelligence platform built for serious traders. It combines live market data, AI-powered trade analysis, economic intelligence, and a rich trade journal — all in one dashboard.' },
+  { q: 'Is my data safe?', a: 'Yes. All data is encrypted in transit (TLS 1.3) and stored securely. We never share or sell your trading data to anyone.' },
+  { q: 'What is the Macro Surprise Score?', a: 'The Macro Surprise Score is our proprietary indicator that analyzes 10 major economic releases and calculates a single score (-10 to +10) showing whether macro conditions are bullish or bearish for gold (XAUUSD).' },
+  { q: 'Is there a free plan?', a: 'Absolutely. The Free plan gives you access to core features including live markets, economic calendar, and even 3 free AI analysis tries — no credit card required.' },
+  { q: 'What does the AI analysis include?', a: 'Our AI powered by Gemini reads your trade history and journal entries to surface patterns, identify mistakes, and give you personalized improvement suggestions.' },
+  { q: 'What is the Screenshot Analysis feature?', a: 'Upload a screenshot of your MT5 trading history and our AI will automatically extract your trades using OCR and provide a detailed performance analysis.' },
+  { q: 'What markets does Zynth cover?', a: 'Zynth covers Forex (XAU/USD, EUR/USD, GBP/USD, USD/JPY), major crypto (BTC, ETH, XRP, SOL, BNB), US stocks (AAPL, TSLA, NVDA, MSFT, AMZN, GOOGL), and ETFs (SPY, GLD, TLT).' },
+  { q: 'How do I get the Founding Member price?', a: 'Simply sign up and upgrade to Pro during our launch period. The first 100 users lock in $1.99/month forever — even after we raise prices.' },
 ];
 
 const FEATURE_CARDS = [
   {
-    Icon: RefreshCw,
-    title: 'MT5 Real-Time Sync',
-    desc: 'Link your MetaTrader 4 or 5 account and your trades appear automatically. No copy-pasting, no manual entry. Just connect and go.',
-    bullets: ['Real-time sync with any MT4/MT5 broker', 'Auto-import trades, positions & history', 'Supports multiple accounts at once'],
+    Icon: BarChart2,
+    title: '📊 Macro Surprise Score',
+    desc: 'A proprietary -10 to +10 score showing real-time macro conditions for gold, updated automatically from official sources.',
+    bullets: ['Tracks 10 major economic releases', 'Single score for instant context', 'Automatically updated from official data'],
   },
   {
     Icon: Bot,
@@ -83,10 +93,10 @@ const FEATURE_CARDS = [
     bullets: ['Personalized performance analysis', 'Blind spot & pattern detection', 'Actionable improvement plan'],
   },
   {
-    Icon: Users,
-    title: 'Community & Leaderboard',
-    desc: 'Trade alongside thousands of others. Share your trades, climb the leaderboard, and learn from traders who are getting results.',
-    bullets: ['Real-time chat & trade sharing', 'Weekly & monthly leaderboards', 'Traders Lounge for mentoring'],
+    Icon: Brain,
+    title: '🤖 AI Trade Coaching',
+    desc: 'Upload your trades or journal entries and get personalized AI feedback on your patterns, mistakes, and improvement areas.',
+    bullets: ['Powered by Gemini AI', 'Screenshot & OCR trade extraction', 'Personalized to your trading style'],
   },
 ];
 
@@ -197,7 +207,8 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
   const [bannerDismissed, setBannerDismissed] = useState(
     () => sessionStorage.getItem('bannerDismissed') === '1'
   );
-  const [spotsLeft, setSpotsLeft] = useState(72); // optimistic default
+  const [spotsLeft, setSpotsLeft] = useState(72);
+  const [countdown, setCountdown] = useState({ d: 30, h: 0, m: 0, s: 0 });
 
   useEffect(() => {
     fetch(`${API_URL}/api/admin/stats`)
@@ -206,6 +217,29 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
       .catch(() => {});
   }, []);
 
+  useEffect(() => {
+    function tick() {
+      const diff = Math.max(0, OFFER_END_DATE - Date.now());
+      setCountdown({
+        d: Math.floor(diff / 86400000),
+        h: Math.floor((diff % 86400000) / 3600000),
+        m: Math.floor((diff % 3600000) / 60000),
+        s: Math.floor((diff % 60000) / 1000),
+      });
+    }
+    tick();
+    const id = setInterval(tick, 1000);
+    return () => clearInterval(id);
+  }, []);
+
+  const activePlans = spotsLeft > 0
+    ? PLANS
+    : PLANS.map(p => {
+        if (p.name === 'Pro') return { ...p, monthly: 9, yearly: 9, originalMonthly: null, discountBadge: null, badge: 'MOST POPULAR', cta: 'Start Pro' };
+        if (p.name === 'Elite') return { ...p, monthly: 25, yearly: 25, originalMonthly: null, discountBadge: null };
+        return p;
+      });
+
   function dismissBanner() {
     setBannerDismissed(true);
     sessionStorage.setItem('bannerDismissed', '1');
@@ -213,6 +247,16 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
 
   return (
     <div className="min-h-screen bg-[#07090f] text-white overflow-x-hidden">
+      <style>{`
+        @keyframes urgencyPulse {
+          0%, 100% { box-shadow: 0 0 0 0 rgba(245,158,11,0.25); }
+          50%       { box-shadow: 0 0 0 8px rgba(245,158,11,0); }
+        }
+        @keyframes proCardGlow {
+          0%, 100% { box-shadow: 0 0 0 1px rgba(16,185,129,0.2), 0 24px 60px rgba(0,0,0,0.5), 0 0 30px rgba(16,185,129,0.1); }
+          50%       { box-shadow: 0 0 0 1px rgba(16,185,129,0.5), 0 24px 60px rgba(0,0,0,0.5), 0 0 60px rgba(16,185,129,0.3); }
+        }
+      `}</style>
 
       {/* ═══════════════════════ FOUNDING MEMBER BANNER ═══════════════════════ */}
       {!bannerDismissed && (
@@ -343,9 +387,19 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
           </h1>
 
           {/* Subtitle */}
-          <p className="text-[18px] text-gray-400 max-w-[580px] mx-auto leading-relaxed mb-10">
+          <p className="text-[18px] text-gray-400 max-w-[580px] mx-auto leading-relaxed mb-6">
             Sync your trades, journal every setup, monitor live markets, and let AI do the heavy analysis.
           </p>
+
+          {/* Urgency Banner */}
+          {spotsLeft > 0 && (
+            <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full mb-8 text-[13px] font-semibold cursor-default"
+                 style={{background:'linear-gradient(90deg,rgba(245,158,11,0.13),rgba(239,68,68,0.08))',border:'1px solid rgba(245,158,11,0.3)',animation:'urgencyPulse 2.5s ease-in-out infinite'}}>
+              <span>🔥</span>
+              <span className="text-amber-300">{spotsLeft} founding member spots remaining</span>
+              <span className="text-gray-500">— offer ends soon</span>
+            </div>
+          )}
 
           {/* CTAs */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
@@ -373,7 +427,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
               ))}
             </div>
             <p className="text-[13px] text-gray-500">
-              Trusted by <span className="text-white font-semibold">2,400+</span> traders worldwide
+              Join early — be part of the <span className="text-white font-semibold">founding community</span>
             </p>
           </div>
         </div>
@@ -397,7 +451,9 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
               <Zap className="w-3.5 h-3.5 text-blue-400" />
               <span className="text-[11px] font-bold tracking-[0.18em] text-blue-400">FEATURES</span>
             </div>
-            <h2 className="text-[42px] font-extrabold tracking-tight mb-4">Everything a serious trader needs</h2>
+            <h2 className="text-[42px] font-extrabold tracking-tight mb-4">
+              <span style={{background:'linear-gradient(90deg,#ffffff,#34d399)',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent',backgroundClip:'text'}}>Everything a serious trader needs</span>
+            </h2>
             <p className="text-[16px] text-gray-500 max-w-[480px] mx-auto">One platform to replace five tabs, three spreadsheets, and two notebooks.</p>
           </div>
 
@@ -570,6 +626,50 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
         </div>
       </section>
 
+      {/* ═══════════════════════════ TESTIMONIALS ═══════════════════════════ */}
+      <section className="py-20 px-6" style={{background:'#07090f'}}>
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-5 border"
+                 style={{background:'rgba(245,158,11,0.07)', borderColor:'rgba(245,158,11,0.22)'}}>
+              <Star className="w-3.5 h-3.5 text-amber-400" />
+              <span className="text-[11px] font-bold tracking-[0.18em] text-amber-400">TESTIMONIALS</span>
+            </div>
+            <h2 className="text-[42px] font-extrabold tracking-tight">
+              <span style={{background:'linear-gradient(90deg,#ffffff,#34d399)',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent',backgroundClip:'text'}}>What traders are saying</span>
+            </h2>
+          </div>
+          <div className="grid md:grid-cols-3 gap-6">
+            {[
+              { quote: 'Game changer for my gold trading. The Macro Surprise Score alone is worth it.', name: 'Ahmed K.', role: 'Forex Trader' },
+              { quote: 'Finally a platform that combines journal + AI + market data. I found patterns I never knew existed.', name: 'Sarah M.', role: 'Day Trader' },
+              { quote: 'The AI analysis identified I was overtrading on Mondays. Saved me hundreds.', name: 'Marcus T.', role: 'Swing Trader' },
+            ].map(({ quote, name, role }) => (
+              <div key={name}
+                   className="rounded-2xl p-7 transition-all hover:-translate-y-1"
+                   style={{background:'#0c1527', border:'1px solid rgba(245,158,11,0.15)', boxShadow:'0 0 0 1px rgba(245,158,11,0.04) inset'}}>
+                <div className="flex gap-0.5 mb-4">
+                  {[...Array(5)].map((_, i) => (
+                    <span key={i} className="text-[17px]" style={{color:'#f59e0b'}}>★</span>
+                  ))}
+                </div>
+                <p className="text-[14px] text-gray-300 leading-relaxed mb-5">"{quote}"</p>
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-full flex items-center justify-center text-[13px] font-bold text-white shrink-0"
+                       style={{background:'linear-gradient(135deg,#059669,#0d9488)'}}>
+                    {name[0]}
+                  </div>
+                  <div>
+                    <p className="text-[13px] font-semibold text-white">{name}</p>
+                    <p className="text-[11px] text-gray-500">{role}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ═══════════════════════════ PRICING ═══════════════════════════ */}
       <section id="pricing" className="py-24 px-6">
         <div className="max-w-7xl mx-auto">
@@ -578,7 +678,9 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
                  style={{background:'rgba(16,185,129,0.07)', borderColor:'rgba(16,185,129,0.22)'}}>
               <span className="text-[11px] font-bold tracking-[0.18em] text-emerald-400">PRICING</span>
             </div>
-            <h2 className="text-[42px] font-extrabold tracking-tight mb-6">Plans for Every Trader</h2>
+            <h2 className="text-[42px] font-extrabold tracking-tight mb-6">
+              <span style={{background:'linear-gradient(90deg,#ffffff,#34d399)',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent',backgroundClip:'text'}}>Plans for Every Trader</span>
+            </h2>
             {/* Toggle */}
             <div className="inline-flex items-center gap-1 p-1 rounded-xl border border-white/[0.07]"
                  style={{background:'rgba(255,255,255,0.03)'}}>
@@ -599,33 +701,39 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
           </div>
 
           {/* Founding member callout above grid */}
-          <div
-            className="flex items-center justify-center gap-3 mb-8 py-3 px-6 rounded-2xl border mx-auto max-w-xl"
-            style={{ background: 'rgba(245,158,11,0.07)', borderColor: 'rgba(245,158,11,0.25)' }}
-          >
-            <span className="text-lg">🔥</span>
-            <p className="text-[13px]" style={{ color: '#fbbf24' }}>
-              <span className="font-bold">FOUNDING MEMBER OFFER:</span>{' '}
-              First 100 users get Pro for{' '}
-              <span className="text-white font-bold">$1.99/month</span>{' '}
-              (regularly <span className="line-through opacity-60">$9</span>) ·{' '}
-              <span className="font-bold">Only {spotsLeft} spots left!</span>
-            </p>
-          </div>
+          {spotsLeft > 0 && (
+            <div
+              className="flex items-center justify-center gap-3 mb-8 py-3 px-6 rounded-2xl border mx-auto max-w-xl"
+              style={{ background: 'rgba(245,158,11,0.07)', borderColor: 'rgba(245,158,11,0.25)' }}
+            >
+              <span className="text-lg">🔥</span>
+              <p className="text-[13px]" style={{ color: '#fbbf24' }}>
+                <span className="font-bold">FOUNDING MEMBER OFFER:</span>{' '}
+                First 100 users get Pro for{' '}
+                <span className="text-white font-bold">$1.99/month</span>{' '}
+                (regularly <span className="line-through opacity-60">$9</span>) ·{' '}
+                <span className="font-bold">Only {spotsLeft} spots left!</span>
+              </p>
+            </div>
+          )}
 
           <div className="grid md:grid-cols-3 gap-6">
-            {PLANS.map(plan => (
+            {activePlans.map(plan => (
               <div key={plan.name}
-                   className={`relative rounded-2xl overflow-visible border transition-all hover:-translate-y-1 ${plan.highlight ? 'border-emerald-500/40' : 'border-white/[0.06]'}`}
+                   className={`relative rounded-2xl overflow-visible border transition-all hover:-translate-y-1 ${plan.highlight ? 'border-emerald-500/50' : 'border-white/[0.06]'}`}
                    style={plan.highlight
-                     ? {background:'#08180f', boxShadow:'0 0 0 1px rgba(16,185,129,0.18), 0 24px 60px rgba(0,0,0,0.5)'}
+                     ? {background:'#08180f', animation:'proCardGlow 2.5s ease-in-out infinite'}
                      : {background:'#0c1527'}}>
-                {/* Badge row: FOUNDING MEMBER for Pro, original badge otherwise */}
+                {/* Badge */}
                 {plan.highlight ? (
-                  <div className="absolute -top-4 left-0 right-0 flex justify-center gap-2">
+                  <div className="absolute -top-5 left-0 right-0 flex justify-center flex-wrap gap-1.5">
                     <span className="px-3 py-1 rounded-full text-[11px] font-bold text-white"
                           style={{background:'linear-gradient(90deg,#059669,#0d9488)'}}>
-                      ✦ FOUNDING MEMBER
+                      {plan.badge}
+                    </span>
+                    <span className="px-3 py-1 rounded-full text-[11px] font-bold text-white"
+                          style={{background:'linear-gradient(90deg,#f59e0b,#ef4444)'}}>
+                      ⚡ Most Popular
                     </span>
                   </div>
                 ) : plan.badge ? (
@@ -637,28 +745,44 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
                   </div>
                 ) : null}
 
-                <div className="p-8 pt-10">
+                <div className="p-8 pt-12">
                   <h3 className={`text-[22px] font-bold mb-1 ${plan.highlight ? 'text-emerald-400' : 'text-white'}`}>{plan.name}</h3>
                   <p className="text-[13px] text-gray-500 mb-4">{plan.desc}</p>
 
-                  {/* Price — Pro shows discount */}
-                  {plan.highlight ? (
+                  {/* Price — show discount for plans with originalMonthly */}
+                  {plan.originalMonthly ? (
                     <div className="mb-1">
                       <div className="flex items-center gap-2 mb-1">
-                        <span className="text-[15px] line-through text-gray-600">$9</span>
+                        <span className="text-[15px] line-through text-gray-600">${plan.originalMonthly}</span>
                         <span className="text-[10px] font-bold px-2 py-0.5 rounded-md"
                               style={{background:'rgba(245,158,11,0.18)', color:'#fbbf24'}}>
-                          80% OFF
+                          {plan.discountBadge}
                         </span>
                       </div>
                       <div className="flex items-end gap-1">
-                        <span className="text-[16px] text-gray-400 mb-2">$</span>
-                        <span className="text-[48px] font-extrabold text-white leading-none">1.99</span>
-                        <span className="text-[13px] text-gray-500 mb-2">/month</span>
+                        <span className="text-[16px] text-gray-400 mb-3">$</span>
+                        <span className={`font-extrabold text-white leading-none ${plan.highlight ? 'text-[68px]' : 'text-[48px]'}`}>
+                          {annual ? plan.yearly : plan.monthly}
+                        </span>
+                        <span className="text-[13px] text-gray-500 mb-3">/month</span>
                       </div>
-                      <p className="text-[11px] text-amber-500/80 mb-6 font-semibold">
-                        🔥 Founding price · {spotsLeft} spots left
-                      </p>
+                      {plan.highlight && spotsLeft > 0 ? (
+                        <>
+                          <p className="text-[11px] text-amber-500/90 mt-1 font-semibold">
+                            🔥 Founding price · {spotsLeft} spots left
+                          </p>
+                          <div className="flex items-center gap-2 mt-1 mb-5">
+                            <span className="text-[10px] text-gray-500">⏱ Offer expires in:</span>
+                            <span className="text-[11px] font-bold" style={{color:'#fbbf24'}}>
+                              {countdown.d}d {countdown.h}h {countdown.m}m {countdown.s}s
+                            </span>
+                          </div>
+                        </>
+                      ) : (
+                        <p className="text-[11px] text-gray-600 mb-6">
+                          {annual ? 'if billed yearly' : 'billed monthly'}
+                        </p>
+                      )}
                     </div>
                   ) : (
                     <>
@@ -678,7 +802,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
                   <div className="space-y-3 mb-8">
                     {plan.features.map(f => (
                       <div key={f} className="flex items-center gap-3">
-                        <Check className={`w-4 h-4 shrink-0 ${plan.highlight ? 'text-emerald-400' : 'text-emerald-400'}`} />
+                        <Check className="w-4 h-4 shrink-0 text-emerald-400" />
                         <span className="text-[13px] text-gray-300">{f}</span>
                       </div>
                     ))}
@@ -688,7 +812,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
                           style={plan.highlight
                             ? {background:'linear-gradient(135deg,#059669,#0d9488)', boxShadow:'0 4px 16px rgba(16,185,129,0.35)'}
                             : {background:'rgba(255,255,255,0.05)', border:'1px solid rgba(255,255,255,0.08)'}}>
-                    {plan.highlight ? '🔥 Claim Founding Price' : plan.cta}
+                    {plan.highlight && spotsLeft > 0 ? '🔥 Claim Founding Price' : plan.cta}
                   </button>
                 </div>
               </div>
@@ -739,7 +863,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
         <div className="relative z-10 max-w-3xl mx-auto text-center">
           <h2 className="text-[42px] font-extrabold tracking-tight mb-5">Ready to trade smarter?</h2>
           <p className="text-[16px] text-gray-400 mb-10 max-w-[400px] mx-auto">
-            Join 2,400+ traders already using Zynth to sharpen their edge.
+            Join our founding community of traders and sharpen your edge.
           </p>
           <button onClick={onGetStarted}
                   className="group inline-flex items-center gap-2 text-[16px] font-semibold text-white px-10 py-4 rounded-2xl transition-all hover:brightness-110 hover:shadow-[0_8px_32px_rgba(16,185,129,0.45)]"
