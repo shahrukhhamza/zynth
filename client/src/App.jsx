@@ -21,6 +21,8 @@ import EconomicIntelligence from './components/EconomicIntelligence'
 import ScreenshotImportDashboard from './components/ScreenshotImportDashboard'
 import LiveMarketTicker from './components/LiveMarketTicker'
 import TradeJournal from './components/TradeJournal'
+import ChartsPage from './components/ChartsPage'
+import TradingDesk from './components/TradingDesk'
 import LoginPage from './components/LoginPage'
 import SignupPage from './components/SignupPage'
 import LandingPage from './components/LandingPage'
@@ -202,6 +204,12 @@ function AppShell() {
             <div key="screenshot" className="flex-1 overflow-y-auto page-enter"><ScreenshotImportDashboard /></div>
           ) : currentView === 'markets' ? (
             <LiveMarketTicker key="markets" />
+          ) : currentView === 'charts' ? (
+            <ChartsPage key="charts" onNavigate={setCurrentView} />
+          ) : currentView === 'backtesting' ? (
+            <ChartsPage key="backtesting" initialTab="backtesting" onNavigate={setCurrentView} />
+          ) : currentView === 'tools' ? (
+            <TradingDesk key="tools" />
           ) : (
             <>
               {/* News Feed */}

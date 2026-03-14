@@ -1,7 +1,8 @@
 ﻿import { useState, useEffect } from 'react';
 import {
-  Search, Filter, Calendar, X, BarChart3, Newspaper, Brain, BookOpen,
-  Wifi, Camera, ChevronLeft, ChevronRight, Crown, Settings, HelpCircle, Clock,
+  Search, Filter, Calendar, X, BarChart3, Newspaper, Brain,
+  Camera, ChevronLeft, ChevronRight, Crown, Settings, HelpCircle, Clock,
+  LayoutDashboard, Star,
 } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 import { useTimezone } from '../contexts/TimezoneContext';
@@ -115,20 +116,24 @@ function MarketSessionBar({ collapsed }) {
 }
 
 const NAV_ITEMS = [
-  { key: 'data',         icon: BarChart3,  label: 'Economic Data',      badge: null },
-  { key: 'calendar',     icon: Calendar,   label: 'Economic Calendar',  badge: null },
-  { key: 'intelligence', icon: Brain,      label: 'Intelligence',        badge: null },
-  { key: 'news',         icon: Newspaper,  label: 'Market News',         badge: null },
-  { key: 'markets',      icon: Wifi,       label: 'Live Markets',        badge: { text: 'LIVE', color: '#22c55e', bg: 'rgba(34,197,94,0.15)', pulse: true } },
-  { key: 'journal',      icon: BookOpen,   label: 'Trade Journal',       badge: null },
-  { key: 'screenshot',   icon: Camera,     label: 'Screenshot Analysis', badge: { text: 'AI', color: '#a855f7', bg: 'rgba(168,85,247,0.15)' } },
+  { key: 'data',         icon: LayoutDashboard, label: 'Dashboard',          badge: null },
+  { key: 'journal',      icon: Star,            label: 'Trade Journal',      badge: null, core: true },
+  { key: 'intelligence', icon: Brain,           label: 'AI Insights',        badge: { text: 'AI', color: '#a855f7', bg: 'rgba(168,85,247,0.15)' } },
+  { key: 'markets',      icon: BarChart3,       label: 'Economic Data',      badge: null },
+  { key: 'calendar',     icon: Calendar,        label: 'Economic Calendar',  badge: null },
+  { key: 'news',         icon: Newspaper,       label: 'Market News',        badge: null },
+  { key: 'screenshot',   icon: Camera,          label: 'Screenshot Analysis',badge: { text: 'AI', color: '#a855f7', bg: 'rgba(168,85,247,0.15)' } },
 ];
 
-function NavButton({ icon: Icon, label, badge, active, collapsed, accentColor, onClick }) {
+function NavButton({ icon: Icon, label, badge, active, collapsed, accentColor, onClick, core }) {
   const theme = useTheme();
   const [hov, setHov] = useState(false);
   const accent = accentColor ?? theme.accent;
-  const activeBg = accentColor ? 'rgba(167,139,250,0.12)' : theme.accentGlow;
+
+  // "core" = Trade Journal special styling
+  const coreBg      = active ? '#059669' : hov ? '#10b981' : '#10b981cc';
+  const coreColor   = '#ffffff';
+  const normalActiveBg = accentColor ? 'rgba(167,139,250,0.12)' : theme.accentGlow;
 
   return (
     <div className="sidebar-nav-item-wrapper relative">
@@ -138,37 +143,57 @@ function NavButton({ icon: Icon, label, badge, active, collapsed, accentColor, o
         onMouseLeave={() => setHov(false)}
         style={{
           width: '100%', display: 'flex', alignItems: 'center', textAlign: 'left',
-          borderRadius: 8, height: 44,
+          borderRadius: 10,
+          height: core ? 54 : 44,
           justifyContent: collapsed ? 'center' : 'flex-start',
           gap: collapsed ? 0 : 12,
-          paddingLeft:  collapsed ? 0 : (active ? 9 : 12),
+          paddingLeft:  collapsed ? 0 : (core ? 14 : active ? 9 : 12),
           paddingRight: collapsed ? 0 : 12,
-          backgroundColor: active ? activeBg : hov ? (theme.isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)') : 'transparent',
-          color: active ? accent : hov ? theme.text : theme.textMuted,
-          borderLeft: `3px solid ${!collapsed && active ? accent : 'transparent'}`,
-          transition: 'background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease',
+          backgroundColor: core
+            ? coreBg
+            : active ? normalActiveBg : hov ? (theme.isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)') : 'transparent',
+          color: core ? coreColor : active ? accent : hov ? theme.text : theme.textMuted,
+          borderLeft: core ? 'none' : `3px solid ${!collapsed && active ? accent : 'transparent'}`,
+          boxShadow: core ? (hov ? '0 4px 16px rgba(16,185,129,0.35)' : '0 2px 10px rgba(16,185,129,0.22)') : 'none',
+          transition: 'background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease',
+          marginBottom: core ? 4 : 0,
         }}
       >
-        <Icon className="w-[18px] h-[18px] flex-shrink-0" />
+        <Icon className={core ? 'w-[20px] h-[20px] flex-shrink-0' : 'w-[18px] h-[18px] flex-shrink-0'}
+          style={core ? { fill: 'rgba(255,255,255,0.25)', color: '#fff' } : {}} />
         {/* Label+badge always in DOM — hidden via CSS only, no DOM mutation during transition */}
         <div style={{
-          flex: 1, display: 'flex', alignItems: 'center', gap: 8, minWidth: 0,
+          flex: 1, display: 'flex', flexDirection: core ? 'column' : 'row',
+          alignItems: core ? 'flex-start' : 'center',
+          gap: core ? 1 : 8, minWidth: 0,
           overflow: 'hidden',
           opacity: collapsed ? 0 : 1,
           maxWidth: collapsed ? 0 : 180,
           transition: 'opacity 0.18s ease, max-width 0.28s ease',
         }}>
-          <span style={{ fontSize: 14, fontWeight: 500, flex: 1, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>{label}</span>
-          {badge && (
-            <span
-              className="flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded-full font-bold leading-none flex-shrink-0"
-              style={{ backgroundColor: badge.bg, color: badge.color }}
-            >
-              {badge.pulse && (
-                <span className="w-1.5 h-1.5 rounded-full flex-shrink-0"
-                  style={{ backgroundColor: badge.color, animation: 'pulse-dot 1.5s ease-in-out infinite' }} />
-              )}
-              {badge.text}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, width: '100%' }}>
+            <span style={{
+              fontSize: core ? 15 : 14,
+              fontWeight: core ? 700 : 500,
+              flex: 1, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis',
+              letterSpacing: core ? '-0.01em' : 'normal',
+            }}>{label}</span>
+            {badge && !core && (
+              <span
+                className="flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded-full font-bold leading-none flex-shrink-0"
+                style={{ backgroundColor: badge.bg, color: badge.color }}
+              >
+                {badge.pulse && (
+                  <span className="w-1.5 h-1.5 rounded-full flex-shrink-0"
+                    style={{ backgroundColor: badge.color, animation: 'pulse-dot 1.5s ease-in-out infinite' }} />
+                )}
+                {badge.text}
+              </span>
+            )}
+          </div>
+          {core && (
+            <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.7)', fontWeight: 400, letterSpacing: '0.01em' }}>
+              Your trading edge
             </span>
           )}
         </div>
@@ -326,8 +351,14 @@ function SidebarInner({
         <nav style={{ padding: collapsed ? '0 8px' : '0 10px', display: 'flex', flexDirection: 'column', gap: 2 }}>
           {NAV_ITEMS.map(item => (
             <NavButton key={item.key} icon={item.icon} label={item.label} badge={item.badge}
+              core={!!item.core}
               active={currentView === item.key} collapsed={collapsed} onClick={() => navigate(item.key)} />
           ))}
+          {/* Settings inline in nav */}
+          <div style={{ marginTop: 6, borderTop: `1px solid ${theme.border}`, paddingTop: 6 }}>
+            <NavButton icon={Settings} label="Settings" badge={null} active={false}
+              collapsed={collapsed} onClick={() => setShowSettingsModal(true)} />
+          </div>
           {user?.is_admin === 1 && (
             <NavButton icon={Crown} label="Admin" badge={null} active={currentView === 'admin'}
               collapsed={collapsed} accentColor="#a78bfa" onClick={() => navigate('admin')} />
@@ -403,29 +434,16 @@ function SidebarInner({
         )}
       </div>
 
-      {/* BOTTOM SECTION -- pinned */}
-      <div className="flex-shrink-0 border-t" style={{ borderColor: theme.border, padding: collapsed ? '8px' : '8px 10px' }}>
-        {[
-          { icon: Settings, label: 'Settings', action: () => setShowSettingsModal(true) },
-          { icon: HelpCircle, label: 'Help', action: () => {} },
-        ].map(({ icon: Icon, label, action }) => (
-          <div key={label} className="sidebar-nav-item-wrapper relative">
-            <button onClick={action}
-              className="w-full flex items-center rounded-lg text-sm transition-all duration-150"
-              style={{ height: 40, gap: collapsed ? 0 : 10, justifyContent: collapsed ? 'center' : 'flex-start', paddingLeft: collapsed ? 0 : 12, paddingRight: collapsed ? 0 : 12, color: theme.textMuted }}
-              onMouseEnter={e => { e.currentTarget.style.backgroundColor = theme.isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)'; e.currentTarget.style.color = theme.text; }}
-              onMouseLeave={e => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.color = theme.textMuted; }}>
-              <Icon className="w-[18px] h-[18px] flex-shrink-0" />
-              <span style={{
-                fontWeight: 500, overflow: 'hidden', whiteSpace: 'nowrap',
-                opacity: collapsed ? 0 : 1,
-                maxWidth: collapsed ? 0 : 120,
-                transition: 'opacity 0.18s ease, max-width 0.28s ease',
-              }}>{label}</span>
-            </button>
-            {collapsed && <div className="sidebar-tooltip"><span>{label}</span></div>}
-          </div>
-        ))}
+      {/* BOTTOM SECTION — just session bar / version note when collapsed */}
+      <div className="flex-shrink-0 border-t" style={{ borderColor: theme.border, padding: collapsed ? '8px' : '6px 10px' }}>
+        <div style={{
+          overflow: 'hidden', opacity: collapsed ? 0 : 1, maxHeight: collapsed ? 0 : 40,
+          transition: 'opacity 0.18s ease, max-height 0.28s ease',
+        }}>
+          <p style={{ fontSize: 10, color: theme.textMuted, textAlign: 'center', padding: '4px 0' }}>
+            Zynth · v1.0
+          </p>
+        </div>
       </div>
     </div>
   );

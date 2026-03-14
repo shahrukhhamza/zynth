@@ -6,6 +6,13 @@ const api = axios.create({
   timeout: 45000,
 });
 
+// Attach JWT on every request
+api.interceptors.request.use(config => {
+  const token = localStorage.getItem('auth_token');
+  if (token) config.headers.Authorization = `Bearer ${token}`;
+  return config;
+});
+
 // ── Trades ────────────────────────────────────────────────────────────────────
 export async function listTrades(page = 0, limit = 50) {
   const { data } = await api.get('/trades', { params: { page, limit } });

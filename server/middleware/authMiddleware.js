@@ -30,6 +30,13 @@ export function requirePro(req, res, next) {
   return res.status(403).json({ error: 'Pro plan required.', upgrade: true });
 }
 
+/** Require elite plan or admin. */
+export function requireElite(req, res, next) {
+  const { plan, is_admin } = req.user || {};
+  if (is_admin === 1 || plan === 'elite') return next();
+  return res.status(403).json({ error: 'Elite plan required.', upgrade: true });
+}
+
 /** Require admin role. */
 export function requireAdmin(req, res, next) {
   if (req.user?.is_admin === 1) return next();

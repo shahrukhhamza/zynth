@@ -66,8 +66,43 @@ function _initSchema(db) {
       created_at  TEXT DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ','now'))
     );
 
-    CREATE INDEX IF NOT EXISTS idx_trades_user   ON trades(user_id, created_at DESC);
-    CREATE INDEX IF NOT EXISTS idx_reports_user  ON performance_reports(user_id, created_at DESC);
+    CREATE TABLE IF NOT EXISTS checklist (
+      id             INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id        TEXT    NOT NULL DEFAULT 'default',
+      score          INTEGER,
+      answers        TEXT,
+      recommendation TEXT,
+      proceeded      INTEGER DEFAULT 0,
+      trade_result   TEXT    DEFAULT NULL,
+      created_at     TEXT    DEFAULT (datetime('now'))
+    );
+
+    CREATE TABLE IF NOT EXISTS macro_snapshots (
+      id         INTEGER PRIMARY KEY AUTOINCREMENT,
+      score      REAL,
+      label      TEXT,
+      date       TEXT UNIQUE,
+      created_at TEXT DEFAULT (datetime('now'))
+    );
+
+    CREATE TABLE IF NOT EXISTS dna_reports (
+      id               INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id          TEXT    NOT NULL DEFAULT 'default',
+      archetype        TEXT,
+      trait_scores     TEXT,
+      strengths        TEXT,
+      weaknesses       TEXT,
+      coach_message    TEXT,
+      improvement_plan TEXT,
+      report_data      TEXT,
+      generated_at     TEXT    DEFAULT (datetime('now'))
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_trades_user      ON trades(user_id, created_at DESC);
+    CREATE INDEX IF NOT EXISTS idx_reports_user     ON performance_reports(user_id, created_at DESC);
+    CREATE INDEX IF NOT EXISTS idx_checklist_user   ON checklist(user_id, created_at DESC);
+    CREATE UNIQUE INDEX IF NOT EXISTS idx_macro_snapshot_date ON macro_snapshots(date);
+    CREATE INDEX IF NOT EXISTS idx_dna_user         ON dna_reports(user_id, generated_at DESC);
   `);
 }
 
@@ -121,6 +156,24 @@ export function updateTrade(id, data) {
 
 export function deleteTrade(id) {
   getDb().prepare('DELETE FROM trades WHERE id = ?').run(id);
+}
+
+export function getTradesBySymbol(userId = 'default', symbol, limit = 100, offset = 0) {
+  return getDb().prepare(`
+    SELECT t.*,
+           j.strategy, j.reasoning, j.emotional_state,
+           j.lessons_learned, j.notes, j.ai_analysis,
+           j.id AS journal_id
+    FROM   trades t
+    LEFT JOIN trade_journals j ON j.trade_id = t.id
+    WHERE  t.user_id = ? AND UPPER(t.pair) = UPPER(?)
+    ORDER  BY t.created_at DESC
+    LIMIT  ? OFFSET ?
+  `).all(userId, symbol, limit, offset);
+}
+
+export function countTradesBySymbol(userId = 'default', symbol) {
+  return getDb().prepare('SELECT COUNT(*) AS n FROM trades WHERE user_id = ? AND UPPER(pair) = UPPER(?)').get(userId, symbol).n;
 }
 
 export function countTrades(userId = 'default') {
@@ -192,4 +245,71 @@ export function getReports(userId = 'default', limit = 20) {
     ORDER  BY created_at DESC
     LIMIT  ?
   `).all(userId, limit);
+}
+
+// ── Checklist ─────────────────────────────────────────────────────────────────
+export function insertChecklist(data) {
+  const r = getDb().prepare(`
+    INSERT INTO checklist (user_id, score, answers, recommendation, proceeded)
+    VALUES (@user_id, @score, @answers, @recommendation, @proceeded)
+  `).run(data);
+  return r.lastInsertRowid;
+}
+
+export function getChecklistHistory(userId = 'default', limit = 50) {
+  return getDb()
+    .prepare('SELECT * FROM checklist WHERE user_id = ? ORDER BY created_at DESC LIMIT ?')
+    .all(userId, limit);
+}
+
+export function getChecklistRawStats(userId = 'default') {
+  return getDb()
+    .prepare('SELECT score, recommendation, proceeded, trade_result FROM checklist WHERE user_id = ?')
+    .all(userId);
+}
+
+// ── Macro Snapshots ───────────────────────────────────────────────────────────
+export function insertMacroSnapshot({ score, label = 'Unknown', date }) {
+  return getDb()
+    .prepare(`INSERT INTO macro_snapshots (score, label, date) VALUES (?, ?, ?)
+              ON CONFLICT(date) DO UPDATE SET score = excluded.score, label = excluded.label`)
+    .run(score, label, date);
+}
+
+export function getMacroSnapshotForDate(date) {
+  return getDb()
+    .prepare('SELECT * FROM macro_snapshots WHERE date = ?')
+    .get(date) ?? null;
+}
+
+export function getRecentMacroSnapshots(limit = 180) {
+  return getDb()
+    .prepare('SELECT date, score, label FROM macro_snapshots ORDER BY date ASC LIMIT ?')
+    .all(limit);
+}
+
+// ── DNA Reports ───────────────────────────────────────────────────────────────
+export function insertDnaReport(data) {
+  const r = getDb().prepare(`
+    INSERT INTO dna_reports
+      (user_id, archetype, trait_scores, strengths, weaknesses, coach_message, improvement_plan, report_data)
+    VALUES
+      (@user_id, @archetype, @trait_scores, @strengths, @weaknesses, @coach_message, @improvement_plan, @report_data)
+  `).run(data);
+  return r.lastInsertRowid;
+}
+
+export function getLatestDnaReport(userId = 'default') {
+  return getDb()
+    .prepare('SELECT * FROM dna_reports WHERE user_id = ? ORDER BY generated_at DESC LIMIT 1')
+    .get(userId) ?? null;
+}
+
+export function countDnaReportsThisMonth(userId = 'default') {
+  const start = new Date();
+  start.setUTCDate(1);
+  start.setUTCHours(0, 0, 0, 0);
+  return getDb()
+    .prepare("SELECT COUNT(*) AS n FROM dna_reports WHERE user_id = ? AND generated_at >= ?")
+    .get(userId, start.toISOString()).n;
 }

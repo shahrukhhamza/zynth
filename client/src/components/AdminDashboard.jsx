@@ -1,13 +1,15 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useTheme } from '../contexts/ThemeContext';
 import { useAuth } from '../contexts/AuthContext';
+import { useToast } from '../contexts/ToastContext';
+import { useConfirm } from '../contexts/ConfirmContext';
 import { API_URL } from '../config/api';
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell,
 } from 'recharts';
 import {
   Users, Crown, Trash2, Search, RefreshCw,
-  DollarSign, Zap, Shield, X, TrendingUp, Download, CalendarDays, CalendarCheck,
+  DollarSign, Zap, Shield, Download, CalendarDays, CalendarCheck,
 } from 'lucide-react';
 
 /* ── helpers ─────────────────────────────────────────────────────── */
@@ -49,10 +51,10 @@ function AdminDashboardInner() {
   const [usersLoading, setUsersLoading] = useState(true);
   const [search, setSearch]             = useState('');
   const [mutating, setMutating]         = useState(null);   // userId being mutated
-  const [deleteTarget, setDeleteTarget] = useState(null);   // userId awaiting confirm
-  const [toast, setToast]               = useState(null);   // { type:'ok'|'err', text }
   const [qa, setQa]                     = useState({ pro: '', elite: '', reset: '' });
   const [qaLoading, setQaLoading]       = useState('');
+  const { toast } = useToast();
+  const { confirm } = useConfirm();
 
   const authH = useCallback(
     () => ({ 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }),
@@ -60,8 +62,8 @@ function AdminDashboardInner() {
   );
 
   function showToast(type, text) {
-    setToast({ type, text });
-    setTimeout(() => setToast(null), 3500);
+    if (type === 'ok') toast.success(text);
+    else toast.error(text);
   }
 
   /* ── data fetching ─────────────────────────────────────────────── */
@@ -119,20 +121,25 @@ function AdminDashboardInner() {
     finally { setMutating(null); }
   }
 
-  async function confirmDelete() {
-    if (!deleteTarget) return;
-    setMutating(deleteTarget);
+  async function deleteUser(userId) {
+    const ok = await confirm({
+      title:   'Delete user?',
+      message: 'This will permanently delete the account and all associated data. This cannot be undone.',
+      confirm: 'Delete User',
+      variant: 'danger',
+    });
+    if (!ok) return;
+    setMutating(userId);
     try {
-      const r = await fetch(`${API_URL}/api/admin/users/${deleteTarget}`, {
+      const r = await fetch(`${API_URL}/api/admin/users/${userId}`, {
         method: 'DELETE', headers: authH(),
       });
       const d = await r.json();
       if (!r.ok) throw new Error(d.error);
-      setUsers(us => us.filter(u => u.id !== deleteTarget));
-      setDeleteTarget(null);
-      showToast('ok', 'User deleted');
+      setUsers(us => us.filter(u => u.id !== userId));
+      toast.success('User deleted');
       loadStats();
-    } catch (e) { showToast('err', e.message); setDeleteTarget(null); }
+    } catch (e) { toast.error(e.message); }
     finally { setMutating(null); }
   }
 
@@ -201,21 +208,6 @@ function AdminDashboardInner() {
   /* ── render ────────────────────────────────────────────────────── */
   return (
     <div className="flex-1 overflow-y-auto" style={{ background: theme.bg, color: theme.text }}>
-
-      {/* Toast notification */}
-      {toast && (
-        <div
-          className="fixed top-20 right-6 z-[9999] flex items-center gap-2.5 px-4 py-3 rounded-xl shadow-2xl text-[13px] font-semibold border"
-          style={{
-            background:  toast.type === 'ok' ? 'rgba(16,185,129,0.12)' : 'rgba(239,68,68,0.12)',
-            borderColor: toast.type === 'ok' ? 'rgba(16,185,129,0.35)' : 'rgba(239,68,68,0.35)',
-            color:       toast.type === 'ok' ? '#34d399' : '#f87171',
-          }}
-        >
-          {toast.type === 'ok' ? <TrendingUp className="w-4 h-4" /> : <X className="w-4 h-4" />}
-          {toast.text}
-        </div>
-      )}
 
       <div className="max-w-7xl mx-auto p-6 space-y-6">
 
@@ -372,7 +364,6 @@ function AdminDashboardInner() {
                   ) : filtered.map(u => {
                     const isAdminUser  = u.is_admin === 1;
                     const isMutating   = mutating === u.id;
-                    const isDeleteConf = deleteTarget === u.id;
                     const rowBaseBg    = isAdminUser
                       ? (theme.isDark ? 'rgba(139,92,246,0.06)' : 'rgba(139,92,246,0.04)')
                       : 'transparent';
@@ -427,27 +418,7 @@ function AdminDashboardInner() {
 
                         {/* Actions */}
                         <td className="px-4 py-3">
-                          {isDeleteConf ? (
-                            <div className="flex items-center gap-1.5">
-                              <span className="text-[11px] font-semibold" style={{ color: '#f87171' }}>Delete?</span>
-                              <button
-                                onClick={confirmDelete}
-                                disabled={isMutating}
-                                className="px-2 py-1 rounded-lg text-[11px] font-bold text-white"
-                                style={{ background: '#dc2626' }}
-                              >
-                                Yes
-                              </button>
-                              <button
-                                onClick={() => setDeleteTarget(null)}
-                                className="px-2 py-1 rounded-lg text-[11px] font-semibold"
-                                style={{ background: theme.border, color: theme.text }}
-                              >
-                                No
-                              </button>
-                            </div>
-                          ) : (
-                            <div className="flex items-center gap-1.5">
+                          <div className="flex items-center gap-1.5">
                               {/* Plan select */}
                               <select
                                 value={u.plan || 'free'}
@@ -482,7 +453,7 @@ function AdminDashboardInner() {
 
                               {/* Trash — delete */}
                               <button
-                                onClick={() => setDeleteTarget(u.id)}
+                                onClick={() => deleteUser(u.id)}
                                 disabled={isMutating}
                                 title="Delete user"
                                 className="w-7 h-7 rounded-lg flex items-center justify-center transition-all"
@@ -493,7 +464,6 @@ function AdminDashboardInner() {
                                 <Trash2 className="w-3.5 h-3.5" />
                               </button>
                             </div>
-                          )}
                         </td>
                       </tr>
                     );

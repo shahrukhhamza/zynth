@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react';
+import PreTradeChecklist from '../PreTradeChecklist';
 import { Upload, X, TrendingUp, TrendingDown, Save, ChevronDown } from 'lucide-react';
 import { useTheme } from '../../contexts/ThemeContext';
 import { createTrade, updateTrade } from '../../services/journalApi';
@@ -29,6 +30,7 @@ export default function TradeEntryForm({ onSaved, editTrade = null }) {
   const [screenshotFile, setScreenshotFile] = useState(null);
   const [dragging, setDragging] = useState(false);
   const [customPair, setCustomPair] = useState(false);
+  const [showChecklist, setShowChecklist] = useState(false);
 
   const init = editTrade ? {
     pair: editTrade.pair || '', direction: editTrade.direction || 'buy',
@@ -248,12 +250,33 @@ export default function TradeEntryForm({ onSaved, editTrade = null }) {
         </div>
       </div>
 
+      {!editTrade && (
+        <button type="button" onClick={() => setShowChecklist(true)}
+          className="w-full py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2"
+          style={{ backgroundColor: 'transparent', color: theme.accent, border: `2px solid ${theme.accent}`, borderRadius: '0.75rem' }}>
+          🎯 Run Pre-Trade Check
+        </button>
+      )}
+
       <button type="submit" disabled={saving || !form.pair || !form.direction}
         className="w-full py-3 rounded-xl font-bold text-sm transition-opacity flex items-center justify-center gap-2"
         style={{ backgroundColor: theme.accent, color: '#fff', opacity: saving ? 0.6 : 1 }}>
         <Save className="w-4 h-4" />
         {saving ? 'Saving…' : editTrade ? 'Update Trade' : 'Log Trade'}
       </button>
+
+      {showChecklist && (
+        <PreTradeChecklist
+          direction={form.direction}
+          entry_price={form.entry_price}
+          tp={form.tp}
+          sl={form.sl}
+          strategy={form.strategy}
+          session={form.session}
+          emotional_state={form.emotional_state}
+          onClose={() => setShowChecklist(false)}
+        />
+      )}
     </form>
   );
 }

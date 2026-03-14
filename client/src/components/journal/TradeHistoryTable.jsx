@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { Trash2, Brain, ChevronLeft, ChevronRight, TrendingUp, TrendingDown, Eye } from 'lucide-react';
 import { useTheme } from '../../contexts/ThemeContext';
+import { useToast } from '../../contexts/ToastContext';
+import { useConfirm } from '../../contexts/ConfirmContext';
 import { deleteTrade, analyzeTrade } from '../../services/journalApi';
 
 function OutcomeBadge({ outcome }) {
@@ -44,19 +46,29 @@ function AiScoreBadge({ ai_analysis }) {
 
 export default function TradeHistoryTable({ trades, total, page, limit, onPageChange, onDeleted, onAnalyze, onView }) {
   const theme = useTheme();
+  const { toast } = useToast();
+  const { confirm } = useConfirm();
   const [deleting, setDeleting] = useState(null);
   const [analyzing, setAnalyzing] = useState(null);
 
   const totalPages = Math.ceil(total / limit);
 
   const handleDelete = async (id) => {
-    if (!window.confirm('Delete this trade? This cannot be undone.')) return;
+    const ok = await confirm({
+      title:   'Delete trade?',
+      message: 'This action cannot be undone. The trade and its journal entry will be permanently removed.',
+      confirm: 'Delete',
+      cancel:  'Cancel',
+      variant: 'danger',
+    });
+    if (!ok) return;
     setDeleting(id);
     try {
       await deleteTrade(id);
+      toast.success('Trade deleted.');
       onDeleted();
     } catch (err) {
-      alert(err.message);
+      toast.error(err.message || 'Failed to delete trade.');
     } finally {
       setDeleting(null);
     }
@@ -67,8 +79,9 @@ export default function TradeHistoryTable({ trades, total, page, limit, onPageCh
     try {
       const res = await analyzeTrade(id);
       onAnalyze(id, res);
+      toast.success('AI analysis complete.');
     } catch (err) {
-      alert('AI analysis failed: ' + err.message);
+      toast.error('AI analysis failed: ' + (err.message || 'Unknown error'));
     } finally {
       setAnalyzing(null);
     }
@@ -111,7 +124,9 @@ export default function TradeHistoryTable({ trades, total, page, limit, onPageCh
               const date = t.created_at ? (t.created_at.includes('T') ? t.created_at.split('T')[0] : t.created_at.slice(0,10)) : '—';
               const pnl = parseFloat(t.profit_loss);
               return (
-                <tr key={t.id} style={{ backgroundColor: i % 2 === 0 ? 'transparent' : (theme.isDark ? `${theme.border}22` : `${theme.border}55`) }}
+                <tr key={t.id}
+                  onClick={() => onView(t)}
+                  style={{ backgroundColor: i % 2 === 0 ? 'transparent' : (theme.isDark ? `${theme.border}22` : `${theme.border}55`), cursor: 'pointer' }}
                   className="hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
                   <td style={td}>{date}</td>
                   <td style={{ ...td, fontWeight: 700, color: theme.accent }}>{t.pair}</td>
@@ -128,16 +143,16 @@ export default function TradeHistoryTable({ trades, total, page, limit, onPageCh
                   <td style={td}><AiScoreBadge ai_analysis={t.ai_analysis} /></td>
                   <td style={td}>
                     <div className="flex items-center gap-1">
-                      <button onClick={() => onView(t)} title="View"
+                      <button onClick={e => { e.stopPropagation(); onView(t); }} title="View"
                         className="p-1.5 rounded transition-colors hover:bg-gray-100 dark:hover:bg-white/10" style={{ color: theme.muted }}>
                         <Eye className="w-3.5 h-3.5" />
                       </button>
-                      <button onClick={() => handleAnalyze(t.id)} disabled={analyzing === t.id}
+                      <button onClick={e => { e.stopPropagation(); handleAnalyze(t.id); }} disabled={analyzing === t.id}
                         title="AI Analyze" className="p-1.5 rounded transition-colors hover:bg-gray-100 dark:hover:bg-white/10"
                         style={{ color: analyzing === t.id ? theme.muted : '#a78bfa', opacity: analyzing === t.id ? 0.5 : 1 }}>
                         <Brain className="w-3.5 h-3.5" />
                       </button>
-                      <button onClick={() => handleDelete(t.id)} disabled={deleting === t.id}
+                      <button onClick={e => { e.stopPropagation(); handleDelete(t.id); }} disabled={deleting === t.id}
                         title="Delete" className="p-1.5 rounded transition-colors hover:bg-red-500/20"
                         style={{ color: '#ef4444', opacity: deleting === t.id ? 0.5 : 1 }}>
                         <Trash2 className="w-3.5 h-3.5" />

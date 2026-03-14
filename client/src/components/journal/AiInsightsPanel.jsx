@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Brain, FileText, Loader2, AlertTriangle, Sparkles, TrendingUp, ChevronDown, ChevronUp } from 'lucide-react';
 import { useTheme } from '../../contexts/ThemeContext';
+import { useToast } from '../../contexts/ToastContext';
 import { generateReport, listReports } from '../../services/journalApi';
 
 function ScoreBar({ score, max = 10 }) {
@@ -195,6 +196,7 @@ function ReportCard({ report }) {
 
 export default function AiInsightsPanel({ trades, metrics, onReportGenerated }) {
   const theme = useTheme();
+  const { toast } = useToast();
   const [generating, setGenerating] = useState(false);
   const [reportType, setReportType] = useState('weekly');
   const [reports, setReports] = useState([]);
@@ -223,9 +225,10 @@ export default function AiInsightsPanel({ trades, metrics, onReportGenerated }) 
       const r = await generateReport(reportType);
       setReports(prev => [r, ...prev]);
       setReportsLoaded(true);
+      toast.success('Report generated successfully!');
       if (onReportGenerated) onReportGenerated(r);
     } catch (err) {
-      alert('Report generation failed: ' + err.message);
+      toast.error('Report generation failed: ' + (err.message || 'Unknown error'));
     } finally {
       setGenerating(false);
     }

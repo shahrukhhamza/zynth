@@ -177,9 +177,9 @@ html:not(.dark) .sidebar-tooltip::before {
 /* ── Smooth page transitions ─────────────────────────────────────────────── */
 @keyframes fadeSlideIn {
   from { opacity: 0; transform: translateY(6px); }
-  to   { opacity: 1; transform: translateY(0); }
+  to   { opacity: 1; transform: none; }
 }
 
 .page-enter {
-  animation: fadeSlideIn 0.22s ease forwards;
+  animation: fadeSlideIn 0.22s ease;
 }

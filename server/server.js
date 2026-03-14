@@ -23,12 +23,16 @@ import economicRouter from './routes/economic.js';
 import authRouter from './routes/auth.js';
 import finnhubRouter from './routes/finnhub.js';
 import journalRouter from './routes/journal.js';
+import checklistRouter from './routes/checklist.js';
+import analysisRouter  from './routes/analysis.js';
 import { getDb } from './services/journalDb.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import { getApiKeyManager } from './utils/apiKeyManager.js';
 import { finnhubService, TRACKED_SYMBOLS } from './services/finnhubService.js';
 import { startAutoReleaseScheduler, manualTrigger } from './services/autoReleaseService.js';
 import adminRouter from './routes/admin.js';
+import chartsRouter from './routes/charts.js';
+import levelsRouter from './routes/levels.js';
 import { requireAuth, checkScreenshotTries } from './middleware/authMiddleware.js';
 
 const app = express();
@@ -110,6 +114,10 @@ app.use('/api/auth', authRouter);
 app.use('/api/admin', adminRouter);
 app.use('/api/finnhub', finnhubRouter);
 app.use('/api/journal', journalRouter);
+app.use('/api/checklist', checklistRouter);
+app.use('/api/analysis',  analysisRouter);
+app.use('/api/charts', requireAuth, chartsRouter);
+app.use('/api/levels', requireAuth, levelsRouter);
 
 // ── /mt5 proxy → Python screenshot service ──────────────────────────────────
 // In production set PYTHON_SERVICE_URL=https://ai-dashboard-python.onrender.com
@@ -283,6 +291,7 @@ httpServer.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
   console.log(`📊 Financial News Dashboard API`);
   console.log(`🔑 Polygon API Key: ${process.env.POLYGON_API_KEY ? 'Yes' : 'No'}`);
+  console.log('Twelve Data key loaded:', !!process.env.TWELVE_DATA_API_KEY);
 
   if (process.env.FINNHUB_API_KEY) {
     // Seed REST prices and open WS AFTER server is ready — truly fire-and-forget
@@ -321,5 +330,19 @@ httpServer.listen(PORT, () => {
       }
     }, 4 * 60 * 1000); // every 4 minutes
   }
+
+  // ── Daily macro snapshot ───────────────────────────────────────────────────────────
+  setInterval(async () => {
+    try {
+      const { calculateMacroSurpriseScore } = await import('./services/economicIntelligenceService.js');
+      const { insertMacroSnapshot }         = await import('./services/journalDb.js');
+      const result = await calculateMacroSurpriseScore();
+      if (result?.score !== undefined) {
+        const date = new Date().toISOString().slice(0, 10);
+        try { insertMacroSnapshot({ score: result.score, label: result.label ?? 'Unknown', date }); } catch {}
+        console.log(`📊 Macro snapshot saved: ${date} score=${result.score}`);
+      }
+    } catch (err) { console.error('⚠️  Macro snapshot error:', err.message); }
+  }, 24 * 60 * 60 * 1000);
 });
 

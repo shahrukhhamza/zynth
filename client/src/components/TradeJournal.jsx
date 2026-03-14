@@ -1,17 +1,22 @@
 import { useState, useEffect, useCallback } from 'react';
-import { BookOpen, List, BarChart2, Brain, X, RefreshCw } from 'lucide-react';
+import { BookOpen, List, BarChart2, Brain, X, RefreshCw, Activity, Fingerprint } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
+import { API_URL } from '../config/api';
 import { listTrades, getAnalytics } from '../services/journalApi';
 import TradeEntryForm from './journal/TradeEntryForm';
 import TradeHistoryTable from './journal/TradeHistoryTable';
 import PerformanceDashboard from './journal/PerformanceDashboard';
 import AiInsightsPanel from './journal/AiInsightsPanel';
+import MacroCorrelation from './MacroCorrelation';
+import TradingDNA from './TradingDNA';
 
 const TABS = [
-  { key: 'log',         label: 'Log Trade',     icon: BookOpen },
-  { key: 'history',     label: 'Trade History', icon: List },
-  { key: 'performance', label: 'Performance',   icon: BarChart2 },
-  { key: 'insights',    label: 'AI Insights',   icon: Brain },
+  { key: 'log',         label: 'Log Trade',          icon: BookOpen  },
+  { key: 'history',     label: 'Trade History',       icon: List      },
+  { key: 'performance', label: 'Performance',         icon: BarChart2 },
+  { key: 'insights',    label: 'AI Insights',         icon: Brain     },
+  { key: 'macro',       label: 'Macro Correlation',   icon: Activity     },
+  { key: 'dna',         label: 'Trading DNA',          icon: Fingerprint  },
 ];
 
 function TradeDetailModal({ trade, onClose }) {
@@ -72,14 +77,28 @@ function TradeDetailModal({ trade, onClose }) {
                 <p className="text-sm p-3 rounded-lg" style={{ backgroundColor: theme.surface, color: theme.text }}>{trade.lessons_learned}</p>
               </div>
             )}
+            {trade.notes && (
+              <div>
+                <p className="text-xs font-bold uppercase tracking-wide mb-1" style={{ color: theme.muted }}>Notes / Remarks</p>
+                <p className="text-sm p-3 rounded-lg" style={{ backgroundColor: theme.surface, color: theme.text }}>{trade.notes}</p>
+              </div>
+            )}
           </div>
         )}
 
         {trade.screenshot_path && (
           <div className="px-4 pb-4">
             <p className="text-xs font-bold uppercase tracking-wide mb-2" style={{ color: theme.muted }}>Screenshot</p>
-            <img src={`/${trade.screenshot_path}`} alt="Trade" className="rounded-lg w-full object-contain max-h-64"
-              style={{ backgroundColor: theme.surface }} />
+            <a href={`${API_URL}${trade.screenshot_path}`} target="_blank" rel="noreferrer" title="Click to open full size">
+              <img
+                src={`${API_URL}${trade.screenshot_path}`}
+                alt="Trade screenshot"
+                className="rounded-lg w-full object-contain max-h-80 hover:opacity-90 transition-opacity"
+                style={{ backgroundColor: theme.surface, cursor: 'zoom-in' }}
+                onError={e => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'block'; }}
+              />
+              <p style={{ display: 'none', color: theme.muted, fontSize: '0.75rem', marginTop: 4 }}>Screenshot could not be loaded.</p>
+            </a>
           </div>
         )}
 
@@ -256,6 +275,18 @@ export default function TradeJournal() {
             metrics={metrics}
             onReportGenerated={() => {}}
           />
+        </div>
+      )}
+
+      {tab === 'macro' && (
+        <div>
+          <MacroCorrelation />
+        </div>
+      )}
+
+      {tab === 'dna' && (
+        <div>
+          <TradingDNA />
         </div>
       )}
 

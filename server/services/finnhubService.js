@@ -23,10 +23,11 @@ export const TRACKED_SYMBOLS = [
   // ── Tier 2: REST-polled every 15 minutes ──────────────────────────────────
   { symbol: 'OANDA:GBP_USD',   display: 'GBP/USD',  label: 'Pound / USD',    category: 'forex',  unit: '',  dec: 5, tier: 2 },
   { symbol: 'OANDA:USD_JPY',   display: 'USD/JPY',  label: 'USD / Yen',      category: 'forex',  unit: '',  dec: 3, tier: 2 },
-  { symbol: 'BINANCE:ETHUSDT', display: 'ETH/USDT', label: 'Ethereum',       category: 'crypto', unit: '$', dec: 2, tier: 2 },
-  { symbol: 'BINANCE:XRPUSDT', display: 'XRP/USDT', label: 'Ripple',         category: 'crypto', unit: '$', dec: 4, tier: 2 },
-  { symbol: 'BINANCE:BNBUSDT', display: 'BNB/USDT', label: 'BNB',            category: 'crypto', unit: '$', dec: 2, tier: 2 },
-  { symbol: 'BINANCE:SOLUSDT', display: 'SOL/USDT', label: 'Solana',         category: 'crypto', unit: '$', dec: 2, tier: 2 },
+  // Crypto is 24/7 — subscribe via WebSocket (tier 1) for real-time ticks
+  { symbol: 'BINANCE:ETHUSDT', display: 'ETH/USDT', label: 'Ethereum',       category: 'crypto', unit: '$', dec: 2, tier: 1 },
+  { symbol: 'BINANCE:XRPUSDT', display: 'XRP/USDT', label: 'Ripple',         category: 'crypto', unit: '$', dec: 4, tier: 1 },
+  { symbol: 'BINANCE:BNBUSDT', display: 'BNB/USDT', label: 'BNB',            category: 'crypto', unit: '$', dec: 2, tier: 1 },
+  { symbol: 'BINANCE:SOLUSDT', display: 'SOL/USDT', label: 'Solana',         category: 'crypto', unit: '$', dec: 2, tier: 1 },
   { symbol: 'GLD',             display: 'GLD',      label: 'Gold ETF',       category: 'stocks', unit: '$', dec: 2, tier: 2 },
   { symbol: 'TLT',             display: 'TLT',      label: '20Y Treasuries', category: 'stocks', unit: '$', dec: 2, tier: 2 },
   { symbol: 'SPY',             display: 'SPY',      label: 'S&P 500 ETF',    category: 'stocks', unit: '$', dec: 2, tier: 2 },

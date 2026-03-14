@@ -379,10 +379,19 @@ function EconomicIntelligence() {
   const loadDashboard = async () => {
     try {
       setError(null);
+      const token = localStorage.getItem('auth_token');
+      if (!token) {
+        setError('Please log in to access Economic Intelligence');
+        setLoading(false);
+        return;
+      }
+      const headers = { Authorization: `Bearer ${token}` };
       const [dashRes, scoreRes] = await Promise.all([
-        fetch(`${API_URL}/api/economic/dashboard`),
-        fetch(`${API_URL}/api/economic/macro-score`),
+        fetch(`${API_URL}/api/economic/dashboard`, { headers }),
+        fetch(`${API_URL}/api/economic/macro-score`, { headers }),
       ]);
+      if (dashRes.status === 401) throw new Error('Session expired — please log in again');
+      if (dashRes.status === 403) throw new Error('Pro or Elite plan required to access Economic Intelligence');
       if (!dashRes.ok) throw new Error('Failed to load economic intelligence');
       setDashboard(await dashRes.json());
       if (scoreRes.ok) setMacroScore(await scoreRes.json());
@@ -396,7 +405,11 @@ function EconomicIntelligence() {
   const handleRefresh = async () => {
     try {
       setRefreshing(true);
-      await fetch(`${API_URL}/api/economic/refresh`, { method: 'POST' });
+      const token = localStorage.getItem('auth_token');
+      await fetch(`${API_URL}/api/economic/refresh`, {
+        method: 'POST',
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+      });
       setLoading(true);
       await loadDashboard();
     } finally {

@@ -20,7 +20,7 @@ import { existsSync, mkdirSync } from 'fs';
 import { requireAuth, checkAiTries, requirePro } from '../middleware/authMiddleware.js';
 import {
   insertTrade, getTrades, getTradeById, updateTrade, deleteTrade, countTrades,
-  countTradesThisMonth,
+  countTradesThisMonth, getTradesBySymbol, countTradesBySymbol,
   upsertJournal, setJournalAiAnalysis,
   getAllTradesForUser, insertReport, getReports,
 } from '../services/journalDb.js';
@@ -119,10 +119,75 @@ router.get('/trades', (req, res) => {
     const userId = getUserId(req);
     const page   = Math.max(0, parseInt(req.query.page)  || 0);
     const limit  = Math.min(200, parseInt(req.query.limit) || 50);
-    const trades = getTrades(userId, limit, page * limit);
-    const total  = countTrades(userId);
+    const symbol = req.query.symbol ? String(req.query.symbol).trim() : null;
+    const trades = symbol
+      ? getTradesBySymbol(userId, symbol, limit, page * limit)
+      : getTrades(userId, limit, page * limit);
+    const total  = symbol
+      ? countTradesBySymbol(userId, symbol)
+      : countTrades(userId);
     res.json({ success: true, data: trades, total, page, limit });
   } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// ── POST /trades/chart-analysis ────────────────────────────────────────────────
+router.post('/trades/chart-analysis', requireAuth, checkAiTries, async (req, res) => {
+  try {
+    const { symbol, trades } = req.body;
+    if (!symbol || !Array.isArray(trades) || trades.length === 0) {
+      return res.status(400).json({ success: false, error: 'symbol and trades[] required' });
+    }
+
+    const key = process.env.GEMINI_API_KEY;
+    const aiEnabled = process.env.USE_GEMINI_AI !== 'false';
+    if (!key || key === 'demo' || !aiEnabled) {
+      return res.status(503).json({ success: false, error: 'AI analysis is currently unavailable. Check your GEMINI_API_KEY configuration.' });
+    }
+
+    const tradesSummary = trades.slice(0, 20).map((t, i) => {
+      const outcome = t.outcome ? t.outcome.toUpperCase() : 'OPEN';
+      const pnl = t.profit_loss != null ? ` | P&L: ${t.profit_loss}` : '';
+      const ep = t.entry_price != null ? ` @ ${t.entry_price}` : '';
+      const xp = t.exit_price  != null ? ` → ${t.exit_price}` : '';
+      const dt = t.created_at  ? ` [${new Date(t.created_at).toLocaleDateString()}]` : '';
+      return `${i+1}. ${(t.direction||'?').toUpperCase()}${ep}${xp} | ${outcome}${pnl}${dt}`;
+    }).join('\n');
+
+    const wins   = trades.filter(t => t.outcome === 'win').length;
+    const losses = trades.filter(t => t.outcome === 'loss').length;
+    const open   = trades.filter(t => !t.outcome || t.outcome === '').length;
+    const totalPnl = trades.reduce((s, t) => s + (parseFloat(t.profit_loss) || 0), 0);
+
+    const prompt = `You are an expert trading coach analyzing a trader's trade history on ${symbol}.
+
+SUMMARY: ${trades.length} trades — ${wins} wins, ${losses} losses, ${open} open. Net P&L: ${totalPnl.toFixed(2)}
+
+TRADE LIST (most recent first):
+${tradesSummary}
+
+Provide a concise pattern analysis (4-6 bullet points max). Focus on:
+- Entry/exit timing patterns
+- Win/loss streaks and what precedes them
+- Risk management observations
+- One actionable improvement suggestion
+
+Be direct, specific, and data-driven. No generic advice. Format as plain text with bullet points starting with •.`;
+
+    const axios = (await import('axios')).default;
+    const geminiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent';
+    const gemRes = await axios.post(
+      `${geminiUrl}?key=${key}`,
+      { contents: [{ parts: [{ text: prompt }] }], generationConfig: { temperature: 0.7, maxOutputTokens: 1024 } },
+      { headers: { 'Content-Type': 'application/json' }, timeout: 30000 }
+    );
+    const analysis = gemRes.data?.candidates?.[0]?.content?.parts?.[0]?.text;
+    if (!analysis) return res.status(500).json({ success: false, error: 'Empty AI response' });
+
+    res.json({ success: true, analysis, symbol, tradeCount: trades.length });
+  } catch (err) {
+    console.error('chart-analysis error:', err.message);
     res.status(500).json({ success: false, error: err.message });
   }
 });

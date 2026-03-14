@@ -24,6 +24,8 @@ from contextlib import asynccontextmanager
 from pathlib import Path
 
 from dotenv import load_dotenv
+# Load root .env first (shared secrets like JWT_SECRET), then local .env can override
+load_dotenv(Path(__file__).parent.parent / ".env")
 load_dotenv(Path(__file__).parent / ".env")
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s:     %(message)s")
