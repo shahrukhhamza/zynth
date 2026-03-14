@@ -140,6 +140,22 @@ export default function MT5AIInsights({ aiSummary }) {
         <InsightList icon={AlertTriangle} title="Warnings" items={warnings} color={theme.warning} />
         <InsightList icon={Wrench} title="Recommendations" items={recommendations} color={theme.danger} />
       </div>
+
+      {/* AI Disclaimer */}
+      <div
+        style={{
+          backgroundColor: 'rgba(245,158,11,0.06)',
+          border: '1px solid rgba(245,158,11,0.15)',
+          borderRadius: 8,
+          padding: '8px 12px',
+          marginTop: 10,
+        }}
+      >
+        <p style={{ fontSize: 10, color: 'rgba(251,191,36,0.65)', textAlign: 'center', lineHeight: 1.6 }}>
+          <strong style={{ color: 'rgba(251,191,36,0.85)' }}>Disclaimer:</strong> AI-generated insights are for informational purposes only and do not constitute financial advice.
+          Trading involves substantial risk. Past patterns are not indicative of future results.
+        </p>
+      </div>
     </section>
   );
 }

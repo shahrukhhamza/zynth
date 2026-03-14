@@ -123,6 +123,7 @@ const NAV_ITEMS = [
   { key: 'calendar',     icon: Calendar,        label: 'Economic Calendar',  badge: null },
   { key: 'news',         icon: Newspaper,       label: 'Market News',        badge: null },
   { key: 'screenshot',   icon: Camera,          label: 'Screenshot Analysis',badge: { text: 'AI', color: '#a855f7', bg: 'rgba(168,85,247,0.15)' } },
+  { key: 'help',         icon: HelpCircle,      label: 'Help & Docs',        badge: null },
 ];
 
 function NavButton({ icon: Icon, label, badge, active, collapsed, accentColor, onClick, core }) {
@@ -133,7 +134,7 @@ function NavButton({ icon: Icon, label, badge, active, collapsed, accentColor, o
   // "core" = Trade Journal special styling
   const coreBg      = active ? '#059669' : hov ? '#10b981' : '#10b981cc';
   const coreColor   = '#ffffff';
-  const normalActiveBg = accentColor ? 'rgba(167,139,250,0.12)' : theme.accentGlow;
+  const normalActiveBg = accentColor ? 'rgba(167,139,250,0.12)' : (theme.surface2 || theme.accentGlow);
 
   return (
     <div className="sidebar-nav-item-wrapper relative">
@@ -238,11 +239,46 @@ function SidebarInner({
       {showSettingsModal && <SettingsModal onClose={() => setShowSettingsModal(false)} />}
 
       {/* TOP SECTION — 64px to align with header height */}
-      <div className="flex-shrink-0 border-b flex items-center overflow-hidden"
-        style={{ height: 64, borderColor: theme.border, gap: 10, padding: '0 14px' }}>
+      <div className="flex-shrink-0 flex items-center overflow-hidden"
+        style={{ height: 64, gap: 10, padding: '0 14px', position: 'relative' }}>
 
-        {/* Live market session widget — expands when sidebar is open */}
-        <MarketSessionBar collapsed={collapsed} />
+        {/* Collapsed state: only the logo icon, centred */}
+        {!isMobile && (
+          <div style={{
+            position: 'absolute', left: '50%', transform: 'translateX(-50%)',
+            opacity: collapsed ? 1 : 0,
+            pointerEvents: 'none',
+            transition: 'opacity 0.18s ease',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+          }}>
+            <div className="w-10 h-10 rounded-xl overflow-hidden">
+              <img src="/logo.png" alt="Zynth" className="w-full h-full object-contain" />
+            </div>
+          </div>
+        )}
+
+        {/* Expanded state: logo + wordmark + BETA tag */}
+        <div style={{
+          display: 'flex', alignItems: 'center', gap: 9, flex: 1,
+          opacity: collapsed ? 0 : 1,
+          pointerEvents: collapsed ? 'none' : 'auto',
+          transition: 'opacity 0.18s ease',
+          overflow: 'hidden',
+        }}>
+          <div className="w-10 h-10 rounded-xl overflow-hidden flex-shrink-0">
+            <img src="/logo.png" alt="Zynth" className="w-full h-full object-contain" />
+          </div>
+          <span style={{
+            fontSize: 16, fontWeight: 700, letterSpacing: '-0.01em',
+            whiteSpace: 'nowrap', color: theme.text, flexShrink: 0,
+          }}>Zynth</span>
+          <span style={{
+            fontSize: 10, fontWeight: 700, letterSpacing: '0.06em',
+            padding: '2px 6px', borderRadius: 4,
+            backgroundColor: '#f59e0b', color: '#000',
+            flexShrink: 0, lineHeight: '16px',
+          }}>BETA</span>
+        </div>
 
         {/* Collapse / close button */}
         <button
@@ -264,10 +300,9 @@ function SidebarInner({
 
       {/* Expand button — desktop only; height collapses to 0 when sidebar is open to eliminate dead space */}
       {!isMobile && (
-        <div className="flex-shrink-0 flex items-center justify-center border-b overflow-hidden"
+        <div className="flex-shrink-0 flex items-center justify-center overflow-hidden"
           style={{
             height: collapsed ? 30 : 0,
-            borderColor: theme.border,
             opacity: collapsed ? 1 : 0,
             pointerEvents: collapsed ? 'auto' : 'none',
             transition: 'height 0.22s ease, opacity 0.18s ease',
@@ -290,7 +325,7 @@ function SidebarInner({
 
         {/* USER CARD */}
         {user && (
-          <div style={{ padding: collapsed ? '10px 10px 4px' : '12px 12px 4px' }}>
+          <div style={{ padding: collapsed ? '10px 10px 12px' : '12px 12px 12px', borderBottom: `1px solid ${theme.border}` }}>
             <button
               onClick={() => setShowProfileModal(true)}
               onMouseEnter={() => setCardHov(true)}
@@ -473,13 +508,19 @@ export default function Sidebar({
       {mobileOpen && (
         <div className="md:hidden fixed inset-0 z-30 bg-black/50 backdrop-blur-sm" onClick={onClose} aria-hidden="true" />
       )}
-      {/* Desktop sidebar */}
+      {/* Desktop sidebar — fixed position, width animates */}
       <aside
-        className={['hidden md:flex flex-col overflow-hidden flex-shrink-0', 'transition-[width] duration-[220ms] ease-out', collapsed ? 'w-[64px]' : 'w-[240px]'].join(' ')}
+        className="hidden md:flex flex-col overflow-hidden flex-shrink-0"
         style={{
-          backgroundColor: theme.surface,
-          borderRight: theme.isDark ? '1px solid rgba(255,255,255,0.10)' : '1px solid rgba(0,0,0,0.10)',
-          boxShadow: theme.isDark ? '4px 0 20px rgba(0,0,0,0.45)' : '4px 0 12px rgba(0,0,0,0.08)',
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          height: '100vh',
+          width: collapsed ? 64 : 240,
+          transition: 'width 0.22s ease-out',
+          backgroundColor: theme.isDark ? '#141414' : theme.surface,
+          borderRight: theme.isDark ? '1px solid #2e2e2e' : `1px solid ${theme.border}`,
+          zIndex: 200,
           willChange: 'width',
         }}
       >

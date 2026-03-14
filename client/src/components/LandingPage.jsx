@@ -887,9 +887,9 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
           <p className="text-[12px] text-gray-700">© 2026 Zynth. All rights reserved.</p>
           <p className="text-[11px] italic" style={{color:'rgba(52,211,153,0.35)'}}>Intelligence Behind Every Trade</p>
           <div className="flex gap-6">
-            {['Privacy', 'Terms', 'Contact'].map(l => (
-              <a key={l} href="#" className="text-[12px] text-gray-600 hover:text-gray-400 transition-colors">{l}</a>
-            ))}
+            <a href="/terms#privacy" className="text-[12px] text-gray-600 hover:text-gray-400 transition-colors">Privacy</a>
+            <a href="/terms" className="text-[12px] text-gray-600 hover:text-gray-400 transition-colors">Terms</a>
+            <a href="mailto:shahrukhhamza770@gmail.com" className="text-[12px] text-gray-600 hover:text-gray-400 transition-colors">Contact</a>
           </div>
         </div>
       </footer>

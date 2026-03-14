@@ -1,4 +1,4 @@
-import { Activity, BarChart3, Sun, Moon, Globe, LogOut, ChevronDown, User, Settings, Shield, Menu, X } from 'lucide-react';
+import { Activity, BarChart3, Sun, Moon, Globe, LogOut, ChevronDown, User, Settings, Shield, Menu, X, ChevronRight } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 import { useTimezone, TIMEZONES } from '../contexts/TimezoneContext';
 import { useAuth } from '../contexts/AuthContext';
@@ -14,7 +14,21 @@ const AVATAR_COLOR_MAP = {
   cyan: '#06b6d4', indigo: '#6366f1',
 };
 
-function Header({ autoRefresh, onToggleAutoRefresh, onToggleSidebar, mobileSidebarOpen, sidebarCollapsed = false }) {
+const VIEW_LABELS = {
+  data:         'Dashboard',
+  journal:      'Trade Journal',
+  intelligence: 'AI Insights',
+  markets:      'Economic Data',
+  calendar:     'Economic Calendar',
+  news:         'Market News',
+  screenshot:   'Screenshot Analysis',
+  backtest:     'Backtesting',
+  lounge:       'Traders Lounge',
+  tools:        'Tools',
+  admin:        'Admin',
+};
+
+function Header({ autoRefresh, onToggleAutoRefresh, onToggleSidebar, mobileSidebarOpen, sidebarCollapsed = false, onExpandSidebar, currentView }) {
   const theme = useTheme();
   const { selectedTimezone, changeTimezone, getTimezoneInfo, timezones } = useTimezone();
   const { user, logout } = useAuth();
@@ -48,6 +62,12 @@ function Header({ autoRefresh, onToggleAutoRefresh, onToggleSidebar, mobileSideb
   return (
   <>
     <header className="border-b h-16 flex items-center justify-between px-4 md:px-6" style={{ 
+      position: 'fixed',
+      top: 0,
+      left: sidebarCollapsed ? 64 : 240,
+      width: sidebarCollapsed ? 'calc(100vw - 64px)' : 'calc(100vw - 240px)',
+      transition: 'left 0.3s ease, width 0.3s ease',
+      zIndex: 100,
       backgroundColor: theme.surface, 
       borderColor: theme.border 
     }}>
@@ -63,13 +83,29 @@ function Header({ autoRefresh, onToggleAutoRefresh, onToggleSidebar, mobileSideb
             ? <X className="w-5 h-5" />
             : <Menu className="w-5 h-5" />}
         </button>
-        {/* Logo — always visible in top banner, single source of truth */}
-        <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl overflow-hidden flex-shrink-0" style={{ boxShadow: `0 0 0 1px ${theme.border}` }}>
-            <img src="/logo.png" alt="Zynth" className="w-full h-full object-contain" />
-          </div>
-          <span className="text-[17px] font-bold tracking-tight" style={{ color: theme.text }}>Zynth</span>
-        </div>
+        {/* Expand sidebar button — desktop only, visible when sidebar is collapsed */}
+        {sidebarCollapsed && (
+          <button
+            onClick={onExpandSidebar}
+            className="hidden md:flex items-center justify-center rounded-lg transition-all"
+            style={{
+              width: 32, height: 32,
+              color: theme.textMuted,
+              backgroundColor: theme.isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)',
+              border: `1px solid ${theme.border}`,
+            }}
+            onMouseEnter={e => { e.currentTarget.style.backgroundColor = theme.isDark ? 'rgba(255,255,255,0.10)' : 'rgba(0,0,0,0.09)'; e.currentTarget.style.color = theme.accent; }}
+            onMouseLeave={e => { e.currentTarget.style.backgroundColor = theme.isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)'; e.currentTarget.style.color = theme.textMuted; }}
+            title="Expand sidebar"
+            aria-label="Expand sidebar"
+          >
+            <ChevronRight className="w-4 h-4" />
+          </button>
+        )}
+        {/* Current page title */}
+        <span className="hidden md:block text-[17px] font-semibold tracking-tight" style={{ color: theme.text }}>
+          {VIEW_LABELS[currentView] ?? 'Dashboard'}
+        </span>
       </div>
       
       <div className="flex items-center gap-4">
@@ -84,7 +120,13 @@ function Header({ autoRefresh, onToggleAutoRefresh, onToggleSidebar, mobileSideb
           }}
           title={theme.isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
         >
-          {theme.isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+          <span style={{
+            display: 'inline-flex',
+            transition: 'transform 0.45s ease, opacity 0.3s ease',
+            transform: theme.isDark ? 'rotate(0deg)' : 'rotate(180deg)',
+          }}>
+            {theme.isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+          </span>
         </button>
 
         {/* Timezone Selector */}

@@ -20,11 +20,35 @@
 
 import axios from 'axios';
 import NodeCache from 'node-cache';
+import { bumpGemini } from '../utils/geminiCounter.js';
 
-// Cache: 20 minutes  — fresh enough to catch post-release corrections
-const cache = new NodeCache({ stdTTL: 1200 });
+// Cache: 6 hours — economic data doesn't change every 20 minutes.
+// forceRefreshAllData() can bypass this when an explicit refresh is requested.
+const cache = new NodeCache({ stdTTL: 21600 });
 
-const GEMINI_API_KEY = () => process.env.GEMINI_API_KEY || '';
+// ── Daily call limit (prevents quota exhaustion) ──────────────────────────────
+const DAILY_LIMIT = 5;  // max 5 live Gemini calls per calendar day
+let dailyCallCount = 0;
+let dailyResetDate = new Date().toDateString();
+
+function checkDailyLimit() {
+  const today = new Date().toDateString();
+  if (today !== dailyResetDate) {
+    console.log(`[WebSearch] Daily reset — yesterday used ${dailyCallCount} Gemini calls`);
+    dailyCallCount = 0;
+    dailyResetDate = today;
+  }
+  if (dailyCallCount >= DAILY_LIMIT) {
+    console.log(`[WebSearch] Daily limit (${DAILY_LIMIT}) reached — serving cache only`);
+    return false;
+  }
+  dailyCallCount++;
+  console.log(`[WebSearch] Gemini call ${dailyCallCount}/${DAILY_LIMIT} today`);
+  return true;
+}
+
+// Key 2 is dedicated to web-search to avoid collisions with journal / assistant
+const GEMINI_API_KEY = () => process.env.GEMINI_API_KEY_2 || process.env.GEMINI_API_KEY || '';
 
 // We prefer gemini-2.0-flash (has native google_search tool).
 // Falls back to gemini-1.5-flash with google_search_retrieval grounding.
@@ -82,7 +106,7 @@ async function callGeminiWithSearch(promptText, maxOutputTokens = 2048) {
       const sources = extractSources(groundingMeta);
 
       console.log(`✅ Gemini (${model.id}) responded — ${text.length} chars, ${sources.length} sources`);
-
+      bumpGemini(`webSearch:${model.id}`);
       return { text, sources, model: model.id };
     } catch (err) {
       console.warn(`⚠️  Gemini model ${model.id} failed: ${err.message}`);
@@ -374,6 +398,13 @@ export async function fetchLatestReleasedData() {
   if (cached) {
     console.log('✓ Returning cached Gemini web-search data');
     return cached;
+  }
+
+  // Enforce daily call limit — return stale cache (any TTL) if exhausted
+  if (!checkDailyLimit()) {
+    const stale = cache.get(cacheKey);
+    if (stale) return stale;
+    throw new Error('[WebSearch] Daily Gemini limit reached and no cached data available');
   }
 
   console.log('🌐 Fetching live economic data via Gemini Google Search grounding...');

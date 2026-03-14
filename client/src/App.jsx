@@ -23,12 +23,15 @@ import LiveMarketTicker from './components/LiveMarketTicker'
 import TradeJournal from './components/TradeJournal'
 import ChartsPage from './components/ChartsPage'
 import TradingDesk from './components/TradingDesk'
+import HelpCenter from './components/HelpCenter'
+import ZynthAssistant from './components/ZynthAssistant'
 import LoginPage from './components/LoginPage'
 import SignupPage from './components/SignupPage'
 import LandingPage from './components/LandingPage'
 import ForgotPasswordPage from './components/ForgotPasswordPage'
 import ResetPasswordPage from './components/ResetPasswordPage'
 import OnboardingFlow from './components/OnboardingFlow'
+import TermsOfService from './components/TermsOfService'
 import { fetchNews } from './services/api'
 import { Loader2 } from 'lucide-react'
 
@@ -41,6 +44,12 @@ function AppShell() {
   const theme = useTheme();
   const { user } = useAuth();
   const [currentView, setCurrentView] = useState('data'); // Start with data view
+
+  // Wrap setCurrentView so all navigation automatically syncs the browser URL
+  const navigate = (view) => {
+    setCurrentView(view);
+    window.history.pushState({ view }, '', '/' + view);
+  };
   const [news, setNews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -65,6 +74,30 @@ function AppShell() {
   };
 
   useAutoCloseSidebarOnDesktop(setMobileSidebarOpen);
+
+  // On initial load: read view from URL so bookmarks / direct links work
+  useEffect(() => {
+    const path = window.location.pathname.replace(/^\//, '');
+    const validViews = [
+      'data', 'journal', 'intelligence', 'markets', 'calendar',
+      'news', 'screenshot', 'tools', 'help', 'charts', 'backtesting', 'admin',
+    ];
+    if (path && validViews.includes(path)) {
+      setCurrentView(path);
+      window.history.replaceState({ view: path }, '', '/' + path);
+    } else {
+      window.history.replaceState({ view: 'data' }, '', '/data');
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Handle browser back / forward (touchpad swipe, alt+left, etc.)
+  useEffect(() => {
+    const handlePopState = (e) => {
+      setCurrentView(e.state?.view ?? 'data');
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
 
   // Keep a ref in sync so loadNews always reads current filters (avoids stale closure)
   const filtersRef = useRef(filters);
@@ -114,7 +147,7 @@ function AppShell() {
 
   // Apply filters, switch to news view, and reload
   const applyFilters = () => {
-    setCurrentView('news');
+    navigate('news');
     loadNews();
   };
 
@@ -146,8 +179,8 @@ function AppShell() {
   };
 
   return (
-    <div className="flex h-screen" style={{ backgroundColor: theme.bg, color: theme.text }}>
-      {/* Left Sidebar — full height, logo section sits at page top */}
+    <div style={{ backgroundColor: theme.bg, color: theme.text }}>
+      {/* Fixed Sidebar */}
       <Sidebar 
         filters={filters}
         onFilterChange={handleFilterChange}
@@ -155,10 +188,8 @@ function AppShell() {
         onResetFilters={resetFilters}
         currentView={currentView}
         onViewChange={(view) => {
-          // Hard guard: silently reject any attempt to navigate to admin
-          // from a non-admin account (belt + backend requireAdmin middleware)
           if (view === 'admin' && user?.is_admin !== 1) return;
-          setCurrentView(view); setMobileSidebarOpen(false);
+          navigate(view); setMobileSidebarOpen(false);
         }}
         mobileOpen={mobileSidebarOpen}
         onClose={() => setMobileSidebarOpen(false)}
@@ -166,18 +197,31 @@ function AppShell() {
         onToggleCollapse={handleToggleCollapse}
       />
 
-      {/* Right column: header + content */}
-      <div className="flex flex-col flex-1 min-w-0 h-screen">
-        <Header 
-          autoRefresh={autoRefresh}
-          onToggleAutoRefresh={() => setAutoRefresh(!autoRefresh)}
-          onRefresh={() => currentView === 'news' ? loadNews() : window.location.reload()}
-          onToggleSidebar={() => setMobileSidebarOpen(o => !o)}
-          mobileSidebarOpen={mobileSidebarOpen}
-          sidebarCollapsed={sidebarCollapsed}
-        />
-        
-        <div className="flex flex-1 overflow-hidden relative">
+      {/* Fixed Header */}
+      <Header 
+        autoRefresh={autoRefresh}
+        onToggleAutoRefresh={() => setAutoRefresh(!autoRefresh)}
+        onRefresh={() => currentView === 'news' ? loadNews() : window.location.reload()}
+        onToggleSidebar={() => setMobileSidebarOpen(o => !o)}
+        mobileSidebarOpen={mobileSidebarOpen}
+        sidebarCollapsed={sidebarCollapsed}
+        onExpandSidebar={handleToggleCollapse}
+        currentView={currentView}
+      />
+
+      {/* Content: offset for fixed sidebar + 64px header */}
+      <div
+        style={{
+          marginLeft: sidebarCollapsed ? 64 : 240,
+          paddingTop: 64,
+          transition: 'margin-left 0.3s ease',
+          height: '100vh',
+          display: 'flex',
+          flexDirection: 'column',
+          overflow: 'hidden',
+        }}
+      >
+        <div key={currentView} className="flex flex-1 overflow-hidden relative page-enter">
           {/* Main Content Area */}
           {currentView === 'admin' && user?.is_admin === 1 ? (
             // Suspense boundary — AdminDashboard chunk loads on-demand only for admins
@@ -205,11 +249,13 @@ function AppShell() {
           ) : currentView === 'markets' ? (
             <LiveMarketTicker key="markets" />
           ) : currentView === 'charts' ? (
-            <ChartsPage key="charts" onNavigate={setCurrentView} />
+            <ChartsPage key="charts" onNavigate={navigate} />
           ) : currentView === 'backtesting' ? (
-            <ChartsPage key="backtesting" initialTab="backtesting" onNavigate={setCurrentView} />
+            <ChartsPage key="backtesting" initialTab="backtesting" onNavigate={navigate} />
           ) : currentView === 'tools' ? (
             <TradingDesk key="tools" />
+          ) : currentView === 'help' ? (
+            <div key="help" style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0 }}><HelpCenter /></div>
           ) : (
             <>
               {/* News Feed */}
@@ -230,6 +276,7 @@ function AppShell() {
           )}
         </div>
       </div>
+      <ZynthAssistant />
     </div>
   )
 }
@@ -293,6 +340,7 @@ function AuthGate() {
     const path = window.location.pathname;
     if (path === '/reset-password') return 'resetPassword';
     if (path === '/forgot-password') return 'forgotPassword';
+    if (path === '/terms') return 'terms';
     return 'landing';
   })
   const [showOnboarding, setShowOnboarding] = useState(false)
@@ -349,6 +397,9 @@ function AuthGate() {
 
   if (view === 'signup')
     return <SignupPage onSwitchToLogin={() => setView('login')} onBack={() => setView('landing')} />
+
+  if (view === 'terms')
+    return <TermsOfService onBack={() => setView('landing')} />
 
   if (view === 'login')
     return <LoginPage

@@ -139,8 +139,8 @@ function downloadDnaCard(archetype, traits, stats) {
     ctx.font = 'bold 22px system-ui, sans-serif';
     ctx.fillText(String(value), x, y + 26);
   };
-  stat(`${stats.totalTrades}`, 'TRADES', 32, 118);
-  stat(`${stats.winRate}%`, 'WIN RATE', 140, 118);
+  stat('TRADES', stats.totalTrades, 32, 118);
+  stat('WIN RATE', `${stats.winRate}%`, 140, 118);
 
   // Divider
   ctx.strokeStyle = '#1f2937';
@@ -446,8 +446,9 @@ function CoachMessage({ message, userName }) {
   );
 }
 
-function EmptyState({ tradeCount, canGenerate, generating, nextAvailable, onGenerate }) {
+function EmptyState({ tradeCount, closedCount = 0, canGenerate, generating, nextAvailable, onGenerate }) {
   const enough = tradeCount >= 10;
+  const hasClosed = closedCount > 0;
   return (
     <div className="flex flex-col items-center justify-center py-16 px-6 text-center">
       <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-emerald-600 to-blue-700 flex items-center justify-center mb-6 shadow-2xl">
@@ -482,9 +483,16 @@ function EmptyState({ tradeCount, canGenerate, generating, nextAvailable, onGene
         </div>
       )}
 
+      {enough && !hasClosed && (
+        <div className="flex items-center gap-2 px-4 py-2 bg-red-900/30 border border-red-700/40 rounded-xl text-red-400 text-sm mb-4">
+          <AlertTriangle className="w-4 h-4 flex-shrink-0" />
+          <span>All your trades are open — close some trades (mark as win/loss) first</span>
+        </div>
+      )}
+
       <button
         onClick={onGenerate}
-        disabled={!enough || !canGenerate || generating}
+        disabled={!enough || !hasClosed || !canGenerate || generating}
         className="flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-emerald-500 to-blue-600 text-white font-semibold rounded-xl shadow-lg hover:from-emerald-600 hover:to-blue-700 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
       >
         {generating ? (
@@ -507,6 +515,7 @@ export default function TradingDNA() {
   const [generating,    setGenerating]    = useState(false);
   const [error,         setError]         = useState(null);
   const [tradeCount,    setTradeCount]    = useState(0);
+  const [closedCount,   setClosedCount]   = useState(0);
   const [canGenerate,   setCanGenerate]   = useState(false);
   const [nextAvailable, setNextAvailable] = useState(null);
 
@@ -521,6 +530,7 @@ export default function TradingDNA() {
       const data = await res.json();
       setReport(data.report);
       setTradeCount(data.tradeCount ?? 0);
+      setClosedCount(data.closedCount ?? 0);
       setCanGenerate(data.canGenerate ?? false);
       setNextAvailable(data.nextAvailable ?? null);
     } catch (e) {
@@ -599,6 +609,7 @@ export default function TradingDNA() {
         )}
         <EmptyState
           tradeCount={tradeCount}
+          closedCount={closedCount}
           canGenerate={canGenerate}
           generating={generating}
           nextAvailable={nextAvailable}

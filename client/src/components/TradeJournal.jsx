@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { createPortal } from 'react-dom';
 import { BookOpen, List, BarChart2, Brain, X, RefreshCw, Activity, Fingerprint } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 import { API_URL } from '../config/api';
@@ -35,8 +36,8 @@ function TradeDetailModal({ trade, onClose }) {
   const pnl = parseFloat(trade.profit_loss);
   const outcomeColors = { win: '#22c55e', loss: '#ef4444', breakeven: '#f59e0b' };
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ backgroundColor: 'rgba(0,0,0,0.7)' }}
+  return createPortal(
+    <div className="fixed inset-0 flex items-center justify-center p-4" style={{ backgroundColor: 'rgba(0,0,0,0.7)', zIndex: 9999 }}
       onClick={onClose}>
       <div className="w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-2xl shadow-2xl"
         style={{ backgroundColor: theme.bg, border: `1px solid ${theme.border}` }}
@@ -115,7 +116,8 @@ function TradeDetailModal({ trade, onClose }) {
           </div>
         )}
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 

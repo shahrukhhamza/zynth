@@ -174,6 +174,43 @@ html:not(.dark) .sidebar-tooltip::before {
   box-shadow: 0 0 6px #22c55e;
 }
 
+/* ── Input/select: fast border-only transition (no color flash) ─────────── */
+input, textarea, select {
+  transition:
+    border-color 0.15s ease,
+    box-shadow   0.15s ease !important;
+}
+
+/* ── Disable all transitions (e.g. on initial paint) ─────────────────────── */
+.no-transition, .no-transition * {
+  transition: none !important;
+}
+
+/* ── Button feel ─────────────────────────────────────────────────────────── */
+button {
+  transition:
+    transform            0.1s ease,
+    background-color     0.18s ease,
+    box-shadow           0.18s ease,
+    border-color         0.18s ease,
+    color                0.15s ease !important;
+}
+button:not(:disabled):hover {
+  transform: translateY(-1px);
+}
+button:not(:disabled):active {
+  transform: translateY(0) scale(0.97);
+}
+
+/* ── Card hover lift ─────────────────────────────────────────────────────── */
+.card-hover {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.28);
+}
+
 /* ── Smooth page transitions ─────────────────────────────────────────────── */
 @keyframes fadeSlideIn {
   from { opacity: 0; transform: translateY(6px); }
@@ -182,4 +219,71 @@ html:not(.dark) .sidebar-tooltip::before {
 
 .page-enter {
   animation: fadeSlideIn 0.22s ease;
+}
+
+/* ── Modal animations ────────────────────────────────────────────────────── */
+@keyframes modalIn {
+  from { opacity: 0; transform: scale(0.95) translateY(-10px); }
+  to   { opacity: 1; transform: scale(1)    translateY(0);     }
+}
+@keyframes overlayIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.modal-overlay {
+  animation: overlayIn 0.15s ease;
+}
+.modal-content {
+  animation: modalIn 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ── Chat panel slide-up ─────────────────────────────────────────────────── */
+@keyframes chatSlideUp {
+  from { opacity: 0; transform: translateY(20px) scale(0.95); }
+  to   { opacity: 1; transform: translateY(0)    scale(1);    }
+}
+.chat-panel {
+  animation: chatSlideUp 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ── Price flash ─────────────────────────────────────────────────────────── */
+@keyframes priceFlashGreen {
+  0%   { background-color: transparent; }
+  30%  { background-color: rgba(16, 185, 129, 0.22); }
+  100% { background-color: transparent; }
+}
+@keyframes priceFlashRed {
+  0%   { background-color: transparent; }
+  30%  { background-color: rgba(239, 68, 68, 0.22); }
+  100% { background-color: transparent; }
+}
+.price-up   { animation: priceFlashGreen 0.8s ease; }
+.price-down { animation: priceFlashRed   0.8s ease; }
+
+/* ── Skeleton loading ────────────────────────────────────────────────────── */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    #1a1a1a 25%,
+    #242424 50%,
+    #1a1a1a 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite linear;
+  border-radius: 4px;
+}
+html:not(.dark) .skeleton {
+  background: linear-gradient(
+    90deg,
+    #e2e8f0 25%,
+    #f1f5f9 50%,
+    #e2e8f0 75%
+  );
+  background-size: 200% 100%;
+}
+
+/* ── Theme toggle — body overlay class ──────────────────────────────────── */
+.theme-transitioning {
+  transition: background-color 0.35s ease !important;
 }

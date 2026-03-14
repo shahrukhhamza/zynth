@@ -161,7 +161,7 @@ function TvEcoChart({ symbol, tf }) {
   useEffect(() => { loadTvScript(init); }, [init]);
   useEffect(() => () => { if (widgetRef.current) { try { widgetRef.current.remove(); } catch (_) {} } }, []);
 
-  return <div id={containerId} style={{ height: 380, width: '100%' }} />;
+  return <div id={containerId} style={{ height: '100%', width: '100%' }} />;
 }
 import { fetchGoldData, fetchEquityData, fetchMarketData, fetchLivePrices } from '../services/dataApi';
 import { finnhubWs } from '../services/finnhubWs';
@@ -293,353 +293,8 @@ function isFuturesOpen() {
   return !(mins >= 17 * 60 && mins < 18 * 60);
 }
 
-// ── Quick Log Modal ───────────────────────────────────────────────────────────
-function QuickLogModal({ pairLabel, entryPrice, isFx, theme, onClose, onLogged }) {
-  const bull = '#22c55e', bear = '#ef4444';
-  const [dir,    setDir]    = useState('BUY');
-  const [entry,  setEntry]  = useState(entryPrice != null ? String(parseFloat(entryPrice).toFixed(isFx ? 5 : 2)) : '');
-  const [result, setResult] = useState('OPEN');
-  const [pnl,    setPnl]    = useState('');
-  const [saving, setSaving] = useState(false);
-  const [err,    setErr]    = useState(null);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const token = localStorage.getItem('auth_token'); if (!token) return;
-    setSaving(true); setErr(null);
-    try {
-      const fd = new FormData();
-      fd.append('pair', pairLabel);
-      fd.append('direction', dir.toLowerCase());
-      if (entry) fd.append('entry_price', entry);
-      if (pnl)   fd.append('profit_loss', pnl);
-      fd.append('outcome', result === 'OPEN' ? '' : result.toLowerCase());
-      const r = await fetch(`${API_URL}/api/journal/trades`, {
-        method: 'POST', headers: { Authorization: `Bearer ${token}` }, body: fd,
-      });
-      const d = await r.json();
-      if (!r.ok) { setErr(d.error || 'Failed to log trade'); return; }
-      onLogged?.();
-      onClose();
-    } catch { setErr('Network error'); }
-    finally { setSaving(false); }
-  };
 
-  const inp = {
-    backgroundColor: theme.bg, border: `1px solid ${theme.border}`,
-    color: theme.text, borderRadius: 7, padding: '6px 10px',
-    fontSize: 13, width: '100%', outline: 'none',
-  };
-
-  return (
-    <div style={{ position:'fixed', inset:0, zIndex:9999, background:'rgba(0,0,0,0.6)', display:'flex', alignItems:'center', justifyContent:'center', padding:16 }}
-      onClick={e => e.target === e.currentTarget && onClose()}>
-      <div style={{ background: theme.surface, border: `1px solid ${theme.border}`, borderRadius:14, padding:24, width:'100%', maxWidth:360 }}>
-        <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:18 }}>
-          <span style={{ fontWeight:700, fontSize:16, color: theme.text }}>⚡ Log Trade — {pairLabel}</span>
-          <button onClick={onClose} style={{ background:'none', border:'none', cursor:'pointer', color: theme.muted, fontSize:20 }}>×</button>
-        </div>
-        {err && <div style={{ marginBottom:10, padding:'7px 10px', borderRadius:7, fontSize:12, fontWeight:600, background:'rgba(239,68,68,0.15)', color:'#ef4444', border:'1px solid rgba(239,68,68,0.3)' }}>{err}</div>}
-        <form onSubmit={handleSubmit}>
-          {/* Direction */}
-          <div style={{ display:'flex', gap:6, marginBottom:14 }}>
-            {['BUY','SELL'].map(d => (
-              <button key={d} type="button" onClick={() => setDir(d)}
-                style={{ flex:1, padding:'8px 0', borderRadius:8, border:`1px solid ${d==='BUY'?bull:bear}`, cursor:'pointer', fontWeight:700, fontSize:13,
-                  background: dir===d ? (d==='BUY'?bull:bear) : 'transparent',
-                  color: dir===d ? '#fff' : (d==='BUY'?bull:bear) }}>{d}</button>
-            ))}
-          </div>
-          {/* Entry price */}
-          <div style={{ marginBottom:12 }}>
-            <div style={{ fontSize:11, fontWeight:700, textTransform:'uppercase', letterSpacing:'0.06em', color: theme.muted, marginBottom:4 }}>Entry Price</div>
-            <input type="number" step="any" value={entry} onChange={e=>setEntry(e.target.value)} style={inp} placeholder="auto-filled" />
-          </div>
-          {/* Result */}
-          <div style={{ marginBottom:12 }}>
-            <div style={{ fontSize:11, fontWeight:700, textTransform:'uppercase', letterSpacing:'0.06em', color: theme.muted, marginBottom:4 }}>Result</div>
-            <div style={{ display:'flex', gap:6 }}>
-              {[{k:'WIN',c:'#10b981'},{k:'LOSS',c:'#ef4444'},{k:'OPEN',c:theme.muted}].map(({k,c}) => (
-                <button key={k} type="button" onClick={() => setResult(k)}
-                  style={{ flex:1, padding:'6px 0', borderRadius:8, border:`1px solid ${c}`, cursor:'pointer', fontWeight:700, fontSize:12,
-                    background: result===k ? c : 'transparent', color: result===k ? '#fff' : c }}>{k}</button>
-              ))}
-            </div>
-          </div>
-          {/* P&L */}
-          <div style={{ marginBottom:18 }}>
-            <div style={{ fontSize:11, fontWeight:700, textTransform:'uppercase', letterSpacing:'0.06em', color: theme.muted, marginBottom:4 }}>P&L (optional)</div>
-            <input type="number" step="any" value={pnl} onChange={e=>setPnl(e.target.value)} style={inp} placeholder="e.g. 125.50" />
-          </div>
-          <button type="submit" disabled={saving}
-            style={{ width:'100%', padding:'10px 0', borderRadius:9, border:'none', cursor: saving?'wait':'pointer',
-              background:'#10b981', color:'#fff', fontWeight:700, fontSize:14, opacity: saving?.7:1 }}>
-            {saving ? 'Logging…' : 'Log Trade →'}
-          </button>
-        </form>
-      </div>
-    </div>
-  );
-}
-
-// ── Trade Timeline Bar ────────────────────────────────────────────────────────
-function TradeTimeline({ trades, isFx, theme, currentPrice }) {
-  const bull = '#22c55e', bear = '#ef4444';
-  const [hovered, setHovered] = useState(null);
-
-  if (!trades || trades.length === 0) return null;
-
-  const sorted = [...trades].sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
-
-  return (
-    <div style={{ padding:'10px 16px 12px', borderTop: `1px solid ${theme.border}` }}>
-      <div style={{ fontSize:10, fontWeight:700, textTransform:'uppercase', letterSpacing:'0.07em', color: theme.muted, marginBottom:8 }}>
-        Trade Timeline — {trades.length} trade{trades.length !== 1 ? 's' : ''}
-      </div>
-      <div style={{ position:'relative', display:'flex', alignItems:'center', gap:3, flexWrap:'wrap' }}>
-        {/* Base line */}
-        <div style={{ position:'absolute', left:0, right:0, top:'50%', height:1, background: theme.border, zIndex:0 }} />
-        {sorted.map((t, i) => {
-          const isBuy = t.direction === 'buy';
-          const win   = t.outcome === 'win';
-          const loss  = t.outcome === 'loss';
-          const open  = !t.outcome || t.outcome === '';
-          const color = win ? bull : loss ? bear : '#f59e0b';
-          const dt    = t.created_at ? new Date(t.created_at).toLocaleDateString() : '—';
-          const ep    = t.entry_price != null ? parseFloat(t.entry_price).toFixed(isFx ? 5 : 2) : '—';
-          const pnl   = t.profit_loss != null ? (parseFloat(t.profit_loss) >= 0 ? `+${parseFloat(t.profit_loss).toFixed(2)}` : `${parseFloat(t.profit_loss).toFixed(2)}`) : null;
-          return (
-            <div key={t.id} style={{ position:'relative', zIndex:1 }}
-              onMouseEnter={() => setHovered(i)}
-              onMouseLeave={() => setHovered(null)}>
-              {/* Marker */}
-              <div style={{
-                width:22, height:22, borderRadius:'50%',
-                background: color, border: `2px solid ${theme.bg}`,
-                display:'flex', alignItems:'center', justifyContent:'center',
-                cursor:'default', fontSize:10, fontWeight:700, color:'#fff',
-                boxShadow: `0 0 0 2px ${color}44`,
-                transform: hovered === i ? 'scale(1.3)' : 'scale(1)',
-                transition: 'transform 0.15s',
-              }}>
-                {isBuy ? '▲' : '▼'}
-              </div>
-              {/* Tooltip */}
-              {hovered === i && (
-                <div style={{
-                  position:'absolute', bottom:28, left:'50%', transform:'translateX(-50%)',
-                  background: theme.surface, border: `1px solid ${theme.border}`,
-                  borderRadius:8, padding:'8px 10px', fontSize:11, whiteSpace:'nowrap',
-                  zIndex:99, boxShadow:'0 4px 16px rgba(0,0,0,0.35)',
-                  minWidth:130,
-                }}>
-                  <div style={{ fontWeight:700, color: isBuy ? bull : bear, marginBottom:3 }}>
-                    {isBuy ? '▲ BUY' : '▼ SELL'}
-                    <span style={{ marginLeft:6, fontWeight:400, color: theme.muted }}>@ {ep}</span>
-                  </div>
-                  <div style={{ color: color, fontWeight:700 }}>
-                    {open ? 'OPEN' : win ? 'WIN' : 'LOSS'}
-                    {pnl && <span style={{ marginLeft:6 }}>{pnl}</span>}
-                  </div>
-                  <div style={{ color: theme.muted, marginTop:2 }}>{dt}</div>
-                </div>
-              )}
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
-
-// ── My Trades Panel ───────────────────────────────────────────────────────────
-function MyTradesPanel({ pairLabel, entryPrice, isFx, theme, onTradeLogged }) {
-  const bull = '#22c55e', bear = '#ef4444';
-  const [trades,   setTrades]   = useState([]);
-  const [loading,  setLoading]  = useState(false);
-  const [showModal,setShowModal]= useState(false);
-  const [aiResult, setAiResult] = useState(null);
-  const [aiLoading,setAiLoading]= useState(false);
-  const [aiErr,    setAiErr]    = useState(null);
-  const [aiOpen,   setAiOpen]   = useState(false);
-
-  const loadTrades = useCallback(async () => {
-    const token = localStorage.getItem('auth_token'); if (!token) return;
-    setLoading(true);
-    try {
-      const r = await fetch(`${API_URL}/api/journal/trades?symbol=${encodeURIComponent(pairLabel)}&limit=50`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const d = await r.json();
-      setTrades(d.data || []);
-    } catch {}
-    setLoading(false);
-  }, [pairLabel]);
-
-  useEffect(() => { loadTrades(); }, [loadTrades]);
-
-  const handleAnalyze = async () => {
-    if (trades.length === 0) return;
-    const token = localStorage.getItem('auth_token'); if (!token) return;
-    setAiLoading(true); setAiErr(null); setAiResult(null); setAiOpen(true);
-    try {
-      const r = await fetch(`${API_URL}/api/journal/trades/chart-analysis`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ symbol: pairLabel, trades }),
-      });
-      const d = await r.json();
-      if (!r.ok) {
-        setAiErr(r.status === 503 ? '⚠️ AI service unavailable — Gemini API is not configured or accessible.' : (d.error || 'AI analysis failed'));
-        return;
-      }
-      setAiResult(d.analysis);
-    } catch { setAiErr('Network error — could not reach server.'); }
-    finally { setAiLoading(false); }
-  };
-
-  const timeAgo = (ts) => {
-    const s = Math.floor((Date.now() - new Date(ts)) / 1000);
-    if (s < 60) return `${s}s ago`;
-    if (s < 3600) return `${Math.floor(s/60)}m`;
-    if (s < 86400) return `${Math.floor(s/3600)}h ago`;
-    return `${Math.floor(s/86400)}d ago`;
-  };
-
-  const wins   = trades.filter(t => t.outcome === 'win').length;
-  const losses = trades.filter(t => t.outcome === 'loss').length;
-  const totalPnl = trades.reduce((s, t) => s + (parseFloat(t.profit_loss) || 0), 0);
-
-  const cardBg = theme.surface2 ?? theme.surface;
-
-  return (
-    <>
-      {showModal && (
-        <QuickLogModal
-          pairLabel={pairLabel} entryPrice={entryPrice} isFx={isFx} theme={theme}
-          onClose={() => setShowModal(false)}
-          onLogged={() => { loadTrades(); onTradeLogged?.(); }}
-        />
-      )}
-      <div className="rounded-xl" style={{ backgroundColor: cardBg, border: `1px solid ${theme.border}`, display:'flex', flexDirection:'column', height:'100%' }}>
-        {/* Header */}
-        <div style={{ padding:'12px 14px 10px', borderBottom: `1px solid ${theme.border}` }}>
-          <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:8 }}>
-            <span style={{ fontWeight:700, fontSize:14, color: theme.text }}>📍 My Trades</span>
-            <button onClick={() => setShowModal(true)}
-              style={{ padding:'4px 10px', borderRadius:7, border:'none', cursor:'pointer',
-                background:'#10b981', color:'#fff', fontWeight:700, fontSize:11 }}>
-              + Log
-            </button>
-          </div>
-          {/* Mini stats */}
-          {trades.length > 0 && (
-            <div style={{ display:'flex', gap:8, fontSize:11 }}>
-              <span style={{ color: bull, fontWeight:700 }}>{wins}W</span>
-              <span style={{ color: bear, fontWeight:700 }}>{losses}L</span>
-              <span style={{ color: theme.muted }}>{trades.length - wins - losses} open</span>
-              <span style={{ marginLeft:'auto', fontWeight:700,
-                color: totalPnl >= 0 ? bull : bear }}>
-                {totalPnl >= 0 ? '+' : ''}{totalPnl.toFixed(2)}
-              </span>
-            </div>
-          )}
-        </div>
-
-        {/* Trades list */}
-        <div style={{ flex:1, overflowY:'auto', padding:'8px 14px' }}>
-          {loading && (
-            <div style={{ textAlign:'center', padding:'20px 0', color: theme.muted, fontSize:12 }}>Loading…</div>
-          )}
-          {!loading && trades.length === 0 && (
-            <div style={{ textAlign:'center', padding:'20px 0', color: theme.muted, fontSize:12 }}>
-              <div style={{ fontSize:24, marginBottom:6 }}>📭</div>
-              No trades logged for {pairLabel}.<br/>
-              <button onClick={() => setShowModal(true)}
-                style={{ marginTop:8, padding:'5px 12px', borderRadius:7, border:'none',
-                  cursor:'pointer', background:'#10b981', color:'#fff', fontWeight:700, fontSize:11 }}>
-                Log your first trade
-              </button>
-            </div>
-          )}
-          {!loading && trades.map(t => {
-            const isBuy  = t.direction === 'buy';
-            const win    = t.outcome === 'win';
-            const loss   = t.outcome === 'loss';
-            const open   = !t.outcome || t.outcome === '';
-            const dotCol = win ? bull : loss ? bear : '#f59e0b';
-            const ep     = t.entry_price != null ? parseFloat(t.entry_price).toFixed(isFx ? 5 : 2) : '—';
-            const pnl    = t.profit_loss != null ? parseFloat(t.profit_loss) : null;
-            return (
-              <div key={t.id} style={{ display:'flex', alignItems:'center', gap:7, padding:'7px 0',
-                borderBottom:`1px solid ${theme.border}` }}>
-                {/* Direction badge */}
-                <span style={{ fontSize:10, fontWeight:700, padding:'2px 6px', borderRadius:5,
-                  border:`1px solid ${isBuy ? bull : bear}`,
-                  color: isBuy ? bull : bear, flexShrink:0 }}>
-                  {isBuy ? '▲' : '▼'} {isBuy ? 'B' : 'S'}
-                </span>
-                {/* Entry */}
-                <span style={{ fontSize:12, color: theme.text, fontFamily:'monospace', flex:1, minWidth:0, overflow:'hidden', textOverflow:'ellipsis' }}>
-                  {ep}
-                </span>
-                {/* Outcome dot + P&L */}
-                <div style={{ textAlign:'right', flexShrink:0 }}>
-                  <div style={{ fontSize:10, fontWeight:700, color: dotCol }}>
-                    {open ? 'OPEN' : win ? 'WIN' : 'LOSS'}
-                  </div>
-                  {pnl != null && (
-                    <div style={{ fontSize:10, color: pnl >= 0 ? bull : bear }}>
-                      {pnl >= 0 ? '+' : ''}{pnl.toFixed(2)}
-                    </div>
-                  )}
-                </div>
-                {/* Time */}
-                <span style={{ fontSize:10, color: theme.muted, flexShrink:0, minWidth:28, textAlign:'right' }}>
-                  {timeAgo(t.created_at)}
-                </span>
-              </div>
-            );
-          })}
-        </div>
-
-        {/* AI Analysis section */}
-        <div style={{ borderTop: `1px solid ${theme.border}`, padding:'10px 14px' }}>
-          <button onClick={handleAnalyze} disabled={aiLoading || trades.length === 0}
-            style={{ width:'100%', padding:'7px 0', borderRadius:8, border:'none', fontWeight:700, fontSize:12,
-              cursor: (aiLoading || trades.length === 0) ? 'not-allowed' : 'pointer',
-              background: trades.length === 0 ? 'rgba(139,92,246,0.2)' : 'rgba(139,92,246,0.9)',
-              color: '#fff', opacity: aiLoading ? 0.7 : 1,
-              display:'flex', alignItems:'center', justifyContent:'center', gap:6 }}>
-            <span>🤖</span>
-            <span>{aiLoading ? 'Analyzing…' : 'Analyze Patterns with AI'}</span>
-          </button>
-
-          {aiOpen && (
-            <div style={{ marginTop:10, background:'rgba(139,92,246,0.08)', border:'1px solid rgba(139,92,246,0.3)', borderRadius:8, padding:'10px 12px' }}>
-              <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:6 }}>
-                <span style={{ fontSize:11, fontWeight:700, color:'#a78bfa' }}>🤖 AI Pattern Analysis</span>
-                <button onClick={() => setAiOpen(false)}
-                  style={{ background:'none', border:'none', cursor:'pointer', color: theme.muted, fontSize:14 }}>×</button>
-              </div>
-              {aiLoading && (
-                <div style={{ fontSize:12, color: theme.muted, textAlign:'center', padding:'8px 0' }}>Generating analysis…</div>
-              )}
-              {aiErr && (
-                <div style={{ fontSize:12, color:'#ef4444' }}>{aiErr}</div>
-              )}
-              {aiResult && (
-                <div style={{ fontSize:12, color: theme.text, lineHeight:1.6, whiteSpace:'pre-wrap' }}>
-                  {aiResult}
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-      </div>
-    </>
-  );
-}
 
 // ── Main Component ──────────────────────────────────────────────────────────
 export default function EconomicDashboard() {
@@ -659,7 +314,7 @@ export default function EconomicDashboard() {
   const [wsStatus, setWsStatus]     = useState('idle');   // Finnhub WS connection state
   const [wsTickCount, setWsTickCount] = useState(0);      // count of live ticks received
   const [lastTick, setLastTick]     = useState(null);     // timestamp of latest Finnhub tick
-  const [symbolTrades, setSymbolTrades] = useState([]);   // trades for current chart symbol (timeline)
+
 
   const days = TIMEFRAMES.find(t => t.label === tf)?.days ?? 90;
 
@@ -882,20 +537,64 @@ export default function EconomicDashboard() {
     return { ...a, corr: pearsonCorr(goldCloses, closes) };
   });
 
-  // Crypto markets run 24/7 — always treat them as live regardless of stock market state
-  const isLive     = isCrypto || marketState === 'REGULAR' || (marketState !== 'PRE' && marketState !== 'POST' && isFuturesOpen());
-  const isExtended = marketState === 'PRE' || marketState === 'POST';
   const bull = '#22c55e';
   const bear = '#ef4444';
 
-  // ── Fetch trades for current chart symbol (feeds TradeTimeline) ───────────
-  useEffect(() => {
-    const token = localStorage.getItem('auth_token');
-    if (!token || !pairLabel) return;
-    fetch(`${API_URL}/api/journal/trades?symbol=${encodeURIComponent(pairLabel)}&limit=50`, {
-      headers: { Authorization: `Bearer ${token}` },
-    }).then(r => r.json()).then(d => setSymbolTrades(d.data || [])).catch(() => {});
-  }, [pairLabel]);
+  // ── Smart per-asset market status ──────────────────────────────────────────
+  // Returns { label, color, bg, border, pulse, subtitle }
+  function getMarketStatus(sym) {
+    const now   = new Date();
+    const day   = now.getUTCDay();   // 0=Sun … 6=Sat
+    const h     = now.getUTCHours();
+    const m     = now.getUTCMinutes();
+    const mins  = h * 60 + m;         // minutes since UTC midnight
+
+    // ── Crypto — always open ────────────────────────────────────────────
+    const isCryptoSym = /BINANCE:|COINBASE:|CRYPTO:/i.test(sym);
+    if (isCryptoSym) {
+      return { label: 'CRYPTO 24/7', color: bull, bg: '#22c55e22', border: '#22c55e44', pulse: true, subtitle: 'Crypto never closes' };
+    }
+
+    // ── Forex / Gold / Silver / Precious Metals ─────────────────────────
+    // Session: Mon 00:00 UTC → Fri 21:00 UTC  (Sydney open Mon to NY close Fri)
+    const isFxSym = /OANDA:|FX:|TVC:DXY/i.test(sym);
+    if (isFxSym) {
+      const fxOpen = (day >= 1 && day <= 4) || (day === 5 && mins < 21 * 60) || (day === 0 && mins >= 22 * 60);
+      if (fxOpen) return { label: 'FOREX LIVE', color: bull, bg: '#22c55e22', border: '#22c55e44', pulse: true, subtitle: 'Forex market is open' };
+      const nextMon = day === 6 ? 'Tomorrow' : 'Monday';
+      return { label: 'FOREX CLOSED', color: '#9ca3af', bg: '#6b727822', border: '#6b728044', pulse: false, subtitle: `Opens ${nextMon} 00:00 UTC` };
+    }
+
+    // ── US Stocks / ETFs / Indices (NYSE/NASDAQ) ────────────────────────
+    // Regular: Mon–Fri 14:30–21:00 UTC
+    const weekday = day >= 1 && day <= 5;
+    if (weekday) {
+      const preOpen  = mins >= 9 * 60  && mins < 14 * 60 + 30;  // 09:00–14:30 UTC
+      const regular  = mins >= 14 * 60 + 30 && mins < 21 * 60;   // 14:30–21:00 UTC
+      const afterHrs = mins >= 21 * 60 && mins < 24 * 60;         // 21:00–24:00 UTC
+      if (regular)  return { label: 'NYSE OPEN',    color: bull,      bg: '#22c55e22', border: '#22c55e44', pulse: true,  subtitle: 'Regular trading hours' };
+      if (preOpen)  return { label: 'PRE-MARKET',   color: '#f59e0b', bg: '#f59e0b22', border: '#f59e0b44', pulse: true,  subtitle: 'Pre-market session' };
+      if (afterHrs) return { label: 'AFTER HOURS',  color: '#f59e0b', bg: '#f59e0b22', border: '#f59e0b44', pulse: false, subtitle: 'After-hours session' };
+    }
+    // Weekend or outside all sessions
+    const daysUntilMon = day === 0 ? 1 : day === 6 ? 2 : 0;
+    const subtitle = daysUntilMon > 0
+      ? `Opens ${daysUntilMon === 1 ? 'Monday' : 'in 2 days'} 14:30 UTC`
+      : 'Opens 14:30 UTC';
+    return { label: 'NYSE CLOSED', color: '#9ca3af', bg: '#6b727822', border: '#6b728044', pulse: false, subtitle };
+  }
+
+  // Status for the currently selected chart symbol
+  const chartStatus = getMarketStatus(chartSymbol);
+
+  // Per-asset-ID quick dot color for ticker cards
+  function assetDotColor(id) {
+    if (id === 'btc')                   return bull;              // crypto always green
+    if (id === 'gold' || id === 'gld')  return getMarketStatus('OANDA:XAUUSD').color;
+    if (id === 'dxy')                   return getMarketStatus('TVC:DXY').color;
+    if (id === 'oil')                   return getMarketStatus('OANDA:XAUUSD').color; // futures ~same as forex
+    return getMarketStatus('AMEX:SPY').color;                    // stocks (spy, tlt, vix)
+  }
 
   // Flash style helper — theme-aware opacity + left-border accent
   const getFlashStyle = (id) => {
@@ -912,22 +611,13 @@ export default function EconomicDashboard() {
     };
   };
 
-  // ── Market state badge ───────────────────────────────────────────────────
+  // ── Smart market state badge (updates with selected chart symbol) ─────────
   const stateBadge = (
     <div className="flex items-center gap-1.5 px-2 py-1 rounded text-xs font-bold"
-      style={{
-        backgroundColor: isLive ? '#22c55e22' : isExtended ? '#f59e0b22' : '#6b727844',
-        color: isLive ? bull : isExtended ? '#f59e0b' : '#9ca3af',
-        border: `1px solid ${isLive ? '#22c55e44' : isExtended ? '#f59e0b44' : '#6b728044'}`,
-      }}>
-      <span
-        className="w-1.5 h-1.5 rounded-full"
-        style={{
-          backgroundColor: isLive ? bull : isExtended ? '#f59e0b' : '#6b7280',
-          animation: isLive || isExtended ? 'pulse 1.5s infinite' : 'none',
-        }}
-      />
-      {isLive ? (marketState === 'REGULAR' ? 'MARKET OPEN' : 'MARKET ACTIVE') : isExtended ? marketState : 'MARKET CLOSED'}
+      style={{ backgroundColor: chartStatus.bg, color: chartStatus.color, border: `1px solid ${chartStatus.border}` }}>
+      <span className="w-1.5 h-1.5 rounded-full"
+        style={{ backgroundColor: chartStatus.color, animation: chartStatus.pulse ? 'pulse 1.5s infinite' : 'none' }} />
+      {chartStatus.label}
     </div>
   );
 
@@ -984,9 +674,13 @@ export default function EconomicDashboard() {
             </div>
             <p className="text-sm mt-1 flex items-center gap-2 flex-wrap" style={{ color: theme.muted }}>
               {wsStatus === 'connected' ? (
-                <span className="flex items-center gap-1" style={{ color: '#22c55e' }}>
+                <span className="flex items-center gap-1" style={{ color: chartStatus.color }}>
                   <Wifi className="w-3 h-3" />
-                  Prices updating live
+                  {isCrypto ? 'Crypto prices live'
+                    : /OANDA:|TVC:DXY/i.test(chartSymbol) ? (chartStatus.pulse ? 'Forex prices live' : 'Forex prices delayed')
+                    : chartStatus.label === 'NYSE OPEN' ? 'Stock prices live'
+                    : chartStatus.label.includes('MARKET') || chartStatus.label.includes('HOURS') ? 'Extended hours prices'
+                    : 'Stock prices delayed'}
                 </span>
               ) : (
                 <span>Prices update automatically</span>
@@ -1021,10 +715,16 @@ export default function EconomicDashboard() {
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-3">
 
           {/* Gold card */}
-          <div className="rounded-lg p-3 border transition-colors duration-300"
-            style={{ backgroundColor: theme.surface, borderTopColor: '#f59e0b55', borderRightColor: '#f59e0b55', borderBottomColor: '#f59e0b55', ...getFlashStyle('gold') }}>
+          <div className="rounded-lg p-3 transition-colors duration-200"
+            style={{ backgroundColor: theme.surface2, border: `1px solid ${theme.border}`, borderLeft: '2px solid #f59e0b55', ...getFlashStyle('gold') }}
+            onMouseEnter={e => { e.currentTarget.style.backgroundColor = theme.isDark ? '#2c2c2c' : '#eef0f3'; }}
+            onMouseLeave={e => { e.currentTarget.style.backgroundColor = theme.surface2; }}>
             <div className="flex items-center justify-between mb-0.5">
-              <span className="text-xs font-bold" style={{ color: '#f59e0b' }}>GOLD</span>
+              <div className="flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full flex-shrink-0"
+                  style={{ backgroundColor: assetDotColor('gold'), animation: assetDotColor('gold') === bull ? 'pulse 1.5s infinite' : 'none' }} />
+                <span className="text-xs font-bold" style={{ color: '#f59e0b' }}>GOLD</span>
+              </div>
               <div className="flex items-center gap-1">
                 <Radio className="w-2.5 h-2.5" style={{ color: bull, opacity: liveGold ? 1 : 0.3 }} />
                 {liveGold && liveGold.changePct != null
@@ -1052,10 +752,16 @@ export default function EconomicDashboard() {
             const up = ld?.changePct != null ? ld.changePct >= 0 : true;
             const flash = getFlashStyle(a.id);
             return (
-              <div key={a.id} className="rounded-lg p-3 border transition-colors duration-300"
-                style={{ backgroundColor: theme.surface, borderTopColor: theme.border, borderRightColor: theme.border, borderBottomColor: theme.border, ...flash }}>
+              <div key={a.id} className="rounded-lg p-3 transition-colors duration-200"
+                style={{ backgroundColor: theme.surface2, border: `1px solid ${theme.border}`, ...flash }}
+                onMouseEnter={e => { e.currentTarget.style.backgroundColor = theme.isDark ? '#2c2c2c' : '#eef0f3'; }}
+                onMouseLeave={e => { e.currentTarget.style.backgroundColor = theme.surface2; }}>
                 <div className="flex items-center justify-between mb-0.5">
-                  <span className="text-xs font-bold" style={{ color: a.color }}>{a.displayTicker}</span>
+                  <div className="flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full flex-shrink-0"
+                      style={{ backgroundColor: assetDotColor(a.id), animation: assetDotColor(a.id) === bull ? 'pulse 1.5s infinite' : 'none' }} />
+                    <span className="text-xs font-bold" style={{ color: a.color }}>{a.displayTicker}</span>
+                  </div>
                   <div className="flex items-center gap-1">
                     <Radio className="w-2.5 h-2.5" style={{ color: bull, opacity: ld?.price ? 1 : 0.3 }} />
                     {ld?.price != null && (up ? <TrendingUp className="w-3 h-3" style={{ color: bull }} /> : <TrendingDown className="w-3 h-3" style={{ color: bear }} />)}
@@ -1075,11 +781,7 @@ export default function EconomicDashboard() {
           })}
         </div>
 
-        {/* Gold main chart + right sidebar */}
-        <div style={{ display:'flex', gap:16, alignItems:'flex-start', flexWrap:'wrap' }}>
-
-        {/* Left: chart card (70%) */}
-        <div style={{ flex:'1 1 62%', minWidth:300 }}>
+        {/* Gold main chart */}
         <div className="rounded-lg border" style={{ backgroundColor: theme.surface, borderColor: '#f59e0b55' }}>
           <div className="p-4 border-b" style={{ borderColor: theme.border }}>
             <div className="flex items-start justify-between gap-4 flex-wrap">
@@ -1138,25 +840,10 @@ export default function EconomicDashboard() {
             </div>
           )}
 
-          <div className="relative" style={{ height: 380 }}>
+          <div className="relative" style={{ height: 600 }}>
             <TvEcoChart symbol={chartSymbol} tf={tf} />
           </div>
-          <TradeTimeline trades={symbolTrades} isFx={isFx} theme={theme} currentPrice={chartLiveData?.price} />
         </div>{/* end chart card */}
-        </div>{/* end left column */}
-
-        {/* Right: My Trades on Chart (30%) */}
-        <div style={{ flex:'0 1 28%', minWidth:260, display:'flex', flexDirection:'column', gap:12 }}>
-          <MyTradesPanel
-            pairLabel={pairLabel}
-            entryPrice={chartLiveData?.price}
-            isFx={isFx}
-            theme={theme}
-            onTradeLogged={() => {}}
-          />
-        </div>
-
-        </div>{/* end flex row */}
 
         {/* Correlation mini-charts */}
         <div>
@@ -1229,10 +916,10 @@ export default function EconomicDashboard() {
                   Shows how closely each asset tracks gold prices over the {tf} period. High positive = moves together; negative = moves opposite.
                 </p>
               </div>
-              <div className="flex items-center gap-1.5 text-xs" style={{ color: isLive ? bull : theme.muted }}>
+              <div className="flex items-center gap-1.5 text-xs" style={{ color: assetDotColor('gold') }}>
                 <span className="w-1.5 h-1.5 rounded-full"
-                  style={{ backgroundColor: isLive ? bull : '#6b7280', animation: isLive ? 'pulse 1.5s infinite' : 'none' }} />
-                {isLive ? 'LIVE' : marketState}
+                  style={{ backgroundColor: assetDotColor('gold'), animation: assetDotColor('gold') === bull ? 'pulse 1.5s infinite' : 'none' }} />
+                {getMarketStatus('OANDA:XAUUSD').label}
               </div>
             </div>
           </div>
@@ -1275,7 +962,7 @@ export default function EconomicDashboard() {
                         </div>
                       </td>
                       <td className="px-4 py-3">
-                        <span className="font-mono text-xs px-1.5 py-0.5 rounded" style={{ backgroundColor: `${a.color}22`, color: a.color }}>{a.symbol}</span>
+                        <span className="font-mono text-xs px-1.5 py-0.5 rounded" style={{ backgroundColor: `${a.color}22`, color: a.color }}>{a.displayTicker}</span>
                       </td>
                       <td className="px-4 py-3 font-mono font-bold tabular-nums" style={{ color: theme.text }}>
                         {ld?.price != null ? (a.unit === '$' ? `$${ld.price.toFixed(2)}` : `${ld.price.toFixed(2)} ${a.unit}`) : '—'}

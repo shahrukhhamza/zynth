@@ -18,6 +18,7 @@
 
 import axios from 'axios';
 import NodeCache from 'node-cache';
+import { bumpGemini } from '../utils/geminiCounter.js';
 
 const cache = new NodeCache({ stdTTL: 3600 });
 
@@ -186,6 +187,7 @@ async function callGeminiForAnalysis(prompt) {
     );
 
     if (response.data?.candidates?.[0]?.content?.parts?.[0]?.text) {
+      bumpGemini('economicAnalysis');
       return response.data.candidates[0].content.parts[0].text;
     }
 

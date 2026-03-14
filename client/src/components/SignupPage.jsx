@@ -26,6 +26,7 @@ export default function SignupPage({ onSwitchToLogin, onBack }) {
   const [error, setError]     = useState('');
   const [loading, setLoading] = useState(false);
   const [spotsLeft, setSpotsLeft] = useState(null);
+  const [consent, setConsent] = useState({ terms: false, risk: false });
 
   useEffect(() => {
     fetch(`${API_URL}/api/admin/stats`)
@@ -56,9 +57,10 @@ export default function SignupPage({ onSwitchToLogin, onBack }) {
     setError('');
     if (form.password !== form.confirm) return setError('Passwords do not match.');
     if (form.password.length < 6)       return setError('Password must be at least 6 characters.');
+    if (!consent.terms || !consent.risk) return setError('Please accept both agreements below to create your account.');
     setLoading(true);
     try {
-      await register({ name: form.name, email: form.email, password: form.password });
+      await register({ name: form.name, email: form.email, password: form.password, terms_accepted: true });
     } catch (err) {
       setError(err.response?.data?.error || 'Registration failed. Please try again.');
     } finally {
@@ -301,6 +303,42 @@ export default function SignupPage({ onSwitchToLogin, onBack }) {
                       </span>
                     )}
                   </div>
+                </div>
+
+                {/* Consent checkboxes */}
+                <div className="space-y-2 pt-1">
+                  <label className="flex items-start gap-2 cursor-pointer select-none">
+                    <input
+                      type="checkbox"
+                      checked={consent.terms}
+                      onChange={e => setConsent(c => ({ ...c, terms: e.target.checked }))}
+                      className="mt-0.5 accent-emerald-500 shrink-0"
+                    />
+                    <span className="text-[11px] text-gray-500 leading-relaxed">
+                      I agree to the{' '}
+                      <a
+                        href="/terms"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-emerald-400 hover:underline"
+                        onClick={e => e.stopPropagation()}
+                      >
+                        Terms of Service
+                      </a>{' '}
+                      and understand that Zynth is a software information tool, not a financial advisor.
+                    </span>
+                  </label>
+                  <label className="flex items-start gap-2 cursor-pointer select-none">
+                    <input
+                      type="checkbox"
+                      checked={consent.risk}
+                      onChange={e => setConsent(c => ({ ...c, risk: e.target.checked }))}
+                      className="mt-0.5 accent-emerald-500 shrink-0"
+                    />
+                    <span className="text-[11px] text-gray-500 leading-relaxed">
+                      I understand that AI analysis and market data may contain errors and should NOT be used as the sole basis for trading decisions. I trade at my own risk.
+                    </span>
+                  </label>
                 </div>
 
                 <button

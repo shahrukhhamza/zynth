@@ -76,7 +76,8 @@ export default function ScreenshotImportDashboard() {
       if (result.success && result.trades?.length > 0) {
         setData(result);
         saveCache(result);           // keep fresh copy in localStorage
-        setActiveTab('overview');
+        // Only redirect to overview if user hasn't manually chosen a tab yet
+        setActiveTab(prev => prev === 'upload' ? 'overview' : prev);
       } else if (!loadCache()?.trades?.length) {
         // Live service says no data and no cache — go to upload
         setActiveTab('upload');
@@ -307,7 +308,7 @@ export default function ScreenshotImportDashboard() {
         {hasData && activeTab === 'charts' && analysis && (
           <div className="space-y-6">
             <MT5PerformanceCharts analysis={analysis} trades={trades} />
-            {heatmap.length > 0 && <MT5HeatmapChart heatmap={heatmap} />}
+            {(heatmap.length > 0 || trades.length > 0) && <MT5HeatmapChart heatmap={heatmap} trades={trades} />}
           </div>
         )}
 

@@ -26,7 +26,9 @@ db.exec(`
     screenshot_tries     INTEGER DEFAULT 0,
     is_admin             INTEGER DEFAULT 0,
     reset_token          TEXT    DEFAULT NULL,
-    reset_token_expires  TEXT    DEFAULT NULL
+    reset_token_expires  TEXT    DEFAULT NULL,
+    terms_accepted       INTEGER DEFAULT 0,
+    terms_accepted_at    TEXT    DEFAULT NULL
   )
 `);
 
@@ -45,6 +47,8 @@ const migrations = [
   "ALTER TABLE users ADD COLUMN avatar_color TEXT DEFAULT 'emerald'",
   'ALTER TABLE users ADD COLUMN onboarding_done INTEGER DEFAULT 0',
   'ALTER TABLE users ADD COLUMN avatar_url TEXT DEFAULT NULL',
+  'ALTER TABLE users ADD COLUMN terms_accepted INTEGER DEFAULT 0',
+  'ALTER TABLE users ADD COLUMN terms_accepted_at TEXT DEFAULT NULL',
 ];
 for (const sql of migrations) {
   try { db.exec(sql); } catch { /* column already exists — safe to ignore */ }
@@ -55,17 +59,17 @@ export const findByEmail = (email) =>
 
 export const findById = (id) =>
   db.prepare(
-    'SELECT id, name, email, avatar, created_at, plan, plan_expires_at, ai_analysis_tries, screenshot_tries, is_admin, trading_experience, markets_traded, goals, avatar_color, onboarding_done, avatar_url FROM users WHERE id = ?'
+    'SELECT id, name, email, avatar, created_at, plan, plan_expires_at, ai_analysis_tries, screenshot_tries, is_admin, trading_experience, markets_traded, goals, avatar_color, onboarding_done, avatar_url, terms_accepted, terms_accepted_at FROM users WHERE id = ?'
   ).get(id);
 
 export const findByGoogleId = (googleId) =>
   db.prepare('SELECT * FROM users WHERE google_id = ?').get(googleId);
 
-export const createUser = ({ name, email, password_hash = null, google_id = null, avatar = null }) =>
+export const createUser = ({ name, email, password_hash = null, google_id = null, avatar = null, terms_accepted = 0, terms_accepted_at = null }) =>
   db.prepare(`
-    INSERT INTO users (name, email, password_hash, google_id, avatar)
-    VALUES (?, ?, ?, ?, ?)
-  `).run(name, email.toLowerCase().trim(), password_hash, google_id, avatar);
+    INSERT INTO users (name, email, password_hash, google_id, avatar, terms_accepted, terms_accepted_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
+  `).run(name, email.toLowerCase().trim(), password_hash, google_id, avatar, terms_accepted, terms_accepted_at);
 
 export const linkGoogleId = (id, google_id, avatar) =>
   db.prepare('UPDATE users SET google_id = ?, avatar = ? WHERE id = ?').run(google_id, avatar, id);

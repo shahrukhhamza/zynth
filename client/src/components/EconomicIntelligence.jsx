@@ -589,6 +589,23 @@ function EconomicIntelligence() {
         <p className="text-xs text-center pb-2" style={{ color: theme.muted }}>
           Data sourced from official government releases and verified analyst consensus. Auto-refreshes every 5 minutes.
         </p>
+
+        {/* Disclaimer */}
+        <div
+          style={{
+            backgroundColor: 'rgba(245,158,11,0.06)',
+            border: '1px solid rgba(245,158,11,0.15)',
+            borderRadius: 8,
+            padding: '10px 14px',
+            marginTop: 4,
+            marginBottom: 8,
+          }}
+        >
+          <p className="text-center" style={{ fontSize: 11, color: 'rgba(251,191,36,0.7)', lineHeight: 1.6 }}>
+            <strong style={{ color: 'rgba(251,191,36,0.9)' }}>Disclaimer:</strong> Economic data and AI analysis are for informational purposes only and do not constitute financial or investment advice.
+            All trading involves substantial risk of loss. Always verify data with primary sources before making trading decisions.
+          </p>
+        </div>
       </div>
     </div>
   );

@@ -63,12 +63,12 @@ export default function SettingsModal({ onClose, autoRefresh, onToggleAutoRefres
 
   return (
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center p-4"
+      className="fixed inset-0 z-[100] modal-overlay flex items-center justify-center p-4"
       style={{ backgroundColor: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(4px)' }}
       onClick={e => { if (e.target === e.currentTarget) onClose(); }}
     >
       <div
-        className="relative w-full rounded-2xl overflow-hidden"
+        className="modal-content relative w-full rounded-2xl overflow-hidden"
         style={{
           backgroundColor: theme.surface,
           border: `1px solid ${theme.border}`,

@@ -30,31 +30,33 @@ export const ThemeProvider = ({ children }) => {
   }, [isDark]);
 
   const toggleTheme = () => {
+    document.body.classList.add('theme-transitioning');
     setIsDark(prev => {
       const newTheme = !prev;
       localStorage.setItem('theme', newTheme ? 'dark' : 'light');
       return newTheme;
     });
+    setTimeout(() => document.body.classList.remove('theme-transitioning'), 400);
   };
 
   const theme = {
     isDark,
     toggleTheme,
     // Background colors
-    bg:       isDark ? '#0d0d0d' : '#f0f2f5',
-    surface:  isDark ? '#161616' : '#ffffff',
-    surface2: isDark ? '#1f1f1f' : '#f8f9fa',
-    border:   isDark ? '#2a2a2a' : '#d1d5db',
+    bg:       isDark ? '#0f0f0f' : '#f0f2f5',
+    surface:  isDark ? '#1a1a1a' : '#ffffff',
+    surface2: isDark ? '#242424' : '#f8f9fa',
+    border:   isDark ? '#2e2e2e' : '#d1d5db',
 
     // Text colors
-    text:     isDark ? '#e8e8e8' : '#111827',
-    muted:    isDark ? '#64748b' : '#4b5563',   // kept as alias
-    textMuted: isDark ? '#64748b' : '#4b5563',
+    text:      isDark ? '#f0f0f0' : '#111827',
+    muted:     isDark ? '#888888' : '#4b5563',   // kept as alias
+    textMuted: isDark ? '#888888' : '#4b5563',
 
     // Accent colors (emerald)
     accent:      isDark ? '#10b981' : '#059669',
     accentHover: isDark ? '#059669' : '#047857',
-    accentGlow:  isDark ? 'rgba(16,185,129,0.15)' : 'rgba(5,150,105,0.1)',
+    accentGlow:  isDark ? 'rgba(16,185,129,0.12)' : 'rgba(5,150,105,0.1)',
     success: '#22c55e',
     warning: isDark ? '#f59e0b' : '#d97706',
     gold:    isDark ? '#f59e0b' : '#b45309',

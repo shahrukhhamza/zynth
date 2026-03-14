@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { fetchEconomicCalendar } from '../services/calendarApi';
-import { Calendar, TrendingUp, AlertCircle, ChevronDown, ChevronUp, Activity, Lightbulb, Target, Printer, Download, X, CheckSquare, Square, ShieldCheck } from 'lucide-react';
+import { Calendar, TrendingUp, TrendingDown, AlertCircle, ChevronDown, ChevronUp, Activity, Lightbulb, Target, Printer, Download, X, CheckSquare, Square, ShieldCheck } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine, LabelList } from 'recharts';
 import { useTheme } from '../contexts/ThemeContext';
 import { useTimezone } from '../contexts/TimezoneContext';
@@ -122,6 +122,13 @@ function EconomicCalendar() {
     const diff = parseFloat(actual) - parseFloat(forecast);
     if (Math.abs(diff) < 0.01) return 'text-terminal-text';
     return diff > 0 ? 'text-terminal-success' : 'text-terminal-error';
+  };
+
+  const getSurprise = (actual, forecast) => {
+    const a = parseFloat(actual);
+    const f = parseFloat(forecast);
+    if (isNaN(a) || isNaN(f) || f === 0) return null;
+    return ((a - f) / Math.abs(f)) * 100;
   };
 
   const toggleRow = (id) => {
@@ -459,121 +466,112 @@ function EconomicCalendar() {
       )}
 
       {/* Header */}
-      <div className="flex items-center justify-between flex-wrap gap-3">
-        <div className="flex items-center gap-3">
-          <Calendar className="w-6 h-6" style={{ color: theme.accent }} />
-          <h2 className="text-xl font-bold" style={{ color: theme.text }}>Economic Calendar</h2>
-          <span className="text-sm" style={{ color: theme.muted }}>
-            {filteredIndicators.length} indicators
-          </span>
+      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: 16 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+          <div style={{ width: 46, height: 46, borderRadius: 13, background: 'linear-gradient(135deg, #10b981, #059669)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, boxShadow: '0 4px 14px rgba(16,185,129,0.35)' }}>
+            <Calendar size={22} color="#fff" />
+          </div>
+          <div>
+            <h2 style={{ color: theme.text, fontWeight: 800, fontSize: 22, margin: 0, lineHeight: 1.2, letterSpacing: '-0.01em' }}>Economic Calendar</h2>
+            <p style={{ color: theme.muted, fontSize: 13, margin: '3px 0 0' }}>17 US macro indicators — Updated automatically</p>
+          </div>
         </div>
-
-        <div className="flex items-center gap-2 flex-wrap">
-          {/* Print / Download */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
           <button
             onClick={openPrintModal}
-            className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors"
-            style={{
-              backgroundColor: theme.surface,
-              border: `1px solid ${theme.border}`,
-              color: theme.text,
-            }}
-            onMouseOver={(e) => { e.currentTarget.style.borderColor = theme.accent; e.currentTarget.style.color = theme.accent; }}
+            style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '7px 14px', borderRadius: 8, border: `1px solid ${theme.border}`, background: 'transparent', color: theme.text, cursor: 'pointer', fontSize: 13, fontWeight: 500, transition: 'border-color 0.15s, color 0.15s' }}
+            onMouseOver={(e) => { e.currentTarget.style.borderColor = '#10b981'; e.currentTarget.style.color = '#10b981'; }}
             onMouseOut={(e) => { e.currentTarget.style.borderColor = theme.border; e.currentTarget.style.color = theme.text; }}
           >
-            <Printer className="w-4 h-4" />
-            Print / Download
+            <Printer size={15} /> Print / Download
           </button>
-
-          {/* Impact Filter */}
-          {['all', 'high', 'medium'].map((level) => (
+          {['all', 'high', 'medium', 'low'].map(level => (
             <button
               key={level}
               onClick={() => setFilterImpact(level)}
-              className="px-3 py-1 rounded-lg text-sm transition-colors"
-              style={{
-                backgroundColor: filterImpact === level
-                  ? (level === 'high' ? '#ef4444' : level === 'medium' ? '#eab308' : theme.accent)
-                  : theme.surface,
-                border: `1px solid ${filterImpact === level
-                  ? (level === 'high' ? '#ef4444' : level === 'medium' ? '#eab308' : theme.accent)
-                  : theme.border}`,
-                color: filterImpact === level ? '#fff' : theme.muted
-              }}
+              style={{ padding: '6px 16px', borderRadius: 999, border: `1px solid ${filterImpact === level ? '#10b981' : theme.border}`, background: filterImpact === level ? '#10b981' : 'transparent', color: filterImpact === level ? '#fff' : theme.muted, cursor: 'pointer', fontSize: 12, fontWeight: 600, transition: 'all 0.15s' }}
             >
-              {level === 'all' ? 'All' : level === 'high' ? 'High Impact' : 'Medium'}
+              {level === 'all' ? 'All' : level.charAt(0).toUpperCase() + level.slice(1)}
             </button>
           ))}
         </div>
       </div>
 
+      {/* Stats bar */}
+      {(() => {
+        const now = new Date();
+        const beats = filteredIndicators.filter(ind => { const s = getSurprise(ind.current, ind.forecast); return s !== null && s > 0.5; }).length;
+        const misses = filteredIndicators.filter(ind => { const s = getSurprise(ind.current, ind.forecast); return s !== null && s < -0.5; }).length;
+        const netScore = beats - misses;
+        const nextInd = [...filteredIndicators].filter(i => i.date).sort((a, b) => new Date(a.date) - new Date(b.date)).find(i => new Date(i.date) > now);
+        const pill = { display: 'inline-flex', alignItems: 'center', gap: 6, padding: '6px 14px', borderRadius: 999, background: theme.surface, border: `1px solid ${theme.border}`, fontSize: 12, fontWeight: 500 };
+        return (
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+            <span style={{ ...pill, color: theme.muted }}><span>📊</span>{filteredIndicators.length} Indicators</span>
+            <span style={{ ...pill, color: theme.muted }}><span>🕐</span>Last Updated: {new Date().toLocaleDateString('en-US', { day: 'numeric', month: 'short' })}</span>
+            {nextInd && (
+              <span style={{ ...pill, color: theme.muted }}><span>📅</span>Next: {nextInd.name} · {new Date(nextInd.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
+            )}
+            <span style={{ ...pill, color: netScore >= 0 ? '#22c55e' : '#ef4444' }}>
+              <span>{netScore >= 0 ? '📈' : '📉'}</span>
+              Macro Score: {netScore >= 0 ? '+' : ''}{netScore} {netScore > 2 ? 'Bullish' : netScore < -2 ? 'Bearish' : 'Neutral'}
+            </span>
+          </div>
+        );
+      })()}
+
       {/* Table */}
-      <div className="border rounded-lg overflow-hidden" style={{ 
-        backgroundColor: theme.surface, 
-        borderColor: theme.border 
-      }}>
+      <div style={{ background: theme.surface, border: `1px solid ${theme.border}`, borderRadius: 12, overflow: 'hidden', boxShadow: theme.isDark ? '0 4px 24px rgba(0,0,0,0.3)' : '0 4px 16px rgba(0,0,0,0.06)' }}>
         <table className="w-full">
-          <thead className="border-b" style={{ 
-            backgroundColor: theme.bg, 
-            borderColor: theme.border 
-          }}>
+          <thead style={{ background: theme.bg, borderBottom: '2px solid #10b981' }}>
             <tr>
-              <th className="px-4 py-3 text-left text-xs font-semibold uppercase" style={{ color: theme.muted }}>
-                Event
-              </th>
-              <th className="px-4 py-3 text-center text-xs font-semibold uppercase" style={{ color: theme.muted }}>
-                Currency
-              </th>
-              <th className="px-4 py-3 text-center text-xs font-semibold uppercase" style={{ color: theme.muted }}>
-                Impact
-              </th>
-              <th className="px-4 py-3 text-right text-xs font-semibold uppercase" style={{ color: theme.muted }}>
-                Actual
-              </th>
-              <th className="px-4 py-3 text-right text-xs font-semibold uppercase" style={{ color: theme.muted }}>
-                Forecast
-              </th>
-              <th className="px-4 py-3 text-right text-xs font-semibold uppercase" style={{ color: theme.muted }}>
-                Previous
-              </th>
-              <th className="px-4 py-3 text-center text-xs font-semibold uppercase" style={{ color: theme.muted }}>
-                
-              </th>
+              <th style={{ padding: '11px 16px', textAlign: 'left',   fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: theme.muted }}>Event</th>
+              <th style={{ padding: '11px 12px', textAlign: 'center', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: theme.muted }}>Currency</th>
+              <th style={{ padding: '11px 12px', textAlign: 'center', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: theme.muted }}>Impact</th>
+              <th style={{ padding: '11px 16px', textAlign: 'right',  fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: theme.muted }}>Actual</th>
+              <th style={{ padding: '11px 16px', textAlign: 'right',  fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: theme.muted }}>Forecast</th>
+              <th style={{ padding: '11px 16px', textAlign: 'right',  fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: theme.muted }}>Previous</th>
+              <th style={{ padding: '11px 12px', textAlign: 'center', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: theme.muted }}>Surprise</th>
+              <th style={{ width: 40 }} />
             </tr>
           </thead>
-          <tbody className="divide-y" style={{ borderColor: theme.border }}>
-            {filteredIndicators.map((indicator) => (
+          <tbody>
+            {filteredIndicators.map((indicator, rowIdx) => (
               <>
                 <tr
                   key={indicator.id}
                   className="transition-colors cursor-pointer"
                   onClick={() => toggleRow(indicator.id)}
-                  style={{ backgroundColor: theme.surface }}
+                  style={{ backgroundColor: rowIdx % 2 === 1 ? (theme.isDark ? 'rgba(255,255,255,0.015)' : 'rgba(0,0,0,0.012)') : theme.surface, borderBottom: `1px solid ${theme.border}` }}
                   onMouseOver={(e) => e.currentTarget.style.backgroundColor = theme.bg}
-                  onMouseOut={(e) => e.currentTarget.style.backgroundColor = theme.surface}
+                  onMouseOut={(e) => e.currentTarget.style.backgroundColor = rowIdx % 2 === 1 ? (theme.isDark ? 'rgba(255,255,255,0.015)' : 'rgba(0,0,0,0.012)') : theme.surface}
                 >
-                  <td className="px-4 py-3">
-                    <div className="flex items-center gap-2">
-                      <TrendingUp className="w-4 h-4 flex-shrink-0" style={{ color: theme.accent }} />
+                  {/* Event */}
+                  <td style={{ padding: '16px 16px', minWidth: 220 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                      {(() => {
+                        const a = parseFloat(indicator.current);
+                        const p = parseFloat(indicator.previous);
+                        if (!isNaN(a) && !isNaN(p)) {
+                          return a >= p
+                            ? <TrendingUp size={16} style={{ color: '#22c55e', flexShrink: 0 }} />
+                            : <TrendingDown size={16} style={{ color: '#ef4444', flexShrink: 0 }} />;
+                        }
+                        return <Activity size={16} style={{ color: theme.muted, flexShrink: 0 }} />;
+                      })()}
                       <div>
-                        <div className="flex items-center gap-1.5 flex-wrap">
-                          <span className="text-sm font-medium" style={{ color: theme.text }}>
-                            {indicator.name}
-                          </span>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+                          <span style={{ color: theme.text, fontWeight: 700, fontSize: 15 }}>{indicator.name}</span>
                           {indicator.webVerified && (
-                            <span title="Data verified via Gemini + Google Search" style={{ color: theme.success }}>
-                              <ShieldCheck className="w-3.5 h-3.5" />
+                            <span title="Data verified via Gemini + Google Search" style={{ color: '#22c55e' }}>
+                              <ShieldCheck size={13} />
                             </span>
                           )}
                           {indicator.corrected && (
-                            <span className="text-xs px-1 rounded" style={{
-                              backgroundColor: 'rgba(234,179,8,0.15)',
-                              color: '#eab308',
-                              fontSize: '10px'
-                            }}>corrected</span>
+                            <span style={{ background: 'rgba(234,179,8,0.15)', color: '#eab308', fontSize: 10, padding: '1px 5px', borderRadius: 4 }}>corrected</span>
                           )}
                         </div>
-                        <div className="text-xs" style={{ color: theme.muted }}>
+                        <div style={{ color: theme.muted, fontSize: 12, fontStyle: 'italic', marginTop: 2 }}>
                           {indicator.reportingPeriod
                             ? `${indicator.reportingPeriod} · ${indicator.frequency}`
                             : indicator.frequency}
@@ -581,42 +579,79 @@ function EconomicCalendar() {
                       </div>
                     </div>
                   </td>
-                  <td className="px-4 py-3 text-center">
-                    <span className="inline-flex items-center justify-center w-12 h-6 border rounded text-xs font-semibold" style={{ 
-                      backgroundColor: theme.bg, 
-                      borderColor: theme.border,
-                      color: theme.text 
-                    }}>
-                      {indicator.currency}
+                  {/* Currency */}
+                  <td style={{ padding: '16px 12px', textAlign: 'center' }}>
+                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '4px 10px', borderRadius: 999, background: theme.bg, border: `1px solid ${theme.border}`, color: theme.text, fontSize: 11, fontWeight: 600, whiteSpace: 'nowrap' }}>
+                      🇺🇸 {indicator.currency}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-center">
-                    <span className={`inline-flex items-center justify-center w-16 h-6 border rounded text-xs font-semibold uppercase ${getImpactBg(indicator.impact)} ${getImpactColor(indicator.impact)}`}>
-                      {indicator.impact}
-                    </span>
+                  {/* Impact */}
+                  <td style={{ padding: '16px 12px', textAlign: 'center' }}>
+                    {indicator.impact === 'high' ? (
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '4px 11px', borderRadius: 6, background: 'rgba(239,68,68,0.12)', border: '1px solid rgba(239,68,68,0.4)', color: '#f87171', fontSize: 11, fontWeight: 700, whiteSpace: 'nowrap' }}>
+                        <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#f87171', display: 'inline-block', animation: 'calPulse 1.5s ease-in-out infinite' }} />
+                        HIGH
+                      </span>
+                    ) : indicator.impact === 'medium' ? (
+                      <span style={{ display: 'inline-flex', alignItems: 'center', padding: '4px 11px', borderRadius: 6, background: 'rgba(245,158,11,0.12)', border: '1px solid rgba(245,158,11,0.4)', color: '#fbbf24', fontSize: 11, fontWeight: 700 }}>
+                        MED
+                      </span>
+                    ) : (
+                      <span style={{ display: 'inline-flex', alignItems: 'center', padding: '4px 11px', borderRadius: 6, background: 'rgba(100,116,139,0.12)', border: '1px solid rgba(100,116,139,0.4)', color: '#94a3b8', fontSize: 11, fontWeight: 600 }}>
+                        LOW
+                      </span>
+                    )}
                   </td>
-                  <td className={`px-4 py-3 text-right font-semibold ${getValueColor(indicator.current, indicator.forecast)}`}>
-                    {formatValue(indicator.current, indicator.unit)}
+                  {/* Actual */}
+                  <td style={{ padding: '16px 16px', textAlign: 'right' }}>
+                    {(() => {
+                      const a = parseFloat(indicator.current);
+                      const f = parseFloat(indicator.forecast);
+                      const color = (isNaN(a) || isNaN(f)) ? theme.text : a > f ? '#22c55e' : a < f ? '#ef4444' : theme.muted;
+                      return (
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 4 }}>
+                          {!isNaN(a) && !isNaN(f) && a !== f && (
+                            a > f ? <TrendingUp size={13} color="#22c55e" /> : <TrendingDown size={13} color="#ef4444" />
+                          )}
+                          <span style={{ color, fontWeight: 700, fontSize: 17 }}>{formatValue(indicator.current, indicator.unit)}</span>
+                        </div>
+                      );
+                    })()}
                   </td>
-                  <td className="px-4 py-3 text-right" style={{ color: theme.accent }}>
-                    {formatValue(indicator.forecast, indicator.unit)}
+                  {/* Forecast */}
+                  <td style={{ padding: '16px 16px', textAlign: 'right', color: theme.muted, fontSize: 15 }}>
+                    ({formatValue(indicator.forecast, indicator.unit)})
                   </td>
-                  <td className="px-4 py-3 text-right" style={{ color: theme.muted }}>
+                  {/* Previous */}
+                  <td style={{ padding: '16px 16px', textAlign: 'right', color: theme.muted, fontSize: 15 }}>
                     {formatValue(indicator.previous, indicator.unit)}
                   </td>
-                  <td className="px-4 py-3 text-center">
-                    {expandedRow === indicator.id ? (
-                      <ChevronUp className="w-4 h-4 mx-auto" style={{ color: theme.accent }} />
-                    ) : (
-                      <ChevronDown className="w-4 h-4 mx-auto" style={{ color: theme.muted }} />
-                    )}
+                  {/* Surprise */}
+                  <td style={{ padding: '16px 12px', textAlign: 'center' }}>
+                    {(() => {
+                      const surp = getSurprise(indicator.current, indicator.forecast);
+                      if (surp === null) return <span style={{ color: theme.muted, fontSize: 11 }}>—</span>;
+                      if (Math.abs(surp) < 0.5) return (
+                        <span style={{ padding: '3px 9px', borderRadius: 999, background: 'rgba(100,116,139,0.12)', border: '1px solid rgba(100,116,139,0.35)', color: '#94a3b8', fontSize: 11, fontWeight: 600, whiteSpace: 'nowrap' }}>In Line</span>
+                      );
+                      return surp > 0
+                        ? <span style={{ padding: '3px 9px', borderRadius: 999, background: 'rgba(34,197,94,0.12)', border: '1px solid rgba(34,197,94,0.35)', color: '#4ade80', fontSize: 11, fontWeight: 700, whiteSpace: 'nowrap' }}>+{surp.toFixed(1)}% Beat</span>
+                        : <span style={{ padding: '3px 9px', borderRadius: 999, background: 'rgba(239,68,68,0.12)', border: '1px solid rgba(239,68,68,0.35)', color: '#f87171', fontSize: 11, fontWeight: 700, whiteSpace: 'nowrap' }}>{surp.toFixed(1)}% Miss</span>;
+                    })()}
+                  </td>
+                  {/* Expand */}
+                  <td style={{ padding: '16px 12px', textAlign: 'center', width: 40 }}>
+                    {expandedRow === indicator.id
+                      ? <ChevronUp size={16} style={{ color: theme.accent, margin: '0 auto' }} />
+                      : <ChevronDown size={16} style={{ color: theme.muted, margin: '0 auto' }} />
+                    }
                   </td>
                 </tr>
                 
                 {/* Expanded Row - AI Insights + Historical Chart */}
                 {expandedRow === indicator.id && (
                   <tr>
-                    <td colSpan="7" className="px-4 py-6" style={{ backgroundColor: theme.bg }}>
+                    <td colSpan="8" style={{ padding: '0 16px 24px', backgroundColor: theme.bg }}>
                       <div className="space-y-4">
                         
                         {/* AI Insights Section */}
@@ -801,6 +836,28 @@ function EconomicCalendar() {
           <p>No indicators found for selected filter</p>
         </div>
       )}
+
+      {/* Impact colour legend */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 22, paddingTop: 4 }}>
+        {[
+          { color: '#f87171', label: 'High Impact' },
+          { color: '#fbbf24', label: 'Medium Impact' },
+          { color: '#94a3b8', label: 'Low Impact' },
+        ].map(({ color, label }) => (
+          <div key={label} style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+            <span style={{ width: 8, height: 8, borderRadius: '50%', background: color, display: 'inline-block' }} />
+            <span style={{ color: theme.muted, fontSize: 11 }}>{label}</span>
+          </div>
+        ))}
+      </div>
+
+      {/* Keyframe for HIGH impact pulse dot */}
+      <style>{`
+        @keyframes calPulse {
+          0%, 100% { opacity: 1;   transform: scale(1);   }
+          50%       { opacity: 0.35; transform: scale(0.65); }
+        }
+      `}</style>
     </div>
   );
 }

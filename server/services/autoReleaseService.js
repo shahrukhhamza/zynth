@@ -26,6 +26,7 @@ import fs           from 'fs';
 import path         from 'path';
 import EventEmitter from 'events';
 import { fileURLToPath } from 'url';
+import { bumpGemini }   from '../utils/geminiCounter.js';
 import {
   cache,
   clearEconomicCache,
@@ -257,13 +258,17 @@ const EXHAUSTION_TTL_MS = 24 * 60 * 60 * 1000;
 
 /**
  * Reads all configured Gemini keys at call time (after dotenv has loaded).
- * Filters out falsy values.
+ * Key assignment by service:
+ *   Key 1 (GEMINI_API_KEY)   → journalAiService  (user-triggered)
+ *   Key 2 (GEMINI_API_KEY_2) → geminiWebSearchService + economicCalendarService
+ *   Key 3 (GEMINI_API_KEY_3) → autoReleaseService (cron) + assistant + geminiAnalysisService
+ * autoRelease uses Key 3 first, then falls back to Key 1/2 if Key 3 is exhausted.
  */
 function getGeminiKeys() {
   return [
-    process.env.GEMINI_API_KEY,
-    process.env.GEMINI_API_KEY_2,
-    process.env.GEMINI_API_KEY_3,
+    process.env.GEMINI_API_KEY_3,  // primary for autoRelease
+    process.env.GEMINI_API_KEY,    // fallback 1
+    process.env.GEMINI_API_KEY_2,  // fallback 2
   ].filter(Boolean);
 }
 
@@ -371,6 +376,7 @@ export async function fetchLatestRelease(indicatorId, indicatorName, unit) {
 
         const parsed = JSON.parse(match[0]);
         console.log(`✅ autoRelease (key ${keyIndex}, ${model.id}): ${indicatorName} → ${JSON.stringify(parsed)}`);
+        bumpGemini(`autoRelease:${model.id}`);
         return parsed;
 
       } catch (err) {

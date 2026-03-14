@@ -576,6 +576,14 @@ router.post('/trading-dna', requireElite, async (req, res) => {
 
     const checklists = getChecklistHistory(userId, 200);
     const traits = calcTraitScores(allTrades, checklists);
+    if (!traits) {
+      return res.status(422).json({
+        success: false,
+        noClosedTrades: true,
+        tradeCount: allTrades.length,
+        required: 10,
+      });
+    }
     const archetype = determineArchetype(traits, allTrades);
     const behaviorFlags = computeBehaviorFlags(allTrades);
 

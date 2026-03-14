@@ -7,8 +7,9 @@ import * as webScraperService from './webScraperService.js';
 import * as freeApiService from './freeApiService.js';
 import geminiWebSearchService from './geminiWebSearchService.js';
 
-// Cache for 2 minutes (120s) for near real-time updates
-const cache = new NodeCache({ stdTTL: 120 });
+// Cache for 30 minutes — economic events are scheduled days in advance.
+// The underlying Gemini web-search data itself caches for 6 hours.
+const cache = new NodeCache({ stdTTL: 1800 });
 
 // Data source configuration
 const USE_FREE_APIS = process.env.USE_FREE_APIS !== 'false'; // Default true - FREE APIS

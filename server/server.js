@@ -15,6 +15,9 @@ const __dirname = dirname(__filename);
 // Load environment variables FIRST before importing other modules
 dotenv.config({ path: join(__dirname, '..', '.env') });
 
+// Gemini call counter (incremented by every service that calls generateContent)
+import { getGeminiCount } from './utils/geminiCounter.js';
+
 // Now import modules that depend on environment variables
 import newsRouter from './routes/news.js';
 import dataRouter from './routes/data.js';
@@ -25,6 +28,7 @@ import finnhubRouter from './routes/finnhub.js';
 import journalRouter from './routes/journal.js';
 import checklistRouter from './routes/checklist.js';
 import analysisRouter  from './routes/analysis.js';
+import assistantRouter from './routes/assistant.js';
 import { getDb } from './services/journalDb.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import { getApiKeyManager } from './utils/apiKeyManager.js';
@@ -59,12 +63,12 @@ app.use(cors({
   preflightContinue: false,
   optionsSuccessStatus: 204,
 }));
-app.use(express.json({ limit: '5mb' }));
+app.use(express.json({ limit: '5mb', strict: false }));
 app.use(express.urlencoded({ extended: true, limit: '5mb' }));
 
 // Routes
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', message: 'Server is running' });
+  res.json({ status: 'ok', message: 'Server is running', geminiCallsToday: getGeminiCount() });
 });
 
 // API Key Stats endpoint
@@ -116,6 +120,7 @@ app.use('/api/finnhub', finnhubRouter);
 app.use('/api/journal', journalRouter);
 app.use('/api/checklist', checklistRouter);
 app.use('/api/analysis',  analysisRouter);
+app.use('/api/assistant', requireAuth, assistantRouter);
 app.use('/api/charts', requireAuth, chartsRouter);
 app.use('/api/levels', requireAuth, levelsRouter);
 

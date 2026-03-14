@@ -2,10 +2,12 @@
  * journalAiService.js — Gemini-powered journal analysis and report generation
  */
 import axios from 'axios';
+import { bumpGemini } from '../utils/geminiCounter.js';
 
 const GEMINI_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent';
 
 async function callGemini(prompt) {
+  // Key 1 is dedicated to journal (user-triggered, unpredictable volume)
   const key = process.env.GEMINI_API_KEY;
   if (!key || key === 'demo') throw new Error('GEMINI_API_KEY not configured');
 
@@ -20,6 +22,7 @@ async function callGemini(prompt) {
 
   const text = res.data?.candidates?.[0]?.content?.parts?.[0]?.text;
   if (!text) throw new Error('Empty Gemini response');
+  bumpGemini('journal');
   return text;
 }
 

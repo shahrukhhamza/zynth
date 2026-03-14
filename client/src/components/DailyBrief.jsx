@@ -260,17 +260,15 @@ export default function DailyBrief() {
 
   return (
     <div style={{ marginBottom: 20, ...fadeStyle }}>
-      {/* Outer card with emerald gradient border */}
-      <div style={{
-        background: `linear-gradient(135deg, rgba(16,185,129,0.18) 0%, rgba(16,185,129,0.06) 100%)`,
-        borderRadius: 14,
-        padding: 1.5,
-      }}>
+      <div>
         <div style={{
           backgroundColor: theme.surface,
-          borderRadius: 13,
+          borderRadius: 12,
+          border: `1px solid ${theme.border}`,
+          borderLeft: '3px solid #10b981',
           padding: 20,
           position: 'relative',
+          boxShadow: '0 1px 3px rgba(0,0,0,0.4)',
         }}>
           {/* Dismiss button */}
           <button

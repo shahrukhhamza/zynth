@@ -39,10 +39,13 @@ function buildUser(row) {
 // ── POST /api/auth/register ────────────────────────────────────────────────
 router.post('/register', async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password, terms_accepted } = req.body;
 
     if (!name?.trim() || !email?.trim() || !password)
       return res.status(400).json({ error: 'Name, email and password are required.' });
+
+    if (!terms_accepted)
+      return res.status(400).json({ error: 'You must accept the Terms of Service to create an account.' });
 
     if (password.length < 6)
       return res.status(400).json({ error: 'Password must be at least 6 characters.' });
@@ -62,7 +65,13 @@ router.post('/register', async (req, res) => {
     }
 
     const password_hash = await bcrypt.hash(password, 12);
-    const result = Users.createUser({ name: name.trim(), email, password_hash });
+    const result = Users.createUser({
+      name: name.trim(),
+      email,
+      password_hash,
+      terms_accepted: 1,
+      terms_accepted_at: new Date().toISOString(),
+    });
     const row = Users.findById(result.lastInsertRowid);
     const user = buildUser(row);
     const token = signToken(user);
