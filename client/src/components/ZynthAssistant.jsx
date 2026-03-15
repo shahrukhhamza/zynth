@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+﻿import { useState, useEffect, useRef, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import { MessageCircle, X, Send, ArrowUp, AlertTriangle } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
@@ -79,7 +79,7 @@ export default function ZynthAssistant() {
     const welcome = {
       id: 'welcome',
       role: 'assistant',
-      content: `Hi ${firstName}! I am the Zynth Assistant.\n\nNote: I am still being improved and may not answer all questions correctly.\n\nI can try to help with:\n- How to use app features\n- Finding settings and options\n- Understanding your analytics\n- Plan and pricing questions\n\nFor guaranteed help email us at\nshahrukhhamza770@gmail.com`,
+      content: `Hi ${firstName}! I am the Zynth Assistant.\n\nNote: I am still being improved and may not answer all questions correctly.\n\nI can try to help with:\n- How to use app features\n- Finding settings and options\n- Understanding your analytics\n- Plan and pricing questions\n\nFor guaranteed help email us at\ngetzynth@gmail.com`,
       timestamp: new Date().toISOString(),
     };
     setMessages([welcome]);
@@ -138,7 +138,7 @@ export default function ZynthAssistant() {
       const errMsg = {
         id: Date.now() + 1,
         role: 'assistant',
-        content: `I am still learning and could not find a good answer for that.\n\nFor reliable help:\n- Email: shahrukhhamza770@gmail.com\n- Or browse the sidebar to find what you are looking for\n\nI will get better over time!`,
+        content: `I am still learning and could not find a good answer for that.\n\nFor reliable help:\n- Email: getzynth@gmail.com\n- Or browse the sidebar to find what you are looking for\n\nI will get better over time!`,
         timestamp: new Date().toISOString(),
         isError: true,
       };
@@ -265,8 +265,8 @@ export default function ZynthAssistant() {
             <p style={{ margin: 0, fontSize: 12, color: '#f59e0b', lineHeight: 1.5 }}>
               Assistant is under construction. Responses may be incomplete or inaccurate.{' '}
               For reliable help email:{' '}
-              <a href="mailto:shahrukhhamza770@gmail.com" style={{ color: '#fbbf24', fontWeight: 600 }}>
-                shahrukhhamza770@gmail.com
+              <a href="mailto:getzynth@gmail.com" style={{ color: '#fbbf24', fontWeight: 600 }}>
+                getzynth@gmail.com
               </a>
             </p>
           </div>

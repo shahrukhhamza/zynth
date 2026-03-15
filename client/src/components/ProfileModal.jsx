@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+﻿import { useState, useEffect, useRef } from 'react';
 import { X, Check, Copy, CheckCheck, ChevronDown, Mail, Key, LogOut, TrendingUp, Bell, Zap, Camera, Loader2, CheckCircle } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 import { useAuth } from '../contexts/AuthContext';
@@ -7,7 +7,7 @@ import PlanBadge from './PlanBadge';
 import ImageCropModal from './ImageCropModal';
 import { API_URL } from '../config/api';
 
-const SUPPORT_EMAIL = 'shahrukhhamza770@gmail.com';
+const SUPPORT_EMAIL = 'getzynth@gmail.com';
 
 const AVATAR_COLOR_MAP = {
   emerald: '#10b981', blue: '#3b82f6', purple: '#a855f7', orange: '#f97316',
