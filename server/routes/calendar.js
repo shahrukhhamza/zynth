@@ -1,7 +1,9 @@
 import express from 'express';
 import { getEconomicCalendar, getIndicatorDetails, forceRefreshCalendar } from '../services/economicCalendarService.js';
+import { requireAuth } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
+router.use(requireAuth);
 
 // Get all economic indicators
 router.get('/', async (req, res, next) => {

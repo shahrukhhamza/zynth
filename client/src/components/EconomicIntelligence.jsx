@@ -6,10 +6,12 @@
 import { useState, useEffect } from 'react';
 import {
   TrendingUp, TrendingDown, Activity, Loader2, AlertCircle,
-  RefreshCcw, Brain,
+  RefreshCcw, Brain, Lock,
 } from 'lucide-react';
 import { API_URL } from '../config/api';
 import { useTheme } from '../contexts/ThemeContext';
+import { usePlanGate } from '../hooks/usePlanGate';
+import ProfileModal from './ProfileModal';
 import { Line } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
@@ -369,14 +371,20 @@ function MacroScoreWidget({ macroScore, theme }) {
 function EconomicIntelligence() {
   const theme = useTheme();
   const isDark = theme.isDark;
+  const { isPro, isElite, isAdmin } = usePlanGate();
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
 
+  // All hooks must be before any conditional return (Rules of Hooks)
   const [dashboard, setDashboard]   = useState(null);
   const [loading, setLoading]       = useState(true);
   const [error, setError]           = useState(null);
   const [refreshing, setRefreshing] = useState(false);
   const [macroScore, setMacroScore] = useState(null);
 
+  const canAccess = isPro || isElite || isAdmin;
+
   const loadDashboard = async () => {
+    if (!canAccess) return;
     try {
       setError(null);
       const token = localStorage.getItem('auth_token');
@@ -418,10 +426,53 @@ function EconomicIntelligence() {
   };
 
   useEffect(() => {
+    if (!canAccess) { setLoading(false); return; }
     loadDashboard();
     const id = setInterval(loadDashboard, 300000);
     return () => clearInterval(id);
-  }, []);
+  }, [canAccess]);
+
+  // Pro gate — shown after all hooks
+  if (!canAccess) {
+    return (
+      <div style={{
+        display: 'flex', flexDirection: 'column',
+        alignItems: 'center', justifyContent: 'center',
+        height: '60vh', gap: 20, textAlign: 'center', padding: '40px',
+      }}>
+        <div style={{
+          width: 64, height: 64,
+          background: 'rgba(16,185,129,0.1)',
+          border: '1px solid rgba(16,185,129,0.3)',
+          borderRadius: '50%',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+        }}>
+          <Lock style={{ color: '#10b981', width: 28, height: 28 }} />
+        </div>
+        <h2 style={{ color: theme.text, fontSize: 24, fontWeight: 700, margin: 0 }}>Pro Feature</h2>
+        <p style={{ color: theme.isDark ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.5)', fontSize: 16, maxWidth: 360, margin: 0, lineHeight: 1.5 }}>
+          Economic Intelligence and Macro Surprise Score require a Pro plan.
+          Upgrade to access 10 macro indicators and our proprietary scoring system.
+        </p>
+        <button
+          onClick={() => setShowUpgradeModal(true)}
+          style={{
+            background: '#10b981', color: 'white', border: 'none',
+            borderRadius: 10, padding: '13px 32px', fontSize: 15,
+            fontWeight: 600, cursor: 'pointer',
+          }}
+        >
+          Upgrade to Pro
+        </button>
+        <p style={{ color: theme.isDark ? 'rgba(255,255,255,0.3)' : 'rgba(0,0,0,0.3)', fontSize: 13, margin: 0 }}>
+          From $1.99/month — Founding Member price
+        </p>
+        {showUpgradeModal && (
+          <ProfileModal onClose={() => setShowUpgradeModal(false)} />
+        )}
+      </div>
+    );
+  }
 
   if (loading) return (
     <div className="flex-1 flex items-center justify-center" style={{ minHeight: 320 }}>

@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { requirePro } from '../middleware/authMiddleware.js';
 
 const router = Router();
 
@@ -69,7 +70,7 @@ router.get('/symbols', (_req, res) => {
 });
 
 // GET /api/charts/candles?symbol=XAU/USD&interval=1h&outputsize=300
-router.get('/candles', async (req, res) => {
+router.get('/candles', requirePro, async (req, res) => {
   const { symbol = 'XAU/USD', interval = '1h', outputsize = '300' } = req.query;
 
   const VALID_INTERVALS = ['1min', '5min', '15min', '30min', '1h', '4h', '1day'];
@@ -413,7 +414,7 @@ function runBacktest(candles, strategy, params, startCapital = 10000, riskMgmt =
 }
 
 // GET /api/charts/backtest
-router.get('/backtest', async (req, res) => {
+router.get('/backtest', requirePro, async (req, res) => {
   const {
     symbol   = 'XAU/USD',
     interval = '1h',

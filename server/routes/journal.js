@@ -266,7 +266,7 @@ router.post('/trades/:id/analyze', checkAiTries, async (req, res) => {
 });
 
 // ── GET /analytics ────────────────────────────────────────────────────────────
-router.get('/analytics', (req, res) => {
+router.get('/analytics', requirePro, (req, res) => {
   try {
     const userId = getUserId(req);
     const trades = getAllTradesForUser(userId);

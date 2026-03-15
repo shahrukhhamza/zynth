@@ -56,8 +56,9 @@ function saveCache(result) {
 export default function ScreenshotImportDashboard() {
   const theme = useTheme();
   const { formatDateWithTimezone } = useTimezone();
-  const { isFree, screenshotTriesLeft } = usePlanGate();
+  const { isFree, isPro, isElite, isAdmin, screenshotTriesLeft } = usePlanGate();
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+  const triesExhausted = !isElite && !isAdmin && screenshotTriesLeft <= 0;
 
   // Seed state from localStorage cache immediately — data visible before service responds
   const [data,          setData]          = useState(() => loadCache());
@@ -137,18 +138,63 @@ export default function ScreenshotImportDashboard() {
 
   return (
     <div className="flex-1 overflow-y-auto">
-      {/* Plan gate banner for free users */}
-      {isFree && (
-        <div className="px-6 pt-4">
-          <PlanGateBanner
-            feature="Screenshot Analysis"
-            requiredPlan="Pro"
-            description={`You have ${screenshotTriesLeft} free AI analysis ${screenshotTriesLeft === 1 ? 'try' : 'tries'} remaining. Upgrade for unlimited screenshot analysis.`}
-            onUpgradeClick={() => setShowUpgradeModal(true)}
-          />
-        </div>
-      )}
+      {/* Plan gate: tries counter banner OR hard block */}
       {showUpgradeModal && <ProfileModal onClose={() => setShowUpgradeModal(false)} />}
+      {triesExhausted ? (
+        <div style={{
+          margin: '24px 24px 0',
+          padding: 28,
+          borderRadius: 16,
+          background: 'rgba(239,68,68,0.06)',
+          border: '1px solid rgba(239,68,68,0.25)',
+          display: 'flex', flexDirection: 'column', alignItems: 'center',
+          textAlign: 'center', gap: 12,
+        }}>
+          <div style={{
+            width: 52, height: 52, borderRadius: '50%',
+            background: 'rgba(239,68,68,0.1)',
+            border: '1px solid rgba(239,68,68,0.3)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+          }}>
+            <Camera style={{ color: '#ef4444', width: 22, height: 22 }} />
+          </div>
+          <p style={{ color: theme.text, fontWeight: 700, fontSize: 17, margin: 0 }}>
+            Screenshot Analysis Limit Reached
+          </p>
+          <p style={{ color: theme.muted, fontSize: 14, maxWidth: 380, margin: 0, lineHeight: 1.5 }}>
+            {isFree
+              ? 'You have used your 2 lifetime free screenshot analyses. Upgrade to Pro for 35 analyses per month.'
+              : 'You have used all 35 Pro analyses this month. Upgrade to Elite for unlimited screenshot OCR.'}
+          </p>
+          <button
+            onClick={() => setShowUpgradeModal(true)}
+            style={{
+              background: '#10b981', color: 'white', border: 'none',
+              borderRadius: 10, padding: '11px 28px',
+              fontSize: 14, fontWeight: 600, cursor: 'pointer', marginTop: 4,
+            }}
+          >
+            {isFree ? 'Upgrade to Pro — $1.99/mo' : 'Upgrade to Elite — $4.99/mo'}
+          </button>
+        </div>
+      ) : (
+        /* Soft banner: tries remaining */
+        !isElite && !isAdmin && (
+          <div style={{ margin: '16px 24px 0' }}>
+            <PlanGateBanner
+              feature="Screenshot Analysis"
+              requiredPlan={isFree ? 'Pro' : 'Elite'}
+              description={
+                isElite || isAdmin ? '' :
+                isPro
+                  ? `${screenshotTriesLeft} of 35 pro analyses remaining this month`
+                  : `${screenshotTriesLeft} of 2 free lifetime ${screenshotTriesLeft === 1 ? 'analysis' : 'analyses'} remaining`
+              }
+              onUpgradeClick={() => setShowUpgradeModal(true)}
+            />
+          </div>
+        )
+      )}
       {/* ── Header ── */}
       <div
         className="sticky top-0 z-10 px-6 py-4 border-b"
@@ -292,7 +338,7 @@ export default function ScreenshotImportDashboard() {
       {/* ── Tab content ── */}
       <div className="p-6">
         {/* No data / upload tab */}
-        {(!hasData || activeTab === 'upload') && (
+        {(!hasData || activeTab === 'upload') && !triesExhausted && (
           <ScreenshotUpload onUploaded={handleUploaded} />
         )}
 

@@ -10,6 +10,7 @@
  */
 
 import { Router } from 'express';
+import { requireAuth, checkAiTries } from '../middleware/authMiddleware.js';
 
 const router = Router();
 
@@ -248,7 +249,7 @@ function findAnswer(userMessage) {
 }
 
 // POST /api/assistant/chat
-router.post('/chat', async (req, res) => {
+router.post('/chat', requireAuth, checkAiTries, async (req, res) => {
   try {
     const userId = req.user?.userId || req.user?.id || 'anon';
 

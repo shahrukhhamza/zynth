@@ -6,8 +6,10 @@ import {
   getFilteredNews,
   getNewsById 
 } from '../services/polygonService.js';
+import { requireAuth } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
+router.use(requireAuth);
 const finnhubCache = new NodeCache({ stdTTL: 120 });
 
 // ── Finnhub general news (second source) ─────────────────────────────────────
