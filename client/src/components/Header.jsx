@@ -99,15 +99,16 @@ function Header({ autoRefresh, onToggleAutoRefresh, onToggleSidebar, mobileSideb
                 ? <X style={{ width: 18, height: 18 }} />
                 : <Menu style={{ width: 18, height: 18 }} />}
             </button>
-            {/* Z logo */}
+            {/* Logo */}
             <div style={{
               width: 28, height: 28,
               backgroundColor: '#10b981',
               borderRadius: 7,
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               flexShrink: 0,
+              overflow: 'hidden',
             }}>
-              <span style={{ color: '#fff', fontWeight: 700, fontSize: 14, lineHeight: 1 }}>Z</span>
+              <img src="/logo.png" alt="Zynth" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
             </div>
             {/* Wordmark */}
             <span style={{
