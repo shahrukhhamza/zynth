@@ -11,6 +11,15 @@ const api = axios.create({
   }
 });
 
+// Attach JWT token from localStorage to every request automatically
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('auth_token');
+  if (token) {
+    config.headers['Authorization'] = `Bearer ${token}`;
+  }
+  return config;
+});
+
 // Fetch news with optional filters
 export async function fetchNews(filters = {}) {
   try {

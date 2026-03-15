@@ -3,9 +3,17 @@ import { API_URL } from '../config/api';
 
 const API_BASE_URL = `${API_URL}/api`;
 
+// Shared axios instance with automatic JWT attachment
+const calendarAxios = axios.create({ baseURL: API_BASE_URL });
+calendarAxios.interceptors.request.use((config) => {
+  const token = localStorage.getItem('auth_token');
+  if (token) config.headers['Authorization'] = `Bearer ${token}`;
+  return config;
+});
+
 export const fetchEconomicCalendar = async () => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/calendar`);
+    const response = await calendarAxios.get('/calendar');
     return response.data;
   } catch (error) {
     console.error('Error fetching economic calendar:', error);
@@ -15,7 +23,7 @@ export const fetchEconomicCalendar = async () => {
 
 export const fetchIndicatorDetails = async (indicatorId) => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/calendar/${indicatorId}`);
+    const response = await calendarAxios.get(`/calendar/${indicatorId}`);
     return response.data;
   } catch (error) {
     console.error('Error fetching indicator details:', error);
@@ -23,14 +31,9 @@ export const fetchIndicatorDetails = async (indicatorId) => {
   }
 };
 
-/**
- * Force-refresh all economic data via Gemini + Google Search grounding.
- * Clears backend cache and re-fetches live data with cross-verification.
- * Use after a major release (NFP, CPI, etc.) to get the latest numbers.
- */
 export const forceRefreshCalendar = async () => {
   try {
-    const response = await axios.post(`${API_BASE_URL}/calendar/refresh`);
+    const response = await calendarAxios.post('/calendar/refresh');
     return response.data;
   } catch (error) {
     console.error('Error refreshing economic calendar:', error);
