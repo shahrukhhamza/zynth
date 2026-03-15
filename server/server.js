@@ -201,7 +201,7 @@ app.all('/mt5/*', (req, res) => {
     port: _pythonTarget.port || (_pythonIsHttps ? 443 : 80),
     path: targetPath,
     method: req.method,
-    headers: { ...req.headers, host: _pythonTarget.host },
+    headers: { ...req.headers, host: _pythonTarget.host, 'x-user-id': String(req.user?.id ?? '') },
   };
   const requester = _pythonIsHttps ? httpsRequest : httpRequest;
   const proxy = requester(options, (proxyRes) => {

@@ -77,10 +77,22 @@ def _verify_jwt(token: str) -> dict:
 
 def _get_user_id(request: Request) -> str:
     """
-    Extract and verify the JWT from the Authorization header.
+    Extract the authenticated user ID.
+
+    Priority:
+    1. x-user-id header injected by the Node.js auth proxy (already verified the JWT).
+    2. Fallback: verify the JWT from the Authorization header directly (used when
+       the Python service is called without the Node.js proxy, e.g. direct dev testing).
+
     Returns a string user key like 'user_42'.
-    Raises HTTP 401 if missing or invalid.
+    Raises HTTP 401 if identity cannot be confirmed.
     """
+    # Trust the user ID forwarded by the Node.js proxy (requireAuth already ran)
+    forwarded_uid = request.headers.get("x-user-id", "").strip()
+    if forwarded_uid and forwarded_uid.isdigit():
+        return f"user_{forwarded_uid}"
+
+    # Fallback: direct JWT verification
     auth = request.headers.get("Authorization", "")
     if not auth.startswith("Bearer "):
         raise HTTPException(status_code=401, detail="Authentication required. Please log in.")
