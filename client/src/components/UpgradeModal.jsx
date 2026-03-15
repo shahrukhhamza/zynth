@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { X, Check, Zap, Lock } from 'lucide-react';
+import { X, Check, Zap, Lock, Flame } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 
 const TOTAL_FOUNDING = 100;
@@ -72,7 +72,7 @@ export default function UpgradeModal({ open, onClose, onUpgrade, spotsUsed = 0 }
             className="flex items-center justify-center gap-2 py-2.5 text-[12px] font-bold tracking-wide"
             style={{ background: 'linear-gradient(90deg, rgba(245,158,11,0.18), rgba(16,185,129,0.18))' }}
           >
-            <span>🔥</span>
+            <Flame size={16} style={{ color: '#fbbf24' }} />
             <span style={{ color: '#fbbf24' }}>LAUNCH DISCOUNT</span>
             <span style={{ color: '#9ca3af' }}>·</span>
             <span style={{ color: '#34d399' }}>FIRST 100 USERS GET 80% OFF</span>
@@ -154,7 +154,7 @@ export default function UpgradeModal({ open, onClose, onUpgrade, spotsUsed = 0 }
               style={{ background: 'rgba(245,158,11,0.08)', border: '1px solid rgba(245,158,11,0.2)' }}
             >
               <span className="text-[12px] font-semibold" style={{ color: '#fbbf24' }}>
-                🔥 Founding member offer
+                <Flame size={13} style={{display:'inline-block',verticalAlign:'middle',marginRight:'4px'}} /> Founding member offer
               </span>
               <span className="text-[12px] font-bold" style={{ color: '#f59e0b' }}>
                 Only{' '}

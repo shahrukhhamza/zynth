@@ -287,3 +287,28 @@ html:not(.dark) .skeleton {
 .theme-transitioning {
   transition: background-color 0.35s ease !important;
 }
+
+/* ── Scroll-triggered entrance animations ───────────────────────────────── */
+.animate-target {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.55s ease, transform 0.55s ease;
+}
+.animate-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ── Respect user motion preferences ───────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .animate-target {
+    opacity: 1;
+    transform: none;
+  }
+}

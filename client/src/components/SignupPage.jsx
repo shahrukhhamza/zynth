@@ -1,32 +1,33 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { API_URL } from '../config/api';
-import { Eye, EyeOff, TrendingUp, TrendingDown, AlertCircle, CheckCircle2, Loader2, User, Mail, Lock, ArrowRight, ArrowLeft, Shield, Zap, BarChart2, Activity } from 'lucide-react';
-
-const TICKERS = [
-  { sym: 'GOLD', val: '$5,168', chg: '+0.82%', up: true,  top: '5%',  left: '4%',  delay: '0s',   dur: '4.2s' },
-  { sym: 'BTC',  val: '$70,855',chg: '+1.28%', up: true,  top: '11%', left: '54%', delay: '0.9s', dur: '5.1s' },
-  { sym: 'OIL',  val: '$88.07', chg: '+5.54%', up: true,  top: '18%', left: '20%', delay: '2.1s', dur: '4.0s' },
-  { sym: 'DXY',  val: '99.26',  chg: '+0.44%', up: true,  top: '24%', left: '56%', delay: '0.4s', dur: '4.7s' },
-  { sym: 'SPY',  val: '$675.31',chg: '-0.28%', up: false, top: '28%', left: '4%',  delay: '1.6s', dur: '3.9s' },
-];
-
-const BENEFITS = [
-  { Icon: Shield,   text: 'Bank-grade security'  },
-  { Icon: Activity, text: 'Real-time market data' },
-  { Icon: BarChart2,text: 'AI trade insights'    },
-  { Icon: Zap,      text: 'Instant analytics'    },
-];
+import {
+  Eye, EyeOff, TrendingUp, AlertCircle, CheckCircle, CheckCircle2,
+  Loader2, User, Mail, Lock, ArrowRight, ArrowLeft, ChevronLeft,
+  BookOpen, Brain, Check, Shield, Zap, Bot, Flame,
+} from 'lucide-react';
 
 export default function SignupPage({ onSwitchToLogin, onBack }) {
   const { register } = useAuth();
   useEffect(() => { window.scrollTo(0, 0); }, []);
-  const [form, setForm]       = useState({ name: '', email: '', password: '', confirm: '' });
-  const [showPass, setShowPass] = useState(false);
-  const [error, setError]     = useState('');
-  const [loading, setLoading] = useState(false);
-  const [spotsLeft, setSpotsLeft] = useState(null);
-  const [consent, setConsent] = useState({ terms: false, risk: false });
+
+  const [form, setForm]               = useState({ name: '', email: '', password: '', confirm: '' });
+  const [showPass, setShowPass]       = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [error, setError]             = useState('');
+  const [loading, setLoading]         = useState(false);
+  const [spotsLeft, setSpotsLeft]     = useState(null);
+  const [consent, setConsent]         = useState({ terms: false, risk: false });
+  const [fieldErrors, setFieldErrors] = useState({ name: '', email: '', password: '', confirm: '' });
+  const [success, setSuccess]         = useState(false);
+  const formRef                       = useRef(null);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     fetch(`${API_URL}/api/admin/stats`)
@@ -35,338 +36,560 @@ export default function SignupPage({ onSwitchToLogin, onBack }) {
       .catch(() => {});
   }, []);
 
-  const strength = (() => {
-    const p = form.password;
-    if (!p) return 0;
-    let s = 0;
-    if (p.length >= 8) s++;
-    if (/[A-Z]/.test(p)) s++;
-    if (/[0-9]/.test(p)) s++;
-    if (/[^A-Za-z0-9]/.test(p)) s++;
-    return s;
-  })();
+  const p       = form.password;
+  const has8    = p.length >= 8;
+  const hasNum  = /[0-9]/.test(p);
+  const hasCaps = /[A-Z]/.test(p);
+  const hasSpec = /[^A-Za-z0-9]/.test(p);
+  const strength = [has8, hasNum, hasCaps, hasSpec].filter(Boolean).length;
 
-  const strengthLabel = ['', 'Weak', 'Fair', 'Good', 'Strong'][strength];
-  const strengthColor = ['', 'bg-red-500', 'bg-yellow-500', 'bg-blue-500', 'bg-emerald-500'][strength];
-  const strengthText  = ['', 'text-red-400', 'text-yellow-400', 'text-blue-400', 'text-emerald-400'][strength];
+  const STRENGTH_META = [
+    { label: '',       color: 'bg-transparent' },
+    { label: 'Weak',   color: 'bg-red-500'     },
+    { label: 'Fair',   color: 'bg-orange-500'  },
+    { label: 'Good',   color: 'bg-amber-400'   },
+    { label: 'Strong', color: 'bg-emerald-500' },
+  ];
+  const STRENGTH_TEXT = ['', 'text-red-400', 'text-orange-400', 'text-amber-400', 'text-emerald-400'];
+
+  const inputStyle = {
+    background: 'rgba(255,255,255,0.04)',
+    border: '1px solid rgba(255,255,255,0.08)',
+    borderRadius: '10px', color: '#fff', width: '100%', fontSize: '15px',
+    outline: 'none', transition: 'all 0.2s ease',
+  };
+  const focusIn  = e => { e.target.style.background = 'rgba(255,255,255,0.06)'; e.target.style.borderColor = 'rgba(16,185,129,0.5)'; e.target.style.boxShadow = '0 0 0 3px rgba(16,185,129,0.08)'; };
+  const focusOut = e => { e.target.style.background = 'rgba(255,255,255,0.04)'; e.target.style.borderColor = 'rgba(255,255,255,0.08)'; e.target.style.boxShadow = 'none'; };
 
   function setField(field, value) { setForm(f => ({ ...f, [field]: value })); }
+
+  function shakeForm() {
+    if (formRef.current) {
+      formRef.current.style.animation = 'formShake 0.5s ease';
+      setTimeout(() => { if (formRef.current) formRef.current.style.animation = ''; }, 500);
+    }
+  }
 
   async function handleSubmit(e) {
     e.preventDefault();
     setError('');
-    if (form.password !== form.confirm) return setError('Passwords do not match.');
-    if (form.password.length < 6)       return setError('Password must be at least 6 characters.');
-    if (!consent.terms || !consent.risk) return setError('Please accept both agreements below to create your account.');
+    setFieldErrors({ name: '', email: '', password: '', confirm: '' });
+    if (form.password !== form.confirm) {
+      setFieldErrors(fe => ({ ...fe, confirm: 'Passwords do not match.' }));
+      shakeForm(); return;
+    }
+    if (form.password.length < 6) {
+      setFieldErrors(fe => ({ ...fe, password: 'Password must be at least 6 characters.' }));
+      shakeForm(); return;
+    }
+    if (!consent.terms || !consent.risk) {
+      setError('Please accept both agreements below to create your account.');
+      shakeForm(); return;
+    }
     setLoading(true);
     try {
       await register({ name: form.name, email: form.email, password: form.password, terms_accepted: true });
+      setSuccess(true);
     } catch (err) {
-      setError(err.response?.data?.error || 'Registration failed. Please try again.');
+      const errMsg = err.response?.data?.error || 'Registration failed. Please try again.';
+      setError(errMsg);
+      if (errMsg.toLowerCase().includes('email')) {
+        setFieldErrors(fe => ({ ...fe, email: errMsg }));
+      }
+      shakeForm();
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <div className="h-screen overflow-hidden flex flex-col bg-[#060a12]">
+    <div style={{display:'flex',height:'100vh',width:'100vw',overflow:'hidden',background:'#000000',position:'relative'}}>
+
       <style>{`
-        @keyframes floatCard {
-          0%,100% { transform: translateY(0px);   }
-          50%      { transform: translateY(-10px); }
-        }
-        @keyframes chartDraw2 {
-          from { stroke-dashoffset: 800; }
-          to   { stroke-dashoffset: 0;   }
-        }
-        @keyframes tickerIn2 {
-          from { opacity: 0; transform: translateY(14px); }
+        @keyframes formAppear {
+          from { opacity: 0; transform: translateY(18px); }
           to   { opacity: 1; transform: translateY(0);    }
         }
-        @keyframes liveBlip2 {
-          0%,100% { transform: scale(1);   opacity: 1;   }
-          50%      { transform: scale(1.7); opacity: 0.3; }
+        @keyframes slideInRight {
+          from { opacity: 0; transform: translateX(16px); }
+          to   { opacity: 1; transform: translateX(0);    }
         }
-        .s-ticker-float {
-          animation:
-            floatCard  var(--dur, 4s) ease-in-out var(--delay, 0s) infinite,
-            tickerIn2  0.7s ease both var(--delay, 0s);
+        @keyframes shake {
+          0%,100% { transform: translateX(0);    }
+          20%      { transform: translateX(-6px); }
+          40%      { transform: translateX(6px);  }
+          60%      { transform: translateX(-4px); }
+          80%      { transform: translateX(4px);  }
+        }
+        @keyframes formShake {
+          0%, 100% { transform: translateX(0); }
+          20% { transform: translateX(-8px); }
+          40% { transform: translateX(8px); }
+          60% { transform: translateX(-5px); }
+          80% { transform: translateX(5px); }
+        }
+        @keyframes checkIn {
+          from { transform: scale(0); opacity: 0; }
+          to { transform: scale(1); opacity: 1; }
+        }
+        .sp-checkbox {
+          appearance: none; -webkit-appearance: none;
+          width: 18px; height: 18px; min-width: 18px;
+          border-radius: 5px;
+          background: rgba(255,255,255,0.04);
+          border: 1px solid rgba(255,255,255,0.15);
+          cursor: pointer; position: relative; margin-top: 1px;
+          transition: background 0.15s, border-color 0.15s;
+        }
+        .sp-checkbox:checked {
+          background: #10b981;
+          border-color: #10b981;
+        }
+        .sp-checkbox:checked::after {
+          content: '';
+          position: absolute;
+          left: 4px; top: 1px;
+          width: 5px; height: 9px;
+          border: 2px solid #fff;
+          border-top: none; border-left: none;
+          transform: rotate(45deg);
+        }
+        @keyframes orbPulse {
+          0%, 100% { transform: scale(1);    opacity: 0.6; }
+          50%       { transform: scale(1.15); opacity: 1;   }
+        }
+        @keyframes panelFadeIn {
+          from { opacity: 0; }
+          to   { opacity: 1; }
         }
       `}</style>
-      {/* ── Top navigation bar ─────────────────────────────────────────── */}
-      <div className="shrink-0 flex items-center justify-between px-8 h-[52px] border-b border-white/[0.06]"
-           style={{background:'rgba(6,10,18,0.98)'}}>
-        {onBack ? (
-          <button onClick={onBack}
-                  className="group flex items-center gap-2 text-[13px] font-medium text-gray-400 hover:text-white transition-all duration-200 px-3 py-1.5 rounded-lg hover:bg-white/[0.05]">
-            <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-0.5" />
-            Back to home
-          </button>
-        ) : <div />}
-        <div className="flex items-center gap-2 select-none">
-          <img src="/logo.png" alt="Zynth" className="w-7 h-7 object-contain" />
-          <span className="text-[15px] font-bold text-white tracking-tight">Zynth</span>
-        </div>
-      </div>
 
-      {/* ── Panels ───────────────────────────────────────────────────────── */}
-      <div className="flex flex-1 overflow-hidden">      {/* ── LEFT: Decorative panel ─────────────────────────────────────────── */}
-      <div className="hidden lg:flex flex-col flex-1 relative overflow-hidden"
-           style={{background:'linear-gradient(150deg,#060e1c 0%,#060c18 55%,#07111f 100%)'}}>
+      {/* â”€â”€ Top nav â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+      {/* placeholder - nav bar removed */}
 
-        <div className="absolute inset-0 pointer-events-none"
-             style={{backgroundImage:'linear-gradient(rgba(16,185,129,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(16,185,129,0.04) 1px,transparent 1px)',backgroundSize:'60px 60px'}} />
-        <div className="absolute pointer-events-none"
-             style={{top:'-10%',left:'15%',width:'500px',height:'400px',background:'radial-gradient(ellipse,rgba(16,185,129,0.12) 0%,transparent 65%)'}} />
-        <div className="absolute pointer-events-none"
-             style={{bottom:'5%',right:'5%',width:'380px',height:'320px',background:'radial-gradient(ellipse,rgba(59,130,246,0.08) 0%,transparent 65%)'}} />
+      {/* â”€â”€ Panels â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
 
-        {/* SVG chart */}
-        <div className="absolute inset-x-0 pointer-events-none" style={{top:'16%',opacity:0.18}}>
-          <svg viewBox="0 0 620 200" className="w-full" style={{height:'220px'}} preserveAspectRatio="none">
-            <defs>
-              <linearGradient id="cg2" x1="0" y1="0" x2="1" y2="0">
-                <stop offset="0%"   stopColor="#059669" stopOpacity="0" />
-                <stop offset="35%"  stopColor="#059669" stopOpacity="1" />
-                <stop offset="100%" stopColor="#0d9488" stopOpacity="0.7" />
-              </linearGradient>
-              <linearGradient id="fg2" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%"   stopColor="#059669" stopOpacity="0.28" />
-                <stop offset="100%" stopColor="#059669" stopOpacity="0"    />
-              </linearGradient>
-            </defs>
-            <path d="M0,170 L50,148 L90,162 L130,118 L170,132 L210,96 L250,112 L290,74 L330,92 L370,58 L410,74 L450,42 L490,58 L530,26 L570,42 L620,16 L620,200 L0,200 Z"
-                  fill="url(#fg2)" />
-            <path d="M0,170 L50,148 L90,162 L130,118 L170,132 L210,96 L250,112 L290,74 L330,92 L370,58 L410,74 L450,42 L490,58 L530,26 L570,42 L620,16"
-                  fill="none" stroke="url(#cg2)" strokeWidth="2.5"
-                  strokeDasharray="800" strokeDashoffset="800"
-                  style={{animation:'chartDraw2 2.8s ease forwards 0.4s'}} />
-          </svg>
-        </div>
+        {/* â”€â”€ LEFT: Brand panel â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+        <div style={{display: isMobile ? 'none' : 'flex', flex:1, flexDirection:'column', position:'relative', overflow:'hidden', minHeight:'100vh', background:'#000000', animation:'panelFadeIn 0.6s ease'}}>
 
-        {/* Floating tickers */}
-        {TICKERS.map(t => (
-          <div key={t.sym} className="s-ticker-float absolute"
-               style={{top:t.top, left:t.left, '--dur':t.dur, '--delay':t.delay}}>
-            <div className="flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl"
-                 style={{background:'rgba(9,17,32,0.88)',border:'1px solid rgba(255,255,255,0.07)',backdropFilter:'blur(12px)',boxShadow:'0 8px 32px rgba(0,0,0,0.45)'}}>
-              <div className="flex flex-col leading-none">
-                <span className="text-[9px] font-bold tracking-[0.18em] text-gray-500 mb-0.5">{t.sym}</span>
-                <span className="text-[14px] font-bold text-white">{t.val}</span>
-              </div>
-              <div className={`flex items-center gap-1 text-[11px] font-semibold px-1.5 py-0.5 rounded-lg ${t.up ? 'text-emerald-400 bg-emerald-500/10' : 'text-red-400 bg-red-500/10'}`}>
-                {t.up ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
-                {t.chg}
+          {/* Orb 1 – bottom left */}
+          <div className="pointer-events-none" style={{
+            position:'absolute', width:'500px', height:'500px',
+            background:'radial-gradient(circle, rgba(16,185,129,0.12) 0%, transparent 70%)',
+            bottom:'-150px', left:'-150px',
+            filter:'blur(60px)',
+            animation:'orbPulse 4s ease infinite',
+          }} />
+          {/* Orb 2 – top right */}
+          <div className="pointer-events-none" style={{
+            position:'absolute', width:'350px', height:'350px',
+            background:'radial-gradient(circle, rgba(16,185,129,0.07) 0%, transparent 70%)',
+            top:'-100px', right:'-50px',
+            filter:'blur(50px)',
+            animation:'orbPulse 4s ease infinite 2s',
+          }} />
+
+          {/* Top-left branding */}
+          <div className="relative z-10 flex items-center" style={{padding:'32px 48px 0', gap:'16px'}}>
+            {onBack && (
+              <button
+                onClick={onBack}
+                style={{
+                  background:'rgba(255,255,255,0.05)',
+                  border:'1px solid rgba(255,255,255,0.1)',
+                  borderRadius:'8px',
+                  padding:'7px 14px',
+                  fontSize:'13px',
+                  color:'rgba(255,255,255,0.5)',
+                  display:'flex', alignItems:'center', gap:'6px',
+                  cursor:'pointer',
+                  transition:'all 0.2s ease',
+                  flexShrink:0,
+                }}
+                onMouseEnter={e => { e.currentTarget.style.background='rgba(255,255,255,0.08)'; e.currentTarget.style.color='rgba(255,255,255,0.75)'; e.currentTarget.style.borderColor='rgba(255,255,255,0.18)'; }}
+                onMouseLeave={e => { e.currentTarget.style.background='rgba(255,255,255,0.05)'; e.currentTarget.style.color='rgba(255,255,255,0.5)'; e.currentTarget.style.borderColor='rgba(255,255,255,0.1)'; }}
+              >
+                <ChevronLeft size={14} />
+                Back
+              </button>
+            )}
+            <div style={{display:'flex', alignItems:'center', gap:'10px'}}>
+              <img src="/logo.png" alt="Zynth" style={{height:'30px',width:'auto',objectFit:'contain'}} />
+              <div>
+                <p style={{color:'#fff',fontSize:'18px',fontWeight:700,lineHeight:1}}>Zynth</p>
+                <p style={{color:'rgba(255,255,255,0.4)',fontSize:'12px',letterSpacing:'0.05em',marginTop:'3px'}}>
+                  Intelligence Behind Every Trade
+                </p>
               </div>
             </div>
           </div>
-        ))}
 
-        {/* Gradient scrim — fades tickers into bottom content cleanly */}
-        <div className="absolute bottom-0 left-0 right-0 h-60 pointer-events-none z-[5]"
-             style={{background:'linear-gradient(to bottom, transparent 0%, rgba(6,12,24,0.85) 60%, #060c18 100%)'}} />
-
-        {/* Bottom content */}
-        <div className="absolute bottom-0 left-0 right-0 p-10 z-10">
-          <div className="flex items-center gap-2 mb-5">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 shrink-0"
-                  style={{animation:'liveBlip2 1.5s ease-in-out infinite'}} />
-            <span className="text-[10px] font-bold tracking-[0.22em] text-emerald-500">LIVE MARKETS</span>
+          {/* Center content */}
+          <div className="relative z-10 flex-1 flex flex-col justify-center" style={{padding:'0 48px 96px'}}>
+            <h1 style={{fontSize:'52px',fontWeight:800,letterSpacing:'-0.03em',lineHeight:1.1,marginBottom:'16px'}}>
+              <span style={{color:'#ffffff'}}>Start Trading<br /></span>
+              <span style={{
+                background:'linear-gradient(135deg, #ffffff 30%, #10b981 100%)',
+                WebkitBackgroundClip:'text',
+                WebkitTextFillColor:'transparent',
+                backgroundClip:'text',
+              }}>Smarter.</span>
+            </h1>
+            <p style={{fontSize:'16px',color:'rgba(255,255,255,0.45)',lineHeight:1.7,marginBottom:'36px',maxWidth:'340px'}}>
+              Join traders who use data to improve their edge, not guesswork.
+            </p>
+            <div>
+              {[
+                { Icon: BookOpen,   title: 'Smart Trade Journal',  desc: 'Log trades in seconds with AI coaching' },
+                { Icon: Brain,      title: 'AI Pattern Detection', desc: 'Find why you win and lose with data'    },
+                { Icon: TrendingUp, title: 'Macro Intelligence',   desc: 'Trade with economic data on your side'  },
+              ].map(({ Icon, title, desc }) => (
+                <div key={title} style={{display:'flex',gap:'14px',marginBottom:'22px'}}>
+                  <div style={{
+                    width:'40px',height:'40px',minWidth:'40px',
+                    background:'rgba(16,185,129,0.1)',
+                    border:'1px solid rgba(16,185,129,0.2)',
+                    borderRadius:'10px',
+                    display:'flex',alignItems:'center',justifyContent:'center',
+                  }}>
+                    <Icon size={18} color="#10b981" />
+                  </div>
+                  <div>
+                    <p style={{color:'#fff',fontSize:'14px',fontWeight:600,marginBottom:'2px'}}>{title}</p>
+                    <p style={{color:'rgba(255,255,255,0.4)',fontSize:'13px',lineHeight:1.5}}>{desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
-          <h2 className="text-[30px] font-bold text-white leading-tight mb-2">
-            Your edge in every<br />
-            <span style={{background:'linear-gradient(90deg,#34d399,#2dd4bf)',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent',backgroundClip:'text'}}>
-              market move
-            </span>
-          </h2>
-          <p className="text-gray-500 text-[13px] mb-7 max-w-[280px] leading-relaxed">
-            Intelligence Behind Every Trade.
-          </p>
-          <div className="grid grid-cols-2 gap-2.5">
-            {BENEFITS.map(({ Icon, text }) => (
-              <div key={text} className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl"
-                   style={{background:'rgba(16,185,129,0.05)',border:'1px solid rgba(16,185,129,0.1)'}}>
-                <Icon className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                <span className="text-[11px] font-medium text-gray-400">{text}</span>
-              </div>
-            ))}
+
+          {/* Bottom trust badges */}
+          <div className="relative z-10" style={{position:'absolute',bottom:'32px',left:'48px',right:'48px'}}>
+            <div style={{display:'flex',gap:'8px',flexWrap:'wrap'}}>
+              {[
+                {Icon: Shield, label: '256-bit SSL'},
+                {Icon: Zap,    label: 'Live Data'},
+                {Icon: Bot,    label: 'AI'},
+              ].map(({Icon, label}) => (
+                <span key={label} style={{
+                  background:'rgba(255,255,255,0.04)',
+                  border:'1px solid rgba(255,255,255,0.08)',
+                  borderRadius:'20px',
+                  padding:'5px 12px',
+                  fontSize:'11px',
+                  color:'rgba(255,255,255,0.4)',
+                  display:'flex',gap:'5px',alignItems:'center',
+                }}>
+                  <Icon size={11} />{label}
+                </span>
+              ))}
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* ── RIGHT: Signup form panel ──────────────────────────────────────── */}
-      <div className="w-full lg:w-[460px] shrink-0 flex flex-col h-full items-center justify-center relative overflow-hidden"
-           style={{borderLeft:'1px solid rgba(255,255,255,0.04)',background:'linear-gradient(180deg,#07101e 0%,#060a12 100%)'}}>  
+        {/* â”€â”€ RIGHT: Signup form â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+        <div style={{
+               width: isMobile ? '100vw' : '480px',
+               minWidth: isMobile ? 'unset' : '480px',
+               flexShrink: 0,
+               display:'flex', flexDirection:'column',
+               alignItems:'center',
+               overflowY:'auto',
+               background: isMobile ? '#000000' : '#0d0d0d',
+               borderLeft: isMobile ? 'none' : '1px solid rgba(255,255,255,0.06)',
+               padding: isMobile ? '24px 20px' : '28px 48px',
+               minHeight:'100vh',
+               boxSizing:'border-box',
+             }}>
 
-        <div className="pointer-events-none absolute -top-16 left-1/2 -translate-x-1/2 w-64 h-36"
-             style={{background:'radial-gradient(ellipse,rgba(16,185,129,0.13) 0%,transparent 70%)'}} />
+          <div style={{width:'100%', maxWidth:'380px', animation:'slideInRight 0.4s ease both', marginTop:'auto', marginBottom:'auto'}}>
 
-        <div className="w-full max-w-[340px] px-4">
-
-          {/* Founding member banner */}
-          {spotsLeft != null && spotsLeft > 0 && (
-            <div className="mb-4 px-4 py-2.5 rounded-xl text-center text-[12px] font-semibold"
-                 style={{background:'linear-gradient(90deg,rgba(5,150,105,0.2),rgba(13,148,136,0.15))',border:'1px solid rgba(16,185,129,0.25)'}}>
-              🔥 <span className="text-emerald-300">{spotsLeft} founding spots left</span>{' '}
-              <span className="text-gray-400">at</span>{' '}
-              <span className="text-white font-bold">$1.99/month</span>
-            </div>
-          )}
-
-          {/* Card */}
-          <div className="rounded-2xl p-px"
-               style={{background:'linear-gradient(135deg,rgba(16,185,129,0.18) 0%,rgba(255,255,255,0.04) 50%,rgba(59,130,246,0.09) 100%)',boxShadow:'0 24px 60px rgba(0,0,0,0.55)'}}>
-            <div className="relative rounded-2xl px-5 py-4 bg-[#0b1322]">
-              <div className="absolute top-0 left-[12%] right-[12%] h-px"
-                   style={{background:'linear-gradient(90deg,transparent,rgba(16,185,129,0.35),transparent)'}} />
-
-              <h2 className="text-[16px] font-semibold text-white">Create your account</h2>
-              <p className="text-gray-500 text-[11px] mt-0.5 mb-3">Start analyzing your trades today</p>
-
-              {error && (
-                <div className="flex items-start gap-2 rounded-xl px-3 py-2.5 mb-3"
-                     style={{background:'rgba(239,68,68,0.07)',border:'1px solid rgba(239,68,68,0.18)'}}>
-                  <AlertCircle className="w-[13px] h-[13px] text-red-400 mt-0.5 shrink-0" />
-                  <p className="text-red-400 text-[12px]">{error}</p>
+            {success ? (
+              <div style={{display:'flex',flexDirection:'column',alignItems:'center',textAlign:'center',gap:'16px',padding:'48px 0'}}>
+                <div style={{
+                  width:'64px', height:'64px',
+                  background:'rgba(16,185,129,0.1)',
+                  border:'2px solid #10b981',
+                  borderRadius:'50%',
+                  display:'flex', alignItems:'center', justifyContent:'center',
+                  animation:'checkIn 0.4s cubic-bezier(0.34,1.56,0.64,1) both',
+                }}>
+                  <CheckCircle size={32} color="#10b981" />
                 </div>
-              )}
+                <div>
+                  <p style={{color:'#fff',fontWeight:700,fontSize:'20px',margin:0}}>Account created!</p>
+                  <p style={{color:'rgba(255,255,255,0.5)',fontSize:'14px',margin:'6px 0 0'}}>Setting up your workspace...</p>
+                </div>
+                <Loader2 size={20} color="rgba(255,255,255,0.3)" className="animate-spin" />
+              </div>
+            ) : (
+              <>
+            {/* Mobile back + logo */}
+            {isMobile && onBack && (
+              <button
+                onClick={onBack}
+                style={{
+                  background:'rgba(255,255,255,0.05)',
+                  border:'1px solid rgba(255,255,255,0.1)',
+                  borderRadius:'8px',
+                  padding:'7px 14px',
+                  fontSize:'13px',
+                  color:'rgba(255,255,255,0.5)',
+                  display:'flex', alignItems:'center', gap:'6px',
+                  cursor:'pointer',
+                  transition:'all 0.2s ease',
+                  marginBottom:'20px',
+                  alignSelf:'flex-start',
+                }}
+                onMouseEnter={e => { e.currentTarget.style.background='rgba(255,255,255,0.08)'; e.currentTarget.style.color='rgba(255,255,255,0.75)'; }}
+                onMouseLeave={e => { e.currentTarget.style.background='rgba(255,255,255,0.05)'; e.currentTarget.style.color='rgba(255,255,255,0.5)'; }}
+              >
+                <ChevronLeft size={14} />
+                Back
+              </button>
+            )}
+            {isMobile && (
+              <div style={{display:'flex',alignItems:'center',justifyContent:'center',gap:'8px',marginBottom:'28px'}}>
+                <div style={{width:'28px',height:'28px',background:'#10b981',borderRadius:'7px',display:'flex',alignItems:'center',justifyContent:'center'}}>
+                  <span style={{color:'#fff',fontWeight:'bold',fontSize:'14px'}}>Z</span>
+                </div>
+                <span style={{color:'#fff',fontWeight:'bold',fontSize:'17px'}}>Zynth</span>
+              </div>
+            )}
 
-              <form onSubmit={handleSubmit} className="space-y-2.5">
-                {/* Name */}
-                <div className="space-y-1">
-                  <label className="block text-[10px] font-bold text-gray-600 uppercase tracking-widest">Full name</label>
-                  <div className="relative">
-                    <User className="absolute left-3 top-1/2 -translate-y-1/2 w-[13px] h-[13px] text-gray-600 pointer-events-none" />
-                    <input
-                      type="text" autoComplete="name" value={form.name}
-                      onChange={e => setField('name', e.target.value)} required placeholder="John Doe"
-                      className="w-full pl-8 pr-4 py-[7px] rounded-xl text-[13px] text-white placeholder-gray-700 bg-[#0d1728] border border-white/[0.06] focus:outline-none focus:border-emerald-500/40 focus:ring-2 focus:ring-emerald-500/[0.09] transition-all duration-200"
-                    />
+            {/* Founding banner */}
+            {spotsLeft != null && spotsLeft > 0 && (
+              <div style={{
+                background:'linear-gradient(135deg, rgba(16,185,129,0.08), rgba(16,185,129,0.04))',
+                border:'1px solid rgba(16,185,129,0.2)',
+                borderRadius:'8px',
+                padding:'10px 14px',
+                marginBottom:'14px',
+                fontSize:'13px',
+                color:'#10b981',
+                textAlign:'center',
+              }}>
+                <Flame size={12} style={{display:'inline-block',verticalAlign:'middle',marginRight:'4px'}} />{spotsLeft} founding spots · $1.99/mo
+              </div>
+            )}
+
+            {/* Header */}
+            <h2 style={{fontSize: isMobile ? '22px' : '26px',fontWeight:700,color:'#fff',letterSpacing:'-0.02em',margin:0}}>Create account</h2>
+            <p style={{fontSize:'14px',marginTop:'4px',marginBottom:'16px',color:'rgba(255,255,255,0.4)'}}>
+              Already have one?{' '}
+              <button onClick={onSwitchToLogin}
+                      style={{color:'#10b981',background:'none',border:'none',cursor:'pointer',fontSize:'14px',padding:0}}
+                      onMouseEnter={e => e.currentTarget.style.textDecoration='underline'}
+                      onMouseLeave={e => e.currentTarget.style.textDecoration='none'}>
+                Sign in
+              </button>
+            </p>
+
+            {/* Error */}
+            {error && (
+              <div style={{display:'flex',alignItems:'flex-start',gap:'10px',background:'rgba(239,68,68,0.07)',border:'1px solid rgba(239,68,68,0.2)',borderRadius:'10px',padding:'12px 14px',marginBottom:'20px',animation:'shake 0.35s ease'}}>
+                <AlertCircle size={16} color="#f87171" style={{flexShrink:0,marginTop:'1px'}} />
+                <p style={{fontSize:'13px',color:'#f87171',margin:0,lineHeight:1.5}}>{error}</p>
+              </div>
+            )}
+
+                        <form onSubmit={handleSubmit} ref={formRef}>
+
+              {/* Full Name */}
+              <div style={{marginBottom:'12px'}}>
+                <label style={{display:'block',fontSize:'12px',fontWeight:500,color:'rgba(255,255,255,0.5)',marginBottom:'7px',textTransform:'uppercase',letterSpacing:'0.06em'}}>
+                  Full name
+                </label>
+                <div style={{position:'relative'}}>
+                  <User size={16} color="rgba(255,255,255,0.25)" style={{position:'absolute',left:'14px',top:'50%',transform:'translateY(-50%)',pointerEvents:'none'}} />
+                  <input type="text" autoComplete="name" required
+                         value={form.name} onChange={e => { setField('name', e.target.value); setFieldErrors(fe => ({...fe, name:''})); }}
+                         placeholder="John Doe"
+                         style={{...inputStyle, padding: isMobile ? '11px 14px 11px 40px' : '12px 16px 12px 42px', ...(fieldErrors.name ? {border:'1px solid rgba(239,68,68,0.6)',boxShadow:'0 0 0 3px rgba(239,68,68,0.08)'} : {})}}
+                         onFocus={focusIn} onBlur={focusOut} />
+                </div>
+                {fieldErrors.name && (
+                  <div style={{display:'flex',alignItems:'center',gap:'4px',marginTop:'5px'}}>
+                    <AlertCircle size={12} color="#ef4444" />
+                    <span style={{fontSize:'12px',color:'#ef4444'}}>{fieldErrors.name}</span>
                   </div>
-                </div>
+                )}
+              </div>
 
-                {/* Email */}
-                <div className="space-y-1">
-                  <label className="block text-[10px] font-bold text-gray-600 uppercase tracking-widest">Email address</label>
-                  <div className="relative">
-                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-[13px] h-[13px] text-gray-600 pointer-events-none" />
-                    <input
-                      type="email" autoComplete="email" value={form.email}
-                      onChange={e => setField('email', e.target.value)} required placeholder="you@example.com"
-                      className="w-full pl-8 pr-4 py-[7px] rounded-xl text-[13px] text-white placeholder-gray-700 bg-[#0d1728] border border-white/[0.06] focus:outline-none focus:border-emerald-500/40 focus:ring-2 focus:ring-emerald-500/[0.09] transition-all duration-200"
-                    />
+              {/* Email */}
+              <div style={{marginBottom:'12px'}}>
+                <label style={{display:'block',fontSize:'12px',fontWeight:500,color:'rgba(255,255,255,0.5)',marginBottom:'7px',textTransform:'uppercase',letterSpacing:'0.06em'}}>
+                  Email address
+                </label>
+                <div style={{position:'relative'}}>
+                  <Mail size={16} color="rgba(255,255,255,0.25)" style={{position:'absolute',left:'14px',top:'50%',transform:'translateY(-50%)',pointerEvents:'none'}} />
+                  <input type="email" autoComplete="email" required
+                         value={form.email} onChange={e => { setField('email', e.target.value); setFieldErrors(fe => ({...fe, email:''})); }}
+                         placeholder="you@example.com"
+                         style={{...inputStyle, padding: isMobile ? '11px 14px 11px 40px' : '12px 16px 12px 42px', ...(fieldErrors.email ? {border:'1px solid rgba(239,68,68,0.6)',boxShadow:'0 0 0 3px rgba(239,68,68,0.08)'} : {})}}
+                         onFocus={focusIn} onBlur={focusOut} />
+                </div>
+                {fieldErrors.email && (
+                  <div style={{display:'flex',alignItems:'center',gap:'4px',marginTop:'5px'}}>
+                    <AlertCircle size={12} color="#ef4444" />
+                    <span style={{fontSize:'12px',color:'#ef4444'}}>{fieldErrors.email}</span>
                   </div>
-                </div>
+                )}
+              </div>
 
-                {/* Password */}
-                <div className="space-y-1">
-                  <label className="block text-[10px] font-bold text-gray-600 uppercase tracking-widest">Password</label>
-                  <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-[13px] h-[13px] text-gray-600 pointer-events-none" />
-                    <input
-                      type={showPass ? 'text' : 'password'} autoComplete="new-password"
-                      value={form.password} onChange={e => setField('password', e.target.value)} required placeholder="Min. 8 characters"
-                      className="w-full pl-8 pr-10 py-[7px] rounded-xl text-[13px] text-white placeholder-gray-700 bg-[#0d1728] border border-white/[0.06] focus:outline-none focus:border-emerald-500/40 focus:ring-2 focus:ring-emerald-500/[0.09] transition-all duration-200"
-                    />
-                    <button type="button" onClick={() => setShowPass(v => !v)} tabIndex={-1}
-                            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-600 hover:text-gray-400 transition-colors">
-                      {showPass ? <EyeOff className="w-[13px] h-[13px]" /> : <Eye className="w-[13px] h-[13px]" />}
+              {/* Password */}
+              <div style={{marginBottom:'12px'}}>
+                <label style={{display:'block',fontSize:'12px',fontWeight:500,color:'rgba(255,255,255,0.5)',marginBottom:'7px',textTransform:'uppercase',letterSpacing:'0.06em'}}>
+                  Password
+                </label>
+                <div style={{position:'relative'}}>
+                  <Lock size={16} color="rgba(255,255,255,0.25)" style={{position:'absolute',left:'14px',top:'50%',transform:'translateY(-50%)',pointerEvents:'none'}} />
+                  <input type={showPass ? 'text' : 'password'} autoComplete="new-password" required
+                         value={form.password} onChange={e => { setField('password', e.target.value); setFieldErrors(fe => ({...fe, password:''})); }}
+                         placeholder="Min. 8 characters"
+                         style={{...inputStyle, padding: isMobile ? '11px 44px 11px 40px' : '12px 44px 12px 42px', ...(fieldErrors.password ? {border:'1px solid rgba(239,68,68,0.6)',boxShadow:'0 0 0 3px rgba(239,68,68,0.08)'} : {})}}
+                         onFocus={focusIn} onBlur={focusOut} />
+                  <button type="button" tabIndex={-1} onClick={() => setShowPass(v => !v)}
+                          style={{position:'absolute',right:'14px',top:'50%',transform:'translateY(-50%)',background:'none',border:'none',cursor:'pointer',color:'rgba(255,255,255,0.35)',padding:0,display:'flex'}}>
+                    {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
+                </div>
+                {/* Strength meter */}
+                {form.password && (
+                  <div style={{marginTop:'10px'}}>
+                    <div style={{display:'flex',gap:'4px',marginBottom:'6px'}}>
+                      {[1,2,3,4].map(i => (
+                        <div key={i} style={{
+                          height:'3px', flex:1, borderRadius:'2px',
+                          transition:'all 0.3s ease',
+                          background: i <= strength
+                            ? (strength===1?'#ef4444':strength===2?'#f97316':strength===3?'#f59e0b':'#10b981')
+                            : 'rgba(255,255,255,0.07)',
+                        }} />
+                      ))}
+                    </div>
+                    <span style={{
+                      fontSize:'12px', fontWeight:500,
+                      color: strength===1?'#f87171':strength===2?'#fb923c':strength===3?'#fbbf24':'#34d399',
+                    }}>
+                      {STRENGTH_META[strength].label} password
+                    </span>
+                    {/* Checklist */}
+                    <div style={{marginTop:'8px',display:'grid',gridTemplateColumns:'1fr 1fr',gap:'4px 16px'}}>
+                      {[
+                        { ok: has8,    label: '8+ characters' },
+                        { ok: hasNum,  label: 'Number'        },
+                        { ok: hasCaps, label: 'Uppercase'     },
+                        { ok: hasSpec, label: 'Symbol'        },
+                      ].map(({ ok, label }) => (
+                        <div key={label} style={{display:'flex',alignItems:'center',gap:'6px'}}>
+                          {ok
+                            ? <Check size={12} color="#34d399" style={{flexShrink:0}} />
+                            : <div style={{width:'12px',height:'12px',borderRadius:'50%',border:'1px solid rgba(255,255,255,0.15)',flexShrink:0}} />}
+                          <span style={{fontSize:'11px',color: ok?'#34d399':'rgba(255,255,255,0.3)',transition:'color 0.2s'}}>{label}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                {fieldErrors.password && (
+                  <div style={{display:'flex',alignItems:'center',gap:'4px',marginTop:'5px'}}>
+                    <AlertCircle size={12} color="#ef4444" />
+                    <span style={{fontSize:'12px',color:'#ef4444'}}>{fieldErrors.password}</span>
+                  </div>
+                )}
+              </div>
+
+              {/* Confirm Password */}
+              <div style={{marginBottom:'4px'}}>
+                <label style={{display:'block',fontSize:'12px',fontWeight:500,color:'rgba(255,255,255,0.5)',marginBottom:'7px',textTransform:'uppercase',letterSpacing:'0.06em'}}>
+                  Confirm password
+                </label>
+                <div style={{position:'relative'}}>
+                  <Lock size={16} color="rgba(255,255,255,0.25)" style={{position:'absolute',left:'14px',top:'50%',transform:'translateY(-50%)',pointerEvents:'none'}} />
+                  <input type={showConfirm ? 'text' : 'password'} autoComplete="new-password" required
+                         value={form.confirm} onChange={e => { setField('confirm', e.target.value); setFieldErrors(fe => ({...fe, confirm:''})); }}
+                         placeholder="Re-enter your password"
+                         style={{...inputStyle, padding:'12px 68px 12px 42px', ...(fieldErrors.confirm ? {border:'1px solid rgba(239,68,68,0.6)',boxShadow:'0 0 0 3px rgba(239,68,68,0.08)'} : {})}}
+                         onFocus={focusIn} onBlur={focusOut} />
+                  <div style={{position:'absolute',right:'14px',top:'50%',transform:'translateY(-50%)',display:'flex',alignItems:'center',gap:'6px'}}>
+                    {form.confirm && (
+                      form.password === form.confirm
+                        ? <CheckCircle2 size={16} color="#34d399" />
+                        : <AlertCircle  size={16} color="#f87171" />
+                    )}
+                    <button type="button" tabIndex={-1} onClick={() => setShowConfirm(v => !v)}
+                            style={{background:'none',border:'none',cursor:'pointer',color:'rgba(255,255,255,0.35)',padding:0,display:'flex'}}>
+                      {showConfirm ? <EyeOff size={16} /> : <Eye size={16} />}
                     </button>
                   </div>
-                  {form.password && (
-                    <div className="pt-0.5">
-                      <div className="flex gap-1 mb-1">
-                        {[1,2,3,4].map(i => (
-                          <div key={i} className={`h-[3px] flex-1 rounded-full transition-all duration-300 ${i <= strength ? strengthColor : 'bg-white/[0.07]'}`} />
-                        ))}
-                      </div>
-                      <p className={`text-[10px] ${strengthText}`}>{strengthLabel} password</p>
-                    </div>
-                  )}
                 </div>
-
-                {/* Confirm */}
-                <div className="space-y-1">
-                  <label className="block text-[10px] font-bold text-gray-600 uppercase tracking-widest">Confirm password</label>
-                  <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-[13px] h-[13px] text-gray-600 pointer-events-none" />
-                    <input
-                      type={showPass ? 'text' : 'password'} autoComplete="new-password"
-                      value={form.confirm} onChange={e => setField('confirm', e.target.value)} required placeholder="Re-enter your password"
-                      className="w-full pl-8 pr-10 py-[7px] rounded-xl text-[13px] text-white placeholder-gray-700 bg-[#0d1728] border border-white/[0.06] focus:outline-none focus:border-emerald-500/40 focus:ring-2 focus:ring-emerald-500/[0.09] transition-all duration-200"
-                    />
-                    {form.confirm && (
-                      <span className="absolute right-3 top-1/2 -translate-y-1/2">
-                        {form.password === form.confirm
-                          ? <CheckCircle2 className="w-[13px] h-[13px] text-emerald-400" />
-                          : <AlertCircle  className="w-[13px] h-[13px] text-red-400"     />}
-                      </span>
-                    )}
+                {fieldErrors.confirm && (
+                  <div style={{display:'flex',alignItems:'center',gap:'4px',marginTop:'5px'}}>
+                    <AlertCircle size={12} color="#ef4444" />
+                    <span style={{fontSize:'12px',color:'#ef4444'}}>{fieldErrors.confirm}</span>
                   </div>
-                </div>
+                )}
+              </div>
 
-                {/* Consent checkboxes */}
-                <div className="space-y-2 pt-1">
-                  <label className="flex items-start gap-2 cursor-pointer select-none">
-                    <input
-                      type="checkbox"
-                      checked={consent.terms}
-                      onChange={e => setConsent(c => ({ ...c, terms: e.target.checked }))}
-                      className="mt-0.5 accent-emerald-500 shrink-0"
-                    />
-                    <span className="text-[11px] text-gray-500 leading-relaxed">
-                      I agree to the{' '}
-                      <a
-                        href="/terms"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-emerald-400 hover:underline"
-                        onClick={e => e.stopPropagation()}
-                      >
-                        Terms of Service
-                      </a>{' '}
-                      and understand that Zynth is a software information tool, not a financial advisor.
-                    </span>
-                  </label>
-                  <label className="flex items-start gap-2 cursor-pointer select-none">
-                    <input
-                      type="checkbox"
-                      checked={consent.risk}
-                      onChange={e => setConsent(c => ({ ...c, risk: e.target.checked }))}
-                      className="mt-0.5 accent-emerald-500 shrink-0"
-                    />
-                    <span className="text-[11px] text-gray-500 leading-relaxed">
-                      I understand that AI analysis and market data may contain errors and should NOT be used as the sole basis for trading decisions. I trade at my own risk.
-                    </span>
-                  </label>
-                </div>
+              {/* Consent checkboxes */}
+              <div style={{marginTop:'10px',marginBottom:'14px',display:'flex',flexDirection:'column',gap:'8px'}}>
+                <label style={{display:'flex',alignItems:'flex-start',gap:'12px',cursor:'pointer',userSelect:'none'}}>
+                  <input type="checkbox" className="sp-checkbox"
+                         checked={consent.terms}
+                         onChange={e => setConsent(c => ({ ...c, terms: e.target.checked }))} />
+                  <span style={{fontSize:'13px',color:'rgba(255,255,255,0.55)',lineHeight:1.5}}>
+                    I agree to the{' '}
+                    <a href="/terms" target="_blank" rel="noopener noreferrer"
+                       style={{color:'#10b981',textDecoration:'none'}}
+                       onMouseEnter={e => e.currentTarget.style.textDecoration='underline'}
+                       onMouseLeave={e => e.currentTarget.style.textDecoration='none'}
+                       onClick={e => e.stopPropagation()}>
+                      Terms of Service
+                    </a>
+                    {' '}and understand that Zynth is a software tool, not a financial advisor.
+                  </span>
+                </label>
+                <label style={{display:'flex',alignItems:'flex-start',gap:'12px',cursor:'pointer',userSelect:'none'}}>
+                  <input type="checkbox" className="sp-checkbox"
+                         checked={consent.risk}
+                         onChange={e => setConsent(c => ({ ...c, risk: e.target.checked }))} />
+                  <span style={{fontSize:'13px',color:'rgba(255,255,255,0.55)',lineHeight:1.5}}>
+                    I understand AI analysis may contain errors and should not be the sole basis for trading decisions. I trade at my own risk.
+                  </span>
+                </label>
+              </div>
 
-                <button
-                  type="submit" disabled={loading}
-                  className="group w-full flex items-center justify-center gap-2 text-white font-semibold text-[13px] rounded-xl py-[10px] transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed hover:brightness-110 hover:shadow-[0_6px_24px_rgba(16,185,129,0.38)]"
-                  style={{background:'linear-gradient(135deg,#059669 0%,#0d9488 100%)',boxShadow:'0 4px 16px rgba(16,185,129,0.22),0 1px 0 rgba(255,255,255,0.07) inset'}}
-                >
-                  {loading
-                    ? <><Loader2 className="w-3.5 h-3.5 animate-spin" /><span>Creating account…</span></>
-                    : <><span>Create account</span><ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" /></>}
-                </button>
-              </form>
+              {/* Submit */}
+              <button
+                type="submit" disabled={loading}
+                style={{
+                  width:'100%',
+                  padding: isMobile ? '12px' : '13px',
+                  background: loading ? 'rgba(16,185,129,0.5)' : '#10b981',
+                  border:'none', borderRadius:'10px',
+                  color:'#fff', fontSize:'15px', fontWeight:600,
+                  cursor: loading ? 'not-allowed' : 'pointer',
+                  transition:'all 0.2s ease',
+                  letterSpacing:'0.01em',
+                  display:'flex', alignItems:'center', justifyContent:'center', gap:'8px',
+                }}
+                onMouseEnter={e => { if (!loading) { e.currentTarget.style.background='#0d9a6e'; e.currentTarget.style.transform='translateY(-1px)'; e.currentTarget.style.boxShadow='0 8px 25px rgba(16,185,129,0.25)'; } }}
+                onMouseLeave={e => { e.currentTarget.style.background=loading?'rgba(16,185,129,0.5)':'#10b981'; e.currentTarget.style.transform='translateY(0)'; e.currentTarget.style.boxShadow='none'; }}
+                onMouseDown={e => { e.currentTarget.style.transform='translateY(0) scale(0.99)'; }}
+                onMouseUp={e => { e.currentTarget.style.transform='translateY(-1px) scale(1)'; }}
+              >
+                {loading
+                  ? <><Loader2 size={16} className="animate-spin" /><span>Creating account...</span></>
+                  : 'Create account →'}
+              </button>
+            </form>
 
-              <p className="text-center text-[12px] text-gray-600 mt-3">
-                Already have an account?{' '}
-                <button onClick={onSwitchToLogin} className="text-emerald-400 hover:text-emerald-300 font-semibold transition-colors">
-                  Sign in
-                </button>
-              </p>
-            </div>
+
+              </>
+            )}
           </div>
-
-          <p className="text-center text-[10px] text-gray-800 mt-2 tracking-wide">
-            256-bit SSL encrypted · © 2026 Zynth
-          </p>
         </div>
-      </div>
-      </div>
     </div>
   );
 }

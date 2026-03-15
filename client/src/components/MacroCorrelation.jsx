@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import {
   Activity, Loader2, AlertCircle, TrendingUp, TrendingDown,
   Zap, Brain, RefreshCw, Lock, ChevronRight,
+  BarChart2, Calendar, AlertTriangle, Info,
 } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 import { useAuth } from '../contexts/AuthContext';
@@ -179,7 +180,7 @@ function IndicatorTable({ data }) {
               return (
                 <tr key={row.code} style={{ borderBottom: `1px solid ${theme.border}` }}>
                   <td style={{ padding: '10px 12px', fontWeight: 600, color: theme.text }}>
-                    {isWorst && <span style={{ marginRight: 5 }}>⚠️</span>}{row.indicator}
+                    {isWorst && <AlertTriangle size={13} style={{ marginRight: 5, color: '#f87171', display:'inline-block', verticalAlign:'middle' }}/>}{row.indicator}
                   </td>
                   <td style={{ padding: '10px 12px', color: theme.muted }}>{row.releaseDate}</td>
                   <td style={{ padding: '10px 12px', color: theme.text }}>{row.tradesCount}</td>
@@ -199,7 +200,7 @@ function IndicatorTable({ data }) {
         <Insight
           icon={AlertCircle}
           color="#ef4444"
-          text={`⚠️ You lose ${100 - worst.winRate}% of trades on ${worst.indicator} release days (${worst.tradesCount} trades). Consider reducing position size or avoiding trading on these dates.`}
+          text={`You lose ${100 - worst.winRate}% of trades on ${worst.indicator} release days (${worst.tradesCount} trades). Consider reducing position size or avoiding trading on these dates.`}
         />
       )}
     </div>
@@ -600,11 +601,11 @@ export default function MacroCorrelation() {
             <SectionTitle
               sub="Does your win rate improve when macro conditions are bullish?"
             >
-              📊 Macro Score vs Win Rate
+              <BarChart2 size={15} style={{display:'inline-block',verticalAlign:'middle',marginRight:'6px'}} />Macro Score vs Win Rate
             </SectionTitle>
             <MacroRangeChart data={data.macroRangeStats} />
             {data.keyInsight && (
-              <Insight icon={Zap} text={`💡 ${data.keyInsight}`} color="#10b981" />
+              <Insight icon={Zap} text={`${data.keyInsight}`} color="#10b981" />
             )}
             {data.dataSource !== 'fred_historical' && (
               <Insight
@@ -620,7 +621,7 @@ export default function MacroCorrelation() {
             <SectionTitle
               sub="How you perform on economic indicator release days"
             >
-              📅 Indicator Release Day Impact
+              <Calendar size={15} style={{display:'inline-block',verticalAlign:'middle',marginRight:'6px'}} />Indicator Release Day Impact
             </SectionTitle>
             <IndicatorTable data={data.indicatorImpact} />
           </Card>
@@ -630,7 +631,7 @@ export default function MacroCorrelation() {
             <SectionTitle
               sub="Trade outcomes plotted against macro score over time. Green dots = wins, red dots = losses."
             >
-              📈 Macro Score vs Trade Outcomes
+              <TrendingUp size={15} style={{display:'inline-block',verticalAlign:'middle',marginRight:'6px'}} />Macro Score vs Trade Outcomes
             </SectionTitle>
             <CorrelationScatter
               timelineTrades={data.timelineTrades}
@@ -638,7 +639,7 @@ export default function MacroCorrelation() {
             />
             {data.macroTimeline.length < 3 && (
               <p style={{ fontSize: 12, color: theme.muted, marginTop: 10 }}>
-                💡 Run this analysis daily to build your macro score history and see the trend line.
+                <Info size={13} style={{display:'inline-block',verticalAlign:'middle',marginRight:'4px'}} /> Run this analysis daily to build your macro score history and see the trend line.
               </p>
             )}
           </Card>

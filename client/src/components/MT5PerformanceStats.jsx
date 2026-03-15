@@ -226,7 +226,7 @@ export default function MT5PerformanceStats({ analysis }) {
     { icon: Clock,      label: 'Avg Duration',       value: avg_trade_duration ?? '—',
       subValue: `Max ${max_consecutive_losses ?? 0} consec. losses`, color: theme.muted },
     { icon: Repeat,     label: 'Max Consec. Losses', value: `${max_consecutive_losses ?? 0}`,
-      subValue: (max_consecutive_losses ?? 0) >= 5 ? '⚠ Dangerous streak'
+      subValue: (max_consecutive_losses ?? 0) >= 5 ? 'Dangerous streak'
                 : (max_consecutive_losses ?? 0) >= 3 ? 'Moderate risk' : 'Under control',
       color: (max_consecutive_losses ?? 0) >= 5 ? theme.danger
            : (max_consecutive_losses ?? 0) >= 3 ? theme.warning : theme.success },

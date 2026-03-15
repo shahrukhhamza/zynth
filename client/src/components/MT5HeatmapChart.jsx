@@ -1,5 +1,5 @@
 import { useState, useMemo, useCallback, useRef, useEffect } from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, TrendingUp, TrendingDown, AlertTriangle, Target, Inbox } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 
 // -- Constants -----------------------------------------------------------
@@ -189,7 +189,7 @@ function generateInsightCards(heatmap) {
 
   if (best) {
     cards.push({
-      type: 'best', title: 'Best Performance', icon: '📈',
+      type: 'best', title: 'Best Performance', Icon: TrendingUp,
       headline: `${best.name} is your strongest day`,
       detail:   `${fmt$(best.profit)} profit · ${best.wr.toFixed(0)}% win rate`,
       color: '#4ade80', bg: 'rgba(34,197,94,0.08)', border: 'rgba(34,197,94,0.25)',
@@ -197,7 +197,7 @@ function generateInsightCards(heatmap) {
   }
   if (worst && worst.day !== best?.day) {
     cards.push({
-      type: 'worst', title: 'Worst Performance', icon: '📉',
+      type: 'worst', title: 'Worst Performance', Icon: TrendingDown,
       headline: `${worst.name} drags your results`,
       detail:   `${fmt$(worst.profit)} total · ${worst.wr.toFixed(0)}% win rate`,
       color: '#f87171', bg: 'rgba(239,68,68,0.08)', border: 'rgba(239,68,68,0.25)',
@@ -206,7 +206,7 @@ function generateInsightCards(heatmap) {
   if (weakHr && weakHr.trades >= 2 && weakHr.profit < -20) {
     const sess = sessionOf(weakHr.hour);
     cards.push({
-      type: 'warning', title: 'Pattern Warning', icon: '⚠️',
+      type: 'warning', title: 'Pattern Warning', Icon: AlertTriangle,
       headline: `${weakHr.hour}:00 during ${sess.label} is costly`,
       detail:   `${fmt$(weakHr.profit)} on ${weakHr.trades} trades — consider avoiding`,
       color: '#fbbf24', bg: 'rgba(245,158,11,0.08)', border: 'rgba(245,158,11,0.25)',
@@ -215,7 +215,7 @@ function generateInsightCards(heatmap) {
   if (peakHr) {
     const sess = sessionOf(peakHr.hour);
     cards.push({
-      type: 'rec', title: 'Recommendation', icon: '🎯',
+      type: 'rec', title: 'Recommendation', Icon: Target,
       headline: `Focus on ${peakHr.hour}:00 (${sess.label} session)`,
       detail:   `Peak hour: ${fmt$(peakHr.profit)} on ${peakHr.trades} trades`,
       color: '#34d399', bg: 'rgba(16,185,129,0.08)', border: 'rgba(16,185,129,0.25)',
@@ -468,7 +468,7 @@ export default function MT5HeatmapChart({ trades = [], heatmap: legacyHeatmap = 
       {/* ── No-data state ───────────────────────────────────────────── */}
       {noDataInRange && (
         <div style={{ textAlign: 'center', padding: '40px 20px', color: text1 }}>
-          <div style={{ fontSize: 32, marginBottom: 10 }}>📭</div>
+          <Inbox size={32} style={{ marginBottom: 10, color: text1 }} />
           <div style={{ fontWeight: 600, color: text0, marginBottom: 6 }}>No trades in {rangeLabel}</div>
           <div style={{ fontSize: 12 }}>Try a different date range or import more trades.</div>
         </div>
@@ -631,7 +631,7 @@ export default function MT5HeatmapChart({ trades = [], heatmap: legacyHeatmap = 
                 style={{ background: card.bg, border: `1px solid ${card.border}`, borderRadius: 10, padding: '12px 14px' }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6 }}>
-                  <span style={{ fontSize: 14 }}>{card.icon}</span>
+                  <card.Icon size={14} color={card.color} />
                   <span style={{ color: card.color, fontSize: 11, fontWeight: 700 }}>{card.title}</span>
                 </div>
                 <div style={{ color: text0, fontSize: 12, fontWeight: 600, marginBottom: 3 }}>{card.headline}</div>

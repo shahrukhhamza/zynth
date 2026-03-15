@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Target, Check, AlertTriangle, XCircle, Lock, Trophy, CheckCircle } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 import { useAuth } from '../contexts/AuthContext';
 import { API_URL } from '../config/api';
@@ -205,9 +206,9 @@ export default function PreTradeChecklist({ direction, entry_price, tp, sl, stra
   const recommendation = score >= 80 ? 'green_light' : score >= 50 ? 'caution' : 'skip';
 
   const RESULT = {
-    green_light: { emoji: '🟢', title: 'Green Light',           msg: 'Everything checks out. Trade with confidence but stick to your plan.', col: '#22c55e', bg: 'rgba(34,197,94,0.08)',  brd: 'rgba(34,197,94,0.3)'  },
-    caution:     { emoji: '🟡', title: 'Proceed with Caution',  msg: 'Some factors are against you. Reduce position size by 50%.',            col: '#f59e0b', bg: 'rgba(245,158,11,0.08)', brd: 'rgba(245,158,11,0.3)' },
-    skip:        { emoji: '🔴', title: 'Consider Skipping',     msg: 'Multiple factors suggest this is not an ideal setup. Wait for better conditions.', col: '#ef4444', bg: 'rgba(239,68,68,0.08)', brd: 'rgba(239,68,68,0.3)' },
+    green_light: { Icon: CheckCircle, title: 'Green Light',           msg: 'Everything checks out. Trade with confidence but stick to your plan.', col: '#22c55e', bg: 'rgba(34,197,94,0.08)',  brd: 'rgba(34,197,94,0.3)'  },
+    caution:     { Icon: AlertTriangle, title: 'Proceed with Caution',  msg: 'Some factors are against you. Reduce position size by 50%.',            col: '#f59e0b', bg: 'rgba(245,158,11,0.08)', brd: 'rgba(245,158,11,0.3)' },
+    skip:        { Icon: XCircle,      title: 'Consider Skipping',     msg: 'Multiple factors suggest this is not an ideal setup. Wait for better conditions.', col: '#ef4444', bg: 'rgba(239,68,68,0.08)', brd: 'rgba(239,68,68,0.3)' },
   };
 
   // ── Save + close ──────────────────────────────────────────────────────────────
@@ -244,7 +245,7 @@ export default function PreTradeChecklist({ direction, entry_price, tp, sl, stra
           <div style={{ padding: '18px 20px 14px', borderBottom: `1px solid ${theme.border}`, flexShrink: 0, backgroundColor: theme.surface }}>
             <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 12 }}>
               <div>
-                <div style={{ fontSize: 17, fontWeight: 700, color: theme.text }}>🎯 Pre-Trade Checklist</div>
+                <div style={{ fontSize: 17, fontWeight: 700, color: theme.text }}><Target size={15} style={{display:'inline-block',verticalAlign:'middle',marginRight:'5px'}} />Pre-Trade Checklist</div>
                 <div style={{ fontSize: 12, color: theme.muted, marginTop: 2 }}>Answer honestly before you trade</div>
               </div>
               <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: theme.muted, fontSize: 22, lineHeight: 1, padding: '0 2px', marginTop: -2 }}>×</button>
@@ -277,11 +278,11 @@ export default function PreTradeChecklist({ direction, entry_price, tp, sl, stra
                         </span>{' '}({macroLabel})
                       </div>
                       <div style={{ fontWeight: 600, color: macroSupports ? '#22c55e' : '#f59e0b' }}>
-                        {macroSupports ? `✅ Macro supports ${direction?.toUpperCase()}` : `⚠️ Macro opposes ${direction?.toUpperCase()}`}
+                        {macroSupports ? <><Check size={11} color="#22c55e" style={{display:'inline-block',verticalAlign:'middle',marginRight:2}}/> Macro supports {direction?.toUpperCase()}</> : <><AlertTriangle size={11} color="#f59e0b" style={{display:'inline-block',verticalAlign:'middle',marginRight:2}}/> Macro opposes {direction?.toUpperCase()}</>}
                       </div>
                     </div>
                   ) : (
-                    <div style={{ fontSize: 12, color: theme.muted, marginBottom: 2 }}>🔒 Macro score requires Pro/Elite plan</div>
+                    <div style={{ fontSize: 12, color: theme.muted, marginBottom: 2 }}><Lock size={11} style={{display:'inline-block',verticalAlign:'middle',marginRight:3}}/> Macro score requires Pro/Elite plan</div>
                   )}
                   <AnswerBtns value={answers.q1} onChange={v => setAns('q1', v)} theme={theme} />
                 </QCard>
@@ -312,7 +313,7 @@ export default function PreTradeChecklist({ direction, entry_price, tp, sl, stra
                     })}
                   </div>
                   {selEmotion && BAD_EMOTIONS.has(selEmotion) && (
-                    <Hint color="red">⚠️ Your win rate drops significantly when you're {selEmotion}</Hint>
+                    <Hint color="red"><AlertTriangle size={11} style={{display:'inline-block',verticalAlign:'middle',marginRight:3}}/> Your win rate drops significantly when you're {selEmotion}</Hint>
                   )}
                   <AnswerBtns value={answers.q2} onChange={v => setAns('q2', v)} theme={theme} />
                 </QCard>
@@ -324,7 +325,7 @@ export default function PreTradeChecklist({ direction, entry_price, tp, sl, stra
                       <span style={{ color: theme.muted }}>Calculated R:R — </span>
                       <span style={{ fontWeight: 700, color: rr >= 1.5 ? '#22c55e' : rr >= 1 ? '#f59e0b' : '#ef4444' }}>1:{rr.toFixed(2)}</span>
                       <span style={{ marginLeft: 8, fontSize: 11, fontWeight: 600, color: rr >= 1.5 ? '#22c55e' : rr >= 1 ? '#f59e0b' : '#ef4444' }}>
-                        {rr >= 1.5 ? '✅ Good RR' : rr >= 1 ? '⚠️ Acceptable but not ideal' : '❌ Poor RR — consider skipping'}
+                        {rr >= 1.5 ? <><Check size={11} color="#22c55e" style={{display:'inline-block',verticalAlign:'middle',marginRight:2}}/> Good RR</> : rr >= 1 ? <><AlertTriangle size={11} color="#f59e0b" style={{display:'inline-block',verticalAlign:'middle',marginRight:2}}/> Acceptable but not ideal</> : <><XCircle size={11} color="#ef4444" style={{display:'inline-block',verticalAlign:'middle',marginRight:2}}/> Poor RR — consider skipping</>}
                       </span>
                     </div>
                   ) : (
@@ -347,7 +348,7 @@ export default function PreTradeChecklist({ direction, entry_price, tp, sl, stra
                     <div style={{ marginTop: 6, fontSize: 11 }}>
                       {selStratRate !== null
                         ? <span style={{ fontWeight: 700, color: selStratRate >= 50 ? '#22c55e' : '#ef4444' }}>
-                            Your {selStrategy} win rate: {selStratRate}% {selStratRate >= 50 ? '✅' : '⚠️ Below 50%'}
+                            Your {selStrategy} win rate: {selStratRate}% {selStratRate >= 50 ? <Check size={11} color="#22c55e" style={{display:'inline-block',verticalAlign:'middle',marginLeft:2}}/> : <><AlertTriangle size={11} color="#ef4444" style={{display:'inline-block',verticalAlign:'middle',marginRight:2}}/> Below 50%</>}
                           </span>
                         : <span style={{ color: theme.muted }}>Not enough data for {selStrategy} yet (need 3+ closed trades)</span>
                       }
@@ -366,12 +367,12 @@ export default function PreTradeChecklist({ direction, entry_price, tp, sl, stra
                       {bestSession ? (
                         <div style={{ padding: '8px 11px', borderRadius: 8, backgroundColor: theme.bg, border: `1px solid ${theme.border}`, fontSize: 11 }}>
                           <div style={{ marginBottom: 4 }}>
-                            🏆 Best session: <span style={{ fontWeight: 700, color: '#22c55e' }}>{fmtSession(bestSession)} ({sessionStats[bestSession]?.rate}% win rate)</span>
+                            <Trophy size={11} style={{display:'inline-block',verticalAlign:'middle',marginRight:4,color:'#22c55e'}}/> Best session: <span style={{ fontWeight: 700, color: '#22c55e' }}>{fmtSession(bestSession)} ({sessionStats[bestSession]?.rate}% win rate)</span>
                           </div>
                           {session === bestSession
-                            ? <div style={{ fontWeight: 600, color: '#22c55e' }}>✅ This is your strongest session</div>
+                            ? <div style={{ fontWeight: 600, color: '#22c55e' }}><Check size={11} color="#22c55e" style={{display:'inline-block',verticalAlign:'middle',marginRight:3}}/> This is your strongest session</div>
                             : <div style={{ fontWeight: 600, color: '#f59e0b' }}>
-                                ⚠️ Your win rate in {fmtSession(session)} is {sessionStats[session]?.rate !== null ? `${sessionStats[session]?.rate}%` : 'unknown (not enough data)'}
+                                <AlertTriangle size={11} color="#f59e0b" style={{display:'inline-block',verticalAlign:'middle',marginRight:3}}/> Your win rate in {fmtSession(session)} is {sessionStats[session]?.rate !== null ? `${sessionStats[session]?.rate}%` : 'unknown (not enough data)'}
                               </div>
                           }
                         </div>
@@ -386,9 +387,9 @@ export default function PreTradeChecklist({ direction, entry_price, tp, sl, stra
                 {/* ── Q6 — Daily Losses (auto) ── */}
                 <QCard num={6} question="Are you within your daily loss limit?" explanation="Loss streaks tend to worsen after 2 consecutive losses." theme={theme}>
                   {loading ? <Skel theme={theme} h={40} /> : todayLosses >= 2 ? (
-                    <Hint color="red">🛑 You've had {todayLosses} loss{todayLosses > 1 ? 'es' : ''} today. Consider stopping — your data shows loss streaks get worse after 2 losses.</Hint>
+                    <Hint color="red"><AlertTriangle size={11} style={{display:'inline-block',verticalAlign:'middle',marginRight:3}}/> You've had {todayLosses} loss{todayLosses > 1 ? 'es' : ''} today. Consider stopping — your data shows loss streaks get worse after 2 losses.</Hint>
                   ) : (
-                    <Hint color="green">✅ You're within safe limits today ({todayLosses} {todayLosses === 1 ? 'loss' : 'losses'} so far)</Hint>
+                    <Hint color="green"><Check size={11} color="#22c55e" style={{display:'inline-block',verticalAlign:'middle',marginRight:3}}/> You're within safe limits today ({todayLosses} {todayLosses === 1 ? 'loss' : 'losses'} so far)</Hint>
                   )}
                   <AnswerBtns value={answers.q6} onChange={v => setAns('q6', v)} theme={theme} />
                   <div style={{ fontSize: 10, color: theme.muted, marginTop: 4 }}>Auto-answered from your journal · tap to override</div>
@@ -412,7 +413,7 @@ export default function PreTradeChecklist({ direction, entry_price, tp, sl, stra
                     <div style={{ borderRadius: 12, padding: 22, border: `1px solid ${cfg.brd}`, backgroundColor: cfg.bg, textAlign: 'center', marginBottom: 16 }}>
                       <div style={{ fontSize: 52, fontWeight: 800, color: cfg.col, lineHeight: 1, marginBottom: 4 }}>{score}</div>
                       <div style={{ fontSize: 12, color: theme.muted, marginBottom: 12 }}>out of 100</div>
-                      <div style={{ fontSize: 18, fontWeight: 700, color: cfg.col }}>{cfg.emoji} {cfg.title}</div>
+                      <div style={{ fontSize: 18, fontWeight: 700, color: cfg.col }}><cfg.Icon size={18} color={cfg.col} style={{display:'inline-block',verticalAlign:'middle',marginRight:6}}/> {cfg.title}</div>
                       <div style={{ fontSize: 13, color: theme.text, marginTop: 8, lineHeight: 1.6 }}>{cfg.msg}</div>
                     </div>
 
@@ -429,7 +430,7 @@ export default function PreTradeChecklist({ direction, entry_price, tp, sl, stra
                       ].map(row => (
                         <div key={row.label} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 5 }}>
                           <span style={{ fontSize: 12, color: row.ans === 'yes' ? theme.text : theme.muted }}>
-                            {row.ans === 'yes' ? '✅' : row.ans === 'skip' ? '⏭' : '✗'} {row.label}
+                            {row.ans === 'yes' ? <Check size={11} color="#22c55e" style={{display:'inline-block',verticalAlign:'middle'}}/> : row.ans === 'skip' ? <span style={{fontWeight:700,color:'#9ca3af'}}>–</span> : <span style={{fontWeight:700,color:'#ef4444'}}>✕</span>} {row.label}
                           </span>
                           <span style={{ fontSize: 12, fontWeight: 700, color: row.ans === 'yes' ? '#22c55e' : theme.muted }}>
                             {row.ans === 'yes' ? `+${row.pts}` : '+0'} / {row.pts}

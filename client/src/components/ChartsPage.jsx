@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { LineChart, Clock } from 'lucide-react';
+import { LineChart, Clock, Lock } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 
 /* ── Symbol map ─────────────────────────────────────────────────────────── */
@@ -247,8 +247,8 @@ export default function ChartsPage({ onNavigate, initialTab }) {
       {/* ── Tabs ── */}
       <div className="flex gap-1 mb-6" style={{ borderBottom: `2px solid ${theme.border}` }}>
         {[
-          { id: 'live',        label: '📈 Live Chart'   },
-          { id: 'backtesting', label: '⏮ Backtesting'  },
+          { id: 'live',        label: 'Live Chart'   },
+          { id: 'backtesting', label: 'Backtesting'  },
         ].map(tab => {
           const active = activeTab === tab.id;
           return (
@@ -326,10 +326,10 @@ export default function ChartsPage({ onNavigate, initialTab }) {
               style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.10)', maxWidth: 380 }}
             >
               <div
-                className="w-16 h-16 rounded-full flex items-center justify-center text-3xl"
+                className="w-16 h-16 rounded-full flex items-center justify-center"
                 style={{ background: 'rgba(16,185,129,0.15)' }}
               >
-                🔒
+                <Lock size={28} style={{ color: 'rgba(255,255,255,0.6)' }} />
               </div>
               <div>
                 <h3 className="text-xl font-bold mb-1" style={{ color: '#fff' }}>Coming Soon</h3>

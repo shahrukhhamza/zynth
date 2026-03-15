@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { BookOpen, Search, ChevronRight, ArrowLeft, Rocket, BookMarked, Bot, BarChart2, Calendar, Camera, Calculator, CreditCard, Settings, Shield, Star, X } from 'lucide-react';
+import { BookOpen, Search, ChevronRight, ArrowLeft, Rocket, BookMarked, Bot, BarChart2, Calendar, Camera, Calculator, CreditCard, Settings, Shield, Star, X, Home, Mail } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 
 // ── Article database ─────────────────────────────────────────────────────────
@@ -1412,7 +1412,7 @@ export default function HelpCenter() {
               onMouseOver={e => { if (selectedCategory) e.currentTarget.style.background = bg2; }}
               onMouseOut={e => { if (selectedCategory) e.currentTarget.style.background = 'transparent'; }}
             >
-              <span style={{ fontSize: 14 }}>🏠</span> Home
+              <Home size={14} style={{ display: 'inline-block', verticalAlign: 'middle', marginRight: 4 }} /> Home
             </button>
 
             <div style={{ height: 1, background: border, margin: '8px 4px 10px' }} />
@@ -1433,7 +1433,7 @@ export default function HelpCenter() {
                   onMouseOver={e => { if (!active) e.currentTarget.style.background = bg2; }}
                   onMouseOut={e => { if (!active) e.currentTarget.style.background = 'transparent'; }}
                 >
-                  <span style={{ fontSize: 15, flexShrink: 0 }}>{cat.emoji}</span>
+                  <cat.icon size={15} style={{ flexShrink: 0 }} />
                   <span style={{ flex: 1, color: active ? accent : text0, fontSize: 13, fontWeight: active ? 600 : 400 }}>{cat.title}</span>
                   <span style={{ fontSize: 11, color: textMuted, background: bg2, padding: '1px 7px', borderRadius: 999, flexShrink: 0 }}>{cat.articles.length}</span>
                   {active && <ChevronRight size={13} color={accent} style={{ flexShrink: 0 }} />}
@@ -1451,7 +1451,7 @@ export default function HelpCenter() {
             </div>
             {searchResults.length === 0 ? (
               <div style={{ padding: '20px 10px', textAlign: 'center' }}>
-                <div style={{ fontSize: 28, marginBottom: 8 }}>🔍</div>
+              <div style={{ fontSize: 28, marginBottom: 8 }}><Search size={28} style={{ display: 'inline-block' }} /></div>
                 <div style={{ color: text0, fontSize: 13, fontWeight: 600, marginBottom: 4 }}>No results found</div>
                 <div style={{ color: textMuted, fontSize: 12 }}>Try different keywords or email us</div>
                 <a href="mailto:shahrukhhamza770@gmail.com" style={{ color: accent, fontSize: 12, display: 'block', marginTop: 6 }}>shahrukhhamza770@gmail.com</a>
@@ -1466,7 +1466,7 @@ export default function HelpCenter() {
                   onMouseOut={e => e.currentTarget.style.background = 'transparent'}
                 >
                   <div style={{ color: text0, fontSize: 13, fontWeight: 600, marginBottom: 2 }}>{art.title}</div>
-                  <div style={{ color: textMuted, fontSize: 11 }}>{art.categoryEmoji} {art.categoryTitle}</div>
+                  <div style={{ color: textMuted, fontSize: 11 }}>{art.categoryTitle}</div>
                 </button>
               ))
             )}
@@ -1492,7 +1492,7 @@ export default function HelpCenter() {
             <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 24, flexWrap: 'wrap' }}>
               <button onClick={backToHome} style={{ background: 'none', border: 'none', cursor: 'pointer', color: textMuted, fontSize: 12 }}>Help</button>
               <ChevronRight size={12} color={textMuted} />
-              <button onClick={backToCategory} style={{ background: 'none', border: 'none', cursor: 'pointer', color: textMuted, fontSize: 12 }}>{currentCategory?.emoji} {currentCategory?.title}</button>
+              <button onClick={backToCategory} style={{ background: 'none', border: 'none', cursor: 'pointer', color: textMuted, fontSize: 12 }}>{currentCategory?.title}</button>
               <ChevronRight size={12} color={textMuted} />
               <span style={{ color: text0, fontSize: 12 }}>{currentArticle.title}</span>
             </div>
@@ -1512,7 +1512,7 @@ export default function HelpCenter() {
               {currentArticle.title}
             </h1>
             <div style={{ color: textMuted, fontSize: 13, marginBottom: 28 }}>
-              Last updated: March 14, 2026 &nbsp;·&nbsp; {currentCategory?.emoji} {currentCategory?.title}
+              Last updated: March 14, 2026 &nbsp;·&nbsp; {currentCategory?.title}
             </div>
 
             {/* Article content */}
@@ -1555,7 +1555,7 @@ export default function HelpCenter() {
             <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 24 }}>
               <button onClick={backToHome} style={{ background: 'none', border: 'none', cursor: 'pointer', color: textMuted, fontSize: 12 }}>Help</button>
               <ChevronRight size={12} color={textMuted} />
-              <span style={{ color: text0, fontSize: 12 }}>{currentCategory.emoji} {currentCategory.title}</span>
+              <span style={{ color: text0, fontSize: 12 }}>{currentCategory.title}</span>
             </div>
 
             {/* Category header */}
@@ -1679,7 +1679,7 @@ export default function HelpCenter() {
 
             {/* Contact card */}
             <div style={{ background: bg1, border: `1px solid ${border}`, borderRadius: 12, padding: '24px 28px', textAlign: 'center' }}>
-              <div style={{ fontSize: 28, marginBottom: 10 }}>📬</div>
+              <div style={{ marginBottom: 10 }}><Mail size={28} style={{ display: 'inline-block' }} /></div>
               <div style={{ color: text0, fontWeight: 700, fontSize: 16, marginBottom: 6 }}>Can't find what you need?</div>
               <div style={{ color: textMuted, fontSize: 14, marginBottom: 12 }}>Our team is happy to help with any question.</div>
               <a

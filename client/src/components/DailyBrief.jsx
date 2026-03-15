@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { Lock, BarChart2, Check, AlertTriangle, TrendingUp, Info, Trophy, Sun } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 import { useAuth } from '../contexts/AuthContext';
 import { useTimezone } from '../contexts/TimezoneContext';
@@ -243,12 +244,12 @@ export default function DailyBrief() {
   const dowRate = dowClosed >= 5 ? Math.round((dowWins / dowClosed) * 100) : null;
 
   // ── Macro score coloring ────────────────────────────────────────────────────
-  let macroLabel = '', macroBullet = '', macroColor = theme.muted;
+  let macroLabel = '', macroBullet = null, macroColor = theme.muted;
   if (macroScore && macroScore !== 'locked' && macroScore !== 'error') {
     const s = macroScore.score;
-    if (s > 2)       { macroLabel = 'Bullish for Gold'; macroBullet = '🟢'; macroColor = '#22c55e'; }
-    else if (s < -2) { macroLabel = 'Bearish for Gold'; macroBullet = '🔴'; macroColor = '#ef4444'; }
-    else             { macroLabel = 'Neutral';           macroBullet = '🟡'; macroColor = '#f59e0b'; }
+    if (s > 2)       { macroLabel = 'Bullish for Gold'; macroBullet = <span style={{display:'inline-block',width:8,height:8,borderRadius:'50%',backgroundColor:'#22c55e',verticalAlign:'middle',marginRight:3}}/>; macroColor = '#22c55e'; }
+    else if (s < -2) { macroLabel = 'Bearish for Gold'; macroBullet = <span style={{display:'inline-block',width:8,height:8,borderRadius:'50%',backgroundColor:'#ef4444',verticalAlign:'middle',marginRight:3}}/>; macroColor = '#ef4444'; }
+    else             { macroLabel = 'Neutral';           macroBullet = <span style={{display:'inline-block',width:8,height:8,borderRadius:'50%',backgroundColor:'#f59e0b',verticalAlign:'middle',marginRight:3}}/>; macroColor = '#f59e0b'; }
   }
 
   // ── Inline keyframe style ────────────────────────────────────────────────────
@@ -291,7 +292,7 @@ export default function DailyBrief() {
           {/* Header */}
           <div style={{ marginBottom: 16, paddingRight: 32 }}>
             <div style={{ fontSize: 18, fontWeight: 700, color: theme.text, lineHeight: 1.3 }}>
-              ☀️ {greeting}, {firstName}!
+              <Sun size={16} style={{display:'inline-block',verticalAlign:'middle',marginRight:'5px',color:'#f59e0b'}} />{greeting}, {firstName}!
             </div>
             <div style={{ fontSize: 12, color: theme.muted, marginTop: 3 }}>{dateStr}</div>
           </div>
@@ -312,7 +313,7 @@ export default function DailyBrief() {
                 </>
               ) : macroScore === 'locked' ? (
                 <>
-                  <div style={{ fontSize: 13, fontWeight: 700, color: theme.muted }}>🔒 Pro / Elite only</div>
+                  <div style={{ fontSize: 13, fontWeight: 700, color: theme.muted }}><Lock size={12} style={{display:'inline-block',verticalAlign:'middle',marginRight:'4px'}} /> Pro / Elite only</div>
                   <div style={{ fontSize: 11, color: theme.muted }}>Upgrade to see your macro bias</div>
                 </>
               ) : macroScore === 'error' || !macroScore ? (
@@ -340,13 +341,13 @@ export default function DailyBrief() {
                   <Skeleton theme={theme} h={12} w="65%" />
                 </>
               ) : !trades || trades.length === 0 ? (
-                <div style={{ fontSize: 12, color: theme.muted }}>📊 No trades logged yet</div>
+                <div style={{ fontSize: 12, color: theme.muted }}><BarChart2 size={12} style={{display:'inline-block',verticalAlign:'middle',marginRight:'4px'}} /> No trades logged yet</div>
               ) : !bestSession ? (
                 <div style={{ fontSize: 12, color: theme.muted }}>Not enough data yet — log more tagged trades</div>
               ) : (
                 <>
                   <div style={{ fontSize: 15, fontWeight: 700, color: '#22c55e' }}>
-                    🏆 {bestSession} — {bestRate}% win rate
+                      <Trophy size={13} style={{display:'inline-block',verticalAlign:'middle',marginRight:'4px'}} /> {bestSession} — {bestRate}% win rate
                   </div>
                   <div style={{ fontSize: 11, color: theme.muted }}>{sessionStatusText}</div>
                 </>
@@ -380,7 +381,7 @@ export default function DailyBrief() {
               ) : dowRate === null ? (
                 <>
                   <div style={{ fontSize: 13, fontWeight: 700, color: theme.muted }}>
-                    📊 Not enough data yet for {todayName}s
+                      <BarChart2 size={12} style={{display:'inline-block',verticalAlign:'middle',marginRight:'4px'}} /> Not enough data yet for {todayName}s
                   </div>
                   <div style={{ fontSize: 11, color: theme.muted }}>
                     {dowClosed} closed trade{dowClosed !== 1 ? 's' : ''} logged on {todayName}s · need 5+
@@ -389,7 +390,7 @@ export default function DailyBrief() {
               ) : dowRate > 60 ? (
                 <>
                   <div style={{ fontSize: 15, fontWeight: 700, color: '#22c55e' }}>
-                    ✅ Strong day — {dowRate}% win rate on {todayName}s
+                      <Check size={13} style={{display:'inline-block',verticalAlign:'middle',marginRight:'4px'}} /> Strong day — {dowRate}% win rate on {todayName}s
                   </div>
                   <div style={{ fontSize: 11, color: theme.muted }}>
                     {dowWins}W / {dowClosed - dowWins}L across {dowClosed} trades
@@ -398,7 +399,7 @@ export default function DailyBrief() {
               ) : dowRate < 45 ? (
                 <>
                   <div style={{ fontSize: 15, fontWeight: 700, color: '#f59e0b' }}>
-                    ⚠️ Careful — you win {dowRate}% on {todayName}s
+                      <AlertTriangle size={13} style={{display:'inline-block',verticalAlign:'middle',marginRight:'4px'}} /> Careful — you win {dowRate}% on {todayName}s
                   </div>
                   <div style={{ fontSize: 11, color: theme.muted }}>
                     {dowWins}W / {dowClosed - dowWins}L across {dowClosed} trades
@@ -407,7 +408,7 @@ export default function DailyBrief() {
               ) : (
                 <>
                   <div style={{ fontSize: 14, fontWeight: 700, color: theme.text }}>
-                    📈 {dowRate}% win rate on {todayName}s
+                      <TrendingUp size={13} style={{display:'inline-block',verticalAlign:'middle',marginRight:'4px'}} /> {dowRate}% win rate on {todayName}s
                   </div>
                   <div style={{ fontSize: 11, color: theme.muted }}>
                     {dowWins}W / {dowClosed - dowWins}L across {dowClosed} trades
@@ -477,7 +478,7 @@ export default function DailyBrief() {
             alignItems: 'flex-start',
             gap: 8,
           }}>
-            <span style={{ fontSize: 13, flexShrink: 0 }}>💡</span>
+            <Info size={13} style={{ flexShrink: 0, color: theme.muted }} />
             <p style={{ fontSize: 12, color: theme.muted, lineHeight: 1.55, margin: 0 }}>
               <span style={{ fontWeight: 700, color: theme.text }}>Today's tip: </span>
               {tip}

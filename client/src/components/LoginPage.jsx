@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { API_URL } from '../config/api';
-import { Eye, EyeOff, TrendingUp, TrendingDown, AlertCircle, Loader2, Mail, Lock, ArrowRight, ArrowLeft, Shield, Zap, BarChart2, Activity } from 'lucide-react';
+import { Eye, EyeOff, TrendingUp, TrendingDown, AlertCircle, Loader2, Mail, Lock, ArrowRight, ArrowLeft, ChevronLeft, Shield, Zap, BarChart2, Activity, BookOpen, Brain, Bot, Flame } from 'lucide-react';
 
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || '';
 
@@ -30,7 +30,16 @@ export default function LoginPage({ onSwitchToSignup, onBack, onForgotPassword }
   const [loading, setLoading]     = useState(false);
   const googleBtnRef              = useRef(null);
   const initializedRef            = useRef(false);
+  const formRef                   = useRef(null);
   const [spotsLeft, setSpotsLeft] = useState(null);
+  const [fieldErrors, setFieldErrors] = useState({ email: '', password: '' });
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     fetch(`${API_URL}/api/admin/stats`)
@@ -82,6 +91,7 @@ export default function LoginPage({ onSwitchToSignup, onBack, onForgotPassword }
   async function handleSubmit(e) {
     e.preventDefault();
     setError('');
+    setFieldErrors({ email: '', password: '' });
     setLoading(true);
     try {
       await login({ email, password });
@@ -92,7 +102,13 @@ export default function LoginPage({ onSwitchToSignup, onBack, onForgotPassword }
         setError(data.error);
       } else {
         setIsGoogleOnlyError(false);
-        setError(data?.error || 'Login failed. Please check your credentials.');
+        const errMsg = data?.error || 'Login failed. Please check your credentials.';
+        setError(errMsg);
+        setFieldErrors({ email: ' ', password: errMsg });
+      }
+      if (formRef.current) {
+        formRef.current.style.animation = 'formShake 0.5s ease';
+        setTimeout(() => { if (formRef.current) formRef.current.style.animation = ''; }, 500);
       }
     } finally {
       setLoading(false);
@@ -100,7 +116,8 @@ export default function LoginPage({ onSwitchToSignup, onBack, onForgotPassword }
   }
 
   return (
-    <div className="h-screen overflow-hidden flex flex-col bg-[#060a12]">
+    <div style={{display:'flex',height:'100vh',width:'100vw',overflow:'hidden',background:'#000000',position:'relative'}}>
+
       <style>{`
         @keyframes floatCard {
           0%,100% { transform: translateY(0px);   }
@@ -127,247 +144,405 @@ export default function LoginPage({ onSwitchToSignup, onBack, onForgotPassword }
             floatCard var(--dur, 4s) ease-in-out var(--delay, 0s) infinite,
             tickerIn  0.7s ease both var(--delay, 0s);
         }
+        @keyframes formAppear {
+          from { opacity: 0; transform: translateY(16px); }
+          to   { opacity: 1; transform: translateY(0);    }
+        }
+        @keyframes slideInRight {
+          from { opacity: 0; transform: translateX(16px); }
+          to   { opacity: 1; transform: translateX(0);    }
+        }
+        @keyframes shake {
+          0%,100% { transform: translateX(0);  }
+          25%     { transform: translateX(-8px); }
+          75%     { transform: translateX(8px);  }
+        }
+        @keyframes formShake {
+          0%, 100% { transform: translateX(0); }
+          20% { transform: translateX(-8px); }
+          40% { transform: translateX(8px); }
+          60% { transform: translateX(-5px); }
+          80% { transform: translateX(5px); }
+        }
+        .field-input:focus {
+          border-color: #10b981 !important;
+          box-shadow: 0 0 0 3px rgba(16,185,129,0.1) !important;
+        }
+        @keyframes orbPulse {
+          0%, 100% { transform: scale(1);    opacity: 0.6; }
+          50%       { transform: scale(1.15); opacity: 1;   }
+        }
+        @keyframes panelFadeIn {
+          from { opacity: 0; }
+          to   { opacity: 1; }
+        }
       `}</style>
 
-      {/* ── Top navigation bar ─────────────────────────────────────────── */}
-      <div className="shrink-0 flex items-center justify-between px-8 h-[52px] border-b border-white/[0.06]"
-           style={{background:'rgba(6,10,18,0.98)'}}>
-        {onBack ? (
-          <button onClick={onBack}
-                  className="group flex items-center gap-2 text-[13px] font-medium text-gray-400 hover:text-white transition-all duration-200 px-3 py-1.5 rounded-lg hover:bg-white/[0.05]">
-            <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-0.5" />
-            Back to home
-          </button>
-        ) : <div />}
-        <div className="flex items-center gap-2 select-none">
-          <img src="/logo.png" alt="Zynth" className="w-7 h-7 object-contain" />
-          <span className="text-[15px] font-bold text-white tracking-tight">Zynth</span>
-        </div>
-      </div>
+      {/* ── LEFT: Brand panel */}
+      <div style={{display: isMobile ? 'none' : 'flex', flex:1, flexDirection:'column', position:'relative', overflow:'hidden', minHeight:'100vh', background:'#000000', animation:'panelFadeIn 0.6s ease'}}>
 
-      {/* ── Panels ───────────────────────────────────────────────────────── */}
-      <div className="flex flex-1 overflow-hidden">
-      {/* ── LEFT: Decorative animated panel ──────────────────────────────── */}
-      <div className="hidden lg:flex flex-col flex-1 relative overflow-hidden"
-           style={{background:'linear-gradient(150deg,#060e1c 0%,#060c18 55%,#07111f 100%)'}}>
+        {/* Orb 1 – bottom left */}
+        <div className="pointer-events-none" style={{
+          position:'absolute', width:'500px', height:'500px',
+          background:'radial-gradient(circle, rgba(16,185,129,0.12) 0%, transparent 70%)',
+          bottom:'-150px', left:'-150px',
+          filter:'blur(60px)',
+          animation:'orbPulse 4s ease infinite',
+        }} />
+        {/* Orb 2 – top right */}
+        <div className="pointer-events-none" style={{
+          position:'absolute', width:'350px', height:'350px',
+          background:'radial-gradient(circle, rgba(16,185,129,0.07) 0%, transparent 70%)',
+          top:'-100px', right:'-50px',
+          filter:'blur(50px)',
+          animation:'orbPulse 4s ease infinite 2s',
+        }} />
 
-        {/* Grid */}
-        <div className="absolute inset-0 pointer-events-none"
-             style={{backgroundImage:'linear-gradient(rgba(16,185,129,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(16,185,129,0.04) 1px,transparent 1px)', backgroundSize:'60px 60px'}} />
-        {/* Glow blobs */}
-        <div className="absolute pointer-events-none"
-             style={{top:'-10%',left:'15%',width:'500px',height:'400px',background:'radial-gradient(ellipse,rgba(16,185,129,0.12) 0%,transparent 65%)'}} />
-        <div className="absolute pointer-events-none"
-             style={{bottom:'5%',right:'5%',width:'380px',height:'320px',background:'radial-gradient(ellipse,rgba(59,130,246,0.08) 0%,transparent 65%)'}} />
-
-        {/* Animated SVG chart */}
-        <div className="absolute inset-x-0 pointer-events-none" style={{top:'18%',opacity:0.18}}>
-          <svg viewBox="0 0 620 200" className="w-full" style={{height:'220px'}} preserveAspectRatio="none">
-            <defs>
-              <linearGradient id="cg1" x1="0" y1="0" x2="1" y2="0">
-                <stop offset="0%"   stopColor="#059669" stopOpacity="0" />
-                <stop offset="35%"  stopColor="#059669" stopOpacity="1" />
-                <stop offset="100%" stopColor="#0d9488" stopOpacity="0.7" />
-              </linearGradient>
-              <linearGradient id="fg1" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%"   stopColor="#059669" stopOpacity="0.28" />
-                <stop offset="100%" stopColor="#059669" stopOpacity="0"    />
-              </linearGradient>
-            </defs>
-            <path d="M0,170 L50,148 L90,162 L130,118 L170,132 L210,96 L250,112 L290,74 L330,92 L370,58 L410,74 L450,42 L490,58 L530,26 L570,42 L620,16 L620,200 L0,200 Z"
-                  fill="url(#fg1)" />
-            <path d="M0,170 L50,148 L90,162 L130,118 L170,132 L210,96 L250,112 L290,74 L330,92 L370,58 L410,74 L450,42 L490,58 L530,26 L570,42 L620,16"
-                  fill="none" stroke="url(#cg1)" strokeWidth="2.5"
-                  strokeDasharray="800" strokeDashoffset="800"
-                  style={{animation:'chartDraw 2.8s ease forwards 0.4s'}} />
-          </svg>
-        </div>
-
-        {/* Floating ticker cards */}
-        {TICKERS.map(t => (
-          <div key={t.sym} className="ticker-float absolute"
-               style={{top:t.top, left:t.left, '--dur':t.dur, '--delay':t.delay}}>
-            <div className="flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl"
-                 style={{background:'rgba(9,17,32,0.88)',border:'1px solid rgba(255,255,255,0.07)',backdropFilter:'blur(12px)',boxShadow:'0 8px 32px rgba(0,0,0,0.45)'}}>
-              <div className="flex flex-col leading-none">
-                <span className="text-[9px] font-bold tracking-[0.18em] text-gray-500 mb-0.5">{t.sym}</span>
-                <span className="text-[14px] font-bold text-white">{t.val}</span>
-              </div>
-              <div className={`flex items-center gap-1 text-[11px] font-semibold px-1.5 py-0.5 rounded-lg ${t.up ? 'text-emerald-400 bg-emerald-500/10' : 'text-red-400 bg-red-500/10'}`}>
-                {t.up ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
-                {t.chg}
-              </div>
+        {/* Top-left branding */}
+        <div className="relative z-10 flex items-center" style={{padding:'32px 48px 0', gap:'16px'}}>
+          {onBack && (
+            <button
+              onClick={onBack}
+              style={{
+                background:'rgba(255,255,255,0.05)',
+                border:'1px solid rgba(255,255,255,0.1)',
+                borderRadius:'8px',
+                padding:'7px 14px',
+                fontSize:'13px',
+                color:'rgba(255,255,255,0.5)',
+                display:'flex', alignItems:'center', gap:'6px',
+                cursor:'pointer',
+                transition:'all 0.2s ease',
+                flexShrink:0,
+              }}
+              onMouseEnter={e => { e.currentTarget.style.background='rgba(255,255,255,0.08)'; e.currentTarget.style.color='rgba(255,255,255,0.75)'; e.currentTarget.style.borderColor='rgba(255,255,255,0.18)'; }}
+              onMouseLeave={e => { e.currentTarget.style.background='rgba(255,255,255,0.05)'; e.currentTarget.style.color='rgba(255,255,255,0.5)'; e.currentTarget.style.borderColor='rgba(255,255,255,0.1)'; }}
+            >
+              <ChevronLeft size={14} />
+              Back
+            </button>
+          )}
+          <div style={{display:'flex', alignItems:'center', gap:'10px'}}>
+            <img src="/logo.png" alt="Zynth" style={{height:'30px',width:'auto',objectFit:'contain'}} />
+            <div>
+              <p style={{color:'#fff',fontSize:'18px',fontWeight:700,lineHeight:1}}>Zynth</p>
+              <p style={{color:'rgba(255,255,255,0.4)',fontSize:'12px',letterSpacing:'0.05em',marginTop:'3px'}}>
+                Intelligence Behind Every Trade
+              </p>
             </div>
           </div>
-        ))}
+        </div>
 
-        {/* Gradient scrim — fades tickers into bottom content cleanly */}
-        <div className="absolute bottom-0 left-0 right-0 h-60 pointer-events-none z-[5]"
-             style={{background:'linear-gradient(to bottom, transparent 0%, rgba(6,12,24,0.85) 60%, #060c18 100%)'}} />
-
-        {/* Bottom content */}
-        <div className="absolute bottom-0 left-0 right-0 p-10 z-10">
-          <div className="flex items-center gap-2 mb-5">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 shrink-0"
-                  style={{animation:'liveBlip 1.5s ease-in-out infinite'}} />
-            <span className="text-[10px] font-bold tracking-[0.22em] text-emerald-500">LIVE MARKETS</span>
-          </div>
-          <h2 className="text-[30px] font-bold text-white leading-tight mb-2">
-            Trade smarter with<br />
-            <span style={{background:'linear-gradient(90deg,#34d399,#2dd4bf)',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent',backgroundClip:'text'}}>
-              AI-powered analytics
-            </span>
-          </h2>
-          <p className="text-gray-500 text-[13px] mb-7 max-w-[280px] leading-relaxed">
-            Intelligence Behind Every Trade.
+        {/* Center content */}
+        <div className="relative z-10 flex-1 flex flex-col justify-center" style={{padding:'0 48px 96px'}}>
+          <h1 style={{fontSize:'52px',fontWeight:800,letterSpacing:'-0.03em',lineHeight:1.1,marginBottom:'16px'}}>
+            <span style={{color:'#ffffff'}}>Welcome Back,<br /></span>
+            <span style={{
+              background:'linear-gradient(135deg, #ffffff 30%, #10b981 100%)',
+              WebkitBackgroundClip:'text',
+              WebkitTextFillColor:'transparent',
+              backgroundClip:'text',
+            }}>Trader.</span>
+          </h1>
+          <p style={{fontSize:'16px',color:'rgba(255,255,255,0.45)',lineHeight:1.7,marginBottom:'36px',maxWidth:'340px'}}>
+            Your journal, AI insights and live markets are waiting for you.
           </p>
-          <div className="space-y-3">
-            {FEATURES.map(({ Icon, title, desc }) => (
-              <div key={title} className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
-                     style={{background:'rgba(16,185,129,0.1)',border:'1px solid rgba(16,185,129,0.15)'}}>
-                  <Icon className="w-[14px] h-[14px] text-emerald-400" />
+          <div>
+            {[
+              { Icon: BookOpen,   title: 'Smart Trade Journal',  desc: 'Log trades in seconds with AI coaching' },
+              { Icon: Brain,      title: 'AI Pattern Detection', desc: 'Find why you win and lose with data'    },
+              { Icon: TrendingUp, title: 'Macro Intelligence',   desc: 'Trade with economic data on your side'  },
+            ].map(({ Icon, title, desc }) => (
+              <div key={title} style={{display:'flex',gap:'14px',marginBottom:'22px'}}>
+                <div style={{
+                  width:'40px',height:'40px',minWidth:'40px',
+                  background:'rgba(16,185,129,0.1)',
+                  border:'1px solid rgba(16,185,129,0.2)',
+                  borderRadius:'10px',
+                  display:'flex',alignItems:'center',justifyContent:'center',
+                }}>
+                  <Icon size={18} color="#10b981" />
                 </div>
                 <div>
-                  <p className="text-[12px] font-semibold text-white">{title}</p>
-                  <p className="text-[11px] text-gray-600">{desc}</p>
+                  <p style={{color:'#fff',fontSize:'14px',fontWeight:600,marginBottom:'2px'}}>{title}</p>
+                  <p style={{color:'rgba(255,255,255,0.4)',fontSize:'13px',lineHeight:1.5}}>{desc}</p>
                 </div>
               </div>
             ))}
           </div>
         </div>
+
+        {/* Bottom trust badges */}
+        <div className="relative z-10" style={{position:'absolute',bottom:'32px',left:'48px',right:'48px'}}>
+          <div style={{display:'flex',gap:'8px',flexWrap:'wrap'}}>
+            {[
+              {Icon: Shield, label: '256-bit SSL'},
+              {Icon: Zap,    label: 'Live Data'},
+              {Icon: Bot,    label: 'AI'},
+            ].map(({Icon, label}) => (
+              <span key={label} style={{
+                background:'rgba(255,255,255,0.04)',
+                border:'1px solid rgba(255,255,255,0.08)',
+                borderRadius:'20px',
+                padding:'5px 12px',
+                fontSize:'11px',
+                color:'rgba(255,255,255,0.4)',
+                display:'flex',gap:'5px',alignItems:'center',
+              }}>
+                <Icon size={11} />{label}
+              </span>
+            ))}
+          </div>
+        </div>
       </div>
 
-      {/* ── RIGHT: Form panel ─────────────────────────────────────────────── */}
-      <div className="w-full lg:w-[460px] shrink-0 flex flex-col h-full items-center justify-center relative overflow-hidden"
-           style={{borderLeft:'1px solid rgba(255,255,255,0.04)',background:'linear-gradient(180deg,#07101e 0%,#060a12 100%)'}}>
+{/* ── RIGHT: Form panel ──────────────────────────────────────────── */}
+      <div style={{
+             width: isMobile ? '100vw' : '480px',
+             minWidth: isMobile ? 'unset' : '480px',
+             flexShrink: 0,
+             display:'flex', flexDirection:'column',
+             alignItems:'center',
+             overflowY:'auto',
+             background: isMobile ? '#000000' : '#0d0d0d',
+             borderLeft: isMobile ? 'none' : '1px solid rgba(255,255,255,0.06)',
+             padding: isMobile ? '32px 24px' : '48px',
+             minHeight:'100vh',
+             boxSizing:'border-box',
+           }}>
 
-        {/* Top glow */}
-        <div className="pointer-events-none absolute -top-16 left-1/2 -translate-x-1/2 w-64 h-36"
-             style={{background:'radial-gradient(ellipse,rgba(16,185,129,0.13) 0%,transparent 70%)'}} />
+        <div style={{width:'100%', maxWidth:'380px', animation:'slideInRight 0.4s ease both', marginTop:'auto', marginBottom:'auto'}}>
 
-        <div className="w-full max-w-[340px] px-4">
-
-          {/* Founding member banner */}
-          {spotsLeft != null && spotsLeft > 0 && (
-            <div className="mb-4 px-4 py-2.5 rounded-xl text-center text-[12px] font-semibold"
-                 style={{background:'linear-gradient(90deg,rgba(5,150,105,0.2),rgba(13,148,136,0.15))',border:'1px solid rgba(16,185,129,0.25)'}}>
-              🔥 <span className="text-emerald-300">{spotsLeft} founding spots left</span>{' '}
-              <span className="text-gray-400">at</span>{' '}
-              <span className="text-white font-bold">$1.99/month</span>
+          {/* Mobile back + logo */}
+          {isMobile && onBack && (
+            <button
+              onClick={onBack}
+              style={{
+                background:'rgba(255,255,255,0.05)',
+                border:'1px solid rgba(255,255,255,0.1)',
+                borderRadius:'8px',
+                padding:'7px 14px',
+                fontSize:'13px',
+                color:'rgba(255,255,255,0.5)',
+                display:'flex', alignItems:'center', gap:'6px',
+                cursor:'pointer',
+                transition:'all 0.2s ease',
+                marginBottom:'20px',
+                alignSelf:'flex-start',
+              }}
+              onMouseEnter={e => { e.currentTarget.style.background='rgba(255,255,255,0.08)'; e.currentTarget.style.color='rgba(255,255,255,0.75)'; }}
+              onMouseLeave={e => { e.currentTarget.style.background='rgba(255,255,255,0.05)'; e.currentTarget.style.color='rgba(255,255,255,0.5)'; }}
+            >
+              <ChevronLeft size={14} />
+              Back
+            </button>
+          )}
+          {isMobile && (
+            <div style={{display:'flex',alignItems:'center',justifyContent:'center',gap:'8px',marginBottom:'28px'}}>
+              <div style={{width:'28px',height:'28px',background:'#10b981',borderRadius:'7px',display:'flex',alignItems:'center',justifyContent:'center'}}>
+                <span style={{color:'#fff',fontWeight:'bold',fontSize:'14px'}}>Z</span>
+              </div>
+              <span style={{color:'#fff',fontWeight:'bold',fontSize:'17px'}}>Zynth</span>
             </div>
           )}
 
-          {/* Card */}
-          <div className="rounded-2xl p-px"
-               style={{background:'linear-gradient(135deg,rgba(16,185,129,0.18) 0%,rgba(255,255,255,0.04) 50%,rgba(59,130,246,0.09) 100%)',boxShadow:'0 24px 60px rgba(0,0,0,0.55)'}}>
-            <div className="relative rounded-2xl px-5 py-5 bg-[#0b1322]">
-              <div className="absolute top-0 left-[12%] right-[12%] h-px"
-                   style={{background:'linear-gradient(90deg,transparent,rgba(16,185,129,0.35),transparent)'}} />
-
-              <h2 className="text-[16px] font-semibold text-white">Welcome back</h2>
-              <p className="text-gray-500 text-[11px] mt-0.5 mb-4">Sign in to your account to continue</p>
-
-              {error && (
-                isGoogleOnlyError ? (
-                  <div className="flex items-start gap-2.5 rounded-xl px-3 py-2.5 mb-4"
-                       style={{background:'rgba(66,133,244,0.08)',border:'1px solid rgba(66,133,244,0.28)'}}>
-                    {/* Google G icon */}
-                    <svg className="w-4 h-4 shrink-0 mt-0.5" viewBox="0 0 24 24">
-                      <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-                      <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-                      <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
-                      <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
-                    </svg>
-                    <p className="text-[12px] leading-relaxed" style={{color:'#93bbfc'}}>{error}</p>
-                  </div>
-                ) : (
-                  <div className="flex items-start gap-2 rounded-xl px-3 py-2.5 mb-4"
-                       style={{background:'rgba(239,68,68,0.07)',border:'1px solid rgba(239,68,68,0.18)'}}>
-                    <AlertCircle className="w-[13px] h-[13px] text-red-400 mt-0.5 shrink-0" />
-                    <p className="text-red-400 text-[12px]">{error}</p>
-                  </div>
-                )
-              )}
-
-              <form onSubmit={handleSubmit} className="space-y-3">
-                <div className="space-y-1">
-                  <label className="block text-[10px] font-bold text-gray-600 uppercase tracking-widest">Email address</label>
-                  <div className="relative">
-                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-[13px] h-[13px] text-gray-600 pointer-events-none" />
-                    <input
-                      type="email" autoComplete="email" value={email}
-                      onChange={e => setEmail(e.target.value)} required placeholder="you@example.com"
-                      className="w-full pl-8 pr-4 py-[8px] rounded-xl text-[13px] text-white placeholder-gray-700 bg-[#0d1728] border border-white/[0.06] focus:outline-none focus:border-emerald-500/40 focus:ring-2 focus:ring-emerald-500/[0.09] transition-all duration-200"
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-1">
-                  <div className="flex justify-between items-center">
-                    <label className="block text-[10px] font-bold text-gray-600 uppercase tracking-widest">Password</label>
-                    <button type="button" onClick={onForgotPassword} className="text-[11px] text-emerald-500 hover:text-emerald-400 font-medium transition-colors">Forgot password?</button>
-                  </div>
-                  <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-[13px] h-[13px] text-gray-600 pointer-events-none" />
-                    <input
-                      type={showPass ? 'text' : 'password'} autoComplete="current-password"
-                      value={password} onChange={e => setPassword(e.target.value)} required placeholder="••••••••••"
-                      className="w-full pl-8 pr-10 py-[8px] rounded-xl text-[13px] text-white placeholder-gray-700 bg-[#0d1728] border border-white/[0.06] focus:outline-none focus:border-emerald-500/40 focus:ring-2 focus:ring-emerald-500/[0.09] transition-all duration-200"
-                    />
-                    <button type="button" onClick={() => setShowPass(v => !v)} tabIndex={-1}
-                            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-600 hover:text-gray-400 transition-colors">
-                      {showPass ? <EyeOff className="w-[13px] h-[13px]" /> : <Eye className="w-[13px] h-[13px]" />}
-                    </button>
-                  </div>
-                </div>
-
-                <button
-                  type="submit" disabled={loading}
-                  className="group w-full flex items-center justify-center gap-2 text-white font-semibold text-[13px] rounded-xl py-[10px] transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed hover:brightness-110 hover:shadow-[0_6px_24px_rgba(16,185,129,0.38)]"
-                  style={{background:'linear-gradient(135deg,#059669 0%,#0d9488 100%)',boxShadow:'0 4px 16px rgba(16,185,129,0.22),0 1px 0 rgba(255,255,255,0.07) inset'}}
-                >
-                  {loading
-                    ? <><Loader2 className="w-3.5 h-3.5 animate-spin" /><span>Signing in…</span></>
-                    : <><span>Sign in</span><ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" /></>}
-                </button>
-              </form>
-
-              <div className="flex items-center gap-3 my-3">
-                <div className="flex-1 h-px bg-white/[0.05]" />
-                <span className="text-[10px] font-bold text-gray-700 tracking-[0.2em]">OR</span>
-                <div className="flex-1 h-px bg-white/[0.05]" />
-              </div>
-
-              {GOOGLE_CLIENT_ID ? (
-                <div ref={googleBtnRef} className="w-full flex justify-center" style={{minHeight:'40px'}} />
-              ) : (
-                <button disabled className="w-full flex items-center justify-center gap-2 rounded-xl py-[10px] text-[12px] text-gray-600 cursor-not-allowed"
-                        style={{background:'rgba(255,255,255,0.02)',border:'1px solid rgba(255,255,255,0.05)'}}>
-                  <svg width="14" height="14" viewBox="0 0 24 24" className="opacity-40 shrink-0">
-                    <path fill="#EA4335" d="M5.266 9.765A7.077 7.077 0 0 1 12 4.909c1.69 0 3.218.6 4.418 1.582L19.91 3C17.782 1.145 15.055 0 12 0 7.27 0 3.198 2.698 1.24 6.65l4.026 3.115z"/>
-                    <path fill="#34A853" d="M16.04 18.013c-1.09.703-2.474 1.078-4.04 1.078a7.077 7.077 0 0 1-6.723-4.823l-4.04 3.067A11.965 11.965 0 0 0 12 24c2.933 0 5.735-1.043 7.834-3l-3.793-2.987z"/>
-                    <path fill="#4A90E2" d="M19.834 21c2.195-2.048 3.62-5.096 3.62-9 0-.71-.109-1.473-.272-2.182H12v4.637h6.436c-.317 1.559-1.17 2.766-2.395 3.558L19.834 21z"/>
-                    <path fill="#FBBC05" d="M5.277 14.268A7.12 7.12 0 0 1 4.909 12c0-.782.125-1.533.357-2.235L1.24 6.65A11.934 11.934 0 0 0 0 12c0 1.92.445 3.73 1.237 5.335l4.04-3.067z"/>
-                  </svg>
-                  <span className="opacity-40">Continue with Google</span>
-                </button>
-              )}
-
-              <p className="text-center text-[12px] text-gray-600 mt-3">
-                Don't have an account?{' '}
-                <button onClick={onSwitchToSignup} className="text-emerald-400 hover:text-emerald-300 font-semibold transition-colors">
-                  Create one
-                </button>
-              </p>
+          {/* Founding banner */}
+          {spotsLeft != null && spotsLeft > 0 && (
+            <div style={{
+              background:'linear-gradient(135deg, rgba(16,185,129,0.08), rgba(16,185,129,0.04))',
+              border:'1px solid rgba(16,185,129,0.2)',
+              borderRadius:'8px',
+              padding:'10px 14px',
+              marginBottom:'28px',
+              fontSize:'13px',
+              color:'#10b981',
+              textAlign:'center',
+            }}>
+              <Flame size={12} style={{display:'inline-block',verticalAlign:'middle',marginRight:'4px'}} />{spotsLeft} founding spots · $1.99/mo
             </div>
+          )}
+
+          {/* Header */}
+          <h2 style={{fontSize: isMobile ? '22px' : '26px',fontWeight:700,color:'#fff',letterSpacing:'-0.02em',margin:0}}>Sign in</h2>
+          <p style={{fontSize:'14px',marginTop:'6px',marginBottom:'28px',color:'rgba(255,255,255,0.4)'}}>
+            New here?{' '}
+            <button onClick={onSwitchToSignup}
+                    style={{color:'#10b981',background:'none',border:'none',cursor:'pointer',fontSize:'14px',padding:0}}
+                    onMouseEnter={e => e.currentTarget.style.textDecoration='underline'}
+                    onMouseLeave={e => e.currentTarget.style.textDecoration='none'}>
+              Create a free account
+            </button>
+          </p>
+
+          {/* Error */}
+          {error && (
+            isGoogleOnlyError ? (
+              <div style={{display:'flex',alignItems:'flex-start',gap:'10px',background:'rgba(66,133,244,0.08)',border:'1px solid rgba(66,133,244,0.28)',borderRadius:'10px',padding:'12px 14px',marginBottom:'20px',animation:'shake 0.35s ease'}}>
+                <svg width="16" height="16" viewBox="0 0 24 24" style={{flexShrink:0,marginTop:'1px'}}>
+                  <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                  <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                  <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+                  <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                </svg>
+                <p style={{fontSize:'13px',color:'#93bbfc',margin:0,lineHeight:1.5}}>{error}</p>
+              </div>
+            ) : (
+              <div style={{display:'flex',alignItems:'flex-start',gap:'10px',background:'rgba(239,68,68,0.07)',border:'1px solid rgba(239,68,68,0.2)',borderRadius:'10px',padding:'12px 14px',marginBottom:'20px',animation:'shake 0.35s ease'}}>
+                <AlertCircle size={16} color="#f87171" style={{flexShrink:0,marginTop:'1px'}} />
+                <p style={{fontSize:'13px',color:'#f87171',margin:0,lineHeight:1.5}}>{error}</p>
+              </div>
+            )
+          )}
+
+          <form onSubmit={handleSubmit} ref={formRef}>
+
+            {/* Email */}
+            <div style={{marginBottom:'18px'}}>
+              <label style={{display:'block',fontSize:'12px',fontWeight:500,color:'rgba(255,255,255,0.5)',marginBottom:'7px',textTransform:'uppercase',letterSpacing:'0.06em'}}>
+                Email address
+              </label>
+              <div style={{position:'relative'}}>
+                <Mail size={16} color="rgba(255,255,255,0.25)" style={{position:'absolute',left:'14px',top:'50%',transform:'translateY(-50%)',pointerEvents:'none'}} />
+                <input
+                  type="email" autoComplete="email" value={email} required
+                  onChange={e => { setEmail(e.target.value); setFieldErrors(fe => ({...fe, email:''})); }}
+                  placeholder="you@example.com"
+                  style={{
+                    width:'100%', boxSizing:'border-box',
+                    background:'rgba(255,255,255,0.04)',
+                    border: fieldErrors.email ? '1px solid rgba(239,68,68,0.6)' : '1px solid rgba(255,255,255,0.08)',
+                    boxShadow: fieldErrors.email ? '0 0 0 3px rgba(239,68,68,0.08)' : 'none',
+                    borderRadius:'10px',
+                    padding: isMobile ? '11px 14px 11px 40px' : '12px 16px 12px 42px',
+                    color:'#fff', fontSize:'15px',
+                    transition:'all 0.2s ease', outline:'none',
+                  }}
+                  onFocus={e => { e.target.style.background='rgba(255,255,255,0.06)'; e.target.style.borderColor='rgba(16,185,129,0.5)'; e.target.style.boxShadow='0 0 0 3px rgba(16,185,129,0.08)'; }}
+                  onBlur={e => { e.target.style.background='rgba(255,255,255,0.04)'; if (fieldErrors.email) { e.target.style.borderColor='rgba(239,68,68,0.6)'; e.target.style.boxShadow='0 0 0 3px rgba(239,68,68,0.08)'; } else { e.target.style.borderColor='rgba(255,255,255,0.08)'; e.target.style.boxShadow='none'; } }}
+                />
+              </div>
+              {fieldErrors.email && fieldErrors.email.trim() && (
+                <div style={{display:'flex',alignItems:'center',gap:'4px',marginTop:'5px'}}>
+                  <AlertCircle size={12} color="#ef4444" />
+                  <span style={{fontSize:'12px',color:'#ef4444'}}>{fieldErrors.email}</span>
+                </div>
+              )}
+            </div>
+
+            {/* Password */}
+            <div style={{marginBottom:'8px'}}>
+              <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'7px'}}>
+                <label style={{fontSize:'12px',fontWeight:500,color:'rgba(255,255,255,0.5)',textTransform:'uppercase',letterSpacing:'0.06em'}}>
+                  Password
+                </label>
+                <button type="button" onClick={onForgotPassword}
+                        style={{fontSize:'13px',color:'#10b981',background:'none',border:'none',cursor:'pointer',padding:0}}
+                        onMouseEnter={e => e.currentTarget.style.textDecoration='underline'}
+                        onMouseLeave={e => e.currentTarget.style.textDecoration='none'}>
+                  Forgot password?
+                </button>
+              </div>
+              <div style={{position:'relative'}}>
+                <Lock size={16} color="rgba(255,255,255,0.25)" style={{position:'absolute',left:'14px',top:'50%',transform:'translateY(-50%)',pointerEvents:'none'}} />
+                <input
+                  type={showPass ? 'text' : 'password'} autoComplete="current-password" value={password} required
+                  onChange={e => { setPassword(e.target.value); setFieldErrors(fe => ({...fe, password:''})); }}
+                  placeholder="••••••••"
+                  style={{
+                    width:'100%', boxSizing:'border-box',
+                    background:'rgba(255,255,255,0.04)',
+                    border: fieldErrors.password ? '1px solid rgba(239,68,68,0.6)' : '1px solid rgba(255,255,255,0.08)',
+                    boxShadow: fieldErrors.password ? '0 0 0 3px rgba(239,68,68,0.08)' : 'none',
+                    borderRadius:'10px',
+                    padding: isMobile ? '11px 44px 11px 40px' : '12px 44px 12px 42px',
+                    color:'#fff', fontSize:'15px',
+                    transition:'all 0.2s ease', outline:'none',
+                  }}
+                  onFocus={e => { e.target.style.background='rgba(255,255,255,0.06)'; e.target.style.borderColor='rgba(16,185,129,0.5)'; e.target.style.boxShadow='0 0 0 3px rgba(16,185,129,0.08)'; }}
+                  onBlur={e => { e.target.style.background='rgba(255,255,255,0.04)'; if (fieldErrors.password) { e.target.style.borderColor='rgba(239,68,68,0.6)'; e.target.style.boxShadow='0 0 0 3px rgba(239,68,68,0.08)'; } else { e.target.style.borderColor='rgba(255,255,255,0.08)'; e.target.style.boxShadow='none'; } }}
+                />
+                <button type="button" onClick={() => setShowPass(v => !v)} tabIndex={-1}
+                        style={{position:'absolute',right:'14px',top:'50%',transform:'translateY(-50%)',background:'none',border:'none',cursor:'pointer',color:'rgba(255,255,255,0.35)',padding:0,display:'flex'}}>
+                  {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
+              </div>
+              {fieldErrors.password && (
+                <div style={{display:'flex',alignItems:'center',gap:'4px',marginTop:'5px'}}>
+                  <AlertCircle size={12} color="#ef4444" />
+                  <span style={{fontSize:'12px',color:'#ef4444'}}>{fieldErrors.password}</span>
+                </div>
+              )}
+            </div>
+
+            {/* Sign in button */}
+            <button
+              type="submit" disabled={loading}
+              style={{
+                marginTop:'8px', width:'100%',
+                padding: isMobile ? '12px' : '13px',
+                background: loading ? 'rgba(16,185,129,0.5)' : '#10b981',
+                border:'none', borderRadius:'10px',
+                color:'#fff', fontSize:'15px', fontWeight:600,
+                cursor: loading ? 'not-allowed' : 'pointer',
+                transition:'all 0.2s ease',
+                letterSpacing:'0.01em',
+                display:'flex', alignItems:'center', justifyContent:'center', gap:'8px',
+              }}
+              onMouseEnter={e => { if (!loading) { e.currentTarget.style.background='#0d9a6e'; e.currentTarget.style.transform='translateY(-1px)'; e.currentTarget.style.boxShadow='0 8px 25px rgba(16,185,129,0.25)'; } }}
+              onMouseLeave={e => { e.currentTarget.style.background=loading?'rgba(16,185,129,0.5)':'#10b981'; e.currentTarget.style.transform='translateY(0)'; e.currentTarget.style.boxShadow='none'; }}
+              onMouseDown={e => { e.currentTarget.style.transform='translateY(0) scale(0.99)'; }}
+              onMouseUp={e => { e.currentTarget.style.transform='translateY(-1px) scale(1)'; }}
+            >
+              {loading ? <><Loader2 size={16} className="animate-spin" /><span>Signing in...</span></> : 'Sign In'}
+            </button>
+          </form>
+
+          {/* OR divider */}
+          <div style={{margin:'20px 0',display:'flex',alignItems:'center',gap:'12px'}}>
+            <div style={{flex:1,height:'1px',background:'rgba(255,255,255,0.07)'}} />
+            <span style={{fontSize:'13px',color:'rgba(255,255,255,0.3)'}}>or</span>
+            <div style={{flex:1,height:'1px',background:'rgba(255,255,255,0.07)'}} />
           </div>
 
-          <p className="text-center text-[10px] text-gray-800 mt-2 tracking-wide">
-            256-bit SSL encrypted · © 2026 Zynth
+          {/* Google button */}
+          {GOOGLE_CLIENT_ID ? (
+            <div ref={googleBtnRef} className="w-full flex justify-center" style={{minHeight:'44px'}} />
+          ) : (
+            <button
+              type="button" disabled
+              style={{
+                width:'100%', padding:'12px',
+                background:'rgba(255,255,255,0.04)',
+                border:'1px solid rgba(255,255,255,0.1)',
+                borderRadius:'10px',
+                color:'rgba(255,255,255,0.75)',
+                fontSize:'14px', fontWeight:500,
+                display:'flex', alignItems:'center', justifyContent:'center', gap:'10px',
+                cursor:'not-allowed', transition:'all 0.2s ease',
+              }}
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24">
+                <path fill="#EA4335" d="M5.266 9.765A7.077 7.077 0 0 1 12 4.909c1.69 0 3.218.6 4.418 1.582L19.91 3C17.782 1.145 15.055 0 12 0 7.27 0 3.198 2.698 1.24 6.65l4.026 3.115z"/>
+                <path fill="#34A853" d="M16.04 18.013c-1.09.703-2.474 1.078-4.04 1.078a7.077 7.077 0 0 1-6.723-4.823l-4.04 3.067A11.965 11.965 0 0 0 12 24c2.933 0 5.735-1.043 7.834-3l-3.793-2.987z"/>
+                <path fill="#4A90E2" d="M19.834 21c2.195-2.048 3.62-5.096 3.62-9 0-.71-.109-1.473-.272-2.182H12v4.637h6.436c-.317 1.559-1.17 2.766-2.395 3.558L19.834 21z"/>
+                <path fill="#FBBC05" d="M5.277 14.268A7.12 7.12 0 0 1 4.909 12c0-.782.125-1.533.357-2.235L1.24 6.65A11.934 11.934 0 0 0 0 12c0 1.92.445 3.73 1.237 5.335l4.04-3.067z"/>
+              </svg>
+              Continue with Google
+            </button>
+          )}
+
+          {/* Bottom link */}
+          <p style={{marginTop:'20px',textAlign:'center',fontSize:'14px',color:'rgba(255,255,255,0.35)'}}>
+            Don't have an account?{' '}
+            <button onClick={onSwitchToSignup}
+                    style={{color:'#10b981',background:'none',border:'none',cursor:'pointer',fontSize:'14px',padding:0,fontWeight:500}}
+                    onMouseEnter={e => e.currentTarget.style.textDecoration='underline'}
+                    onMouseLeave={e => e.currentTarget.style.textDecoration='none'}>
+              Sign up free
+            </button>
           </p>
+
         </div>
-      </div>
       </div>
     </div>
   );

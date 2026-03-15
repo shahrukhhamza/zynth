@@ -1,5 +1,5 @@
 import { useTheme } from '../contexts/ThemeContext';
-import { Brain, AlertTriangle, CheckCircle2, Lightbulb, Wrench, Zap } from 'lucide-react';
+import { Brain, AlertTriangle, CheckCircle2, Lightbulb, Wrench, Zap, Sparkles } from 'lucide-react';
 
 // Trim text to max N words
 function trimWords(text, max = 14) {
@@ -111,7 +111,7 @@ export default function MT5AIInsights({ aiSummary }) {
               color: theme.muted,
             }}
           >
-            {generated_by === 'gemini' ? '✦ Zynth AI' : 'Rule Engine'}
+            {generated_by === 'gemini' ? <><Sparkles className="w-3 h-3 inline-block mr-1" />Zynth AI</> : 'Rule Engine'}
           </span>
         </div>
       </div>

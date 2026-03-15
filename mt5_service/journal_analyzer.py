@@ -260,8 +260,11 @@ def compute_behavioral_analysis(trades: List[Dict[str, Any]]) -> Dict[str, Any]:
     df["profit"]    = pd.to_numeric(df.get("profit", pd.Series(dtype=float)), errors="coerce").fillna(0)
     df["_open_dt"]  = pd.to_datetime(df.get("open_time"),  utc=True, errors="coerce")
     df["_close_dt"] = pd.to_datetime(df.get("close_time"), utc=True, errors="coerce")
-    df["_date"]     = df["_open_dt"].dt.date
-    df = df.sort_values("_open_dt").reset_index(drop=True)
+    # Mobile screenshots often have null open_time — fall back to close_time for date grouping
+    df["_date"] = df["_open_dt"].dt.date.where(df["_open_dt"].notna(), df["_close_dt"].dt.date)
+    # Sort by open_time if available, else close_time
+    sort_key = df["_open_dt"].where(df["_open_dt"].notna(), df["_close_dt"])
+    df = df.assign(_sort_key=sort_key).sort_values("_sort_key").drop(columns="_sort_key").reset_index(drop=True)
 
     lot_col = next((c for c in ("lot", "volume") if c in df.columns), None)
     if lot_col:
@@ -275,11 +278,14 @@ def compute_behavioral_analysis(trades: List[Dict[str, Any]]) -> Dict[str, Any]:
     max_trades_in_day    = int(trades_per_day.max()) if not trades_per_day.empty else 0
 
     # 2. Revenge trading — trade opened within 10 min of a loss closing
+    # Use close_time as fallback timestamp when open_time is null (mobile format)
     revenge_count = 0
     for i in range(1, len(df)):
         if df.iloc[i - 1]["profit"] < 0:
             prev_close = df.iloc[i - 1]["_close_dt"]
             cur_open   = df.iloc[i]["_open_dt"]
+            if pd.isna(cur_open):
+                cur_open = df.iloc[i]["_close_dt"]
             if pd.notna(prev_close) and pd.notna(cur_open):
                 diff_min = (cur_open - prev_close).total_seconds() / 60
                 if 0 < diff_min <= 10:

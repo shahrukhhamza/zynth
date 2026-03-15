@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, createContext, useContext } from 'react';
 import {
   Wrench, Clock, Layers, BarChart2, Activity,
   TrendingUp, ArrowLeftRight, X, Calculator, ChevronDown,
+  Info, Check, AlertTriangle, XCircle,
 } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 import { useTimezone } from '../contexts/TimezoneContext';
@@ -272,7 +273,7 @@ function PositionCalc() {
         <Stat label="Mini Lots (÷10)" value={fmt(lots * 10)} color="#a855f7" />
         <Stat label="Micro Lots (÷100)" value={fmt(lots * 100)} color="#10b981" />
         <InfoBox color="#3b82f6">
-          💡 Always round <strong style={{ color: '#93c5fd' }}>down</strong> to the nearest 0.01 lot to stay within your defined risk limit.
+          <Info size={13} style={{display:'inline-block',verticalAlign:'middle',marginRight:'4px'}} /> Always round <strong style={{ color: '#93c5fd' }}>down</strong> to the nearest 0.01 lot to stay within your defined risk limit.
         </InfoBox>
       </div>
     </div>
@@ -425,8 +426,8 @@ function MarketHours() {
       {/* ── Overlap windows ── */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
         {[
-          { active: lonNy,  label: '🔥 London–NY Overlap',   time: `${fmtTzH(13)} – ${fmtTzH(17)}`, tip: 'Peak volatility · Best for EUR/USD, GBP/USD' },
-          { active: tokLon, label: '⚡ Tokyo–London Overlap', time: `${fmtTzH(8)} – ${fmtTzH(9)}`,   tip: 'EUR/JPY, GBP/JPY volatility spikes'           },
+          { active: lonNy,  label: 'London–NY Overlap',   time: `${fmtTzH(13)} – ${fmtTzH(17)}`, tip: 'Peak volatility · Best for EUR/USD, GBP/USD' },
+          { active: tokLon, label: 'Tokyo–London Overlap', time: `${fmtTzH(8)} – ${fmtTzH(9)}`,   tip: 'EUR/JPY, GBP/JPY volatility spikes'           },
         ].map(o => (
           <div key={o.label} style={{
             background: o.active ? 'rgba(16,185,129,0.07)' : T.overlapBg,
@@ -493,7 +494,7 @@ function PipCalc() {
           <Inp value={pairPx} onChange={e => setPairPx(e.target.value)} step="0.00001" placeholder={String(meta.approxRate)} />
         </Field>
         <InfoBox color="#a855f7">
-          💡 For USD-denominated accounts only. For other accounts multiply by your USD conversion rate.
+          <Info size={13} style={{display:'inline-block',verticalAlign:'middle',marginRight:'4px'}} /> For USD-denominated accounts only. For other accounts multiply by your USD conversion rate.
         </InfoBox>
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
@@ -543,7 +544,7 @@ function RRCalc() {
         <Field label="Stop Loss"><Inp value={sl} onChange={e => setSl(e.target.value)} step="0.01" /></Field>
         <Field label="Take Profit"><Inp value={tp} onChange={e => setTp(e.target.value)} step="0.01" /></Field>
         <InfoBox color="#f97316">
-          💡 Works for any instrument: Gold (2000), Forex (1.0850), Indices (5200), etc.
+          <Info size={13} style={{display:'inline-block',verticalAlign:'middle',marginRight:'4px'}} /> Works for any instrument: Gold (2000), Forex (1.0850), Indices (5200), etc.
         </InfoBox>
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
@@ -572,7 +573,7 @@ function RRCalc() {
             </div>
           ))}
           <div style={{ fontSize: 11, marginTop: 4, fontWeight: 600, color: rrColor, fontFamily: FONT }}>
-            {rr >= 2 ? '✅ Good setup (≥ 1:2)' : rr >= 1.5 ? '⚠️ Fair setup (≥ 1:1.5)' : rr > 0 ? '❌ Poor R:R (< 1:1.5)' : '—'}
+            {rr >= 2 ? <><Check size={11} color="#22c55e" style={{display:'inline-block',verticalAlign:'middle',marginRight:3}}/> Good setup (≥ 1:2)</> : rr >= 1.5 ? <><AlertTriangle size={11} color="#f59e0b" style={{display:'inline-block',verticalAlign:'middle',marginRight:3}}/> Fair setup (≥ 1:1.5)</> : rr > 0 ? <><XCircle size={11} color="#ef4444" style={{display:'inline-block',verticalAlign:'middle',marginRight:3}}/> Poor R:R ({'<'} 1:1.5)</> : '—'}
             {!isNaN(isBuy) && rr > 0 && <span style={{ color: T.muted }}>  ·  {isBuy ? '▲ BUY' : '▼ SELL'}</span>}
           </div>
         </SubCard>
@@ -818,7 +819,7 @@ function SwapCalc() {
           ))}
           {hasTriple && (
             <div style={{ fontSize: 10, color: '#f59e0b', marginTop: 6, fontWeight: 600, fontFamily: FONT }}>
-              ⚠ Wednesday positions attract triple swap (covers the weekend).
+              <AlertTriangle size={11} style={{display:'inline-block',verticalAlign:'middle',marginRight:3}} /> Wednesday positions attract triple swap (covers the weekend).
             </div>
           )}
           <div style={{ fontSize: 10, color: T.hintColor, marginTop: 6, lineHeight: 1.6, fontFamily: FONT }}>

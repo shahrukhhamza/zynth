@@ -283,7 +283,9 @@ export default function OnboardingFlow({ onComplete, onSkip }) {
         {/* ── Step 0: Welcome ── */}
         {step === 0 && (
           <div className="px-6 py-10 text-center">
-            <div className="text-4xl mb-4">👋</div>
+            <div className="mb-4">
+              <Sparkles size={40} style={{ margin: '0 auto', display: 'block', color: '#10b981' }} />
+            </div>
             <h2 className="text-2xl font-bold mb-2" style={{ color: theme.text }}>
               Welcome to Zynth, {firstName}!
             </h2>

@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react';
 import PreTradeChecklist from '../PreTradeChecklist';
-import { Upload, X, TrendingUp, TrendingDown, Save, ChevronDown } from 'lucide-react';
+import { Upload, X, TrendingUp, TrendingDown, Save, ChevronDown, Target } from 'lucide-react';
 import { useTheme } from '../../contexts/ThemeContext';
 import { createTrade, updateTrade } from '../../services/journalApi';
 
@@ -254,7 +254,7 @@ export default function TradeEntryForm({ onSaved, editTrade = null }) {
         <button type="button" onClick={() => setShowChecklist(true)}
           className="w-full py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2"
           style={{ backgroundColor: 'transparent', color: theme.accent, border: `2px solid ${theme.accent}`, borderRadius: '0.75rem' }}>
-          🎯 Run Pre-Trade Check
+          <Target size={14} /> Run Pre-Trade Check
         </button>
       )}
 

@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { createPortal } from 'react-dom';
-import { MessageCircle, X, Send, ArrowUp } from 'lucide-react';
+import { MessageCircle, X, Send, ArrowUp, AlertTriangle } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 import { useAuth } from '../contexts/AuthContext';
 import { API_URL } from '../config/api';
@@ -79,7 +79,7 @@ export default function ZynthAssistant() {
     const welcome = {
       id: 'welcome',
       role: 'assistant',
-      content: `👋 Hi ${firstName}! I am the Zynth Assistant.\n\nNote: I am still being improved and may not answer all questions correctly.\n\nI can try to help with:\n- How to use app features\n- Finding settings and options\n- Understanding your analytics\n- Plan and pricing questions\n\nFor guaranteed help email us at\nshahrukhhamza770@gmail.com`,
+      content: `Hi ${firstName}! I am the Zynth Assistant.\n\nNote: I am still being improved and may not answer all questions correctly.\n\nI can try to help with:\n- How to use app features\n- Finding settings and options\n- Understanding your analytics\n- Plan and pricing questions\n\nFor guaranteed help email us at\nshahrukhhamza770@gmail.com`,
       timestamp: new Date().toISOString(),
     };
     setMessages([welcome]);
@@ -261,7 +261,7 @@ export default function ZynthAssistant() {
             gap: 8,
             flexShrink: 0,
           }}>
-            <span style={{ fontSize: 13, lineHeight: 1.4, flexShrink: 0 }}>⚠️</span>
+            <AlertTriangle size={13} style={{ lineHeight: 1.4, flexShrink: 0, color: '#f59e0b' }} />
             <p style={{ margin: 0, fontSize: 12, color: '#f59e0b', lineHeight: 1.5 }}>
               Assistant is under construction. Responses may be incomplete or inaccurate.{' '}
               For reliable help email:{' '}

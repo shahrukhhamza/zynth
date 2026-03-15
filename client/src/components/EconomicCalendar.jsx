@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { fetchEconomicCalendar } from '../services/calendarApi';
-import { Calendar, TrendingUp, TrendingDown, AlertCircle, ChevronDown, ChevronUp, Activity, Lightbulb, Target, Printer, Download, X, CheckSquare, Square, ShieldCheck } from 'lucide-react';
+import { Calendar, TrendingUp, TrendingDown, AlertCircle, ChevronDown, ChevronUp, Activity, Lightbulb, Target, Printer, Download, X, CheckSquare, Square, ShieldCheck, BarChart2, Clock } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine, LabelList } from 'recharts';
 import { useTheme } from '../contexts/ThemeContext';
 import { useTimezone } from '../contexts/TimezoneContext';
@@ -507,13 +507,13 @@ function EconomicCalendar() {
         const pill = { display: 'inline-flex', alignItems: 'center', gap: 6, padding: '6px 14px', borderRadius: 999, background: theme.surface, border: `1px solid ${theme.border}`, fontSize: 12, fontWeight: 500 };
         return (
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-            <span style={{ ...pill, color: theme.muted }}><span>📊</span>{filteredIndicators.length} Indicators</span>
-            <span style={{ ...pill, color: theme.muted }}><span>🕐</span>Last Updated: {new Date().toLocaleDateString('en-US', { day: 'numeric', month: 'short' })}</span>
+            <span style={{ ...pill, color: theme.muted }}><BarChart2 size={12} style={{display:'inline-block',verticalAlign:'middle',marginRight:'4px'}} />{filteredIndicators.length} Indicators</span>
+            <span style={{ ...pill, color: theme.muted }}><Clock size={12} style={{display:'inline-block',verticalAlign:'middle',marginRight:'4px'}} />Last Updated: {new Date().toLocaleDateString('en-US', { day: 'numeric', month: 'short' })}</span>
             {nextInd && (
-              <span style={{ ...pill, color: theme.muted }}><span>📅</span>Next: {nextInd.name} · {new Date(nextInd.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
+              <span style={{ ...pill, color: theme.muted }}><Calendar size={12} style={{display:'inline-block',verticalAlign:'middle',marginRight:'4px'}} />Next: {nextInd.name} · {new Date(nextInd.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
             )}
             <span style={{ ...pill, color: netScore >= 0 ? '#22c55e' : '#ef4444' }}>
-              <span>{netScore >= 0 ? '📈' : '📉'}</span>
+              {netScore >= 0 ? <TrendingUp size={12} style={{display:'inline-block',verticalAlign:'middle',marginRight:'4px'}} /> : <TrendingDown size={12} style={{display:'inline-block',verticalAlign:'middle',marginRight:'4px'}} />}
               Macro Score: {netScore >= 0 ? '+' : ''}{netScore} {netScore > 2 ? 'Bullish' : netScore < -2 ? 'Bearish' : 'Neutral'}
             </span>
           </div>
@@ -582,7 +582,7 @@ function EconomicCalendar() {
                   {/* Currency */}
                   <td style={{ padding: '16px 12px', textAlign: 'center' }}>
                     <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '4px 10px', borderRadius: 999, background: theme.bg, border: `1px solid ${theme.border}`, color: theme.text, fontSize: 11, fontWeight: 600, whiteSpace: 'nowrap' }}>
-                      🇺🇸 {indicator.currency}
+                      {indicator.currency}
                     </span>
                   </td>
                   {/* Impact */}

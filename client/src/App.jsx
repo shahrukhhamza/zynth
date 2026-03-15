@@ -33,7 +33,7 @@ import ResetPasswordPage from './components/ResetPasswordPage'
 import OnboardingFlow from './components/OnboardingFlow'
 import TermsOfService from './components/TermsOfService'
 import { fetchNews } from './services/api'
-import { Loader2 } from 'lucide-react'
+import { Loader2, Sparkles } from 'lucide-react'
 
 // Lazily loaded — chunk is only downloaded when an admin user navigates to the admin view.
 // Non-admin users will never trigger this import.
@@ -310,7 +310,7 @@ function SetupReminderBanner({ onSetup, onDismiss }) {
         WebkitBackdropFilter: 'blur(8px)',
       }}
     >
-      <span>✨</span>
+      <Sparkles size={14} style={{ color: '#10b981', flexShrink: 0 }} />
       <p className="flex-1 text-xs" style={{ color: theme.text }}>
         Complete your profile setup to personalize your Zynth experience.
       </p>
