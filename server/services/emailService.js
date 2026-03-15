@@ -1,4 +1,4 @@
-import axios from 'axios';
+﻿import axios from 'axios';
 
 export async function sendPasswordResetEmail(toEmail, resetLink, userName) {
   const displayName = userName || 'Trader';
@@ -95,7 +95,7 @@ export async function sendPasswordResetEmail(toEmail, resetLink, userName) {
 </html>`;
 
   const body = {
-    sender:      { name: 'Zynth', email: 'shahrukhhamza770@gmail.com' },
+    sender:      { name: 'Zynth', email: 'getzynth@gmail.com' },
     to:          [{ email: toEmail }],
     subject:     'Reset your Zynth password',
     htmlContent: html,

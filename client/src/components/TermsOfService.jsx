@@ -1,4 +1,4 @@
-import { ArrowLeft, Shield, AlertTriangle, FileText } from 'lucide-react';
+﻿import { ArrowLeft, Shield, AlertTriangle, FileText } from 'lucide-react';
 
 export default function TermsOfService({ onBack }) {
   const handleBack = () => {
@@ -273,12 +273,12 @@ export default function TermsOfService({ onBack }) {
               <p style={{ fontSize: 13, color: '#9ca3af' }}>
                 Email:{' '}
                 <a
-                  href="mailto:shahrukhhamza770@gmail.com"
+                  href="mailto:getzynth@gmail.com"
                   style={{ color: '#10b981', textDecoration: 'none' }}
                   onMouseEnter={e => (e.currentTarget.style.textDecoration = 'underline')}
                   onMouseLeave={e => (e.currentTarget.style.textDecoration = 'none')}
                 >
-                  shahrukhhamza770@gmail.com
+                  getzynth@gmail.com
                 </a>
               </p>
             </div>

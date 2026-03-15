@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+﻿import { useState, useMemo } from 'react';
 import { BookOpen, Search, ChevronRight, ArrowLeft, Rocket, BookMarked, Bot, BarChart2, Calendar, Camera, Calculator, CreditCard, Settings, Shield, Star, X, Home, Mail } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 
@@ -683,7 +683,7 @@ The AI may occasionally misread values. Always review before confirming import. 
 - Heavily customized broker interfaces
 
 ::tip
-If your broker format is not working well, email us at shahrukhhamza770@gmail.com and we will add support for it.
+If your broker format is not working well, email us at getzynth@gmail.com and we will add support for it.
 ::`,
       },
       {
@@ -853,7 +853,7 @@ Everything in Pro, plus:
 2. Click **Upgrade Plan** in your profile
 3. Choose **Pro** ($1.99) or **Elite** ($4.99)
 4. Note the founding member price (only for first 100 users)
-5. Email **shahrukhhamza770@gmail.com** with:
+5. Email **getzynth@gmail.com** with:
    - Subject: \`Pro Upgrade Request\` or \`Elite Upgrade Request\`
    - Include: your registered email address
 6. We will process and activate your account within 24 hours
@@ -899,7 +899,7 @@ If you are not satisfied within the first 7 days of your subscription we will re
 
 ## How to Request a Refund
 
-Email **shahrukhhamza770@gmail.com** with:
+Email **getzynth@gmail.com** with:
 - Subject: \`Refund Request\`
 - Include your registered email and reason (optional)
 
@@ -961,7 +961,7 @@ If you signed up with Google, your account uses Google's security. Enable 2FA on
 - Screenshots are stored securely
 
 ::warning
-If your account is compromised, email shahrukhhamza770@gmail.com immediately with subject "Account Security Issue".
+If your account is compromised, email getzynth@gmail.com immediately with subject "Account Security Issue".
 ::`,
       },
       {
@@ -1072,7 +1072,7 @@ When collapsed, only icons are shown — hover to see labels.`,
 
 ## Data Deletion
 
-Email **shahrukhhamza770@gmail.com** to delete your account and all data.`,
+Email **getzynth@gmail.com** to delete your account and all data.`,
       },
       {
         id: 'terms-summary', title: 'Terms of Service Summary',
@@ -1454,7 +1454,7 @@ export default function HelpCenter() {
               <div style={{ fontSize: 28, marginBottom: 8 }}><Search size={28} style={{ display: 'inline-block' }} /></div>
                 <div style={{ color: text0, fontSize: 13, fontWeight: 600, marginBottom: 4 }}>No results found</div>
                 <div style={{ color: textMuted, fontSize: 12 }}>Try different keywords or email us</div>
-                <a href="mailto:shahrukhhamza770@gmail.com" style={{ color: accent, fontSize: 12, display: 'block', marginTop: 6 }}>shahrukhhamza770@gmail.com</a>
+                <a href="mailto:getzynth@gmail.com" style={{ color: accent, fontSize: 12, display: 'block', marginTop: 6 }}>getzynth@gmail.com</a>
               </div>
             ) : (
               searchResults.map(art => (
@@ -1476,8 +1476,8 @@ export default function HelpCenter() {
         {/* Bottom contact */}
         <div style={{ padding: '12px 16px', borderTop: `1px solid ${border}` }}>
           <div style={{ color: textMuted, fontSize: 11, marginBottom: 4 }}>Need more help?</div>
-          <a href="mailto:shahrukhhamza770@gmail.com" style={{ color: accent, fontSize: 12, fontWeight: 600, textDecoration: 'none' }}>
-            shahrukhhamza770@gmail.com
+          <a href="mailto:getzynth@gmail.com" style={{ color: accent, fontSize: 12, fontWeight: 600, textDecoration: 'none' }}>
+            getzynth@gmail.com
           </a>
         </div>
       </div>
@@ -1683,10 +1683,10 @@ export default function HelpCenter() {
               <div style={{ color: text0, fontWeight: 700, fontSize: 16, marginBottom: 6 }}>Can't find what you need?</div>
               <div style={{ color: textMuted, fontSize: 14, marginBottom: 12 }}>Our team is happy to help with any question.</div>
               <a
-                href="mailto:shahrukhhamza770@gmail.com"
+                href="mailto:getzynth@gmail.com"
                 style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '9px 20px', borderRadius: 8, background: accent, color: '#fff', fontWeight: 600, fontSize: 14, textDecoration: 'none' }}
               >
-                Email Us: shahrukhhamza770@gmail.com
+                Email Us: getzynth@gmail.com
               </a>
               <div style={{ color: textMuted, fontSize: 12, marginTop: 10 }}>Response time: within 24 hours</div>
             </div>

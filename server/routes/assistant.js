@@ -1,4 +1,4 @@
-/**
+﻿/**
  * assistant.js - Zynth Assistant chatbot route
  *
  * POST /api/assistant/chat
@@ -179,11 +179,11 @@ const QA = [
     a: 'To sign out: click your name/avatar in the top right -> scroll to bottom of profile panel -> click the red Sign Out button.' },
 
   { q: ['delete account', 'remove account', 'close account'],
-    a: 'To delete your account contact us at shahrukhhamza770@gmail.com with the subject "Delete Account". We will process it within 24 hours.' },
+    a: 'To delete your account contact us at getzynth@gmail.com with the subject "Delete Account". We will process it within 24 hours.' },
 
   // PLANS & BILLING
   { q: ['upgrade', 'upgrade plan', 'get pro', 'get elite', 'subscribe', 'buy plan', 'purchase'],
-    a: 'To upgrade: click your avatar top right -> Profile -> click Upgrade Plan button -> choose Pro ($1.99/month) or Elite ($4.99/month) -> email us at shahrukhhamza770@gmail.com with your chosen plan. We activate within 24 hours.' },
+    a: 'To upgrade: click your avatar top right -> Profile -> click Upgrade Plan button -> choose Pro ($1.99/month) or Elite ($4.99/month) -> email us at getzynth@gmail.com with your chosen plan. We activate within 24 hours.' },
 
   { q: ['how much', 'price', 'cost', 'pricing', 'how much does it cost', 'subscription cost'],
     a: 'Zynth pricing: Free ($0 forever), Pro ($1.99/month founding price, regular $9), Elite ($4.99/month founding price, regular $25). The founding price is locked in forever for the first 100 users.' },
@@ -201,10 +201,10 @@ const QA = [
     a: 'Founding Member offer: first 100 users get Pro at $1.99/month (regular $9) and Elite at $4.99/month (regular $25). This price is locked in FOREVER even when we raise prices. Check the landing page to see how many spots are left.' },
 
   { q: ['payment', 'how to pay', 'pay for pro', 'billing', 'invoice'],
-    a: 'To pay: email shahrukhhamza770@gmail.com with subject "Pro Upgrade" or "Elite Upgrade" and your registered email. We will process your upgrade within 24 hours at the founding member price.' },
+    a: 'To pay: email getzynth@gmail.com with subject "Pro Upgrade" or "Elite Upgrade" and your registered email. We will process your upgrade within 24 hours at the founding member price.' },
 
   { q: ['refund', 'money back', 'cancel subscription', 'cancel plan'],
-    a: 'We offer a 7-day money back guarantee. To cancel or request a refund email shahrukhhamza770@gmail.com. No questions asked within 7 days of payment.' },
+    a: 'We offer a 7-day money back guarantee. To cancel or request a refund email getzynth@gmail.com. No questions asked within 7 days of payment.' },
 
   // ONBOARDING
   { q: ['onboarding', 'setup', 'profile setup', 'initial setup', 'first setup'],
@@ -212,20 +212,20 @@ const QA = [
 
   // ERRORS & SUPPORT
   { q: ['not working', 'broken', 'bug', 'error', 'issue', 'problem', 'glitch', 'something wrong'],
-    a: 'Sorry to hear something is not working! Try refreshing the page first. If the issue persists email us at shahrukhhamza770@gmail.com with a description of the problem and we will fix it right away.' },
+    a: 'Sorry to hear something is not working! Try refreshing the page first. If the issue persists email us at getzynth@gmail.com with a description of the problem and we will fix it right away.' },
 
   { q: ['contact', 'support', 'help', 'reach you', 'talk to someone', 'customer service'],
-    a: 'For support email shahrukhhamza770@gmail.com. We typically respond within 24 hours. For urgent issues write URGENT in the subject line.' },
+    a: 'For support email getzynth@gmail.com. We typically respond within 24 hours. For urgent issues write URGENT in the subject line.' },
 
   { q: ['feature request', 'suggestion', 'idea', 'feedback', 'improve'],
-    a: 'We love feedback! Email your suggestions to shahrukhhamza770@gmail.com. Elite members get priority feature requests - your ideas get built first.' },
+    a: 'We love feedback! Email your suggestions to getzynth@gmail.com. Elite members get priority feature requests - your ideas get built first.' },
 
   // ABOUT ZYNTH
   { q: ['what is zynth', 'about zynth', 'zynth platform', 'what does zynth do', 'tell me about zynth'],
     a: 'Zynth is a trading intelligence platform for serious traders. It combines: smart trade journal with AI coaching, live market data, economic intelligence, Macro Surprise Score, and behavioral pattern detection - all in one place. Tagline: Intelligence Behind Every Trade.' },
 
   { q: ['who made zynth', 'who built zynth', 'founder', 'developer', 'team'],
-    a: 'Zynth was built by Shahrukh Hamza, an independent developer passionate about helping traders improve. Contact: shahrukhhamza770@gmail.com' },
+    a: 'Zynth was built by Shahrukh Hamza, an independent developer passionate about helping traders improve. Contact: getzynth@gmail.com' },
 
   { q: ['is zynth safe', 'data privacy', 'my data', 'secure', 'privacy'],
     a: 'Your data is stored securely with encryption in transit (TLS). We never share or sell your trading data to anyone. Your journal entries and performance data are private to your account only.' },
@@ -276,7 +276,7 @@ router.post('/chat', async (req, res) => {
     }
 
     return res.json({
-      reply: 'I am not sure about that. Here are some things I can help with:\n\n- How to log a trade\n- Changing timezone or theme\n- Understanding your analytics\n- Upgrading your plan\n- Using Screenshot Analysis\n\nOr email us at shahrukhhamza770@gmail.com for anything else!',
+      reply: 'I am not sure about that. Here are some things I can help with:\n\n- How to log a trade\n- Changing timezone or theme\n- Understanding your analytics\n- Upgrading your plan\n- Using Screenshot Analysis\n\nOr email us at getzynth@gmail.com for anything else!',
     });
 
   } catch (error) {

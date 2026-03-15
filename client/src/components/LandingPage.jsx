@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import {
   TrendingUp, BarChart2, BookOpen, Shield, Zap, Brain, Users,
   AlertCircle, FileSpreadsheet,
@@ -1375,7 +1375,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
             <p className="text-[11px] font-bold tracking-[0.15em] uppercase text-gray-500 mb-4">Connect</p>
             <ul className="space-y-2.5">
               <li>
-                <a href="mailto:shahrukhhamza770@gmail.com" className="text-[13px] text-gray-500 hover:text-gray-300 transition-colors">shahrukhhamza770@gmail.com</a>
+                <a href="mailto:getzynth@gmail.com" className="text-[13px] text-gray-500 hover:text-gray-300 transition-colors">getzynth@gmail.com</a>
               </li>
             </ul>
             <div className="mt-6 flex items-center gap-2">
@@ -1390,7 +1390,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
           <div className="flex gap-5">
             <a href="/terms#privacy" className="text-[11px] text-gray-700 hover:text-gray-500 transition-colors">Privacy</a>
             <a href="/terms" className="text-[11px] text-gray-700 hover:text-gray-500 transition-colors">Terms</a>
-            <a href="mailto:shahrukhhamza770@gmail.com" className="text-[11px] text-gray-700 hover:text-gray-500 transition-colors">Contact</a>
+            <a href="mailto:getzynth@gmail.com" className="text-[11px] text-gray-700 hover:text-gray-500 transition-colors">Contact</a>
           </div>
         </div>
       </footer>
