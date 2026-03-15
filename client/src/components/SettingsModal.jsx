@@ -188,7 +188,7 @@ export default function SettingsModal({ onClose, autoRefresh, onToggleAutoRefres
           overflow: 'hidden',
         }}>
           {/* Drag handle */}
-          <div style={{ display: 'flex', justifyContent: 'center', paddingTop: 12, paddingBottom: 4, flexShrink: 0 }}>
+          <div style={{ display: 'flex', justifyContent: 'center', paddingTop: 8, paddingBottom: 2, flexShrink: 0 }}>
             <div style={{ width: 40, height: 4, backgroundColor: 'rgba(255,255,255,0.2)', borderRadius: 2 }} />
           </div>
 
@@ -197,7 +197,7 @@ export default function SettingsModal({ onClose, autoRefresh, onToggleAutoRefres
             position: 'sticky', top: 0,
             backgroundColor: sheetBg,
             zIndex: 10,
-            padding: '16px 20px',
+            padding: '10px 20px 12px',
             borderBottom: '1px solid rgba(255,255,255,0.06)',
             display: 'flex', alignItems: 'center', justifyContent: 'space-between',
             flexShrink: 0,
