@@ -40,7 +40,7 @@ function RightPanel({ sentimentStats, highImpactNews, totalNews }) {
   };
 
   return (
-    <aside className="w-80 border-l overflow-y-auto" style={{ backgroundColor: theme.surface, borderColor: theme.border }}>
+    <aside className="hidden md:block w-80 border-l overflow-y-auto" style={{ backgroundColor: theme.surface, borderColor: theme.border }}>
       <div className="p-4">
         {/* Market Sentiment */}
         <div className="mb-6">
