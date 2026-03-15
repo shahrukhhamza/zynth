@@ -149,7 +149,7 @@ function Header({ autoRefresh, onToggleAutoRefresh, onToggleSidebar, mobileSideb
         )}
       </div>
       
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-2 sm:gap-4">
         {/* Theme Toggle — segmented pill */}
         <button
           onClick={theme.toggleTheme}
@@ -203,7 +203,7 @@ function Header({ autoRefresh, onToggleAutoRefresh, onToggleSidebar, mobileSideb
             title="Select Timezone"
           >
             <Globe className="w-4 h-4" style={{ color: theme.accent }} />
-            <span className="text-sm font-medium">{currentTz.id.toUpperCase()}</span>
+            <span className="hidden sm:inline text-sm font-medium">{currentTz.id.toUpperCase()}</span>
           </button>
 
           {showTimezoneDropdown && (

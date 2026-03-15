@@ -193,7 +193,7 @@ export default function TradeJournal() {
       style={{ backgroundColor: theme.surface, border: `1px solid ${theme.border}` }}>
       {TABS.map(({ key, label, icon: Icon }) => (
         <button key={key} onClick={() => setTab(key)}
-          className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all whitespace-nowrap flex-1 justify-center"
+          className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all whitespace-nowrap flex-shrink-0 justify-center"
           style={{
             backgroundColor: tab === key ? theme.accent : 'transparent',
             color: tab === key ? '#fff' : theme.muted,

@@ -782,7 +782,7 @@ export default function EconomicDashboard() {
         </div>
 
         {/* Gold main chart */}
-        <div className="rounded-lg border" style={{ backgroundColor: theme.surface, borderColor: '#f59e0b55' }}>
+        <div className="rounded-lg border" style={{ backgroundColor: theme.surface, borderColor: theme.border }}>
           <div className="p-4 border-b" style={{ borderColor: theme.border }}>
             <div className="flex items-start justify-between gap-4 flex-wrap">
               <div>
@@ -816,7 +816,7 @@ export default function EconomicDashboard() {
 
           {/* Stats bar */}
           {chartDashKey ? (
-            <div className="grid grid-cols-6 border-b" style={{ borderColor: theme.border }}>
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 border-b" style={{ borderColor: theme.border }}>
               {[
                 { l: 'Day High',   v: chartLiveData?.dayHigh  != null ? fmtChartVal(chartLiveData.dayHigh)  : (chartStats ? fmtChartVal(chartStats.periodHigh) : '—'),  c: bull },
                 { l: 'Day Low',    v: chartLiveData?.dayLow   != null ? fmtChartVal(chartLiveData.dayLow)   : (chartStats ? fmtChartVal(chartStats.periodLow)  : '—'),  c: bear },
@@ -928,7 +928,7 @@ export default function EconomicDashboard() {
               <thead>
                 <tr style={{ borderBottom: `1px solid ${theme.border}` }}>
                   {['Instrument', 'Symbol', 'Live Price', 'Day Chg', `${tf} %`, 'Pearson r', 'Interpretation'].map(h => (
-                    <th key={h} className="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: theme.muted }}>{h}</th>
+                    <th key={h} className={`px-4 py-2 text-left text-xs font-semibold uppercase tracking-wider${h === 'Day Chg' || h === 'Interpretation' ? ' hidden md:table-cell' : ''}`} style={{ color: theme.muted }}>{h}</th>
                   ))}
                 </tr>
               </thead>
@@ -967,7 +967,7 @@ export default function EconomicDashboard() {
                       <td className="px-4 py-3 font-mono font-bold tabular-nums" style={{ color: theme.text }}>
                         {ld?.price != null ? (a.unit === '$' ? `$${ld.price.toFixed(2)}` : `${ld.price.toFixed(2)} ${a.unit}`) : '—'}
                       </td>
-                      <td className="px-4 py-3 font-medium tabular-nums" style={{ color: up === true ? bull : up === false ? bear : theme.muted }}>
+                      <td className="px-4 py-3 font-medium tabular-nums hidden md:table-cell" style={{ color: up === true ? bull : up === false ? bear : theme.muted }}>
                         {ld?.changePct != null ? fmtPct(ld.changePct) : '—'}
                       </td>
                       <td className="px-4 py-3 font-medium tabular-nums" style={{ color: ps?.periodChange != null ? (ps.periodChange >= 0 ? bull : bear) : theme.muted }}>
@@ -976,7 +976,7 @@ export default function EconomicDashboard() {
                       <td className="px-4 py-3 font-bold font-mono tabular-nums" style={{ color: corrColor }}>
                         {a.corr !== null ? a.corr.toFixed(2) : 'N/A'}
                       </td>
-                      <td className="px-4 py-3 text-xs" style={{ color: a.corr === null ? theme.muted : Math.abs(a.corr) < 0.2 ? theme.muted : corrColor }}>{signal}</td>
+                      <td className="px-4 py-3 text-xs hidden md:table-cell" style={{ color: a.corr === null ? theme.muted : Math.abs(a.corr) < 0.2 ? theme.muted : corrColor }}>{signal}</td>
                     </tr>
                   );
                 })}
