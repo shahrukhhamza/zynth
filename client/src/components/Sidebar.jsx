@@ -493,9 +493,10 @@ export default function Sidebar({
     <>
       {/* Mobile sidebar */}
       <aside
-        className={['md:hidden fixed top-0 left-0 h-full z-40 flex flex-col overflow-hidden', 'transition-transform duration-300 ease-in-out', mobileOpen ? 'translate-x-0' : '-translate-x-full'].join(' ')}
+        className={['md:hidden fixed top-0 left-0 h-full flex flex-col overflow-hidden', 'transition-transform duration-300 ease-in-out', mobileOpen ? 'translate-x-0' : '-translate-x-full'].join(' ')}
         style={{
-          width: 260,
+          width: 280,
+          zIndex: 999,
           backgroundColor: theme.surface,
           borderRight: theme.isDark ? '1px solid rgba(255,255,255,0.10)' : '1px solid rgba(0,0,0,0.10)',
           boxShadow: theme.isDark ? '4px 0 20px rgba(0,0,0,0.45)' : '4px 0 12px rgba(0,0,0,0.08)',
@@ -506,7 +507,18 @@ export default function Sidebar({
           filters={filters} onFilterChange={onFilterChange} onApplyFilters={onApplyFilters} onResetFilters={onResetFilters} />
       </aside>
       {mobileOpen && (
-        <div className="md:hidden fixed inset-0 z-30 bg-black/50 backdrop-blur-sm" onClick={onClose} aria-hidden="true" />
+        <div
+          className="md:hidden"
+          onClick={onClose}
+          aria-hidden="true"
+          style={{
+            position: 'fixed', inset: 0,
+            background: 'rgba(0,0,0,0.6)',
+            backdropFilter: 'blur(4px)',
+            WebkitBackdropFilter: 'blur(4px)',
+            zIndex: 998,
+          }}
+        />
       )}
       {/* Desktop sidebar — fixed position, width animates */}
       <aside

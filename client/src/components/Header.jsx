@@ -61,28 +61,66 @@ function Header({ autoRefresh, onToggleAutoRefresh, onToggleSidebar, mobileSideb
 
   return (
   <>
-    <header className="border-b h-16 flex items-center justify-between px-4 md:px-6" style={{ 
-      position: 'fixed',
-      top: 0,
-      left: isMobile ? 0 : (sidebarCollapsed ? 64 : 240),
-      width: isMobile ? '100vw' : (sidebarCollapsed ? 'calc(100vw - 64px)' : 'calc(100vw - 240px)'),
-      transition: 'left 0.3s ease, width 0.3s ease',
-      zIndex: 100,
-      backgroundColor: theme.surface, 
-      borderColor: theme.border 
-    }}>
+    <header
+      className="border-b flex items-center justify-between"
+      style={{ 
+        position: 'fixed',
+        top: 0,
+        left: isMobile ? 0 : (sidebarCollapsed ? 64 : 240),
+        width: isMobile ? '100vw' : (sidebarCollapsed ? 'calc(100vw - 64px)' : 'calc(100vw - 240px)'),
+        height: isMobile ? 56 : 64,
+        padding: isMobile ? '0 16px' : '0 24px',
+        transition: 'left 0.3s ease, width 0.3s ease',
+        zIndex: 100,
+        backgroundColor: theme.surface, 
+        borderColor: theme.border,
+      }}
+    >
       <div className="flex items-center gap-3">
-        {/* Hamburger — mobile only */}
-        <button
-          onClick={onToggleSidebar}
-          className="md:hidden p-2 rounded-lg transition-colors"
-          style={{ color: theme.muted }}
-          aria-label="Toggle navigation"
-        >
-          {mobileSidebarOpen
-            ? <X className="w-5 h-5" />
-            : <Menu className="w-5 h-5" />}
-        </button>
+        {/* Mobile: hamburger + logo + wordmark */}
+        {isMobile ? (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 0 }}>
+            <button
+              onClick={onToggleSidebar}
+              style={{
+                width: 36, height: 36,
+                background: 'rgba(255,255,255,0.06)',
+                borderRadius: 8,
+                border: 'none',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                cursor: 'pointer',
+                marginRight: 10,
+                color: theme.muted,
+                flexShrink: 0,
+              }}
+              aria-label="Toggle navigation"
+            >
+              {mobileSidebarOpen
+                ? <X style={{ width: 18, height: 18 }} />
+                : <Menu style={{ width: 18, height: 18 }} />}
+            </button>
+            {/* Z logo */}
+            <div style={{
+              width: 28, height: 28,
+              backgroundColor: '#10b981',
+              borderRadius: 7,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              flexShrink: 0,
+            }}>
+              <span style={{ color: '#fff', fontWeight: 700, fontSize: 14, lineHeight: 1 }}>Z</span>
+            </div>
+            {/* Wordmark */}
+            <span style={{
+              color: theme.text,
+              fontWeight: 700,
+              fontSize: 18,
+              letterSpacing: '-0.01em',
+              marginLeft: 8,
+            }}>Zynth</span>
+          </div>
+        ) : (
+          <>
+            {/* Desktop: hamburger expand button + page title */}
         {/* Expand sidebar button — desktop only, visible when sidebar is collapsed */}
         {sidebarCollapsed && (
           <button
@@ -102,10 +140,12 @@ function Header({ autoRefresh, onToggleAutoRefresh, onToggleSidebar, mobileSideb
             <ChevronRight className="w-4 h-4" />
           </button>
         )}
-        {/* Current page title */}
-        <span className="hidden md:block text-[17px] font-semibold tracking-tight" style={{ color: theme.text }}>
-          {VIEW_LABELS[currentView] ?? 'Dashboard'}
-        </span>
+            {/* Current page title */}
+            <span className="text-[17px] font-semibold tracking-tight" style={{ color: theme.text }}>
+              {VIEW_LABELS[currentView] ?? 'Dashboard'}
+            </span>
+          </>
+        )}
       </div>
       
       <div className="flex items-center gap-4">

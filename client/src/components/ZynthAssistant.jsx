@@ -51,6 +51,14 @@ export default function ZynthAssistant() {
   const [loading, setLoading] = useState(false);
   const [showPulse, setShowPulse] = useState(false);
   const [welcomeSent, setWelcomeSent] = useState(false);
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768);
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 767px)');
+    setIsMobile(mq.matches);
+    const handler = (e) => setIsMobile(e.matches);
+    mq.addEventListener('change', handler);
+    return () => mq.removeEventListener('change', handler);
+  }, []);
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
 
@@ -416,7 +424,7 @@ export default function ZynthAssistant() {
       )}
 
       {/* FAB */}
-      <div style={{ position: 'fixed', bottom: 24, right: 24, zIndex: 9999 }}>
+      <div style={{ position: 'fixed', bottom: isMobile ? 80 : 24, right: isMobile ? 16 : 24, zIndex: 9999 }}>
         {/* Tooltip */}
         {!open && (
           <div
