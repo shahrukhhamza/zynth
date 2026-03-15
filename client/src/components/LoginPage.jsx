@@ -368,11 +368,11 @@ export default function LoginPage({ onSwitchToSignup, onBack, onForgotPassword }
           )}
 
           {/* Header */}
-          <h2 style={{fontSize: isMobile ? '22px' : '26px',fontWeight:700,color:'#fff',letterSpacing:'-0.02em',margin:0}}>Sign in</h2>
-          <p style={{fontSize:'14px',marginTop:'6px',marginBottom:'28px',color:'rgba(255,255,255,0.4)'}}>
+          <h2 style={{fontSize: isMobile ? '22px' : '24px',fontWeight:700,color:'#fff',letterSpacing:'-0.02em',margin:0}}>Sign in</h2>
+          <p style={{fontSize:'13px',marginTop:'3px',marginBottom:'14px',color:'rgba(255,255,255,0.4)'}}>
             New here?{' '}
             <button onClick={onSwitchToSignup}
-                    style={{color:'#10b981',background:'none',border:'none',cursor:'pointer',fontSize:'14px',padding:0}}
+                    style={{color:'#10b981',background:'none',border:'none',cursor:'pointer',fontSize:'13px',padding:0}}
                     onMouseEnter={e => e.currentTarget.style.textDecoration='underline'}
                     onMouseLeave={e => e.currentTarget.style.textDecoration='none'}>
               Create a free account
@@ -382,8 +382,8 @@ export default function LoginPage({ onSwitchToSignup, onBack, onForgotPassword }
           {/* Error */}
           {error && (
             isGoogleOnlyError ? (
-              <div style={{display:'flex',alignItems:'flex-start',gap:'10px',background:'rgba(66,133,244,0.08)',border:'1px solid rgba(66,133,244,0.28)',borderRadius:'10px',padding:'12px 14px',marginBottom:'20px',animation:'shake 0.35s ease'}}>
-                <svg width="16" height="16" viewBox="0 0 24 24" style={{flexShrink:0,marginTop:'1px'}}>
+              <div style={{display:'flex',alignItems:'flex-start',gap:'10px',background:'rgba(66,133,244,0.08)',border:'1px solid rgba(66,133,244,0.28)',borderRadius:'10px',padding:'10px 14px',marginBottom:'14px',animation:'shake 0.35s ease'}}>
+                <svg width="15" height="15" viewBox="0 0 24 24" style={{flexShrink:0,marginTop:'1px'}}>
                   <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
                   <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
                   <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
@@ -392,162 +392,55 @@ export default function LoginPage({ onSwitchToSignup, onBack, onForgotPassword }
                 <p style={{fontSize:'13px',color:'#93bbfc',margin:0,lineHeight:1.5}}>{error}</p>
               </div>
             ) : (
-              <div style={{display:'flex',alignItems:'flex-start',gap:'10px',background:'rgba(239,68,68,0.07)',border:'1px solid rgba(239,68,68,0.2)',borderRadius:'10px',padding:'12px 14px',marginBottom:'20px',animation:'shake 0.35s ease'}}>
-                <AlertCircle size={16} color="#f87171" style={{flexShrink:0,marginTop:'1px'}} />
+              <div style={{display:'flex',alignItems:'flex-start',gap:'10px',background:'rgba(239,68,68,0.07)',border:'1px solid rgba(239,68,68,0.2)',borderRadius:'10px',padding:'10px 14px',marginBottom:'14px',animation:'shake 0.35s ease'}}>
+                <AlertCircle size={15} color="#f87171" style={{flexShrink:0,marginTop:'1px'}} />
                 <p style={{fontSize:'13px',color:'#f87171',margin:0,lineHeight:1.5}}>{error}</p>
               </div>
             )
           )}
 
-          <form onSubmit={handleSubmit} ref={formRef}>
-
-            {/* Email */}
-            <div style={{marginBottom:'18px'}}>
-              <label style={{display:'block',fontSize:'12px',fontWeight:500,color:'rgba(255,255,255,0.5)',marginBottom:'7px',textTransform:'uppercase',letterSpacing:'0.06em'}}>
-                Email address
-              </label>
-              <div style={{position:'relative'}}>
-                <Mail size={16} color="rgba(255,255,255,0.25)" style={{position:'absolute',left:'14px',top:'50%',transform:'translateY(-50%)',pointerEvents:'none'}} />
-                <input
-                  type="email" autoComplete="email" value={email} required
-                  onChange={e => { setEmail(e.target.value); setFieldErrors(fe => ({...fe, email:''})); }}
-                  placeholder="you@example.com"
-                  style={{
-                    width:'100%', boxSizing:'border-box',
-                    background:'rgba(255,255,255,0.04)',
-                    border: fieldErrors.email ? '1px solid rgba(239,68,68,0.6)' : '1px solid rgba(255,255,255,0.08)',
-                    boxShadow: fieldErrors.email ? '0 0 0 3px rgba(239,68,68,0.08)' : 'none',
-                    borderRadius:'10px',
-                    padding: isMobile ? '11px 14px 11px 40px' : '12px 16px 12px 42px',
-                    color:'#fff', fontSize:'15px',
-                    transition:'all 0.2s ease', outline:'none',
-                  }}
-                  onFocus={e => { e.target.style.background='rgba(255,255,255,0.06)'; e.target.style.borderColor='rgba(16,185,129,0.5)'; e.target.style.boxShadow='0 0 0 3px rgba(16,185,129,0.08)'; }}
-                  onBlur={e => { e.target.style.background='rgba(255,255,255,0.04)'; if (fieldErrors.email) { e.target.style.borderColor='rgba(239,68,68,0.6)'; e.target.style.boxShadow='0 0 0 3px rgba(239,68,68,0.08)'; } else { e.target.style.borderColor='rgba(255,255,255,0.08)'; e.target.style.boxShadow='none'; } }}
-                />
-              </div>
-              {fieldErrors.email && fieldErrors.email.trim() && (
-                <div style={{display:'flex',alignItems:'center',gap:'4px',marginTop:'5px'}}>
-                  <AlertCircle size={12} color="#ef4444" />
-                  <span style={{fontSize:'12px',color:'#ef4444'}}>{fieldErrors.email}</span>
-                </div>
-              )}
-            </div>
-
-            {/* Password */}
-            <div style={{marginBottom:'8px'}}>
-              <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'7px'}}>
-                <label style={{fontSize:'12px',fontWeight:500,color:'rgba(255,255,255,0.5)',textTransform:'uppercase',letterSpacing:'0.06em'}}>
-                  Password
-                </label>
-                <button type="button" onClick={onForgotPassword}
-                        style={{fontSize:'13px',color:'#10b981',background:'none',border:'none',cursor:'pointer',padding:0}}
-                        onMouseEnter={e => e.currentTarget.style.textDecoration='underline'}
-                        onMouseLeave={e => e.currentTarget.style.textDecoration='none'}>
-                  Forgot password?
-                </button>
-              </div>
-              <div style={{position:'relative'}}>
-                <Lock size={16} color="rgba(255,255,255,0.25)" style={{position:'absolute',left:'14px',top:'50%',transform:'translateY(-50%)',pointerEvents:'none'}} />
-                <input
-                  type={showPass ? 'text' : 'password'} autoComplete="current-password" value={password} required
-                  onChange={e => { setPassword(e.target.value); setFieldErrors(fe => ({...fe, password:''})); }}
-                  placeholder="••••••••"
-                  style={{
-                    width:'100%', boxSizing:'border-box',
-                    background:'rgba(255,255,255,0.04)',
-                    border: fieldErrors.password ? '1px solid rgba(239,68,68,0.6)' : '1px solid rgba(255,255,255,0.08)',
-                    boxShadow: fieldErrors.password ? '0 0 0 3px rgba(239,68,68,0.08)' : 'none',
-                    borderRadius:'10px',
-                    padding: isMobile ? '11px 44px 11px 40px' : '12px 44px 12px 42px',
-                    color:'#fff', fontSize:'15px',
-                    transition:'all 0.2s ease', outline:'none',
-                  }}
-                  onFocus={e => { e.target.style.background='rgba(255,255,255,0.06)'; e.target.style.borderColor='rgba(16,185,129,0.5)'; e.target.style.boxShadow='0 0 0 3px rgba(16,185,129,0.08)'; }}
-                  onBlur={e => { e.target.style.background='rgba(255,255,255,0.04)'; if (fieldErrors.password) { e.target.style.borderColor='rgba(239,68,68,0.6)'; e.target.style.boxShadow='0 0 0 3px rgba(239,68,68,0.08)'; } else { e.target.style.borderColor='rgba(255,255,255,0.08)'; e.target.style.boxShadow='none'; } }}
-                />
-                <button type="button" onClick={() => setShowPass(v => !v)} tabIndex={-1}
-                        style={{position:'absolute',right:'14px',top:'50%',transform:'translateY(-50%)',background:'none',border:'none',cursor:'pointer',color:'rgba(255,255,255,0.35)',padding:0,display:'flex'}}>
-                  {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
-                </button>
-              </div>
-              {fieldErrors.password && (
-                <div style={{display:'flex',alignItems:'center',gap:'4px',marginTop:'5px'}}>
-                  <AlertCircle size={12} color="#ef4444" />
-                  <span style={{fontSize:'12px',color:'#ef4444'}}>{fieldErrors.password}</span>
-                </div>
-              )}
-            </div>
-
-            {/* Sign in button */}
-            <button
-              type="submit" disabled={loading}
-              style={{
-                marginTop:'8px', width:'100%',
-                padding: isMobile ? '12px' : '13px',
-                background: loading ? 'rgba(16,185,129,0.5)' : '#10b981',
-                border:'none', borderRadius:'10px',
-                color:'#fff', fontSize:'15px', fontWeight:600,
-                cursor: loading ? 'not-allowed' : 'pointer',
-                transition:'all 0.2s ease',
-                letterSpacing:'0.01em',
-                display:'flex', alignItems:'center', justifyContent:'center', gap:'8px',
-              }}
-              onMouseEnter={e => { if (!loading) { e.currentTarget.style.background='#0d9a6e'; e.currentTarget.style.transform='translateY(-1px)'; e.currentTarget.style.boxShadow='0 8px 25px rgba(16,185,129,0.25)'; } }}
-              onMouseLeave={e => { e.currentTarget.style.background=loading?'rgba(16,185,129,0.5)':'#10b981'; e.currentTarget.style.transform='translateY(0)'; e.currentTarget.style.boxShadow='none'; }}
-              onMouseDown={e => { e.currentTarget.style.transform='translateY(0) scale(0.99)'; }}
-              onMouseUp={e => { e.currentTarget.style.transform='translateY(-1px) scale(1)'; }}
-            >
-              {loading ? <><Loader2 size={16} className="animate-spin" /><span>Signing in...</span></> : 'Sign In'}
-            </button>
-          </form>
-
-          {/* OR divider */}
-          <div style={{margin:'20px 0',display:'flex',alignItems:'center',gap:'12px'}}>
-            <div style={{flex:1,height:'1px',background:'rgba(255,255,255,0.07)'}} />
-            <span style={{fontSize:'13px',color:'rgba(255,255,255,0.3)'}}>or</span>
-            <div style={{flex:1,height:'1px',background:'rgba(255,255,255,0.07)'}} />
-          </div>
-
-          {/* Google button */}
+          {/* Google button (top) */}
           <button
             type="button"
             onClick={handleGoogleClick}
             disabled={loading || googleLoading || !GOOGLE_CLIENT_ID}
             style={{
-              width:'100%', padding:'13px 16px',
-              background: googleLoading ? 'rgba(255,255,255,0.06)' : 'rgba(255,255,255,0.03)',
-              border:'1px solid rgba(255,255,255,0.1)',
+              width:'100%', padding:'11px 16px',
+              background: googleLoading ? 'rgba(255,255,255,0.06)' : 'rgba(255,255,255,0.04)',
+              border:'1px solid rgba(255,255,255,0.13)',
               borderRadius:'10px',
-              color: !GOOGLE_CLIENT_ID ? 'rgba(255,255,255,0.25)' : '#fff',
+              color: !GOOGLE_CLIENT_ID ? 'rgba(255,255,255,0.25)' : 'rgba(255,255,255,0.9)',
               fontSize:'14px', fontWeight:500,
               display:'flex', alignItems:'center', justifyContent:'center', gap:'10px',
               cursor: loading || googleLoading || !GOOGLE_CLIENT_ID ? 'not-allowed' : 'pointer',
               transition:'all 0.2s ease',
               letterSpacing:'0.01em',
-              position:'relative',
+              marginBottom:'14px',
+              boxShadow:'inset 0 1px 0 rgba(255,255,255,0.05)',
             }}
             onMouseEnter={e => {
               if (!loading && !googleLoading && GOOGLE_CLIENT_ID) {
-                e.currentTarget.style.background = 'rgba(255,255,255,0.07)';
-                e.currentTarget.style.borderColor = 'rgba(255,255,255,0.22)';
+                e.currentTarget.style.background = 'rgba(255,255,255,0.08)';
+                e.currentTarget.style.borderColor = 'rgba(255,255,255,0.25)';
                 e.currentTarget.style.transform = 'translateY(-1px)';
-                e.currentTarget.style.boxShadow = '0 6px 24px rgba(0,0,0,0.35)';
+                e.currentTarget.style.boxShadow = '0 6px 20px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.07)';
+                e.currentTarget.style.color = '#fff';
               }
             }}
             onMouseLeave={e => {
-              e.currentTarget.style.background = googleLoading ? 'rgba(255,255,255,0.06)' : 'rgba(255,255,255,0.03)';
-              e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)';
+              e.currentTarget.style.background = googleLoading ? 'rgba(255,255,255,0.06)' : 'rgba(255,255,255,0.04)';
+              e.currentTarget.style.borderColor = 'rgba(255,255,255,0.13)';
               e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow = 'none';
+              e.currentTarget.style.boxShadow = 'inset 0 1px 0 rgba(255,255,255,0.05)';
+              e.currentTarget.style.color = !GOOGLE_CLIENT_ID ? 'rgba(255,255,255,0.25)' : 'rgba(255,255,255,0.9)';
             }}
             onMouseDown={e => { if (!loading && !googleLoading) e.currentTarget.style.transform = 'scale(0.99)'; }}
             onMouseUp={e => { e.currentTarget.style.transform = 'translateY(-1px)'; }}
           >
             {googleLoading ? (
-              <Loader2 size={18} className="animate-spin" style={{color:'rgba(255,255,255,0.55)',flexShrink:0}} />
+              <Loader2 size={17} className="animate-spin" style={{color:'rgba(255,255,255,0.55)',flexShrink:0}} />
             ) : (
-              <svg width="18" height="18" viewBox="0 0 24 24" style={{flexShrink:0}}>
+              <svg width="17" height="17" viewBox="0 0 24 24" style={{flexShrink:0}}>
                 <path fill="#EA4335" d="M5.266 9.765A7.077 7.077 0 0 1 12 4.909c1.69 0 3.218.6 4.418 1.582L19.91 3C17.782 1.145 15.055 0 12 0 7.27 0 3.198 2.698 1.24 6.65l4.026 3.115z"/>
                 <path fill="#34A853" d="M16.04 18.013c-1.09.703-2.474 1.078-4.04 1.078a7.077 7.077 0 0 1-6.723-4.823l-4.04 3.067A11.965 11.965 0 0 0 12 24c2.933 0 5.735-1.043 7.834-3l-3.793-2.987z"/>
                 <path fill="#4A90E2" d="M19.834 21c2.195-2.048 3.62-5.096 3.62-9 0-.71-.109-1.473-.272-2.182H12v4.637h6.436c-.317 1.559-1.17 2.766-2.395 3.558L19.834 21z"/>
@@ -557,11 +450,116 @@ export default function LoginPage({ onSwitchToSignup, onBack, onForgotPassword }
             <span>{googleLoading ? 'Signing in...' : 'Continue with Google'}</span>
           </button>
 
+          {/* OR divider */}
+          <div style={{display:'flex',alignItems:'center',gap:'10px',marginBottom:'14px'}}>
+            <div style={{flex:1,height:'1px',background:'linear-gradient(to right, transparent, rgba(255,255,255,0.1))'}} />
+            <span style={{fontSize:'11px',fontWeight:500,color:'rgba(255,255,255,0.25)',letterSpacing:'0.08em',textTransform:'uppercase'}}>or with email</span>
+            <div style={{flex:1,height:'1px',background:'linear-gradient(to left, transparent, rgba(255,255,255,0.1))'}} />
+          </div>
+
+          <form onSubmit={handleSubmit} ref={formRef}>
+
+            {/* Email */}
+            <div style={{marginBottom:'10px'}}>
+              <div style={{position:'relative'}}>
+                <Mail size={15} color="rgba(255,255,255,0.2)" style={{position:'absolute',left:'13px',top:'50%',transform:'translateY(-50%)',pointerEvents:'none'}} />
+                <input
+                  type="email" autoComplete="email" value={email} required
+                  onChange={e => { setEmail(e.target.value); setFieldErrors(fe => ({...fe, email:''})); }}
+                  placeholder="Email address"
+                  style={{
+                    width:'100%', boxSizing:'border-box',
+                    background:'rgba(255,255,255,0.04)',
+                    border: fieldErrors.email ? '1px solid rgba(239,68,68,0.5)' : '1px solid rgba(255,255,255,0.1)',
+                    boxShadow: fieldErrors.email ? '0 0 0 3px rgba(239,68,68,0.07)' : 'none',
+                    borderRadius:'10px',
+                    padding:'11px 14px 11px 38px',
+                    color:'#fff', fontSize:'14px',
+                    transition:'all 0.2s ease', outline:'none',
+                  }}
+                  onFocus={e => { e.target.style.background='rgba(255,255,255,0.06)'; e.target.style.borderColor='rgba(16,185,129,0.45)'; e.target.style.boxShadow='0 0 0 3px rgba(16,185,129,0.07)'; }}
+                  onBlur={e => { e.target.style.background='rgba(255,255,255,0.04)'; if (fieldErrors.email) { e.target.style.borderColor='rgba(239,68,68,0.5)'; e.target.style.boxShadow='0 0 0 3px rgba(239,68,68,0.07)'; } else { e.target.style.borderColor='rgba(255,255,255,0.1)'; e.target.style.boxShadow='none'; } }}
+                />
+              </div>
+              {fieldErrors.email && fieldErrors.email.trim() && (
+                <div style={{display:'flex',alignItems:'center',gap:'4px',marginTop:'4px'}}>
+                  <AlertCircle size={11} color="#ef4444" />
+                  <span style={{fontSize:'11px',color:'#ef4444'}}>{fieldErrors.email}</span>
+                </div>
+              )}
+            </div>
+
+            {/* Password */}
+            <div style={{marginBottom:'14px'}}>
+              <div style={{display:'flex',justifyContent:'flex-end',marginBottom:'5px'}}>
+                <button type="button" onClick={onForgotPassword}
+                        style={{fontSize:'12px',color:'#10b981',background:'none',border:'none',cursor:'pointer',padding:0}}
+                        onMouseEnter={e => e.currentTarget.style.textDecoration='underline'}
+                        onMouseLeave={e => e.currentTarget.style.textDecoration='none'}>
+                  Forgot password?
+                </button>
+              </div>
+              <div style={{position:'relative'}}>
+                <Lock size={15} color="rgba(255,255,255,0.2)" style={{position:'absolute',left:'13px',top:'50%',transform:'translateY(-50%)',pointerEvents:'none'}} />
+                <input
+                  type={showPass ? 'text' : 'password'} autoComplete="current-password" value={password} required
+                  onChange={e => { setPassword(e.target.value); setFieldErrors(fe => ({...fe, password:''})); }}
+                  placeholder="Password"
+                  style={{
+                    width:'100%', boxSizing:'border-box',
+                    background:'rgba(255,255,255,0.04)',
+                    border: fieldErrors.password ? '1px solid rgba(239,68,68,0.5)' : '1px solid rgba(255,255,255,0.1)',
+                    boxShadow: fieldErrors.password ? '0 0 0 3px rgba(239,68,68,0.07)' : 'none',
+                    borderRadius:'10px',
+                    padding:'11px 40px 11px 38px',
+                    color:'#fff', fontSize:'14px',
+                    transition:'all 0.2s ease', outline:'none',
+                  }}
+                  onFocus={e => { e.target.style.background='rgba(255,255,255,0.06)'; e.target.style.borderColor='rgba(16,185,129,0.45)'; e.target.style.boxShadow='0 0 0 3px rgba(16,185,129,0.07)'; }}
+                  onBlur={e => { e.target.style.background='rgba(255,255,255,0.04)'; if (fieldErrors.password) { e.target.style.borderColor='rgba(239,68,68,0.5)'; e.target.style.boxShadow='0 0 0 3px rgba(239,68,68,0.07)'; } else { e.target.style.borderColor='rgba(255,255,255,0.1)'; e.target.style.boxShadow='none'; } }}
+                />
+                <button type="button" onClick={() => setShowPass(v => !v)} tabIndex={-1}
+                        style={{position:'absolute',right:'12px',top:'50%',transform:'translateY(-50%)',background:'none',border:'none',cursor:'pointer',color:'rgba(255,255,255,0.3)',padding:0,display:'flex'}}>
+                  {showPass ? <EyeOff size={15} /> : <Eye size={15} />}
+                </button>
+              </div>
+              {fieldErrors.password && (
+                <div style={{display:'flex',alignItems:'center',gap:'4px',marginTop:'4px'}}>
+                  <AlertCircle size={11} color="#ef4444" />
+                  <span style={{fontSize:'11px',color:'#ef4444'}}>{fieldErrors.password}</span>
+                </div>
+              )}
+            </div>
+
+            {/* Sign in button */}
+            <button
+              type="submit" disabled={loading}
+              style={{
+                width:'100%',
+                padding:'12px',
+                background: loading ? 'rgba(16,185,129,0.5)' : 'linear-gradient(135deg, #10b981 0%, #0d9a6e 100%)',
+                border:'none', borderRadius:'10px',
+                color:'#fff', fontSize:'14px', fontWeight:600,
+                cursor: loading ? 'not-allowed' : 'pointer',
+                transition:'all 0.2s ease',
+                letterSpacing:'0.01em',
+                display:'flex', alignItems:'center', justifyContent:'center', gap:'8px',
+                boxShadow: loading ? 'none' : '0 4px 15px rgba(16,185,129,0.2)',
+              }}
+              onMouseEnter={e => { if (!loading) { e.currentTarget.style.transform='translateY(-1px)'; e.currentTarget.style.boxShadow='0 8px 25px rgba(16,185,129,0.3)'; } }}
+              onMouseLeave={e => { e.currentTarget.style.transform='translateY(0)'; e.currentTarget.style.boxShadow=loading?'none':'0 4px 15px rgba(16,185,129,0.2)'; }}
+              onMouseDown={e => { e.currentTarget.style.transform='translateY(0) scale(0.99)'; }}
+              onMouseUp={e => { e.currentTarget.style.transform='translateY(-1px) scale(1)'; }}
+            >
+              {loading ? <><Loader2 size={15} className="animate-spin" /><span>Signing in...</span></> : 'Sign In'}
+            </button>
+          </form>
+
           {/* Bottom link */}
-          <p style={{marginTop:'20px',textAlign:'center',fontSize:'14px',color:'rgba(255,255,255,0.35)'}}>
+          <p style={{marginTop:'18px',textAlign:'center',fontSize:'13px',color:'rgba(255,255,255,0.35)'}}>
             Don't have an account?{' '}
             <button onClick={onSwitchToSignup}
-                    style={{color:'#10b981',background:'none',border:'none',cursor:'pointer',fontSize:'14px',padding:0,fontWeight:500}}
+                    style={{color:'#10b981',background:'none',border:'none',cursor:'pointer',fontSize:'13px',padding:0,fontWeight:500}}
                     onMouseEnter={e => e.currentTarget.style.textDecoration='underline'}
                     onMouseLeave={e => e.currentTarget.style.textDecoration='none'}>
               Sign up free
