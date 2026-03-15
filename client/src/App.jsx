@@ -64,6 +64,7 @@ function AppShell() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
     try { return localStorage.getItem('sidebarCollapsed') === 'true'; } catch { return false; }
   });
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768);
 
   const handleToggleCollapse = () => {
     setSidebarCollapsed(prev => {
@@ -74,6 +75,14 @@ function AppShell() {
   };
 
   useAutoCloseSidebarOnDesktop(setMobileSidebarOpen);
+
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 767px)');
+    setIsMobile(mq.matches);
+    const handler = (e) => setIsMobile(e.matches);
+    mq.addEventListener('change', handler);
+    return () => mq.removeEventListener('change', handler);
+  }, []);
 
   // On initial load: read view from URL so bookmarks / direct links work
   useEffect(() => {
@@ -212,7 +221,7 @@ function AppShell() {
       {/* Content: offset for fixed sidebar + 64px header */}
       <div
         style={{
-          marginLeft: sidebarCollapsed ? 64 : 240,
+          marginLeft: isMobile ? 0 : (sidebarCollapsed ? 64 : 240),
           paddingTop: 64,
           transition: 'margin-left 0.3s ease',
           height: '100vh',
