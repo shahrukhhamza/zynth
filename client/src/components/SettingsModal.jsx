@@ -1,4 +1,4 @@
-import { X, Settings, Moon, Sun, Globe, Bell, RefreshCw } from 'lucide-react';
+import { X, Settings, Moon, Sun, Globe, Bell, RefreshCw, ChevronDown } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 import { useTimezone } from '../contexts/TimezoneContext';
 import { useState, useEffect } from 'react';
@@ -8,6 +8,7 @@ export default function SettingsModal({ onClose, autoRefresh, onToggleAutoRefres
   const { selectedTimezone, changeTimezone, timezones } = useTimezone();
   const [notifications, setNotifications] = useState(true);
   const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768);
+
   useEffect(() => {
     const mq = window.matchMedia('(max-width: 767px)');
     setIsMobile(mq.matches);
@@ -16,191 +17,345 @@ export default function SettingsModal({ onClose, autoRefresh, onToggleAutoRefres
     return () => mq.removeEventListener('change', handler);
   }, []);
 
+  const emerald = '#10b981';
+  const sheetBg = theme.isDark ? '#111111' : theme.surface;
+
+  // ── Shared sub-components ────────────────────────────────────────────────
+
   const Toggle = ({ value, onChange }) => (
     <button
       onClick={onChange}
-      className="relative inline-flex items-center rounded-full transition-colors duration-200 flex-shrink-0"
-      style={{
-        width: 44, height: 24,
-        backgroundColor: value ? theme.accent : (theme.isDark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.15)'),
-      }}
-      aria-checked={value}
       role="switch"
+      aria-checked={value}
+      style={{
+        position: 'relative',
+        display: 'inline-flex',
+        alignItems: 'center',
+        borderRadius: 9999,
+        width: 48,
+        height: 26,
+        minWidth: 48,
+        flexShrink: 0,
+        backgroundColor: value ? emerald : (theme.isDark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.15)'),
+        border: 'none',
+        cursor: 'pointer',
+        transition: 'background-color 0.2s',
+      }}
     >
-      <span
-        className="inline-block rounded-full bg-white shadow transition-transform duration-200"
-        style={{
-          width: 18, height: 18,
-          transform: value ? 'translateX(22px)' : 'translateX(3px)',
-        }}
-      />
+      <span style={{
+        display: 'inline-block',
+        borderRadius: '50%',
+        backgroundColor: 'white',
+        boxShadow: '0 1px 3px rgba(0,0,0,0.3)',
+        width: 20,
+        height: 20,
+        transform: value ? 'translateX(24px)' : 'translateX(3px)',
+        transition: 'transform 0.2s',
+      }} />
     </button>
   );
 
-  /* A section card with a label header */
-  const Section = ({ title, children }) => (
-    <div className="mb-5">
-      <p
-        className="text-[11px] font-semibold uppercase tracking-widest mb-2 px-1"
-        style={{ color: theme.muted }}
-      >
-        {title}
-      </p>
-      <div
-        className="rounded-xl overflow-hidden"
-        style={{ border: `1px solid ${theme.border}`, backgroundColor: theme.isDark ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.02)' }}
-      >
-        {children}
-      </div>
-    </div>
+  const SectionLabel = ({ title }) => (
+    <p style={{
+      fontSize: 11,
+      fontWeight: 600,
+      letterSpacing: '0.1em',
+      color: theme.isDark ? 'rgba(255,255,255,0.3)' : 'rgba(0,0,0,0.35)',
+      padding: '16px 0 8px',
+      margin: 0,
+      textTransform: 'uppercase',
+    }}>
+      {title}
+    </p>
   );
 
-  /* Row: icon · label + description on left | control on right — never overlaps */
-  const Row = ({ icon: Icon, iconColor, label, description, control, last }) => (
-    <div
-      className="flex items-center gap-3 px-4 py-3"
-      style={{ borderBottom: last ? 'none' : `1px solid ${theme.border}` }}
-    >
-      {/* Icon bubble */}
-      <div
-        className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
-        style={{ backgroundColor: iconColor ? `${iconColor}18` : (theme.isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.05)') }}
-      >
-        <Icon className="w-4 h-4" style={{ color: iconColor || theme.muted }} />
+  const Row = ({ icon: Icon, label, description, control }) => (
+    <div style={{
+      display: 'flex',
+      alignItems: 'center',
+      gap: 16,
+      padding: 16,
+      backgroundColor: theme.isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)',
+      borderRadius: 12,
+      marginBottom: 8,
+      minHeight: 72,
+    }}>
+      <div style={{
+        width: 40, height: 40, minWidth: 40,
+        backgroundColor: `${emerald}1a`,
+        border: `1px solid ${emerald}33`,
+        borderRadius: 10,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+      }}>
+        <Icon style={{ color: emerald, width: 18, height: 18 }} />
       </div>
-
-      {/* Text */}
-      <div className="flex-1 min-w-0">
-        <p className="text-sm font-medium leading-tight" style={{ color: theme.text }}>{label}</p>
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <p style={{
+          color: theme.text, fontWeight: 600, fontSize: 15,
+          whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', margin: 0,
+        }}>{label}</p>
         {description && (
-          <p className="text-xs mt-0.5 leading-snug" style={{ color: theme.muted }}>{description}</p>
+          <p style={{
+            color: theme.isDark ? 'rgba(255,255,255,0.4)' : 'rgba(0,0,0,0.45)',
+            fontSize: 13, marginTop: 2,
+            whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', marginBottom: 0,
+          }}>{description}</p>
         )}
       </div>
-
-      {/* Control – never shrinks, never overlaps text */}
-      <div className="flex-shrink-0 ml-2">{control}</div>
+      {control}
     </div>
   );
 
-  return (
-    <div
-      className="fixed inset-x-0 bottom-0 z-[300] flex items-end sm:items-center justify-center sm:p-4"
-      style={{ backgroundColor: 'rgba(0,0,0,0.65)', backdropFilter: 'blur(6px)', top: isMobile ? '64px' : 0 }}
-      onClick={e => { if (e.target === e.currentTarget) onClose(); }}
-    >
-      <div
-        className="relative w-full rounded-t-2xl sm:rounded-2xl overflow-hidden"
-        style={{
-          backgroundColor: theme.surface,
-          border: `1px solid ${theme.border}`,
-          maxWidth: 480,
-          maxHeight: isMobile ? 'calc(100vh - 80px)' : 'calc(100vh - 80px)',
+  const TimezoneBlock = ({ bg }) => (
+    <div style={{
+      backgroundColor: theme.isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)',
+      borderRadius: 12, padding: 16, marginBottom: 8,
+    }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
+        <div style={{
+          width: 40, height: 40, minWidth: 40,
+          backgroundColor: `${emerald}1a`, border: `1px solid ${emerald}33`,
+          borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center',
+        }}>
+          <Globe style={{ color: emerald, width: 18, height: 18 }} />
+        </div>
+        <div>
+          <p style={{ color: theme.text, fontWeight: 600, fontSize: 15, margin: 0 }}>Market Timezone</p>
+          <p style={{ color: theme.isDark ? 'rgba(255,255,255,0.4)' : theme.muted, fontSize: 13, marginTop: 2, marginBottom: 0 }}>
+            Used across all charts and calendar
+          </p>
+        </div>
+      </div>
+      <div style={{ position: 'relative' }}>
+        <select
+          value={selectedTimezone}
+          onChange={e => changeTimezone(e.target.value)}
+          style={{
+            width: '100%',
+            backgroundColor: theme.isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)',
+            border: `1px solid ${theme.isDark ? 'rgba(255,255,255,0.1)' : theme.border}`,
+            borderRadius: 10,
+            padding: '13px 40px 13px 16px',
+            color: theme.text,
+            fontSize: 15,
+            appearance: 'none',
+            WebkitAppearance: 'none',
+            cursor: 'pointer',
+            outline: 'none',
+          }}
+        >
+          {timezones.map(tz => (
+            <option key={tz.id} value={tz.id} style={{ backgroundColor: bg || theme.surface, color: theme.text }}>
+              {tz.name}
+            </option>
+          ))}
+        </select>
+        <ChevronDown style={{
+          position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)',
+          width: 16, height: 16,
+          color: theme.isDark ? 'rgba(255,255,255,0.4)' : theme.muted,
+          pointerEvents: 'none',
+        }} />
+      </div>
+    </div>
+  );
+
+  // ── MOBILE — proper bottom sheet ─────────────────────────────────────────
+  if (isMobile) {
+    return (
+      <>
+        {/* Backdrop */}
+        <div
+          onClick={onClose}
+          style={{
+            position: 'fixed', inset: 0,
+            backgroundColor: 'rgba(0,0,0,0.6)',
+            backdropFilter: 'blur(4px)',
+            WebkitBackdropFilter: 'blur(4px)',
+            zIndex: 999,
+          }}
+        />
+
+        {/* Sheet */}
+        <div style={{
+          position: 'fixed', bottom: 0, left: 0, right: 0,
+          height: '85vh',
+          borderRadius: '20px 20px 0 0',
+          backgroundColor: sheetBg,
+          zIndex: 1000,
           display: 'flex',
           flexDirection: 'column',
-          overflowY: 'hidden',
-          boxShadow: theme.isDark ? '0 -8px 40px rgba(0,0,0,0.7)' : '0 -8px 40px rgba(0,0,0,0.18)',
-        }}
-      >
-        {/* Drag handle (mobile) */}
-        <div className="flex justify-center pt-3 pb-1 sm:hidden">
-          <div className="w-9 h-1 rounded-full" style={{ backgroundColor: theme.border }} />
-        </div>
-
-        {/* Header */}
-        <div
-          className="flex items-center justify-between px-5 py-4 border-b"
-          style={{ borderColor: theme.border }}
-        >
-          <div className="flex items-center gap-3">
-            <div
-              className="w-9 h-9 rounded-xl flex items-center justify-center"
-              style={{ backgroundColor: `${theme.accent}18`, border: `1px solid ${theme.accent}30` }}
-            >
-              <Settings className="w-4 h-4" style={{ color: theme.accent }} />
-            </div>
-            <div>
-              <h2 className="text-base font-bold" style={{ color: theme.text }}>Settings</h2>
-              <p className="text-xs" style={{ color: theme.muted }}>Preferences &amp; display options</p>
-            </div>
+          overflow: 'hidden',
+        }}>
+          {/* Drag handle */}
+          <div style={{ display: 'flex', justifyContent: 'center', paddingTop: 12, paddingBottom: 4, flexShrink: 0 }}>
+            <div style={{ width: 40, height: 4, backgroundColor: 'rgba(255,255,255,0.2)', borderRadius: 2 }} />
           </div>
-          <button
-            onClick={onClose}
-            className="w-8 h-8 rounded-lg flex items-center justify-center transition-colors"
-            style={{ color: theme.muted, backgroundColor: 'transparent' }}
-            onMouseOver={e => e.currentTarget.style.backgroundColor = theme.isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)'}
-            onMouseOut={e => e.currentTarget.style.backgroundColor = 'transparent'}
-          >
-            <X className="w-4 h-4" />
-          </button>
-        </div>
 
-        {/* Body — only this part scrolls */}
-        <div className="p-5 overflow-y-auto flex-1">
+          {/* Sticky header */}
+          <div style={{
+            position: 'sticky', top: 0,
+            backgroundColor: sheetBg,
+            zIndex: 10,
+            padding: '16px 20px',
+            borderBottom: '1px solid rgba(255,255,255,0.06)',
+            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+            flexShrink: 0,
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+              <div style={{
+                width: 36, height: 36,
+                backgroundColor: `${emerald}18`, border: `1px solid ${emerald}30`,
+                borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}>
+                <Settings style={{ color: emerald, width: 16, height: 16 }} />
+              </div>
+              <div>
+                <h2 style={{ color: theme.text, fontWeight: 700, fontSize: 16, margin: 0 }}>Settings</h2>
+                <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: 12, margin: 0 }}>Preferences &amp; display options</p>
+              </div>
+            </div>
+            <button
+              onClick={onClose}
+              style={{
+                width: 32, height: 32,
+                backgroundColor: 'rgba(255,255,255,0.06)',
+                borderRadius: '50%',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                border: 'none', cursor: 'pointer',
+                color: 'rgba(255,255,255,0.5)',
+              }}
+            >
+              <X style={{ width: 16, height: 16 }} />
+            </button>
+          </div>
 
-          {/* Appearance */}
-          <Section title="Appearance">
+          {/* Scrollable content */}
+          <div style={{
+            flex: 1, overflowY: 'auto',
+            WebkitOverflowScrolling: 'touch',
+            padding: '0 16px',
+            paddingBottom: 40,
+          }}>
+            <SectionLabel title="Appearance" />
             <Row
               icon={theme.isDark ? Moon : Sun}
-              iconColor={theme.accent}
               label="Dark Mode"
               description={theme.isDark ? 'Currently using dark theme' : 'Currently using light theme'}
               control={<Toggle value={theme.isDark} onChange={theme.toggleTheme} />}
-              last
             />
-          </Section>
 
-          {/* Data & Refresh */}
-          <Section title="Data & Refresh">
+            <SectionLabel title="Data & Refresh" />
             <Row
               icon={RefreshCw}
               label="Auto-refresh"
-              description="Automatically reload market data every 30s"
+              description="Auto reload market data every 30s"
               control={<Toggle value={autoRefresh} onChange={onToggleAutoRefresh} />}
             />
             <Row
               icon={Bell}
               label="Notifications"
-              description="Show alerts for high-impact market events"
+              description="Alerts for high-impact market events"
               control={<Toggle value={notifications} onChange={() => setNotifications(v => !v)} />}
-              last
             />
-          </Section>
 
-          {/* Timezone — select lives below the label row so it has full width */}
-          <Section title="Timezone">
-            <div className="px-4 py-3">
-              <div className="flex items-center gap-3 mb-3">
-                <div
-                  className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
-                  style={{ backgroundColor: theme.isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.05)' }}
-                >
-                  <Globe className="w-4 h-4" style={{ color: theme.muted }} />
-                </div>
-                <div className="min-w-0">
-                  <p className="text-sm font-medium" style={{ color: theme.text }}>Market Timezone</p>
-                  <p className="text-xs" style={{ color: theme.muted }}>Used across all charts and calendar</p>
-                </div>
-              </div>
-              <select
-                value={selectedTimezone}
-                onChange={e => changeTimezone(e.target.value)}
-                className="w-full text-sm rounded-lg px-3 py-2 outline-none"
-                style={{
-                  backgroundColor: theme.isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.05)',
-                  color: theme.text,
-                  border: `1px solid ${theme.border}`,
-                }}
-              >
-                {timezones.map(tz => (
-                  <option key={tz.id} value={tz.id} style={{ backgroundColor: theme.surface, color: theme.text }}>
-                    {tz.name}
-                  </option>
-                ))}
-              </select>
+            <SectionLabel title="Timezone" />
+            <TimezoneBlock bg={theme.isDark ? '#1a1a1a' : theme.surface} />
+
+            <p style={{ textAlign: 'center', fontSize: 12, color: theme.muted, paddingTop: 8, paddingBottom: 8 }}>
+              More settings coming in future updates.
+            </p>
+          </div>
+        </div>
+      </>
+    );
+  }
+
+  // ── DESKTOP — centered modal (unchanged behaviour) ────────────────────────
+  return (
+    <div
+      style={{
+        position: 'fixed', inset: 0, zIndex: 300,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        padding: 16,
+        backgroundColor: 'rgba(0,0,0,0.65)',
+        backdropFilter: 'blur(6px)',
+        WebkitBackdropFilter: 'blur(6px)',
+      }}
+      onClick={e => { if (e.target === e.currentTarget) onClose(); }}
+    >
+      <div style={{
+        backgroundColor: theme.surface,
+        border: `1px solid ${theme.border}`,
+        borderRadius: 16,
+        width: '100%', maxWidth: 480,
+        maxHeight: 'calc(100vh - 80px)',
+        display: 'flex', flexDirection: 'column',
+        overflow: 'hidden',
+        boxShadow: theme.isDark ? '0 8px 40px rgba(0,0,0,0.7)' : '0 8px 40px rgba(0,0,0,0.18)',
+      }}>
+        {/* Header */}
+        <div style={{
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          padding: '16px 20px',
+          borderBottom: `1px solid ${theme.border}`,
+          flexShrink: 0,
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <div style={{
+              width: 36, height: 36,
+              backgroundColor: `${emerald}18`, border: `1px solid ${emerald}30`,
+              borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center',
+            }}>
+              <Settings style={{ color: emerald, width: 16, height: 16 }} />
             </div>
-          </Section>
+            <div>
+              <h2 style={{ color: theme.text, fontWeight: 700, fontSize: 16, margin: 0 }}>Settings</h2>
+              <p style={{ color: theme.muted, fontSize: 12, margin: 0 }}>Preferences &amp; display options</p>
+            </div>
+          </div>
+          <button
+            onClick={onClose}
+            style={{
+              width: 32, height: 32,
+              backgroundColor: theme.isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)',
+              borderRadius: '50%',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              border: 'none', cursor: 'pointer', color: theme.muted,
+            }}
+          >
+            <X style={{ width: 16, height: 16 }} />
+          </button>
+        </div>
 
-          <p className="text-center text-xs pb-1" style={{ color: theme.muted }}>
+        {/* Body */}
+        <div style={{ flex: 1, overflowY: 'auto', padding: '0 20px', paddingBottom: 24 }}>
+          <SectionLabel title="Appearance" />
+          <Row
+            icon={theme.isDark ? Moon : Sun}
+            label="Dark Mode"
+            description={theme.isDark ? 'Currently using dark theme' : 'Currently using light theme'}
+            control={<Toggle value={theme.isDark} onChange={theme.toggleTheme} />}
+          />
+
+          <SectionLabel title="Data & Refresh" />
+          <Row
+            icon={RefreshCw}
+            label="Auto-refresh"
+            description="Auto reload market data every 30s"
+            control={<Toggle value={autoRefresh} onChange={onToggleAutoRefresh} />}
+          />
+          <Row
+            icon={Bell}
+            label="Notifications"
+            description="Alerts for high-impact market events"
+            control={<Toggle value={notifications} onChange={() => setNotifications(v => !v)} />}
+          />
+
+          <SectionLabel title="Timezone" />
+          <TimezoneBlock />
+
+          <p style={{ textAlign: 'center', fontSize: 12, color: theme.muted, paddingTop: 8 }}>
             More settings coming in future updates.
           </p>
         </div>
