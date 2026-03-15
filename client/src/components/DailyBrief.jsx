@@ -4,6 +4,8 @@ import { useTheme } from '../contexts/ThemeContext';
 import { useAuth } from '../contexts/AuthContext';
 import { useTimezone } from '../contexts/TimezoneContext';
 import { API_URL } from '../config/api';
+import usePlanGate from '../hooks/usePlanGate';
+import ProfileModal from './ProfileModal';
 
 // ── Session definitions (UTC hours) ─────────────────────────────────────────
 const SESSIONS = [
@@ -101,6 +103,10 @@ export default function DailyBrief() {
   const theme   = useTheme();
   const { user, token } = useAuth();
   const { getTimezoneInfo } = useTimezone();
+
+  const { isPro, isElite, isAdmin } = usePlanGate();
+  const canSeeMacro = isPro || isElite || isAdmin;
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
 
   const [visible, setVisible] = useState(false);
   const [shown,   setShown]   = useState(false);  // mount → visible animation
@@ -261,6 +267,7 @@ export default function DailyBrief() {
 
   return (
     <div style={{ marginBottom: 20, ...fadeStyle }}>
+      {showUpgradeModal && <ProfileModal onClose={() => setShowUpgradeModal(false)} />}
       <div>
         <div style={{
           backgroundColor: theme.surface,
@@ -306,15 +313,39 @@ export default function DailyBrief() {
           }}>
             {/* Block 1 — Macro Climate */}
             <Block title="Macro Climate" theme={theme}>
-              {loading ? (
+              {!canSeeMacro ? (
+                /* Blur gate — same dimensions as real content, no layout shift */
+                <div style={{ position: 'relative', minHeight: 52 }}>
+                  {/* Fake score blurred behind */}
+                  <div style={{ filter: 'blur(5px)', pointerEvents: 'none', userSelect: 'none', opacity: 0.65 }}>
+                    <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
+                      <span style={{ fontSize: 28, fontWeight: 800, color: '#22c55e', lineHeight: 1 }}>+3.2</span>
+                      <span style={{ fontSize: 13, fontWeight: 700, color: '#22c55e' }}>
+                        <span style={{display:'inline-block',width:8,height:8,borderRadius:'50%',backgroundColor:'#22c55e',verticalAlign:'middle',marginRight:3}}/> Bullish for Gold
+                      </span>
+                    </div>
+                    <div style={{ fontSize: 11, color: theme.muted }}>Based on 10 macro indicators</div>
+                  </div>
+                  {/* Lock overlay */}
+                  <div style={{
+                    position: 'absolute', inset: 0,
+                    display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                    gap: 3,
+                  }}>
+                    <Lock size={15} style={{ color: theme.muted }} />
+                    <span style={{ fontSize: 11, fontWeight: 600, color: theme.muted, letterSpacing: '0.02em' }}>Pro Feature</span>
+                    <button
+                      onClick={() => setShowUpgradeModal(true)}
+                      style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, fontSize: 12, fontWeight: 600, color: '#10b981' }}
+                    >
+                      Upgrade →
+                    </button>
+                  </div>
+                </div>
+              ) : loading ? (
                 <>
                   <Skeleton theme={theme} h={28} w="70%" />
                   <Skeleton theme={theme} h={12} w="90%" />
-                </>
-              ) : macroScore === 'locked' ? (
-                <>
-                  <div style={{ fontSize: 13, fontWeight: 700, color: theme.muted }}><Lock size={12} style={{display:'inline-block',verticalAlign:'middle',marginRight:'4px'}} /> Pro / Elite only</div>
-                  <div style={{ fontSize: 11, color: theme.muted }}>Upgrade to see your macro bias</div>
                 </>
               ) : macroScore === 'error' || !macroScore ? (
                 <div style={{ fontSize: 13, color: theme.muted }}>Unavailable</div>
