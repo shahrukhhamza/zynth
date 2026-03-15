@@ -109,23 +109,43 @@ function Header({ autoRefresh, onToggleAutoRefresh, onToggleSidebar, mobileSideb
       </div>
       
       <div className="flex items-center gap-4">
-        {/* Theme Toggle */}
+        {/* Theme Toggle — segmented pill */}
         <button
           onClick={theme.toggleTheme}
-          className="p-2 rounded-lg transition-all hover:bg-opacity-80"
-          style={{ 
-            backgroundColor: theme.isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.05)',
-            border: `1px solid ${theme.border}`,
-            color: theme.accent 
-          }}
           title={theme.isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-        >
-          <span style={{
+          aria-label={theme.isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+          style={{
             display: 'inline-flex',
-            transition: 'transform 0.45s ease, opacity 0.3s ease',
-            transform: theme.isDark ? 'rotate(0deg)' : 'rotate(180deg)',
+            alignItems: 'center',
+            gap: 2,
+            padding: 3,
+            borderRadius: 10,
+            border: `1px solid ${theme.border}`,
+            backgroundColor: theme.isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.05)',
+            cursor: 'pointer',
+            outline: 'none',
+            transition: 'border-color 0.2s ease, background-color 0.2s ease',
+          }}
+        >
+          {/* Sun — active in light mode */}
+          <span style={{
+            display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+            width: 26, height: 26, borderRadius: 7,
+            backgroundColor: !theme.isDark ? theme.accent : 'transparent',
+            color: !theme.isDark ? '#fff' : theme.muted,
+            transition: 'background-color 0.25s ease, color 0.25s ease',
           }}>
-            {theme.isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+            <Sun size={13} />
+          </span>
+          {/* Moon — active in dark mode */}
+          <span style={{
+            display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+            width: 26, height: 26, borderRadius: 7,
+            backgroundColor: theme.isDark ? theme.accent : 'transparent',
+            color: theme.isDark ? '#fff' : theme.muted,
+            transition: 'background-color 0.25s ease, color 0.25s ease',
+          }}>
+            <Moon size={13} />
           </span>
         </button>
 
