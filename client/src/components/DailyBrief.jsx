@@ -4,7 +4,7 @@ import { useTheme } from '../contexts/ThemeContext';
 import { useAuth } from '../contexts/AuthContext';
 import { useTimezone } from '../contexts/TimezoneContext';
 import { API_URL } from '../config/api';
-import usePlanGate from '../hooks/usePlanGate';
+import { usePlanGate } from '../hooks/usePlanGate';
 import ProfileModal from './ProfileModal';
 
 // ── Session definitions (UTC hours) ─────────────────────────────────────────

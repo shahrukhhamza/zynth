@@ -30,7 +30,7 @@ export default function SignupPage({ onSwitchToLogin, onBack }) {
   }, []);
 
   useEffect(() => {
-    fetch(`${API_URL}/api/admin/stats`)
+    fetch(`${API_URL}/api/public-stats`)
       .then(r => r.ok ? r.json() : null)
       .then(d => { if (d?.totalUsers != null) setSpotsLeft(Math.max(0, 100 - d.totalUsers)); })
       .catch(() => {});

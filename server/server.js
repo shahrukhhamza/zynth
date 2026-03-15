@@ -41,6 +41,7 @@ import adminRouter from './routes/admin.js';
 import chartsRouter from './routes/charts.js';
 import levelsRouter from './routes/levels.js';
 import { requireAuth, checkScreenshotTries } from './middleware/authMiddleware.js';
+import * as Users from './db/users.js';
 import { incrementScreenshotTries } from './db/users.js';
 
 const app = express();
@@ -114,6 +115,16 @@ app.use(mongoSanitize());
 // Routes
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', message: 'Server is running', geminiCallsToday: getGeminiCount() });
+});
+
+// Public stats — only exposes totalUsers (for landing page "spots left" counter)
+app.get('/api/public-stats', (req, res) => {
+  try {
+    const all = Users.findAll();
+    res.json({ totalUsers: all.length });
+  } catch (_) {
+    res.json({ totalUsers: 0 });
+  }
 });
 
 // API Key Stats endpoint

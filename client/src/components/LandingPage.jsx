@@ -241,7 +241,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
   const [ctaInsightVisible, setCtaInsightVisible] = useState(true);
 
   useEffect(() => {
-    fetch(`${API_URL}/api/admin/stats`)
+    fetch(`${API_URL}/api/public-stats`)
       .then(r => r.ok ? r.json() : null)
       .then(d => { setSpotsLeft(d?.totalUsers != null ? Math.max(0, TOTAL_FOUNDING - d.totalUsers) : 0); })
       .catch(() => { setSpotsLeft(0); });

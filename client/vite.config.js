@@ -9,6 +9,19 @@ export default defineConfig(({ mode }) => {
 
   return {
     plugins: [react()],
+    build: {
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            'vendor-react':    ['react', 'react-dom'],
+            'vendor-charts':   ['chart.js', 'react-chartjs-2', 'recharts'],
+            'vendor-lwcharts': ['lightweight-charts'],
+            'vendor-lucide':   ['lucide-react'],
+            'vendor-misc':     ['axios', 'date-fns', 'react-image-crop'],
+          },
+        },
+      },
+    },
     server: {
       port: 5173,
       host: true,
