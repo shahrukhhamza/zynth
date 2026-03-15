@@ -28,8 +28,8 @@ export default function LoginPage({ onSwitchToSignup, onBack, onForgotPassword }
   const [error, setError]         = useState('');
   const [isGoogleOnlyError, setIsGoogleOnlyError] = useState(false);
   const [loading, setLoading]     = useState(false);
-  const googleBtnRef              = useRef(null);
   const initializedRef            = useRef(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
   const formRef                   = useRef(null);
   const [spotsLeft, setSpotsLeft] = useState(null);
   const [fieldErrors, setFieldErrors] = useState({ email: '', password: '' });
@@ -51,16 +51,15 @@ export default function LoginPage({ onSwitchToSignup, onBack, onForgotPassword }
   const handleGoogleCredential = useCallback(async (response) => {
     setError('');
     setIsGoogleOnlyError(false);
-    setLoading(true);
+    setGoogleLoading(true);
     try {
       await loginWithGoogle(response.credential);
     } catch (err) {
       const data = err.response?.data;
-      // Show detail from server if available (helps debug during launch)
       const msg = data?.detail || data?.error || 'Google sign-in failed. Please try again.';
       setError(msg);
     } finally {
-      setLoading(false);
+      setGoogleLoading(false);
     }
   }, [loginWithGoogle]);
 
@@ -76,13 +75,6 @@ export default function LoginPage({ onSwitchToSignup, onBack, onForgotPassword }
         auto_select: false,
         cancel_on_tap_outside: true,
       });
-      if (googleBtnRef.current) {
-        window.google.accounts.id.renderButton(googleBtnRef.current, {
-          theme: 'filled_black', size: 'large',
-          width: googleBtnRef.current.offsetWidth || 340,
-          text: 'continue_with', shape: 'rectangular', logo_alignment: 'center',
-        });
-      }
       return true;
     }
     if (!initGoogle()) {
@@ -90,6 +82,16 @@ export default function LoginPage({ onSwitchToSignup, onBack, onForgotPassword }
       return () => clearInterval(interval);
     }
   }, [handleGoogleCredential]);
+
+  function handleGoogleClick() {
+    if (!GOOGLE_CLIENT_ID || !window.google?.accounts?.id) return;
+    setGoogleLoading(true);
+    window.google.accounts.id.prompt((notification) => {
+      if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+        setGoogleLoading(false);
+      }
+    });
+  }
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -508,31 +510,52 @@ export default function LoginPage({ onSwitchToSignup, onBack, onForgotPassword }
           </div>
 
           {/* Google button */}
-          {GOOGLE_CLIENT_ID ? (
-            <div ref={googleBtnRef} className="w-full flex justify-center" style={{minHeight:'44px'}} />
-          ) : (
-            <button
-              type="button" disabled
-              style={{
-                width:'100%', padding:'12px',
-                background:'rgba(255,255,255,0.04)',
-                border:'1px solid rgba(255,255,255,0.1)',
-                borderRadius:'10px',
-                color:'rgba(255,255,255,0.75)',
-                fontSize:'14px', fontWeight:500,
-                display:'flex', alignItems:'center', justifyContent:'center', gap:'10px',
-                cursor:'not-allowed', transition:'all 0.2s ease',
-              }}
-            >
-              <svg width="20" height="20" viewBox="0 0 24 24">
+          <button
+            type="button"
+            onClick={handleGoogleClick}
+            disabled={loading || googleLoading || !GOOGLE_CLIENT_ID}
+            style={{
+              width:'100%', padding:'13px 16px',
+              background: googleLoading ? 'rgba(255,255,255,0.06)' : 'rgba(255,255,255,0.03)',
+              border:'1px solid rgba(255,255,255,0.1)',
+              borderRadius:'10px',
+              color: !GOOGLE_CLIENT_ID ? 'rgba(255,255,255,0.25)' : '#fff',
+              fontSize:'14px', fontWeight:500,
+              display:'flex', alignItems:'center', justifyContent:'center', gap:'10px',
+              cursor: loading || googleLoading || !GOOGLE_CLIENT_ID ? 'not-allowed' : 'pointer',
+              transition:'all 0.2s ease',
+              letterSpacing:'0.01em',
+              position:'relative',
+            }}
+            onMouseEnter={e => {
+              if (!loading && !googleLoading && GOOGLE_CLIENT_ID) {
+                e.currentTarget.style.background = 'rgba(255,255,255,0.07)';
+                e.currentTarget.style.borderColor = 'rgba(255,255,255,0.22)';
+                e.currentTarget.style.transform = 'translateY(-1px)';
+                e.currentTarget.style.boxShadow = '0 6px 24px rgba(0,0,0,0.35)';
+              }
+            }}
+            onMouseLeave={e => {
+              e.currentTarget.style.background = googleLoading ? 'rgba(255,255,255,0.06)' : 'rgba(255,255,255,0.03)';
+              e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)';
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = 'none';
+            }}
+            onMouseDown={e => { if (!loading && !googleLoading) e.currentTarget.style.transform = 'scale(0.99)'; }}
+            onMouseUp={e => { e.currentTarget.style.transform = 'translateY(-1px)'; }}
+          >
+            {googleLoading ? (
+              <Loader2 size={18} className="animate-spin" style={{color:'rgba(255,255,255,0.55)',flexShrink:0}} />
+            ) : (
+              <svg width="18" height="18" viewBox="0 0 24 24" style={{flexShrink:0}}>
                 <path fill="#EA4335" d="M5.266 9.765A7.077 7.077 0 0 1 12 4.909c1.69 0 3.218.6 4.418 1.582L19.91 3C17.782 1.145 15.055 0 12 0 7.27 0 3.198 2.698 1.24 6.65l4.026 3.115z"/>
                 <path fill="#34A853" d="M16.04 18.013c-1.09.703-2.474 1.078-4.04 1.078a7.077 7.077 0 0 1-6.723-4.823l-4.04 3.067A11.965 11.965 0 0 0 12 24c2.933 0 5.735-1.043 7.834-3l-3.793-2.987z"/>
                 <path fill="#4A90E2" d="M19.834 21c2.195-2.048 3.62-5.096 3.62-9 0-.71-.109-1.473-.272-2.182H12v4.637h6.436c-.317 1.559-1.17 2.766-2.395 3.558L19.834 21z"/>
                 <path fill="#FBBC05" d="M5.277 14.268A7.12 7.12 0 0 1 4.909 12c0-.782.125-1.533.357-2.235L1.24 6.65A11.934 11.934 0 0 0 0 12c0 1.92.445 3.73 1.237 5.335l4.04-3.067z"/>
               </svg>
-              Continue with Google
-            </button>
-          )}
+            )}
+            <span>{googleLoading ? 'Signing in...' : 'Continue with Google'}</span>
+          </button>
 
           {/* Bottom link */}
           <p style={{marginTop:'20px',textAlign:'center',fontSize:'14px',color:'rgba(255,255,255,0.35)'}}>
