@@ -28,7 +28,7 @@ const VIEW_LABELS = {
   admin:        'Admin',
 };
 
-function Header({ autoRefresh, onToggleAutoRefresh, onToggleSidebar, mobileSidebarOpen, sidebarCollapsed = false, onExpandSidebar, currentView }) {
+function Header({ autoRefresh, onToggleAutoRefresh, onToggleSidebar, mobileSidebarOpen, sidebarCollapsed = false, onExpandSidebar, currentView, isMobile = false }) {
   const theme = useTheme();
   const { selectedTimezone, changeTimezone, getTimezoneInfo, timezones } = useTimezone();
   const { user, logout } = useAuth();
@@ -64,8 +64,8 @@ function Header({ autoRefresh, onToggleAutoRefresh, onToggleSidebar, mobileSideb
     <header className="border-b h-16 flex items-center justify-between px-4 md:px-6" style={{ 
       position: 'fixed',
       top: 0,
-      left: sidebarCollapsed ? 64 : 240,
-      width: sidebarCollapsed ? 'calc(100vw - 64px)' : 'calc(100vw - 240px)',
+      left: isMobile ? 0 : (sidebarCollapsed ? 64 : 240),
+      width: isMobile ? '100vw' : (sidebarCollapsed ? 'calc(100vw - 64px)' : 'calc(100vw - 240px)'),
       transition: 'left 0.3s ease, width 0.3s ease',
       zIndex: 100,
       backgroundColor: theme.surface, 

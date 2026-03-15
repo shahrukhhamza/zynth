@@ -216,6 +216,7 @@ function AppShell() {
         sidebarCollapsed={sidebarCollapsed}
         onExpandSidebar={handleToggleCollapse}
         currentView={currentView}
+        isMobile={isMobile}
       />
 
       {/* Content: offset for fixed sidebar + 64px header */}
