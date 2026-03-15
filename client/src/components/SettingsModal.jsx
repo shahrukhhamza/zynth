@@ -1,12 +1,20 @@
 import { X, Settings, Moon, Sun, Globe, Bell, RefreshCw } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 import { useTimezone } from '../contexts/TimezoneContext';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export default function SettingsModal({ onClose, autoRefresh, onToggleAutoRefresh }) {
   const theme = useTheme();
   const { selectedTimezone, changeTimezone, timezones } = useTimezone();
   const [notifications, setNotifications] = useState(true);
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768);
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 767px)');
+    setIsMobile(mq.matches);
+    const handler = (e) => setIsMobile(e.matches);
+    mq.addEventListener('change', handler);
+    return () => mq.removeEventListener('change', handler);
+  }, []);
 
   const Toggle = ({ value, onChange }) => (
     <button
@@ -76,8 +84,8 @@ export default function SettingsModal({ onClose, autoRefresh, onToggleAutoRefres
 
   return (
     <div
-      className="fixed inset-0 z-[300] flex items-end sm:items-center justify-center sm:p-4"
-      style={{ backgroundColor: 'rgba(0,0,0,0.65)', backdropFilter: 'blur(6px)' }}
+      className="fixed inset-x-0 bottom-0 z-[300] flex items-end sm:items-center justify-center sm:p-4"
+      style={{ backgroundColor: 'rgba(0,0,0,0.65)', backdropFilter: 'blur(6px)', top: isMobile ? '64px' : 0 }}
       onClick={e => { if (e.target === e.currentTarget) onClose(); }}
     >
       <div
@@ -86,7 +94,7 @@ export default function SettingsModal({ onClose, autoRefresh, onToggleAutoRefres
           backgroundColor: theme.surface,
           border: `1px solid ${theme.border}`,
           maxWidth: 480,
-          maxHeight: 'calc(100vh - 80px)',
+          maxHeight: isMobile ? 'calc(100vh - 80px)' : 'calc(100vh - 80px)',
           display: 'flex',
           flexDirection: 'column',
           overflowY: 'hidden',
