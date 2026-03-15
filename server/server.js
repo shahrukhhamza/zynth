@@ -1,6 +1,9 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
+import mongoSanitize from 'express-mongo-sanitize';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import { createServer } from 'http';
@@ -42,12 +45,49 @@ import { requireAuth, checkScreenshotTries } from './middleware/authMiddleware.j
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// ── Rate limiters ────────────────────────────────────────────────────────────
+// Global: 100 requests per 15 minutes per IP
+const globalLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Too many requests, please try again later.' },
+});
+
+// Auth routes: 10 requests per 15 minutes per IP (brute-force protection)
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Too many authentication attempts, please try again later.' },
+});
+
+// AI / assistant routes: 20 requests per hour per IP
+const aiLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  max: 20,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'AI request limit reached, please try again in an hour.' },
+});
+
 // Middleware
 const _ALLOWED_ORIGINS = [
   'http://localhost:5173',
   'https://zynth.vercel.app',
 ];
 const _VERCEL_ORIGIN = /^https:\/\/[^.]+\.vercel\.app$/;
+
+// Security headers
+app.use(helmet({
+  contentSecurityPolicy: false, // CSP managed by Vercel/CDN for the SPA
+  crossOriginEmbedderPolicy: false,
+}));
+
+// Apply global rate limit to all API routes
+app.use('/api', globalLimiter);
 
 app.use(cors({
   origin: (origin, callback) => {
@@ -63,8 +103,12 @@ app.use(cors({
   preflightContinue: false,
   optionsSuccessStatus: 204,
 }));
-app.use(express.json({ limit: '5mb', strict: false }));
-app.use(express.urlencoded({ extended: true, limit: '5mb' }));
+// Tighter body size limit — prevents large-payload attacks
+app.use(express.json({ limit: '10mb', strict: false }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// Strip keys that start with $ or contain . to prevent NoSQL injection
+app.use(mongoSanitize());
 
 // Routes
 app.get('/api/health', (req, res) => {
@@ -114,13 +158,13 @@ app.post('/api/economic/trigger-update', async (req, res) => {
     return res.status(500).json({ error: err.message });
   }
 });
-app.use('/api/auth', authRouter);
+app.use('/api/auth', authLimiter, authRouter);
 app.use('/api/admin', adminRouter);
 app.use('/api/finnhub', finnhubRouter);
 app.use('/api/journal', journalRouter);
 app.use('/api/checklist', checklistRouter);
 app.use('/api/analysis',  analysisRouter);
-app.use('/api/assistant', requireAuth, assistantRouter);
+app.use('/api/assistant', requireAuth, aiLimiter, assistantRouter);
 app.use('/api/charts', requireAuth, chartsRouter);
 app.use('/api/levels', requireAuth, levelsRouter);
 
