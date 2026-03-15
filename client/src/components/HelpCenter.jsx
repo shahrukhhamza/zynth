@@ -1,4 +1,4 @@
-﻿import { useState, useMemo } from 'react';
+﻿import { useState, useMemo, useEffect } from 'react';
 import { BookOpen, Search, ChevronRight, ArrowLeft, Rocket, BookMarked, Bot, BarChart2, Calendar, Camera, Calculator, CreditCard, Settings, Shield, Star, X, Home, Mail } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 
@@ -1311,6 +1311,18 @@ export default function HelpCenter() {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedArticle,  setSelectedArticle]  = useState(null);
   const [query, setQuery] = useState('');
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768);
+
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 767px)');
+    setIsMobile(mq.matches);
+    const handler = (e) => setIsMobile(e.matches);
+    mq.addEventListener('change', handler);
+    return () => mq.removeEventListener('change', handler);
+  }, []);
+
+  // On mobile: "content panel is active" when a category or article is selected
+  const mobileShowContent = isMobile && (selectedCategory !== null || selectedArticle !== null || query.trim() !== '');
 
   const isDark   = theme.isDark !== false;
   const bg0      = isDark ? '#060a12' : '#f4f6f8';
@@ -1352,10 +1364,12 @@ export default function HelpCenter() {
 
       {/* ── LEFT PANEL ────────────────────────────────────────────── */}
       <div style={{
-        width: 268, flexShrink: 0,
+        width: isMobile ? '100%' : 268,
+        flexShrink: 0,
         background: bg1,
-        borderRight: `1px solid ${border}`,
-        display: 'flex', flexDirection: 'column',
+        borderRight: isMobile ? 'none' : `1px solid ${border}`,
+        display: mobileShowContent ? 'none' : 'flex',
+        flexDirection: 'column',
         overflowY: 'auto',
       }}>
         {/* Panel header */}
@@ -1483,7 +1497,22 @@ export default function HelpCenter() {
       </div>
 
       {/* ── RIGHT PANEL ───────────────────────────────────────────── */}
-      <div style={{ flex: 1, overflowY: 'auto', background: bg0 }}>
+      <div style={{ flex: 1, overflowY: 'auto', background: bg0, display: (!isMobile || mobileShowContent) ? 'block' : 'none' }}>
+        {/* Mobile back button */}
+        {isMobile && (
+          <button
+            onClick={() => { setSelectedCategory(null); setSelectedArticle(null); setQuery(''); }}
+            style={{
+              display: 'flex', alignItems: 'center', gap: 6,
+              padding: '12px 16px', background: 'none', border: 'none',
+              cursor: 'pointer', color: accent, fontSize: 13, fontWeight: 600,
+              borderBottom: `1px solid ${border}`, width: '100%',
+            }}
+          >
+            <ChevronRight size={16} style={{ transform: 'rotate(180deg)' }} />
+            Back to Help &amp; Docs
+          </button>
+        )}
 
         {/* ── ARTICLE VIEW ── */}
         {currentArticle && (
