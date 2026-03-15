@@ -55,7 +55,10 @@ export default function LoginPage({ onSwitchToSignup, onBack, onForgotPassword }
     try {
       await loginWithGoogle(response.credential);
     } catch (err) {
-      setError(err.response?.data?.error || 'Google sign-in failed. Please try again.');
+      const data = err.response?.data;
+      // Show detail from server if available (helps debug during launch)
+      const msg = data?.detail || data?.error || 'Google sign-in failed. Please try again.';
+      setError(msg);
     } finally {
       setLoading(false);
     }

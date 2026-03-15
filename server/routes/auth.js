@@ -117,20 +117,47 @@ router.post('/login', async (req, res) => {
 });
 
 // ── POST /api/auth/google ──────────────────────────────────────────────────
+// Startup diagnostic — logged once when server boots so you can verify env vars in Render
+console.log('[Google OAuth] config check:', {
+  GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID ? `set (${process.env.GOOGLE_CLIENT_ID.slice(0, 12)}...)` : 'MISSING',
+  CLIENT_URL: process.env.CLIENT_URL || 'MISSING',
+});
+
 router.post('/google', async (req, res) => {
   try {
     const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || '';
-    if (!GOOGLE_CLIENT_ID)
-      return res.status(503).json({ error: 'Google sign-in is not configured. Add GOOGLE_CLIENT_ID to .env.' });
+
+    // Detailed server-side diagnostics (visible in Render logs)
+    console.log('[Google OAuth] POST /api/auth/google received');
+    console.log('[Google OAuth] GOOGLE_CLIENT_ID set:', !!GOOGLE_CLIENT_ID);
+    console.log('[Google OAuth] credential present:', !!req.body?.credential);
+    console.log('[Google OAuth] credential length:', req.body?.credential?.length ?? 0);
+
+    if (!GOOGLE_CLIENT_ID) {
+      console.error('[Google OAuth] FATAL: GOOGLE_CLIENT_ID is not set in environment variables');
+      return res.status(503).json({ error: 'Google sign-in is not configured on the server. Contact support.' });
+    }
 
     const { credential } = req.body;
     if (!credential)
       return res.status(400).json({ error: 'Google credential is required.' });
 
     const client = new OAuth2Client(GOOGLE_CLIENT_ID);
-    const ticket = await client.verifyIdToken({ idToken: credential, audience: GOOGLE_CLIENT_ID });
+    let ticket;
+    try {
+      ticket = await client.verifyIdToken({ idToken: credential, audience: GOOGLE_CLIENT_ID });
+    } catch (verifyErr) {
+      console.error('[Google OAuth] verifyIdToken failed:', verifyErr.message);
+      // Common causes: token expired, wrong GOOGLE_CLIENT_ID, clock skew
+      return res.status(401).json({
+        error: 'Google credential verification failed. Please try again.',
+        detail: verifyErr.message, // visible to client for debugging
+      });
+    }
+
     const payload = ticket.getPayload();
     const { sub: googleId, email, name, picture } = payload;
+    console.log('[Google OAuth] verified OK — email:', email);
 
     let row = Users.findByGoogleId(googleId);
     if (!row) {
@@ -146,10 +173,11 @@ router.post('/google', async (req, res) => {
     const freshRow = Users.findById(row.id);
     const user = buildUser({ ...freshRow, avatar: picture || freshRow.avatar });
     const token = signToken(user);
+    console.log('[Google OAuth] login success — userId:', user.id);
     res.json({ user, token });
   } catch (err) {
-    console.error('Google auth error:', err);
-    res.status(401).json({ error: 'Google authentication failed. Please try again.' });
+    console.error('[Google OAuth] unexpected error:', err);
+    res.status(500).json({ error: 'Google sign-in failed due to a server error. Please try again.' });
   }
 });
 
