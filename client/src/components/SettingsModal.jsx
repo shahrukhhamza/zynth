@@ -87,7 +87,9 @@ export default function SettingsModal({ onClose, autoRefresh, onToggleAutoRefres
           border: `1px solid ${theme.border}`,
           maxWidth: 480,
           maxHeight: 'calc(100vh - 80px)',
-          overflowY: 'auto',
+          display: 'flex',
+          flexDirection: 'column',
+          overflowY: 'hidden',
           boxShadow: theme.isDark ? '0 -8px 40px rgba(0,0,0,0.7)' : '0 -8px 40px rgba(0,0,0,0.18)',
         }}
       >
@@ -124,8 +126,8 @@ export default function SettingsModal({ onClose, autoRefresh, onToggleAutoRefres
           </button>
         </div>
 
-        {/* Body */}
-        <div className="p-5">
+        {/* Body — only this part scrolls */}
+        <div className="p-5 overflow-y-auto flex-1">
 
           {/* Appearance */}
           <Section title="Appearance">
