@@ -228,14 +228,14 @@ export default function ScreenshotImportDashboard() {
 
         {/* ── Tab bar ── */}
         {hasData && (
-          <div className="flex gap-1 mt-3">
+          <div className="flex gap-1 mt-3 overflow-x-auto pb-1 scrollbar-none" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
             {TABS.map(({ id, label, Icon }) => {
               const active = activeTab === id;
               return (
                 <button
                   key={id}
                   onClick={() => setActiveTab(id)}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all flex-shrink-0"
                   style={{
                     backgroundColor: active ? `${theme.accent}20` : 'transparent',
                     color:           active ? theme.accent : theme.muted,
