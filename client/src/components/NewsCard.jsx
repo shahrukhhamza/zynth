@@ -77,7 +77,7 @@ function NewsCard({ article }) {
             {formatDistanceToNow(new Date(article.publishedAt), { addSuffix: true })}
           </span>
 
-          <span className="text-xs ml-auto" style={{ color: theme.muted }}>{article.source}</span>
+          <span className="hidden sm:inline text-xs ml-auto" style={{ color: theme.muted }}>{article.source}</span>
         </div>
 
         {/* Content */}
@@ -141,7 +141,7 @@ function NewsCard({ article }) {
 
           {/* Image */}
           {article.imageUrl && (
-            <div className="w-32 h-32 flex-shrink-0">
+            <div className="w-20 h-20 md:w-32 md:h-32 flex-shrink-0">
               <img
                 src={article.imageUrl}
                 alt={article.title}
