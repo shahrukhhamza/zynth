@@ -41,6 +41,7 @@ import adminRouter from './routes/admin.js';
 import chartsRouter from './routes/charts.js';
 import levelsRouter from './routes/levels.js';
 import { requireAuth, checkScreenshotTries } from './middleware/authMiddleware.js';
+import { incrementScreenshotTries } from './db/users.js';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -183,6 +184,7 @@ const _pythonIsHttps = _pythonTarget.protocol === 'https:';
 
 app.all('/mt5/*', (req, res) => {
   const targetPath = req.url.replace(/^\/mt5/, '') || '/';
+  const isOcrUpload = req.method === 'POST' && targetPath === '/upload-trade-screenshot';
   const options = {
     hostname: _pythonTarget.hostname,
     port: _pythonTarget.port || (_pythonIsHttps ? 443 : 80),
@@ -192,6 +194,9 @@ app.all('/mt5/*', (req, res) => {
   };
   const requester = _pythonIsHttps ? httpsRequest : httpRequest;
   const proxy = requester(options, (proxyRes) => {
+    if (isOcrUpload && proxyRes.statusCode >= 200 && proxyRes.statusCode < 300 && req.user?.id) {
+      try { incrementScreenshotTries(req.user.id); } catch (_) { /* non-fatal */ }
+    }
     res.writeHead(proxyRes.statusCode, proxyRes.headers);
     pipeline(proxyRes, res, () => {});
   });
