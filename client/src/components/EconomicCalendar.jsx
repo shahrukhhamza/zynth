@@ -466,30 +466,34 @@ function EconomicCalendar() {
       )}
 
       {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: 16 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-          <div style={{ width: 46, height: 46, borderRadius: 13, background: 'linear-gradient(135deg, #10b981, #059669)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, boxShadow: '0 4px 14px rgba(16,185,129,0.35)' }}>
-            <Calendar size={22} color="#fff" />
+      <div>
+        {/* Row 1: Title + Print button */}
+        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <div style={{ width: 44, height: 44, borderRadius: 13, background: 'linear-gradient(135deg, #10b981, #059669)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, boxShadow: '0 4px 14px rgba(16,185,129,0.35)' }}>
+              <Calendar size={20} color="#fff" />
+            </div>
+            <div>
+              <h2 style={{ color: theme.text, fontWeight: 800, fontSize: 20, margin: 0, lineHeight: 1.2, letterSpacing: '-0.01em' }}>Economic Calendar</h2>
+              <p style={{ color: theme.muted, fontSize: 12, margin: '2px 0 0' }}>17 US macro indicators — Updated automatically</p>
+            </div>
           </div>
-          <div>
-            <h2 style={{ color: theme.text, fontWeight: 800, fontSize: 22, margin: 0, lineHeight: 1.2, letterSpacing: '-0.01em' }}>Economic Calendar</h2>
-            <p style={{ color: theme.muted, fontSize: 13, margin: '3px 0 0' }}>17 US macro indicators — Updated automatically</p>
-          </div>
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
           <button
             onClick={openPrintModal}
-            style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '7px 14px', borderRadius: 8, border: `1px solid ${theme.border}`, background: 'transparent', color: theme.text, cursor: 'pointer', fontSize: 13, fontWeight: 500, transition: 'border-color 0.15s, color 0.15s' }}
+            style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '7px 12px', borderRadius: 8, border: `1px solid ${theme.border}`, background: 'transparent', color: theme.text, cursor: 'pointer', fontSize: 13, fontWeight: 500, transition: 'border-color 0.15s, color 0.15s', flexShrink: 0 }}
             onMouseOver={(e) => { e.currentTarget.style.borderColor = '#10b981'; e.currentTarget.style.color = '#10b981'; }}
             onMouseOut={(e) => { e.currentTarget.style.borderColor = theme.border; e.currentTarget.style.color = theme.text; }}
           >
-            <Printer size={15} /> Print / Download
+            <Printer size={15} /> <span className="cal-print-label">Print / Download</span>
           </button>
+        </div>
+        {/* Row 2: Filter pills — scrollable on mobile */}
+        <div className="cal-filter-row" style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 14, overflowX: 'auto', paddingBottom: 2 }}>
           {['all', 'high', 'medium', 'low'].map(level => (
             <button
               key={level}
               onClick={() => setFilterImpact(level)}
-              style={{ padding: '6px 16px', borderRadius: 999, border: `1px solid ${filterImpact === level ? '#10b981' : theme.border}`, background: filterImpact === level ? '#10b981' : 'transparent', color: filterImpact === level ? '#fff' : theme.muted, cursor: 'pointer', fontSize: 12, fontWeight: 600, transition: 'all 0.15s' }}
+              style={{ flexShrink: 0, padding: '6px 16px', borderRadius: 999, border: `1px solid ${filterImpact === level ? '#10b981' : theme.border}`, background: filterImpact === level ? '#10b981' : 'transparent', color: filterImpact === level ? '#fff' : theme.muted, cursor: 'pointer', fontSize: 12, fontWeight: 600, transition: 'all 0.15s' }}
             >
               {level === 'all' ? 'All' : level.charAt(0).toUpperCase() + level.slice(1)}
             </button>
@@ -522,17 +526,18 @@ function EconomicCalendar() {
 
       {/* Table */}
       <div style={{ background: theme.surface, border: `1px solid ${theme.border}`, borderRadius: 12, overflow: 'hidden', boxShadow: theme.isDark ? '0 4px 24px rgba(0,0,0,0.3)' : '0 4px 16px rgba(0,0,0,0.06)' }}>
+        <div className="cal-table-scroll">
         <table className="w-full">
           <thead style={{ background: theme.bg, borderBottom: '2px solid #10b981' }}>
             <tr>
-              <th style={{ padding: '11px 16px', textAlign: 'left',   fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: theme.muted }}>Event</th>
-              <th style={{ padding: '11px 12px', textAlign: 'center', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: theme.muted }}>Currency</th>
-              <th style={{ padding: '11px 12px', textAlign: 'center', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: theme.muted }}>Impact</th>
-              <th style={{ padding: '11px 16px', textAlign: 'right',  fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: theme.muted }}>Actual</th>
-              <th style={{ padding: '11px 16px', textAlign: 'right',  fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: theme.muted }}>Forecast</th>
-              <th style={{ padding: '11px 16px', textAlign: 'right',  fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: theme.muted }}>Previous</th>
-              <th style={{ padding: '11px 12px', textAlign: 'center', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: theme.muted }}>Surprise</th>
-              <th style={{ width: 40 }} />
+              <th style={{ padding: '11px 12px', textAlign: 'left',   fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: theme.muted }}>Event</th>
+              <th className="cal-col-currency" style={{ padding: '11px 12px', textAlign: 'center', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: theme.muted }}>Currency</th>
+              <th className="cal-col-impact" style={{ padding: '11px 12px', textAlign: 'center', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: theme.muted }}>Impact</th>
+              <th style={{ padding: '11px 12px', textAlign: 'right',  fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: theme.muted }}>Actual</th>
+              <th className="cal-col-forecast" style={{ padding: '11px 12px', textAlign: 'right',  fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: theme.muted }}>Forecast</th>
+              <th className="cal-col-previous" style={{ padding: '11px 12px', textAlign: 'right',  fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: theme.muted }}>Previous</th>
+              <th className="cal-col-surprise" style={{ padding: '11px 12px', textAlign: 'center', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: theme.muted }}>Surprise</th>
+              <th style={{ width: 36 }} />
             </tr>
           </thead>
           <tbody>
@@ -547,46 +552,56 @@ function EconomicCalendar() {
                   onMouseOut={(e) => e.currentTarget.style.backgroundColor = rowIdx % 2 === 1 ? (theme.isDark ? 'rgba(255,255,255,0.015)' : 'rgba(0,0,0,0.012)') : theme.surface}
                 >
                   {/* Event */}
-                  <td style={{ padding: '16px 16px', minWidth: 220 }}>
+                  <td style={{ padding: '12px 12px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                       {(() => {
                         const a = parseFloat(indicator.current);
                         const p = parseFloat(indicator.previous);
                         if (!isNaN(a) && !isNaN(p)) {
                           return a >= p
-                            ? <TrendingUp size={16} style={{ color: '#22c55e', flexShrink: 0 }} />
-                            : <TrendingDown size={16} style={{ color: '#ef4444', flexShrink: 0 }} />;
+                            ? <TrendingUp size={15} style={{ color: '#22c55e', flexShrink: 0 }} />
+                            : <TrendingDown size={15} style={{ color: '#ef4444', flexShrink: 0 }} />;
                         }
-                        return <Activity size={16} style={{ color: theme.muted, flexShrink: 0 }} />;
+                        return <Activity size={15} style={{ color: theme.muted, flexShrink: 0 }} />;
                       })()}
                       <div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
-                          <span style={{ color: theme.text, fontWeight: 700, fontSize: 15 }}>{indicator.name}</span>
+                          <span style={{ color: theme.text, fontWeight: 700, fontSize: 14 }}>{indicator.name}</span>
                           {indicator.webVerified && (
                             <span title="Data verified via Gemini + Google Search" style={{ color: '#22c55e' }}>
-                              <ShieldCheck size={13} />
+                              <ShieldCheck size={12} />
                             </span>
                           )}
                           {indicator.corrected && (
                             <span style={{ background: 'rgba(234,179,8,0.15)', color: '#eab308', fontSize: 10, padding: '1px 5px', borderRadius: 4 }}>corrected</span>
                           )}
                         </div>
-                        <div style={{ color: theme.muted, fontSize: 12, fontStyle: 'italic', marginTop: 2 }}>
+                        <div style={{ color: theme.muted, fontSize: 11, fontStyle: 'italic', marginTop: 2 }}>
                           {indicator.reportingPeriod
                             ? `${indicator.reportingPeriod} · ${indicator.frequency}`
                             : indicator.frequency}
                         </div>
+                        {/* Mobile-only impact badge */}
+                        <span className="cal-impact-mobile" style={{ marginTop: 4 }}>
+                          {indicator.impact === 'high' ? (
+                            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 3, padding: '2px 7px', borderRadius: 4, background: 'rgba(239,68,68,0.12)', border: '1px solid rgba(239,68,68,0.4)', color: '#f87171', fontSize: 10, fontWeight: 700 }}>HIGH</span>
+                          ) : indicator.impact === 'medium' ? (
+                            <span style={{ display: 'inline-flex', alignItems: 'center', padding: '2px 7px', borderRadius: 4, background: 'rgba(245,158,11,0.12)', border: '1px solid rgba(245,158,11,0.4)', color: '#fbbf24', fontSize: 10, fontWeight: 700 }}>MED</span>
+                          ) : (
+                            <span style={{ display: 'inline-flex', alignItems: 'center', padding: '2px 7px', borderRadius: 4, background: 'rgba(100,116,139,0.12)', border: '1px solid rgba(100,116,139,0.4)', color: '#94a3b8', fontSize: 10, fontWeight: 600 }}>LOW</span>
+                          )}
+                        </span>
                       </div>
                     </div>
                   </td>
                   {/* Currency */}
-                  <td style={{ padding: '16px 12px', textAlign: 'center' }}>
+                  <td className="cal-col-currency" style={{ padding: '12px 12px', textAlign: 'center' }}>
                     <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '4px 10px', borderRadius: 999, background: theme.bg, border: `1px solid ${theme.border}`, color: theme.text, fontSize: 11, fontWeight: 600, whiteSpace: 'nowrap' }}>
                       {indicator.currency}
                     </span>
                   </td>
                   {/* Impact */}
-                  <td style={{ padding: '16px 12px', textAlign: 'center' }}>
+                  <td className="cal-col-impact" style={{ padding: '12px 12px', textAlign: 'center' }}>
                     {indicator.impact === 'high' ? (
                       <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '4px 11px', borderRadius: 6, background: 'rgba(239,68,68,0.12)', border: '1px solid rgba(239,68,68,0.4)', color: '#f87171', fontSize: 11, fontWeight: 700, whiteSpace: 'nowrap' }}>
                         <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#f87171', display: 'inline-block', animation: 'calPulse 1.5s ease-in-out infinite' }} />
@@ -603,7 +618,7 @@ function EconomicCalendar() {
                     )}
                   </td>
                   {/* Actual */}
-                  <td style={{ padding: '16px 16px', textAlign: 'right' }}>
+                  <td style={{ padding: '12px 12px', textAlign: 'right' }}>
                     {(() => {
                       const a = parseFloat(indicator.current);
                       const f = parseFloat(indicator.forecast);
@@ -613,21 +628,21 @@ function EconomicCalendar() {
                           {!isNaN(a) && !isNaN(f) && a !== f && (
                             a > f ? <TrendingUp size={13} color="#22c55e" /> : <TrendingDown size={13} color="#ef4444" />
                           )}
-                          <span style={{ color, fontWeight: 700, fontSize: 17 }}>{formatValue(indicator.current, indicator.unit)}</span>
+                          <span className="cal-actual-val" style={{ color, fontWeight: 700, fontSize: 17 }}>{formatValue(indicator.current, indicator.unit)}</span>
                         </div>
                       );
                     })()}
                   </td>
                   {/* Forecast */}
-                  <td style={{ padding: '16px 16px', textAlign: 'right', color: theme.muted, fontSize: 15 }}>
+                  <td className="cal-col-forecast" style={{ padding: '12px 12px', textAlign: 'right', color: theme.muted, fontSize: 14 }}>
                     ({formatValue(indicator.forecast, indicator.unit)})
                   </td>
                   {/* Previous */}
-                  <td style={{ padding: '16px 16px', textAlign: 'right', color: theme.muted, fontSize: 15 }}>
+                  <td className="cal-col-previous" style={{ padding: '12px 12px', textAlign: 'right', color: theme.muted, fontSize: 14 }}>
                     {formatValue(indicator.previous, indicator.unit)}
                   </td>
                   {/* Surprise */}
-                  <td style={{ padding: '16px 12px', textAlign: 'center' }}>
+                  <td className="cal-col-surprise" style={{ padding: '12px 12px', textAlign: 'center' }}>
                     {(() => {
                       const surp = getSurprise(indicator.current, indicator.forecast);
                       if (surp === null) return <span style={{ color: theme.muted, fontSize: 11 }}>—</span>;
@@ -640,7 +655,7 @@ function EconomicCalendar() {
                     })()}
                   </td>
                   {/* Expand */}
-                  <td style={{ padding: '16px 12px', textAlign: 'center', width: 40 }}>
+                  <td style={{ padding: '12px 8px', textAlign: 'center', width: 36 }}>
                     {expandedRow === indicator.id
                       ? <ChevronUp size={16} style={{ color: theme.accent, margin: '0 auto' }} />
                       : <ChevronDown size={16} style={{ color: theme.muted, margin: '0 auto' }} />
@@ -651,7 +666,7 @@ function EconomicCalendar() {
                 {/* Expanded Row - AI Insights + Historical Chart */}
                 {expandedRow === indicator.id && (
                   <tr>
-                    <td colSpan="8" style={{ padding: '0 16px 24px', backgroundColor: theme.bg }}>
+                    <td colSpan="8" className="cal-expanded-td" style={{ padding: '0 16px 24px', backgroundColor: theme.bg }}>
                       <div className="space-y-4">
                         
                         {/* AI Insights Section */}
@@ -669,7 +684,7 @@ function EconomicCalendar() {
                             <p className="text-sm mb-3" style={{ color: theme.text }}>
                               {indicator.aiInsights.summary}
                             </p>
-                            <div className="grid grid-cols-3 gap-3 text-xs">
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
                               <div className="rounded p-2" style={{ backgroundColor: theme.surface }}>
                                 <div style={{ color: theme.muted }}>Impact</div>
                                 <div className="font-semibold mt-1" style={{ 
@@ -713,7 +728,7 @@ function EconomicCalendar() {
                         )}
 
                         {/* Specs */}
-                        <div className="grid grid-cols-2 gap-4 mb-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
                           <div>
                             <h4 className="text-xs font-semibold uppercase mb-2" style={{ color: theme.muted }}>
                               Source
@@ -828,6 +843,7 @@ function EconomicCalendar() {
             ))}
           </tbody>
         </table>
+        </div>
       </div>
 
       {filteredIndicators.length === 0 && (
@@ -856,6 +872,23 @@ function EconomicCalendar() {
         @keyframes calPulse {
           0%, 100% { opacity: 1;   transform: scale(1);   }
           50%       { opacity: 0.35; transform: scale(0.65); }
+        }
+        .cal-filter-row::-webkit-scrollbar { display: none; }
+        .cal-filter-row { -ms-overflow-style: none; scrollbar-width: none; }
+        .cal-impact-mobile { display: none; }
+        .cal-table-scroll { width: 100%; }
+        @media (max-width: 639px) {
+          .cal-col-currency,
+          .cal-col-impact,
+          .cal-col-forecast,
+          .cal-col-previous,
+          .cal-col-surprise { display: none; }
+          .cal-impact-mobile { display: inline-flex; }
+          .cal-print-label { display: none; }
+          .cal-table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+          .cal-expanded-td { padding: 0 8px 16px !important; }
+          .col-span-2 { grid-column: span 1 !important; }
+          .cal-actual-val { font-size: 15px !important; }
         }
       `}</style>
     </div>
