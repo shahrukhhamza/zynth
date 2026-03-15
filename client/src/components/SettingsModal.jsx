@@ -1,4 +1,4 @@
-import { X, Settings, Moon, Sun, Globe, Bell, BellOff, RefreshCw } from 'lucide-react';
+import { X, Settings, Moon, Sun, Globe, Bell, RefreshCw } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 import { useTimezone } from '../contexts/TimezoneContext';
 import { useState } from 'react';
@@ -7,99 +7,116 @@ export default function SettingsModal({ onClose, autoRefresh, onToggleAutoRefres
   const theme = useTheme();
   const { selectedTimezone, changeTimezone, timezones } = useTimezone();
   const [notifications, setNotifications] = useState(true);
-  const isMobile = window.innerWidth < 768;
 
+  const Toggle = ({ value, onChange }) => (
+    <button
+      onClick={onChange}
+      className="relative inline-flex items-center rounded-full transition-colors duration-200 flex-shrink-0"
+      style={{
+        width: 44, height: 24,
+        backgroundColor: value ? theme.accent : (theme.isDark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.15)'),
+      }}
+      aria-checked={value}
+      role="switch"
+    >
+      <span
+        className="inline-block rounded-full bg-white shadow transition-transform duration-200"
+        style={{
+          width: 18, height: 18,
+          transform: value ? 'translateX(22px)' : 'translateX(3px)',
+        }}
+      />
+    </button>
+  );
+
+  /* A section card with a label header */
   const Section = ({ title, children }) => (
-    <div className="mb-6">
-      <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: theme.muted }}>
+    <div className="mb-5">
+      <p
+        className="text-[11px] font-semibold uppercase tracking-widest mb-2 px-1"
+        style={{ color: theme.muted }}
+      >
         {title}
       </p>
       <div
         className="rounded-xl overflow-hidden"
-        style={{ border: `1px solid ${theme.border}` }}
+        style={{ border: `1px solid ${theme.border}`, backgroundColor: theme.isDark ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.02)' }}
       >
         {children}
       </div>
     </div>
   );
 
-  const Row = ({ icon: Icon, label, description, children, last }) => (
+  /* Row: icon · label + description on left | control on right — never overlaps */
+  const Row = ({ icon: Icon, iconColor, label, description, control, last }) => (
     <div
-      className="flex items-center justify-between px-4 py-3"
-      style={{
-        borderBottom: last ? 'none' : `1px solid ${theme.border}`,
-        background: 'transparent',
-      }}
+      className="flex items-center gap-3 px-4 py-3"
+      style={{ borderBottom: last ? 'none' : `1px solid ${theme.border}` }}
     >
-      <div className="flex items-center gap-3 flex-1 min-w-0 mr-3">
-        <div
-          className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
-          style={{ backgroundColor: theme.isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.05)' }}
-        >
-          <Icon className="w-4 h-4" style={{ color: theme.muted }} />
-        </div>
-        <div className="min-w-0">
-          <p className="text-sm font-medium" style={{ color: theme.text }}>{label}</p>
-          {description && (
-            <p className="text-xs mt-0.5" style={{ color: theme.muted }}>{description}</p>
-          )}
-        </div>
+      {/* Icon bubble */}
+      <div
+        className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
+        style={{ backgroundColor: iconColor ? `${iconColor}18` : (theme.isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.05)') }}
+      >
+        <Icon className="w-4 h-4" style={{ color: iconColor || theme.muted }} />
       </div>
-      <div className="flex-shrink-0">{children}</div>
-    </div>
-  );
 
-  const Toggle = ({ value, onChange }) => (
-    <button
-      onClick={onChange}
-      className="relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 flex-shrink-0"
-      style={{ backgroundColor: value ? theme.accent : (theme.isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.15)') }}
-    >
-      <span
-        className="inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-200 shadow"
-        style={{ transform: value ? 'translateX(1.5rem)' : 'translateX(0.25rem)' }}
-      />
-    </button>
+      {/* Text */}
+      <div className="flex-1 min-w-0">
+        <p className="text-sm font-medium leading-tight" style={{ color: theme.text }}>{label}</p>
+        {description && (
+          <p className="text-xs mt-0.5 leading-snug" style={{ color: theme.muted }}>{description}</p>
+        )}
+      </div>
+
+      {/* Control – never shrinks, never overlaps text */}
+      <div className="flex-shrink-0 ml-2">{control}</div>
+    </div>
   );
 
   return (
     <div
-      className="fixed inset-0 z-[100] modal-overlay flex items-end sm:items-center justify-center sm:p-4"
-      style={{ backgroundColor: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(4px)' }}
+      className="fixed inset-0 z-[300] flex items-end sm:items-center justify-center sm:p-4"
+      style={{ backgroundColor: 'rgba(0,0,0,0.65)', backdropFilter: 'blur(6px)' }}
       onClick={e => { if (e.target === e.currentTarget) onClose(); }}
     >
       <div
-        className="modal-content relative w-full rounded-t-2xl sm:rounded-2xl overflow-hidden"
+        className="relative w-full rounded-t-2xl sm:rounded-2xl overflow-hidden"
         style={{
           backgroundColor: theme.surface,
           border: `1px solid ${theme.border}`,
-          maxWidth: '480px',
-          maxHeight: isMobile ? '92vh' : '90vh',
+          maxWidth: 480,
+          maxHeight: '92vh',
           overflowY: 'auto',
-          boxShadow: '0 30px 80px rgba(0,0,0,0.6)',
+          boxShadow: theme.isDark ? '0 -8px 40px rgba(0,0,0,0.7)' : '0 -8px 40px rgba(0,0,0,0.18)',
         }}
       >
+        {/* Drag handle (mobile) */}
+        <div className="flex justify-center pt-3 pb-1 sm:hidden">
+          <div className="w-9 h-1 rounded-full" style={{ backgroundColor: theme.border }} />
+        </div>
+
         {/* Header */}
         <div
-          className="flex items-center justify-between px-6 py-4 border-b"
-          style={{ borderColor: theme.border, background: theme.isDark ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.02)' }}
+          className="flex items-center justify-between px-5 py-4 border-b"
+          style={{ borderColor: theme.border }}
         >
           <div className="flex items-center gap-3">
             <div
               className="w-9 h-9 rounded-xl flex items-center justify-center"
-              style={{ backgroundColor: theme.accentGlow, border: `1px solid ${theme.accent}40` }}
+              style={{ backgroundColor: `${theme.accent}18`, border: `1px solid ${theme.accent}30` }}
             >
-              <Settings className="w-5 h-5" style={{ color: theme.accent }} />
+              <Settings className="w-4 h-4" style={{ color: theme.accent }} />
             </div>
             <div>
               <h2 className="text-base font-bold" style={{ color: theme.text }}>Settings</h2>
-              <p className="text-xs" style={{ color: theme.muted }}>Preferences and display options</p>
+              <p className="text-xs" style={{ color: theme.muted }}>Preferences &amp; display options</p>
             </div>
           </div>
           <button
             onClick={onClose}
             className="w-8 h-8 rounded-lg flex items-center justify-center transition-colors"
-            style={{ color: theme.muted }}
+            style={{ color: theme.muted, backgroundColor: 'transparent' }}
             onMouseOver={e => e.currentTarget.style.backgroundColor = theme.isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)'}
             onMouseOut={e => e.currentTarget.style.backgroundColor = 'transparent'}
           >
@@ -107,66 +124,73 @@ export default function SettingsModal({ onClose, autoRefresh, onToggleAutoRefres
           </button>
         </div>
 
-        <div className="p-6">
+        {/* Body */}
+        <div className="p-5">
+
           {/* Appearance */}
           <Section title="Appearance">
             <Row
               icon={theme.isDark ? Moon : Sun}
+              iconColor={theme.accent}
               label="Dark Mode"
               description={theme.isDark ? 'Currently using dark theme' : 'Currently using light theme'}
+              control={<Toggle value={theme.isDark} onChange={theme.toggleTheme} />}
               last
-            >
-              <Toggle value={theme.isDark} onChange={theme.toggleTheme} />
-            </Row>
+            />
           </Section>
 
-          {/* Data */}
+          {/* Data & Refresh */}
           <Section title="Data & Refresh">
             <Row
               icon={RefreshCw}
               label="Auto-refresh"
-              description="Automatically reload market data"
-            >
-              <Toggle value={autoRefresh} onChange={onToggleAutoRefresh} />
-            </Row>
+              description="Automatically reload market data every 30s"
+              control={<Toggle value={autoRefresh} onChange={onToggleAutoRefresh} />}
+            />
             <Row
               icon={Bell}
               label="Notifications"
-              description="Show alerts for market events"
+              description="Show alerts for high-impact market events"
+              control={<Toggle value={notifications} onChange={() => setNotifications(v => !v)} />}
               last
-            >
-              <Toggle value={notifications} onChange={() => setNotifications(v => !v)} />
-            </Row>
+            />
           </Section>
 
-          {/* Timezone */}
+          {/* Timezone — select lives below the label row so it has full width */}
           <Section title="Timezone">
-            <Row icon={Globe} label="Market Timezone" description="Used across all charts and calendar" last>
+            <div className="px-4 py-3">
+              <div className="flex items-center gap-3 mb-3">
+                <div
+                  className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
+                  style={{ backgroundColor: theme.isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.05)' }}
+                >
+                  <Globe className="w-4 h-4" style={{ color: theme.muted }} />
+                </div>
+                <div className="min-w-0">
+                  <p className="text-sm font-medium" style={{ color: theme.text }}>Market Timezone</p>
+                  <p className="text-xs" style={{ color: theme.muted }}>Used across all charts and calendar</p>
+                </div>
+              </div>
               <select
                 value={selectedTimezone}
                 onChange={e => changeTimezone(e.target.value)}
-                className="text-sm rounded-lg px-2 py-1.5 outline-none"
+                className="w-full text-sm rounded-lg px-3 py-2 outline-none"
                 style={{
-                  backgroundColor: theme.isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)',
+                  backgroundColor: theme.isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.05)',
                   color: theme.text,
                   border: `1px solid ${theme.border}`,
-                  maxWidth: isMobile ? '110px' : '140px',
                 }}
               >
                 {timezones.map(tz => (
-                  <option
-                    key={tz.id}
-                    value={tz.id}
-                    style={{ backgroundColor: theme.surface, color: theme.text }}
-                  >
+                  <option key={tz.id} value={tz.id} style={{ backgroundColor: theme.surface, color: theme.text }}>
                     {tz.name}
                   </option>
                 ))}
               </select>
-            </Row>
+            </div>
           </Section>
 
-          <p className="text-center text-xs" style={{ color: theme.muted }}>
+          <p className="text-center text-xs pb-1" style={{ color: theme.muted }}>
             More settings coming in future updates.
           </p>
         </div>
@@ -174,3 +198,4 @@ export default function SettingsModal({ onClose, autoRefresh, onToggleAutoRefres
     </div>
   );
 }
+
