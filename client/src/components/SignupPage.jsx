@@ -101,12 +101,12 @@ export default function SignupPage({ onSwitchToLogin, onBack }) {
 
   const inputStyle = {
     background: 'rgba(255,255,255,0.04)',
-    border: '1px solid rgba(255,255,255,0.08)',
-    borderRadius: '10px', color: '#fff', width: '100%', fontSize: '15px',
+    border: '1px solid rgba(255,255,255,0.1)',
+    borderRadius: '10px', color: '#fff', width: '100%', fontSize: '14px',
     outline: 'none', transition: 'all 0.2s ease',
   };
-  const focusIn  = e => { e.target.style.background = 'rgba(255,255,255,0.06)'; e.target.style.borderColor = 'rgba(16,185,129,0.5)'; e.target.style.boxShadow = '0 0 0 3px rgba(16,185,129,0.08)'; };
-  const focusOut = e => { e.target.style.background = 'rgba(255,255,255,0.04)'; e.target.style.borderColor = 'rgba(255,255,255,0.08)'; e.target.style.boxShadow = 'none'; };
+  const focusIn  = e => { e.target.style.background = 'rgba(255,255,255,0.06)'; e.target.style.borderColor = 'rgba(16,185,129,0.45)'; e.target.style.boxShadow = '0 0 0 3px rgba(16,185,129,0.07)'; };
+  const focusOut = e => { e.target.style.background = 'rgba(255,255,255,0.04)'; e.target.style.borderColor = 'rgba(255,255,255,0.1)'; e.target.style.boxShadow = 'none'; };
 
   function setField(field, value) { setForm(f => ({ ...f, [field]: value })); }
 
@@ -336,15 +336,15 @@ export default function SignupPage({ onSwitchToLogin, onBack }) {
 
         {/* â”€â”€ RIGHT: Signup form â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
         <div style={{
-               width: isMobile ? '100vw' : '480px',
-               minWidth: isMobile ? 'unset' : '480px',
+               width: isMobile ? '100vw' : '460px',
+               minWidth: isMobile ? 'unset' : '460px',
                flexShrink: 0,
                display:'flex', flexDirection:'column',
                alignItems:'center',
                overflowY:'auto',
                background: isMobile ? '#000000' : '#0d0d0d',
-               borderLeft: isMobile ? 'none' : '1px solid rgba(255,255,255,0.06)',
-               padding: isMobile ? '24px 20px' : '28px 48px',
+               borderLeft: isMobile ? 'none' : '1px solid rgba(255,255,255,0.07)',
+               padding: isMobile ? '24px 20px' : '24px 44px',
                minHeight:'100vh',
                boxSizing:'border-box',
              }}>
@@ -421,11 +421,11 @@ export default function SignupPage({ onSwitchToLogin, onBack }) {
             )}
 
             {/* Header */}
-            <h2 style={{fontSize: isMobile ? '22px' : '26px',fontWeight:700,color:'#fff',letterSpacing:'-0.02em',margin:0}}>Create account</h2>
-            <p style={{fontSize:'14px',marginTop:'4px',marginBottom:'16px',color:'rgba(255,255,255,0.4)'}}>
+            <h2 style={{fontSize: isMobile ? '22px' : '24px',fontWeight:700,color:'#fff',letterSpacing:'-0.02em',margin:0}}>Create account</h2>
+            <p style={{fontSize:'13px',marginTop:'3px',marginBottom:'14px',color:'rgba(255,255,255,0.4)'}}>
               Already have one?{' '}
               <button onClick={onSwitchToLogin}
-                      style={{color:'#10b981',background:'none',border:'none',cursor:'pointer',fontSize:'14px',padding:0}}
+                      style={{color:'#10b981',background:'none',border:'none',cursor:'pointer',fontSize:'13px',padding:0}}
                       onMouseEnter={e => e.currentTarget.style.textDecoration='underline'}
                       onMouseLeave={e => e.currentTarget.style.textDecoration='none'}>
                 Sign in
@@ -434,80 +434,129 @@ export default function SignupPage({ onSwitchToLogin, onBack }) {
 
             {/* Error */}
             {error && (
-              <div style={{display:'flex',alignItems:'flex-start',gap:'10px',background:'rgba(239,68,68,0.07)',border:'1px solid rgba(239,68,68,0.2)',borderRadius:'10px',padding:'12px 14px',marginBottom:'20px',animation:'shake 0.35s ease'}}>
-                <AlertCircle size={16} color="#f87171" style={{flexShrink:0,marginTop:'1px'}} />
+              <div style={{display:'flex',alignItems:'flex-start',gap:'10px',background:'rgba(239,68,68,0.07)',border:'1px solid rgba(239,68,68,0.2)',borderRadius:'10px',padding:'10px 14px',marginBottom:'14px',animation:'shake 0.35s ease'}}>
+                <AlertCircle size={15} color="#f87171" style={{flexShrink:0,marginTop:'1px'}} />
                 <p style={{fontSize:'13px',color:'#f87171',margin:0,lineHeight:1.5}}>{error}</p>
               </div>
             )}
 
+            {/* ── Google button (top CTA) */}
+            <button
+              type="button"
+              onClick={handleGoogleClick}
+              disabled={loading || googleLoading || !GOOGLE_CLIENT_ID}
+              style={{
+                width:'100%', padding:'11px 16px',
+                background: googleLoading ? 'rgba(255,255,255,0.06)' : 'rgba(255,255,255,0.04)',
+                border:'1px solid rgba(255,255,255,0.13)',
+                borderRadius:'10px',
+                color: !GOOGLE_CLIENT_ID ? 'rgba(255,255,255,0.25)' : 'rgba(255,255,255,0.9)',
+                fontSize:'14px', fontWeight:500,
+                display:'flex', alignItems:'center', justifyContent:'center', gap:'10px',
+                cursor: loading || googleLoading || !GOOGLE_CLIENT_ID ? 'not-allowed' : 'pointer',
+                transition:'all 0.2s ease',
+                letterSpacing:'0.01em',
+                marginBottom:'14px',
+                boxShadow:'inset 0 1px 0 rgba(255,255,255,0.05)',
+              }}
+              onMouseEnter={e => {
+                if (!loading && !googleLoading && GOOGLE_CLIENT_ID) {
+                  e.currentTarget.style.background = 'rgba(255,255,255,0.08)';
+                  e.currentTarget.style.borderColor = 'rgba(255,255,255,0.25)';
+                  e.currentTarget.style.transform = 'translateY(-1px)';
+                  e.currentTarget.style.boxShadow = '0 6px 20px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.07)';
+                  e.currentTarget.style.color = '#fff';
+                }
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.background = googleLoading ? 'rgba(255,255,255,0.06)' : 'rgba(255,255,255,0.04)';
+                e.currentTarget.style.borderColor = 'rgba(255,255,255,0.13)';
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = 'inset 0 1px 0 rgba(255,255,255,0.05)';
+                e.currentTarget.style.color = !GOOGLE_CLIENT_ID ? 'rgba(255,255,255,0.25)' : 'rgba(255,255,255,0.9)';
+              }}
+              onMouseDown={e => { if (!loading && !googleLoading) e.currentTarget.style.transform = 'scale(0.99)'; }}
+              onMouseUp={e => { e.currentTarget.style.transform = 'translateY(-1px)'; }}
+            >
+              {googleLoading ? (
+                <Loader2 size={17} className="animate-spin" style={{color:'rgba(255,255,255,0.55)',flexShrink:0}} />
+              ) : (
+                <svg width="17" height="17" viewBox="0 0 24 24" style={{flexShrink:0}}>
+                  <path fill="#EA4335" d="M5.266 9.765A7.077 7.077 0 0 1 12 4.909c1.69 0 3.218.6 4.418 1.582L19.91 3C17.782 1.145 15.055 0 12 0 7.27 0 3.198 2.698 1.24 6.65l4.026 3.115z"/>
+                  <path fill="#34A853" d="M16.04 18.013c-1.09.703-2.474 1.078-4.04 1.078a7.077 7.077 0 0 1-6.723-4.823l-4.04 3.067A11.965 11.965 0 0 0 12 24c2.933 0 5.735-1.043 7.834-3l-3.793-2.987z"/>
+                  <path fill="#4A90E2" d="M19.834 21c2.195-2.048 3.62-5.096 3.62-9 0-.71-.109-1.473-.272-2.182H12v4.637h6.436c-.317 1.559-1.17 2.766-2.395 3.558L19.834 21z"/>
+                  <path fill="#FBBC05" d="M5.277 14.268A7.12 7.12 0 0 1 4.909 12c0-.782.125-1.533.357-2.235L1.24 6.65A11.934 11.934 0 0 0 0 12c0 1.92.445 3.73 1.237 5.335l4.04-3.067z"/>
+                </svg>
+              )}
+              <span>{googleLoading ? 'Signing in...' : 'Continue with Google'}</span>
+            </button>
+
+            {/* OR divider */}
+            <div style={{display:'flex',alignItems:'center',gap:'10px',marginBottom:'14px'}}>
+              <div style={{flex:1,height:'1px',background:'linear-gradient(to right, transparent, rgba(255,255,255,0.1))'}} />
+              <span style={{fontSize:'11px',fontWeight:500,color:'rgba(255,255,255,0.25)',letterSpacing:'0.08em',textTransform:'uppercase'}}>or with email</span>
+              <div style={{flex:1,height:'1px',background:'linear-gradient(to left, transparent, rgba(255,255,255,0.1))'}} />
+            </div>
+
                         <form onSubmit={handleSubmit} ref={formRef}>
 
               {/* Full Name */}
-              <div style={{marginBottom:'12px'}}>
-                <label style={{display:'block',fontSize:'12px',fontWeight:500,color:'rgba(255,255,255,0.5)',marginBottom:'7px',textTransform:'uppercase',letterSpacing:'0.06em'}}>
-                  Full name
-                </label>
+              <div style={{marginBottom:'10px'}}>
                 <div style={{position:'relative'}}>
-                  <User size={16} color="rgba(255,255,255,0.25)" style={{position:'absolute',left:'14px',top:'50%',transform:'translateY(-50%)',pointerEvents:'none'}} />
+                  <User size={15} color="rgba(255,255,255,0.2)" style={{position:'absolute',left:'13px',top:'50%',transform:'translateY(-50%)',pointerEvents:'none'}} />
                   <input type="text" autoComplete="name" required
                          value={form.name} onChange={e => { setField('name', e.target.value); setFieldErrors(fe => ({...fe, name:''})); }}
-                         placeholder="John Doe"
-                         style={{...inputStyle, padding: isMobile ? '11px 14px 11px 40px' : '12px 16px 12px 42px', ...(fieldErrors.name ? {border:'1px solid rgba(239,68,68,0.6)',boxShadow:'0 0 0 3px rgba(239,68,68,0.08)'} : {})}}
+                         placeholder="Full name"
+                         style={{...inputStyle, padding:'11px 14px 11px 38px', ...(fieldErrors.name ? {border:'1px solid rgba(239,68,68,0.5)',boxShadow:'0 0 0 3px rgba(239,68,68,0.07)'} : {})}}
                          onFocus={focusIn} onBlur={focusOut} />
                 </div>
                 {fieldErrors.name && (
-                  <div style={{display:'flex',alignItems:'center',gap:'4px',marginTop:'5px'}}>
-                    <AlertCircle size={12} color="#ef4444" />
-                    <span style={{fontSize:'12px',color:'#ef4444'}}>{fieldErrors.name}</span>
+                  <div style={{display:'flex',alignItems:'center',gap:'4px',marginTop:'4px'}}>
+                    <AlertCircle size={11} color="#ef4444" />
+                    <span style={{fontSize:'11px',color:'#ef4444'}}>{fieldErrors.name}</span>
                   </div>
                 )}
               </div>
 
               {/* Email */}
-              <div style={{marginBottom:'12px'}}>
-                <label style={{display:'block',fontSize:'12px',fontWeight:500,color:'rgba(255,255,255,0.5)',marginBottom:'7px',textTransform:'uppercase',letterSpacing:'0.06em'}}>
-                  Email address
-                </label>
+              <div style={{marginBottom:'10px'}}>
                 <div style={{position:'relative'}}>
-                  <Mail size={16} color="rgba(255,255,255,0.25)" style={{position:'absolute',left:'14px',top:'50%',transform:'translateY(-50%)',pointerEvents:'none'}} />
+                  <Mail size={15} color="rgba(255,255,255,0.2)" style={{position:'absolute',left:'13px',top:'50%',transform:'translateY(-50%)',pointerEvents:'none'}} />
                   <input type="email" autoComplete="email" required
                          value={form.email} onChange={e => { setField('email', e.target.value); setFieldErrors(fe => ({...fe, email:''})); }}
-                         placeholder="you@example.com"
-                         style={{...inputStyle, padding: isMobile ? '11px 14px 11px 40px' : '12px 16px 12px 42px', ...(fieldErrors.email ? {border:'1px solid rgba(239,68,68,0.6)',boxShadow:'0 0 0 3px rgba(239,68,68,0.08)'} : {})}}
+                         placeholder="Email address"
+                         style={{...inputStyle, padding:'11px 14px 11px 38px', ...(fieldErrors.email ? {border:'1px solid rgba(239,68,68,0.5)',boxShadow:'0 0 0 3px rgba(239,68,68,0.07)'} : {})}}
                          onFocus={focusIn} onBlur={focusOut} />
                 </div>
                 {fieldErrors.email && (
-                  <div style={{display:'flex',alignItems:'center',gap:'4px',marginTop:'5px'}}>
-                    <AlertCircle size={12} color="#ef4444" />
-                    <span style={{fontSize:'12px',color:'#ef4444'}}>{fieldErrors.email}</span>
+                  <div style={{display:'flex',alignItems:'center',gap:'4px',marginTop:'4px'}}>
+                    <AlertCircle size={11} color="#ef4444" />
+                    <span style={{fontSize:'11px',color:'#ef4444'}}>{fieldErrors.email}</span>
                   </div>
                 )}
               </div>
 
               {/* Password */}
-              <div style={{marginBottom:'12px'}}>
-                <label style={{display:'block',fontSize:'12px',fontWeight:500,color:'rgba(255,255,255,0.5)',marginBottom:'7px',textTransform:'uppercase',letterSpacing:'0.06em'}}>
-                  Password
-                </label>
+              <div style={{marginBottom:'10px'}}>
                 <div style={{position:'relative'}}>
-                  <Lock size={16} color="rgba(255,255,255,0.25)" style={{position:'absolute',left:'14px',top:'50%',transform:'translateY(-50%)',pointerEvents:'none'}} />
+                  <Lock size={15} color="rgba(255,255,255,0.2)" style={{position:'absolute',left:'13px',top:'50%',transform:'translateY(-50%)',pointerEvents:'none'}} />
                   <input type={showPass ? 'text' : 'password'} autoComplete="new-password" required
                          value={form.password} onChange={e => { setField('password', e.target.value); setFieldErrors(fe => ({...fe, password:''})); }}
-                         placeholder="Min. 8 characters"
-                         style={{...inputStyle, padding: isMobile ? '11px 44px 11px 40px' : '12px 44px 12px 42px', ...(fieldErrors.password ? {border:'1px solid rgba(239,68,68,0.6)',boxShadow:'0 0 0 3px rgba(239,68,68,0.08)'} : {})}}
+                         placeholder="Password (min. 8 characters)"
+                         style={{...inputStyle, padding:'11px 40px 11px 38px', ...(fieldErrors.password ? {border:'1px solid rgba(239,68,68,0.5)',boxShadow:'0 0 0 3px rgba(239,68,68,0.07)'} : {})}}
                          onFocus={focusIn} onBlur={focusOut} />
                   <button type="button" tabIndex={-1} onClick={() => setShowPass(v => !v)}
-                          style={{position:'absolute',right:'14px',top:'50%',transform:'translateY(-50%)',background:'none',border:'none',cursor:'pointer',color:'rgba(255,255,255,0.35)',padding:0,display:'flex'}}>
-                    {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
+                          style={{position:'absolute',right:'12px',top:'50%',transform:'translateY(-50%)',background:'none',border:'none',cursor:'pointer',color:'rgba(255,255,255,0.3)',padding:0,display:'flex'}}>
+                    {showPass ? <EyeOff size={15} /> : <Eye size={15} />}
                   </button>
                 </div>
                 {/* Strength meter */}
                 {form.password && (
-                  <div style={{marginTop:'10px'}}>
-                    <div style={{display:'flex',gap:'4px',marginBottom:'6px'}}>
+                  <div style={{marginTop:'7px'}}>
+                    <div style={{display:'flex',gap:'3px',marginBottom:'4px'}}>
                       {[1,2,3,4].map(i => (
                         <div key={i} style={{
-                          height:'3px', flex:1, borderRadius:'2px',
+                          height:'2px', flex:1, borderRadius:'2px',
                           transition:'all 0.3s ease',
                           background: i <= strength
                             ? (strength===1?'#ef4444':strength===2?'#f97316':strength===3?'#f59e0b':'#10b981')
@@ -515,77 +564,62 @@ export default function SignupPage({ onSwitchToLogin, onBack }) {
                         }} />
                       ))}
                     </div>
-                    <span style={{
-                      fontSize:'12px', fontWeight:500,
-                      color: strength===1?'#f87171':strength===2?'#fb923c':strength===3?'#fbbf24':'#34d399',
-                    }}>
-                      {STRENGTH_META[strength].label} password
-                    </span>
-                    {/* Checklist */}
-                    <div style={{marginTop:'8px',display:'grid',gridTemplateColumns:'1fr 1fr',gap:'4px 16px'}}>
-                      {[
-                        { ok: has8,    label: '8+ characters' },
-                        { ok: hasNum,  label: 'Number'        },
-                        { ok: hasCaps, label: 'Uppercase'     },
-                        { ok: hasSpec, label: 'Symbol'        },
-                      ].map(({ ok, label }) => (
-                        <div key={label} style={{display:'flex',alignItems:'center',gap:'6px'}}>
-                          {ok
-                            ? <Check size={12} color="#34d399" style={{flexShrink:0}} />
-                            : <div style={{width:'12px',height:'12px',borderRadius:'50%',border:'1px solid rgba(255,255,255,0.15)',flexShrink:0}} />}
-                          <span style={{fontSize:'11px',color: ok?'#34d399':'rgba(255,255,255,0.3)',transition:'color 0.2s'}}>{label}</span>
-                        </div>
-                      ))}
+                    <div style={{display:'flex',alignItems:'center',justifyContent:'space-between'}}>
+                      <span style={{fontSize:'11px',fontWeight:500,color:strength===1?'#f87171':strength===2?'#fb923c':strength===3?'#fbbf24':'#34d399'}}>
+                        {STRENGTH_META[strength].label} password
+                      </span>
+                      <div style={{display:'flex',gap:'8px'}}>
+                        {[{ok:has8,label:'8+'},{ok:hasNum,label:'123'},{ok:hasCaps,label:'Aa'},{ok:hasSpec,label:'!@'}].map(({ok,label})=>(
+                          <span key={label} style={{fontSize:'10px',color:ok?'#34d399':'rgba(255,255,255,0.2)',fontWeight:500,transition:'color 0.2s'}}>{label}</span>
+                        ))}
+                      </div>
                     </div>
                   </div>
                 )}
                 {fieldErrors.password && (
-                  <div style={{display:'flex',alignItems:'center',gap:'4px',marginTop:'5px'}}>
-                    <AlertCircle size={12} color="#ef4444" />
-                    <span style={{fontSize:'12px',color:'#ef4444'}}>{fieldErrors.password}</span>
+                  <div style={{display:'flex',alignItems:'center',gap:'4px',marginTop:'4px'}}>
+                    <AlertCircle size={11} color="#ef4444" />
+                    <span style={{fontSize:'11px',color:'#ef4444'}}>{fieldErrors.password}</span>
                   </div>
                 )}
               </div>
 
               {/* Confirm Password */}
-              <div style={{marginBottom:'4px'}}>
-                <label style={{display:'block',fontSize:'12px',fontWeight:500,color:'rgba(255,255,255,0.5)',marginBottom:'7px',textTransform:'uppercase',letterSpacing:'0.06em'}}>
-                  Confirm password
-                </label>
+              <div style={{marginBottom:'12px'}}>
                 <div style={{position:'relative'}}>
-                  <Lock size={16} color="rgba(255,255,255,0.25)" style={{position:'absolute',left:'14px',top:'50%',transform:'translateY(-50%)',pointerEvents:'none'}} />
+                  <Lock size={15} color="rgba(255,255,255,0.2)" style={{position:'absolute',left:'13px',top:'50%',transform:'translateY(-50%)',pointerEvents:'none'}} />
                   <input type={showConfirm ? 'text' : 'password'} autoComplete="new-password" required
                          value={form.confirm} onChange={e => { setField('confirm', e.target.value); setFieldErrors(fe => ({...fe, confirm:''})); }}
-                         placeholder="Re-enter your password"
-                         style={{...inputStyle, padding:'12px 68px 12px 42px', ...(fieldErrors.confirm ? {border:'1px solid rgba(239,68,68,0.6)',boxShadow:'0 0 0 3px rgba(239,68,68,0.08)'} : {})}}
+                         placeholder="Confirm password"
+                         style={{...inputStyle, padding:'11px 60px 11px 38px', ...(fieldErrors.confirm ? {border:'1px solid rgba(239,68,68,0.5)',boxShadow:'0 0 0 3px rgba(239,68,68,0.07)'} : {})}}
                          onFocus={focusIn} onBlur={focusOut} />
-                  <div style={{position:'absolute',right:'14px',top:'50%',transform:'translateY(-50%)',display:'flex',alignItems:'center',gap:'6px'}}>
+                  <div style={{position:'absolute',right:'12px',top:'50%',transform:'translateY(-50%)',display:'flex',alignItems:'center',gap:'5px'}}>
                     {form.confirm && (
                       form.password === form.confirm
-                        ? <CheckCircle2 size={16} color="#34d399" />
-                        : <AlertCircle  size={16} color="#f87171" />
+                        ? <CheckCircle2 size={14} color="#34d399" />
+                        : <AlertCircle  size={14} color="#f87171" />
                     )}
                     <button type="button" tabIndex={-1} onClick={() => setShowConfirm(v => !v)}
-                            style={{background:'none',border:'none',cursor:'pointer',color:'rgba(255,255,255,0.35)',padding:0,display:'flex'}}>
-                      {showConfirm ? <EyeOff size={16} /> : <Eye size={16} />}
+                            style={{background:'none',border:'none',cursor:'pointer',color:'rgba(255,255,255,0.3)',padding:0,display:'flex'}}>
+                      {showConfirm ? <EyeOff size={15} /> : <Eye size={15} />}
                     </button>
                   </div>
                 </div>
                 {fieldErrors.confirm && (
-                  <div style={{display:'flex',alignItems:'center',gap:'4px',marginTop:'5px'}}>
-                    <AlertCircle size={12} color="#ef4444" />
-                    <span style={{fontSize:'12px',color:'#ef4444'}}>{fieldErrors.confirm}</span>
+                  <div style={{display:'flex',alignItems:'center',gap:'4px',marginTop:'4px'}}>
+                    <AlertCircle size={11} color="#ef4444" />
+                    <span style={{fontSize:'11px',color:'#ef4444'}}>{fieldErrors.confirm}</span>
                   </div>
                 )}
               </div>
 
               {/* Consent checkboxes */}
-              <div style={{marginTop:'10px',marginBottom:'14px',display:'flex',flexDirection:'column',gap:'8px'}}>
-                <label style={{display:'flex',alignItems:'flex-start',gap:'12px',cursor:'pointer',userSelect:'none'}}>
+              <div style={{marginBottom:'14px',display:'flex',flexDirection:'column',gap:'7px',padding:'10px 12px',background:'rgba(255,255,255,0.02)',border:'1px solid rgba(255,255,255,0.07)',borderRadius:'9px'}}>
+                <label style={{display:'flex',alignItems:'flex-start',gap:'10px',cursor:'pointer',userSelect:'none'}}>
                   <input type="checkbox" className="sp-checkbox"
                          checked={consent.terms}
                          onChange={e => setConsent(c => ({ ...c, terms: e.target.checked }))} />
-                  <span style={{fontSize:'13px',color:'rgba(255,255,255,0.55)',lineHeight:1.5}}>
+                  <span style={{fontSize:'12px',color:'rgba(255,255,255,0.5)',lineHeight:1.5}}>
                     I agree to the{' '}
                     <a href="/terms" target="_blank" rel="noopener noreferrer"
                        style={{color:'#10b981',textDecoration:'none'}}
@@ -594,15 +628,16 @@ export default function SignupPage({ onSwitchToLogin, onBack }) {
                        onClick={e => e.stopPropagation()}>
                       Terms of Service
                     </a>
-                    {' '}and understand that Zynth is a software tool, not a financial advisor.
+                    {' '}— Zynth is a tool, not a financial advisor.
                   </span>
                 </label>
-                <label style={{display:'flex',alignItems:'flex-start',gap:'12px',cursor:'pointer',userSelect:'none'}}>
+                <div style={{height:'1px',background:'rgba(255,255,255,0.05)'}} />
+                <label style={{display:'flex',alignItems:'flex-start',gap:'10px',cursor:'pointer',userSelect:'none'}}>
                   <input type="checkbox" className="sp-checkbox"
                          checked={consent.risk}
                          onChange={e => setConsent(c => ({ ...c, risk: e.target.checked }))} />
-                  <span style={{fontSize:'13px',color:'rgba(255,255,255,0.55)',lineHeight:1.5}}>
-                    I understand AI analysis may contain errors and should not be the sole basis for trading decisions. I trade at my own risk.
+                  <span style={{fontSize:'12px',color:'rgba(255,255,255,0.5)',lineHeight:1.5}}>
+                    AI analysis may contain errors. I trade at my own risk.
                   </span>
                 </label>
               </div>
@@ -612,80 +647,26 @@ export default function SignupPage({ onSwitchToLogin, onBack }) {
                 type="submit" disabled={loading}
                 style={{
                   width:'100%',
-                  padding: isMobile ? '12px' : '13px',
-                  background: loading ? 'rgba(16,185,129,0.5)' : '#10b981',
+                  padding:'12px',
+                  background: loading ? 'rgba(16,185,129,0.5)' : 'linear-gradient(135deg, #10b981 0%, #0d9a6e 100%)',
                   border:'none', borderRadius:'10px',
-                  color:'#fff', fontSize:'15px', fontWeight:600,
+                  color:'#fff', fontSize:'14px', fontWeight:600,
                   cursor: loading ? 'not-allowed' : 'pointer',
                   transition:'all 0.2s ease',
                   letterSpacing:'0.01em',
                   display:'flex', alignItems:'center', justifyContent:'center', gap:'8px',
+                  boxShadow: loading ? 'none' : '0 4px 15px rgba(16,185,129,0.2)',
                 }}
-                onMouseEnter={e => { if (!loading) { e.currentTarget.style.background='#0d9a6e'; e.currentTarget.style.transform='translateY(-1px)'; e.currentTarget.style.boxShadow='0 8px 25px rgba(16,185,129,0.25)'; } }}
-                onMouseLeave={e => { e.currentTarget.style.background=loading?'rgba(16,185,129,0.5)':'#10b981'; e.currentTarget.style.transform='translateY(0)'; e.currentTarget.style.boxShadow='none'; }}
+                onMouseEnter={e => { if (!loading) { e.currentTarget.style.transform='translateY(-1px)'; e.currentTarget.style.boxShadow='0 8px 25px rgba(16,185,129,0.3)'; } }}
+                onMouseLeave={e => { e.currentTarget.style.transform='translateY(0)'; e.currentTarget.style.boxShadow=loading?'none':'0 4px 15px rgba(16,185,129,0.2)'; }}
                 onMouseDown={e => { e.currentTarget.style.transform='translateY(0) scale(0.99)'; }}
                 onMouseUp={e => { e.currentTarget.style.transform='translateY(-1px) scale(1)'; }}
               >
                 {loading
-                  ? <><Loader2 size={16} className="animate-spin" /><span>Creating account...</span></>
+                  ? <><Loader2 size={15} className="animate-spin" /><span>Creating account...</span></>
                   : 'Create account →'}
               </button>
             </form>
-
-            {/* OR divider */}
-            <div style={{margin:'20px 0',display:'flex',alignItems:'center',gap:'12px'}}>
-              <div style={{flex:1,height:'1px',background:'rgba(255,255,255,0.07)'}} />
-              <span style={{fontSize:'13px',color:'rgba(255,255,255,0.3)'}}>or</span>
-              <div style={{flex:1,height:'1px',background:'rgba(255,255,255,0.07)'}} />
-            </div>
-
-            {/* Google button */}
-            <button
-              type="button"
-              onClick={handleGoogleClick}
-              disabled={loading || googleLoading || !GOOGLE_CLIENT_ID}
-              style={{
-                width:'100%', padding:'13px 16px',
-                background: googleLoading ? 'rgba(255,255,255,0.06)' : 'rgba(255,255,255,0.03)',
-                border:'1px solid rgba(255,255,255,0.1)',
-                borderRadius:'10px',
-                color: !GOOGLE_CLIENT_ID ? 'rgba(255,255,255,0.25)' : '#fff',
-                fontSize:'14px', fontWeight:500,
-                display:'flex', alignItems:'center', justifyContent:'center', gap:'10px',
-                cursor: loading || googleLoading || !GOOGLE_CLIENT_ID ? 'not-allowed' : 'pointer',
-                transition:'all 0.2s ease',
-                letterSpacing:'0.01em',
-                position:'relative',
-              }}
-              onMouseEnter={e => {
-                if (!loading && !googleLoading && GOOGLE_CLIENT_ID) {
-                  e.currentTarget.style.background = 'rgba(255,255,255,0.07)';
-                  e.currentTarget.style.borderColor = 'rgba(255,255,255,0.22)';
-                  e.currentTarget.style.transform = 'translateY(-1px)';
-                  e.currentTarget.style.boxShadow = '0 6px 24px rgba(0,0,0,0.35)';
-                }
-              }}
-              onMouseLeave={e => {
-                e.currentTarget.style.background = googleLoading ? 'rgba(255,255,255,0.06)' : 'rgba(255,255,255,0.03)';
-                e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)';
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = 'none';
-              }}
-              onMouseDown={e => { if (!loading && !googleLoading) e.currentTarget.style.transform = 'scale(0.99)'; }}
-              onMouseUp={e => { e.currentTarget.style.transform = 'translateY(-1px)'; }}
-            >
-              {googleLoading ? (
-                <Loader2 size={18} className="animate-spin" style={{color:'rgba(255,255,255,0.55)',flexShrink:0}} />
-              ) : (
-                <svg width="18" height="18" viewBox="0 0 24 24" style={{flexShrink:0}}>
-                  <path fill="#EA4335" d="M5.266 9.765A7.077 7.077 0 0 1 12 4.909c1.69 0 3.218.6 4.418 1.582L19.91 3C17.782 1.145 15.055 0 12 0 7.27 0 3.198 2.698 1.24 6.65l4.026 3.115z"/>
-                  <path fill="#34A853" d="M16.04 18.013c-1.09.703-2.474 1.078-4.04 1.078a7.077 7.077 0 0 1-6.723-4.823l-4.04 3.067A11.965 11.965 0 0 0 12 24c2.933 0 5.735-1.043 7.834-3l-3.793-2.987z"/>
-                  <path fill="#4A90E2" d="M19.834 21c2.195-2.048 3.62-5.096 3.62-9 0-.71-.109-1.473-.272-2.182H12v4.637h6.436c-.317 1.559-1.17 2.766-2.395 3.558L19.834 21z"/>
-                  <path fill="#FBBC05" d="M5.277 14.268A7.12 7.12 0 0 1 4.909 12c0-.782.125-1.533.357-2.235L1.24 6.65A11.934 11.934 0 0 0 0 12c0 1.92.445 3.73 1.237 5.335l4.04-3.067z"/>
-                </svg>
-              )}
-              <span>{googleLoading ? 'Signing in...' : 'Continue with Google'}</span>
-            </button>
 
 
               </>
