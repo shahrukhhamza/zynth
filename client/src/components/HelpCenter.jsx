@@ -1298,7 +1298,7 @@ function renderInline(text, theme) {
   while ((m = re.exec(text)) !== null) {
     if (m.index > last) parts.push(text.slice(last, m.index));
     if (m[2]) parts.push(<strong key={m.index} style={{ fontWeight: 700 }}>{m[2]}</strong>);
-    else if (m[3]) parts.push(<code key={m.index} style={{ fontFamily: 'monospace', fontSize: 13, background: theme.isDark ? '#1a2436' : '#f1f5f9', padding: '1px 6px', borderRadius: 4, color: '#10b981' }}>{m[3]}</code>);
+    else if (m[3]) parts.push(<code key={m.index} style={{ fontFamily: 'monospace', fontSize: 13, background: theme.isDark ? '#1a1a1a' : '#f1f5f9', padding: '1px 6px', borderRadius: 4, color: '#10b981' }}>{m[3]}</code>);
     last = m.index + m[0].length;
   }
   if (last < text.length) parts.push(text.slice(last));
@@ -1325,12 +1325,12 @@ export default function HelpCenter() {
   const mobileShowContent = isMobile && (selectedCategory !== null || selectedArticle !== null || query.trim() !== '');
 
   const isDark   = theme.isDark !== false;
-  const bg0      = isDark ? '#060a12' : '#f4f6f8';
-  const bg1      = isDark ? '#0b1322' : '#ffffff';
-  const bg2      = isDark ? '#111827' : '#f1f5f9';
-  const border   = theme.border || (isDark ? '#1e2d3d' : '#e2e8f0');
-  const text0    = theme.text   || (isDark ? '#e2e8f0' : '#1e293b');
-  const textMuted= theme.muted  || (isDark ? '#64748b' : '#94a3b8');
+  const bg0      = theme.bg      || (isDark ? '#0d0d0d' : '#f0f2f5');
+  const bg1      = theme.surface || (isDark ? '#141414' : '#ffffff');
+  const bg2      = theme.bg      || (isDark ? '#1a1a1a' : '#f1f5f9');
+  const border   = theme.border  || (isDark ? '#2e2e2e' : '#e2e8f0');
+  const text0    = theme.text    || (isDark ? '#e8e8e8' : '#111827');
+  const textMuted= theme.muted   || (isDark ? '#64748b' : '#94a3b8');
   const accent   = '#10b981';
 
   const searchResults = useMemo(() => {
