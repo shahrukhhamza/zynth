@@ -7,6 +7,7 @@ export default function SettingsModal({ onClose, autoRefresh, onToggleAutoRefres
   const theme = useTheme();
   const { selectedTimezone, changeTimezone, timezones } = useTimezone();
   const [notifications, setNotifications] = useState(true);
+  const isMobile = window.innerWidth < 768;
 
   const Section = ({ title, children }) => (
     <div className="mb-6">
@@ -30,21 +31,21 @@ export default function SettingsModal({ onClose, autoRefresh, onToggleAutoRefres
         background: 'transparent',
       }}
     >
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-3 flex-1 min-w-0 mr-3">
         <div
           className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
           style={{ backgroundColor: theme.isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.05)' }}
         >
           <Icon className="w-4 h-4" style={{ color: theme.muted }} />
         </div>
-        <div>
+        <div className="min-w-0">
           <p className="text-sm font-medium" style={{ color: theme.text }}>{label}</p>
           {description && (
             <p className="text-xs mt-0.5" style={{ color: theme.muted }}>{description}</p>
           )}
         </div>
       </div>
-      <div className="flex-shrink-0 ml-4">{children}</div>
+      <div className="flex-shrink-0">{children}</div>
     </div>
   );
 
@@ -63,17 +64,17 @@ export default function SettingsModal({ onClose, autoRefresh, onToggleAutoRefres
 
   return (
     <div
-      className="fixed inset-0 z-[100] modal-overlay flex items-center justify-center p-4"
+      className="fixed inset-0 z-[100] modal-overlay flex items-end sm:items-center justify-center sm:p-4"
       style={{ backgroundColor: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(4px)' }}
       onClick={e => { if (e.target === e.currentTarget) onClose(); }}
     >
       <div
-        className="modal-content relative w-full rounded-2xl overflow-hidden"
+        className="modal-content relative w-full rounded-t-2xl sm:rounded-2xl overflow-hidden"
         style={{
           backgroundColor: theme.surface,
           border: `1px solid ${theme.border}`,
           maxWidth: '480px',
-          maxHeight: '90vh',
+          maxHeight: isMobile ? '92vh' : '90vh',
           overflowY: 'auto',
           boxShadow: '0 30px 80px rgba(0,0,0,0.6)',
         }}
@@ -149,7 +150,7 @@ export default function SettingsModal({ onClose, autoRefresh, onToggleAutoRefres
                   backgroundColor: theme.isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)',
                   color: theme.text,
                   border: `1px solid ${theme.border}`,
-                  maxWidth: '140px',
+                  maxWidth: isMobile ? '110px' : '140px',
                 }}
               >
                 {timezones.map(tz => (
