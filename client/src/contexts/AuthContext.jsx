@@ -39,8 +39,8 @@ export function AuthProvider({ children }) {
     localStorage.removeItem(USER_KEY);
   }
 
-  const register = useCallback(async ({ name, email, password }) => {
-    const { data } = await api.post('/auth/register', { name, email, password });
+  const register = useCallback(async ({ name, email, password, terms_accepted }) => {
+    const { data } = await api.post('/auth/register', { name, email, password, terms_accepted });
     saveSession(data.user, data.token);
     return data.user;
   }, []);

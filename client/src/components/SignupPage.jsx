@@ -1,6 +1,8 @@
-﻿import { useState, useEffect, useRef } from 'react';
+﻿import { useState, useEffect, useRef, useCallback } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { API_URL } from '../config/api';
+
+const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || '';
 import {
   Eye, EyeOff, TrendingUp, AlertCircle, CheckCircle, CheckCircle2,
   Loader2, User, Mail, Lock, ArrowRight, ArrowLeft, ChevronLeft,
@@ -8,7 +10,7 @@ import {
 } from 'lucide-react';
 
 export default function SignupPage({ onSwitchToLogin, onBack }) {
-  const { register } = useAuth();
+  const { register, loginWithGoogle } = useAuth();
   useEffect(() => { window.scrollTo(0, 0); }, []);
 
   const [form, setForm]               = useState({ name: '', email: '', password: '', confirm: '' });
@@ -21,6 +23,8 @@ export default function SignupPage({ onSwitchToLogin, onBack }) {
   const [fieldErrors, setFieldErrors] = useState({ name: '', email: '', password: '', confirm: '' });
   const [success, setSuccess]         = useState(false);
   const formRef                       = useRef(null);
+  const googleBtnRef                  = useRef(null);
+  const initializedRef                = useRef(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
   useEffect(() => {
@@ -35,6 +39,46 @@ export default function SignupPage({ onSwitchToLogin, onBack }) {
       .then(d => { if (d?.totalUsers != null) setSpotsLeft(Math.max(0, 100 - d.totalUsers)); })
       .catch(() => {});
   }, []);
+
+  const handleGoogleCredential = useCallback(async (response) => {
+    setError('');
+    setLoading(true);
+    try {
+      await loginWithGoogle(response.credential);
+    } catch (err) {
+      const data = err.response?.data;
+      setError(data?.error || 'Google sign-in failed. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  }, [loginWithGoogle]);
+
+  useEffect(() => {
+    if (!GOOGLE_CLIENT_ID) return;
+    function initGoogle() {
+      if (initializedRef.current) return true;
+      if (!window.google?.accounts?.id) return false;
+      initializedRef.current = true;
+      window.google.accounts.id.initialize({
+        client_id: GOOGLE_CLIENT_ID,
+        callback: handleGoogleCredential,
+        auto_select: false,
+        cancel_on_tap_outside: true,
+      });
+      if (googleBtnRef.current) {
+        window.google.accounts.id.renderButton(googleBtnRef.current, {
+          theme: 'filled_black', size: 'large',
+          width: googleBtnRef.current.offsetWidth || 340,
+          text: 'signup_with', shape: 'rectangular', logo_alignment: 'center',
+        });
+      }
+      return true;
+    }
+    if (!initGoogle()) {
+      const interval = setInterval(() => { if (initGoogle()) clearInterval(interval); }, 100);
+      return () => clearInterval(interval);
+    }
+  }, [handleGoogleCredential]);
 
   const p       = form.password;
   const has8    = p.length >= 8;
@@ -584,6 +628,40 @@ export default function SignupPage({ onSwitchToLogin, onBack }) {
                   : 'Create account →'}
               </button>
             </form>
+
+            {/* OR divider */}
+            <div style={{margin:'20px 0',display:'flex',alignItems:'center',gap:'12px'}}>
+              <div style={{flex:1,height:'1px',background:'rgba(255,255,255,0.07)'}} />
+              <span style={{fontSize:'13px',color:'rgba(255,255,255,0.3)'}}>or</span>
+              <div style={{flex:1,height:'1px',background:'rgba(255,255,255,0.07)'}} />
+            </div>
+
+            {/* Google button */}
+            {GOOGLE_CLIENT_ID ? (
+              <div ref={googleBtnRef} className="w-full flex justify-center" style={{minHeight:'44px'}} />
+            ) : (
+              <button
+                type="button" disabled
+                style={{
+                  width:'100%', padding:'12px',
+                  background:'rgba(255,255,255,0.04)',
+                  border:'1px solid rgba(255,255,255,0.1)',
+                  borderRadius:'10px',
+                  color:'rgba(255,255,255,0.75)',
+                  fontSize:'14px', fontWeight:500,
+                  display:'flex', alignItems:'center', justifyContent:'center', gap:'10px',
+                  cursor:'not-allowed', transition:'all 0.2s ease',
+                }}
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24">
+                  <path fill="#EA4335" d="M5.266 9.765A7.077 7.077 0 0 1 12 4.909c1.69 0 3.218.6 4.418 1.582L19.91 3C17.782 1.145 15.055 0 12 0 7.27 0 3.198 2.698 1.24 6.65l4.026 3.115z"/>
+                  <path fill="#34A853" d="M16.04 18.013c-1.09.703-2.474 1.078-4.04 1.078a7.077 7.077 0 0 1-6.723-4.823l-4.04 3.067A11.965 11.965 0 0 0 12 24c2.933 0 5.735-1.043 7.834-3l-3.793-2.987z"/>
+                  <path fill="#4A90E2" d="M19.834 21c2.195-2.048 3.62-5.096 3.62-9 0-.71-.109-1.473-.272-2.182H12v4.637h6.436c-.317 1.559-1.17 2.766-2.395 3.558L19.834 21z"/>
+                  <path fill="#FBBC05" d="M5.277 14.268A7.12 7.12 0 0 1 4.909 12c0-.782.125-1.533.357-2.235L1.24 6.65A11.934 11.934 0 0 0 0 12c0 1.92.445 3.73 1.237 5.335l4.04-3.067z"/>
+                </svg>
+                Continue with Google
+              </button>
+            )}
 
 
               </>
