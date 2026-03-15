@@ -86,7 +86,7 @@ export default function SettingsModal({ onClose, autoRefresh, onToggleAutoRefres
           backgroundColor: theme.surface,
           border: `1px solid ${theme.border}`,
           maxWidth: 480,
-          maxHeight: '92vh',
+          maxHeight: 'calc(100vh - 80px)',
           overflowY: 'auto',
           boxShadow: theme.isDark ? '0 -8px 40px rgba(0,0,0,0.7)' : '0 -8px 40px rgba(0,0,0,0.18)',
         }}
