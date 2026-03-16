@@ -36,16 +36,7 @@ class FinnhubWsClient {
 
   /** Build WS URL — works in both dev (Vite proxy) and production (Render) */
   _url() {
-    // Only use the explicit env var — NOT the localhost fallback.
-    // If VITE_API_URL is not set we're in dev and Vite's proxy handles /ws.
-    const explicitApi = import.meta.env.VITE_API_URL;
-    if (explicitApi) {
-      // https://... → wss://...   |   http://... → ws://...
-      return explicitApi.replace(/^http/, 'ws') + '/ws/market';
-    }
-    // Dev: let Vite proxy forward /ws → localhost:5000
-    const proto = window.location.protocol === 'https:' ? 'wss' : 'ws';
-    return `${proto}://${window.location.host}/ws/market`;
+    return API_URL.replace(/^http/, 'ws') + '/ws/market';
   }
 
   connect() {
