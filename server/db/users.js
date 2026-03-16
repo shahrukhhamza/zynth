@@ -10,7 +10,7 @@ const pool = new Pool({
     : false,
 });
 
-// Test connection on startup
+// Test connection on startup (non-fatal — initDb() will surface real errors)
 pool.connect()
   .then(client => {
     console.log('✅ PostgreSQL connected');
@@ -18,7 +18,6 @@ pool.connect()
   })
   .catch(err => {
     console.error('❌ PostgreSQL connection failed:', err.message);
-    process.exit(1);
   });
 
 // ── Create tables + migrate ───────────────────────────────────────────────────
