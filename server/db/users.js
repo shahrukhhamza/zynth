@@ -131,9 +131,10 @@ export async function linkGoogleId(id, google_id, avatar) {
 }
 
 export async function updateUserPlan(id, plan, expiresAt = null) {
+  const normalizedPlan = String(plan || 'free').trim().toLowerCase();
   await pool.query(
     'UPDATE users SET plan = $1, plan_expires_at = $2 WHERE id = $3',
-    [plan, expiresAt, id]
+    [normalizedPlan, expiresAt, id]
   );
 }
 

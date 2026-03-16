@@ -19,7 +19,6 @@ import {
 import { useTheme } from '../contexts/ThemeContext';
 import { useTimezone } from '../contexts/TimezoneContext';
 import { usePlanGate } from '../hooks/usePlanGate';
-import { deleteScreenshotReport, deleteScreenshotTrade, getScreenshotReport } from '../services/mt5Api';
 import { deleteScreenshotReport, deleteScreenshotTrade, deleteScreenshotBatch, getScreenshotReport, getScreenshotBatches } from '../services/mt5Api';
 import ScreenshotUpload from './ScreenshotUpload';
 import MT5PerformanceStats   from './MT5PerformanceStats';
@@ -141,10 +140,10 @@ export default function ScreenshotImportDashboard() {
 
   const handleDeleteTrade = (trade) => {
     setConfirmModal({ type: 'trade', trade });
+  };
 
-    const handleDeleteBatch = (batch, label) => {
-      setConfirmModal({ type: 'batch', batch, label });
-    };
+  const handleDeleteBatch = (batch, label) => {
+    setConfirmModal({ type: 'batch', batch, label });
   };
 
   const handleConfirmDelete = async () => {

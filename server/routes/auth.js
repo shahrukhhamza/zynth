@@ -9,6 +9,10 @@ import { saveAvatarFromBase64 } from '../services/fileStorageService.js';
 
 const router = Router();
 
+function normalizePlan(plan) {
+  return String(plan || 'free').trim().toLowerCase();
+}
+
 /** Build a safe JWT/response user object from a DB row. */
 function buildUser(row) {
   return {
@@ -17,7 +21,7 @@ function buildUser(row) {
     email:               row.email,
     avatar:              row.avatar ?? null,
     avatar_url:          row.avatar_url ?? null,
-    plan:                row.plan ?? 'free',
+    plan:                normalizePlan(row.plan),
     plan_expires_at:     row.plan_expires_at ?? null,
     ai_analysis_tries:   row.ai_analysis_tries ?? 0,
     screenshot_tries:    row.screenshot_tries ?? 0,

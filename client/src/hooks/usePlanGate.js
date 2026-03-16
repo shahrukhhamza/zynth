@@ -16,7 +16,7 @@ import { useAuth } from '../contexts/AuthContext';
 export function usePlanGate() {
   const { user } = useAuth();
 
-  const plan     = user?.plan ?? 'free';
+  const plan     = String(user?.plan ?? 'free').trim().toLowerCase();
   const isAdmin  = (user?.is_admin ?? 0) === 1;
   const isPro    = plan === 'pro';
   const isElite  = plan === 'elite';

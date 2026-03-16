@@ -49,6 +49,7 @@ import { UPLOADS_DIR, ensureUploadDirs } from './config/storagePaths.js';
 const app = express();
 const PORT = process.env.PORT || 5000;
 const HOST = process.env.HOST || '0.0.0.0';
+const isPreflightRequest = (req) => req.method === 'OPTIONS';
 
 // Railway sits behind a reverse proxy/CDN. Trust the forwarded client IP headers
 // so express-rate-limit and other middleware can identify the real client.
@@ -57,10 +58,11 @@ app.set('trust proxy', 1);
 // ── Rate limiters ─────────────────────────────────────────────────────────────
 const globalLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 100,
+  max: 500,
   standardHeaders: true,
   legacyHeaders: false,
   message: { error: 'Too many requests, please try again later.' },
+  skip: isPreflightRequest,
 });
 
 const authLimiter = rateLimit({
@@ -69,6 +71,7 @@ const authLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
   message: { error: 'Too many authentication attempts, please try again later.' },
+  skip: isPreflightRequest,
 });
 
 const aiLimiter = rateLimit({
@@ -137,10 +140,10 @@ app.use(helmet({
   crossOriginEmbedderPolicy: false,
 }));
 
-app.use('/api', globalLimiter);
-
 app.use(cors(corsOptions));
 app.options('*', cors(corsOptions));
+
+app.use('/api', globalLimiter);
 
 app.use(express.json({ limit: '10mb', strict: false }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));

@@ -64,25 +64,25 @@ export async function deleteScreenshotReport() {
  */
 export async function deleteScreenshotTrade(tradeId) {
   const response = await client.delete(`/screenshot-trade/${tradeId}`);
+  return response.data;
+}
 
-  /**
-   * Fetch all upload sessions (batches) for the logged-in user.
-   * @returns {Promise<{success, batches: Array<{upload_batch, trade_count, uploaded_at, symbols}>}>}
-   */
-  export async function getScreenshotBatches() {
-    const response = await client.get('/screenshot-batches');
-    return response.data;
-  }
+/**
+ * Fetch all upload sessions (batches) for the logged-in user.
+ * @returns {Promise<{success, batches: Array<{upload_batch, trade_count, uploaded_at, symbols}>}>}
+ */
+export async function getScreenshotBatches() {
+  const response = await client.get('/screenshot-batches');
+  return response.data;
+}
 
-  /**
-   * Delete all trades belonging to a specific upload session.
-   * @param {string|null} batchId — UUID string or null for legacy trades
-   * @returns {Promise<{success, message, deleted}>}
-   */
-  export async function deleteScreenshotBatch(batchId) {
-    const response = await client.delete(`/screenshot-batch/${batchId ?? 'null'}`);
-    return response.data;
-  }
+/**
+ * Delete all trades belonging to a specific upload session.
+ * @param {string|null} batchId — UUID string or null for legacy trades
+ * @returns {Promise<{success, message, deleted}>}
+ */
+export async function deleteScreenshotBatch(batchId) {
+  const response = await client.delete(`/screenshot-batch/${batchId ?? 'null'}`);
   return response.data;
 }
 
