@@ -9,6 +9,8 @@ POST   /upload-trade-screenshot         — image → OCR + AI → trades + full
 GET    /screenshot-report               — stored screenshot trades + analysis
 DELETE /screenshot-report               — delete all stored screenshot trades + analysis
 DELETE /screenshot-trade/{trade_id}     — delete a single screenshot trade by ID
+GET    /screenshot-batches              — list upload sessions for the authenticated user
+DELETE /screenshot-batch/{batch_id}    — delete all trades from a specific upload session
 """
 
 from __future__ import annotations
@@ -33,10 +35,12 @@ load_dotenv(Path(__file__).parent / ".env")
 logging.basicConfig(level=logging.INFO, format="%(levelname)s:     %(message)s")
 
 from fastapi import FastAPI, HTTPException, Request, UploadFile, File, Form
+import uuid
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 
 from database import init_db, save_trades, get_trades, merge_screenshot_trades, delete_trades, delete_trade_by_id
+from database import init_db, save_trades, get_trades, merge_screenshot_trades, delete_trades, delete_trade_by_id, get_screenshot_batches, delete_trades_by_batch
 from screenshot_ocr import extract_trades_from_screenshot
 from journal_analyzer import compute_statistics, compute_behavioral_analysis, generate_ai_report
 
@@ -209,7 +213,8 @@ async def upload_screenshot(
 
     # ── persist — merge (dedup) instead of replace ──
     try:
-        merge_result = await asyncio.to_thread(merge_screenshot_trades, trades, user_id)
+        upload_batch = str(uuid.uuid4())
+        merge_result = await asyncio.to_thread(merge_screenshot_trades, trades, user_id, upload_batch)
     except Exception as exc:
         logging.error("merge_screenshot_trades failed:\n%s", traceback.format_exc())
         raise HTTPException(status_code=500, detail=f"Failed to save trades: {exc}")
@@ -320,6 +325,23 @@ async def delete_screenshot_report(request: Request) -> dict:
         "message": "Screenshot analysis data deleted.",
         "deleted": deleted,
     }
+
+
+@app.get("/screenshot-batches")
+async def list_screenshot_batches(request: Request) -> dict:
+    """Return all upload sessions (batches) for the authenticated user."""
+    user_id = _get_user_id(request)
+    batches = await asyncio.to_thread(get_screenshot_batches, user_id)
+    return {"success": True, "batches": batches}
+
+
+@app.delete("/screenshot-batch/{batch_id}")
+async def delete_screenshot_batch_route(batch_id: str, request: Request) -> dict:
+    """Delete all trades belonging to one upload session."""
+    user_id = _get_user_id(request)
+    actual_id = None if batch_id == "null" else batch_id
+    deleted = await asyncio.to_thread(delete_trades_by_batch, user_id, actual_id)
+    return {"success": True, "message": "Batch deleted.", "deleted": deleted}
 
 
 @app.delete("/screenshot-trade/{trade_id}")

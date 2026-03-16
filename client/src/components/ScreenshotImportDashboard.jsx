@@ -20,6 +20,7 @@ import { useTheme } from '../contexts/ThemeContext';
 import { useTimezone } from '../contexts/TimezoneContext';
 import { usePlanGate } from '../hooks/usePlanGate';
 import { deleteScreenshotReport, deleteScreenshotTrade, getScreenshotReport } from '../services/mt5Api';
+import { deleteScreenshotReport, deleteScreenshotTrade, deleteScreenshotBatch, getScreenshotReport, getScreenshotBatches } from '../services/mt5Api';
 import ScreenshotUpload from './ScreenshotUpload';
 import MT5PerformanceStats   from './MT5PerformanceStats';
 import MT5PerformanceCharts  from './MT5PerformanceCharts';
@@ -77,7 +78,9 @@ export default function ScreenshotImportDashboard() {
   const [serviceError,  setServiceError]  = useState(null);   // human-readable reason
   const [deleting,      setDeleting]      = useState(false);
   const [deletingTradeId, setDeletingTradeId] = useState(null);
-  const [confirmModal,  setConfirmModal]  = useState(null); // { type: 'all' } | { type: 'trade', trade }
+  const [confirmModal,  setConfirmModal]  = useState(null); // { type: 'all' } | { type: 'trade', trade } | { type: 'batch', batch, label }
+  const [batches,       setBatches]       = useState([]);
+  const [deletingBatchId, setDeletingBatchId] = useState(null);
 
   // ── On mount: check if we already have stored screenshot trades ──────────
   const loadExisting = useCallback(async () => {
@@ -96,6 +99,11 @@ export default function ScreenshotImportDashboard() {
         setActiveTab('upload');
       }
       setServiceOnline(true);
+      // Also fetch batches (non-critical — don't let failure break main report)
+      try {
+        const batchRes = await getScreenshotBatches();
+        if (batchRes.success) setBatches(batchRes.batches ?? []);
+      } catch { /* ignore batch fetch errors */ }
     } catch (err) {
       // Service is down — but DON'T wipe existing data; show offline banner instead
       setServiceOnline(false);
@@ -133,6 +141,10 @@ export default function ScreenshotImportDashboard() {
 
   const handleDeleteTrade = (trade) => {
     setConfirmModal({ type: 'trade', trade });
+
+    const handleDeleteBatch = (batch, label) => {
+      setConfirmModal({ type: 'batch', batch, label });
+    };
   };
 
   const handleConfirmDelete = async () => {
@@ -174,6 +186,23 @@ export default function ScreenshotImportDashboard() {
         }
       } finally {
         setDeletingTradeId(null);
+        setConfirmModal(null);
+      }
+    } else if (confirmModal.type === 'batch') {
+      const batchId = confirmModal.batch.upload_batch;
+      setDeletingBatchId(batchId ?? 'null');
+      try {
+        await deleteScreenshotBatch(batchId);
+        await loadExisting();
+      } catch (err) {
+        const status = err?.response?.status;
+        if (status === 401) {
+          setServiceError('Your session has expired. Please sign out and sign back in.');
+        } else {
+          setServiceError('Failed to delete screenshot upload. Please try again.');
+        }
+      } finally {
+        setDeletingBatchId(null);
         setConfirmModal(null);
       }
     }
@@ -448,12 +477,118 @@ export default function ScreenshotImportDashboard() {
 
         {/* Trade History */}
         {hasData && activeTab === 'history' && (
-          <MT5TradeHistory
-            trades={trades}
-            onDeleteTrade={handleDeleteTrade}
-            deletingTradeId={deletingTradeId}
-          />
+          <div className="space-y-6">
+            <ScreenshotBatchList
+              batches={batches}
+              onDeleteBatch={handleDeleteBatch}
+              deletingBatchId={deletingBatchId}
+              theme={theme}
+            />
+            <MT5TradeHistory
+              trades={trades}
+              onDeleteTrade={handleDeleteTrade}
+              deletingTradeId={deletingTradeId}
+            />
+          </div>
         )}
+      </div>
+    </div>
+  );
+}
+
+// ── Small summary pill ─────────────────────────────────────────────────────
+// ── Screenshot batch list (shown at top of History tab) ───────────────────
+function ScreenshotBatchList({ batches, onDeleteBatch, deletingBatchId, theme }) {
+  if (!batches || batches.length === 0) return null;
+
+  return (
+    <div>
+      <h3 className="text-xs font-semibold uppercase tracking-widest mb-3" style={{ color: theme.muted }}>
+        Upload Sessions
+      </h3>
+      <div className="space-y-2">
+        {batches.map((batch, idx) => {
+          const label = `Screenshot ${idx + 1}`;
+          const batchKey = batch.upload_batch ?? 'null';
+          const isDeleting = deletingBatchId === batchKey;
+          const symbols = batch.symbols
+            ? batch.symbols.split(',').slice(0, 4).join(', ') + (batch.symbols.split(',').length > 4 ? '…' : '')
+            : '—';
+          const uploadedDate = batch.uploaded_at
+            ? new Date(batch.uploaded_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
+            : null;
+
+          return (
+            <div
+              key={batchKey}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 12,
+                padding: '12px 16px',
+                borderRadius: 12,
+                backgroundColor: theme.isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)',
+                border: `1px solid ${theme.border}`,
+              }}
+            >
+              {/* Index badge */}
+              <div style={{
+                width: 36, height: 36, borderRadius: 10, flexShrink: 0,
+                background: `linear-gradient(135deg, ${theme.accent}30, ${theme.accent}15)`,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontSize: 13, fontWeight: 700, color: theme.accent,
+              }}>
+                {idx + 1}
+              </div>
+
+              {/* Info */}
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <span style={{ fontSize: 13, fontWeight: 600, color: theme.text }}>{label}</span>
+                  <span style={{
+                    fontSize: 11, fontWeight: 500,
+                    padding: '2px 8px', borderRadius: 20,
+                    backgroundColor: `${theme.accent}18`,
+                    color: theme.accent,
+                  }}>
+                    {batch.trade_count} trade{batch.trade_count !== 1 ? 's' : ''}
+                  </span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 3 }}>
+                  {uploadedDate && (
+                    <span style={{ fontSize: 11, color: theme.muted }}>{uploadedDate}</span>
+                  )}
+                  {symbols !== '—' && (
+                    <span style={{ fontSize: 11, color: theme.muted, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      {symbols}
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              {/* Delete button */}
+              <button
+                onClick={() => onDeleteBatch(batch, label)}
+                disabled={isDeleting}
+                title={`Delete ${label}`}
+                style={{
+                  background: 'none', border: `1px solid rgba(239,68,68,0.25)`,
+                  borderRadius: 8, padding: '6px 10px', flexShrink: 0,
+                  display: 'flex', alignItems: 'center', gap: 5,
+                  color: isDeleting ? theme.muted : 'rgba(239,68,68,0.75)',
+                  fontSize: 11, fontWeight: 500,
+                  cursor: isDeleting ? 'not-allowed' : 'pointer',
+                  transition: 'all 0.15s',
+                }}
+                onMouseEnter={e => { if (!isDeleting) { e.currentTarget.style.backgroundColor = 'rgba(239,68,68,0.08)'; e.currentTarget.style.color = '#ef4444'; }}}
+                onMouseLeave={e => { if (!isDeleting) { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.color = 'rgba(239,68,68,0.75)'; }}}
+              >
+                {isDeleting
+                  ? <Loader2 style={{ width: 12, height: 12 }} className="animate-spin" />
+                  : <Trash2 style={{ width: 12, height: 12 }} />}
+                Delete
+              </button>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
@@ -476,117 +611,104 @@ function Pill({ label, value, color, theme }) {
 function DeleteModal({ modal, onConfirm, onCancel, isDeleting, theme }) {
   if (!modal) return null;
 
-  const isAll = modal.type === 'all';
-  const trade = modal.trade;
-  const profit = trade?.profit ?? 0;
+  const isAll   = modal.type === 'all';
+  const isBatch = modal.type === 'batch';
+  const isTrade = modal.type === 'trade';
+  const trade   = modal.trade;
+  const profit  = trade?.profit ?? 0;
+
+  const title = isAll   ? 'Delete All Data'
+              : isBatch ? `Delete ${modal.label}`
+              : 'Delete Trade';
+
+  const body = isAll ? (
+    'This will permanently remove all screenshot sessions and every imported trade across all uploads.'
+  ) : isBatch ? (
+    <>
+      All <strong style={{ color: theme.text }}>{modal.batch?.trade_count} trade{modal.batch?.trade_count !== 1 ? 's' : ''}</strong>{' '}
+      from <strong style={{ color: theme.text }}>{modal.label}</strong> will be permanently removed.
+    </>
+  ) : (
+    <>
+      The <strong style={{ color: theme.text }}>{trade?.symbol}</strong>{' '}
+      <span style={{ color: trade?.type === 'BUY' ? '#10b981' : '#ef4444', fontWeight: 600 }}>{trade?.type}</span>{' '}
+      trade{' '}
+      <span style={{ color: profit >= 0 ? '#10b981' : '#ef4444', fontWeight: 600 }}>
+        ({profit >= 0 ? '+' : ''}{profit.toFixed(2)})
+      </span>
+      {' '}will be permanently removed.
+    </>
+  );
 
   return (
     <div
       style={{
         position: 'fixed', inset: 0, zIndex: 9999,
-        backgroundColor: 'rgba(0,0,0,0.55)',
+        backgroundColor: 'rgba(0,0,0,0.5)',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         padding: 16,
-        backdropFilter: 'blur(6px)',
-        WebkitBackdropFilter: 'blur(6px)',
-        animation: 'fadeIn 0.15s ease',
+        backdropFilter: 'blur(8px)',
+        WebkitBackdropFilter: 'blur(8px)',
+        animation: 'dmFadeIn 0.15s ease',
       }}
       onClick={(e) => { if (e.target === e.currentTarget && !isDeleting) onCancel(); }}
     >
       <div
         style={{
-          backgroundColor: theme.isDark ? '#1a1a2e' : theme.surface,
-          border: `1px solid ${theme.isDark ? 'rgba(255,255,255,0.08)' : theme.border}`,
+          backgroundColor: theme.surface,
+          border: `1px solid ${theme.border}`,
           borderRadius: 20,
-          padding: '36px 32px 28px',
-          maxWidth: 380, width: '100%',
-          boxShadow: theme.isDark
-            ? '0 0 0 1px rgba(255,255,255,0.04), 0 24px 60px rgba(0,0,0,0.6)'
-            : '0 20px 60px rgba(0,0,0,0.18)',
-          animation: 'slideUp 0.2s cubic-bezier(0.34,1.56,0.64,1)',
+          padding: '32px 28px 24px',
+          maxWidth: 360, width: '100%',
+          boxShadow: '0 8px 32px rgba(0,0,0,0.3), 0 2px 8px rgba(0,0,0,0.15)',
+          animation: 'dmSlideUp 0.2s cubic-bezier(0.22,1,0.36,1)',
         }}
       >
-        {/* Icon badge */}
+        {/* Icon */}
         <div style={{
-          position: 'relative',
-          width: 64, height: 64,
-          margin: '0 auto 22px',
+          width: 48, height: 48, borderRadius: 14,
+          background: 'rgba(239,68,68,0.1)',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
+          margin: '0 auto 18px',
         }}>
-          {/* Outer glow ring */}
-          <div style={{
-            position: 'absolute', inset: 0, borderRadius: '50%',
-            background: 'radial-gradient(circle, rgba(239,68,68,0.18) 0%, transparent 70%)',
-          }} />
-          <div style={{
-            width: 52, height: 52, borderRadius: '50%',
-            background: 'linear-gradient(135deg, rgba(239,68,68,0.15) 0%, rgba(239,68,68,0.08) 100%)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-          }}>
-            <Trash2 style={{ width: 21, height: 21, color: '#ef4444' }} />
-          </div>
+          <Trash2 style={{ width: 20, height: 20, color: '#ef4444' }} />
         </div>
 
+        {/* Title */}
         <h3 style={{
-          color: theme.text, fontSize: 17, fontWeight: 700,
-          textAlign: 'center', margin: '0 0 8px',
-          letterSpacing: '-0.01em',
+          color: theme.text, fontSize: 16, fontWeight: 700,
+          textAlign: 'center', margin: '0 0 10px', letterSpacing: '-0.01em',
         }}>
-          {isAll ? 'Delete All Screenshot Data' : 'Delete Trade'}
+          {title}
         </h3>
 
+        {/* Body */}
         <p style={{
-          color: theme.muted, fontSize: 13.5,
-          textAlign: 'center', lineHeight: 1.65, margin: '0 0 20px',
-          padding: '0 4px',
+          color: theme.muted, fontSize: 13, textAlign: 'center',
+          lineHeight: 1.65, margin: '0 0 16px', padding: '0 4px',
         }}>
-          {isAll
-            ? 'This will permanently remove all screenshot analysis data and every imported trade.'
-            : (
-              <>
-                Permanently delete the{' '}
-                <strong style={{ color: theme.text }}>{trade?.symbol}</strong>{' '}
-                <span style={{
-                  color: trade?.type === 'BUY' ? '#10b981' : '#ef4444',
-                  fontWeight: 600,
-                }}>
-                  {trade?.type}
-                </span>{' '}
-                trade{' '}
-                <span style={{
-                  color: profit >= 0 ? '#10b981' : '#ef4444',
-                  fontWeight: 600,
-                }}>
-                  ({profit >= 0 ? '+' : ''}{profit.toFixed(2)})
-                </span>
-                ?
-              </>
-            )}
+          {body}
         </p>
 
-        {/* Warning chip */}
-        <div style={{
-          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
-          backgroundColor: 'rgba(239,68,68,0.08)',
-          border: '1px solid rgba(239,68,68,0.18)',
-          borderRadius: 8, padding: '7px 14px',
-          margin: '0 0 24px',
+        {/* Warning note */}
+        <p style={{
+          fontSize: 11.5, textAlign: 'center', margin: '0 0 22px',
+          color: 'rgba(239,68,68,0.7)', fontWeight: 500,
+          letterSpacing: '0.01em',
         }}>
-          <AlertCircle style={{ width: 13, height: 13, color: '#ef4444', flexShrink: 0 }} />
-          <span style={{ fontSize: 12, color: '#ef4444', fontWeight: 500 }}>
-            This action cannot be undone
-          </span>
-        </div>
+          This action cannot be undone.
+        </p>
 
-        <div style={{ display: 'flex', gap: 10 }}>
+        {/* Buttons */}
+        <div style={{ display: 'flex', gap: 8 }}>
           <button
             onClick={onCancel}
             disabled={isDeleting}
             style={{
-              flex: 1, padding: '11px 16px', borderRadius: 11,
-              border: `1px solid ${theme.isDark ? 'rgba(255,255,255,0.1)' : theme.border}`,
-              backgroundColor: theme.isDark ? 'rgba(255,255,255,0.04)' : 'transparent',
-              color: theme.text, fontSize: 14, fontWeight: 500,
+              flex: 1, padding: '10px 16px', borderRadius: 10,
+              border: `1px solid ${theme.border}`,
+              backgroundColor: 'transparent',
+              color: theme.text, fontSize: 13.5, fontWeight: 500,
               cursor: isDeleting ? 'not-allowed' : 'pointer',
               opacity: isDeleting ? 0.4 : 1,
               transition: 'opacity 0.15s',
@@ -598,29 +720,28 @@ function DeleteModal({ modal, onConfirm, onCancel, isDeleting, theme }) {
             onClick={onConfirm}
             disabled={isDeleting}
             style={{
-              flex: 1, padding: '11px 16px', borderRadius: 11,
+              flex: 1, padding: '10px 16px', borderRadius: 10,
               border: 'none',
-              background: isDeleting
-                ? 'rgba(239,68,68,0.6)'
-                : 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
-              color: 'white', fontSize: 14, fontWeight: 600,
+              background: 'linear-gradient(135deg, #f87171 0%, #ef4444 50%, #dc2626 100%)',
+              color: 'white', fontSize: 13.5, fontWeight: 600,
               cursor: isDeleting ? 'not-allowed' : 'pointer',
+              opacity: isDeleting ? 0.7 : 1,
               display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
-              boxShadow: isDeleting ? 'none' : '0 4px 14px rgba(239,68,68,0.35)',
-              transition: 'all 0.15s',
+              boxShadow: '0 2px 12px rgba(239,68,68,0.3)',
+              transition: 'opacity 0.15s',
             }}
           >
             {isDeleting
-              ? <Loader2 style={{ width: 14, height: 14 }} className="animate-spin" />
-              : <Trash2 style={{ width: 14, height: 14 }} />}
+              ? <Loader2 style={{ width: 13, height: 13 }} className="animate-spin" />
+              : <Trash2 style={{ width: 13, height: 13 }} />}
             {isDeleting ? 'Deleting…' : 'Delete'}
           </button>
         </div>
       </div>
 
       <style>{`
-        @keyframes fadeIn { from { opacity: 0 } to { opacity: 1 } }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(16px) scale(0.97) } to { opacity: 1; transform: translateY(0) scale(1) } }
+        @keyframes dmFadeIn  { from { opacity: 0 }                            to { opacity: 1 } }
+        @keyframes dmSlideUp { from { opacity: 0; transform: translateY(12px) scale(0.98) } to { opacity: 1; transform: translateY(0) scale(1) } }
       `}</style>
     </div>
   );

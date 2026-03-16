@@ -11,10 +11,11 @@ DB_PATH = Path(__file__).parent / "data" / "trades.db"
 
 # Columns added after initial release — migrated at startup
 _MIGRATION_COLUMNS = [
-    ("lot",         "REAL"),
-    ("stop_loss",   "REAL"),
-    ("take_profit", "REAL"),
-    ("source",      "TEXT DEFAULT 'mt5'"),
+    ("lot",          "REAL"),
+    ("stop_loss",    "REAL"),
+    ("take_profit",  "REAL"),
+    ("source",       "TEXT DEFAULT 'mt5'"),
+    ("upload_batch", "TEXT"),
 ]
 
 
@@ -154,6 +155,7 @@ def _trade_fingerprint(t: Dict[str, Any]) -> str:
 def merge_screenshot_trades(
     new_trades: List[Dict[str, Any]],
     user_id: str = "default",
+    upload_batch: Optional[str] = None,
 ) -> Dict[str, int]:
     """
     Append-only merge for screenshot imports.
@@ -186,11 +188,11 @@ def merge_screenshot_trades(
         cursor.executemany(
             """
             INSERT INTO trades
-                (user_id, ticket, symbol, type, volume, lot,
-                 open_price, close_price, stop_loss, take_profit,
-                 profit, swap, commission,
-                 open_time, close_time, duration, duration_seconds, source)
-            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+                 (user_id, ticket, symbol, type, volume, lot,
+                  open_price, close_price, stop_loss, take_profit,
+                  profit, swap, commission,
+                  open_time, close_time, duration, duration_seconds, source, upload_batch)
+              VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
             """,
             [
                 (
@@ -212,6 +214,7 @@ def merge_screenshot_trades(
                     t.get("duration"),
                     t.get("duration_seconds"),
                     "screenshot",
+                    upload_batch,
                 )
                 for t in to_insert
             ],
@@ -224,6 +227,56 @@ def merge_screenshot_trades(
         conn.close()
 
     return {"inserted": len(to_insert), "duplicates": dupes}
+
+
+def get_screenshot_batches(user_id: str = "default") -> List[Dict[str, Any]]:
+    """Return upload sessions (batches) for the user, ordered oldest first."""
+    if not DB_PATH.exists():
+        return []
+
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+    cursor.execute(
+        """
+        SELECT
+            upload_batch,
+            COUNT(*)                      AS trade_count,
+            MIN(created_at)               AS uploaded_at,
+            GROUP_CONCAT(DISTINCT symbol) AS symbols
+        FROM trades
+        WHERE user_id = ? AND source = 'screenshot'
+        GROUP BY upload_batch
+        ORDER BY MIN(created_at) ASC
+        """,
+        (user_id,),
+    )
+    rows = cursor.fetchall()
+    conn.close()
+    return [dict(row) for row in rows]
+
+
+def delete_trades_by_batch(user_id: str, batch_id: Optional[str]) -> int:
+    """Delete all screenshot trades for a specific upload batch (None = legacy trades)."""
+    if not DB_PATH.exists():
+        return 0
+
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    if batch_id is None:
+        cursor.execute(
+            "DELETE FROM trades WHERE user_id = ? AND source = 'screenshot' AND upload_batch IS NULL",
+            (user_id,),
+        )
+    else:
+        cursor.execute(
+            "DELETE FROM trades WHERE user_id = ? AND source = 'screenshot' AND upload_batch = ?",
+            (user_id, batch_id),
+        )
+    deleted = cursor.rowcount or 0
+    conn.commit()
+    conn.close()
+    return deleted
 
 
 def get_trades(
