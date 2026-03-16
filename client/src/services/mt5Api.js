@@ -58,6 +58,16 @@ export async function deleteScreenshotReport() {
 }
 
 /**
+ * Delete a single screenshot-imported trade by its DB row ID.
+ * @param {number} tradeId
+ * @returns {Promise<{success, message}>}
+ */
+export async function deleteScreenshotTrade(tradeId) {
+  const response = await client.delete(`/screenshot-trade/${tradeId}`);
+  return response.data;
+}
+
+/**
  * Liveness check for the backend service.
  * @returns {Promise<{status, service}>}
  */

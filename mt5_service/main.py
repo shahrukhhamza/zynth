@@ -4,10 +4,11 @@ FastAPI service — Trade Screenshot Analysis
 
 Endpoints
 ---------
-GET  /health                    — liveness check
-POST /upload-trade-screenshot   — image → OCR + AI → trades + full analysis
-GET  /screenshot-report         — stored screenshot trades + analysis
-DELETE /screenshot-report       — delete stored screenshot trades + analysis
+GET    /health                          — liveness check
+POST   /upload-trade-screenshot         — image → OCR + AI → trades + full analysis
+GET    /screenshot-report               — stored screenshot trades + analysis
+DELETE /screenshot-report               — delete all stored screenshot trades + analysis
+DELETE /screenshot-trade/{trade_id}     — delete a single screenshot trade by ID
 """
 
 from __future__ import annotations
@@ -35,7 +36,7 @@ from fastapi import FastAPI, HTTPException, Request, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 
-from database import init_db, save_trades, get_trades, merge_screenshot_trades, delete_trades
+from database import init_db, save_trades, get_trades, merge_screenshot_trades, delete_trades, delete_trade_by_id
 from screenshot_ocr import extract_trades_from_screenshot
 from journal_analyzer import compute_statistics, compute_behavioral_analysis, generate_ai_report
 
@@ -319,6 +320,16 @@ async def delete_screenshot_report(request: Request) -> dict:
         "message": "Screenshot analysis data deleted.",
         "deleted": deleted,
     }
+
+
+@app.delete("/screenshot-trade/{trade_id}")
+async def delete_single_screenshot_trade(trade_id: int, request: Request) -> dict:
+    """Delete a single screenshot-imported trade by its DB row ID."""
+    user_id = _get_user_id(request)
+    ok = await asyncio.to_thread(delete_trade_by_id, trade_id, user_id)
+    if not ok:
+        raise HTTPException(status_code=404, detail="Trade not found.")
+    return {"success": True, "message": "Trade deleted."}
 
 
 # ── Entry point ────────────────────────────────────────────────────────────

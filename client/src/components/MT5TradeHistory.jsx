@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 import { useTheme } from '../contexts/ThemeContext';
 import { useTimezone } from '../contexts/TimezoneContext';
-import { ChevronUp, ChevronDown, ChevronsUpDown, Search } from 'lucide-react';
+import { ChevronUp, ChevronDown, ChevronsUpDown, Search, Trash2, Loader2 } from 'lucide-react';
 import { format } from 'date-fns';
 
 const PAGE_SIZE = 20;
@@ -18,7 +18,7 @@ function fmtDate(iso) {
   catch { return iso; }
 }
 
-export default function MT5TradeHistory({ trades }) {
+export default function MT5TradeHistory({ trades, onDeleteTrade, deletingTradeId }) {
   const theme = useTheme();
   const { formatDateWithTimezone } = useTimezone();
   const [page, setPage] = useState(1);
@@ -63,6 +63,7 @@ export default function MT5TradeHistory({ trades }) {
     { key: 'open_time', label: 'Opened', align: 'left', w: '10rem' },
     { key: 'close_time', label: 'Closed', align: 'left', w: '10rem' },
     { key: 'duration', label: 'Duration', align: 'right', w: '7rem' },
+    ...(onDeleteTrade ? [{ key: '_actions', label: '', align: 'center', w: '3rem' }] : []),
   ];
 
   const th = {
@@ -171,6 +172,27 @@ export default function MT5TradeHistory({ trades }) {
                       <td style={td()}>{formatDateWithTimezone(new Date(t.open_time), 'MMM dd, yyyy HH:mm')}</td>
                       <td style={td()}>{formatDateWithTimezone(new Date(t.close_time), 'MMM dd, yyyy HH:mm')}</td>
                       <td style={td({ textAlign: 'right', color: theme.muted })}>{t.duration}</td>
+                      {onDeleteTrade && (
+                        <td style={td({ textAlign: 'center', padding: '4px 8px' })}>
+                          <button
+                            onClick={() => onDeleteTrade(t)}
+                            disabled={deletingTradeId === t.id}
+                            title="Delete trade"
+                            style={{
+                              background: 'none', border: 'none', cursor: deletingTradeId === t.id ? 'not-allowed' : 'pointer',
+                              padding: '4px', borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                              color: deletingTradeId === t.id ? theme.muted : 'rgba(239,68,68,0.6)',
+                              transition: 'color 0.15s',
+                            }}
+                            onMouseEnter={e => { if (deletingTradeId !== t.id) e.currentTarget.style.color = '#ef4444'; }}
+                            onMouseLeave={e => { if (deletingTradeId !== t.id) e.currentTarget.style.color = 'rgba(239,68,68,0.6)'; }}
+                          >
+                            {deletingTradeId === t.id
+                              ? <Loader2 style={{ width: 13, height: 13 }} className="animate-spin" />
+                              : <Trash2 style={{ width: 13, height: 13 }} />}
+                          </button>
+                        </td>
+                      )}
                     </tr>
                   );
                 })

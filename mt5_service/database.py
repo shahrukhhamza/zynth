@@ -254,6 +254,23 @@ def get_trades(
     return [dict(row) for row in rows]
 
 
+def delete_trade_by_id(trade_id: int, user_id: str = "default") -> bool:
+    """Delete a single trade by its primary key, scoped to user_id. Returns True if deleted."""
+    if not DB_PATH.exists():
+        return False
+
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    cursor.execute(
+        "DELETE FROM trades WHERE id = ? AND user_id = ?",
+        (trade_id, user_id),
+    )
+    deleted = cursor.rowcount > 0
+    conn.commit()
+    conn.close()
+    return deleted
+
+
 def delete_trades(
     user_id: str = "default",
     source: Optional[str] = None,

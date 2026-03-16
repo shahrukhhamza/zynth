@@ -19,7 +19,7 @@ import {
 import { useTheme } from '../contexts/ThemeContext';
 import { useTimezone } from '../contexts/TimezoneContext';
 import { usePlanGate } from '../hooks/usePlanGate';
-import { deleteScreenshotReport, getScreenshotReport } from '../services/mt5Api';
+import { deleteScreenshotReport, deleteScreenshotTrade, getScreenshotReport } from '../services/mt5Api';
 import ScreenshotUpload from './ScreenshotUpload';
 import MT5PerformanceStats   from './MT5PerformanceStats';
 import MT5PerformanceCharts  from './MT5PerformanceCharts';
@@ -76,6 +76,8 @@ export default function ScreenshotImportDashboard() {
   const [serviceOnline, setServiceOnline] = useState(true);   // false = MT5 Python service unreachable
   const [serviceError,  setServiceError]  = useState(null);   // human-readable reason
   const [deleting,      setDeleting]      = useState(false);
+  const [deletingTradeId, setDeletingTradeId] = useState(null);
+  const [confirmModal,  setConfirmModal]  = useState(null); // { type: 'all' } | { type: 'trade', trade }
 
   // ── On mount: check if we already have stored screenshot trades ──────────
   const loadExisting = useCallback(async () => {
@@ -124,28 +126,56 @@ export default function ScreenshotImportDashboard() {
     setActiveTab('overview');
   };
 
-  const handleDeleteReport = async () => {
+  const handleDeleteReport = () => {
     if (deleting) return;
-    const confirmed = window.confirm('Delete all screenshot analysis data and imported screenshot trades? This cannot be undone.');
-    if (!confirmed) return;
+    setConfirmModal({ type: 'all' });
+  };
 
-    setDeleting(true);
-    try {
-      await deleteScreenshotReport();
-      clearCache();
-      setData(null);
-      setActiveTab('upload');
-      setServiceOnline(true);
-      setServiceError(null);
-    } catch (err) {
-      const status = err?.response?.status;
-      if (status === 401) {
-        setServiceError('Your session has expired. Please sign out and sign back in.');
-      } else {
-        setServiceError('Failed to delete screenshot analysis data. Please try again.');
+  const handleDeleteTrade = (trade) => {
+    setConfirmModal({ type: 'trade', trade });
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!confirmModal) return;
+
+    if (confirmModal.type === 'all') {
+      setDeleting(true);
+      try {
+        await deleteScreenshotReport();
+        clearCache();
+        setData(null);
+        setActiveTab('upload');
+        setServiceOnline(true);
+        setServiceError(null);
+      } catch (err) {
+        const status = err?.response?.status;
+        if (status === 401) {
+          setServiceError('Your session has expired. Please sign out and sign back in.');
+        } else {
+          setServiceError('Failed to delete screenshot analysis data. Please try again.');
+        }
+      } finally {
+        setDeleting(false);
+        setConfirmModal(null);
       }
-    } finally {
-      setDeleting(false);
+    } else if (confirmModal.type === 'trade') {
+      const tradeId = confirmModal.trade.id;
+      setDeletingTradeId(tradeId);
+      try {
+        await deleteScreenshotTrade(tradeId);
+        // Remove from local state and refresh analysis from server
+        await loadExisting();
+      } catch (err) {
+        const status = err?.response?.status;
+        if (status === 401) {
+          setServiceError('Your session has expired. Please sign out and sign back in.');
+        } else {
+          setServiceError('Failed to delete trade. Please try again.');
+        }
+      } finally {
+        setDeletingTradeId(null);
+        setConfirmModal(null);
+      }
     }
   };
 
@@ -173,6 +203,15 @@ export default function ScreenshotImportDashboard() {
 
   return (
     <div className="flex-1 overflow-y-auto">
+      {/* Themed delete confirmation modal */}
+      <DeleteModal
+        modal={confirmModal}
+        onConfirm={handleConfirmDelete}
+        onCancel={() => setConfirmModal(null)}
+        isDeleting={deleting || deletingTradeId !== null}
+        theme={theme}
+      />
+
       {/* Plan gate: tries counter banner OR hard block */}
       {showUpgradeModal && <ProfileModal onClose={() => setShowUpgradeModal(false)} />}
       {triesExhausted ? (
@@ -409,7 +448,11 @@ export default function ScreenshotImportDashboard() {
 
         {/* Trade History */}
         {hasData && activeTab === 'history' && (
-          <MT5TradeHistory trades={trades} />
+          <MT5TradeHistory
+            trades={trades}
+            onDeleteTrade={handleDeleteTrade}
+            deletingTradeId={deletingTradeId}
+          />
         )}
       </div>
     </div>
@@ -425,6 +468,121 @@ function Pill({ label, value, color, theme }) {
     >
       <span style={{ color: theme.muted }}>{label}</span>
       <span className="font-bold">{value}</span>
+    </div>
+  );
+}
+
+// ── Delete confirmation modal ──────────────────────────────────────────────
+function DeleteModal({ modal, onConfirm, onCancel, isDeleting, theme }) {
+  if (!modal) return null;
+
+  const isAll = modal.type === 'all';
+  const trade = modal.trade;
+  const profit = trade?.profit ?? 0;
+
+  return (
+    <div
+      style={{
+        position: 'fixed', inset: 0, zIndex: 9999,
+        backgroundColor: 'rgba(0,0,0,0.65)',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        padding: 16,
+        backdropFilter: 'blur(4px)',
+      }}
+      onClick={(e) => { if (e.target === e.currentTarget && !isDeleting) onCancel(); }}
+    >
+      <div
+        style={{
+          backgroundColor: theme.surface,
+          border: `1px solid ${theme.border}`,
+          borderRadius: 18,
+          padding: '32px 28px',
+          maxWidth: 400, width: '100%',
+          boxShadow: '0 32px 64px rgba(0,0,0,0.45)',
+        }}
+      >
+        {/* Icon */}
+        <div style={{
+          width: 52, height: 52, borderRadius: '50%',
+          backgroundColor: 'rgba(239,68,68,0.1)',
+          border: '1px solid rgba(239,68,68,0.25)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          margin: '0 auto 20px',
+        }}>
+          <Trash2 style={{ width: 22, height: 22, color: '#ef4444' }} />
+        </div>
+
+        <h3 style={{
+          color: theme.text, fontSize: 16, fontWeight: 700,
+          textAlign: 'center', margin: '0 0 10px',
+        }}>
+          {isAll ? 'Delete All Screenshot Data' : 'Delete Trade'}
+        </h3>
+
+        <p style={{
+          color: theme.muted, fontSize: 13,
+          textAlign: 'center', lineHeight: 1.6, margin: '0 0 8px',
+        }}>
+          {isAll
+            ? 'This will permanently remove all screenshot analysis data and every imported trade.'
+            : (
+              <>
+                Delete this <strong style={{ color: theme.text }}>{trade?.symbol}</strong>{' '}
+                <span style={{
+                  color: trade?.type === 'BUY' ? '#10b981' : '#ef4444',
+                  fontWeight: 600,
+                }}>
+                  {trade?.type}
+                </span>{' '}
+                trade (
+                <span style={{ color: profit >= 0 ? '#10b981' : '#ef4444', fontWeight: 600 }}>
+                  {profit >= 0 ? '+' : ''}{profit.toFixed(2)}
+                </span>
+                )?
+              </>
+            )}
+        </p>
+        <p style={{
+          color: 'rgba(239,68,68,0.8)', fontSize: 12,
+          textAlign: 'center', margin: '0 0 24px',
+        }}>
+          This action cannot be undone.
+        </p>
+
+        <div style={{ display: 'flex', gap: 10 }}>
+          <button
+            onClick={onCancel}
+            disabled={isDeleting}
+            style={{
+              flex: 1, padding: '11px', borderRadius: 10,
+              border: `1px solid ${theme.border}`,
+              backgroundColor: 'transparent',
+              color: theme.text, fontSize: 14, fontWeight: 500,
+              cursor: isDeleting ? 'not-allowed' : 'pointer',
+              opacity: isDeleting ? 0.5 : 1,
+            }}
+          >
+            Cancel
+          </button>
+          <button
+            onClick={onConfirm}
+            disabled={isDeleting}
+            style={{
+              flex: 1, padding: '11px', borderRadius: 10,
+              border: 'none',
+              backgroundColor: '#ef4444',
+              color: 'white', fontSize: 14, fontWeight: 600,
+              cursor: isDeleting ? 'not-allowed' : 'pointer',
+              opacity: isDeleting ? 0.75 : 1,
+              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+              transition: 'opacity 0.15s',
+            }}
+          >
+            {isDeleting && <Loader2 style={{ width: 14, height: 14 }} className="animate-spin" />}
+            Delete
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
