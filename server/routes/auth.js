@@ -1,17 +1,17 @@
 import { Router } from 'express';
 import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
-import { writeFileSync, mkdirSync, existsSync } from 'fs';
+import { writeFileSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { OAuth2Client } from 'google-auth-library';
 import * as Users from '../db/users.js';
 import { signToken, requireAuth } from '../middleware/authMiddleware.js';
 import { sendPasswordResetEmail } from '../services/emailService.js';
+import { AVATARS_DIR, ensureUploadDirs } from '../config/storagePaths.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-const AVATARS_DIR = join(__dirname, '..', 'uploads', 'avatars');
 
 const router = Router();
 
@@ -278,7 +278,7 @@ router.put('/update-profile', requireAuth, async (req, res) => {
         const buffer = Buffer.from(matches[2], 'base64');
         if (buffer.length > 2 * 1024 * 1024)
           return res.status(400).json({ error: 'Image too large. Max size is 2MB.' });
-        if (!existsSync(AVATARS_DIR)) mkdirSync(AVATARS_DIR, { recursive: true });
+        ensureUploadDirs();
         const ext = matches[1] === 'png' ? 'png' : 'jpg';
         const filename = `${req.user.id}.${ext}`;
         const filePath = join(AVATARS_DIR, filename);

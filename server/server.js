@@ -6,7 +6,7 @@ import rateLimit from 'express-rate-limit';
 import mongoSanitize from 'express-mongo-sanitize';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
-import { existsSync, mkdirSync } from 'fs';
+import { existsSync } from 'fs';
 import { createServer } from 'http';
 import { WebSocketServer } from 'ws';
 import { request as httpRequest } from 'http';
@@ -44,6 +44,7 @@ import levelsRouter from './routes/levels.js';
 import { requireAuth, checkScreenshotTries } from './middleware/authMiddleware.js';
 import * as Users from './db/users.js';
 import { incrementScreenshotTries, initDb } from './db/users.js';
+import { UPLOADS_DIR, ensureUploadDirs } from './config/storagePaths.js';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -205,9 +206,9 @@ app.all('/mt5/*', (req, res) => {
   }
 });
 
-// Serve avatar uploads
-app.use('/uploads', express.static(join(__dirname, 'uploads')));
-mkdirSync(join(__dirname, 'uploads', 'avatars'), { recursive: true });
+// Serve uploaded files from configured persistent path
+ensureUploadDirs();
+app.use('/uploads', express.static(UPLOADS_DIR));
 
 // Serve React frontend static build (production)
 const clientBuildPath = join(__dirname, '..', 'client', 'dist');

@@ -14,9 +14,7 @@
 
 import { Router } from 'express';
 import multer from 'multer';
-import { join, dirname, extname } from 'path';
-import { fileURLToPath } from 'url';
-import { existsSync, mkdirSync } from 'fs';
+import { extname } from 'path';
 import { requireAuth, checkAiTries, requirePro } from '../middleware/authMiddleware.js';
 import {
   insertTrade, getTrades, getTradeById, updateTrade, deleteTrade, countTrades,
@@ -26,15 +24,13 @@ import {
 } from '../services/journalDb.js';
 import { calcMetrics } from '../services/analyticsService.js';
 import { analyzeJournalEntry, generatePerformanceReport } from '../services/journalAiService.js';
+import { JOURNAL_UPLOADS_DIR, ensureUploadDirs } from '../config/storagePaths.js';
 
-const __dirname  = dirname(fileURLToPath(import.meta.url));
-const UPLOAD_DIR = join(__dirname, '..', 'uploads', 'journal');
-
-if (!existsSync(UPLOAD_DIR)) mkdirSync(UPLOAD_DIR, { recursive: true });
+ensureUploadDirs();
 
 // ── Multer config ─────────────────────────────────────────────────────────────
 const storage = multer.diskStorage({
-  destination: (_req, _file, cb) => cb(null, UPLOAD_DIR),
+  destination: (_req, _file, cb) => cb(null, JOURNAL_UPLOADS_DIR),
   filename: (_req, file, cb) => {
     const safe = Date.now() + '-' + Math.round(Math.random() * 1e9);
     cb(null, safe + extname(file.originalname).toLowerCase());
