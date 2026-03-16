@@ -12,6 +12,7 @@ import { WebSocketServer } from 'ws';
 import { request as httpRequest } from 'http';
 import { request as httpsRequest } from 'https';
 import { pipeline } from 'stream';
+import { createHash } from 'crypto';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -51,6 +52,44 @@ const PORT = process.env.PORT || 5000;
 const HOST = process.env.HOST || '0.0.0.0';
 const isPreflightRequest = (req) => req.method === 'OPTIONS';
 
+const getForwardedIp = (req) => {
+  const forwardedFor = req.headers['x-forwarded-for'];
+  if (typeof forwardedFor === 'string' && forwardedFor.trim()) {
+    return forwardedFor.split(',')[0].trim();
+  }
+
+  const realIp = req.headers['x-real-ip'];
+  if (typeof realIp === 'string' && realIp.trim()) {
+    return realIp.trim();
+  }
+
+  return req.ip || req.socket?.remoteAddress || 'unknown';
+};
+
+const getRateLimitKey = (req) => {
+  const auth = req.headers.authorization;
+  if (typeof auth === 'string' && auth.startsWith('Bearer ')) {
+    const token = auth.slice(7);
+    const tokenHash = createHash('sha256').update(token).digest('hex').slice(0, 24);
+    return `token:${tokenHash}`;
+  }
+
+  const origin = typeof req.headers.origin === 'string' && req.headers.origin.trim()
+    ? req.headers.origin.trim()
+    : 'no-origin';
+  return `ip:${getForwardedIp(req)}|origin:${origin}`;
+};
+
+const skipGlobalRateLimit = (req) => {
+  if (isPreflightRequest(req)) return true;
+  return req.path === '/health' || req.path === '/public-stats' || req.path === '/auth/me';
+};
+
+const skipAuthAttemptRateLimit = (req) => {
+  if (isPreflightRequest(req)) return true;
+  return req.path === '/me';
+};
+
 // Railway sits behind a reverse proxy/CDN. Trust the forwarded client IP headers
 // so express-rate-limit and other middleware can identify the real client.
 app.set('trust proxy', 1);
@@ -62,7 +101,8 @@ const globalLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
   message: { error: 'Too many requests, please try again later.' },
-  skip: isPreflightRequest,
+  keyGenerator: getRateLimitKey,
+  skip: skipGlobalRateLimit,
 });
 
 const authLimiter = rateLimit({
@@ -71,6 +111,17 @@ const authLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
   message: { error: 'Too many authentication attempts, please try again later.' },
+  keyGenerator: getRateLimitKey,
+  skip: skipAuthAttemptRateLimit,
+});
+
+const authSessionLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 180,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Too many session validation requests, please try again later.' },
+  keyGenerator: getRateLimitKey,
   skip: isPreflightRequest,
 });
 
@@ -80,6 +131,7 @@ const aiLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
   message: { error: 'AI request limit reached, please try again in an hour.' },
+  keyGenerator: getRateLimitKey,
 });
 
 // ── CORS ──────────────────────────────────────────────────────────────────────
@@ -144,6 +196,7 @@ app.use(cors(corsOptions));
 app.options('*', cors(corsOptions));
 
 app.use('/api', globalLimiter);
+app.use('/api/auth/me', authSessionLimiter);
 
 app.use(express.json({ limit: '10mb', strict: false }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));

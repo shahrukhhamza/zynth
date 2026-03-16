@@ -1,6 +1,7 @@
 ﻿import { useState, useEffect, useRef, useCallback } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { API_URL } from '../config/api';
+import { getPublicStats } from '../utils/publicStats';
 
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || '';
 import {
@@ -34,8 +35,7 @@ export default function SignupPage({ onSwitchToLogin, onBack }) {
   }, []);
 
   useEffect(() => {
-    fetch(`${API_URL}/api/public-stats`)
-      .then(r => r.ok ? r.json() : null)
+    getPublicStats()
       .then(d => { if (d?.totalUsers != null) setSpotsLeft(Math.max(0, 100 - d.totalUsers)); })
       .catch(() => {});
   }, []);

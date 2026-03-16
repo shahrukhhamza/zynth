@@ -6,6 +6,7 @@ import {
   RefreshCw, Bot, Trophy, Activity, Bell, Star, Flame, Info, Clock,
 } from 'lucide-react';
 import { API_URL } from '../config/api';
+import { getPublicStats } from '../utils/publicStats';
 
 const TOTAL_FOUNDING = 100;
 const OFFER_END_DATE = new Date('2026-04-12T23:59:59');
@@ -241,8 +242,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
   const [ctaInsightVisible, setCtaInsightVisible] = useState(true);
 
   useEffect(() => {
-    fetch(`${API_URL}/api/public-stats`)
-      .then(r => r.ok ? r.json() : null)
+    getPublicStats()
       .then(d => { setSpotsLeft(d?.totalUsers != null ? Math.max(0, TOTAL_FOUNDING - d.totalUsers) : 0); })
       .catch(() => { setSpotsLeft(0); });
   }, []);
