@@ -71,8 +71,12 @@ function AdminDashboardInner() {
     setStatsLoading(true);
     try {
       const r = await fetch(`${API_URL}/api/admin/stats`, { headers: authH() });
-      if (!r.ok) throw new Error('Failed to load stats');
-      setStats(await r.json());
+      const data = await r.json();
+      if (!r.ok) throw new Error(data.error || 'Failed to load stats');
+      setStats({
+        ...data,
+        signupsByDay: Array.isArray(data.signupsByDay) ? data.signupsByDay : [],
+      });
     } catch (e) { showToast('err', e.message); }
     finally { setStatsLoading(false); }
   }, [authH]);
@@ -81,9 +85,9 @@ function AdminDashboardInner() {
     setUsersLoading(true);
     try {
       const r = await fetch(`${API_URL}/api/admin/users`, { headers: authH() });
-      if (!r.ok) throw new Error('Failed to load users');
       const d = await r.json();
-      setUsers(d.users || []);
+      if (!r.ok) throw new Error(d.error || 'Failed to load users');
+      setUsers(Array.isArray(d.users) ? d.users : []);
     } catch (e) { showToast('err', e.message); }
     finally { setUsersLoading(false); }
   }, [authH]);
@@ -167,7 +171,7 @@ function AdminDashboardInner() {
   }
 
   /* ── derived ───────────────────────────────────────────────────── */
-  const filtered = users.filter(u => {
+  const filtered = (Array.isArray(users) ? users : []).filter(u => {
     if (!search.trim()) return true;
     const q = search.toLowerCase();
     return u.name?.toLowerCase().includes(q) || u.email?.toLowerCase().includes(q);

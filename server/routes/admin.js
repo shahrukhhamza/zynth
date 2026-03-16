@@ -8,9 +8,9 @@ const router = Router();
 router.use(requireAuth, requireAdmin);
 
 // ── GET /api/admin/users ──────────────────────────────────────────────────
-router.get('/users', (req, res) => {
+router.get('/users', async (req, res) => {
   try {
-    const users = Users.findAll();
+    const users = await Users.findAll();
     res.json({ users });
   } catch (err) {
     console.error('admin/users error:', err);
@@ -19,7 +19,7 @@ router.get('/users', (req, res) => {
 });
 
 // ── POST /api/admin/users/:id/plan ────────────────────────────────────────
-router.post('/users/:id/plan', (req, res) => {
+router.post('/users/:id/plan', async (req, res) => {
   try {
     const id = Number(req.params.id);
     const { plan, expiresAt = null } = req.body;
@@ -27,8 +27,8 @@ router.post('/users/:id/plan', (req, res) => {
     if (!validPlans.includes(plan))
       return res.status(400).json({ error: `Invalid plan. Must be one of: ${validPlans.join(', ')}` });
 
-    Users.updateUserPlan(id, plan, expiresAt);
-    const row = Users.findById(id);
+    await Users.updateUserPlan(id, plan, expiresAt);
+    const row = await Users.findById(id);
     if (!row) return res.status(404).json({ error: 'User not found.' });
     res.json({ user: row });
   } catch (err) {
@@ -38,15 +38,15 @@ router.post('/users/:id/plan', (req, res) => {
 });
 
 // ── POST /api/admin/users/:id/admin ───────────────────────────────────────
-router.post('/users/:id/admin', (req, res) => {
+router.post('/users/:id/admin', async (req, res) => {
   try {
     const id = Number(req.params.id);
     const { isAdmin } = req.body;
     if (typeof isAdmin !== 'boolean' && isAdmin !== 0 && isAdmin !== 1)
       return res.status(400).json({ error: 'isAdmin must be true/false or 1/0.' });
 
-    Users.setAdmin(id, isAdmin ? 1 : 0);
-    const row = Users.findById(id);
+    await Users.setAdmin(id, isAdmin ? 1 : 0);
+    const row = await Users.findById(id);
     if (!row) return res.status(404).json({ error: 'User not found.' });
     res.json({ user: row });
   } catch (err) {
@@ -56,17 +56,17 @@ router.post('/users/:id/admin', (req, res) => {
 });
 
 // ── DELETE /api/admin/users/:id ───────────────────────────────────────────
-router.delete('/users/:id', (req, res) => {
+router.delete('/users/:id', async (req, res) => {
   try {
     const id = Number(req.params.id);
     // Prevent self-deletion
     if (id === req.user.id)
       return res.status(400).json({ error: 'Cannot delete your own account via admin API.' });
 
-    const existing = Users.findById(id);
+    const existing = await Users.findById(id);
     if (!existing) return res.status(404).json({ error: 'User not found.' });
 
-    Users.deleteUser(id);
+    await Users.deleteUser(id);
     res.json({ success: true });
   } catch (err) {
     console.error('admin/delete-user error:', err);
@@ -75,13 +75,13 @@ router.delete('/users/:id', (req, res) => {
 });
 
 // ── POST /api/admin/users/:id/reset-tries ───────────────────────────────
-router.post('/users/:id/reset-tries', (req, res) => {
+router.post('/users/:id/reset-tries', async (req, res) => {
   try {
     const id = Number(req.params.id);
-    const existing = Users.findById(id);
+    const existing = await Users.findById(id);
     if (!existing) return res.status(404).json({ error: 'User not found.' });
-    Users.resetTries(id);
-    const row = Users.findById(id);
+    await Users.resetTries(id);
+    const row = await Users.findById(id);
     res.json({ user: row });
   } catch (err) {
     console.error('admin/reset-tries error:', err);
@@ -90,9 +90,9 @@ router.post('/users/:id/reset-tries', (req, res) => {
 });
 
 // ── GET /api/admin/stats ──────────────────────────────────────────────────
-router.get('/stats', (req, res) => {
+router.get('/stats', async (req, res) => {
   try {
-    const users = Users.findAll();
+    const users = await Users.findAll();
 
     // Timezone-agnostic day boundaries in UTC
     const now     = new Date();
@@ -138,9 +138,9 @@ router.get('/stats', (req, res) => {
 });
 
 // ── GET /api/admin/export-emails ─────────────────────────────────────────
-router.get('/export-emails', (req, res) => {
+router.get('/export-emails', async (req, res) => {
   try {
-    const users = Users.findAll();
+    const users = await Users.findAll();
 
     // Build CSV — escape any commas / quotes in field values
     const esc = (v) => `"${String(v ?? '').replace(/"/g, '""')}"`;
