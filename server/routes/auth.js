@@ -53,8 +53,8 @@ router.post('/register', async (req, res) => {
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
       return res.status(400).json({ error: 'Please enter a valid email address.' });
 
-    if (Users.findByEmail(email)) {
-      const existing = Users.findByEmail(email);
+    const existing = await Users.findByEmail(email);
+    if (existing) {
       if (!existing.password_hash) {
         return res.status(409).json({
           error: "This email is registered via Google Sign-In. Please use 'Continue with Google' to login, or click 'Forgot Password' to set a password.",
@@ -65,14 +65,14 @@ router.post('/register', async (req, res) => {
     }
 
     const password_hash = await bcrypt.hash(password, 12);
-    const result = Users.createUser({
+    const result = await Users.createUser({
       name: name.trim(),
       email,
       password_hash,
       terms_accepted: 1,
       terms_accepted_at: new Date().toISOString(),
     });
-    const row = Users.findById(result.lastInsertRowid);
+    const row = await Users.findById(result.id);
     const user = buildUser(row);
     const token = signToken(user);
 
@@ -91,7 +91,7 @@ router.post('/login', async (req, res) => {
     if (!email?.trim() || !password)
       return res.status(400).json({ error: 'Email and password are required.' });
 
-    const row = Users.findByEmail(email);
+    const row = await Users.findByEmail(email);
     if (!row) {
       return res.status(401).json({ error: 'Invalid email or password.' });
     }
@@ -106,7 +106,7 @@ router.post('/login', async (req, res) => {
     if (!valid)
       return res.status(401).json({ error: 'Invalid email or password.' });
 
-    const freshRow = Users.findById(row.id);
+    const freshRow = await Users.findById(row.id);
     const user = buildUser(freshRow);
     const token = signToken(user);
     res.json({ user, token });
@@ -117,7 +117,6 @@ router.post('/login', async (req, res) => {
 });
 
 // ── POST /api/auth/google ──────────────────────────────────────────────────
-// Startup diagnostic — logged once when server boots so you can verify env vars in Render
 console.log('[Google OAuth] config check:', {
   GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID ? `set (${process.env.GOOGLE_CLIENT_ID.slice(0, 12)}...)` : 'MISSING',
   CLIENT_URL: process.env.CLIENT_URL || 'MISSING',
@@ -127,14 +126,12 @@ router.post('/google', async (req, res) => {
   try {
     const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || '';
 
-    // Detailed server-side diagnostics (visible in Render logs)
     console.log('[Google OAuth] POST /api/auth/google received');
     console.log('[Google OAuth] GOOGLE_CLIENT_ID set:', !!GOOGLE_CLIENT_ID);
     console.log('[Google OAuth] credential present:', !!req.body?.credential);
-    console.log('[Google OAuth] credential length:', req.body?.credential?.length ?? 0);
 
     if (!GOOGLE_CLIENT_ID) {
-      console.error('[Google OAuth] FATAL: GOOGLE_CLIENT_ID is not set in environment variables');
+      console.error('[Google OAuth] FATAL: GOOGLE_CLIENT_ID is not set');
       return res.status(503).json({ error: 'Google sign-in is not configured on the server. Contact support.' });
     }
 
@@ -148,10 +145,9 @@ router.post('/google', async (req, res) => {
       ticket = await client.verifyIdToken({ idToken: credential, audience: GOOGLE_CLIENT_ID });
     } catch (verifyErr) {
       console.error('[Google OAuth] verifyIdToken failed:', verifyErr.message);
-      // Common causes: token expired, wrong GOOGLE_CLIENT_ID, clock skew
       return res.status(401).json({
         error: 'Google credential verification failed. Please try again.',
-        detail: verifyErr.message, // visible to client for debugging
+        detail: verifyErr.message,
       });
     }
 
@@ -159,18 +155,18 @@ router.post('/google', async (req, res) => {
     const { sub: googleId, email, name, picture } = payload;
     console.log('[Google OAuth] verified OK — email:', email);
 
-    let row = Users.findByGoogleId(googleId);
+    let row = await Users.findByGoogleId(googleId);
     if (!row) {
-      row = Users.findByEmail(email);
+      row = await Users.findByEmail(email);
       if (row) {
-        Users.linkGoogleId(row.id, googleId, picture);
+        await Users.linkGoogleId(row.id, googleId, picture);
       } else {
-        const result = Users.createUser({ name, email, google_id: googleId, avatar: picture });
-        row = Users.findById(result.lastInsertRowid);
+        const result = await Users.createUser({ name, email, google_id: googleId, avatar: picture });
+        row = await Users.findById(result.id);
       }
     }
 
-    const freshRow = Users.findById(row.id);
+    const freshRow = await Users.findById(row.id);
     const user = buildUser({ ...freshRow, avatar: picture || freshRow.avatar });
     const token = signToken(user);
     console.log('[Google OAuth] login success — userId:', user.id);
@@ -182,22 +178,27 @@ router.post('/google', async (req, res) => {
 });
 
 // ── GET /api/auth/me ───────────────────────────────────────────────────────
-router.get('/me', requireAuth, (req, res) => {
-  const row = Users.findById(req.user.id);
-  if (!row) return res.status(404).json({ error: 'User not found.' });
-  res.json({ user: buildUser(row) });
+router.get('/me', requireAuth, async (req, res) => {
+  try {
+    const row = await Users.findById(req.user.id);
+    if (!row) return res.status(404).json({ error: 'User not found.' });
+    res.json({ user: buildUser(row) });
+  } catch (err) {
+    console.error('/me error:', err);
+    res.status(500).json({ error: 'Failed to fetch user.' });
+  }
 });
 
 // ── POST /api/auth/upgrade-plan ───────────────────────────────────────────
-router.post('/upgrade-plan', requireAuth, (req, res) => {
+router.post('/upgrade-plan', requireAuth, async (req, res) => {
   try {
     const { plan, expiresAt = null } = req.body;
     const validPlans = ['free', 'pro', 'elite'];
     if (!validPlans.includes(plan))
       return res.status(400).json({ error: `Invalid plan. Must be one of: ${validPlans.join(', ')}` });
 
-    Users.updateUserPlan(req.user.id, plan, expiresAt);
-    const row = Users.findById(req.user.id);
+    await Users.updateUserPlan(req.user.id, plan, expiresAt);
+    const row = await Users.findById(req.user.id);
     if (!row) return res.status(404).json({ error: 'User not found.' });
     const user = buildUser(row);
     const token = signToken(user);
@@ -215,17 +216,16 @@ router.post('/forgot-password', async (req, res) => {
     if (!email?.trim())
       return res.status(400).json({ error: 'Email is required.' });
 
-    const row = Users.findByEmail(email);
+    const row = await Users.findByEmail(email);
     if (row) {
       const token   = crypto.randomBytes(32).toString('hex');
-      const expires = new Date(Date.now() + 3_600_000).toISOString(); // 1 hour
-      Users.setResetToken(email, token, expires);
+      const expires = new Date(Date.now() + 3_600_000).toISOString();
+      await Users.setResetToken(email, token, expires);
 
       const resetLink = `${process.env.CLIENT_URL}/reset-password?token=${token}`;
       await sendPasswordResetEmail(email, resetLink, row.name);
     }
 
-    // Always respond the same way — never reveal whether the email exists
     res.json({ message: 'If this email exists you will receive a reset link.' });
   } catch (err) {
     const detail = err.response?.data ?? err.message;
@@ -245,7 +245,7 @@ router.post('/reset-password', async (req, res) => {
     if (newPassword.length < 8)
       return res.status(400).json({ error: 'Password must be at least 8 characters.' });
 
-    const row = Users.findByResetToken(token);
+    const row = await Users.findByResetToken(token);
     if (!row)
       return res.status(400).json({ error: 'Invalid or expired reset link.' });
 
@@ -253,8 +253,8 @@ router.post('/reset-password', async (req, res) => {
       return res.status(400).json({ error: 'Reset link has expired. Please request a new one.' });
 
     const password_hash = await bcrypt.hash(newPassword, 12);
-    Users.setPassword(row.id, password_hash);
-    Users.clearResetToken(row.id);
+    await Users.setPassword(row.id, password_hash);
+    await Users.clearResetToken(row.id);
 
     res.json({ message: 'Password updated successfully.' });
   } catch (err) {
@@ -263,39 +263,34 @@ router.post('/reset-password', async (req, res) => {
   }
 });
 
-// ── PUT /api/auth/update-profile ─────────────────────────────────────────
-router.put('/update-profile', requireAuth, (req, res) => {
+// ── PUT /api/auth/update-profile ──────────────────────────────────────────
+router.put('/update-profile', requireAuth, async (req, res) => {
   try {
     const { trading_experience, markets_traded, goals, avatar_color, name, avatar_base64 } = req.body;
 
-    // Validate avatar_color against allowed values
     const allowedColors = ['emerald', 'blue', 'purple', 'orange', 'rose', 'amber', 'cyan', 'indigo'];
     const safeColor = allowedColors.includes(avatar_color) ? avatar_color : 'emerald';
 
-    // Handle avatar image upload
     if (avatar_base64) {
-      console.log('[avatar] received — length:', avatar_base64?.length, 'type check:', avatar_base64?.substring(0, 30));
+      console.log('[avatar] received — length:', avatar_base64?.length);
       const matches = avatar_base64.match(/^data:image\/(\w+);base64,(.+)$/);
-      console.log('[avatar] regex match:', !!matches, 'format:', matches?.[1]);
       if (matches) {
         const buffer = Buffer.from(matches[2], 'base64');
-        console.log('[avatar] buffer size:', buffer.length, 'bytes (limit 2097152)');
         if (buffer.length > 2 * 1024 * 1024)
           return res.status(400).json({ error: 'Image too large. Max size is 2MB.' });
         if (!existsSync(AVATARS_DIR)) mkdirSync(AVATARS_DIR, { recursive: true });
         const ext = matches[1] === 'png' ? 'png' : 'jpg';
         const filename = `${req.user.id}.${ext}`;
         const filePath = join(AVATARS_DIR, filename);
-        console.log('[avatar] writing to:', filePath);
         writeFileSync(filePath, buffer);
-        Users.updateAvatarUrl(req.user.id, `/uploads/avatars/${filename}`);
+        await Users.updateAvatarUrl(req.user.id, `/uploads/avatars/${filename}`);
         console.log('[avatar] saved OK — url: /uploads/avatars/' + filename);
       } else {
-        console.warn('[avatar] WARNING: base64 regex did not match — data URL prefix may be missing or corrupted');
+        console.warn('[avatar] WARNING: base64 regex did not match');
       }
     }
 
-    Users.updateProfile(req.user.id, {
+    await Users.updateProfile(req.user.id, {
       trading_experience: trading_experience ?? null,
       markets_traded: Array.isArray(markets_traded) ? markets_traded.join(',') : (markets_traded ?? null),
       goals: Array.isArray(goals) ? goals.join(',') : (goals ?? null),
@@ -303,12 +298,12 @@ router.put('/update-profile', requireAuth, (req, res) => {
     });
 
     if (name?.trim()) {
-      Users.updateName(req.user.id, name.trim());
+      await Users.updateName(req.user.id, name.trim());
     }
 
-    Users.setOnboardingDone(req.user.id);
+    await Users.setOnboardingDone(req.user.id);
 
-    const row = Users.findById(req.user.id);
+    const row = await Users.findById(req.user.id);
     if (!row) return res.status(404).json({ error: 'User not found.' });
     const user = buildUser(row);
     const token = signToken(user);

@@ -1,127 +1,241 @@
-import Database from 'better-sqlite3';
-import { join, dirname } from 'path';
-import { fileURLToPath } from 'url';
-import { mkdirSync, existsSync } from 'fs';
+import pg from 'pg';
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const DB_DIR = join(__dirname, '..', '..', 'data');
-const DB_PATH = join(DB_DIR, 'users.db');
+const { Pool } = pg;
 
-if (!existsSync(DB_DIR)) mkdirSync(DB_DIR, { recursive: true });
+// Railway injects DATABASE_URL automatically
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: process.env.NODE_ENV === 'production'
+    ? { rejectUnauthorized: false }
+    : false,
+});
 
-const db = new Database(DB_PATH);
+// Test connection on startup
+pool.connect()
+  .then(client => {
+    console.log('✅ PostgreSQL connected');
+    client.release();
+  })
+  .catch(err => {
+    console.error('❌ PostgreSQL connection failed:', err.message);
+    process.exit(1);
+  });
 
-db.exec(`
-  CREATE TABLE IF NOT EXISTS users (
-    id                   INTEGER PRIMARY KEY AUTOINCREMENT,
-    name                 TEXT    NOT NULL,
-    email                TEXT    UNIQUE NOT NULL,
-    password_hash        TEXT,
-    google_id            TEXT    UNIQUE,
-    avatar               TEXT,
-    created_at           TEXT    DEFAULT (datetime('now')),
-    plan                 TEXT    DEFAULT 'free',
-    plan_expires_at      TEXT    DEFAULT NULL,
-    ai_analysis_tries    INTEGER DEFAULT 0,
-    screenshot_tries     INTEGER DEFAULT 0,
-    is_admin             INTEGER DEFAULT 0,
-    reset_token          TEXT    DEFAULT NULL,
-    reset_token_expires  TEXT    DEFAULT NULL,
-    terms_accepted       INTEGER DEFAULT 0,
-    terms_accepted_at    TEXT    DEFAULT NULL
-  )
-`);
+// ── Create tables + migrate ───────────────────────────────────────────────────
+export async function initDb() {
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS users (
+      id                   SERIAL PRIMARY KEY,
+      name                 TEXT    NOT NULL,
+      email                TEXT    UNIQUE NOT NULL,
+      password_hash        TEXT,
+      google_id            TEXT    UNIQUE,
+      avatar               TEXT,
+      created_at           TIMESTAMPTZ DEFAULT NOW(),
+      plan                 TEXT    DEFAULT 'free',
+      plan_expires_at      TIMESTAMPTZ DEFAULT NULL,
+      ai_analysis_tries    INTEGER DEFAULT 0,
+      screenshot_tries     INTEGER DEFAULT 0,
+      is_admin             INTEGER DEFAULT 0,
+      reset_token          TEXT    DEFAULT NULL,
+      reset_token_expires  TIMESTAMPTZ DEFAULT NULL,
+      trading_experience   TEXT    DEFAULT NULL,
+      markets_traded       TEXT    DEFAULT NULL,
+      goals                TEXT    DEFAULT NULL,
+      avatar_color         TEXT    DEFAULT 'emerald',
+      onboarding_done      INTEGER DEFAULT 0,
+      avatar_url           TEXT    DEFAULT NULL,
+      terms_accepted       INTEGER DEFAULT 0,
+      terms_accepted_at    TIMESTAMPTZ DEFAULT NULL
+    )
+  `);
 
-// Migrate existing databases that lack the new columns
-const migrations = [
-  "ALTER TABLE users ADD COLUMN plan TEXT DEFAULT 'free'",
-  'ALTER TABLE users ADD COLUMN plan_expires_at TEXT DEFAULT NULL',
-  'ALTER TABLE users ADD COLUMN ai_analysis_tries INTEGER DEFAULT 0',
-  'ALTER TABLE users ADD COLUMN screenshot_tries INTEGER DEFAULT 0',
-  'ALTER TABLE users ADD COLUMN is_admin INTEGER DEFAULT 0',
-  'ALTER TABLE users ADD COLUMN reset_token TEXT DEFAULT NULL',
-  'ALTER TABLE users ADD COLUMN reset_token_expires TEXT DEFAULT NULL',
-  'ALTER TABLE users ADD COLUMN trading_experience TEXT DEFAULT NULL',
-  'ALTER TABLE users ADD COLUMN markets_traded TEXT DEFAULT NULL',
-  'ALTER TABLE users ADD COLUMN goals TEXT DEFAULT NULL',
-  "ALTER TABLE users ADD COLUMN avatar_color TEXT DEFAULT 'emerald'",
-  'ALTER TABLE users ADD COLUMN onboarding_done INTEGER DEFAULT 0',
-  'ALTER TABLE users ADD COLUMN avatar_url TEXT DEFAULT NULL',
-  'ALTER TABLE users ADD COLUMN terms_accepted INTEGER DEFAULT 0',
-  'ALTER TABLE users ADD COLUMN terms_accepted_at TEXT DEFAULT NULL',
-];
-for (const sql of migrations) {
-  try { db.exec(sql); } catch { /* column already exists — safe to ignore */ }
+  // Safe column migrations — ADD COLUMN IF NOT EXISTS (PostgreSQL 9.6+)
+  const migrations = [
+    `ALTER TABLE users ADD COLUMN IF NOT EXISTS plan TEXT DEFAULT 'free'`,
+    `ALTER TABLE users ADD COLUMN IF NOT EXISTS plan_expires_at TIMESTAMPTZ DEFAULT NULL`,
+    `ALTER TABLE users ADD COLUMN IF NOT EXISTS ai_analysis_tries INTEGER DEFAULT 0`,
+    `ALTER TABLE users ADD COLUMN IF NOT EXISTS screenshot_tries INTEGER DEFAULT 0`,
+    `ALTER TABLE users ADD COLUMN IF NOT EXISTS is_admin INTEGER DEFAULT 0`,
+    `ALTER TABLE users ADD COLUMN IF NOT EXISTS reset_token TEXT DEFAULT NULL`,
+    `ALTER TABLE users ADD COLUMN IF NOT EXISTS reset_token_expires TIMESTAMPTZ DEFAULT NULL`,
+    `ALTER TABLE users ADD COLUMN IF NOT EXISTS trading_experience TEXT DEFAULT NULL`,
+    `ALTER TABLE users ADD COLUMN IF NOT EXISTS markets_traded TEXT DEFAULT NULL`,
+    `ALTER TABLE users ADD COLUMN IF NOT EXISTS goals TEXT DEFAULT NULL`,
+    `ALTER TABLE users ADD COLUMN IF NOT EXISTS avatar_color TEXT DEFAULT 'emerald'`,
+    `ALTER TABLE users ADD COLUMN IF NOT EXISTS onboarding_done INTEGER DEFAULT 0`,
+    `ALTER TABLE users ADD COLUMN IF NOT EXISTS avatar_url TEXT DEFAULT NULL`,
+    `ALTER TABLE users ADD COLUMN IF NOT EXISTS terms_accepted INTEGER DEFAULT 0`,
+    `ALTER TABLE users ADD COLUMN IF NOT EXISTS terms_accepted_at TIMESTAMPTZ DEFAULT NULL`,
+  ];
+
+  for (const sql of migrations) {
+    try { await pool.query(sql); } catch { /* column already exists */ }
+  }
+
+  console.log('✅ Database schema ready');
 }
 
-export const findByEmail = (email) =>
-  db.prepare('SELECT * FROM users WHERE email = ?').get(email.toLowerCase().trim());
+// ── Query helpers ─────────────────────────────────────────────────────────────
 
-export const findById = (id) =>
-  db.prepare(
-    'SELECT id, name, email, avatar, created_at, plan, plan_expires_at, ai_analysis_tries, screenshot_tries, is_admin, trading_experience, markets_traded, goals, avatar_color, onboarding_done, avatar_url, terms_accepted, terms_accepted_at FROM users WHERE id = ?'
-  ).get(id);
+export async function findByEmail(email) {
+  const { rows } = await pool.query(
+    'SELECT * FROM users WHERE email = $1',
+    [email.toLowerCase().trim()]
+  );
+  return rows[0] ?? null;
+}
 
-export const findByGoogleId = (googleId) =>
-  db.prepare('SELECT * FROM users WHERE google_id = ?').get(googleId);
+export async function findById(id) {
+  const { rows } = await pool.query(
+    `SELECT id, name, email, avatar, created_at, plan, plan_expires_at,
+            ai_analysis_tries, screenshot_tries, is_admin, trading_experience,
+            markets_traded, goals, avatar_color, onboarding_done, avatar_url,
+            terms_accepted, terms_accepted_at
+     FROM users WHERE id = $1`,
+    [id]
+  );
+  return rows[0] ?? null;
+}
 
-export const createUser = ({ name, email, password_hash = null, google_id = null, avatar = null, terms_accepted = 0, terms_accepted_at = null }) =>
-  db.prepare(`
-    INSERT INTO users (name, email, password_hash, google_id, avatar, terms_accepted, terms_accepted_at)
-    VALUES (?, ?, ?, ?, ?, ?, ?)
-  `).run(name, email.toLowerCase().trim(), password_hash, google_id, avatar, terms_accepted, terms_accepted_at);
+export async function findByGoogleId(googleId) {
+  const { rows } = await pool.query(
+    'SELECT * FROM users WHERE google_id = $1',
+    [googleId]
+  );
+  return rows[0] ?? null;
+}
 
-export const linkGoogleId = (id, google_id, avatar) =>
-  db.prepare('UPDATE users SET google_id = ?, avatar = ? WHERE id = ?').run(google_id, avatar, id);
+export async function createUser({
+  name,
+  email,
+  password_hash = null,
+  google_id = null,
+  avatar = null,
+  terms_accepted = 0,
+  terms_accepted_at = null,
+}) {
+  const { rows } = await pool.query(
+    `INSERT INTO users (name, email, password_hash, google_id, avatar, terms_accepted, terms_accepted_at)
+     VALUES ($1, $2, $3, $4, $5, $6, $7)
+     RETURNING id`,
+    [name, email.toLowerCase().trim(), password_hash, google_id, avatar, terms_accepted, terms_accepted_at]
+  );
+  return rows[0]; // { id }
+}
 
-export const updateUserPlan = (id, plan, expiresAt = null) =>
-  db.prepare('UPDATE users SET plan = ?, plan_expires_at = ? WHERE id = ?').run(plan, expiresAt, id);
+export async function linkGoogleId(id, google_id, avatar) {
+  await pool.query(
+    'UPDATE users SET google_id = $1, avatar = $2 WHERE id = $3',
+    [google_id, avatar, id]
+  );
+}
 
-export const incrementAiTries = (id) =>
-  db.prepare('UPDATE users SET ai_analysis_tries = ai_analysis_tries + 1 WHERE id = ?').run(id);
+export async function updateUserPlan(id, plan, expiresAt = null) {
+  await pool.query(
+    'UPDATE users SET plan = $1, plan_expires_at = $2 WHERE id = $3',
+    [plan, expiresAt, id]
+  );
+}
 
-export const incrementScreenshotTries = (id) =>
-  db.prepare('UPDATE users SET screenshot_tries = screenshot_tries + 1 WHERE id = ?').run(id);
+export async function incrementAiTries(id) {
+  await pool.query(
+    'UPDATE users SET ai_analysis_tries = ai_analysis_tries + 1 WHERE id = $1',
+    [id]
+  );
+}
 
-export const setAdmin = (id, isAdmin) =>
-  db.prepare('UPDATE users SET is_admin = ? WHERE id = ?').run(isAdmin ? 1 : 0, id);
+export async function incrementScreenshotTries(id) {
+  await pool.query(
+    'UPDATE users SET screenshot_tries = screenshot_tries + 1 WHERE id = $1',
+    [id]
+  );
+}
 
-export const findAll = () =>
-  db.prepare(
-    'SELECT id, name, email, plan, plan_expires_at, is_admin, created_at, ai_analysis_tries, screenshot_tries FROM users ORDER BY created_at DESC'
-  ).all();
+export async function setAdmin(id, isAdmin) {
+  await pool.query(
+    'UPDATE users SET is_admin = $1 WHERE id = $2',
+    [isAdmin ? 1 : 0, id]
+  );
+}
 
-export const deleteUser = (id) =>
-  db.prepare('DELETE FROM users WHERE id = ?').run(id);
+export async function findAll() {
+  const { rows } = await pool.query(
+    `SELECT id, name, email, plan, plan_expires_at, is_admin, created_at,
+            ai_analysis_tries, screenshot_tries
+     FROM users ORDER BY created_at DESC`
+  );
+  return rows;
+}
 
-export const resetTries = (id) =>
-  db.prepare('UPDATE users SET ai_analysis_tries = 0, screenshot_tries = 0 WHERE id = ?').run(id);
+export async function deleteUser(id) {
+  await pool.query('DELETE FROM users WHERE id = $1', [id]);
+}
 
-export const setResetToken = (email, token, expires) =>
-  db.prepare('UPDATE users SET reset_token = ?, reset_token_expires = ? WHERE email = ?')
-    .run(token, expires, email.toLowerCase().trim());
+export async function resetTries(id) {
+  await pool.query(
+    'UPDATE users SET ai_analysis_tries = 0, screenshot_tries = 0 WHERE id = $1',
+    [id]
+  );
+}
 
-export const findByResetToken = (token) =>
-  db.prepare('SELECT * FROM users WHERE reset_token = ?').get(token);
+export async function setResetToken(email, token, expires) {
+  await pool.query(
+    'UPDATE users SET reset_token = $1, reset_token_expires = $2 WHERE email = $3',
+    [token, expires, email.toLowerCase().trim()]
+  );
+}
 
-export const clearResetToken = (id) =>
-  db.prepare('UPDATE users SET reset_token = NULL, reset_token_expires = NULL WHERE id = ?').run(id);
+export async function findByResetToken(token) {
+  const { rows } = await pool.query(
+    'SELECT * FROM users WHERE reset_token = $1',
+    [token]
+  );
+  return rows[0] ?? null;
+}
 
-export const setPassword = (id, password_hash) =>
-  db.prepare('UPDATE users SET password_hash = ? WHERE id = ?').run(password_hash, id);
+export async function clearResetToken(id) {
+  await pool.query(
+    'UPDATE users SET reset_token = NULL, reset_token_expires = NULL WHERE id = $1',
+    [id]
+  );
+}
 
-export const updateProfile = (id, { trading_experience, markets_traded, goals, avatar_color }) =>
-  db.prepare(
-    'UPDATE users SET trading_experience = ?, markets_traded = ?, goals = ?, avatar_color = ? WHERE id = ?'
-  ).run(trading_experience, markets_traded, goals, avatar_color, id);
+export async function setPassword(id, password_hash) {
+  await pool.query(
+    'UPDATE users SET password_hash = $1 WHERE id = $2',
+    [password_hash, id]
+  );
+}
 
-export const updateName = (id, name) =>
-  db.prepare('UPDATE users SET name = ? WHERE id = ?').run(name, id);
+export async function updateProfile(id, { trading_experience, markets_traded, goals, avatar_color }) {
+  await pool.query(
+    `UPDATE users
+     SET trading_experience = $1, markets_traded = $2, goals = $3, avatar_color = $4
+     WHERE id = $5`,
+    [trading_experience, markets_traded, goals, avatar_color, id]
+  );
+}
 
-export const updateAvatarUrl = (id, avatar_url) =>
-  db.prepare('UPDATE users SET avatar_url = ? WHERE id = ?').run(avatar_url, id);
+export async function updateName(id, name) {
+  await pool.query(
+    'UPDATE users SET name = $1 WHERE id = $2',
+    [name, id]
+  );
+}
 
-export const setOnboardingDone = (id) =>
-  db.prepare('UPDATE users SET onboarding_done = 1 WHERE id = ?').run(id);
+export async function updateAvatarUrl(id, avatar_url) {
+  await pool.query(
+    'UPDATE users SET avatar_url = $1 WHERE id = $2',
+    [avatar_url, id]
+  );
+}
 
-export default db;
+export async function setOnboardingDone(id) {
+  await pool.query(
+    'UPDATE users SET onboarding_done = 1 WHERE id = $1',
+    [id]
+  );
+}
+
+export default pool;

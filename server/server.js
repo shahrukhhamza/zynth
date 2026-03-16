@@ -6,6 +6,7 @@ import rateLimit from 'express-rate-limit';
 import mongoSanitize from 'express-mongo-sanitize';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
+import { existsSync, mkdirSync } from 'fs';
 import { createServer } from 'http';
 import { WebSocketServer } from 'ws';
 import { request as httpRequest } from 'http';
@@ -18,7 +19,7 @@ const __dirname = dirname(__filename);
 // Load environment variables FIRST before importing other modules
 dotenv.config({ path: join(__dirname, '..', '.env') });
 
-// Gemini call counter (incremented by every service that calls generateContent)
+// Gemini call counter
 import { getGeminiCount } from './utils/geminiCounter.js';
 
 // Now import modules that depend on environment variables
@@ -42,13 +43,12 @@ import chartsRouter from './routes/charts.js';
 import levelsRouter from './routes/levels.js';
 import { requireAuth, checkScreenshotTries } from './middleware/authMiddleware.js';
 import * as Users from './db/users.js';
-import { incrementScreenshotTries } from './db/users.js';
+import { incrementScreenshotTries, initDb } from './db/users.js';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// ── Rate limiters ────────────────────────────────────────────────────────────
-// Global: 100 requests per 15 minutes per IP
+// ── Rate limiters ─────────────────────────────────────────────────────────────
 const globalLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 100,
@@ -57,7 +57,6 @@ const globalLimiter = rateLimit({
   message: { error: 'Too many requests, please try again later.' },
 });
 
-// Auth routes: 10 requests per 15 minutes per IP (brute-force protection)
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 10,
@@ -66,7 +65,6 @@ const authLimiter = rateLimit({
   message: { error: 'Too many authentication attempts, please try again later.' },
 });
 
-// AI / assistant routes: 20 requests per hour per IP
 const aiLimiter = rateLimit({
   windowMs: 60 * 60 * 1000,
   max: 20,
@@ -75,20 +73,18 @@ const aiLimiter = rateLimit({
   message: { error: 'AI request limit reached, please try again in an hour.' },
 });
 
-// Middleware
+// ── CORS ──────────────────────────────────────────────────────────────────────
 const _ALLOWED_ORIGINS = [
   'http://localhost:5173',
   'https://zynth.vercel.app',
 ];
 const _VERCEL_ORIGIN = /^https:\/\/[^.]+\.vercel\.app$/;
 
-// Security headers
 app.use(helmet({
-  contentSecurityPolicy: false, // CSP managed by Vercel/CDN for the SPA
+  contentSecurityPolicy: false,
   crossOriginEmbedderPolicy: false,
 }));
 
-// Apply global rate limit to all API routes
 app.use('/api', globalLimiter);
 
 app.use(cors({
@@ -105,38 +101,30 @@ app.use(cors({
   preflightContinue: false,
   optionsSuccessStatus: 204,
 }));
-// Tighter body size limit — prevents large-payload attacks
+
 app.use(express.json({ limit: '10mb', strict: false }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
-
-// Strip keys that start with $ or contain . to prevent NoSQL injection
 app.use(mongoSanitize());
 
-// Routes
+// ── Routes ────────────────────────────────────────────────────────────────────
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', message: 'Server is running', geminiCallsToday: getGeminiCount() });
 });
 
-// Public stats — only exposes totalUsers (for landing page "spots left" counter)
-app.get('/api/public-stats', (req, res) => {
+app.get('/api/public-stats', async (req, res) => {
   try {
-    const all = Users.findAll();
+    const all = await Users.findAll();
     res.json({ totalUsers: all.length });
   } catch (_) {
     res.json({ totalUsers: 0 });
   }
 });
 
-// API Key Stats endpoint
 app.get('/api/key-stats', (req, res) => {
   try {
     const keyManager = getApiKeyManager();
     const stats = keyManager.getStats();
-    res.json({
-      totalKeys: stats.length,
-      stats: stats,
-      timestamp: new Date().toISOString()
-    });
+    res.json({ totalKeys: stats.length, stats, timestamp: new Date().toISOString() });
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch key stats' });
   }
@@ -147,29 +135,25 @@ app.use('/api/data', dataRouter);
 app.use('/api/calendar', calendarRouter);
 app.use('/api/economic', economicRouter);
 
-// ── Manual economic data release trigger (admin only) ────────────────────────
 app.post('/api/economic/trigger-update', async (req, res) => {
   const secret = req.headers['x-admin-secret'];
   if (!process.env.ADMIN_SECRET || secret !== process.env.ADMIN_SECRET) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
-
   const { indicatorId } = req.body;
   if (!indicatorId || typeof indicatorId !== 'string') {
     return res.status(400).json({ error: 'indicatorId is required' });
   }
-
   try {
     const result = await manualTrigger(indicatorId, wss);
-    if (!result.success) {
-      return res.status(422).json(result);
-    }
+    if (!result.success) return res.status(422).json(result);
     return res.json(result);
   } catch (err) {
     console.error('trigger-update error:', err.message);
     return res.status(500).json({ error: err.message });
   }
 });
+
 app.use('/api/auth', authLimiter, authRouter);
 app.use('/api/admin', adminRouter);
 app.use('/api/finnhub', finnhubRouter);
@@ -180,13 +164,8 @@ app.use('/api/assistant', requireAuth, aiLimiter, assistantRouter);
 app.use('/api/charts', requireAuth, chartsRouter);
 app.use('/api/levels', requireAuth, levelsRouter);
 
-// ── /mt5 proxy → Python screenshot service ──────────────────────────────────
-// In production set PYTHON_SERVICE_URL=https://ai-dashboard-python.onrender.com
-// In dev it falls back to http://localhost:8000
-
-// Auth guard — all MT5 endpoints require a valid JWT
+// ── /mt5 proxy → Python screenshot service ────────────────────────────────────
 app.use('/mt5', requireAuth);
-// Screenshot OCR endpoint — also check per-plan try budget BEFORE proxying
 app.post('/mt5/upload-trade-screenshot', checkScreenshotTries, (_req, _res, next) => next());
 
 const _PYTHON_SERVICE_URL = process.env.PYTHON_SERVICE_URL || 'http://localhost:8000';
@@ -212,11 +191,7 @@ app.all('/mt5/*', (req, res) => {
     pipeline(proxyRes, res, () => {});
   });
   proxy.on('error', () => {
-    if (!res.headersSent) {
-      res.status(503).json({
-        error: 'Screenshot analysis service unavailable',
-      });
-    }
+    if (!res.headersSent) res.status(503).json({ error: 'Screenshot analysis service unavailable' });
   });
   if (req.method !== 'GET' && req.method !== 'HEAD') {
     pipeline(req, proxy, () => {});
@@ -225,10 +200,8 @@ app.all('/mt5/*', (req, res) => {
   }
 });
 
-// Serve screenshot uploads
+// Serve avatar uploads
 app.use('/uploads', express.static(join(__dirname, 'uploads')));
-
-// Ensure avatar upload directory exists on startup
 mkdirSync(join(__dirname, 'uploads', 'avatars'), { recursive: true });
 
 // Init journal DB on startup
@@ -236,10 +209,8 @@ try { getDb(); } catch (e) { console.error('Journal DB init error:', e.message);
 
 // Serve React frontend static build (production)
 const clientBuildPath = join(__dirname, '..', 'client', 'dist');
-import { existsSync, mkdirSync } from 'fs';
 if (existsSync(clientBuildPath)) {
   app.use(express.static(clientBuildPath));
-  // For React Router — send index.html for any non-API route
   app.get('*', (req, res) => {
     res.sendFile(join(clientBuildPath, 'index.html'));
   });
@@ -248,35 +219,26 @@ if (existsSync(clientBuildPath)) {
   console.log('⚠️  No client/dist found. Run: cd client && npm run build');
 }
 
-// Error handling
 app.use(errorHandler);
 
-// ── HTTP server + WebSocket server ──────────────────────────────────────────
+// ── HTTP + WebSocket server ───────────────────────────────────────────────────
 const httpServer = createServer(app);
-
-// WebSocket server bound to /ws/market — broadcasts Finnhub price ticks
 const wss = new WebSocketServer({ server: httpServer, path: '/ws/market' });
 
-// !! Must handle errors on both httpServer AND wss or Node will throw uncaught
 httpServer.on('error', (err) => {
   if (err.code === 'EADDRINUSE') {
     console.error(`\n❌ Port ${PORT} is already in use.`);
-    console.error(`   Run: Get-NetTCPConnection -LocalPort ${PORT} | Select-Object -ExpandProperty OwningProcess | ForEach-Object { Stop-Process -Id $_ -Force }`);
   } else {
     console.error('❌ HTTP server error:', err.message);
   }
   process.exit(1);
 });
 
-wss.on('error', (err) => {
-  // ws forwards underlying server errors — log but don't double-exit
-  console.error('❌ WebSocketServer error:', err.message);
-});
+wss.on('error', (err) => console.error('❌ WebSocketServer error:', err.message));
 
 wss.on('connection', (ws) => {
   console.log(`📡 Market WS client connected (total: ${wss.clients.size})`);
 
-  // Helper — sends the full price snapshot to this browser client
   const sendSnapshot = () => {
     if (ws.readyState !== ws.OPEN) return;
     ws.send(JSON.stringify({
@@ -288,35 +250,14 @@ wss.on('connection', (ws) => {
     }));
   };
 
-  // 1. Decide when to send the initial snapshot to this browser client.
-  //    Two deferred cases — checked in priority order:
-  //
-  //    a) Price cache is empty (seedFromRest not yet complete) →
-  //       wait for the 'snapshot' event emitted at end of seedFromRest(),
-  //       then send. This ensures the browser gets a fully-populated baseline.
-  //
-  //    b) Cache is seeded but no live WS tick has arrived yet →
-  //       wait for the first 'price' event so the snapshot contains at least
-  //       one real-time price before being delivered.
-  //
-  //    If neither condition applies (cache has data AND live ticks are flowing)
-  //    send immediately.
-  //
-  //    In all deferred cases, a 'close' guard cleans up the one-time listener
-  //    if the client disconnects before the trigger fires.
-
   const priceCache = finnhubService.getPriceSnapshot();
   const cacheEmpty = Object.keys(priceCache).length === 0;
 
   if (cacheEmpty) {
-    // Case a: wait for REST seed to complete
-    const onSeeded = () => {
-      sendSnapshot();
-    };
+    const onSeeded = () => sendSnapshot();
     finnhubService.once('snapshot', onSeeded);
     ws.once('close', () => finnhubService.off('snapshot', onSeeded));
   } else if (!finnhubService.hasLiveTick) {
-    // Case b: cache seeded but no live tick yet — wait for first trade
     const onFirstTick = () => {
       sendSnapshot();
       finnhubService.off('price', onFirstTick);
@@ -324,17 +265,13 @@ wss.on('connection', (ws) => {
     finnhubService.once('price', onFirstTick);
     ws.once('close', () => finnhubService.off('price', onFirstTick));
   } else {
-    // Normal path: cache populated + live ticks flowing — send immediately
     sendSnapshot();
   }
 
-  // 2. Forward every live price tick to this client
   const onPrice = (update) => {
     if (ws.readyState === ws.OPEN)
       ws.send(JSON.stringify({ type: 'price', data: update, ts: Date.now() }));
   };
-
-  // 3. Forward connection-status changes (reconnecting, etc.)
   const onStatus = (status) => {
     if (ws.readyState === ws.OPEN)
       ws.send(JSON.stringify({ type: 'status', status, ts: Date.now() }));
@@ -348,66 +285,51 @@ wss.on('connection', (ws) => {
     finnhubService.off('status', onStatus);
     console.log(`📡 Market WS client disconnected (total: ${wss.clients.size})`);
   });
-
   ws.on('error', (err) => console.error('WS client error:', err.message));
 });
 
-httpServer.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-  console.log(`📊 Financial News Dashboard API`);
-  console.log(`🔑 Polygon API Key: ${process.env.POLYGON_API_KEY ? 'Yes' : 'No'}`);
-  console.log('Twelve Data key loaded:', !!process.env.TWELVE_DATA_API_KEY);
+// ── Start server ──────────────────────────────────────────────────────────────
+// Initialize PostgreSQL schema BEFORE listening
+initDb()
+  .then(() => {
+    httpServer.listen(PORT, () => {
+      console.log(`🚀 Server running on port ${PORT}`);
+      console.log(`📊 Financial News Dashboard API`);
+      console.log(`🔑 Polygon API Key: ${process.env.POLYGON_API_KEY ? 'Yes' : 'No'}`);
+      console.log('Twelve Data key loaded:', !!process.env.TWELVE_DATA_API_KEY);
 
-  if (process.env.FINNHUB_API_KEY) {
-    // Seed REST prices and open WS AFTER server is ready — truly fire-and-forget
-    // so the existing Yahoo/Polygon chart routes are never blocked by Finnhub init
-    setTimeout(async () => {
-      try {
-        await finnhubService.seedFromRest();
-        finnhubService.connect();
-        finnhubService.startPolling();
-        console.log('📈 Finnhub live market data service started');
-        startAutoReleaseScheduler(wss);
-      } catch (err) {
-        console.warn('⚠️  Finnhub init error (non-fatal):', err.message);
+      if (process.env.FINNHUB_API_KEY) {
+        setTimeout(async () => {
+          try {
+            await finnhubService.seedFromRest();
+            finnhubService.connect();
+            finnhubService.startPolling();
+            console.log('📈 Finnhub live market data service started');
+            startAutoReleaseScheduler(wss);
+          } catch (err) {
+            console.warn('⚠️  Finnhub init error (non-fatal):', err.message);
+          }
+        }, 1000);
+      } else {
+        console.warn('⚠️  FINNHUB_API_KEY not set — live market data disabled');
       }
-    }, 1000); // 1-second delay so server is fully ready before making outbound calls
-  } else {
-    console.warn('⚠️  FINNHUB_API_KEY not set — live market data disabled');
-  }
 
-  // ── Keep-alive: ping self + Python service every 4 min (Render free-tier) ──
-  const SELF_URL = process.env.RENDER_EXTERNAL_URL || `http://localhost:${PORT}`;
-  if (process.env.RENDER_EXTERNAL_URL) {
-    setInterval(async () => {
-      try {
-        const { default: axios } = await import('axios');
-        await axios.get(`${SELF_URL}/api/health`, { timeout: 10000 });
-        console.log('🏓 Keep-alive ping OK');
-      } catch (_) { /* ignore */ }
-      // Also keep the Python screenshot service alive
-      if (process.env.PYTHON_SERVICE_URL) {
+      // ── Daily macro snapshot ─────────────────────────────────────────────
+      setInterval(async () => {
         try {
-          const { default: axios } = await import('axios');
-          await axios.get(`${process.env.PYTHON_SERVICE_URL}/health`, { timeout: 10000 });
-          console.log('🏓 Python service ping OK');
-        } catch (_) { /* ignore */ }
-      }
-    }, 4 * 60 * 1000); // every 4 minutes
-  }
-
-  // ── Daily macro snapshot ───────────────────────────────────────────────────────────
-  setInterval(async () => {
-    try {
-      const { calculateMacroSurpriseScore } = await import('./services/economicIntelligenceService.js');
-      const { insertMacroSnapshot }         = await import('./services/journalDb.js');
-      const result = await calculateMacroSurpriseScore();
-      if (result?.score !== undefined) {
-        const date = new Date().toISOString().slice(0, 10);
-        try { insertMacroSnapshot({ score: result.score, label: result.label ?? 'Unknown', date }); } catch {}
-        console.log(`📊 Macro snapshot saved: ${date} score=${result.score}`);
-      }
-    } catch (err) { console.error('⚠️  Macro snapshot error:', err.message); }
-  }, 24 * 60 * 60 * 1000);
-});
-
+          const { calculateMacroSurpriseScore } = await import('./services/economicIntelligenceService.js');
+          const { insertMacroSnapshot }         = await import('./services/journalDb.js');
+          const result = await calculateMacroSurpriseScore();
+          if (result?.score !== undefined) {
+            const date = new Date().toISOString().slice(0, 10);
+            try { insertMacroSnapshot({ score: result.score, label: result.label ?? 'Unknown', date }); } catch {}
+            console.log(`📊 Macro snapshot saved: ${date} score=${result.score}`);
+          }
+        } catch (err) { console.error('⚠️  Macro snapshot error:', err.message); }
+      }, 24 * 60 * 60 * 1000);
+    });
+  })
+  .catch(err => {
+    console.error('❌ Failed to initialise database:', err.message);
+    process.exit(1);
+  });
