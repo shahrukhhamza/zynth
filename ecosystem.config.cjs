@@ -5,11 +5,11 @@ module.exports = {
       script: 'server.js',
       cwd: 'D:\\US DATA\\server',
       interpreter: 'node',
+      interpreter_args: '--env-file=D:\\US DATA\\.env',
       env: {
         NODE_ENV: 'production',
         PORT: '5000',
         PATH: 'C:\\Program Files\\nodejs;' + process.env.PATH,
-        // env vars are loaded from D:\US DATA\.env by dotenv inside server.js
       },
       watch: false,
       autorestart: true,
