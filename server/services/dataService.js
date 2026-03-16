@@ -23,14 +23,68 @@ const YAHOO_HEADERS = {
   'Accept': 'application/json',
 };
 
+function getUpstreamErrorMessage(error) {
+  return error?.response?.data?.chart?.error?.description
+    || error?.response?.data?.error
+    || error?.response?.statusText
+    || error?.code
+    || error?.message
+    || 'Unknown upstream error';
+}
+
+const MARKET_PROXY_TICKERS = {
+  '^VIX': [
+    { ticker: 'I:VIX', source: 'Polygon VIX index' },
+    { ticker: 'VIXY', source: 'VIXY ETF proxy' },
+  ],
+  'BTC-USD': [
+    { ticker: 'X:BTCUSD', source: 'Polygon BTC/USD' },
+  ],
+  'CL=F': [
+    { ticker: 'USO', source: 'USO ETF proxy' },
+  ],
+  'DX-Y.NYB': [
+    { ticker: 'UUP', source: 'UUP ETF proxy' },
+  ],
+};
+
+async function fetchFromPolygonTicker(ticker, limit = 90) {
+  const to = new Date().toISOString().split('T')[0];
+  const from = new Date(Date.now() - limit * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+  const response = await makeApiCallWithFallback(
+    `${BASE_URL}/v2/aggs/ticker/${encodeURIComponent(ticker)}/range/1/day/${from}/${to}`,
+    { adjusted: true, sort: 'asc', limit: 5000 }
+  );
+
+  if (!response.data?.results?.length) {
+    throw new Error(`No Polygon aggregate data for ${ticker}`);
+  }
+
+  return response.data.results.map(item => ({
+    date: new Date(item.t).toISOString().split('T')[0],
+    timestamp: item.t,
+    open: item.o,
+    high: item.h,
+    low: item.l,
+    close: item.c,
+    volume: item.v,
+    value: item.c,
+  }));
+}
+
 async function fetchFromYahoo(ticker, days = 90) {
   const range = daysToYahooRange(days);
   const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(ticker)}`;
-  const response = await axios.get(url, {
-    params: { interval: '1d', range, includePrePost: false },
-    headers: YAHOO_HEADERS,
-    timeout: 15000,
-  });
+  let response;
+  try {
+    response = await axios.get(url, {
+      params: { interval: '1d', range, includePrePost: false },
+      headers: YAHOO_HEADERS,
+      timeout: 15000,
+    });
+  } catch (error) {
+    throw new Error(`Yahoo Finance request failed for ${ticker}: ${getUpstreamErrorMessage(error)}`);
+  }
 
   const result = response.data?.chart?.result?.[0];
   if (!result) throw new Error(`Yahoo Finance: no data for ${ticker}`);
@@ -86,9 +140,22 @@ export async function getMarketData(symbol, limit = 90) {
     cache.set(cacheKey, data);
     return data;
   } catch (error) {
-    console.error(`❌ Error fetching market data for ${symbol}:`, error.message);
-    throw new Error(`Failed to fetch ${symbol}: ${error.message}`);
+    console.warn(`⚠️  Yahoo market fetch failed for ${symbol}: ${error.message}`);
   }
+
+  const fallbacks = MARKET_PROXY_TICKERS[symbol] ?? [];
+  for (const fallback of fallbacks) {
+    try {
+      const data = await fetchFromPolygonTicker(fallback.ticker, limit);
+      cache.set(cacheKey, data);
+      console.log(`✅ Fetched ${data.length} points for ${symbol} via ${fallback.source}`);
+      return data;
+    } catch (error) {
+      console.warn(`⚠️  Fallback ${fallback.ticker} failed for ${symbol}: ${getUpstreamErrorMessage(error)}`);
+    }
+  }
+
+  throw new Error(`Failed to fetch ${symbol}: no upstream source returned data`);
 }
 
 // Live price snapshot — fetches only current price for each symbol, no chart history
