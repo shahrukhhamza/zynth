@@ -33,7 +33,7 @@ import journalRouter from './routes/journal.js';
 import checklistRouter from './routes/checklist.js';
 import analysisRouter  from './routes/analysis.js';
 import assistantRouter from './routes/assistant.js';
-import { getDb } from './services/journalDb.js';
+import { initJournalDb, insertMacroSnapshot } from './services/journalDb.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import { getApiKeyManager } from './utils/apiKeyManager.js';
 import { finnhubService, TRACKED_SYMBOLS } from './services/finnhubService.js';
@@ -209,9 +209,6 @@ app.all('/mt5/*', (req, res) => {
 app.use('/uploads', express.static(join(__dirname, 'uploads')));
 mkdirSync(join(__dirname, 'uploads', 'avatars'), { recursive: true });
 
-// Init journal DB on startup
-try { getDb(); } catch (e) { console.error('Journal DB init error:', e.message); }
-
 // Serve React frontend static build (production)
 const clientBuildPath = join(__dirname, '..', 'client', 'dist');
 if (existsSync(clientBuildPath)) {
@@ -294,8 +291,8 @@ wss.on('connection', (ws) => {
 });
 
 // ── Start server ──────────────────────────────────────────────────────────────
-// Initialize PostgreSQL schema BEFORE listening
-initDb()
+// Initialize PostgreSQL schemas BEFORE listening
+Promise.all([initDb(), initJournalDb()])
   .then(() => {
     httpServer.listen(PORT, HOST, () => {
       console.log(`🚀 Server running on ${HOST}:${PORT}`);
@@ -323,11 +320,10 @@ initDb()
       setInterval(async () => {
         try {
           const { calculateMacroSurpriseScore } = await import('./services/economicIntelligenceService.js');
-          const { insertMacroSnapshot }         = await import('./services/journalDb.js');
           const result = await calculateMacroSurpriseScore();
           if (result?.score !== undefined) {
             const date = new Date().toISOString().slice(0, 10);
-            try { insertMacroSnapshot({ score: result.score, label: result.label ?? 'Unknown', date }); } catch {}
+            try { await insertMacroSnapshot({ score: result.score, label: result.label ?? 'Unknown', date }); } catch {}
             console.log(`📊 Macro snapshot saved: ${date} score=${result.score}`);
           }
         } catch (err) { console.error('⚠️  Macro snapshot error:', err.message); }

@@ -55,10 +55,10 @@ function getUserId(req) {
 }
 
 /** Free users: max 10 journal entries per calendar month. Pro/Elite/Admin: unlimited. */
-function checkJournalLimit(req, res, next) {
+async function checkJournalLimit(req, res, next) {
   const { plan, is_admin } = req.user || {};
   if (is_admin === 1 || plan === 'pro' || plan === 'elite') return next();
-  const count = countTradesThisMonth(getUserId(req));
+  const count = await countTradesThisMonth(getUserId(req));
   if (count >= 10)
     return res.status(403).json({ error: 'journal_limit_reached', limit: 10, upgrade: true });
   next();
@@ -94,7 +94,7 @@ router.post('/trades', checkJournalLimit, upload.single('screenshot'), async (re
       screenshot_path: req.file ? `/uploads/journal/${req.file.filename}` : null,
     };
 
-    const tradeId = insertTrade(tradeData);
+    const tradeId = await insertTrade(tradeData);
 
     // Upsert journal fields if any are provided
     const journalFields = ['strategy', 'reasoning', 'emotional_state', 'lessons_learned', 'notes'];
@@ -102,10 +102,10 @@ router.post('/trades', checkJournalLimit, upload.single('screenshot'), async (re
     if (hasJournal) {
       const jData = {};
       journalFields.forEach(k => { if (body[k]) jData[k] = body[k]; });
-      upsertJournal(tradeId, jData);
+      await upsertJournal(tradeId, jData);
     }
 
-    const trade = getTradeById(tradeId);
+    const trade = await getTradeById(tradeId);
     res.status(201).json({ success: true, data: trade });
   } catch (err) {
     console.error('POST /journal/trades error:', err);
@@ -114,18 +114,18 @@ router.post('/trades', checkJournalLimit, upload.single('screenshot'), async (re
 });
 
 // ── GET /trades ───────────────────────────────────────────────────────────────
-router.get('/trades', (req, res) => {
+router.get('/trades', async (req, res) => {
   try {
     const userId = getUserId(req);
     const page   = Math.max(0, parseInt(req.query.page)  || 0);
     const limit  = Math.min(200, parseInt(req.query.limit) || 50);
     const symbol = req.query.symbol ? String(req.query.symbol).trim() : null;
     const trades = symbol
-      ? getTradesBySymbol(userId, symbol, limit, page * limit)
-      : getTrades(userId, limit, page * limit);
+      ? await getTradesBySymbol(userId, symbol, limit, page * limit)
+      : await getTrades(userId, limit, page * limit);
     const total  = symbol
-      ? countTradesBySymbol(userId, symbol)
-      : countTrades(userId);
+      ? await countTradesBySymbol(userId, symbol)
+      : await countTrades(userId);
     res.json({ success: true, data: trades, total, page, limit });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
@@ -193,9 +193,9 @@ Be direct, specific, and data-driven. No generic advice. Format as plain text wi
 });
 
 // ── GET /trades/:id ───────────────────────────────────────────────────────────
-router.get('/trades/:id', (req, res) => {
+router.get('/trades/:id', async (req, res) => {
   try {
-    const trade = getTradeById(parseInt(req.params.id));
+    const trade = await getTradeById(parseInt(req.params.id));
     if (!trade) return res.status(404).json({ success: false, error: 'Trade not found' });
     res.json({ success: true, data: trade });
   } catch (err) {
@@ -204,7 +204,7 @@ router.get('/trades/:id', (req, res) => {
 });
 
 // ── PUT /trades/:id ───────────────────────────────────────────────────────────
-router.put('/trades/:id', upload.single('screenshot'), (req, res) => {
+router.put('/trades/:id', upload.single('screenshot'), async (req, res) => {
   try {
     const id   = parseInt(req.params.id);
     const body = req.body;
@@ -215,14 +215,14 @@ router.put('/trades/:id', upload.single('screenshot'), (req, res) => {
     if (req.file) tradeUpdate.screenshot_path = `/uploads/journal/${req.file.filename}`;
     if (body.pair) tradeUpdate.pair = body.pair.toUpperCase();
 
-    if (Object.keys(tradeUpdate).length) updateTrade(id, tradeUpdate);
+    if (Object.keys(tradeUpdate).length) await updateTrade(id, tradeUpdate);
 
     const journalFields = ['strategy', 'reasoning', 'emotional_state', 'lessons_learned', 'notes'];
     const jData = {};
     journalFields.forEach(k => { if (body[k] !== undefined) jData[k] = body[k]; });
-    if (Object.keys(jData).length) upsertJournal(id, jData);
+    if (Object.keys(jData).length) await upsertJournal(id, jData);
 
-    const trade = getTradeById(id);
+    const trade = await getTradeById(id);
     res.json({ success: true, data: trade });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
@@ -230,9 +230,9 @@ router.put('/trades/:id', upload.single('screenshot'), (req, res) => {
 });
 
 // ── DELETE /trades/:id ────────────────────────────────────────────────────────
-router.delete('/trades/:id', (req, res) => {
+router.delete('/trades/:id', async (req, res) => {
   try {
-    deleteTrade(parseInt(req.params.id));
+    await deleteTrade(parseInt(req.params.id));
     res.json({ success: true });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
@@ -243,7 +243,7 @@ router.delete('/trades/:id', (req, res) => {
 router.post('/trades/:id/analyze', checkAiTries, async (req, res) => {
   try {
     const id    = parseInt(req.params.id);
-    const trade = getTradeById(id);
+    const trade = await getTradeById(id);
     if (!trade) return res.status(404).json({ success: false, error: 'Trade not found' });
 
     const analysis = await analyzeJournalEntry(trade, {
@@ -255,8 +255,8 @@ router.post('/trades/:id/analyze', checkAiTries, async (req, res) => {
     });
 
     // Persist the analysis
-    upsertJournal(id, {}); // ensure journal row exists
-    setJournalAiAnalysis(id, analysis);
+    await upsertJournal(id, {}); // ensure journal row exists
+    await setJournalAiAnalysis(id, analysis);
 
     res.json({ success: true, data: analysis });
   } catch (err) {
@@ -266,10 +266,10 @@ router.post('/trades/:id/analyze', checkAiTries, async (req, res) => {
 });
 
 // ── GET /analytics ────────────────────────────────────────────────────────────
-router.get('/analytics', requirePro, (req, res) => {
+router.get('/analytics', requirePro, async (req, res) => {
   try {
     const userId = getUserId(req);
-    const trades = getAllTradesForUser(userId);
+    const trades = await getAllTradesForUser(userId);
     const metrics = calcMetrics(trades);
     res.json({ success: true, data: metrics });
   } catch (err) {
@@ -278,10 +278,10 @@ router.get('/analytics', requirePro, (req, res) => {
 });
 
 // ── GET /reports ──────────────────────────────────────────────────────────────
-router.get('/reports', (req, res) => {
+router.get('/reports', async (req, res) => {
   try {
     const userId = getUserId(req);
-    const reports = getReports(userId, 20).map(r => ({
+    const reports = (await getReports(userId, 20)).map(r => ({
       ...r,
       report_data: r.report_data ? JSON.parse(r.report_data) : null,
     }));
@@ -297,13 +297,13 @@ router.post('/reports', requirePro, checkAiTries, async (req, res) => {
     const userId     = getUserId(req);
     const reportType = req.body.type || 'custom'; // weekly | monthly | custom
 
-    const trades  = getAllTradesForUser(userId);
+    const trades  = await getAllTradesForUser(userId);
     const metrics = calcMetrics(trades);
 
     const reportData = await generatePerformanceReport(metrics, trades, reportType);
     reportData.metrics = metrics; // embed raw metrics in report
 
-    const id = insertReport({
+    const id = await insertReport({
       user_id:     userId,
       report_type: reportType,
       report_data: JSON.stringify(reportData),

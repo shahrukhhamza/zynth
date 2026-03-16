@@ -239,7 +239,7 @@ router.get('/macro-correlation', async (req, res) => {
     const userId = getUserId(req);
 
     // 1. Fetch user's trades
-    const allTrades   = getAllTradesForUser(userId);
+    const allTrades   = await getAllTradesForUser(userId);
     const closedTrades = allTrades.filter(t => t.outcome === 'win' || t.outcome === 'loss');
 
     // 2. Get current macro score and save as today's snapshot
@@ -248,12 +248,12 @@ router.get('/macro-correlation', async (req, res) => {
     const todayStr     = new Date().toISOString().slice(0, 10);
     if (currentScore !== null) {
       try {
-        insertMacroSnapshot({ score: currentScore, label: macroResult.label ?? 'Unknown', date: todayStr });
+        await insertMacroSnapshot({ score: currentScore, label: macroResult.label ?? 'Unknown', date: todayStr });
       } catch { /* duplicate date — ignore */ }
     }
 
     // 3. Get saved snapshots (for nearest-date lookup fallback)
-    const snapshots = getRecentMacroSnapshots(365);
+    const snapshots = await getRecentMacroSnapshots(365);
 
     // 4. Get economic dashboard to build monthly historical scores + indicator release dates
     const dashboard = await getEconomicDashboard();
@@ -528,10 +528,10 @@ Return ONLY valid JSON (no markdown, no code fences):
 router.get('/trading-dna/latest', requireElite, async (req, res) => {
   try {
     const userId = getUserId(req);
-    const allTrades = getAllTradesForUser(userId);
+    const allTrades = await getAllTradesForUser(userId);
     const closed = allTrades.filter(t => t.outcome === 'win' || t.outcome === 'loss');
-    const latest = getLatestDnaReport(userId);
-    const reportsThisMonth = countDnaReportsThisMonth(userId);
+    const latest = await getLatestDnaReport(userId);
+    const reportsThisMonth = await countDnaReportsThisMonth(userId);
     const now = new Date();
     const nextMonth = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 1, 1));
 
@@ -560,21 +560,21 @@ router.get('/trading-dna/latest', requireElite, async (req, res) => {
 router.post('/trading-dna', requireElite, async (req, res) => {
   try {
     const userId = getUserId(req);
-    const allTrades = getAllTradesForUser(userId);
+    const allTrades = await getAllTradesForUser(userId);
     const closed = allTrades.filter(t => t.outcome === 'win' || t.outcome === 'loss');
 
     if (allTrades.length < 10) {
       return res.status(422).json({ success: false, insufficientData: true, tradeCount: allTrades.length, required: 10 });
     }
 
-    const reportsThisMonth = countDnaReportsThisMonth(userId);
+    const reportsThisMonth = await countDnaReportsThisMonth(userId);
     if (reportsThisMonth > 0) {
       const now = new Date();
       const nextMonth = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 1, 1));
       return res.status(429).json({ success: false, alreadyGenerated: true, nextAvailable: nextMonth.toISOString() });
     }
 
-    const checklists = getChecklistHistory(userId, 200);
+    const checklists = await getChecklistHistory(userId, 200);
     const traits = calcTraitScores(allTrades, checklists);
     if (!traits) {
       return res.status(422).json({
@@ -617,7 +617,7 @@ router.post('/trading-dna', requireElite, async (req, res) => {
 
     const reportData = { archetype, traits, stats, radarData, behaviorFlags, ...(aiResult || {}) };
 
-    insertDnaReport({
+    await insertDnaReport({
       user_id:          userId,
       archetype,
       trait_scores:     JSON.stringify(traits),

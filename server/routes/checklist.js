@@ -16,12 +16,12 @@ function getUserId(req) {
 }
 
 // POST /api/checklist
-router.post('/', (req, res) => {
+router.post('/', async (req, res) => {
   try {
     const userId = getUserId(req);
     const { score, answers, recommendation, proceeded = 0 } = req.body;
 
-    const id = insertChecklist({
+    const id = await insertChecklist({
       user_id:        userId,
       score:          score ?? 0,
       answers:        typeof answers === 'string' ? answers : JSON.stringify(answers ?? {}),
@@ -37,9 +37,9 @@ router.post('/', (req, res) => {
 });
 
 // GET /api/checklist/history
-router.get('/history', (req, res) => {
+router.get('/history', async (req, res) => {
   try {
-    const rows = getChecklistHistory(getUserId(req));
+    const rows = await getChecklistHistory(getUserId(req));
     res.json({ success: true, data: rows });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
@@ -47,9 +47,9 @@ router.get('/history', (req, res) => {
 });
 
 // GET /api/checklist/stats
-router.get('/stats', (req, res) => {
+router.get('/stats', async (req, res) => {
   try {
-    const rows = getChecklistRawStats(getUserId(req));
+    const rows = await getChecklistRawStats(getUserId(req));
 
     if (!rows.length) {
       return res.json({ success: true, data: { totalChecks: 0 } });

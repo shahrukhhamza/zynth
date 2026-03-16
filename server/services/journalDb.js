@@ -1,315 +1,430 @@
 /**
- * journalDb.js — SQLite database for the AI Trading Journal
- * Manages: trades, trade_journals, performance_reports
+ * journalDb.js — PostgreSQL persistence for journal, checklist, macro snapshots,
+ * DNA reports, and saved levels.
  */
-import Database from 'better-sqlite3';
-import { join, dirname } from 'path';
-import { fileURLToPath } from 'url';
-import { mkdirSync, existsSync } from 'fs';
+import pg from 'pg';
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const DB_PATH   = join(__dirname, '..', '..', 'journal.db');
-const UPLOADS_DIR = join(__dirname, '..', 'uploads', 'journal');
+const { Pool } = pg;
 
-// Ensure uploads directory exists
-if (!existsSync(UPLOADS_DIR)) mkdirSync(UPLOADS_DIR, { recursive: true });
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: process.env.NODE_ENV === 'production'
+    ? { rejectUnauthorized: false }
+    : false,
+});
 
-let _db;
+let initPromise;
+
+function serializeRow(row) {
+  if (!row) return row;
+  const serialized = { ...row };
+  for (const [key, value] of Object.entries(serialized)) {
+    if (value instanceof Date) serialized[key] = value.toISOString();
+  }
+  return serialized;
+}
+
+function serializeRows(rows) {
+  return rows.map(serializeRow);
+}
+
 export function getDb() {
-  if (!_db) {
-    _db = new Database(DB_PATH);
-    _db.pragma('journal_mode = WAL');
-    _db.pragma('foreign_keys = ON');
-    _initSchema(_db);
-    console.log('✅ Trade Journal DB initialized at', DB_PATH);
-  }
-  return _db;
+  return pool;
 }
 
-function _initSchema(db) {
-  db.exec(`
-    CREATE TABLE IF NOT EXISTS trades (
-      id             INTEGER PRIMARY KEY AUTOINCREMENT,
-      user_id        TEXT    NOT NULL DEFAULT 'default',
-      pair           TEXT    NOT NULL,
-      direction      TEXT    NOT NULL,       -- 'buy' | 'sell'
-      position_size  REAL,
-      entry_price    REAL,
-      exit_price     REAL,
-      tp             REAL,
-      sl             REAL,
-      outcome        TEXT,                   -- 'win' | 'loss' | 'breakeven'
-      profit_loss    REAL,
-      session        TEXT,                   -- 'london' | 'new_york' | 'asian' | 'overlap'
-      screenshot_path TEXT,
-      created_at     TEXT    DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ','now'))
-    );
+export async function initJournalDb() {
+  if (initPromise) return initPromise;
 
-    CREATE TABLE IF NOT EXISTS trade_journals (
-      id              INTEGER PRIMARY KEY AUTOINCREMENT,
-      trade_id        INTEGER NOT NULL UNIQUE,
-      strategy        TEXT,
-      reasoning       TEXT,
-      emotional_state TEXT,
-      lessons_learned TEXT,
-      notes           TEXT,
-      ai_analysis     TEXT,                  -- JSON blob from Gemini
-      created_at      TEXT DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ','now')),
-      FOREIGN KEY (trade_id) REFERENCES trades(id) ON DELETE CASCADE
-    );
+  initPromise = (async () => {
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS trades (
+        id              SERIAL PRIMARY KEY,
+        user_id         TEXT NOT NULL DEFAULT 'default',
+        pair            TEXT NOT NULL,
+        direction       TEXT NOT NULL,
+        position_size   DOUBLE PRECISION,
+        entry_price     DOUBLE PRECISION,
+        exit_price      DOUBLE PRECISION,
+        tp              DOUBLE PRECISION,
+        sl              DOUBLE PRECISION,
+        outcome         TEXT,
+        profit_loss     DOUBLE PRECISION,
+        session         TEXT,
+        screenshot_path TEXT,
+        created_at      TIMESTAMPTZ DEFAULT NOW()
+      );
 
-    CREATE TABLE IF NOT EXISTS performance_reports (
-      id          INTEGER PRIMARY KEY AUTOINCREMENT,
-      user_id     TEXT NOT NULL DEFAULT 'default',
-      report_type TEXT,                      -- 'weekly' | 'monthly' | 'custom'
-      report_data TEXT,                      -- JSON
-      created_at  TEXT DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ','now'))
-    );
+      CREATE TABLE IF NOT EXISTS trade_journals (
+        id               SERIAL PRIMARY KEY,
+        trade_id         INTEGER NOT NULL UNIQUE REFERENCES trades(id) ON DELETE CASCADE,
+        strategy         TEXT,
+        reasoning        TEXT,
+        emotional_state  TEXT,
+        lessons_learned  TEXT,
+        notes            TEXT,
+        ai_analysis      TEXT,
+        created_at       TIMESTAMPTZ DEFAULT NOW()
+      );
 
-    CREATE TABLE IF NOT EXISTS checklist (
-      id             INTEGER PRIMARY KEY AUTOINCREMENT,
-      user_id        TEXT    NOT NULL DEFAULT 'default',
-      score          INTEGER,
-      answers        TEXT,
-      recommendation TEXT,
-      proceeded      INTEGER DEFAULT 0,
-      trade_result   TEXT    DEFAULT NULL,
-      created_at     TEXT    DEFAULT (datetime('now'))
-    );
+      CREATE TABLE IF NOT EXISTS performance_reports (
+        id           SERIAL PRIMARY KEY,
+        user_id      TEXT NOT NULL DEFAULT 'default',
+        report_type  TEXT,
+        report_data  TEXT,
+        created_at   TIMESTAMPTZ DEFAULT NOW()
+      );
 
-    CREATE TABLE IF NOT EXISTS macro_snapshots (
-      id         INTEGER PRIMARY KEY AUTOINCREMENT,
-      score      REAL,
-      label      TEXT,
-      date       TEXT UNIQUE,
-      created_at TEXT DEFAULT (datetime('now'))
-    );
+      CREATE TABLE IF NOT EXISTS checklist (
+        id              SERIAL PRIMARY KEY,
+        user_id         TEXT NOT NULL DEFAULT 'default',
+        score           INTEGER,
+        answers         TEXT,
+        recommendation  TEXT,
+        proceeded       INTEGER DEFAULT 0,
+        trade_result    TEXT DEFAULT NULL,
+        created_at      TIMESTAMPTZ DEFAULT NOW()
+      );
 
-    CREATE TABLE IF NOT EXISTS dna_reports (
-      id               INTEGER PRIMARY KEY AUTOINCREMENT,
-      user_id          TEXT    NOT NULL DEFAULT 'default',
-      archetype        TEXT,
-      trait_scores     TEXT,
-      strengths        TEXT,
-      weaknesses       TEXT,
-      coach_message    TEXT,
-      improvement_plan TEXT,
-      report_data      TEXT,
-      generated_at     TEXT    DEFAULT (datetime('now'))
-    );
+      CREATE TABLE IF NOT EXISTS macro_snapshots (
+        id          SERIAL PRIMARY KEY,
+        score       DOUBLE PRECISION,
+        label       TEXT,
+        date        TEXT UNIQUE,
+        created_at  TIMESTAMPTZ DEFAULT NOW()
+      );
 
-    CREATE INDEX IF NOT EXISTS idx_trades_user      ON trades(user_id, created_at DESC);
-    CREATE INDEX IF NOT EXISTS idx_reports_user     ON performance_reports(user_id, created_at DESC);
-    CREATE INDEX IF NOT EXISTS idx_checklist_user   ON checklist(user_id, created_at DESC);
-    CREATE UNIQUE INDEX IF NOT EXISTS idx_macro_snapshot_date ON macro_snapshots(date);
-    CREATE INDEX IF NOT EXISTS idx_dna_user         ON dna_reports(user_id, generated_at DESC);
-  `);
+      CREATE TABLE IF NOT EXISTS dna_reports (
+        id                SERIAL PRIMARY KEY,
+        user_id           TEXT NOT NULL DEFAULT 'default',
+        archetype         TEXT,
+        trait_scores      TEXT,
+        strengths         TEXT,
+        weaknesses        TEXT,
+        coach_message     TEXT,
+        improvement_plan  TEXT,
+        report_data       TEXT,
+        generated_at      TIMESTAMPTZ DEFAULT NOW()
+      );
+
+      CREATE TABLE IF NOT EXISTS levels (
+        id          SERIAL PRIMARY KEY,
+        user_id     TEXT NOT NULL,
+        symbol      TEXT NOT NULL,
+        type        TEXT NOT NULL,
+        price       DOUBLE PRECISION NOT NULL,
+        note        TEXT,
+        created_at  TIMESTAMPTZ DEFAULT NOW()
+      );
+
+      CREATE INDEX IF NOT EXISTS idx_trades_user ON trades(user_id, created_at DESC);
+      CREATE INDEX IF NOT EXISTS idx_reports_user ON performance_reports(user_id, created_at DESC);
+      CREATE INDEX IF NOT EXISTS idx_checklist_user ON checklist(user_id, created_at DESC);
+      CREATE UNIQUE INDEX IF NOT EXISTS idx_macro_snapshot_date ON macro_snapshots(date);
+      CREATE INDEX IF NOT EXISTS idx_dna_user ON dna_reports(user_id, generated_at DESC);
+      CREATE INDEX IF NOT EXISTS idx_levels_user_sym ON levels(user_id, symbol);
+    `);
+
+    console.log('✅ Trade Journal PostgreSQL schema ready');
+  })();
+
+  return initPromise;
 }
 
-// ── Trades ────────────────────────────────────────────────────────────────────
-export function insertTrade(data) {
-  const db = getDb();
-  const r = db.prepare(`
-    INSERT INTO trades
+export async function syncSequence(tableName) {
+  await pool.query(
+    `SELECT setval(pg_get_serial_sequence($1, 'id'), COALESCE((SELECT MAX(id) FROM ${tableName}), 1), (SELECT COUNT(*) > 0 FROM ${tableName}))`,
+    [tableName]
+  );
+}
+
+export async function insertTrade(data) {
+  const { rows } = await pool.query(
+    `INSERT INTO trades
       (user_id, pair, direction, position_size, entry_price, exit_price, tp, sl, outcome, profit_loss, session, screenshot_path)
-    VALUES
-      (@user_id, @pair, @direction, @position_size, @entry_price, @exit_price, @tp, @sl, @outcome, @profit_loss, @session, @screenshot_path)
-  `).run(data);
-  return r.lastInsertRowid;
+     VALUES
+      ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+     RETURNING id`,
+    [
+      data.user_id,
+      data.pair,
+      data.direction,
+      data.position_size,
+      data.entry_price,
+      data.exit_price,
+      data.tp,
+      data.sl,
+      data.outcome,
+      data.profit_loss,
+      data.session,
+      data.screenshot_path,
+    ]
+  );
+  return rows[0].id;
 }
 
-export function getTrades(userId = 'default', limit = 100, offset = 0) {
-  return getDb().prepare(`
-    SELECT t.*,
-           j.strategy, j.reasoning, j.emotional_state,
-           j.lessons_learned, j.notes, j.ai_analysis,
-           j.id AS journal_id
-    FROM   trades t
-    LEFT JOIN trade_journals j ON j.trade_id = t.id
-    WHERE  t.user_id = ?
-    ORDER  BY t.created_at DESC
-    LIMIT  ? OFFSET ?
-  `).all(userId, limit, offset);
+export async function getTrades(userId = 'default', limit = 100, offset = 0) {
+  const { rows } = await pool.query(
+    `SELECT t.*, j.strategy, j.reasoning, j.emotional_state,
+            j.lessons_learned, j.notes, j.ai_analysis,
+            j.id AS journal_id
+     FROM trades t
+     LEFT JOIN trade_journals j ON j.trade_id = t.id
+     WHERE t.user_id = $1
+     ORDER BY t.created_at DESC
+     LIMIT $2 OFFSET $3`,
+    [userId, limit, offset]
+  );
+  return serializeRows(rows);
 }
 
-export function getTradeById(id) {
-  return getDb().prepare(`
-    SELECT t.*,
-           j.strategy, j.reasoning, j.emotional_state,
-           j.lessons_learned, j.notes, j.ai_analysis,
-           j.id AS journal_id
-    FROM   trades t
-    LEFT JOIN trade_journals j ON j.trade_id = t.id
-    WHERE  t.id = ?
-  `).get(id);
+export async function getTradeById(id) {
+  const { rows } = await pool.query(
+    `SELECT t.*, j.strategy, j.reasoning, j.emotional_state,
+            j.lessons_learned, j.notes, j.ai_analysis,
+            j.id AS journal_id
+     FROM trades t
+     LEFT JOIN trade_journals j ON j.trade_id = t.id
+     WHERE t.id = $1`,
+    [id]
+  );
+  return serializeRow(rows[0] ?? null);
 }
 
-export function updateTrade(id, data) {
-  const allowed = ['pair','direction','position_size','entry_price','exit_price','tp','sl','outcome','profit_loss','session','screenshot_path'];
-  const fields  = Object.keys(data).filter(k => allowed.includes(k));
+export async function updateTrade(id, data) {
+  const allowed = ['pair', 'direction', 'position_size', 'entry_price', 'exit_price', 'tp', 'sl', 'outcome', 'profit_loss', 'session', 'screenshot_path'];
+  const fields = Object.keys(data).filter((key) => allowed.includes(key));
   if (!fields.length) return;
-  const db = getDb();
-  db.prepare(
-    `UPDATE trades SET ${fields.map(k => `${k} = @${k}`).join(', ')} WHERE id = @id`
-  ).run({ ...data, id });
+
+  const assignments = fields.map((key, index) => `${key} = $${index + 1}`);
+  const values = fields.map((key) => data[key]);
+  values.push(id);
+
+  await pool.query(`UPDATE trades SET ${assignments.join(', ')} WHERE id = $${values.length}`, values);
 }
 
-export function deleteTrade(id) {
-  getDb().prepare('DELETE FROM trades WHERE id = ?').run(id);
+export async function deleteTrade(id) {
+  await pool.query('DELETE FROM trades WHERE id = $1', [id]);
 }
 
-export function getTradesBySymbol(userId = 'default', symbol, limit = 100, offset = 0) {
-  return getDb().prepare(`
-    SELECT t.*,
-           j.strategy, j.reasoning, j.emotional_state,
-           j.lessons_learned, j.notes, j.ai_analysis,
-           j.id AS journal_id
-    FROM   trades t
-    LEFT JOIN trade_journals j ON j.trade_id = t.id
-    WHERE  t.user_id = ? AND UPPER(t.pair) = UPPER(?)
-    ORDER  BY t.created_at DESC
-    LIMIT  ? OFFSET ?
-  `).all(userId, symbol, limit, offset);
+export async function getTradesBySymbol(userId = 'default', symbol, limit = 100, offset = 0) {
+  const { rows } = await pool.query(
+    `SELECT t.*, j.strategy, j.reasoning, j.emotional_state,
+            j.lessons_learned, j.notes, j.ai_analysis,
+            j.id AS journal_id
+     FROM trades t
+     LEFT JOIN trade_journals j ON j.trade_id = t.id
+     WHERE t.user_id = $1 AND UPPER(t.pair) = UPPER($2)
+     ORDER BY t.created_at DESC
+     LIMIT $3 OFFSET $4`,
+    [userId, symbol, limit, offset]
+  );
+  return serializeRows(rows);
 }
 
-export function countTradesBySymbol(userId = 'default', symbol) {
-  return getDb().prepare('SELECT COUNT(*) AS n FROM trades WHERE user_id = ? AND UPPER(pair) = UPPER(?)').get(userId, symbol).n;
+export async function countTradesBySymbol(userId = 'default', symbol) {
+  const { rows } = await pool.query(
+    'SELECT COUNT(*)::int AS n FROM trades WHERE user_id = $1 AND UPPER(pair) = UPPER($2)',
+    [userId, symbol]
+  );
+  return rows[0]?.n ?? 0;
 }
 
-export function countTrades(userId = 'default') {
-  return getDb().prepare('SELECT COUNT(*) AS n FROM trades WHERE user_id = ?').get(userId).n;
+export async function countTrades(userId = 'default') {
+  const { rows } = await pool.query('SELECT COUNT(*)::int AS n FROM trades WHERE user_id = $1', [userId]);
+  return rows[0]?.n ?? 0;
 }
 
-export function countTradesThisMonth(userId = 'default') {
+export async function countTradesThisMonth(userId = 'default') {
   const start = new Date();
   start.setUTCDate(1);
   start.setUTCHours(0, 0, 0, 0);
-  return getDb()
-    .prepare("SELECT COUNT(*) AS n FROM trades WHERE user_id = ? AND created_at >= ?")
-    .get(userId, start.toISOString()).n;
+  const { rows } = await pool.query(
+    'SELECT COUNT(*)::int AS n FROM trades WHERE user_id = $1 AND created_at >= $2',
+    [userId, start.toISOString()]
+  );
+  return rows[0]?.n ?? 0;
 }
 
-// ── Trade Journals ────────────────────────────────────────────────────────────
-export function upsertJournal(tradeId, data) {
-  const db  = getDb();
-  const ex  = db.prepare('SELECT id FROM trade_journals WHERE trade_id = ?').get(tradeId);
-  const allowed = ['strategy','reasoning','emotional_state','lessons_learned','notes'];
-  const clean   = {};
-  allowed.forEach(k => { if (data[k] !== undefined) clean[k] = data[k]; });
-
-  if (ex) {
-    if (Object.keys(clean).length) {
-      db.prepare(
-        `UPDATE trade_journals SET ${Object.keys(clean).map(k => `${k} = @${k}`).join(', ')} WHERE trade_id = @trade_id`
-      ).run({ ...clean, trade_id: tradeId });
-    }
-    return ex.id;
-  } else {
-    const r = db.prepare(`
-      INSERT INTO trade_journals (trade_id, strategy, reasoning, emotional_state, lessons_learned, notes)
-      VALUES (@trade_id, @strategy, @reasoning, @emotional_state, @lessons_learned, @notes)
-    `).run({ trade_id: tradeId, strategy:'', reasoning:'', emotional_state:'', lessons_learned:'', notes:'', ...clean });
-    return r.lastInsertRowid;
+export async function upsertJournal(tradeId, data) {
+  const { rows } = await pool.query('SELECT id FROM trade_journals WHERE trade_id = $1', [tradeId]);
+  const existing = rows[0] ?? null;
+  const allowed = ['strategy', 'reasoning', 'emotional_state', 'lessons_learned', 'notes'];
+  const clean = {};
+  for (const key of allowed) {
+    if (data[key] !== undefined) clean[key] = data[key];
   }
+
+  if (existing) {
+    if (Object.keys(clean).length) {
+      const fields = Object.keys(clean);
+      const assignments = fields.map((key, index) => `${key} = $${index + 1}`);
+      const values = fields.map((key) => clean[key]);
+      values.push(tradeId);
+      await pool.query(`UPDATE trade_journals SET ${assignments.join(', ')} WHERE trade_id = $${values.length}`, values);
+    }
+    return existing.id;
+  }
+
+  const { rows: inserted } = await pool.query(
+    `INSERT INTO trade_journals (trade_id, strategy, reasoning, emotional_state, lessons_learned, notes)
+     VALUES ($1, $2, $3, $4, $5, $6)
+     RETURNING id`,
+    [
+      tradeId,
+      clean.strategy ?? '',
+      clean.reasoning ?? '',
+      clean.emotional_state ?? '',
+      clean.lessons_learned ?? '',
+      clean.notes ?? '',
+    ]
+  );
+  return inserted[0].id;
 }
 
-export function setJournalAiAnalysis(tradeId, aiAnalysis) {
-  getDb().prepare('UPDATE trade_journals SET ai_analysis = ? WHERE trade_id = ?')
-         .run(JSON.stringify(aiAnalysis), tradeId);
+export async function setJournalAiAnalysis(tradeId, aiAnalysis) {
+  await pool.query('UPDATE trade_journals SET ai_analysis = $1 WHERE trade_id = $2', [JSON.stringify(aiAnalysis), tradeId]);
 }
 
-// ── Analytics raw data ────────────────────────────────────────────────────────
-export function getAllTradesForUser(userId = 'default') {
-  return getDb().prepare(`
-    SELECT t.*, j.strategy, j.reasoning, j.emotional_state, j.lessons_learned, j.notes
-    FROM   trades t
-    LEFT JOIN trade_journals j ON j.trade_id = t.id
-    WHERE  t.user_id = ?
-    ORDER  BY t.created_at ASC
-  `).all(userId);
+export async function getAllTradesForUser(userId = 'default') {
+  const { rows } = await pool.query(
+    `SELECT t.*, j.strategy, j.reasoning, j.emotional_state, j.lessons_learned, j.notes
+     FROM trades t
+     LEFT JOIN trade_journals j ON j.trade_id = t.id
+     WHERE t.user_id = $1
+     ORDER BY t.created_at ASC`,
+    [userId]
+  );
+  return serializeRows(rows);
 }
 
-// ── Reports ───────────────────────────────────────────────────────────────────
-export function insertReport(data) {
-  const r = getDb().prepare(`
-    INSERT INTO performance_reports (user_id, report_type, report_data)
-    VALUES (@user_id, @report_type, @report_data)
-  `).run(data);
-  return r.lastInsertRowid;
+export async function insertReport(data) {
+  const { rows } = await pool.query(
+    `INSERT INTO performance_reports (user_id, report_type, report_data)
+     VALUES ($1, $2, $3)
+     RETURNING id`,
+    [data.user_id, data.report_type, data.report_data]
+  );
+  return rows[0].id;
 }
 
-export function getReports(userId = 'default', limit = 20) {
-  return getDb().prepare(`
-    SELECT * FROM performance_reports
-    WHERE  user_id = ?
-    ORDER  BY created_at DESC
-    LIMIT  ?
-  `).all(userId, limit);
+export async function getReports(userId = 'default', limit = 20) {
+  const { rows } = await pool.query(
+    `SELECT * FROM performance_reports WHERE user_id = $1 ORDER BY created_at DESC LIMIT $2`,
+    [userId, limit]
+  );
+  return serializeRows(rows);
 }
 
-// ── Checklist ─────────────────────────────────────────────────────────────────
-export function insertChecklist(data) {
-  const r = getDb().prepare(`
-    INSERT INTO checklist (user_id, score, answers, recommendation, proceeded)
-    VALUES (@user_id, @score, @answers, @recommendation, @proceeded)
-  `).run(data);
-  return r.lastInsertRowid;
+export async function insertChecklist(data) {
+  const { rows } = await pool.query(
+    `INSERT INTO checklist (user_id, score, answers, recommendation, proceeded)
+     VALUES ($1, $2, $3, $4, $5)
+     RETURNING id`,
+    [data.user_id, data.score, data.answers, data.recommendation, data.proceeded]
+  );
+  return rows[0].id;
 }
 
-export function getChecklistHistory(userId = 'default', limit = 50) {
-  return getDb()
-    .prepare('SELECT * FROM checklist WHERE user_id = ? ORDER BY created_at DESC LIMIT ?')
-    .all(userId, limit);
+export async function getChecklistHistory(userId = 'default', limit = 50) {
+  const { rows } = await pool.query(
+    'SELECT * FROM checklist WHERE user_id = $1 ORDER BY created_at DESC LIMIT $2',
+    [userId, limit]
+  );
+  return serializeRows(rows);
 }
 
-export function getChecklistRawStats(userId = 'default') {
-  return getDb()
-    .prepare('SELECT score, recommendation, proceeded, trade_result FROM checklist WHERE user_id = ?')
-    .all(userId);
+export async function getChecklistRawStats(userId = 'default') {
+  const { rows } = await pool.query(
+    'SELECT score, recommendation, proceeded, trade_result FROM checklist WHERE user_id = $1',
+    [userId]
+  );
+  return serializeRows(rows);
 }
 
-// ── Macro Snapshots ───────────────────────────────────────────────────────────
-export function insertMacroSnapshot({ score, label = 'Unknown', date }) {
-  return getDb()
-    .prepare(`INSERT INTO macro_snapshots (score, label, date) VALUES (?, ?, ?)
-              ON CONFLICT(date) DO UPDATE SET score = excluded.score, label = excluded.label`)
-    .run(score, label, date);
+export async function insertMacroSnapshot({ score, label = 'Unknown', date }) {
+  await pool.query(
+    `INSERT INTO macro_snapshots (score, label, date)
+     VALUES ($1, $2, $3)
+     ON CONFLICT(date) DO UPDATE SET score = EXCLUDED.score, label = EXCLUDED.label`,
+    [score, label, date]
+  );
 }
 
-export function getMacroSnapshotForDate(date) {
-  return getDb()
-    .prepare('SELECT * FROM macro_snapshots WHERE date = ?')
-    .get(date) ?? null;
+export async function getMacroSnapshotForDate(date) {
+  const { rows } = await pool.query('SELECT * FROM macro_snapshots WHERE date = $1', [date]);
+  return serializeRow(rows[0] ?? null);
 }
 
-export function getRecentMacroSnapshots(limit = 180) {
-  return getDb()
-    .prepare('SELECT date, score, label FROM macro_snapshots ORDER BY date ASC LIMIT ?')
-    .all(limit);
+export async function getRecentMacroSnapshots(limit = 180) {
+  const { rows } = await pool.query('SELECT date, score, label FROM macro_snapshots ORDER BY date ASC LIMIT $1', [limit]);
+  return serializeRows(rows);
 }
 
-// ── DNA Reports ───────────────────────────────────────────────────────────────
-export function insertDnaReport(data) {
-  const r = getDb().prepare(`
-    INSERT INTO dna_reports
+export async function insertDnaReport(data) {
+  const { rows } = await pool.query(
+    `INSERT INTO dna_reports
       (user_id, archetype, trait_scores, strengths, weaknesses, coach_message, improvement_plan, report_data)
-    VALUES
-      (@user_id, @archetype, @trait_scores, @strengths, @weaknesses, @coach_message, @improvement_plan, @report_data)
-  `).run(data);
-  return r.lastInsertRowid;
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+     RETURNING id`,
+    [
+      data.user_id,
+      data.archetype,
+      data.trait_scores,
+      data.strengths,
+      data.weaknesses,
+      data.coach_message,
+      data.improvement_plan,
+      data.report_data,
+    ]
+  );
+  return rows[0].id;
 }
 
-export function getLatestDnaReport(userId = 'default') {
-  return getDb()
-    .prepare('SELECT * FROM dna_reports WHERE user_id = ? ORDER BY generated_at DESC LIMIT 1')
-    .get(userId) ?? null;
+export async function getLatestDnaReport(userId = 'default') {
+  const { rows } = await pool.query(
+    'SELECT * FROM dna_reports WHERE user_id = $1 ORDER BY generated_at DESC LIMIT 1',
+    [userId]
+  );
+  return serializeRow(rows[0] ?? null);
 }
 
-export function countDnaReportsThisMonth(userId = 'default') {
+export async function countDnaReportsThisMonth(userId = 'default') {
   const start = new Date();
   start.setUTCDate(1);
   start.setUTCHours(0, 0, 0, 0);
-  return getDb()
-    .prepare("SELECT COUNT(*) AS n FROM dna_reports WHERE user_id = ? AND generated_at >= ?")
-    .get(userId, start.toISOString()).n;
+  const { rows } = await pool.query(
+    'SELECT COUNT(*)::int AS n FROM dna_reports WHERE user_id = $1 AND generated_at >= $2',
+    [userId, start.toISOString()]
+  );
+  return rows[0]?.n ?? 0;
+}
+
+export async function getLevelsForUserSymbol(userId, symbol) {
+  const { rows } = await pool.query(
+    'SELECT * FROM levels WHERE user_id = $1 AND symbol = $2 ORDER BY price DESC',
+    [String(userId), symbol.trim()]
+  );
+  return serializeRows(rows);
+}
+
+export async function createLevel({ user_id, symbol, type, price, note }) {
+  const { rows } = await pool.query(
+    `INSERT INTO levels (user_id, symbol, type, price, note)
+     VALUES ($1, $2, $3, $4, $5)
+     RETURNING *`,
+    [String(user_id), symbol.trim(), type, price, note]
+  );
+  return serializeRow(rows[0]);
+}
+
+export async function findLevelByIdForUser(id, userId) {
+  const { rows } = await pool.query(
+    'SELECT id FROM levels WHERE id = $1 AND user_id = $2',
+    [id, String(userId)]
+  );
+  return rows[0] ?? null;
+}
+
+export async function deleteLevelById(id) {
+  await pool.query('DELETE FROM levels WHERE id = $1', [id]);
 }

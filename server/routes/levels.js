@@ -9,7 +9,12 @@
  */
 
 import { Router } from 'express';
-import { getDb } from '../services/journalDb.js';
+import {
+  createLevel,
+  deleteLevelById,
+  findLevelByIdForUser,
+  getLevelsForUserSymbol,
+} from '../services/journalDb.js';
 
 const VALID_TYPES = ['Support', 'Resistance', 'Target', 'Stop Zone'];
 
@@ -17,36 +22,17 @@ function getUserId(req) {
   return req.user?.userId || req.user?.id;
 }
 
-function ensureTable() {
-  // Idempotent — called on every request to handle fresh DB instances
-  getDb().exec(`
-    CREATE TABLE IF NOT EXISTS levels (
-      id         INTEGER PRIMARY KEY AUTOINCREMENT,
-      user_id    TEXT    NOT NULL,
-      symbol     TEXT    NOT NULL,
-      type       TEXT    NOT NULL,
-      price      REAL    NOT NULL,
-      note       TEXT,
-      created_at TEXT    DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ','now'))
-    );
-    CREATE INDEX IF NOT EXISTS idx_levels_user_sym ON levels(user_id, symbol);
-  `);
-}
-
 const router = Router();
 
 // ── GET /api/levels?symbol=XAU/USD ───────────────────────────────────────────
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
   try {
     const { symbol } = req.query;
     if (!symbol || typeof symbol !== 'string' || symbol.length > 30) {
       return res.status(400).json({ error: 'symbol is required (max 30 chars)' });
     }
     const userId = getUserId(req);
-    ensureTable();
-    const levels = getDb()
-      .prepare('SELECT * FROM levels WHERE user_id = ? AND symbol = ? ORDER BY price DESC')
-      .all(String(userId), symbol.trim());
+    const levels = await getLevelsForUserSymbol(userId, symbol);
     res.json({ levels });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -54,7 +40,7 @@ router.get('/', (req, res) => {
 });
 
 // ── POST /api/levels ──────────────────────────────────────────────────────────
-router.post('/', (req, res) => {
+router.post('/', async (req, res) => {
   try {
     const userId = getUserId(req);
     const { symbol, type, price, note } = req.body ?? {};
@@ -71,39 +57,24 @@ router.post('/', (req, res) => {
     }
     const cleanNote = note ? String(note).slice(0, 50) : null;
 
-    ensureTable();
-    const r = getDb()
-      .prepare('INSERT INTO levels (user_id, symbol, type, price, note) VALUES (?, ?, ?, ?, ?)')
-      .run(String(userId), symbol.trim(), type, priceNum, cleanNote);
-
-    res.status(201).json({
-      id: r.lastInsertRowid,
-      user_id: userId,
-      symbol: symbol.trim(),
-      type,
-      price: priceNum,
-      note: cleanNote,
-      created_at: new Date().toISOString(),
-    });
+    const level = await createLevel({ user_id: userId, symbol, type, price: priceNum, note: cleanNote });
+    res.status(201).json(level);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
 // ── DELETE /api/levels/:id ────────────────────────────────────────────────────
-router.delete('/:id', (req, res) => {
+router.delete('/:id', async (req, res) => {
   try {
     const userId = getUserId(req);
     const id = parseInt(req.params.id, 10);
     if (isNaN(id) || id <= 0) return res.status(400).json({ error: 'invalid id' });
 
-    ensureTable();
-    const existing = getDb()
-      .prepare('SELECT id FROM levels WHERE id = ? AND user_id = ?')
-      .get(id, String(userId));
+    const existing = await findLevelByIdForUser(id, userId);
     if (!existing) return res.status(404).json({ error: 'Level not found or not owned by you' });
 
-    getDb().prepare('DELETE FROM levels WHERE id = ?').run(id);
+    await deleteLevelById(id);
     res.json({ success: true });
   } catch (err) {
     res.status(500).json({ error: err.message });
