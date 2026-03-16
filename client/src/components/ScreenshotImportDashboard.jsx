@@ -484,82 +484,112 @@ function DeleteModal({ modal, onConfirm, onCancel, isDeleting, theme }) {
     <div
       style={{
         position: 'fixed', inset: 0, zIndex: 9999,
-        backgroundColor: 'rgba(0,0,0,0.65)',
+        backgroundColor: 'rgba(0,0,0,0.55)',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         padding: 16,
-        backdropFilter: 'blur(4px)',
+        backdropFilter: 'blur(6px)',
+        WebkitBackdropFilter: 'blur(6px)',
+        animation: 'fadeIn 0.15s ease',
       }}
       onClick={(e) => { if (e.target === e.currentTarget && !isDeleting) onCancel(); }}
     >
       <div
         style={{
-          backgroundColor: theme.surface,
-          border: `1px solid ${theme.border}`,
-          borderRadius: 18,
-          padding: '32px 28px',
-          maxWidth: 400, width: '100%',
-          boxShadow: '0 32px 64px rgba(0,0,0,0.45)',
+          backgroundColor: theme.isDark ? '#1a1a2e' : theme.surface,
+          border: `1px solid ${theme.isDark ? 'rgba(255,255,255,0.08)' : theme.border}`,
+          borderRadius: 20,
+          padding: '36px 32px 28px',
+          maxWidth: 380, width: '100%',
+          boxShadow: theme.isDark
+            ? '0 0 0 1px rgba(255,255,255,0.04), 0 24px 60px rgba(0,0,0,0.6)'
+            : '0 20px 60px rgba(0,0,0,0.18)',
+          animation: 'slideUp 0.2s cubic-bezier(0.34,1.56,0.64,1)',
         }}
       >
-        {/* Icon */}
+        {/* Icon badge */}
         <div style={{
-          width: 52, height: 52, borderRadius: '50%',
-          backgroundColor: 'rgba(239,68,68,0.1)',
-          border: '1px solid rgba(239,68,68,0.25)',
+          position: 'relative',
+          width: 64, height: 64,
+          margin: '0 auto 22px',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-          margin: '0 auto 20px',
         }}>
-          <Trash2 style={{ width: 22, height: 22, color: '#ef4444' }} />
+          {/* Outer glow ring */}
+          <div style={{
+            position: 'absolute', inset: 0, borderRadius: '50%',
+            background: 'radial-gradient(circle, rgba(239,68,68,0.18) 0%, transparent 70%)',
+          }} />
+          <div style={{
+            width: 52, height: 52, borderRadius: '50%',
+            background: 'linear-gradient(135deg, rgba(239,68,68,0.15) 0%, rgba(239,68,68,0.08) 100%)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+          }}>
+            <Trash2 style={{ width: 21, height: 21, color: '#ef4444' }} />
+          </div>
         </div>
 
         <h3 style={{
-          color: theme.text, fontSize: 16, fontWeight: 700,
-          textAlign: 'center', margin: '0 0 10px',
+          color: theme.text, fontSize: 17, fontWeight: 700,
+          textAlign: 'center', margin: '0 0 8px',
+          letterSpacing: '-0.01em',
         }}>
           {isAll ? 'Delete All Screenshot Data' : 'Delete Trade'}
         </h3>
 
         <p style={{
-          color: theme.muted, fontSize: 13,
-          textAlign: 'center', lineHeight: 1.6, margin: '0 0 8px',
+          color: theme.muted, fontSize: 13.5,
+          textAlign: 'center', lineHeight: 1.65, margin: '0 0 20px',
+          padding: '0 4px',
         }}>
           {isAll
             ? 'This will permanently remove all screenshot analysis data and every imported trade.'
             : (
               <>
-                Delete this <strong style={{ color: theme.text }}>{trade?.symbol}</strong>{' '}
+                Permanently delete the{' '}
+                <strong style={{ color: theme.text }}>{trade?.symbol}</strong>{' '}
                 <span style={{
                   color: trade?.type === 'BUY' ? '#10b981' : '#ef4444',
                   fontWeight: 600,
                 }}>
                   {trade?.type}
                 </span>{' '}
-                trade (
-                <span style={{ color: profit >= 0 ? '#10b981' : '#ef4444', fontWeight: 600 }}>
-                  {profit >= 0 ? '+' : ''}{profit.toFixed(2)}
+                trade{' '}
+                <span style={{
+                  color: profit >= 0 ? '#10b981' : '#ef4444',
+                  fontWeight: 600,
+                }}>
+                  ({profit >= 0 ? '+' : ''}{profit.toFixed(2)})
                 </span>
-                )?
+                ?
               </>
             )}
         </p>
-        <p style={{
-          color: 'rgba(239,68,68,0.8)', fontSize: 12,
-          textAlign: 'center', margin: '0 0 24px',
+
+        {/* Warning chip */}
+        <div style={{
+          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+          backgroundColor: 'rgba(239,68,68,0.08)',
+          border: '1px solid rgba(239,68,68,0.18)',
+          borderRadius: 8, padding: '7px 14px',
+          margin: '0 0 24px',
         }}>
-          This action cannot be undone.
-        </p>
+          <AlertCircle style={{ width: 13, height: 13, color: '#ef4444', flexShrink: 0 }} />
+          <span style={{ fontSize: 12, color: '#ef4444', fontWeight: 500 }}>
+            This action cannot be undone
+          </span>
+        </div>
 
         <div style={{ display: 'flex', gap: 10 }}>
           <button
             onClick={onCancel}
             disabled={isDeleting}
             style={{
-              flex: 1, padding: '11px', borderRadius: 10,
-              border: `1px solid ${theme.border}`,
-              backgroundColor: 'transparent',
+              flex: 1, padding: '11px 16px', borderRadius: 11,
+              border: `1px solid ${theme.isDark ? 'rgba(255,255,255,0.1)' : theme.border}`,
+              backgroundColor: theme.isDark ? 'rgba(255,255,255,0.04)' : 'transparent',
               color: theme.text, fontSize: 14, fontWeight: 500,
               cursor: isDeleting ? 'not-allowed' : 'pointer',
-              opacity: isDeleting ? 0.5 : 1,
+              opacity: isDeleting ? 0.4 : 1,
+              transition: 'opacity 0.15s',
             }}
           >
             Cancel
@@ -568,21 +598,30 @@ function DeleteModal({ modal, onConfirm, onCancel, isDeleting, theme }) {
             onClick={onConfirm}
             disabled={isDeleting}
             style={{
-              flex: 1, padding: '11px', borderRadius: 10,
+              flex: 1, padding: '11px 16px', borderRadius: 11,
               border: 'none',
-              backgroundColor: '#ef4444',
+              background: isDeleting
+                ? 'rgba(239,68,68,0.6)'
+                : 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
               color: 'white', fontSize: 14, fontWeight: 600,
               cursor: isDeleting ? 'not-allowed' : 'pointer',
-              opacity: isDeleting ? 0.75 : 1,
               display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
-              transition: 'opacity 0.15s',
+              boxShadow: isDeleting ? 'none' : '0 4px 14px rgba(239,68,68,0.35)',
+              transition: 'all 0.15s',
             }}
           >
-            {isDeleting && <Loader2 style={{ width: 14, height: 14 }} className="animate-spin" />}
-            Delete
+            {isDeleting
+              ? <Loader2 style={{ width: 14, height: 14 }} className="animate-spin" />
+              : <Trash2 style={{ width: 14, height: 14 }} />}
+            {isDeleting ? 'Deleting…' : 'Delete'}
           </button>
         </div>
       </div>
+
+      <style>{`
+        @keyframes fadeIn { from { opacity: 0 } to { opacity: 1 } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(16px) scale(0.97) } to { opacity: 1; transform: translateY(0) scale(1) } }
+      `}</style>
     </div>
   );
 }
