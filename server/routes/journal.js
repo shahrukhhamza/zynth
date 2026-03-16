@@ -14,7 +14,6 @@
 
 import { Router } from 'express';
 import multer from 'multer';
-import { extname } from 'path';
 import { requireAuth, checkAiTries, requirePro } from '../middleware/authMiddleware.js';
 import {
   insertTrade, getTrades, getTradeById, updateTrade, deleteTrade, countTrades,
@@ -24,20 +23,11 @@ import {
 } from '../services/journalDb.js';
 import { calcMetrics } from '../services/analyticsService.js';
 import { analyzeJournalEntry, generatePerformanceReport } from '../services/journalAiService.js';
-import { JOURNAL_UPLOADS_DIR, ensureUploadDirs } from '../config/storagePaths.js';
-
-ensureUploadDirs();
+import { saveJournalScreenshot } from '../services/fileStorageService.js';
 
 // ── Multer config ─────────────────────────────────────────────────────────────
-const storage = multer.diskStorage({
-  destination: (_req, _file, cb) => cb(null, JOURNAL_UPLOADS_DIR),
-  filename: (_req, file, cb) => {
-    const safe = Date.now() + '-' + Math.round(Math.random() * 1e9);
-    cb(null, safe + extname(file.originalname).toLowerCase());
-  },
-});
 const upload = multer({
-  storage,
+  storage: multer.memoryStorage(),
   limits: { fileSize: 10 * 1024 * 1024 }, // 10 MB
   fileFilter: (_req, file, cb) => {
     if (/^image\/(jpeg|png|gif|webp)$/.test(file.mimetype)) cb(null, true);
@@ -75,6 +65,10 @@ router.post('/trades', checkJournalLimit, upload.single('screenshot'), async (re
       return res.status(400).json({ success: false, error: 'pair and direction are required' });
     }
 
+    const screenshotPath = req.file
+      ? await saveJournalScreenshot(userId, req.file)
+      : null;
+
     const tradeData = {
       user_id:       userId,
       pair:          body.pair.toUpperCase(),
@@ -87,7 +81,7 @@ router.post('/trades', checkJournalLimit, upload.single('screenshot'), async (re
       outcome:       body.outcome       || null,
       profit_loss:   body.profit_loss   ? parseFloat(body.profit_loss)   : null,
       session:       body.session       || null,
-      screenshot_path: req.file ? `/uploads/journal/${req.file.filename}` : null,
+      screenshot_path: screenshotPath,
     };
 
     const tradeId = await insertTrade(tradeData);
@@ -208,7 +202,9 @@ router.put('/trades/:id', upload.single('screenshot'), async (req, res) => {
     const tradeFields = ['pair','direction','position_size','entry_price','exit_price','tp','sl','outcome','profit_loss','session'];
     const tradeUpdate = {};
     tradeFields.forEach(k => { if (body[k] !== undefined) tradeUpdate[k] = body[k]; });
-    if (req.file) tradeUpdate.screenshot_path = `/uploads/journal/${req.file.filename}`;
+    if (req.file) {
+      tradeUpdate.screenshot_path = await saveJournalScreenshot(getUserId(req), req.file);
+    }
     if (body.pair) tradeUpdate.pair = body.pair.toUpperCase();
 
     if (Object.keys(tradeUpdate).length) await updateTrade(id, tradeUpdate);

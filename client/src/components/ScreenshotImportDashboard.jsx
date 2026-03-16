@@ -14,11 +14,12 @@ import {
   Activity,
   WifiOff,
   Database,
+  Trash2,
 } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 import { useTimezone } from '../contexts/TimezoneContext';
 import { usePlanGate } from '../hooks/usePlanGate';
-import { getScreenshotReport } from '../services/mt5Api';
+import { deleteScreenshotReport, getScreenshotReport } from '../services/mt5Api';
 import ScreenshotUpload from './ScreenshotUpload';
 import MT5PerformanceStats   from './MT5PerformanceStats';
 import MT5PerformanceCharts  from './MT5PerformanceCharts';
@@ -53,6 +54,14 @@ function saveCache(result) {
   } catch { /* storage full — ignore */ }
 }
 
+function clearCache() {
+  try {
+    localStorage.removeItem(CACHE_KEY);
+  } catch {
+    // no-op
+  }
+}
+
 export default function ScreenshotImportDashboard() {
   const theme = useTheme();
   const { formatDateWithTimezone } = useTimezone();
@@ -66,6 +75,7 @@ export default function ScreenshotImportDashboard() {
   const [loadingInit,   setLoadingInit]   = useState(true);
   const [serviceOnline, setServiceOnline] = useState(true);   // false = MT5 Python service unreachable
   const [serviceError,  setServiceError]  = useState(null);   // human-readable reason
+  const [deleting,      setDeleting]      = useState(false);
 
   // ── On mount: check if we already have stored screenshot trades ──────────
   const loadExisting = useCallback(async () => {
@@ -112,6 +122,31 @@ export default function ScreenshotImportDashboard() {
     setServiceOnline(true);
     setServiceError(null);
     setActiveTab('overview');
+  };
+
+  const handleDeleteReport = async () => {
+    if (deleting) return;
+    const confirmed = window.confirm('Delete all screenshot analysis data and imported screenshot trades? This cannot be undone.');
+    if (!confirmed) return;
+
+    setDeleting(true);
+    try {
+      await deleteScreenshotReport();
+      clearCache();
+      setData(null);
+      setActiveTab('upload');
+      setServiceOnline(true);
+      setServiceError(null);
+    } catch (err) {
+      const status = err?.response?.status;
+      if (status === 401) {
+        setServiceError('Your session has expired. Please sign out and sign back in.');
+      } else {
+        setServiceError('Failed to delete screenshot analysis data. Please try again.');
+      }
+    } finally {
+      setDeleting(false);
+    }
   };
 
   // ── Helpers ───────────────────────────────────────────────────────────────
@@ -267,6 +302,15 @@ export default function ScreenshotImportDashboard() {
                 title="Refresh data"
               >
                 <RefreshCw className="w-4 h-4" />
+              </button>
+              <button
+                onClick={handleDeleteReport}
+                disabled={deleting}
+                className="p-1.5 rounded-lg transition-colors"
+                style={{ color: deleting ? theme.muted : '#ef4444' }}
+                title="Delete screenshot analysis data"
+              >
+                {deleting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
               </button>
             </div>
           )}

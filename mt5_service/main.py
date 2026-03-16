@@ -7,6 +7,7 @@ Endpoints
 GET  /health                    — liveness check
 POST /upload-trade-screenshot   — image → OCR + AI → trades + full analysis
 GET  /screenshot-report         — stored screenshot trades + analysis
+DELETE /screenshot-report       — delete stored screenshot trades + analysis
 """
 
 from __future__ import annotations
@@ -34,7 +35,7 @@ from fastapi import FastAPI, HTTPException, Request, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 
-from database import init_db, save_trades, get_trades, merge_screenshot_trades
+from database import init_db, save_trades, get_trades, merge_screenshot_trades, delete_trades
 from screenshot_ocr import extract_trades_from_screenshot
 from journal_analyzer import compute_statistics, compute_behavioral_analysis, generate_ai_report
 
@@ -305,6 +306,18 @@ async def screenshot_report(request: Request) -> dict:
         "analysis":   stats,
         "behavior":   behavior,
         "ai_summary": ai_report,
+    }
+
+
+@app.delete("/screenshot-report")
+async def delete_screenshot_report(request: Request) -> dict:
+    """Delete all stored screenshot-imported trades for the authenticated user."""
+    user_id = _get_user_id(request)
+    deleted = await asyncio.to_thread(delete_trades, user_id, "screenshot")
+    return {
+        "success": True,
+        "message": "Screenshot analysis data deleted.",
+        "deleted": deleted,
     }
 
 

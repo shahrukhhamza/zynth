@@ -1,17 +1,11 @@
 import { Router } from 'express';
 import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
-import { writeFileSync } from 'fs';
-import { join, dirname } from 'path';
-import { fileURLToPath } from 'url';
 import { OAuth2Client } from 'google-auth-library';
 import * as Users from '../db/users.js';
 import { signToken, requireAuth } from '../middleware/authMiddleware.js';
 import { sendPasswordResetEmail } from '../services/emailService.js';
-import { AVATARS_DIR, ensureUploadDirs } from '../config/storagePaths.js';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+import { saveAvatarFromBase64 } from '../services/fileStorageService.js';
 
 const router = Router();
 
@@ -273,18 +267,10 @@ router.put('/update-profile', requireAuth, async (req, res) => {
 
     if (avatar_base64) {
       console.log('[avatar] received — length:', avatar_base64?.length);
-      const matches = avatar_base64.match(/^data:image\/(\w+);base64,(.+)$/);
-      if (matches) {
-        const buffer = Buffer.from(matches[2], 'base64');
-        if (buffer.length > 2 * 1024 * 1024)
-          return res.status(400).json({ error: 'Image too large. Max size is 2MB.' });
-        ensureUploadDirs();
-        const ext = matches[1] === 'png' ? 'png' : 'jpg';
-        const filename = `${req.user.id}.${ext}`;
-        const filePath = join(AVATARS_DIR, filename);
-        writeFileSync(filePath, buffer);
-        await Users.updateAvatarUrl(req.user.id, `/uploads/avatars/${filename}`);
-        console.log('[avatar] saved OK — url: /uploads/avatars/' + filename);
+      const avatarUrl = await saveAvatarFromBase64(req.user.id, avatar_base64);
+      if (avatarUrl) {
+        await Users.updateAvatarUrl(req.user.id, avatarUrl);
+        console.log('[avatar] saved OK — url:', avatarUrl);
       } else {
         console.warn('[avatar] WARNING: base64 regex did not match');
       }
@@ -310,6 +296,9 @@ router.put('/update-profile', requireAuth, async (req, res) => {
     res.json({ user, token });
   } catch (err) {
     console.error('update-profile error:', err);
+    if (err.statusCode) {
+      return res.status(err.statusCode).json({ error: err.message });
+    }
     res.status(500).json({ error: 'Profile update failed.' });
   }
 });

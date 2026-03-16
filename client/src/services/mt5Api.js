@@ -49,6 +49,15 @@ export async function getScreenshotReport() {
 }
 
 /**
+ * Delete all stored screenshot-imported trades and analysis for the logged-in user.
+ * @returns {Promise<{success, message, deleted}>}
+ */
+export async function deleteScreenshotReport() {
+  const response = await client.delete('/screenshot-report');
+  return response.data;
+}
+
+/**
  * Liveness check for the backend service.
  * @returns {Promise<{status, service}>}
  */

@@ -6,6 +6,7 @@ import { usePlanGate } from '../hooks/usePlanGate';
 import PlanBadge from './PlanBadge';
 import ImageCropModal from './ImageCropModal';
 import { API_URL } from '../config/api';
+import { resolveMediaUrl } from '../utils/mediaUrl';
 
 const SUPPORT_EMAIL = 'getzynth@gmail.com';
 
@@ -98,7 +99,7 @@ export default function ProfileModal({ onClose, onForgotPassword }) {
   const planInfo = PLAN_INFO[planKey];
 
   const avatarBg   = AVATAR_COLOR_MAP[user?.avatar_color] ?? '#059669';
-  const avatarUrl  = user?.avatar_url ? `${API_URL}${user.avatar_url}` : null;
+  const avatarUrl  = user?.avatar_url ? resolveMediaUrl(user.avatar_url) : null;
 
   // Fetch journal stats
   useEffect(() => {

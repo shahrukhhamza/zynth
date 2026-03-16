@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import { BookOpen, List, BarChart2, Brain, X, RefreshCw, Activity, Fingerprint } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
-import { API_URL } from '../config/api';
+import { resolveMediaUrl } from '../utils/mediaUrl';
 import { listTrades, getAnalytics } from '../services/journalApi';
 import TradeEntryForm from './journal/TradeEntryForm';
 import TradeHistoryTable from './journal/TradeHistoryTable';
@@ -90,9 +90,9 @@ function TradeDetailModal({ trade, onClose }) {
         {trade.screenshot_path && (
           <div className="px-4 pb-4">
             <p className="text-xs font-bold uppercase tracking-wide mb-2" style={{ color: theme.muted }}>Screenshot</p>
-            <a href={`${API_URL}${trade.screenshot_path}`} target="_blank" rel="noreferrer" title="Click to open full size">
+            <a href={resolveMediaUrl(trade.screenshot_path)} target="_blank" rel="noreferrer" title="Click to open full size">
               <img
-                src={`${API_URL}${trade.screenshot_path}`}
+                src={resolveMediaUrl(trade.screenshot_path)}
                 alt="Trade screenshot"
                 className="rounded-lg w-full object-contain max-h-80 hover:opacity-90 transition-opacity"
                 style={{ backgroundColor: theme.surface, cursor: 'zoom-in' }}

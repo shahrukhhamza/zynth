@@ -253,3 +253,31 @@ def get_trades(
     conn.close()
     return [dict(row) for row in rows]
 
+
+def delete_trades(
+    user_id: str = "default",
+    source: Optional[str] = None,
+) -> int:
+    """Delete trades for *user_id* (optionally filtered by *source*). Returns deleted row count."""
+    if not DB_PATH.exists():
+        return 0
+
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+
+    if source:
+        cursor.execute(
+            "DELETE FROM trades WHERE user_id = ? AND source = ?",
+            (user_id, source),
+        )
+    else:
+        cursor.execute(
+            "DELETE FROM trades WHERE user_id = ?",
+            (user_id,),
+        )
+
+    deleted = cursor.rowcount or 0
+    conn.commit()
+    conn.close()
+    return deleted
+

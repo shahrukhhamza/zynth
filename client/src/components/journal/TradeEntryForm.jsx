@@ -3,6 +3,7 @@ import PreTradeChecklist from '../PreTradeChecklist';
 import { Upload, X, TrendingUp, TrendingDown, Save, ChevronDown, Target } from 'lucide-react';
 import { useTheme } from '../../contexts/ThemeContext';
 import { createTrade, updateTrade } from '../../services/journalApi';
+import { resolveMediaUrl } from '../../utils/mediaUrl';
 
 const PAIRS = ['EURUSD','GBPUSD','USDJPY','AUDUSD','USDCAD','USDCHF','XAUUSD','BTCUSDT','ETHUSDT','GBPJPY','EURJPY','SP500','NAS100','OIL','CUSTOM'];
 const SESSIONS = ['asian','london','new_york','overlap'];
@@ -26,7 +27,7 @@ export default function TradeEntryForm({ onSaved, editTrade = null }) {
   const fileRef = useRef();
   const [saving, setSaving] = useState(false);
   const [error,  setError]  = useState(null);
-  const [preview, setPreview] = useState(editTrade?.screenshot_path ? editTrade.screenshot_path : null);
+  const [preview, setPreview] = useState(editTrade?.screenshot_path ? resolveMediaUrl(editTrade.screenshot_path) : null);
   const [screenshotFile, setScreenshotFile] = useState(null);
   const [dragging, setDragging] = useState(false);
   const [customPair, setCustomPair] = useState(false);

@@ -10,7 +10,7 @@ import { useAuth } from '../contexts/AuthContext';
 import ProfileModal from './ProfileModal';
 import SettingsModal from './SettingsModal';
 import PlanBadge from './PlanBadge';
-import { API_URL } from '../config/api';
+import { resolveMediaUrl } from '../utils/mediaUrl';
 
 const AVATAR_COLOR_MAP = {
   emerald: '#10b981', blue: '#3b82f6', purple: '#a855f7', orange: '#f97316',
@@ -225,7 +225,7 @@ function SidebarInner({
   const [cardHov, setCardHov] = useState(false);
 
   const avatarColor = AVATAR_COLOR_MAP[user?.avatar_color] ?? AVATAR_COLOR_MAP.emerald;
-  const avatarSrc = user?.avatar_url ? `${API_URL}${user.avatar_url}` : null;
+  const avatarSrc = user?.avatar_url ? resolveMediaUrl(user.avatar_url) : null;
   const initials = user?.name ? user.name.slice(0, 2).toUpperCase() : 'U';
 
   const navigate = (key) => {
