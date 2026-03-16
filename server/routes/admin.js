@@ -4,6 +4,13 @@ import { requireAuth, requireAdmin } from '../middleware/authMiddleware.js';
 
 const router = Router();
 
+function toUtcDateKey(value) {
+  if (!value) return null;
+  const date = value instanceof Date ? value : new Date(value);
+  if (Number.isNaN(date.getTime())) return null;
+  return date.toISOString().slice(0, 10);
+}
+
 // All admin routes require authentication + admin role
 router.use(requireAuth, requireAdmin);
 
@@ -99,8 +106,12 @@ router.get('/stats', async (req, res) => {
     const todayStr = now.toISOString().slice(0, 10);                // "YYYY-MM-DD"
     const weekAgo  = new Date(now - 7 * 24 * 60 * 60 * 1000);
 
-    const todaySignups = users.filter(u => u.created_at && u.created_at.slice(0, 10) === todayStr).length;
-    const weekSignups  = users.filter(u => u.created_at && new Date(u.created_at) >= weekAgo).length;
+    const todaySignups = users.filter(u => toUtcDateKey(u.created_at) === todayStr).length;
+    const weekSignups  = users.filter(u => {
+      if (!u.created_at) return false;
+      const createdAt = u.created_at instanceof Date ? u.created_at : new Date(u.created_at);
+      return !Number.isNaN(createdAt.getTime()) && createdAt >= weekAgo;
+    }).length;
 
     // Signup chart: last 30 days, one entry per day
     const days = 30;
@@ -111,8 +122,8 @@ router.get('/stats', async (req, res) => {
       dayMap[d.toISOString().slice(0, 10)] = 0;
     }
     users.forEach(u => {
-      if (!u.created_at) return;
-      const day = u.created_at.slice(0, 10);
+      const day = toUtcDateKey(u.created_at);
+      if (!day) return;
       if (day in dayMap) dayMap[day]++;
     });
     const signupsByDay = Object.entries(dayMap).map(([date, count]) => ({
