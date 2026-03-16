@@ -49,6 +49,10 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 const HOST = process.env.HOST || '0.0.0.0';
 
+// Railway sits behind a reverse proxy/CDN. Trust the forwarded client IP headers
+// so express-rate-limit and other middleware can identify the real client.
+app.set('trust proxy', 1);
+
 // ── Rate limiters ─────────────────────────────────────────────────────────────
 const globalLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
