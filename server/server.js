@@ -80,11 +80,57 @@ const aiLimiter = rateLimit({
 });
 
 // ── CORS ──────────────────────────────────────────────────────────────────────
-const _ALLOWED_ORIGINS = [
+const _normalizeOrigin = (value) => {
+  if (!value) return null;
+  try {
+    return new URL(value).origin;
+  } catch {
+    return null;
+  }
+};
+
+const _allowedOriginsFromEnv = [
+  process.env.CLIENT_URL,
+  process.env.CLIENT_ORIGIN,
+  process.env.FRONTEND_URL,
+  process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null,
+].map(_normalizeOrigin).filter(Boolean);
+
+const _ALLOWED_ORIGINS = new Set([
   'http://localhost:5173',
+  'http://127.0.0.1:5173',
   'https://zynth.vercel.app',
-];
-const _VERCEL_ORIGIN = /^https:\/\/[^.]+\.vercel\.app$/;
+  ..._allowedOriginsFromEnv,
+]);
+
+const _isAllowedVercelPreview = (origin) => {
+  try {
+    const { protocol, hostname } = new URL(origin);
+    return protocol === 'https:' && hostname.endsWith('.vercel.app');
+  } catch {
+    return false;
+  }
+};
+
+const corsOptions = {
+  origin: (origin, callback) => {
+    // Allow non-browser clients and server-to-server requests.
+    if (!origin) return callback(null, true);
+
+    const normalized = _normalizeOrigin(origin);
+    if (normalized && (_ALLOWED_ORIGINS.has(normalized) || _isAllowedVercelPreview(normalized))) {
+      return callback(null, true);
+    }
+
+    console.warn(`CORS blocked origin: ${origin}`);
+    return callback(new Error('Not allowed by CORS'));
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  preflightContinue: false,
+  optionsSuccessStatus: 204,
+};
 
 app.use(helmet({
   contentSecurityPolicy: false,
@@ -93,20 +139,8 @@ app.use(helmet({
 
 app.use('/api', globalLimiter);
 
-app.use(cors({
-  origin: (origin, callback) => {
-    if (!origin || _ALLOWED_ORIGINS.includes(origin) || _VERCEL_ORIGIN.test(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'Access-Control-Allow-Origin'],
-  preflightContinue: false,
-  optionsSuccessStatus: 204,
-}));
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
 
 app.use(express.json({ limit: '10mb', strict: false }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));

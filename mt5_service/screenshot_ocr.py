@@ -14,6 +14,7 @@ Strategy (in order):
 from __future__ import annotations
 
 import base64
+from datetime import datetime
 import json
 import os
 import re
@@ -51,9 +52,11 @@ CRITICAL INSTRUCTIONS:
 - Extract EVERY SINGLE trade visible in the screenshot — do not stop after the first few.
 - Scroll through the ENTIRE image from top to bottom and capture all rows.
 - Count how many trade entries you see before responding and make sure your array has that many items.
+- Never duplicate the same trade row. If the screenshot overlaps or a row is partially repeated, include it only once.
 - Ignore balance lines, deposit lines, and withdrawal lines (they don't have an arrow → between two prices).
 - Negative profits appear in red or have a minus sign — use a negative number.
 - Positive profits appear in blue or have no sign — use a positive number.
+- If any field is unclear, prefer null over guessing or inventing a value.
 
 Return ONLY a raw JSON array — no markdown code fences, no explanation, nothing else.
 Each element MUST follow this exact schema:
@@ -112,7 +115,7 @@ def extract_trades_from_screenshot(
                 trades = _gemini_rest(image_bytes, safe_mime, key, model)
                 print(f"[screenshot_ocr] {model} extracted {len(trades)} trades")
                 if trades:
-                    return trades
+                    return _sanitize_extracted_trades(trades)
                 # Empty result — Gemini saw but found nothing; still try next
                 print(f"[screenshot_ocr] {model} returned 0 trades, trying next model")
                 break   # Don't retry same model on empty result
@@ -133,8 +136,9 @@ def extract_trades_from_screenshot(
         if ocr_lines:
             trades = _parse_mt5_mobile_text(ocr_lines)
             if trades:
-                print(f"[screenshot_ocr] EasyOCR+regex extracted {len(trades)} trades")
-                return trades
+                cleaned = _sanitize_extracted_trades(trades)
+                print(f"[screenshot_ocr] EasyOCR+regex extracted {len(cleaned)} trades")
+                return cleaned
             # If regex parse didn't find trades, try sending OCR text to Gemini
             if key and gemini_errors:
                 for model in _GEMINI_MODELS[:1]:   # only first model for text
@@ -143,7 +147,7 @@ def extract_trades_from_screenshot(
                             "\n".join(ocr_lines), key, model
                         )
                         if trades:
-                            return trades
+                            return _sanitize_extracted_trades(trades)
                     except Exception:
                         pass
     except Exception as exc:
@@ -156,8 +160,9 @@ def extract_trades_from_screenshot(
         if pil_text:
             trades = _parse_mt5_mobile_text(pil_text)
             if trades:
-                print(f"[screenshot_ocr] Pillow+regex extracted {len(trades)} trades")
-                return trades
+                cleaned = _sanitize_extracted_trades(trades)
+                print(f"[screenshot_ocr] Pillow+regex extracted {len(cleaned)} trades")
+                return cleaned
     except Exception as exc:
         print(f"[screenshot_ocr] Pillow extraction failed: {exc!r}")
 
@@ -354,7 +359,7 @@ def _parse_mt5_mobile_text(lines: List[str]) -> List[Dict[str, Any]]:
         else:
             i += 1
 
-    return trades
+    return _sanitize_extracted_trades(trades)
 
 
 # ── JSON response parser ───────────────────────────────────────────────────
@@ -383,11 +388,7 @@ def _parse_response(text: str) -> List[Dict[str, Any]]:
     if not isinstance(raw, list):
         return []
 
-    return [
-        _normalise(item)
-        for item in raw
-        if isinstance(item, dict) and _looks_like_trade(item)
-    ]
+    return _sanitize_extracted_trades(raw)
 
 
 def _looks_like_trade(t: Dict[str, Any]) -> bool:
@@ -400,7 +401,7 @@ def _looks_like_trade(t: Dict[str, Any]) -> bool:
 def _normalise(t: Dict[str, Any]) -> Dict[str, Any]:
     def _f(v: Any) -> Optional[float]:
         try:
-            s = re.sub(r"[\s\xa0]", "", str(v))
+            s = re.sub(r"[\s\xa0,$]", "", str(v))
             return float(s) if v is not None and str(v).strip() not in ("", "null", "None") else None
         except (TypeError, ValueError):
             return None
@@ -416,6 +417,149 @@ def _normalise(t: Dict[str, Any]) -> Dict[str, Any]:
         "open_price":  _f(t.get("open_price") or t.get("open") or t.get("price_open")),
         "close_price": _f(t.get("close_price") or t.get("close") or t.get("price_close")),
         "profit":      _f(t.get("profit") or t.get("pnl") or t.get("pl")),
-        "open_time":   str(t.get("open_time") or t.get("time_open") or "").strip() or None,
-        "close_time":  str(t.get("close_time") or t.get("time_close") or t.get("time") or "").strip() or None,
+        "open_time":   _normalise_time(t.get("open_time") or t.get("time_open")),
+        "close_time":  _normalise_time(t.get("close_time") or t.get("time_close") or t.get("time")),
     }
+
+
+def _normalise_time(value: Any) -> Optional[str]:
+    raw = str(value or "").strip()
+    if not raw or raw.lower() in ("null", "none"):
+        return None
+
+    cleaned = raw.replace("T", " ")
+    cleaned = re.sub(r"[./]", "-", cleaned)
+    cleaned = re.sub(r"\s+", " ", cleaned).strip()
+
+    for fmt in (
+        "%Y-%m-%d %H:%M:%S",
+        "%Y-%m-%d %H:%M",
+        "%Y-%m-%d",
+    ):
+        try:
+            parsed = datetime.strptime(cleaned, fmt)
+            if fmt == "%Y-%m-%d":
+                return parsed.strftime("%Y-%m-%d")
+            return parsed.strftime("%Y-%m-%d %H:%M:%S")
+        except ValueError:
+            continue
+
+    return cleaned or None
+
+
+def _score_trade(trade: Dict[str, Any]) -> int:
+    score = 0
+    if trade.get("symbol") and trade["symbol"] != "UNKNOWN":
+        score += 2
+    if trade.get("type") in ("buy", "sell"):
+        score += 1
+    if trade.get("lot") is not None:
+        score += 2
+    if trade.get("open_price") is not None:
+        score += 2
+    if trade.get("close_price") is not None:
+        score += 2
+    if trade.get("profit") is not None:
+        score += 3
+    if trade.get("close_time"):
+        score += 3
+    if _profit_sign_matches_prices(trade):
+        score += 2
+    return score
+
+
+def _profit_sign_matches_prices(trade: Dict[str, Any]) -> bool:
+    open_price = trade.get("open_price")
+    close_price = trade.get("close_price")
+    profit = trade.get("profit")
+    trade_type = trade.get("type")
+
+    if None in (open_price, close_price, profit) or trade_type not in ("buy", "sell"):
+        return False
+
+    delta = close_price - open_price if trade_type == "buy" else open_price - close_price
+    if abs(delta) < 1e-9 or abs(profit) < 1e-9:
+        return True
+    return (delta > 0 and profit > 0) or (delta < 0 and profit < 0)
+
+
+def _trade_exact_key(trade: Dict[str, Any]) -> str:
+    return "|".join([
+        str(trade.get("symbol") or "").lower(),
+        str(trade.get("type") or "").lower(),
+        _fmt_key_num(trade.get("lot")),
+        _fmt_key_num(trade.get("open_price")),
+        _fmt_key_num(trade.get("close_price")),
+        _fmt_key_num(trade.get("profit")),
+        str(trade.get("close_time") or "").lower(),
+    ])
+
+
+def _trade_relaxed_key(trade: Dict[str, Any]) -> Optional[str]:
+    if trade.get("lot") is None or trade.get("profit") is None or not trade.get("close_time"):
+        return None
+
+    return "|".join([
+        str(trade.get("symbol") or "").lower(),
+        str(trade.get("type") or "").lower(),
+        _fmt_key_num(trade.get("lot")),
+        _fmt_key_num(trade.get("profit")),
+        str(trade.get("close_time") or "").lower(),
+    ])
+
+
+def _fmt_key_num(value: Any) -> str:
+    try:
+        return f"{float(value):.3f}"
+    except (TypeError, ValueError):
+        return ""
+
+
+def _prefer_trade(candidate: Dict[str, Any], current: Dict[str, Any]) -> bool:
+    candidate_score = _score_trade(candidate)
+    current_score = _score_trade(current)
+    if candidate_score != current_score:
+        return candidate_score > current_score
+
+    candidate_fields = sum(value is not None for value in candidate.values())
+    current_fields = sum(value is not None for value in current.values())
+    if candidate_fields != current_fields:
+        return candidate_fields > current_fields
+
+    return False
+
+
+def _sanitize_extracted_trades(items: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    cleaned: List[Dict[str, Any]] = []
+    exact_index: Dict[str, int] = {}
+    relaxed_index: Dict[str, int] = {}
+
+    for item in items:
+        if not isinstance(item, dict):
+            continue
+
+        trade = _normalise(item)
+        if not _looks_like_trade(trade):
+            continue
+
+        exact_key = _trade_exact_key(trade)
+        existing_idx = exact_index.get(exact_key)
+        if existing_idx is not None:
+            if _prefer_trade(trade, cleaned[existing_idx]):
+                cleaned[existing_idx] = trade
+            continue
+
+        relaxed_key = _trade_relaxed_key(trade)
+        if relaxed_key is not None and relaxed_key in relaxed_index:
+            existing_idx = relaxed_index[relaxed_key]
+            if _prefer_trade(trade, cleaned[existing_idx]):
+                cleaned[existing_idx] = trade
+                exact_index[_trade_exact_key(trade)] = existing_idx
+            continue
+
+        exact_index[exact_key] = len(cleaned)
+        if relaxed_key is not None:
+            relaxed_index[relaxed_key] = len(cleaned)
+        cleaned.append(trade)
+
+    return cleaned

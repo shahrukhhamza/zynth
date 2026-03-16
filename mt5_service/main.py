@@ -34,13 +34,22 @@ load_dotenv(Path(__file__).parent / ".env")
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s:     %(message)s")
 
-from fastapi import FastAPI, HTTPException, Request, UploadFile, File, Form
+from fastapi import FastAPI, HTTPException, Request, UploadFile, File
 import uuid
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 
-from database import init_db, save_trades, get_trades, merge_screenshot_trades, delete_trades, delete_trade_by_id
-from database import init_db, save_trades, get_trades, merge_screenshot_trades, delete_trades, delete_trade_by_id, get_screenshot_batches, delete_trades_by_batch
+from database import (
+    cleanup_duplicate_screenshot_trades,
+    delete_trade_by_id,
+    delete_trades,
+    delete_trades_by_batch,
+    get_screenshot_batches,
+    get_trades,
+    init_db,
+    merge_screenshot_trades,
+    save_trades,
+)
 from screenshot_ocr import extract_trades_from_screenshot
 from journal_analyzer import compute_statistics, compute_behavioral_analysis, generate_ai_report
 
@@ -222,6 +231,8 @@ async def upload_screenshot(
     inserted  = merge_result["inserted"]
     duplicates = merge_result["duplicates"]
 
+    await asyncio.to_thread(cleanup_duplicate_screenshot_trades, user_id)
+
     # If every single extracted trade was a duplicate, still return success
     # but load all stored trades for analysis
     all_trades = await asyncio.to_thread(get_trades, user_id=user_id, source="screenshot")
@@ -271,6 +282,7 @@ async def upload_screenshot(
 async def screenshot_report(request: Request) -> dict:
     """Return all stored screenshot trades + full analysis for the authenticated user."""
     user_id = _get_user_id(request)
+    await asyncio.to_thread(cleanup_duplicate_screenshot_trades, user_id)
     # Blocking SQLite read — run in thread pool to avoid event-loop stall
     trades = await asyncio.to_thread(get_trades, user_id=user_id, source="screenshot")
 

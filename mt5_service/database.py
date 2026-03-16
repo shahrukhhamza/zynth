@@ -126,8 +126,8 @@ def save_trades(
 def _trade_fingerprint(t: Dict[str, Any]) -> str:
     """
     Stable fingerprint for deduplication.
-    Based on: symbol + type + open_price + close_price + profit + close_time.
-    Two trades are considered identical if ALL six fields match (±0.001 tolerance
+    Based on: symbol + type + lot + open_price + close_price + profit + close_time.
+    Two trades are considered identical if ALL fields match (±0.001 tolerance
     on floats to handle rounding differences between screenshots).
     """
     import hashlib
@@ -144,11 +144,42 @@ def _trade_fingerprint(t: Dict[str, Any]) -> str:
     key = (
         f"{_norm_str(t.get('symbol'))}"
         f"|{_norm_str(t.get('type'))}"
+        f"|{_norm_num(t.get('lot') or t.get('volume'))}"
         f"|{_norm_num(t.get('open_price'))}"
         f"|{_norm_num(t.get('close_price'))}"
         f"|{_norm_num(t.get('profit'))}"
         f"|{_norm_str(t.get('close_time'))}"
     )
+    return hashlib.md5(key.encode()).hexdigest()
+
+
+def _trade_relaxed_fingerprint(t: Dict[str, Any]) -> Optional[str]:
+    """
+    Fallback screenshot dedupe key.
+    If OCR/Gemini slightly changes prices, we still treat the trade as the same
+    when symbol, side, lot, profit, and close timestamp all match.
+    """
+    import hashlib
+
+    def _norm_num(v):
+        try:
+            return round(float(v), 3)
+        except (TypeError, ValueError):
+            return None
+
+    def _norm_str(v):
+        return str(v or "").strip().lower()
+
+    lot = _norm_num(t.get("lot") or t.get("volume"))
+    profit = _norm_num(t.get("profit"))
+    close_time = _norm_str(t.get("close_time"))
+    symbol = _norm_str(t.get("symbol"))
+    trade_type = _norm_str(t.get("type"))
+
+    if lot is None or profit is None or not close_time or not symbol or not trade_type:
+        return None
+
+    key = f"{symbol}|{trade_type}|{lot}|{profit}|{close_time}"
     return hashlib.md5(key.encode()).hexdigest()
 
 
@@ -167,15 +198,21 @@ def merge_screenshot_trades(
     """
     existing = get_trades(user_id=user_id, source="screenshot")
     existing_fps = {_trade_fingerprint(t) for t in existing}
+    existing_relaxed_fps = {
+        fp for fp in (_trade_relaxed_fingerprint(t) for t in existing) if fp
+    }
 
     to_insert = []
     dupes = 0
     for t in new_trades:
         fp = _trade_fingerprint(t)
-        if fp in existing_fps:
+        relaxed_fp = _trade_relaxed_fingerprint(t)
+        if fp in existing_fps or (relaxed_fp is not None and relaxed_fp in existing_relaxed_fps):
             dupes += 1
         else:
             existing_fps.add(fp)   # prevent dupes within the same upload
+            if relaxed_fp is not None:
+                existing_relaxed_fps.add(relaxed_fp)
             to_insert.append(t)
 
     if not to_insert:
@@ -227,6 +264,50 @@ def merge_screenshot_trades(
         conn.close()
 
     return {"inserted": len(to_insert), "duplicates": dupes}
+
+
+def cleanup_duplicate_screenshot_trades(user_id: str = "default") -> int:
+    """Delete already-stored duplicate screenshot trades for the user."""
+    if not DB_PATH.exists():
+        return 0
+
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+    cursor.execute(
+        """
+        SELECT *
+        FROM trades
+        WHERE user_id = ? AND source = 'screenshot'
+        ORDER BY id ASC
+        """,
+        (user_id,),
+    )
+    rows = [dict(row) for row in cursor.fetchall()]
+
+    exact_seen = set()
+    relaxed_seen = set()
+    duplicate_ids = []
+
+    for trade in rows:
+        exact_fp = _trade_fingerprint(trade)
+        relaxed_fp = _trade_relaxed_fingerprint(trade)
+        if exact_fp in exact_seen or (relaxed_fp is not None and relaxed_fp in relaxed_seen):
+            duplicate_ids.append(trade["id"])
+            continue
+
+        exact_seen.add(exact_fp)
+        if relaxed_fp is not None:
+            relaxed_seen.add(relaxed_fp)
+
+    if not duplicate_ids:
+        conn.close()
+        return 0
+
+    cursor.executemany("DELETE FROM trades WHERE id = ?", [(trade_id,) for trade_id in duplicate_ids])
+    conn.commit()
+    conn.close()
+    return len(duplicate_ids)
 
 
 def get_screenshot_batches(user_id: str = "default") -> List[Dict[str, Any]]:
