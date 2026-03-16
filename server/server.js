@@ -47,6 +47,7 @@ import { incrementScreenshotTries, initDb } from './db/users.js';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+const HOST = process.env.HOST || '0.0.0.0';
 
 // ── Rate limiters ─────────────────────────────────────────────────────────────
 const globalLimiter = rateLimit({
@@ -292,8 +293,8 @@ wss.on('connection', (ws) => {
 // Initialize PostgreSQL schema BEFORE listening
 initDb()
   .then(() => {
-    httpServer.listen(PORT, () => {
-      console.log(`🚀 Server running on port ${PORT}`);
+    httpServer.listen(PORT, HOST, () => {
+      console.log(`🚀 Server running on ${HOST}:${PORT}`);
       console.log(`📊 Financial News Dashboard API`);
       console.log(`🔑 Polygon API Key: ${process.env.POLYGON_API_KEY ? 'Yes' : 'No'}`);
       console.log('Twelve Data key loaded:', !!process.env.TWELVE_DATA_API_KEY);
