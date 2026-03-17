@@ -1,163 +1,253 @@
-import { useState } from 'react';
-import { Trash2, Brain, ChevronLeft, ChevronRight, TrendingUp, TrendingDown, Eye } from 'lucide-react';
+import {
+  ChevronLeft, ChevronRight,
+  ArrowUpRight, ArrowDownRight,
+  CheckCircle2, XCircle, Minus,
+  Brain, CalendarDays, BarChart2,
+  ChevronsRight,
+} from 'lucide-react';
 import { useTheme } from '../../contexts/ThemeContext';
-import { useToast } from '../../contexts/ToastContext';
-import { useConfirm } from '../../contexts/ConfirmContext';
-import { deleteTrade, analyzeTrade } from '../../services/journalApi';
 
+const MONO = { fontFamily: "'ui-monospace','Cascadia Code','SF Mono','Consolas',monospace" };
+
+/* ── Outcome badge ─────────────────────────────────────────────────── */
 function OutcomeBadge({ outcome }) {
-  const cfg = {
-    win:       { bg: '#22c55e22', color: '#22c55e', label: 'WIN' },
-    loss:      { bg: '#ef444422', color: '#ef4444', label: 'LOSS' },
-    breakeven: { bg: '#f59e0b22', color: '#f59e0b', label: 'BE' },
+  const theme = useTheme();
+  const cfgDark = {
+    win:       { color: '#10B981', bg: '#10B98112', border: '#10B98130', Icon: CheckCircle2, label: 'WIN'  },
+    loss:      { color: '#F43F5E', bg: '#F43F5E12', border: '#F43F5E30', Icon: XCircle,     label: 'LOSS' },
+    breakeven: { color: '#f59e0b', bg: '#f59e0b12', border: '#f59e0b30', Icon: Minus,        label: 'B/E'  },
   };
-  const c = cfg[outcome] || { bg: '#64748b22', color: '#64748b', label: '—' };
+  const cfgLight = {
+    win:       { color: '#047857', bg: '#d1fae5', border: '#6ee7b7', Icon: CheckCircle2, label: 'WIN'  },
+    loss:      { color: '#be123c', bg: '#ffe4e6', border: '#fda4af', Icon: XCircle,     label: 'LOSS' },
+    breakeven: { color: '#92400e', bg: '#fef3c7', border: '#fcd34d', Icon: Minus,        label: 'B/E'  },
+  };
+  const map = theme.isDark ? cfgDark : cfgLight;
+  const c   = map[outcome] || { color: theme.muted, bg: 'transparent', border: theme.border, Icon: Minus, label: '—' };
+  const { Icon } = c;
   return (
-    <span className="px-2 py-0.5 rounded text-xs font-bold" style={{ backgroundColor: c.bg, color: c.color }}>
+    <span
+      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold tracking-wide whitespace-nowrap"
+      style={{ backgroundColor: c.bg, color: c.color, border: `1px solid ${c.border}` }}
+    >
+      <Icon className="w-3 h-3 flex-shrink-0" />
       {c.label}
     </span>
   );
 }
 
+/* ── Direction badge ───────────────────────────────────────────────── */
 function DirectionBadge({ dir }) {
-  const buy = dir?.toLowerCase() === 'buy';
+  const theme = useTheme();
+  const buy  = dir?.toLowerCase() === 'buy';
+  const darkC  = { color: buy ? '#10B981' : '#F43F5E', bg: buy ? '#10B98112' : '#F43F5E12', border: buy ? '#10B98130' : '#F43F5E30' };
+  const lightC = { color: buy ? '#047857' : '#be123c',  bg: buy ? '#d1fae5'   : '#ffe4e6',   border: buy ? '#6ee7b7'   : '#fda4af'  };
+  const c    = theme.isDark ? darkC : lightC;
+  const Icon = buy ? ArrowUpRight : ArrowDownRight;
   return (
-    <span className="flex items-center gap-1 px-2 py-0.5 rounded text-xs font-bold"
-      style={{ backgroundColor: buy ? '#22c55e22' : '#ef444422', color: buy ? '#22c55e' : '#ef4444' }}>
-      {buy ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
+    <span
+      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold tracking-wide whitespace-nowrap"
+      style={{ backgroundColor: c.bg, color: c.color, border: `1px solid ${c.border}` }}
+    >
+      <Icon className="w-3.5 h-3.5 flex-shrink-0" />
       {(dir || '').toUpperCase()}
     </span>
   );
 }
 
+/* ── AI Score badge ────────────────────────────────────────────────── */
 function AiScoreBadge({ ai_analysis }) {
-  if (!ai_analysis) return <span className="text-xs" style={{ color: '#94a3b8' }}>—</span>;
+  const theme = useTheme();
+  if (!ai_analysis) return <span style={{ color: theme.muted }}>—</span>;
   let data;
-  try { data = typeof ai_analysis === 'string' ? JSON.parse(ai_analysis) : ai_analysis; } catch { return null; }
+  try { data = typeof ai_analysis === 'string' ? JSON.parse(ai_analysis) : ai_analysis; }
+  catch { return <span style={{ color: theme.muted }}>—</span>; }
   const score = data?.psychology_score;
-  if (!score) return null;
-  const color = score >= 7 ? '#22c55e' : score >= 4 ? '#f59e0b' : '#ef4444';
+  if (score == null) return <span style={{ color: theme.muted }}>—</span>;
+  const color = score >= 7 ? '#10B981' : score >= 4 ? '#f59e0b' : '#F43F5E';
   return (
-    <span className="px-2 py-0.5 rounded text-xs font-bold" style={{ backgroundColor: `${color}22`, color }}>
-      {score}/10
+    <span
+      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold"
+      style={{ backgroundColor: `${color}12`, color, border: `1px solid ${color}30`, ...MONO }}
+    >
+      <Brain className="w-3 h-3 flex-shrink-0" />
+      {score}<span className="opacity-50 font-normal">/10</span>
     </span>
   );
 }
 
+/* ══════════════════════════════════════════════════════════════════════
+   Main component
+══════════════════════════════════════════════════════════════════════ */
 export default function TradeHistoryTable({ trades, total, page, limit, onPageChange, onDeleted, onAnalyze, onView }) {
   const theme = useTheme();
-  const { toast } = useToast();
-  const { confirm } = useConfirm();
-  const [deleting, setDeleting] = useState(null);
-  const [analyzing, setAnalyzing] = useState(null);
-
   const totalPages = Math.ceil(total / limit);
 
-  const handleDelete = async (id) => {
-    const ok = await confirm({
-      title:   'Delete trade?',
-      message: 'This action cannot be undone. The trade and its journal entry will be permanently removed.',
-      confirm: 'Delete',
-      cancel:  'Cancel',
-      variant: 'danger',
-    });
-    if (!ok) return;
-    setDeleting(id);
-    try {
-      await deleteTrade(id);
-      toast.success('Trade deleted.');
-      onDeleted();
-    } catch (err) {
-      toast.error(err.message || 'Failed to delete trade.');
-    } finally {
-      setDeleting(null);
-    }
+  /* shared header cell style */
+  const thBase = {
+    color: theme.muted,
+    fontSize: '0.67rem',
+    fontWeight: 700,
+    letterSpacing: '0.09em',
+    textTransform: 'uppercase',
+    whiteSpace: 'nowrap',
+    padding: '0.85rem 1.25rem',
+    textAlign: 'left',
+    backgroundColor: theme.surface,
+    borderBottom: `1px solid ${theme.border}`,
+    userSelect: 'none',
   };
 
-  const handleAnalyze = async (id) => {
-    setAnalyzing(id);
-    try {
-      const res = await analyzeTrade(id);
-      onAnalyze(id, res);
-      toast.success('AI analysis complete.');
-    } catch (err) {
-      toast.error('AI analysis failed: ' + (err.message || 'Unknown error'));
-    } finally {
-      setAnalyzing(null);
-    }
+  /* shared body cell style */
+  const tdBase = {
+    fontSize: '0.82rem',
+    padding: '0.95rem 1.25rem',
+    borderBottom: theme.isDark ? `1px solid ${theme.border}55` : `1px solid ${theme.border}aa`,
+    verticalAlign: 'middle',
+    color: theme.text,
   };
 
-  const th = { color: theme.muted, fontSize: '0.7rem', fontWeight: 700, padding: '0.5rem 0.75rem', textAlign: 'left', textTransform: 'uppercase', letterSpacing: '0.05em', borderBottom: `1px solid ${theme.border}`, whiteSpace: 'nowrap' };
-  const td = { color: theme.text, fontSize: '0.8rem', padding: '0.6rem 0.75rem', borderBottom: `1px solid ${theme.isDark ? theme.border + '44' : theme.border}`, verticalAlign: 'middle' };
-
+  /* ── Empty state ── */
   if (!trades || trades.length === 0) {
     return (
-      <div className="text-center py-16" style={{ color: theme.muted }}>
-        <p className="text-lg mb-2">No trades logged yet</p>
-        <p className="text-sm">Go to "Log Trade" to add your first trade.</p>
+      <div className="flex flex-col items-center justify-center py-24 gap-4" style={{ color: theme.muted }}>
+        <BarChart2 className="w-10 h-10 opacity-20" />
+        <div className="text-center">
+          <p className="text-base font-semibold mb-1" style={{ color: theme.text }}>No trades logged yet</p>
+          <p className="text-sm opacity-60">Use the "Log Trade" tab to record your first trade.</p>
+        </div>
       </div>
     );
   }
 
+  const COLS = [
+    { label: 'Date',      mono: true  },
+    { label: 'Pair',      mono: false },
+    { label: 'Direction', mono: false },
+    { label: 'Entry',     mono: true  },
+    { label: 'Exit',      mono: true  },
+    { label: 'Size',      mono: true  },
+    { label: 'Outcome',   mono: false },
+    { label: 'P & L',     mono: true  },
+    { label: 'Strategy',  mono: false },
+    { label: 'Emotion',   mono: false },
+    { label: 'AI Score',  mono: false },
+  ];
+
   return (
-    <div>
-      <div className="overflow-x-auto rounded-xl" style={{ border: `1px solid ${theme.border}` }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-          <thead style={{ backgroundColor: theme.surface }}>
+    <div className="flex flex-col gap-4">
+
+      {/* ── Table ── */}
+      <div
+        className="overflow-x-auto w-full"
+        style={{ borderRadius: '14px', border: `1px solid ${theme.border}`, backgroundColor: theme.surface }}
+      >
+        <table style={{ width: '100%', borderCollapse: 'collapse', tableLayout: 'auto' }}>
+
+          {/* Head */}
+          <thead>
             <tr>
-              <th style={th}>Date</th>
-              <th style={th}>Pair</th>
-              <th style={th}>Dir</th>
-              <th style={th}>Size</th>
-              <th style={th}>Entry</th>
-              <th style={th}>Exit</th>
-              <th style={th}>Outcome</th>
-              <th style={th}>P&L</th>
-              <th style={th}>Strategy</th>
-              <th style={th}>Emotion</th>
-              <th style={th}>AI</th>
-              <th style={th}>Actions</th>
+              {COLS.map(({ label, mono }) => (
+                <th key={label} style={{ ...thBase, ...(mono ? MONO : {}) }}>{label}</th>
+              ))}
+              {/* chevron hint col — no label */}
+              <th style={{ ...thBase, width: '40px', padding: '0.85rem 0.75rem' }} />
             </tr>
           </thead>
+
+          {/* Body */}
           <tbody>
             {trades.map((t, i) => {
-              const date = t.created_at ? (t.created_at.includes('T') ? t.created_at.split('T')[0] : t.created_at.slice(0,10)) : '—';
-              const pnl = parseFloat(t.profit_loss);
+              const rawDate  = t.created_at
+                ? (t.created_at.includes('T') ? t.created_at.split('T')[0] : t.created_at.slice(0, 10))
+                : null;
+              const pnl      = parseFloat(t.profit_loss);
+              const pnlColor = isNaN(pnl) ? theme.muted : pnl >= 0 ? '#10B981' : '#F43F5E';
+              const isLast   = i === trades.length - 1;
+              const noBorder = isLast ? { borderBottom: 'none' } : {};
+
               return (
-                <tr key={t.id}
+                <tr
+                  key={t.id}
                   onClick={() => onView(t)}
-                  style={{ backgroundColor: i % 2 === 0 ? 'transparent' : (theme.isDark ? `${theme.border}22` : `${theme.border}55`), cursor: 'pointer' }}
-                  className="hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
-                  <td style={td}>{date}</td>
-                  <td style={{ ...td, fontWeight: 700, color: theme.accent }}>{t.pair}</td>
-                  <td style={td}><DirectionBadge dir={t.direction} /></td>
-                  <td style={td}>{t.position_size || '—'}</td>
-                  <td style={td}>{t.entry_price || '—'}</td>
-                  <td style={td}>{t.exit_price || '—'}</td>
-                  <td style={td}><OutcomeBadge outcome={t.outcome} /></td>
-                  <td style={{ ...td, fontWeight: 700, color: pnl >= 0 ? '#22c55e' : '#ef4444' }}>
-                    {isNaN(pnl) ? '—' : (pnl >= 0 ? '+' : '') + pnl.toFixed(2)}
+                  style={{ cursor: 'pointer', transition: 'background-color 0.12s ease' }}
+                  onMouseEnter={e => {
+                    e.currentTarget.style.backgroundColor = theme.isDark
+                      ? 'rgba(255,255,255,0.035)'
+                      : 'rgba(0,0,0,0.022)';
+                    const ch = e.currentTarget.querySelector('.row-chevron');
+                    if (ch) ch.style.opacity = '1';
+                  }}
+                  onMouseLeave={e => {
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                    const ch = e.currentTarget.querySelector('.row-chevron');
+                    if (ch) ch.style.opacity = '0';
+                  }}
+                >
+                  {/* Date */}
+                  <td style={{ ...tdBase, ...noBorder, color: theme.muted, ...MONO, fontSize: '0.78rem' }}>
+                    {rawDate ? (
+                      <span className="inline-flex items-center gap-1.5">
+                        <CalendarDays className="w-3 h-3 opacity-40 flex-shrink-0" />
+                        {rawDate}
+                      </span>
+                    ) : '—'}
                   </td>
-                  <td style={{ ...td, maxWidth: '120px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{t.strategy || '—'}</td>
-                  <td style={td}>{t.emotional_state || '—'}</td>
-                  <td style={td}><AiScoreBadge ai_analysis={t.ai_analysis} /></td>
-                  <td style={td}>
-                    <div className="flex items-center gap-1">
-                      <button onClick={e => { e.stopPropagation(); onView(t); }} title="View"
-                        className="p-1.5 rounded transition-colors hover:bg-gray-100 dark:hover:bg-white/10" style={{ color: theme.muted }}>
-                        <Eye className="w-3.5 h-3.5" />
-                      </button>
-                      <button onClick={e => { e.stopPropagation(); handleAnalyze(t.id); }} disabled={analyzing === t.id}
-                        title="AI Analyze" className="p-1.5 rounded transition-colors hover:bg-gray-100 dark:hover:bg-white/10"
-                        style={{ color: analyzing === t.id ? theme.muted : '#a78bfa', opacity: analyzing === t.id ? 0.5 : 1 }}>
-                        <Brain className="w-3.5 h-3.5" />
-                      </button>
-                      <button onClick={e => { e.stopPropagation(); handleDelete(t.id); }} disabled={deleting === t.id}
-                        title="Delete" className="p-1.5 rounded transition-colors hover:bg-red-500/20"
-                        style={{ color: '#ef4444', opacity: deleting === t.id ? 0.5 : 1 }}>
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
+
+                  {/* Pair */}
+                  <td style={{ ...tdBase, ...noBorder, fontWeight: 700, fontSize: '0.88rem', letterSpacing: '0.04em' }}>
+                    {t.pair || '—'}
+                  </td>
+
+                  {/* Direction */}
+                  <td style={{ ...tdBase, ...noBorder }}>
+                    <DirectionBadge dir={t.direction} />
+                  </td>
+
+                  {/* Entry */}
+                  <td style={{ ...tdBase, ...noBorder, ...MONO }}>{t.entry_price || '—'}</td>
+
+                  {/* Exit */}
+                  <td style={{ ...tdBase, ...noBorder, ...MONO }}>{t.exit_price || '—'}</td>
+
+                  {/* Size */}
+                  <td style={{ ...tdBase, ...noBorder, ...MONO, color: theme.muted }}>
+                    {t.position_size
+                      ? <span>{t.position_size} <span style={{ fontSize: '0.7rem', opacity: 0.45 }}>lots</span></span>
+                      : '—'}
+                  </td>
+
+                  {/* Outcome */}
+                  <td style={{ ...tdBase, ...noBorder }}>
+                    <OutcomeBadge outcome={t.outcome} />
+                  </td>
+
+                  {/* P&L */}
+                  <td style={{ ...tdBase, ...noBorder, ...MONO, fontWeight: 700, fontSize: '0.88rem', color: pnlColor }}>
+                    {isNaN(pnl) ? '—' : `${pnl >= 0 ? '+' : ''}${pnl.toFixed(2)}`}
+                  </td>
+
+                  {/* Strategy */}
+                  <td style={{ ...tdBase, ...noBorder, maxWidth: '130px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: theme.muted, fontSize: '0.8rem' }}>
+                    {t.strategy || <span style={{ opacity: 0.35 }}>—</span>}
+                  </td>
+
+                  {/* Emotion */}
+                  <td style={{ ...tdBase, ...noBorder, color: theme.muted, textTransform: 'capitalize', fontSize: '0.8rem' }}>
+                    {t.emotional_state || <span style={{ opacity: 0.35 }}>—</span>}
+                  </td>
+
+                  {/* AI Score */}
+                  <td style={{ ...tdBase, ...noBorder }}>
+                    <AiScoreBadge ai_analysis={t.ai_analysis} />
+                  </td>
+
+                  {/* Chevron row hint */}
+                  <td style={{ ...tdBase, ...noBorder, padding: '0.95rem 0.75rem', width: '40px' }}>
+                    <ChevronsRight
+                      className="row-chevron w-3.5 h-3.5"
+                      style={{ color: theme.muted, opacity: 0, transition: 'opacity 0.15s' }}
+                    />
                   </td>
                 </tr>
               );
@@ -166,24 +256,42 @@ export default function TradeHistoryTable({ trades, total, page, limit, onPageCh
         </table>
       </div>
 
+      {/* ── Pagination ── */}
       {totalPages > 1 && (
-        <div className="flex items-center justify-between mt-4">
-          <p className="text-xs" style={{ color: theme.muted }}>
-            Showing {page * limit + 1}–{Math.min((page + 1) * limit, total)} of {total} trades
+        <div className="flex items-center justify-between px-1">
+          <p className="text-xs" style={{ color: theme.muted, ...MONO }}>
+            {page * limit + 1}–{Math.min((page + 1) * limit, total)}
+            <span className="opacity-50"> / {total} trades</span>
           </p>
-          <div className="flex gap-2">
-            <button disabled={page === 0} onClick={() => onPageChange(page - 1)}
-              className="p-2 rounded-lg transition-colors hover:bg-gray-100 dark:hover:bg-white/10 disabled:opacity-30"
-              style={{ color: theme.text, border: `1px solid ${theme.border}` }}>
-              <ChevronLeft className="w-4 h-4" />
+
+          <div className="flex items-center gap-1.5">
+            <button
+              disabled={page === 0}
+              onClick={() => onPageChange(page - 1)}
+              className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors disabled:opacity-30"
+              style={{ color: theme.muted, border: `1px solid ${theme.border}`, backgroundColor: 'transparent' }}
+              onMouseEnter={e => { if (page !== 0) { e.currentTarget.style.color = theme.text; e.currentTarget.style.backgroundColor = theme.surface2; } }}
+              onMouseLeave={e => { e.currentTarget.style.color = theme.muted; e.currentTarget.style.backgroundColor = 'transparent'; }}
+            >
+              <ChevronLeft className="w-3.5 h-3.5" /> Prev
             </button>
-            <span className="flex items-center px-3 text-sm" style={{ color: theme.muted }}>
+
+            <span
+              className="px-3 py-1.5 text-xs font-semibold rounded-lg"
+              style={{ color: theme.text, backgroundColor: theme.surface2, border: `1px solid ${theme.border}`, ...MONO }}
+            >
               {page + 1} / {totalPages}
             </span>
-            <button disabled={page >= totalPages - 1} onClick={() => onPageChange(page + 1)}
-              className="p-2 rounded-lg transition-colors hover:bg-gray-100 dark:hover:bg-white/10 disabled:opacity-30"
-              style={{ color: theme.text, border: `1px solid ${theme.border}` }}>
-              <ChevronRight className="w-4 h-4" />
+
+            <button
+              disabled={page >= totalPages - 1}
+              onClick={() => onPageChange(page + 1)}
+              className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors disabled:opacity-30"
+              style={{ color: theme.muted, border: `1px solid ${theme.border}`, backgroundColor: 'transparent' }}
+              onMouseEnter={e => { if (page < totalPages - 1) { e.currentTarget.style.color = theme.text; e.currentTarget.style.backgroundColor = theme.surface2; } }}
+              onMouseLeave={e => { e.currentTarget.style.color = theme.muted; e.currentTarget.style.backgroundColor = 'transparent'; }}
+            >
+              Next <ChevronRight className="w-3.5 h-3.5" />
             </button>
           </div>
         </div>

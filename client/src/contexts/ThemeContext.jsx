@@ -42,32 +42,39 @@ export const ThemeProvider = ({ children }) => {
   const theme = {
     isDark,
     toggleTheme,
-    // Background colors
-    bg:       isDark ? '#0f0f0f' : '#f0f2f5',
-    surface:  isDark ? '#1a1a1a' : '#ffffff',
-    surface2: isDark ? '#242424' : '#f8f9fa',
-    border:   isDark ? '#2e2e2e' : '#d1d5db',
+    // ── Layered Dark palette (Zinc) ──────────────────────────────────
+    // bg         → deepest layer  (#09090B  Zinc-950)
+    // surface    → card / panel   (#18181B  Zinc-900)
+    // surface2   → hover / inset  (#1C1C1F  between 900-950)
+    // border     → subtle 1-px    (#27272A  Zinc-800)
+    // text       → primary text   (#FAFAFA  Zinc-50)
+    // muted      → secondary text (#A1A1AA  Zinc-400)
+    // ────────────────────────────────────────────────────────────────
+    bg:       isDark ? '#09090B' : '#f0f2f5',
+    surface:  isDark ? '#18181B' : '#ffffff',
+    surface2: isDark ? '#1C1C1F' : '#f8f9fa',
+    border:   isDark ? '#27272A' : '#d1d5db',
 
     // Text colors
-    text:      isDark ? '#f0f0f0' : '#111827',
-    muted:     isDark ? '#888888' : '#4b5563',   // kept as alias
-    textMuted: isDark ? '#888888' : '#4b5563',
+    text:      isDark ? '#FAFAFA' : '#111827',
+    muted:     isDark ? '#A1A1AA' : '#4b5563',
+    textMuted: isDark ? '#A1A1AA' : '#4b5563',
 
-    // Accent colors (emerald)
+    // Accent colors (emerald — used sparingly)
     accent:      isDark ? '#10b981' : '#059669',
-    accentHover: isDark ? '#059669' : '#047857',
-    accentGlow:  isDark ? 'rgba(16,185,129,0.12)' : 'rgba(5,150,105,0.1)',
-    success: '#22c55e',
+    accentHover: isDark ? '#0ea571' : '#047857',
+    accentGlow:  isDark ? 'rgba(16,185,129,0.10)' : 'rgba(5,150,105,0.1)',
+    success: '#10b981',
     warning: isDark ? '#f59e0b' : '#d97706',
     gold:    isDark ? '#f59e0b' : '#b45309',
-    danger:  isDark ? '#ef4444' : '#dc2626',
-    bullish: '#22c55e',
-    bearish: isDark ? '#ef4444' : '#dc2626',
+    danger:  isDark ? '#F43F5E' : '#e11d48',
+    bullish: '#10b981',
+    bearish: isDark ? '#F43F5E' : '#e11d48',
     neutral: isDark ? '#64748b' : '#4b5563',
 
     // Chart colors
-    chartGrid: isDark ? '#2a2a2a' : '#d1d5db',
-    chartAxis: isDark ? '#64748b' : '#4b5563',
+    chartGrid: isDark ? '#1F242B' : '#d1d5db',
+    chartAxis: isDark ? '#5C6370' : '#4b5563',
   };
 
   return (
