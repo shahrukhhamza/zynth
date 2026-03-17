@@ -36,6 +36,46 @@ _GEMINI_BASE = (
     "https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
 )
 
+# ── Commission rate table (round-trip USD per 1.0 lot) ────────────────────
+# MT5 screenshots show gross profit only; commission is deducted separately
+# here based on lot size.  Rates reflect typical ECN/STP broker charges.
+_COMMISSION_PER_LOT: Dict[str, float] = {
+    # Precious metals
+    "XAUUSD": 7.0,  "XAUUSD.": 7.0, "XAUUSDM": 7.0,
+    "GOLD":   7.0,  "GOLDM":   7.0,
+    "XAGUSD": 5.0,
+    # Forex majors
+    "EURUSD": 7.0,  "GBPUSD": 7.0,  "USDJPY": 7.0,
+    "USDCHF": 7.0,  "AUDUSD": 7.0,  "USDCAD": 7.0,
+    "NZDUSD": 7.0,  "GBPJPY": 7.0,  "EURJPY": 7.0,
+    "EURGBP": 7.0,  "EURAUD": 7.0,  "GBPAUD": 7.0,
+    "GBPCAD": 7.0,  "AUDCAD": 7.0,  "AUDJPY": 7.0,
+    "CADJPY": 7.0,  "CHFJPY": 7.0,  "NZDJPY": 7.0,
+    # Indices (round-trip per contract/lot)
+    "US30":   2.0,  "DJ30":   2.0,
+    "US500":  2.0,  "SPX500": 2.0,  "SP500":  2.0,
+    "NAS100": 2.0,  "NDX100": 2.0,  "USTEC":  2.0,
+    "UK100":  2.0,  "GER40":  2.0,  "GER30":  2.0,
+    "FRA40":  2.0,  "JPN225": 2.0,  "AUS200": 2.0,
+    # Crypto (higher spread/commission)
+    "BTCUSD": 15.0, "ETHUSD": 10.0, "LTCUSD": 8.0,
+}
+_DEFAULT_COMMISSION_PER_LOT = 7.0  # fallback for unrecognised symbols
+
+
+def _calc_commission(symbol: str, lot: Optional[float]) -> float:
+    """Return estimated round-trip commission (USD) for the given symbol and lot size."""
+    if not lot or lot <= 0:
+        return 0.0
+    sym = (symbol or "").upper().strip()
+    rate = _COMMISSION_PER_LOT.get(sym)
+    if rate is None:
+        # Strip broker-specific suffix characters (e.g. 'm', '.', digits) and retry
+        base = re.sub(r'[^A-Z]', '', sym)
+        rate = _COMMISSION_PER_LOT.get(base, _DEFAULT_COMMISSION_PER_LOT)
+    return round(lot * rate, 2)
+
+
 # ── Prompt ─────────────────────────────────────────────────────────────────
 _VISION_PROMPT = """You are an expert at reading MetaTrader 4 and MetaTrader 5 trade history screenshots.
 
@@ -560,6 +600,15 @@ def _sanitize_extracted_trades(items: List[Dict[str, Any]]) -> List[Dict[str, An
         exact_index[exact_key] = len(cleaned)
         if relaxed_key is not None:
             relaxed_index[relaxed_key] = len(cleaned)
+
+        # Deduct commission from gross profit so downstream stats use net P&L
+        commission = _calc_commission(trade.get("symbol", ""), trade.get("lot"))
+        if commission > 0:
+            trade["commission"] = commission
+            trade["profit"] = round((trade.get("profit") or 0.0) - commission, 2)
+        else:
+            trade.setdefault("commission", 0.0)
+
         cleaned.append(trade)
 
     return cleaned
