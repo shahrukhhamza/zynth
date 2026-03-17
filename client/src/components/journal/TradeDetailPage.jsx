@@ -188,23 +188,24 @@ export default function TradeDetailPage({ trade, trades, tradeIndex, onBack, onN
           WebkitBackdropFilter: 'blur(20px)',
         }}
       >
-        <div className="flex items-center justify-between gap-4 px-5" style={{ height: '56px' }}>
+        <div className="flex items-center gap-2 px-3 sm:px-5" style={{ height: '56px' }}>
 
-          {/* ── LEFT: back · divider · P&L · pair · badges ── */}
-          <div className="flex items-center gap-3 min-w-0 overflow-hidden">
-            <button
-              onClick={onBack}
-              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-sm font-medium flex-shrink-0 transition-colors"
-              style={navBase}
-              onMouseEnter={navIn}
-              onMouseLeave={navOut}
-            >
-              <ArrowLeft className="w-4 h-4" />
-              Back
-            </button>
+          {/* ── BACK — always visible, never inside a shrinkable container ── */}
+          <button
+            onClick={onBack}
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-sm font-medium flex-shrink-0 transition-colors"
+            style={navBase}
+            onMouseEnter={navIn}
+            onMouseLeave={navOut}
+          >
+            <ArrowLeft className="w-4 h-4" />
+            <span className="hidden sm:inline">Back</span>
+          </button>
 
-            <div className="w-px h-5 flex-shrink-0" style={{ backgroundColor: theme.border }} />
+          <div className="w-px h-5 flex-shrink-0" style={{ backgroundColor: theme.border }} />
 
+          {/* ── MIDDLE: P&L · pair · badges — shrinks gracefully on small screens ── */}
+          <div className="flex items-center gap-2 min-w-0 overflow-hidden flex-1">
             <span
               className="text-xl font-black tabular-nums flex-shrink-0 leading-none"
               style={{ color: pnlColor, ...MONO }}
@@ -222,13 +223,15 @@ export default function TradeDetailPage({ trade, trades, tradeIndex, onBack, onN
               {(trade.outcome || 'N/A').toUpperCase()}
             </Pill>
 
-            <Pill color={dirColor} bg={dirColorDim} border={dirBorder}>
-              {isBuy ? <ArrowUpRight className="w-3 h-3" /> : <ArrowDownRight className="w-3 h-3" />}
-              {(trade.direction || '').toUpperCase()}
-            </Pill>
+            <span className="hidden sm:flex">
+              <Pill color={dirColor} bg={dirColorDim} border={dirBorder}>
+                {isBuy ? <ArrowUpRight className="w-3 h-3" /> : <ArrowDownRight className="w-3 h-3" />}
+                {(trade.direction || '').toUpperCase()}
+              </Pill>
+            </span>
           </div>
 
-          {/* ── RIGHT: edit button · date · tags · nav ── */}
+          {/* ── RIGHT: edit · date · tags · nav ── */}
           <div className="flex items-center gap-2 flex-shrink-0">
             <button
               onClick={() => setIsEditing(true)}
@@ -238,25 +241,29 @@ export default function TradeDetailPage({ trade, trades, tradeIndex, onBack, onN
               onMouseLeave={e => e.currentTarget.style.backgroundColor = `${theme.accent}0d`}
             >
               <Pencil className="w-3 h-3" />
-              Edit
+              <span className="hidden sm:inline">Edit</span>
             </button>
             <span className="text-xs tabular-nums hidden sm:block" style={{ color: theme.muted, ...MONO }}>
               {date}{time ? ` · ${time}` : ''}
             </span>
             {trade.session && (
-              <Pill color={theme.muted} bg={theme.surface2} border={theme.border}>
-                {trade.session.replace(/_/g, ' ').toUpperCase()}
-              </Pill>
+              <span className="hidden md:flex">
+                <Pill color={theme.muted} bg={theme.surface2} border={theme.border}>
+                  {trade.session.replace(/_/g, ' ').toUpperCase()}
+                </Pill>
+              </span>
             )}
             {trade.strategy && (
-              <Pill color={theme.muted} bg={theme.surface2} border={theme.border}>
-                {trade.strategy}
-              </Pill>
+              <span className="hidden md:flex">
+                <Pill color={theme.muted} bg={theme.surface2} border={theme.border}>
+                  {trade.strategy}
+                </Pill>
+              </span>
             )}
 
-            <div className="w-px h-5" style={{ backgroundColor: theme.border }} />
+            <div className="w-px h-5 hidden sm:block" style={{ backgroundColor: theme.border }} />
 
-            <span className="text-xs" style={{ color: theme.muted }}>{tradeIndex + 1} / {trades.length}</span>
+            <span className="text-xs hidden sm:inline" style={{ color: theme.muted }}>{tradeIndex + 1} / {trades.length}</span>
 
             <button
               onClick={() => hasPrev && onNavigate(tradeIndex - 1)}
@@ -266,7 +273,7 @@ export default function TradeDetailPage({ trade, trades, tradeIndex, onBack, onN
               onMouseEnter={e => { if (hasPrev) navIn(e); }}
               onMouseLeave={navOut}
             >
-              <ChevronLeft className="w-3.5 h-3.5" /> Prev
+              <ChevronLeft className="w-3.5 h-3.5" /><span className="hidden sm:inline"> Prev</span>
             </button>
             <button
               onClick={() => hasNext && onNavigate(tradeIndex + 1)}
@@ -276,7 +283,7 @@ export default function TradeDetailPage({ trade, trades, tradeIndex, onBack, onN
               onMouseEnter={e => { if (hasNext) navIn(e); }}
               onMouseLeave={navOut}
             >
-              Next <ChevronRight className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Next </span><ChevronRight className="w-3.5 h-3.5" />
             </button>
           </div>
         </div>
