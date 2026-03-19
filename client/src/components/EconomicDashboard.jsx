@@ -167,30 +167,47 @@ export default function EconomicDashboard({ onViewChange }) {
 
     const headers = { Authorization: `Bearer ${token}` };
 
-    Promise.allSettled([
-      fetch(`${API_URL}/journal?startDate=${weekStart}`, { headers }).then(r => r.ok ? r.json() : []),
-      fetch(`${API_URL}/journal?startDate=${monthStart}`, { headers }).then(r => r.ok ? r.json() : []),
-      fetch(`${API_URL}/journal`, { headers }).then(r => r.ok ? r.json() : []),
-      fetch(`${API_URL}/economic`, { headers }).then(r => r.ok ? r.json() : null),
-    ]).then(([week, month, all, eco]) => {
-      console.log('Week result:', week);
-      console.log('All trades result:', all);
+    // Fetch all trades (server provides pagination; request a large limit and compute week/month client-side)
+    Promise.all([
+      fetch(`${API_URL}/api/journal/trades?limit=500`, { headers }).then(r => r.ok ? r.json() : { data: [] }),
+      fetch(`${API_URL}/api/economic/dashboard`, { headers }).then(r => r.ok ? r.json() : null),
+    ]).then(([tradesRes, eco]) => {
+      const trades = tradesRes?.data ?? [];
+      console.log('All trades result:', tradesRes);
+
       const calcStats = (data) => {
         if (!Array.isArray(data) || data.length === 0) return null;
-        const wins  = data.filter(t => parseFloat(t.pnl ?? 0) > 0).length;
-        const pnl   = data.reduce((s, t) => s + (parseFloat(t.pnl) || 0), 0);
+        const wins  = data.filter(t => parseFloat(t.profit_loss ?? t.pnl ?? 0) > 0).length;
+        const pnl   = data.reduce((s, t) => s + (parseFloat(t.profit_loss ?? t.pnl) || 0), 0);
         const winRate = data.length > 0 ? Math.round((wins / data.length) * 100) : 0;
         return { total: data.length, wins, losses: data.length - wins, pnl, winRate };
       };
 
-      if (week.status === 'fulfilled') setWeekStats(calcStats(week.value));
-      if (month.status === 'fulfilled') setMonthStats(calcStats(month.value));
-      if (all.status === 'fulfilled' && Array.isArray(all.value)) setAllTrades(all.value);
-      if (eco.status === 'fulfilled' && eco.value) {
-        const events = Array.isArray(eco.value) ? eco.value : (eco.value?.events ?? []);
+      // set all trades
+      setAllTrades(trades);
+
+      // compute week and month slices
+      const wk = trades.filter(t => {
+        const d = new Date(t.created_at || t.date || t.createdAt || t.created_at);
+        return d >= new Date(weekStart + 'T00:00:00');
+      });
+      const mn = trades.filter(t => {
+        const d = new Date(t.created_at || t.date || t.createdAt || t.created_at);
+        return d >= new Date(monthStart + 'T00:00:00');
+      });
+
+      setWeekStats(calcStats(wk));
+      setMonthStats(calcStats(mn));
+
+      if (eco) {
+        const events = Array.isArray(eco) ? eco : (eco?.events ?? []);
         const high = events.find(e => (e.impact ?? '').toLowerCase() === 'high');
         if (high) setKeyEvent({ title: high.event ?? high.title ?? 'High Impact Event', time: high.time ?? '' });
       }
+
+      setLoading(false);
+    }).catch(err => {
+      console.error('Dashboard fetch error:', err);
       setLoading(false);
     });
   }, []);
