@@ -13,9 +13,9 @@ const MONO = { fontFamily: "'ui-monospace','Cascadia Code','SF Mono','Consolas',
 function OutcomeBadge({ outcome }) {
   const theme = useTheme();
   const cfgDark = {
-    win:       { color: '#10B981', bg: '#10B98112', border: '#10B98130', Icon: CheckCircle2, label: 'WIN'  },
-    loss:      { color: '#F43F5E', bg: '#F43F5E12', border: '#F43F5E30', Icon: XCircle,     label: 'LOSS' },
-    breakeven: { color: '#f59e0b', bg: '#f59e0b12', border: '#f59e0b30', Icon: Minus,        label: 'B/E'  },
+    win:       { color: '#10b981', bg: '#10b98120', border: '#10b98140', Icon: CheckCircle2, label: 'WIN'  },
+    loss:      { color: '#ef4444', bg: '#ef444420', border: '#ef444440', Icon: XCircle,     label: 'LOSS' },
+    breakeven: { color: '#f59e0b', bg: '#f59e0b15', border: '#f59e0b35', Icon: Minus,        label: 'B/E'  },
   };
   const cfgLight = {
     win:       { color: '#047857', bg: '#d1fae5', border: '#6ee7b7', Icon: CheckCircle2, label: 'WIN'  },
@@ -27,8 +27,8 @@ function OutcomeBadge({ outcome }) {
   const { Icon } = c;
   return (
     <span
-      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold tracking-wide whitespace-nowrap"
-      style={{ backgroundColor: c.bg, color: c.color, border: `1px solid ${c.border}` }}
+      className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full whitespace-nowrap"
+      style={{ backgroundColor: c.bg, color: c.color, border: `1px solid ${c.border}`, fontSize: '10px', fontWeight: 700 }}
     >
       <Icon className="w-3 h-3 flex-shrink-0" />
       {c.label}
@@ -40,14 +40,14 @@ function OutcomeBadge({ outcome }) {
 function DirectionBadge({ dir }) {
   const theme = useTheme();
   const buy  = dir?.toLowerCase() === 'buy';
-  const darkC  = { color: buy ? '#10B981' : '#F43F5E', bg: buy ? '#10B98112' : '#F43F5E12', border: buy ? '#10B98130' : '#F43F5E30' };
+  const darkC  = { color: buy ? '#10b981' : '#ef4444', bg: buy ? '#10b98115' : '#ef444415', border: buy ? '#10b98130' : '#ef444430' };
   const lightC = { color: buy ? '#047857' : '#be123c',  bg: buy ? '#d1fae5'   : '#ffe4e6',   border: buy ? '#6ee7b7'   : '#fda4af'  };
   const c    = theme.isDark ? darkC : lightC;
   const Icon = buy ? ArrowUpRight : ArrowDownRight;
   return (
     <span
-      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold tracking-wide whitespace-nowrap"
-      style={{ backgroundColor: c.bg, color: c.color, border: `1px solid ${c.border}` }}
+      className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full whitespace-nowrap"
+      style={{ backgroundColor: c.bg, color: c.color, border: `1px solid ${c.border}`, fontSize: '10px', fontWeight: 700 }}
     >
       <Icon className="w-3.5 h-3.5 flex-shrink-0" />
       {(dir || '').toUpperCase()}
@@ -58,12 +58,12 @@ function DirectionBadge({ dir }) {
 /* ── AI Score badge ────────────────────────────────────────────────── */
 function AiScoreBadge({ ai_analysis }) {
   const theme = useTheme();
-  if (!ai_analysis) return <span style={{ color: theme.muted }}>—</span>;
+  if (!ai_analysis) return <span style={{ color: theme.isDark ? '#333' : theme.muted }}>—</span>;
   let data;
   try { data = typeof ai_analysis === 'string' ? JSON.parse(ai_analysis) : ai_analysis; }
-  catch { return <span style={{ color: theme.muted }}>—</span>; }
+  catch { return <span style={{ color: theme.isDark ? '#333' : theme.muted }}>—</span>; }
   const score = data?.psychology_score;
-  if (score == null) return <span style={{ color: theme.muted }}>—</span>;
+  if (score == null) return <span style={{ color: theme.isDark ? '#333' : theme.muted }}>—</span>;
   const color = score >= 7 ? '#10B981' : score >= 4 ? '#f59e0b' : '#F43F5E';
   return (
     <span
@@ -85,26 +85,26 @@ export default function TradeHistoryTable({ trades, total, page, limit, onPageCh
 
   /* shared header cell style */
   const thBase = {
-    color: theme.muted,
-    fontSize: '0.67rem',
+    color: theme.isDark ? '#444' : theme.muted,
+    fontSize: '10px',
     fontWeight: 700,
-    letterSpacing: '0.09em',
+    letterSpacing: '0.08em',
     textTransform: 'uppercase',
     whiteSpace: 'nowrap',
-    padding: '0.85rem 1.25rem',
+    padding: '12px 16px',
     textAlign: 'left',
-    backgroundColor: theme.surface,
-    borderBottom: `1px solid ${theme.border}`,
+    backgroundColor: theme.isDark ? '#0a0a0a' : theme.surface,
+    borderBottom: theme.isDark ? '1px solid #1e1e1e' : `1px solid ${theme.border}`,
     userSelect: 'none',
   };
 
   /* shared body cell style */
   const tdBase = {
     fontSize: '0.82rem',
-    padding: '0.95rem 1.25rem',
-    borderBottom: theme.isDark ? `1px solid ${theme.border}55` : `1px solid ${theme.border}aa`,
+    padding: '14px 16px',
+    borderBottom: theme.isDark ? '1px solid #141414' : `1px solid ${theme.border}aa`,
     verticalAlign: 'middle',
-    color: theme.text,
+    color: theme.isDark ? '#e8e8e8' : theme.text,
   };
 
   /* ── Empty state ── */
@@ -140,7 +140,7 @@ export default function TradeHistoryTable({ trades, total, page, limit, onPageCh
       {/* ── Table ── */}
       <div
         className="overflow-x-auto w-full"
-        style={{ borderRadius: '14px', border: `1px solid ${theme.border}`, backgroundColor: theme.surface }}
+        style={{ borderRadius: '10px', border: theme.isDark ? '1px solid #1e1e1e' : `1px solid ${theme.border}`, backgroundColor: theme.isDark ? '#0d0d0d' : theme.surface }}
       >
         <table style={{ width: '100%', borderCollapse: 'collapse', tableLayout: 'auto' }}>
 
@@ -151,7 +151,7 @@ export default function TradeHistoryTable({ trades, total, page, limit, onPageCh
                 <th key={label} style={{ ...thBase, ...(mono ? MONO : {}) }}>{label}</th>
               ))}
               {/* chevron hint col — no label */}
-              <th style={{ ...thBase, width: '40px', padding: '0.85rem 0.75rem' }} />
+              <th style={{ ...thBase, width: '40px', padding: '12px 0.75rem' }} />
             </tr>
           </thead>
 
@@ -162,7 +162,7 @@ export default function TradeHistoryTable({ trades, total, page, limit, onPageCh
                 ? (t.created_at.includes('T') ? t.created_at.split('T')[0] : t.created_at.slice(0, 10))
                 : null;
               const pnl      = parseFloat(t.profit_loss);
-              const pnlColor = isNaN(pnl) ? theme.muted : pnl >= 0 ? '#10B981' : '#F43F5E';
+              const pnlColor = isNaN(pnl) ? theme.muted : pnl >= 0 ? '#10b981' : '#ef4444';
               const isLast   = i === trades.length - 1;
               const noBorder = isLast ? { borderBottom: 'none' } : {};
 
@@ -170,22 +170,22 @@ export default function TradeHistoryTable({ trades, total, page, limit, onPageCh
                 <tr
                   key={t.id}
                   onClick={() => onView(t)}
-                  style={{ cursor: 'pointer', transition: 'background-color 0.12s ease' }}
+                  style={{ cursor: 'pointer', transition: 'background-color 0.12s ease', backgroundColor: theme.isDark ? '#111' : 'transparent' }}
                   onMouseEnter={e => {
                     e.currentTarget.style.backgroundColor = theme.isDark
-                      ? 'rgba(255,255,255,0.035)'
+                      ? '#161616'
                       : 'rgba(0,0,0,0.022)';
                     const ch = e.currentTarget.querySelector('.row-chevron');
                     if (ch) ch.style.opacity = '1';
                   }}
                   onMouseLeave={e => {
-                    e.currentTarget.style.backgroundColor = 'transparent';
+                    e.currentTarget.style.backgroundColor = theme.isDark ? '#111' : 'transparent';
                     const ch = e.currentTarget.querySelector('.row-chevron');
                     if (ch) ch.style.opacity = '0';
                   }}
                 >
                   {/* Date */}
-                  <td style={{ ...tdBase, ...noBorder, color: theme.muted, ...MONO, fontSize: '0.78rem' }}>
+                  <td style={{ ...tdBase, ...noBorder, color: theme.isDark ? '#555' : theme.muted, ...MONO, fontSize: '12px' }}>
                     {rawDate ? (
                       <span className="inline-flex items-center gap-1.5">
                         <CalendarDays className="w-3 h-3 opacity-40 flex-shrink-0" />
@@ -195,7 +195,7 @@ export default function TradeHistoryTable({ trades, total, page, limit, onPageCh
                   </td>
 
                   {/* Pair */}
-                  <td style={{ ...tdBase, ...noBorder, fontWeight: 700, fontSize: '0.88rem', letterSpacing: '0.04em' }}>
+                  <td style={{ ...tdBase, ...noBorder, fontWeight: 600, fontSize: '13px', letterSpacing: '0.04em', color: theme.isDark ? '#e8e8e8' : theme.text }}>
                     {t.pair || '—'}
                   </td>
 
@@ -223,7 +223,7 @@ export default function TradeHistoryTable({ trades, total, page, limit, onPageCh
                   </td>
 
                   {/* P&L */}
-                  <td style={{ ...tdBase, ...noBorder, ...MONO, fontWeight: 700, fontSize: '0.88rem', color: pnlColor }}>
+                  <td style={{ ...tdBase, ...noBorder, ...MONO, fontWeight: 600, fontSize: '0.88rem', color: pnlColor }}>
                     {isNaN(pnl) ? '—' : `${pnl >= 0 ? '+' : ''}${pnl.toFixed(2)}`}
                   </td>
 

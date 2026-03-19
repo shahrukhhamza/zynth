@@ -41,18 +41,18 @@ function NewsFeed({ news, loading, error }) {
     <main className="flex-1 overflow-y-auto p-6" style={{ backgroundColor: theme.bg }}>
       <div className="max-w-5xl mx-auto">
         <div className="mb-6">
-          <h2 className="text-2xl font-bold mb-2" style={{ color: theme.text }}>Latest Financial News</h2>
-          <p className="text-sm" style={{ color: theme.muted }}>
-            {news.length} articles • Updated every 30 seconds
+          <h2 className="text-2xl font-bold mb-1" style={{ color: theme.text }}>Market News</h2>
+          <p style={{ fontSize: 12, color: theme.muted }}>
+            {news.length} articles · Updated every 30 seconds
           </p>
         </div>
 
         {news.length === 0 ? (
-          <div className="rounded-lg p-8 text-center border" style={{ backgroundColor: theme.surface, borderColor: theme.border }}>
+          <div className="rounded-lg p-8 text-center" style={{ backgroundColor: theme.surface, border: `1px solid ${theme.border}`, borderRadius: 10 }}>
             <p style={{ color: theme.muted }}>No news articles found matching your filters.</p>
           </div>
         ) : (
-          <div className="space-y-4">
+          <div className="space-y-3">
             {news.map((article) => (
               <NewsCard key={article.id} article={article} />
             ))}

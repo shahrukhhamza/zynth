@@ -188,7 +188,7 @@ function AppShell() {
   };
 
   return (
-    <div style={{ backgroundColor: theme.bg, color: theme.text }}>
+    <div style={{ backgroundColor: theme.bg, color: theme.text, transition: 'background-color 0.25s ease, color 0.15s ease' }}>
       {/* Fixed Sidebar */}
       <Sidebar 
         filters={filters}
@@ -222,7 +222,7 @@ function AppShell() {
       {/* Content: offset for fixed sidebar + 64px header */}
       <div
         style={{
-          marginLeft: isMobile ? 0 : (sidebarCollapsed ? 64 : 240),
+          marginLeft: isMobile ? 0 : (sidebarCollapsed ? 60 : 236),
           paddingTop: 64,
           transition: 'margin-left 0.3s ease',
           height: '100vh',
@@ -243,7 +243,7 @@ function AppShell() {
               <AdminDashboard />
             </Suspense>
           ) : currentView === 'data' ? (
-            <EconomicDashboard key="data" />
+            <EconomicDashboard key="data" onViewChange={navigate} />
           ) : currentView === 'calendar' ? (
             <div key="calendar" className="flex-1 overflow-y-auto p-6 page-enter">
               <EconomicCalendar />

@@ -1,8 +1,8 @@
 ﻿import { useState, useEffect } from 'react';
 import {
-  Search, Filter, Calendar, X, BarChart3, Newspaper, Brain,
+  Search, Filter, Calendar, X, Brain,
   Camera, ChevronLeft, ChevronRight, Crown, Settings, HelpCircle, Clock,
-  LayoutDashboard, Star,
+  LayoutDashboard, Star, Zap,
 } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 import { useTimezone } from '../contexts/TimezoneContext';
@@ -14,476 +14,509 @@ import { resolveMediaUrl } from '../utils/mediaUrl';
 
 const AVATAR_COLOR_MAP = {
   emerald: '#10b981', blue: '#3b82f6', purple: '#a855f7', orange: '#f97316',
-  rose: '#f43f5e',    amber: '#f59e0b', cyan: '#06b6d4',  indigo: '#6366f1',
+  rose: '#f43f5e', amber: '#f59e0b', cyan: '#06b6d4', indigo: '#6366f1',
 };
 
-/* ── Market session logic ─────────────────────────────────────────────────── */
-const SESSIONS = [
-  { name: 'Tokyo',  open:  0, close:  9, color: '#f59e0b' },
-  { name: 'London', open:  8, close: 17, color: '#60a5fa' },
-  { name: 'NY',     open: 13, close: 22, color: '#34d399' },
+const NAV_ITEMS = [
+  { key: 'data',         icon: LayoutDashboard, label: 'Dashboard',           badge: null },
+  { key: 'journal',      icon: Star,            label: 'Trade Journal',       badge: null, core: true },
+  { key: 'screenshot',   icon: Camera,          label: 'Screenshot Analysis', badge: { text: 'AI', color: '#a855f7' } },
+  { key: 'intelligence', icon: Brain,           label: 'AI Insights',         badge: { text: 'AI', color: '#a855f7' } },
+  { key: 'calendar',     icon: Calendar,        label: 'Economic Calendar',   badge: null },
+  { key: 'help',         icon: HelpCircle,      label: 'Help & Docs',         badge: null },
 ];
 
-function getUtcHour() {
-  return new Date().getUTCHours() + new Date().getUTCMinutes() / 60;
-}
-
-function getOpenSessions(utcH) {
-  return SESSIONS.filter(s => utcH >= s.open && utcH < s.close);
-}
-
-function MarketSessionBar({ collapsed }) {
+function NavButton({ icon: Icon, label, badge, active, collapsed, onClick, core }) {
+  const [hov, setHov] = useState(false);
   const theme = useTheme();
-  const { convertToTimezone, getTimezoneInfo } = useTimezone();
-  const [now, setNow] = useState(new Date());
 
-  useEffect(() => {
-    const id = setInterval(() => setNow(new Date()), 1000);
-    return () => clearInterval(id);
-  }, []);
+  const getBg = () => {
+    if (core) return active ? '#059669' : hov ? '#0d9e6e' : '#10b981cc';
+    if (active) return 'rgba(16,185,129,0.12)';
+    if (hov) return theme.isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)';
+    return 'transparent';
+  };
 
-  const utcH = now.getUTCHours() + now.getUTCMinutes() / 60;
-  const open = getOpenSessions(utcH);
-  const tzInfo = getTimezoneInfo();
-  const converted = convertToTimezone(now);
-  const timeStr = [
-    String(converted.getUTCHours()).padStart(2, '0'),
-    String(converted.getUTCMinutes()).padStart(2, '0'),
-    String(converted.getUTCSeconds()).padStart(2, '0'),
-  ].join(':');
-  const tzMonths = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  const dateStr = `${tzMonths[converted.getUTCMonth()]} ${converted.getUTCDate()}`;
-  const tzLabel = tzInfo.id.toUpperCase();
+  const getColor = () => {
+    if (core) return '#ffffff';
+    if (active) return '#10b981';
+    if (hov) return theme.text;
+    return theme.muted;
+  };
 
   return (
-    <div
+    <button
+      onClick={onClick}
+      onMouseEnter={() => setHov(true)}
+      onMouseLeave={() => setHov(false)}
+      title={collapsed ? label : undefined}
       style={{
-        flex: 1,
-        overflow: 'hidden',
-        opacity: collapsed ? 0 : 1,
-        maxWidth: collapsed ? 0 : 999,
-        transition: 'opacity 0.18s ease, max-width 0.28s ease',
+        width: '100%',
         display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        gap: 3,
-        minWidth: 0,
+        alignItems: 'center',
+        textAlign: 'left',
+        borderRadius: 8,
+        height: core ? 48 : 40,
+        justifyContent: collapsed ? 'center' : 'flex-start',
+        gap: collapsed ? 0 : 10,
+        padding: collapsed ? '0' : `0 10px 0 ${active && !core ? '9px' : '12px'}`,
+        backgroundColor: getBg(),
+        color: getColor(),
+        border: 'none',
+        borderLeft: !core && !collapsed ? `2px solid ${active ? '#10b981' : 'transparent'}` : 'none',
+        boxShadow: core
+          ? hov
+            ? '0 4px 20px rgba(16,185,129,0.3)'
+            : '0 2px 12px rgba(16,185,129,0.2)'
+          : 'none',
+        transition: 'all 0.18s ease',
+        cursor: 'pointer',
+        position: 'relative',
+        flexShrink: 0,
       }}
     >
-      {/* Time + date row */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-        <Clock className="w-3 h-3 flex-shrink-0" style={{ color: theme.textMuted }} />
-        <span style={{ fontSize: 13, fontWeight: 700, color: theme.text, fontVariantNumeric: 'tabular-nums', letterSpacing: '0.02em' }}>
-          {timeStr}
-        </span>
-        <span style={{ fontSize: 11, color: theme.textMuted, fontWeight: 500 }}>{tzLabel} · {dateStr}</span>
-      </div>
+      {/* Active indicator dot for non-core items */}
+      {!core && active && !collapsed && (
+        <span style={{
+          position: 'absolute',
+          left: -1,
+          top: '50%',
+          transform: 'translateY(-50%)',
+          width: 3,
+          height: 16,
+          borderRadius: 99,
+          background: '#10b981',
+          boxShadow: '0 0 8px rgba(16,185,129,0.6)',
+        }} />
+      )}
 
-      {/* Session pills */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-        {SESSIONS.map(s => {
-          const isOpen = utcH >= s.open && utcH < s.close;
-          return (
-            <span
-              key={s.name}
-              title={`${s.name}: ${String(s.open).padStart(2,'0')}:00 – ${String(s.close).padStart(2,'0')}:00 UTC`}
-              style={{
-                fontSize: 9,
-                fontWeight: 700,
-                padding: '1px 6px',
-                borderRadius: 99,
-                letterSpacing: '0.06em',
-                cursor: 'default',
-                userSelect: 'none',
-                color: isOpen ? s.color : theme.textMuted,
-                background: isOpen ? `${s.color}1a` : 'transparent',
-                border: `1px solid ${isOpen ? `${s.color}55` : theme.border}`,
-                transition: 'all 0.3s ease',
-              }}
-            >
-              {s.name}
-            </span>
-          );
-        })}
-        {open.length === 0 && (
-          <span style={{ fontSize: 9, color: theme.textMuted, fontWeight: 600, letterSpacing: '0.05em', cursor: 'default', userSelect: 'none' }}>
-            ALL CLOSED
-          </span>
-        )}
-      </div>
-    </div>
-  );
-}
+      {/* Icon */}
+      <Icon style={{
+        width: core ? 18 : 16,
+        height: core ? 18 : 16,
+        flexShrink: 0,
+        opacity: collapsed && !active && !hov ? 0.5 : 1,
+        fill: core ? 'rgba(255,255,255,0.2)' : 'none',
+      }} />
 
-const NAV_ITEMS = [
-  { key: 'data',         icon: LayoutDashboard, label: 'Dashboard',          badge: null },
-  { key: 'journal',      icon: Star,            label: 'Trade Journal',      badge: null, core: true },
-  { key: 'intelligence', icon: Brain,           label: 'AI Insights',        badge: { text: 'AI', color: '#a855f7', bg: 'rgba(168,85,247,0.15)' } },
-  { key: 'markets',      icon: BarChart3,       label: 'Economic Data',      badge: null },
-  { key: 'calendar',     icon: Calendar,        label: 'Economic Calendar',  badge: null },
-  { key: 'news',         icon: Newspaper,       label: 'Market News',        badge: null },
-  { key: 'screenshot',   icon: Camera,          label: 'Screenshot Analysis',badge: { text: 'AI', color: '#a855f7', bg: 'rgba(168,85,247,0.15)' } },
-  { key: 'help',         icon: HelpCircle,      label: 'Help & Docs',        badge: null },
-];
-
-function NavButton({ icon: Icon, label, badge, active, collapsed, accentColor, onClick, core }) {
-  const theme = useTheme();
-  const [hov, setHov] = useState(false);
-  const accent = accentColor ?? theme.accent;
-
-  // "core" = Trade Journal special styling
-  const coreBg      = active ? '#059669' : hov ? '#10b981' : '#10b981cc';
-  const coreColor   = '#ffffff';
-  const normalActiveBg = accentColor ? 'rgba(167,139,250,0.12)' : (theme.surface2 || theme.accentGlow);
-
-  return (
-    <div className="sidebar-nav-item-wrapper relative">
-      <button
-        onClick={onClick}
-        onMouseEnter={() => setHov(true)}
-        onMouseLeave={() => setHov(false)}
-        style={{
-          width: '100%', display: 'flex', alignItems: 'center', textAlign: 'left',
-          borderRadius: 10,
-          height: core ? 54 : 44,
-          justifyContent: collapsed ? 'center' : 'flex-start',
-          gap: collapsed ? 0 : 12,
-          paddingLeft:  collapsed ? 0 : (core ? 14 : active ? 9 : 12),
-          paddingRight: collapsed ? 0 : 12,
-          backgroundColor: core
-            ? coreBg
-            : active ? normalActiveBg : hov ? (theme.isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)') : 'transparent',
-          color: core ? coreColor : active ? accent : hov ? theme.text : theme.textMuted,
-          borderLeft: core ? 'none' : `3px solid ${!collapsed && active ? accent : 'transparent'}`,
-          boxShadow: core ? (hov ? '0 4px 16px rgba(16,185,129,0.35)' : '0 2px 10px rgba(16,185,129,0.22)') : 'none',
-          transition: 'background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease',
-          marginBottom: core ? 4 : 0,
-        }}
-      >
-        <Icon className={core ? 'w-[20px] h-[20px] flex-shrink-0' : 'w-[18px] h-[18px] flex-shrink-0'}
-          style={core ? { fill: 'rgba(255,255,255,0.25)', color: '#fff' } : {}} />
-        {/* Label+badge always in DOM — hidden via CSS only, no DOM mutation during transition */}
-        <div style={{
-          flex: 1, display: 'flex', flexDirection: core ? 'column' : 'row',
-          alignItems: core ? 'flex-start' : 'center',
-          gap: core ? 1 : 8, minWidth: 0,
-          overflow: 'hidden',
-          opacity: collapsed ? 0 : 1,
-          maxWidth: collapsed ? 0 : 180,
-          transition: 'opacity 0.18s ease, max-width 0.28s ease',
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, width: '100%' }}>
-            <span style={{
-              fontSize: core ? 15 : 14,
-              fontWeight: core ? 700 : 500,
-              flex: 1, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis',
-              letterSpacing: core ? '-0.01em' : 'normal',
-            }}>{label}</span>
-            {badge && !core && (
-              <span
-                className="flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded-full font-bold leading-none flex-shrink-0"
-                style={{ backgroundColor: badge.bg, color: badge.color }}
-              >
-                {badge.pulse && (
-                  <span className="w-1.5 h-1.5 rounded-full flex-shrink-0"
-                    style={{ backgroundColor: badge.color, animation: 'pulse-dot 1.5s ease-in-out infinite' }} />
-                )}
-                {badge.text}
+      {/* Label + badge */}
+      {!collapsed && (
+        <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'space-between', minWidth: 0 }}>
+          <span style={{
+            fontSize: core ? 13 : 13,
+            fontWeight: core ? 600 : active ? 500 : 400,
+            letterSpacing: core ? '0.01em' : 0,
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+          }}>
+            {label}
+            {core && (
+              <span style={{ display: 'block', fontSize: 9, fontWeight: 500, opacity: 0.7, letterSpacing: '0.04em', marginTop: 1 }}>
+                Your trading edge
               </span>
             )}
-          </div>
-          {core && (
-            <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.7)', fontWeight: 400, letterSpacing: '0.01em' }}>
-              Your trading edge
-            </span>
-          )}
-        </div>
-      </button>
-      {collapsed && (
-        <div className="sidebar-tooltip">
-          <span>{label}</span>
+          </span>
           {badge && (
-            <span className="ml-1.5 text-[10px] px-1 py-0.5 rounded-full font-bold"
-              style={{ backgroundColor: badge.bg, color: badge.color }}>
+            <span style={{
+              fontSize: 9, fontWeight: 700,
+              padding: '2px 6px', borderRadius: 99,
+              letterSpacing: '0.06em',
+              color: badge.color,
+              background: `${badge.color}18`,
+              border: `1px solid ${badge.color}30`,
+            }}>
               {badge.text}
             </span>
           )}
         </div>
       )}
-    </div>
+
+      {/* Collapsed tooltip badge */}
+      {collapsed && badge && (
+        <span style={{
+          position: 'absolute', top: 6, right: 6,
+          width: 6, height: 6, borderRadius: '50%',
+          background: badge.color,
+          boxShadow: `0 0 6px ${badge.color}`,
+        }} />
+      )}
+    </button>
   );
 }
 
+/* ── SidebarInner ─────────────────────────────────────────────────────────── */
 function SidebarInner({
   collapsed, onToggleCollapse, isMobile, onMobileClose,
-  currentView, onViewChange, filters, onFilterChange, onApplyFilters, onResetFilters,
+  currentView, onViewChange,
+  filters, onFilterChange, onApplyFilters, onResetFilters,
 }) {
   const theme = useTheme();
   const { user } = useAuth();
-  const [showProfileModal, setShowProfileModal] = useState(false);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
-  const [cardHov, setCardHov] = useState(false);
+  const [showProfileModal, setShowProfileModal] = useState(false);
+  const [avatarError, setAvatarError] = useState(false);
 
-  const avatarColor = AVATAR_COLOR_MAP[user?.avatar_color] ?? AVATAR_COLOR_MAP.emerald;
-  const avatarSrc = user?.avatar_url ? resolveMediaUrl(user.avatar_url) : null;
-  const initials = user?.name ? user.name.slice(0, 2).toUpperCase() : 'U';
+  const avatarBg = AVATAR_COLOR_MAP[user?.avatar_color] ?? '#10b981';
+  const avatarSrc = user?.avatar_url ? resolveMediaUrl(user.avatar_url) : (user?.avatar ?? null);
 
   const navigate = (key) => {
     onViewChange(key);
     if (isMobile && onMobileClose) onMobileClose();
   };
 
+  const SB_BG     = theme.isDark ? '#0d0d0d' : theme.bg;
+  const SB_BORDER = theme.isDark ? '#1e1e1e' : theme.border;
+
   return (
-    <div className="flex flex-col h-full">
-      {showProfileModal && <ProfileModal onClose={() => setShowProfileModal(false)} />}
-      {showSettingsModal && <SettingsModal onClose={() => setShowSettingsModal(false)} />}
+    <div style={{
+      display: 'flex', flexDirection: 'column', height: '100%',
+      backgroundColor: SB_BG,
+      overflow: 'hidden',
+    }}>
 
-      {/* TOP SECTION — 64px to align with header height */}
-      <div className="flex-shrink-0 flex items-center overflow-hidden"
-        style={{ height: 64, gap: 10, padding: '0 14px', position: 'relative' }}>
-
-        {/* Collapsed state: only the logo icon, centred */}
-        {!isMobile && (
-          <div style={{
-            position: 'absolute', left: '50%', transform: 'translateX(-50%)',
-            opacity: collapsed ? 1 : 0,
-            pointerEvents: 'none',
-            transition: 'opacity 0.18s ease',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-          }}>
-            <div className="w-10 h-10 rounded-xl overflow-hidden">
-              <img src="/logo.png" alt="Zynth" className="w-full h-full object-contain" />
+      {/* ── HEADER ─────────────────────────────────────────── */}
+      <div style={{
+        height: 64,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: collapsed ? 'center' : 'space-between',
+        padding: collapsed ? '0' : '0 14px 0 16px',
+        borderBottom: `1px solid ${SB_BORDER}`,
+        flexShrink: 0,
+        gap: 8,
+      }}>
+        {/* Logo + wordmark */}
+        {!collapsed && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
+            <svg width="30" height="30" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M8 9 L32 9 L32 13 L8 13 Z" fill="#10b981"/>
+              <path d="M8 27 L32 27 L32 31 L8 31 Z" fill="#10b981"/>
+              <path d="M32 13 L8 27 L8 31 L10 31 L34 15 L34 13 Z" fill="#0d7a5a"/>
+              <polyline points="10,28 16,22 20,25 26,16 30,12" stroke="#f59e0b" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+              <path d="M28,10 L32,12 L29,15" stroke="#f59e0b" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+              <rect x="19" y="21" width="2.5" height="5" rx="0.5" fill="#f59e0b"/>
+              <line x1="20.25" y1="19.5" x2="20.25" y2="21" stroke="#f59e0b" strokeWidth="1" strokeLinecap="round"/>
+              <line x1="20.25" y1="26" x2="20.25" y2="27.5" stroke="#f59e0b" strokeWidth="1" strokeLinecap="round"/>
+            </svg>
+            <div>
+              <span style={{
+                fontSize: 16, fontWeight: 700, color: theme.text,
+                letterSpacing: '-0.02em', display: 'block', lineHeight: 1,
+              }}>
+                Zynth
+              </span>
+              <span style={{
+                fontSize: 9, color: '#10b981', fontWeight: 600,
+                letterSpacing: '0.1em', textTransform: 'uppercase',
+              }}>
+                BETA
+              </span>
             </div>
           </div>
         )}
 
-        {/* Expanded state: logo + wordmark + BETA tag */}
-        <div style={{
-          display: 'flex', alignItems: 'center', gap: 9, flex: 1,
-          opacity: collapsed ? 0 : 1,
-          pointerEvents: collapsed ? 'none' : 'auto',
-          transition: 'opacity 0.18s ease',
-          overflow: 'hidden',
-        }}>
-          <div className="w-10 h-10 rounded-xl overflow-hidden flex-shrink-0">
-            <img src="/logo.png" alt="Zynth" className="w-full h-full object-contain" />
-          </div>
-          <span style={{
-            fontSize: 16, fontWeight: 700, letterSpacing: '-0.01em',
-            whiteSpace: 'nowrap', color: theme.text, flexShrink: 0,
-          }}>Zynth</span>
-          <span style={{
-            fontSize: 10, fontWeight: 700, letterSpacing: '0.06em',
-            padding: '2px 6px', borderRadius: 4,
-            backgroundColor: '#f59e0b', color: '#000',
-            flexShrink: 0, lineHeight: '16px',
-          }}>BETA</span>
-        </div>
+        {/* Collapsed: just logo */}
+        {collapsed && (
+          <svg width="30" height="30" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M8 9 L32 9 L32 13 L8 13 Z" fill="#10b981"/>
+            <path d="M8 27 L32 27 L32 31 L8 31 Z" fill="#10b981"/>
+            <path d="M32 13 L8 27 L8 31 L10 31 L34 15 L34 13 Z" fill="#0d7a5a"/>
+            <polyline points="10,28 16,22 20,25 26,16 30,12" stroke="#f59e0b" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+            <path d="M28,10 L32,12 L29,15" stroke="#f59e0b" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+            <rect x="19" y="21" width="2.5" height="5" rx="0.5" fill="#f59e0b"/>
+            <line x1="20.25" y1="19.5" x2="20.25" y2="21" stroke="#f59e0b" strokeWidth="1" strokeLinecap="round"/>
+            <line x1="20.25" y1="26" x2="20.25" y2="27.5" stroke="#f59e0b" strokeWidth="1" strokeLinecap="round"/>
+          </svg>
+        )}
 
-        {/* Collapse / close button */}
-        <button
-          onClick={isMobile ? onMobileClose : onToggleCollapse}
-          className="flex-shrink-0 flex items-center justify-center rounded-lg"
-          style={{
-            width: 32, height: 32, color: theme.textMuted,
-            opacity: collapsed ? 0 : 1,
-            pointerEvents: collapsed ? 'none' : 'auto',
-            transition: 'opacity 0.18s ease, background-color 0.15s ease',
-          }}
-          onMouseEnter={e => (e.currentTarget.style.backgroundColor = theme.isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)')}
-          onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'transparent')}
-          aria-label={isMobile ? 'Close menu' : 'Collapse sidebar'}
-        >
-          {isMobile ? <X className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
-        </button>
-      </div>
-
-      {/* Expand button — desktop only; height collapses to 0 when sidebar is open to eliminate dead space */}
-      {!isMobile && (
-        <div className="flex-shrink-0 flex items-center justify-center overflow-hidden"
-          style={{
-            height: collapsed ? 30 : 0,
-            opacity: collapsed ? 1 : 0,
-            pointerEvents: collapsed ? 'auto' : 'none',
-            transition: 'height 0.22s ease, opacity 0.18s ease',
-          }}>
+        {/* Collapse toggle — desktop only */}
+        {!isMobile && (
           <button
             onClick={onToggleCollapse}
-            className="flex items-center justify-center rounded-md"
-            style={{ width: 28, height: 22, color: theme.textMuted, transition: 'background-color 0.15s ease' }}
-            onMouseEnter={e => (e.currentTarget.style.backgroundColor = theme.isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)')}
-            onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'transparent')}
-            title="Expand sidebar" aria-label="Expand sidebar"
+            title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+            style={{
+              width: 24, height: 24,
+              borderRadius: 6,
+              border: `1px solid ${SB_BORDER}`,
+              background: theme.isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              cursor: 'pointer',
+              color: theme.muted,
+              flexShrink: 0,
+              transition: 'all 0.15s ease',
+            }}
+            onMouseEnter={e => { e.currentTarget.style.background = theme.isDark ? 'rgba(255,255,255,0.09)' : 'rgba(0,0,0,0.08)'; e.currentTarget.style.color = '#10b981'; }}
+            onMouseLeave={e => { e.currentTarget.style.background = theme.isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)'; e.currentTarget.style.color = theme.muted; }}
           >
-            <ChevronRight className="w-3.5 h-3.5" />
+            {collapsed
+              ? <ChevronRight style={{ width: 13, height: 13 }} />
+              : <ChevronLeft style={{ width: 13, height: 13 }} />}
           </button>
+        )}
+
+        {/* Mobile close */}
+        {isMobile && (
+          <button
+            onClick={onMobileClose}
+            style={{
+              width: 28, height: 28, borderRadius: 7,
+              border: `1px solid ${SB_BORDER}`,
+              background: 'transparent',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              cursor: 'pointer', color: theme.muted,
+            }}
+          >
+            <X style={{ width: 14, height: 14 }} />
+          </button>
+        )}
+      </div>
+
+      {/* ── USER PROFILE CARD ─────────────────────────────── */}
+      {!collapsed && (
+        <button
+          onClick={() => setShowProfileModal(true)}
+          style={{
+            margin: '10px 10px 2px',
+            padding: '10px 12px',
+            borderRadius: 10,
+            border: `1px solid ${SB_BORDER}`,
+            background: theme.isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)',
+            display: 'flex', alignItems: 'center', gap: 10,
+            cursor: 'pointer',
+            textAlign: 'left',
+            transition: 'all 0.15s ease',
+            flexShrink: 0,
+          }}
+          onMouseEnter={e => { e.currentTarget.style.background = theme.isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)'; e.currentTarget.style.borderColor = SB_BORDER; }}
+          onMouseLeave={e => { e.currentTarget.style.background = theme.isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)'; e.currentTarget.style.borderColor = SB_BORDER; }}
+        >
+          {/* Avatar */}
+          {avatarSrc && !avatarError ? (
+            <img
+              src={avatarSrc}
+              alt={user?.name}
+              onError={() => setAvatarError(true)}
+              style={{ width: 34, height: 34, borderRadius: 8, objectFit: 'cover', flexShrink: 0 }}
+            />
+          ) : (
+            <div style={{
+              width: 34, height: 34, borderRadius: 8,
+              background: `linear-gradient(135deg, ${avatarBg}, ${avatarBg}bb)`,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontSize: 13, fontWeight: 700, color: '#fff',
+              flexShrink: 0,
+              boxShadow: `0 2px 8px ${avatarBg}40`,
+            }}>
+              {user?.name?.charAt(0).toUpperCase()}
+            </div>
+          )}
+
+          {/* Info */}
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <p style={{
+              fontSize: 13, fontWeight: 600, color: theme.text,
+              whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
+              lineHeight: 1.2,
+            }}>
+              {user?.name?.split(' ').slice(0, 2).join(' ')}
+            </p>
+            <div style={{ marginTop: 3 }}>
+              <PlanBadge />
+            </div>
+          </div>
+
+          <ChevronRight style={{ width: 13, height: 13, color: theme.muted, flexShrink: 0 }} />
+        </button>
+      )}
+
+      {/* Collapsed: avatar only */}
+      {collapsed && (
+        <div style={{ display: 'flex', justifyContent: 'center', padding: '10px 0 4px', flexShrink: 0 }}>
+          {avatarSrc && !avatarError ? (
+            <img
+              src={avatarSrc}
+              alt={user?.name}
+              onError={() => setAvatarError(true)}
+              style={{ width: 32, height: 32, borderRadius: 8, objectFit: 'cover' }}
+            />
+          ) : (
+            <div style={{
+              width: 32, height: 32, borderRadius: 8,
+              background: `linear-gradient(135deg, ${avatarBg}, ${avatarBg}bb)`,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontSize: 12, fontWeight: 700, color: '#fff',
+            }}>
+              {user?.name?.charAt(0).toUpperCase()}
+            </div>
+          )}
         </div>
       )}
 
-      {/* Scrollable middle */}
-      <div className="flex-1 overflow-y-auto overflow-x-hidden">
+      {/* ── NAV ───────────────────────────────────────────── */}
+      <div style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden', padding: collapsed ? '8px 8px' : '8px 10px' }}>
 
-        {/* USER CARD */}
-        {user && (
-          <div style={{ padding: collapsed ? '10px 10px 12px' : '12px 12px 12px', borderBottom: `1px solid ${theme.border}` }}>
-            <button
-              onClick={() => setShowProfileModal(true)}
-              onMouseEnter={() => setCardHov(true)}
-              onMouseLeave={() => setCardHov(false)}
-              className="w-full text-left rounded-xl transition-all duration-150"
-              style={{
-                padding: collapsed ? '10px 0' : '12px',
-                display: 'flex',
-                alignItems: 'center',
-                gap: collapsed ? 0 : 12,
-                justifyContent: collapsed ? 'center' : 'flex-start',
-                backgroundColor: cardHov ? (theme.isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)') : theme.surface2,
-                border: `1px solid ${theme.border}`,
-              }}
-              title={collapsed ? user.name : undefined}
-              aria-label="Open profile"
-            >
-              <div className="flex-shrink-0 flex items-center justify-center rounded-full font-bold text-white overflow-hidden"
-                style={{ width: 40, height: 40, fontSize: 14, backgroundColor: avatarSrc ? 'transparent' : avatarColor, boxShadow: `0 0 0 2px ${theme.border}` }}>
-                {avatarSrc ? <img src={avatarSrc} alt="Avatar" className="w-full h-full object-cover" /> : initials}
-              </div>
-              {/* Text always in DOM — hides via CSS only */}
-              <div style={{
-                flex: 1, minWidth: 0, overflow: 'hidden',
-                opacity: collapsed ? 0 : 1,
-                maxWidth: collapsed ? 0 : 200,
-                transition: 'opacity 0.18s ease, max-width 0.28s ease',
-              }}>
-                <p className="text-sm font-semibold truncate leading-tight" style={{ color: theme.text }}>{user.name}</p>
-                <p className="text-xs truncate leading-tight mt-0.5" style={{ color: theme.textMuted }}>{user.email}</p>
-                <div className="mt-1.5"><PlanBadge /></div>
-              </div>
-              <ChevronRight className="w-4 h-4 flex-shrink-0"
-                style={{
-                  color: theme.textMuted,
-                  opacity: collapsed ? 0 : 0.4,
-                  maxWidth: collapsed ? 0 : 16,
-                  overflow: 'hidden',
-                  transition: 'opacity 0.18s ease, max-width 0.28s ease',
-                }} />
-            </button>
-          </div>
+        {/* Section label */}
+        {!collapsed && (
+          <p style={{
+            fontSize: 9, fontWeight: 700, color: theme.muted,
+            letterSpacing: '0.1em', textTransform: 'uppercase',
+            padding: '6px 4px 4px', marginBottom: 2,
+          }}>
+            Menu
+          </p>
         )}
 
-        {/* MENU LABEL — always in DOM, fades via CSS */}
-        <div style={{ padding: collapsed ? '10px 20px 4px' : '16px 20px 6px', overflow: 'hidden', transition: 'padding 0.28s ease' }}>
-          <span style={{
-            display: 'block', color: theme.textMuted, fontSize: 10, fontWeight: 600,
-            textTransform: 'uppercase', letterSpacing: '0.1em', whiteSpace: 'nowrap',
-            opacity: collapsed ? 0 : 1,
-            maxHeight: collapsed ? 0 : 20,
-            overflow: 'hidden',
-            transition: 'opacity 0.18s ease, max-height 0.28s ease',
-          }}>Menu</span>
-        </div>
-
-        {/* NAV ITEMS */}
-        <nav style={{ padding: collapsed ? '0 8px' : '0 10px', display: 'flex', flexDirection: 'column', gap: 2 }}>
+        {/* Nav items */}
+        <nav style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
           {NAV_ITEMS.map(item => (
-            <NavButton key={item.key} icon={item.icon} label={item.label} badge={item.badge}
+            <NavButton
+              key={item.key}
+              icon={item.icon}
+              label={item.label}
+              badge={item.badge}
               core={!!item.core}
-              active={currentView === item.key} collapsed={collapsed} onClick={() => navigate(item.key)} />
+              active={currentView === item.key}
+              collapsed={collapsed}
+              onClick={() => navigate(item.key)}
+            />
           ))}
-          {/* Settings inline in nav */}
-          <div style={{ marginTop: 6, borderTop: `1px solid ${theme.border}`, paddingTop: 6 }}>
-            <NavButton icon={Settings} label="Settings" badge={null} active={false}
-              collapsed={collapsed} onClick={() => setShowSettingsModal(true)} />
-          </div>
+        </nav>
+
+        {/* Divider */}
+        <div style={{ height: 1, background: SB_BORDER, margin: '8px 0' }} />
+
+        {/* Settings + Admin */}
+        <nav style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <NavButton
+            icon={Settings}
+            label="Settings"
+            badge={null}
+            active={false}
+            collapsed={collapsed}
+            onClick={() => setShowSettingsModal(true)}
+          />
           {user?.is_admin === 1 && (
-            <NavButton icon={Crown} label="Admin" badge={null} active={currentView === 'admin'}
-              collapsed={collapsed} accentColor="#a78bfa" onClick={() => navigate('admin')} />
+            <NavButton
+              icon={Crown}
+              label="Admin"
+              badge={null}
+              active={currentView === 'admin'}
+              collapsed={collapsed}
+              onClick={() => navigate('admin')}
+            />
           )}
         </nav>
 
-        {/* News filters -- expanded + news view only */}
+        {/* News filters */}
         {!collapsed && currentView === 'news' && (
-          <div style={{ padding: '8px 10px 16px' }}>
-            <div className="border-t pt-4" style={{ borderColor: theme.border }}>
-              <div className="flex items-center justify-between mb-3">
-                <span className="text-[10px] font-semibold uppercase tracking-widest flex items-center gap-1.5" style={{ color: theme.textMuted }}>
-                  <Filter className="w-3 h-3" /> Filters
-                </span>
-                <button onClick={onResetFilters} className="text-xs flex items-center gap-1 opacity-70 hover:opacity-100 transition-opacity" style={{ color: theme.accent }}>
-                  <X className="w-3 h-3" /> Clear
-                </button>
+          <div style={{ marginTop: 12, borderTop: `1px solid ${SB_BORDER}`, paddingTop: 12 }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
+              <span style={{ fontSize: 9, fontWeight: 700, color: theme.muted, letterSpacing: '0.1em', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: 5 }}>
+                <Filter style={{ width: 10, height: 10 }} /> Filters
+              </span>
+              <button onClick={onResetFilters} style={{ fontSize: 10, color: '#10b981', background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 3 }}>
+                <X style={{ width: 10, height: 10 }} /> Clear
+              </button>
+            </div>
+
+            <div style={{ marginBottom: 10 }}>
+              <label style={{ fontSize: 10, color: theme.muted, display: 'flex', alignItems: 'center', gap: 4, marginBottom: 6 }}>
+                <Search style={{ width: 10, height: 10 }} /> Keyword
+              </label>
+              <input
+                type="text"
+                value={filters.keyword}
+                onChange={e => onFilterChange({ keyword: e.target.value })}
+                placeholder="Search news..."
+                style={{
+                  width: '100%', padding: '7px 10px',
+                  background: theme.isDark ? '#1a1a1a' : theme.surface, border: `1px solid ${SB_BORDER}`,
+                  borderRadius: 7, fontSize: 12, color: theme.text,
+                  outline: 'none',
+                }}
+                onFocus={e => e.target.style.borderColor = '#10b981'}
+                onBlur={e => e.target.style.borderColor = SB_BORDER}
+              />
+            </div>
+
+            <div style={{ marginBottom: 10 }}>
+              <label style={{ fontSize: 10, color: theme.muted, marginBottom: 6, display: 'block' }}>Impact Level</label>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 4 }}>
+                {['All', 'High', 'Medium', 'Low'].map(level => (
+                  <button
+                    key={level}
+                    onClick={() => onFilterChange({ impactLevel: level })}
+                    style={{
+                      padding: '6px 8px', borderRadius: 6, fontSize: 11, fontWeight: 500,
+                      background: filters.impactLevel === level ? '#10b981' : theme.isDark ? '#1a1a1a' : theme.surface2,
+                      color: filters.impactLevel === level ? '#fff' : theme.muted,
+                      border: `1px solid ${filters.impactLevel === level ? '#10b981' : SB_BORDER}`,
+                      cursor: 'pointer', transition: 'all 0.15s ease',
+                    }}
+                  >
+                    {level}
+                  </button>
+                ))}
               </div>
-              <div className="mb-3">
-                <label className="text-xs mb-1.5 flex items-center gap-1" style={{ color: theme.textMuted }}>
-                  <Search className="w-3 h-3" /> Keyword
-                </label>
-                <input type="text" value={filters.keyword} onChange={e => onFilterChange({ keyword: e.target.value })}
-                  placeholder="Search news..." className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none"
-                  style={{ backgroundColor: theme.bg, borderColor: theme.border, color: theme.text }}
-                  onFocus={e => (e.target.style.borderColor = theme.accent)}
-                  onBlur={e => (e.target.style.borderColor = theme.border)} />
-              </div>
-              <div className="mb-3">
-                <label className="text-xs mb-1.5 flex items-center gap-1" style={{ color: theme.textMuted }}>
-                  <Calendar className="w-3 h-3" /> Date Range
-                </label>
-                <div className="space-y-2">
-                  {['startDate', 'endDate'].map(f => (
-                    <input key={f} type="date" value={filters[f]} onChange={e => onFilterChange({ [f]: e.target.value })}
-                      className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none"
-                      style={{ backgroundColor: theme.bg, borderColor: theme.border, color: theme.text }}
-                      onFocus={e => (e.target.style.borderColor = theme.accent)}
-                      onBlur={e => (e.target.style.borderColor = theme.border)} />
-                  ))}
-                </div>
-              </div>
-              <div className="mb-3">
-                <label className="text-xs mb-1.5 block" style={{ color: theme.textMuted }}>Impact Level</label>
-                <div className="grid grid-cols-2 gap-1">
-                  {['All', 'High', 'Medium', 'Low'].map(level => (
-                    <button key={level} onClick={() => onFilterChange({ impactLevel: level })}
-                      className="px-2 py-1.5 rounded-lg text-xs font-medium transition-all"
-                      style={{ backgroundColor: filters.impactLevel === level ? theme.accent : theme.bg, color: filters.impactLevel === level ? '#fff' : theme.textMuted, border: `1px solid ${filters.impactLevel === level ? theme.accent : theme.border}` }}>
-                      {level}
-                    </button>
-                  ))}
-                </div>
-              </div>
-              <button onClick={onApplyFilters} className="w-full px-4 py-2 text-white rounded-lg text-sm font-semibold transition-opacity hover:opacity-90"
-                style={{ backgroundColor: theme.accent }}>Apply Filters</button>
-              <div className="mt-3">
-                <p className="text-[10px] uppercase font-semibold tracking-wider mb-2" style={{ color: theme.textMuted }}>Quick Tags</p>
-                <div className="flex flex-wrap gap-1.5">
-                  {['Gold', 'Inflation', 'Fed', 'USD', 'Geopolitics'].map(tag => (
-                    <button key={tag} onClick={() => { onFilterChange({ keyword: tag }); onApplyFilters(); }}
-                      className="px-2 py-1 border rounded-full text-xs transition-all hover:scale-105"
-                      style={{ backgroundColor: theme.bg, borderColor: theme.border, color: theme.textMuted }}
-                      onMouseEnter={e => { e.currentTarget.style.borderColor = theme.accent; e.currentTarget.style.color = theme.accent; }}
-                      onMouseLeave={e => { e.currentTarget.style.borderColor = theme.border; e.currentTarget.style.color = theme.textMuted; }}>
-                      {tag}
-                    </button>
-                  ))}
-                </div>
+            </div>
+
+            <button
+              onClick={onApplyFilters}
+              style={{
+                width: '100%', padding: '8px', borderRadius: 7,
+                background: '#10b981', color: '#fff',
+                fontSize: 12, fontWeight: 600, border: 'none', cursor: 'pointer',
+              }}
+            >
+              Apply Filters
+            </button>
+
+            <div style={{ marginTop: 10 }}>
+              <p style={{ fontSize: 9, fontWeight: 700, color: theme.muted, letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 6 }}>Quick Tags</p>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5 }}>
+                {['Gold', 'Inflation', 'Fed', 'USD', 'Geopolitics'].map(tag => (
+                  <button
+                    key={tag}
+                    onClick={() => { onFilterChange({ keyword: tag }); onApplyFilters(); }}
+                    style={{
+                      padding: '3px 8px', borderRadius: 99, fontSize: 10,
+                      background: 'transparent', color: theme.muted,
+                      border: `1px solid ${SB_BORDER}`, cursor: 'pointer', transition: 'all 0.15s ease',
+                    }}
+                    onMouseEnter={e => { e.currentTarget.style.borderColor = '#10b981'; e.currentTarget.style.color = '#10b981'; }}
+                    onMouseLeave={e => { e.currentTarget.style.borderColor = SB_BORDER; e.currentTarget.style.color = theme.muted; }}
+                  >
+                    {tag}
+                  </button>
+                ))}
               </div>
             </div>
           </div>
         )}
       </div>
 
-      {/* BOTTOM SECTION — just session bar / version note when collapsed */}
-      <div className="flex-shrink-0 border-t" style={{ borderColor: theme.border, padding: collapsed ? '8px' : '6px 10px' }}>
+      {/* ── VERSION ──────────────────────────────────────── */}
+      {!collapsed && (
         <div style={{
-          overflow: 'hidden', opacity: collapsed ? 0 : 1, maxHeight: collapsed ? 0 : 40,
-          transition: 'opacity 0.18s ease, max-height 0.28s ease',
+          padding: '8px 14px',
+          borderTop: `1px solid ${SB_BORDER}`,
         }}>
-          <p style={{ fontSize: 10, color: theme.textMuted, textAlign: 'center', padding: '4px 0' }}>
-            Zynth · v1.0
+          <p style={{ fontSize: 9, color: theme.muted, textAlign: 'center', letterSpacing: '0.06em' }}>
+            ZYNTH · v1.0
           </p>
         </div>
-      </div>
+      )}
+
+      {showProfileModal && <ProfileModal onClose={() => setShowProfileModal(false)} />}
+      {showSettingsModal && (
+        <SettingsModal onClose={() => setShowSettingsModal(false)} autoRefresh={false} onToggleAutoRefresh={() => {}} />
+      )}
     </div>
   );
 }
 
+/* ── Main export ──────────────────────────────────────────────────────────── */
 export default function Sidebar({
   filters, onFilterChange, onApplyFilters, onResetFilters,
   currentView, onViewChange, mobileOpen, onClose, collapsed, onToggleCollapse,
@@ -491,21 +524,7 @@ export default function Sidebar({
   const theme = useTheme();
   return (
     <>
-      {/* Mobile sidebar */}
-      <aside
-        className={['md:hidden fixed top-0 left-0 h-full flex flex-col overflow-hidden', 'transition-transform duration-300 ease-in-out', mobileOpen ? 'translate-x-0' : '-translate-x-full'].join(' ')}
-        style={{
-          width: 280,
-          zIndex: 999,
-          backgroundColor: theme.surface,
-          borderRight: theme.isDark ? '1px solid rgba(255,255,255,0.10)' : '1px solid rgba(0,0,0,0.10)',
-          boxShadow: theme.isDark ? '4px 0 20px rgba(0,0,0,0.45)' : '4px 0 12px rgba(0,0,0,0.08)',
-        }}
-      >
-        <SidebarInner collapsed={false} isMobile onMobileClose={onClose}
-          currentView={currentView} onViewChange={onViewChange}
-          filters={filters} onFilterChange={onFilterChange} onApplyFilters={onApplyFilters} onResetFilters={onResetFilters} />
-      </aside>
+      {/* Mobile overlay */}
       {mobileOpen && (
         <div
           className="md:hidden"
@@ -513,33 +532,56 @@ export default function Sidebar({
           aria-hidden="true"
           style={{
             position: 'fixed', inset: 0,
-            background: 'rgba(0,0,0,0.6)',
-            backdropFilter: 'blur(4px)',
-            WebkitBackdropFilter: 'blur(4px)',
+            background: 'rgba(0,0,0,0.7)',
+            backdropFilter: 'blur(6px)',
+            WebkitBackdropFilter: 'blur(6px)',
             zIndex: 998,
           }}
         />
       )}
-      {/* Desktop sidebar — fixed position, width animates */}
+
+      {/* Mobile sidebar */}
       <aside
-        className="hidden md:flex flex-col overflow-hidden flex-shrink-0"
+        className="md:hidden"
         style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          height: '100vh',
-          width: collapsed ? 64 : 240,
-          transition: 'width 0.22s ease-out',
-          backgroundColor: theme.isDark ? '#141414' : theme.surface,
-          borderRight: theme.isDark ? '1px solid #2e2e2e' : `1px solid ${theme.border}`,
-          zIndex: 200,
-          willChange: 'width',
+          position: 'fixed', top: 0, left: 0, height: '100%',
+          width: 272,
+          zIndex: 999,
+          transform: mobileOpen ? 'translateX(0)' : 'translateX(-100%)',
+          transition: 'transform 0.28s cubic-bezier(0.4,0,0.2,1)',
+          borderRight: `1px solid ${theme.isDark ? '#1e1e1e' : theme.border}`,
+          boxShadow: '8px 0 32px rgba(0,0,0,0.6)',
         }}
       >
-        <SidebarInner collapsed={collapsed} onToggleCollapse={onToggleCollapse} isMobile={false}
+        <SidebarInner
+          collapsed={false} isMobile onMobileClose={onClose}
           currentView={currentView} onViewChange={onViewChange}
-          filters={filters} onFilterChange={onFilterChange} onApplyFilters={onApplyFilters} onResetFilters={onResetFilters} />
+          filters={filters} onFilterChange={onFilterChange}
+          onApplyFilters={onApplyFilters} onResetFilters={onResetFilters}
+        />
+      </aside>
+
+      {/* Desktop sidebar */}
+      <aside
+        className="hidden md:flex flex-col"
+        style={{
+          position: 'fixed', top: 0, left: 0, height: '100vh',
+          width: collapsed ? 60 : 236,
+          transition: 'width 0.22s cubic-bezier(0.4,0,0.2,1)',
+          borderRight: `1px solid ${theme.isDark ? '#1e1e1e' : theme.border}`,
+          zIndex: 200,
+          willChange: 'width',
+          overflow: 'hidden',
+        }}
+      >
+        <SidebarInner
+          collapsed={collapsed} onToggleCollapse={onToggleCollapse} isMobile={false}
+          currentView={currentView} onViewChange={onViewChange}
+          filters={filters} onFilterChange={onFilterChange}
+          onApplyFilters={onApplyFilters} onResetFilters={onResetFilters}
+        />
       </aside>
     </>
   );
 }
+

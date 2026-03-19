@@ -23,22 +23,22 @@ function NewsCard({ article }) {
   const getSentimentStyle = () => {
     switch (article.sentiment) {
       case 'Bullish':
-        return { color: '#22c55e', backgroundColor: 'rgba(34,197,94,0.1)', borderColor: '#22c55e' };
+        return { color: '#10b981', backgroundColor: 'rgba(16,185,129,0.10)', borderColor: 'rgba(16,185,129,0.25)' };
       case 'Bearish':
-        return { color: '#ef4444', backgroundColor: 'rgba(239,68,68,0.1)', borderColor: '#ef4444' };
+        return { color: '#ef4444', backgroundColor: 'rgba(239,68,68,0.10)', borderColor: 'rgba(239,68,68,0.25)' };
       default:
-        return { color: theme.muted, backgroundColor: `${theme.border}`, borderColor: theme.border };
+        return { color: theme.muted, backgroundColor: theme.bg, borderColor: theme.border };
     }
   };
 
   const getImpactStyle = () => {
     switch (article.impactLevel) {
       case 'High':
-        return { backgroundColor: '#ef4444', color: '#ffffff' };
+        return { backgroundColor: '#ef444415', color: '#ef4444', border: '1px solid #ef444430' };
       case 'Medium':
-        return { backgroundColor: '#eab308', color: '#ffffff' };
+        return { backgroundColor: '#f59e0b15', color: '#f59e0b', border: '1px solid rgba(245,158,11,0.25)' };
       default:
-        return { backgroundColor: theme.border, color: theme.muted };
+        return { backgroundColor: theme.isDark ? '#ffffff08' : 'rgba(0,0,0,0.07)', color: theme.muted, border: `1px solid ${theme.border}` };
     }
   };
 
@@ -46,28 +46,25 @@ function NewsCard({ article }) {
     window.open(article.url, '_blank', 'noopener,noreferrer');
   };
 
-  const cardBorderColor = hovered
-    ? theme.accent
-    : article.impactLevel === 'High'
-      ? theme.danger
-      : theme.border;
+  const cardBg = hovered ? theme.surface2 : theme.surface;
+  const cardBorder = theme.border;
 
   return (
     <article
-      className="rounded-lg border transition-all cursor-pointer group"
-      style={{ backgroundColor: theme.surface, borderColor: cardBorderColor }}
+      className="rounded-lg border transition-all cursor-pointer"
+      style={{ backgroundColor: cardBg, borderColor: cardBorder, borderRadius: 10, padding: 16 }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       onClick={handleCardClick}
     >
-      <div className="p-4">
+      <div>
         {/* Header with badges */}
         <div className="flex items-center gap-2 mb-3 flex-wrap">
-          <span className="text-xs px-2 py-1 rounded font-medium" style={getImpactStyle()}>
+          <span className="text-xs px-2 py-0.5 rounded-full font-semibold" style={getImpactStyle()}>
             {article.impactLevel}
           </span>
           
-          <span className="text-xs px-2 py-1 rounded border flex items-center gap-1" style={getSentimentStyle()}>
+          <span className="text-xs px-2 py-0.5 rounded-full border flex items-center gap-1 font-semibold" style={getSentimentStyle()}>
             {getSentimentIcon()}
             {article.sentiment}
           </span>
@@ -84,12 +81,12 @@ function NewsCard({ article }) {
         <div className="flex gap-4">
           {/* Text Content */}
           <div className="flex-1">
-            <h3 className="text-lg font-semibold mb-2 transition-colors line-clamp-2" style={{ color: hovered ? theme.accent : theme.text }}>
+            <h3 className="font-semibold mb-2 line-clamp-2" style={{ fontSize: 15, color: theme.text, lineHeight: 1.45 }}>
               {article.title}
             </h3>
             
             {article.description && (
-              <p className="text-sm mb-3 line-clamp-2" style={{ color: theme.muted }}>
+              <p className="mb-3" style={{ fontSize: 13, color: theme.muted, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
                 {article.description}
               </p>
             )}
@@ -99,8 +96,8 @@ function NewsCard({ article }) {
                 {article.keywords.slice(0, 3).map((keyword, index) => (
                   <span
                     key={index}
-                    className="text-xs px-2 py-1 rounded-full"
-                    style={{ backgroundColor: theme.bg, color: theme.muted }}
+                    className="text-xs px-2 py-0.5 rounded-full"
+                    style={{ backgroundColor: theme.bg, color: theme.muted, fontSize: 10 }}
                   >
                     {keyword}
                   </span>
@@ -123,13 +120,13 @@ function NewsCard({ article }) {
             {/* Ticker symbols if available */}
             {article.ticker && article.ticker.length > 0 && (
               <div className="mt-2 flex items-center gap-2">
-                <span className="text-xs" style={{ color: theme.muted }}>Tickers:</span>
+                <span style={{ fontSize: 10, color: theme.muted }}>Tickers:</span>
                 <div className="flex gap-1">
                   {article.ticker.slice(0, 4).map((ticker, index) => (
                     <span
                       key={index}
-                      className="text-xs px-2 py-1 rounded font-mono"
-                      style={{ backgroundColor: `${theme.accent}1a`, color: theme.accent }}
+                      className="font-mono"
+                      style={{ fontSize: 10, padding: '2px 6px', borderRadius: 4, backgroundColor: theme.bg, color: theme.muted }}
                     >
                       {ticker}
                     </span>
@@ -155,8 +152,8 @@ function NewsCard({ article }) {
         </div>
 
         {/* Footer */}
-        <div className="mt-3 pt-3 border-t text-xs" style={{ borderColor: theme.border, color: theme.muted }}>
-          <div className="flex items-center justify-between">
+        <div className="mt-3 pt-3 border-t" style={{ borderColor: theme.border }}>
+          <div className="flex items-center justify-between" style={{ fontSize: 11, color: theme.muted }}>
             <span>By {article.author}</span>
             <span>{formatDateWithTimezone(new Date(article.publishedAt), 'MMM dd, yyyy HH:mm')}</span>
           </div>

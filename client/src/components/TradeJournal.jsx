@@ -333,19 +333,27 @@ export default function TradeJournal() {
   };
 
   const tabBar = (
-    <div className="flex gap-1 p-1 rounded-xl mb-6 overflow-x-auto"
-      style={{ backgroundColor: theme.surface, border: `1px solid ${theme.border}` }}>
-      {TABS.map(({ key, label, icon: Icon }) => (
-        <button key={key} onClick={() => setTab(key)}
-          className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all whitespace-nowrap flex-shrink-0 justify-center"
-          style={{
-            backgroundColor: tab === key ? theme.accent : 'transparent',
-            color: tab === key ? '#fff' : theme.muted,
-          }}>
-          <Icon className="w-4 h-4" />
-          {label}
-        </button>
-      ))}
+    <div className="flex gap-1 mb-6 overflow-x-auto" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+      {TABS.map(({ key, label, icon: Icon }) => {
+        const active = tab === key;
+        return (
+          <button key={key} onClick={() => setTab(key)}
+            className="flex items-center gap-2 transition-all whitespace-nowrap flex-shrink-0"
+            style={{
+              padding: '7px 14px',
+              borderRadius: 7,
+              fontSize: '13px',
+              backgroundColor: active ? (theme.isDark ? '#1e1e1e' : theme.surface2) : 'transparent',
+              color: active ? (theme.isDark ? '#e8e8e8' : theme.text) : (theme.isDark ? '#555' : theme.muted),
+              fontWeight: active ? 500 : 400,
+              border: 'none',
+              outline: 'none',
+            }}>
+            <Icon className="w-3.5 h-3.5" />
+            {label}
+          </button>
+        );
+      })}
     </div>
   );
 

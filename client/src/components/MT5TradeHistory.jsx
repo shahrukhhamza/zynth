@@ -70,28 +70,28 @@ export default function MT5TradeHistory({ trades, onDeleteTrade, deletingTradeId
     padding: '8px 10px',
     fontSize: '11px',
     fontWeight: 600,
-    color: theme.muted,
+    color: theme.isDark ? '#4a4a4a' : theme.muted,
     textTransform: 'uppercase',
     letterSpacing: '0.05em',
     whiteSpace: 'nowrap',
     cursor: 'pointer',
     userSelect: 'none',
-    borderBottom: `1px solid ${theme.border}`,
+    borderBottom: `1px solid ${theme.isDark ? '#1e1e1e' : theme.border}`,
   };
 
   const td = (extra = {}) => ({
     padding: '8px 10px',
     fontSize: '12px',
-    color: theme.text,
+    color: theme.isDark ? '#e8e8e8' : theme.text,
     whiteSpace: 'nowrap',
-    borderBottom: `1px solid ${theme.border}40`,
+    borderBottom: theme.isDark ? '1px solid rgba(30,30,30,0.6)' : `1px solid ${theme.border}40`,
     ...extra,
   });
 
   return (
     <section>
       <div className="flex items-center justify-between mb-3">
-        <h3 className="text-sm font-semibold" style={{ color: theme.muted }}>
+        <h3 className="text-sm font-semibold" style={{ color: theme.isDark ? '#4a4a4a' : theme.muted }}>
           TRADE HISTORY&nbsp;
           <span style={{ color: theme.accent }}>({filtered.length})</span>
         </h3>
@@ -99,26 +99,26 @@ export default function MT5TradeHistory({ trades, onDeleteTrade, deletingTradeId
         {/* Search */}
         <div
           className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm"
-          style={{ backgroundColor: theme.surface, border: `1px solid ${theme.border}` }}
+          style={{ background: theme.isDark ? '#111111' : theme.surface, border: `1px solid ${theme.isDark ? '#1e1e1e' : theme.border}` }}
         >
-          <Search className="w-3.5 h-3.5" style={{ color: theme.muted }} />
+          <Search className="w-3.5 h-3.5" style={{ color: theme.isDark ? '#4a4a4a' : theme.muted }} />
           <input
             value={query}
             onChange={(e) => { setQuery(e.target.value); setPage(1); }}
             placeholder="Filter symbol / ticket…"
             className="bg-transparent outline-none text-xs w-36"
-            style={{ color: theme.text }}
+            style={{ color: theme.isDark ? '#e8e8e8' : theme.text }}
           />
         </div>
       </div>
 
       <div
         className="rounded-xl overflow-hidden"
-        style={{ border: `1px solid ${theme.border}` }}
+        style={{ border: `1px solid ${theme.isDark ? '#1e1e1e' : theme.border}` }}
       >
         <div className="overflow-x-auto">
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-            <thead style={{ backgroundColor: theme.surface }}>
+            <thead style={{ background: theme.isDark ? '#0d0d0d' : theme.surface }}>
               <tr>
                 {columns.map((col) => (
                   <th
@@ -138,24 +138,30 @@ export default function MT5TradeHistory({ trades, onDeleteTrade, deletingTradeId
               {pageRows.length === 0 ? (
                 <tr>
                   <td colSpan={columns.length} style={{ ...td(), textAlign: 'center', padding: '24px' }}>
-                    <span style={{ color: theme.muted }}>No trades found.</span>
+                    <span style={{ color: theme.isDark ? '#4a4a4a' : theme.muted }}>No trades found.</span>
                   </td>
                 </tr>
               ) : (
                 pageRows.map((t, i) => {
                   const profit = t.profit ?? 0;
-                  const profitColor = profit > 0 ? theme.success : profit < 0 ? theme.danger : theme.muted;
-                  const rowBg = i % 2 === 0 ? 'transparent' : `${theme.surface}80`;
+                  const profitColor = profit > 0 ? '#10b981' : profit < 0 ? '#ef4444' : (theme.isDark ? '#4a4a4a' : theme.muted);
+                  const rowBg = i % 2 === 0 ? (theme.isDark ? '#111111' : theme.surface) : (theme.isDark ? '#0d0d0d' : theme.bg);
+                  const rowHover = theme.isDark ? '#161616' : theme.surface2;
                   return (
-                    <tr key={t.ticket ?? i} style={{ backgroundColor: rowBg }}>
-                      <td style={td({ color: theme.muted })}>{t.ticket}</td>
+                    <tr
+                      key={t.ticket ?? i}
+                      style={{ backgroundColor: rowBg }}
+                      onMouseEnter={e => { e.currentTarget.style.backgroundColor = rowHover; }}
+                      onMouseLeave={e => { e.currentTarget.style.backgroundColor = rowBg; }}
+                    >
+                      <td style={td({ color: theme.isDark ? '#4a4a4a' : theme.muted })}>{t.ticket}</td>
                       <td style={td({ fontWeight: 600 })}>{t.symbol}</td>
                       <td style={{ ...td({ textAlign: 'center' }) }}>
                         <span
                           className="px-2 py-0.5 rounded-full text-xs font-semibold"
                           style={{
-                            backgroundColor: t.type === 'BUY' ? `${theme.success}20` : `${theme.danger}20`,
-                            color: t.type === 'BUY' ? theme.success : theme.danger,
+                            backgroundColor: t.type === 'BUY' ? 'rgba(16,185,129,0.15)' : 'rgba(239,68,68,0.15)',
+                            color: t.type === 'BUY' ? '#10b981' : '#ef4444',
                           }}
                         >
                           {t.type}
@@ -167,11 +173,11 @@ export default function MT5TradeHistory({ trades, onDeleteTrade, deletingTradeId
                       <td style={td({ textAlign: 'right', color: profitColor, fontWeight: 600 })}>
                         {profit >= 0 ? '+' : ''}{profit.toFixed(2)}
                       </td>
-                      <td style={td({ textAlign: 'right', color: theme.muted })}>{t.swap?.toFixed(2)}</td>
-                      <td style={td({ textAlign: 'right', color: theme.muted })}>{t.commission?.toFixed(2)}</td>
+                      <td style={td({ textAlign: 'right', color: theme.isDark ? '#4a4a4a' : theme.muted })}>{t.swap?.toFixed(2)}</td>
+                      <td style={td({ textAlign: 'right', color: theme.isDark ? '#4a4a4a' : theme.muted })}>{t.commission?.toFixed(2)}</td>
                       <td style={td()}>{formatDateWithTimezone(new Date(t.open_time), 'MMM dd, yyyy HH:mm')}</td>
                       <td style={td()}>{formatDateWithTimezone(new Date(t.close_time), 'MMM dd, yyyy HH:mm')}</td>
-                      <td style={td({ textAlign: 'right', color: theme.muted })}>{t.duration}</td>
+                      <td style={td({ textAlign: 'right', color: theme.isDark ? '#4a4a4a' : theme.muted })}>{t.duration}</td>
                       {onDeleteTrade && (
                         <td style={td({ textAlign: 'center', padding: '4px 8px' })}>
                           <button
@@ -181,7 +187,7 @@ export default function MT5TradeHistory({ trades, onDeleteTrade, deletingTradeId
                             style={{
                               background: 'none', border: 'none', cursor: deletingTradeId === t.id ? 'not-allowed' : 'pointer',
                               padding: '4px', borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center',
-                              color: deletingTradeId === t.id ? theme.muted : 'rgba(239,68,68,0.6)',
+                              color: deletingTradeId === t.id ? (theme.isDark ? '#4a4a4a' : theme.muted) : 'rgba(239,68,68,0.6)',
                               transition: 'color 0.15s',
                             }}
                             onMouseEnter={e => { if (deletingTradeId !== t.id) e.currentTarget.style.color = '#ef4444'; }}
@@ -205,9 +211,9 @@ export default function MT5TradeHistory({ trades, onDeleteTrade, deletingTradeId
         {totalPages > 1 && (
           <div
             className="flex items-center justify-between px-4 py-2"
-            style={{ borderTop: `1px solid ${theme.border}`, backgroundColor: theme.surface }}
+            style={{ borderTop: `1px solid ${theme.isDark ? '#1e1e1e' : theme.border}`, background: theme.isDark ? '#0d0d0d' : theme.surface }}
           >
-            <span className="text-xs" style={{ color: theme.muted }}>
+            <span className="text-xs" style={{ color: theme.isDark ? '#4a4a4a' : theme.muted }}>
               Page {page} of {totalPages} · {filtered.length} trades
             </span>
             <div className="flex gap-2">
@@ -216,9 +222,9 @@ export default function MT5TradeHistory({ trades, onDeleteTrade, deletingTradeId
                 disabled={page === 1}
                 className="px-3 py-1 rounded text-xs"
                 style={{
-                  backgroundColor: theme.bg,
-                  border: `1px solid ${theme.border}`,
-                  color: page === 1 ? theme.muted : theme.text,
+                  background: theme.isDark ? '#111111' : theme.surface,
+                  border: `1px solid ${theme.isDark ? '#1e1e1e' : theme.border}`,
+                  color: page === 1 ? (theme.isDark ? '#4a4a4a' : theme.muted) : (theme.isDark ? '#e8e8e8' : theme.text),
                   cursor: page === 1 ? 'not-allowed' : 'pointer',
                 }}
               >
@@ -229,9 +235,9 @@ export default function MT5TradeHistory({ trades, onDeleteTrade, deletingTradeId
                 disabled={page === totalPages}
                 className="px-3 py-1 rounded text-xs"
                 style={{
-                  backgroundColor: theme.bg,
-                  border: `1px solid ${theme.border}`,
-                  color: page === totalPages ? theme.muted : theme.text,
+                  background: theme.isDark ? '#111111' : theme.surface,
+                  border: `1px solid ${theme.isDark ? '#1e1e1e' : theme.border}`,
+                  color: page === totalPages ? (theme.isDark ? '#4a4a4a' : theme.muted) : (theme.isDark ? '#e8e8e8' : theme.text),
                   cursor: page === totalPages ? 'not-allowed' : 'pointer',
                 }}
               >

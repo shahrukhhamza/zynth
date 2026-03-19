@@ -325,47 +325,43 @@ export default function ScreenshotImportDashboard() {
 
           {/* Summary pills */}
           {hasData && analysis && (
-            <div className="flex items-center gap-3 flex-wrap">
-              <Pill
-                label="Win Rate"
-                value={`${analysis.win_rate ?? 0}%`}
-                color={
-                  (analysis.win_rate ?? 0) >= 50
-                    ? theme.success
-                    : theme.danger
-                }
-                theme={theme}
-              />
-              <Pill
-                label="Total P&L"
-                value={`${(analysis.total_profit ?? 0) >= 0 ? '+' : ''}${(analysis.total_profit ?? 0).toFixed(2)}`}
-                color={
-                  (analysis.total_profit ?? 0) >= 0
-                    ? theme.success
-                    : theme.danger
-                }
-                theme={theme}
-              />
-              {analysis.profit_factor != null && (
+            <div className="flex items-center gap-2 flex-wrap">
+              {/* Inline stats bar */}
+              <div style={{
+                display: 'flex', alignItems: 'stretch',
+                background: theme.isDark ? '#111111' : theme.surface,
+                border: `1px solid ${theme.isDark ? '#1e1e1e' : theme.border}`,
+                borderRadius: 10,
+                overflow: 'hidden',
+              }}>
                 <Pill
-                  label="PF"
-                  value={analysis.profit_factor}
-                  color={
-                    analysis.profit_factor >= 1.5
-                      ? theme.success
-                      : analysis.profit_factor >= 1
-                      ? theme.warning
-                      : theme.danger
-                  }
-                  theme={theme}
+                  label="Win Rate"
+                  value={`${analysis.win_rate ?? 0}%`}
+                  color={(analysis.win_rate ?? 0) >= 50 ? '#10b981' : '#ef4444'}
                 />
-              )}
+                <div style={{ width: 1, background: theme.isDark ? '#1e1e1e' : theme.border, alignSelf: 'stretch' }} />
+                <Pill
+                  label="Total P&L"
+                  value={`${(analysis.total_profit ?? 0) >= 0 ? '+' : ''}${(analysis.total_profit ?? 0).toFixed(2)}`}
+                  color={(analysis.total_profit ?? 0) >= 0 ? '#10b981' : '#ef4444'}
+                />
+                {analysis.profit_factor != null && (
+                  <>
+                    <div style={{ width: 1, background: theme.isDark ? '#1e1e1e' : theme.border, alignSelf: 'stretch' }} />
+                    <Pill
+                      label="PF"
+                      value={analysis.profit_factor}
+                      color={analysis.profit_factor >= 1.5 ? '#10b981' : analysis.profit_factor >= 1 ? '#f59e0b' : '#ef4444'}
+                    />
+                  </>
+                )}
+              </div>
 
-              {/* Refresh */}
+              {/* Action buttons */}
               <button
                 onClick={loadExisting}
                 className="p-1.5 rounded-lg transition-colors"
-                style={{ color: theme.muted }}
+                style={{ color: theme.isDark ? '#4a4a4a' : theme.muted, background: theme.isDark ? '#111111' : theme.surface, border: `1px solid ${theme.isDark ? '#1e1e1e' : theme.border}`, borderRadius: 8 }}
                 title="Refresh data"
               >
                 <RefreshCw className="w-4 h-4" />
@@ -374,7 +370,7 @@ export default function ScreenshotImportDashboard() {
                 onClick={handleDeleteReport}
                 disabled={deleting}
                 className="p-1.5 rounded-lg transition-colors"
-                style={{ color: deleting ? theme.muted : '#ef4444' }}
+                style={{ color: deleting ? (theme.isDark ? '#4a4a4a' : theme.muted) : '#ef4444', background: theme.isDark ? '#111111' : theme.surface, border: `1px solid ${theme.isDark ? '#1e1e1e' : theme.border}`, borderRadius: 8 }}
                 title="Delete screenshot analysis data"
               >
                 {deleting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
@@ -392,10 +388,14 @@ export default function ScreenshotImportDashboard() {
                 <button
                   key={id}
                   onClick={() => setActiveTab(id)}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all flex-shrink-0"
+                  className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium transition-all flex-shrink-0"
                   style={{
-                    backgroundColor: active ? `${theme.accent}20` : 'transparent',
-                    color:           active ? theme.accent : theme.muted,
+                    borderRadius: 8,
+                    backgroundColor: active ? (theme.isDark ? '#1e1e1e' : theme.surface2) : 'transparent',
+                    color: active ? theme.accent : (theme.isDark ? '#4a4a4a' : theme.muted),
+                    border: 'none',
+                    borderBottom: active ? `2px solid ${theme.accent}` : '2px solid transparent',
+                    outline: 'none',
                   }}
                 >
                   <Icon className="w-3.5 h-3.5" />
@@ -593,15 +593,13 @@ function ScreenshotBatchList({ batches, onDeleteBatch, deletingBatchId, theme })
   );
 }
 
-// ── Small summary pill ─────────────────────────────────────────────────────
-function Pill({ label, value, color, theme }) {
+// ── Small inline stat (used in summary bar) ──────────────────────────────
+function Pill({ label, value, color }) {
+  const theme = useTheme();
   return (
-    <div
-      className="flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-medium"
-      style={{ backgroundColor: `${color}15`, color }}
-    >
-      <span style={{ color: theme.muted }}>{label}</span>
-      <span className="font-bold">{value}</span>
+    <div style={{ padding: '7px 14px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
+      <span style={{ fontSize: 10, textTransform: 'uppercase', color: theme.isDark ? '#4a4a4a' : theme.muted, letterSpacing: '0.08em', lineHeight: 1 }}>{label}</span>
+      <span style={{ fontSize: 14, fontWeight: 700, color, lineHeight: 1.3 }}>{value}</span>
     </div>
   );
 }

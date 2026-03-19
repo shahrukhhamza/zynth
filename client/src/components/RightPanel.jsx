@@ -20,85 +20,85 @@ function RightPanel({ sentimentStats, highImpactNews, totalNews }) {
   const getSentimentStyle = (sentiment) => {
     switch (sentiment) {
       case 'Bullish':
-        return { color: '#22c55e', backgroundColor: 'rgba(34,197,94,0.1)', borderColor: '#22c55e' };
+        return { color: '#10b981', backgroundColor: 'rgba(16,185,129,0.10)', borderColor: 'rgba(16,185,129,0.25)' };
       case 'Bearish':
-        return { color: '#ef4444', backgroundColor: 'rgba(239,68,68,0.1)', borderColor: '#ef4444' };
+        return { color: '#ef4444', backgroundColor: 'rgba(239,68,68,0.10)', borderColor: 'rgba(239,68,68,0.25)' };
       default:
-        return { color: theme.muted, backgroundColor: theme.border, borderColor: theme.border };
+        return { color: theme.muted, backgroundColor: theme.bg, borderColor: theme.border };
     }
   };
 
   const getImpactStyle = (level) => {
     switch (level) {
       case 'High':
-        return { backgroundColor: '#ef4444', color: '#ffffff' };
+        return { backgroundColor: '#ef444415', color: '#ef4444', border: '1px solid #ef444430' };
       case 'Medium':
-        return { backgroundColor: '#eab308', color: '#ffffff' };
+        return { backgroundColor: '#f59e0b15', color: '#f59e0b', border: '1px solid rgba(245,158,11,0.25)' };
       default:
-        return { backgroundColor: theme.border, color: theme.muted };
+        return { backgroundColor: theme.isDark ? '#ffffff08' : 'rgba(0,0,0,0.07)', color: theme.muted, border: `1px solid ${theme.border}` };
     }
   };
 
   return (
-    <aside className="hidden md:block w-80 border-l overflow-y-auto" style={{ backgroundColor: theme.surface, borderColor: theme.border }}>
+    <aside className="hidden md:block w-80 border-l overflow-y-auto" style={{ backgroundColor: theme.bg, borderColor: theme.border }}>
       <div className="p-4">
         {/* Market Sentiment */}
         <div className="mb-6">
-          <h2 className="text-xs font-semibold uppercase mb-3 flex items-center gap-2" style={{ color: theme.muted }}>
-            <TrendingUp className="w-4 h-4" />
+          <h2 className="text-xs font-semibold uppercase mb-3 flex items-center gap-2" style={{ color: theme.muted, letterSpacing: '0.08em' }}>
+            <TrendingUp className="w-3.5 h-3.5" />
             Market Sentiment
           </h2>
           
-          <div className="rounded-lg p-4 border" style={{ backgroundColor: theme.bg, borderColor: theme.border }}>
-            <div className="flex items-center justify-between mb-4">
-              <span className="text-sm" style={{ color: theme.muted }}>Total Articles</span>
-              <span className="text-2xl font-bold" style={{ color: theme.accent }}>{totalNews}</span>
+          <div className="rounded-xl p-4" style={{ backgroundColor: theme.surface, border: `1px solid ${theme.border}` }}>
+            <div className="flex items-center justify-between mb-5">
+              <span style={{ fontSize: 11, color: theme.muted, textTransform: 'uppercase', letterSpacing: '0.06em' }}>Total Articles</span>
+              <span style={{ fontSize: 26, fontWeight: 800, color: theme.text, fontVariantNumeric: 'tabular-nums' }}>{totalNews}</span>
             </div>
 
-            <div className="space-y-3">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
               {/* Bullish */}
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-lg bg-terminal-bullish/10 flex items-center justify-center">
-                    <TrendingUp className="w-4 h-4 text-terminal-bullish" />
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <div style={{ width: 28, height: 28, borderRadius: 7, backgroundColor: 'rgba(16,185,129,0.10)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <TrendingUp className="w-3.5 h-3.5" style={{ color: '#10b981' }} />
                   </div>
-                  <span className="text-sm" style={{ color: theme.text }}>Bullish</span>
+                  <span style={{ fontSize: 13, color: theme.text }}>Bullish</span>
                 </div>
-                <div className="text-right">
-                  <div className="text-lg font-bold text-terminal-bullish">{sentimentStats.bullish}</div>
-                  <div className="text-xs" style={{ color: theme.muted }}>
+                <div style={{ textAlign: 'right' }}>
+                  <div style={{ fontSize: 22, fontWeight: 700, color: '#10b981', lineHeight: 1, fontVariantNumeric: 'tabular-nums' }}>{sentimentStats.bullish}</div>
+                  <div style={{ fontSize: 10, color: theme.muted, marginTop: 1 }}>
                     {totalNews > 0 ? Math.round((sentimentStats.bullish / totalNews) * 100) : 0}%
                   </div>
                 </div>
               </div>
 
-              {/* Bearish */}
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-lg bg-terminal-bearish/10 flex items-center justify-center">
-                    <TrendingDown className="w-4 h-4 text-terminal-bearish" />
+              {/* Bearish */}}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <div style={{ width: 28, height: 28, borderRadius: 7, backgroundColor: 'rgba(239,68,68,0.10)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <TrendingDown className="w-3.5 h-3.5" style={{ color: '#ef4444' }} />
                   </div>
-                  <span className="text-sm" style={{ color: theme.text }}>Bearish</span>
+                  <span style={{ fontSize: 13, color: theme.text }}>Bearish</span>
                 </div>
-                <div className="text-right">
-                  <div className="text-lg font-bold text-terminal-bearish">{sentimentStats.bearish}</div>
-                  <div className="text-xs" style={{ color: theme.muted }}>
+                <div style={{ textAlign: 'right' }}>
+                  <div style={{ fontSize: 22, fontWeight: 700, color: '#ef4444', lineHeight: 1, fontVariantNumeric: 'tabular-nums' }}>{sentimentStats.bearish}</div>
+                  <div style={{ fontSize: 10, color: theme.muted, marginTop: 1 }}>
                     {totalNews > 0 ? Math.round((sentimentStats.bearish / totalNews) * 100) : 0}%
                   </div>
                 </div>
               </div>
 
-              {/* Neutral */}
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-lg bg-terminal-neutral/10 flex items-center justify-center">
-                    <Minus className="w-4 h-4 text-terminal-neutral" />
+              {/* Neutral */}}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <div style={{ width: 28, height: 28, borderRadius: 7, backgroundColor: theme.bg, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Minus className="w-3.5 h-3.5" style={{ color: theme.muted }} />
                   </div>
-                  <span className="text-sm" style={{ color: theme.text }}>Neutral</span>
+                  <span style={{ fontSize: 13, color: theme.text }}>Neutral</span>
                 </div>
-                <div className="text-right">
-                  <div className="text-lg font-bold text-terminal-neutral">{sentimentStats.neutral}</div>
-                  <div className="text-xs" style={{ color: theme.muted }}>
+                <div style={{ textAlign: 'right' }}>
+                  <div style={{ fontSize: 22, fontWeight: 700, color: theme.muted, lineHeight: 1, fontVariantNumeric: 'tabular-nums' }}>{sentimentStats.neutral}</div>
+                  <div style={{ fontSize: 10, color: theme.muted, marginTop: 1 }}>
                     {totalNews > 0 ? Math.round((sentimentStats.neutral / totalNews) * 100) : 0}%
                   </div>
                 </div>
@@ -109,54 +109,58 @@ function RightPanel({ sentimentStats, highImpactNews, totalNews }) {
 
         {/* High Impact Alerts */}
         <div>
-          <h2 className="text-xs font-semibold uppercase mb-3 flex items-center gap-2" style={{ color: theme.muted }}>
-            <AlertTriangle className="w-4 h-4" />
+          <h2 className="text-xs font-semibold uppercase mb-3 flex items-center gap-2" style={{ color: theme.muted, letterSpacing: '0.08em' }}>
+            <AlertTriangle className="w-3.5 h-3.5" />
             High Impact Alerts
           </h2>
 
           {highImpactNews.length === 0 ? (
-            <div className="rounded-lg p-4 border text-center" style={{ backgroundColor: theme.bg, borderColor: theme.border }}>
-              <Newspaper className="w-8 h-8 mx-auto mb-2" style={{ color: theme.muted }} />
-              <p className="text-sm" style={{ color: theme.muted }}>No high impact news at the moment</p>
+            <div className="rounded-xl p-4 text-center" style={{ backgroundColor: theme.surface, border: `1px solid ${theme.border}` }}>
+              <Newspaper className="w-7 h-7 mx-auto mb-2" style={{ color: theme.muted }} />
+              <p style={{ fontSize: 12, color: theme.muted }}>No high impact news at the moment</p>
             </div>
           ) : (
-            <div className="space-y-3">
-              {highImpactNews.map((article) => (
-                <div
-                  key={article.id}
-                  className="rounded-lg p-3 border transition-colors cursor-pointer"
-                  style={{ backgroundColor: theme.bg, borderColor: theme.danger }}
-                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = theme.surface}
-                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = theme.bg}
-                >
-                  <div className="flex items-start gap-2 mb-2">
-                    <span className="text-xs px-2 py-1 rounded" style={getImpactStyle(article.impactLevel)}>
-                      {article.impactLevel}
-                    </span>
-                    <span className="text-xs px-2 py-1 rounded border" style={getSentimentStyle(article.sentiment)}>
-                      {article.sentiment}
-                    </span>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              {highImpactNews.map((article) => {
+                const leftBorder = article.impactLevel === 'High' ? '#ef4444' : article.impactLevel === 'Medium' ? '#f59e0b' : theme.border;
+                return (
+                  <div
+                    key={article.id}
+                    className="rounded-lg transition-colors cursor-pointer"
+                    style={{ backgroundColor: theme.surface, border: `1px solid ${theme.border}`, borderLeft: `3px solid ${leftBorder}`, padding: '10px 12px' }}
+                    onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = theme.surface2; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = theme.surface; }}
+                    onClick={() => window.open(article.url, '_blank', 'noopener,noreferrer')}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6 }}>
+                      <span style={{ fontSize: 10, padding: '2px 7px', borderRadius: 999, fontWeight: 700, ...getImpactStyle(article.impactLevel) }}>
+                        {article.impactLevel}
+                      </span>
+                      <span style={{ fontSize: 10, padding: '2px 7px', borderRadius: 999, fontWeight: 600, border: '1px solid', ...getSentimentStyle(article.sentiment) }}>
+                        {article.sentiment}
+                      </span>
+                    </div>
+                    
+                    <h3 style={{ fontSize: 12, fontWeight: 600, color: theme.text, lineHeight: 1.45, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', marginBottom: 6 }}>{article.title}</h3>
+                    
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: 10, color: theme.muted }}>
+                      <span>{article.source}</span>
+                      <span>{formatDateWithTimezone(new Date(article.publishedAt), 'HH:mm')}</span>
+                    </div>
                   </div>
-                  
-                  <h3 className="text-sm font-medium mb-2 line-clamp-2" style={{ color: theme.text }}>{article.title}</h3>
-                  
-                  <div className="flex items-center justify-between text-xs" style={{ color: theme.muted }}>
-                    <span>{article.source}</span>
-                    <span>{formatDateWithTimezone(new Date(article.publishedAt), 'HH:mm')}</span>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>
 
         {/* Gold Focus Indicator */}
-        <div className="mt-6 bg-gradient-to-r from-yellow-600/20 to-yellow-500/20 border border-yellow-600/30 rounded-lg p-4">
-          <div className="flex items-center gap-2 mb-2">
-            <div className="w-3 h-3 bg-yellow-500 rounded-full animate-pulse"></div>
-            <span className="text-sm font-semibold text-yellow-500">Gold Focus</span>
+        <div style={{ marginTop: 20, backgroundColor: theme.surface, border: `1px solid ${theme.border}`, borderLeft: '3px solid #f59e0b', borderRadius: 10, padding: '12px 14px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 5 }}>
+            <div style={{ width: 7, height: 7, borderRadius: '50%', backgroundColor: '#f59e0b', animation: 'pulse 1.5s infinite' }} />
+            <span style={{ fontSize: 12, fontWeight: 600, color: '#f59e0b' }}>Gold Focus</span>
           </div>
-          <p className="text-xs" style={{ color: theme.muted }}>
+          <p style={{ fontSize: 11, color: theme.muted, lineHeight: 1.5 }}>
             Tracking XAUUSD, precious metals, and macro-economic indicators
           </p>
         </div>

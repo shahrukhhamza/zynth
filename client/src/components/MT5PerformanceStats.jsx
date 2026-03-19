@@ -118,27 +118,39 @@ function AccountModal({ open, onClose, account, onChange }) {
 
 function StatCard({ icon: Icon, label, value, subValue, color, badge }) {
   const theme = useTheme();
+  const [hovered, setHovered] = useState(false);
   return (
     <div
-      className="rounded-xl p-4 flex items-start gap-3"
-      style={{ backgroundColor: theme.surface, border: `1px solid ${theme.border}` }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        background: theme.isDark ? '#111111' : theme.surface,
+        border: `1px solid ${theme.isDark ? (hovered ? '#2a2a2a' : '#1e1e1e') : theme.border}`,
+        borderRadius: 10,
+        padding: '14px 16px',
+        display: 'flex',
+        alignItems: 'flex-start',
+        gap: 12,
+        transition: 'border-color 0.15s',
+        cursor: 'default',
+      }}
     >
-      <div
-        className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0"
-        style={{ backgroundColor: `${color}18` }}
-      >
-        <Icon className="w-4 h-4" style={{ color }} />
+      <div style={{
+        width: 36, height: 36, borderRadius: 8,
+        background: theme.isDark ? '#1a1a1a' : theme.surface2,
+        display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+      }}>
+        <Icon style={{ width: 16, height: 16, color }} />
       </div>
-      <div className="min-w-0 flex-1">
-        <div className="flex items-center gap-1.5 mb-0.5">
-          <p className="text-xs truncate" style={{ color: theme.muted }}>{label}</p>
+      <div style={{ minWidth: 0, flex: 1 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
+          <p className="truncate" style={{ fontSize: 10, textTransform: 'uppercase', color: theme.isDark ? '#4a4a4a' : theme.muted, letterSpacing: '0.08em', margin: 0 }}>{label}</p>
           {badge && (
-            <span className="text-[9px] font-bold px-1 py-0.5 rounded shrink-0"
-              style={{ backgroundColor: `${color}25`, color }}>{badge}</span>
+            <span style={{ fontSize: 9, fontWeight: 700, padding: '1px 5px', borderRadius: 4, backgroundColor: `${color}25`, color, flexShrink: 0 }}>{badge}</span>
           )}
         </div>
-        <p className="text-lg font-bold leading-tight" style={{ color: theme.text }}>{value ?? '—'}</p>
-        {subValue && <p className="text-xs mt-0.5" style={{ color: theme.muted }}>{subValue}</p>}
+        <p style={{ fontSize: 22, fontWeight: 700, color, lineHeight: 1.1, margin: 0 }}>{value ?? '—'}</p>
+        {subValue && <p style={{ fontSize: 11, marginTop: 3, color: theme.isDark ? '#4a4a4a' : theme.muted }}>{subValue}</p>}
       </div>
     </div>
   );
@@ -235,15 +247,15 @@ export default function MT5PerformanceStats({ analysis }) {
   return (
     <section>
       <div className="flex items-center justify-between mb-3">
-        <h3 className="text-sm font-semibold uppercase tracking-wide" style={{ color: theme.muted }}>Performance Statistics</h3>
+        <h3 className="text-sm font-semibold uppercase tracking-wide" style={{ color: theme.isDark ? '#4a4a4a' : theme.muted }}>Performance Statistics</h3>
         <button onClick={() => setModalOpen(true)}
           className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg hover:opacity-80 transition-opacity"
-          style={{ backgroundColor: `${theme.accent}18`, color: theme.accent, border: `1px solid ${theme.accent}30` }}>
+          style={{ background: 'rgba(16,185,129,0.1)', color: '#10b981', border: '1px solid rgba(16,185,129,0.2)' }}>
           <Settings2 className="w-3.5 h-3.5" />
           {deposit || balance ? 'Account Settings' : 'Set Balance / Deposit'}
         </button>
       </div>
-      <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         {stats.map((s) => <StatCard key={s.label} {...s} />)}
       </div>
       <AccountModal open={modalOpen} onClose={() => setModalOpen(false)}

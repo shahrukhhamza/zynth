@@ -1,6 +1,6 @@
-import { Activity, BarChart3, Sun, Moon, Globe, LogOut, ChevronDown, User, Settings, Shield, Menu, X, ChevronRight } from 'lucide-react';
+import { Sun, Moon, Globe, LogOut, ChevronDown, User, Settings, Shield, Menu, X, ChevronRight, Bell } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
-import { useTimezone, TIMEZONES } from '../contexts/TimezoneContext';
+import { useTimezone } from '../contexts/TimezoneContext';
 import { useAuth } from '../contexts/AuthContext';
 import { useState, useRef, useEffect } from 'react';
 import ProfileModal from './ProfileModal';
@@ -28,7 +28,22 @@ const VIEW_LABELS = {
   admin:        'Admin',
 };
 
-function Header({ autoRefresh, onToggleAutoRefresh, onToggleSidebar, mobileSidebarOpen, sidebarCollapsed = false, onExpandSidebar, currentView, isMobile = false }) {
+const VIEW_SUBTITLES = {
+  data:         'Market overview & intelligence',
+  journal:      'Track, analyse, improve',
+  intelligence: 'Macroeconomic AI signals',
+  markets:      'Live prices & correlations',
+  calendar:     'Economic events & surprises',
+  news:         'Real-time financial news',
+  screenshot:   'AI-powered trade analysis',
+  admin:        'Platform administration',
+};
+
+function Header({
+  autoRefresh, onToggleAutoRefresh, onToggleSidebar,
+  mobileSidebarOpen, sidebarCollapsed = false, onExpandSidebar,
+  currentView, isMobile = false,
+}) {
   const theme = useTheme();
   const { selectedTimezone, changeTimezone, getTimezoneInfo, timezones } = useTimezone();
   const { user, logout } = useAuth();
@@ -37,405 +52,404 @@ function Header({ autoRefresh, onToggleAutoRefresh, onToggleSidebar, mobileSideb
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
   const [avatarError, setAvatarError] = useState(false);
-  const avatarBg = AVATAR_COLOR_MAP[user?.avatar_color] ?? '#10b981';
+
+  const avatarBg  = AVATAR_COLOR_MAP[user?.avatar_color] ?? '#10b981';
   const avatarSrc = user?.avatar_url ? resolveMediaUrl(user.avatar_url) : (user?.avatar ?? null);
   const dropdownRef = useRef(null);
   const userMenuRef = useRef(null);
 
-  // Close dropdown when clicking outside
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setShowTimezoneDropdown(false);
-      }
-      if (userMenuRef.current && !userMenuRef.current.contains(event.target)) {
-        setShowUserMenu(false);
-      }
+    const handleClickOutside = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) setShowTimezoneDropdown(false);
+      if (userMenuRef.current && !userMenuRef.current.contains(e.target)) setShowUserMenu(false);
     };
-
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   const currentTz = getTimezoneInfo();
 
+  // Header always dark — premium feel
+  const H_BG     = theme.isDark ? '#0d0d0d' : theme.surface;
+  const H_BORDER = theme.isDark ? '#1e1e1e' : theme.border;
+  const H_TEXT   = theme.isDark ? '#d8d8d8' : theme.text;
+  const H_MUTED  = theme.isDark ? '#4a4a4a' : theme.textMuted;
+
+  const sidebarW = isMobile ? 0 : (sidebarCollapsed ? 60 : 236);
+
   return (
-  <>
-    <header
-      className="border-b flex items-center justify-between"
-      style={{ 
-        position: 'fixed',
-        top: 0,
-        left: isMobile ? 0 : (sidebarCollapsed ? 64 : 240),
-        width: isMobile ? '100vw' : (sidebarCollapsed ? 'calc(100vw - 64px)' : 'calc(100vw - 240px)'),
-        height: isMobile ? 56 : 64,
-        padding: isMobile ? '0 16px' : '0 24px',
-        transition: 'left 0.3s ease, width 0.3s ease',
-        zIndex: 100,
-        backgroundColor: theme.surface, 
-        borderColor: theme.border,
-      }}
-    >
-      <div className="flex items-center gap-3">
-        {/* Mobile: hamburger + logo + wordmark */}
-        {isMobile ? (
-          <div style={{ display: 'flex', alignItems: 'center', gap: 0 }}>
-            <button
-              onClick={onToggleSidebar}
-              style={{
-                width: 36, height: 36,
-                background: 'rgba(255,255,255,0.06)',
-                borderRadius: 8,
-                border: 'none',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                cursor: 'pointer',
-                marginRight: 10,
-                color: theme.muted,
-                flexShrink: 0,
-              }}
-              aria-label="Toggle navigation"
-            >
-              {mobileSidebarOpen
-                ? <X style={{ width: 18, height: 18 }} />
-                : <Menu style={{ width: 18, height: 18 }} />}
-            </button>
-            {/* Logo */}
-            <div style={{
-              width: 28, height: 28,
-              backgroundColor: '#10b981',
-              borderRadius: 7,
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              flexShrink: 0,
-              overflow: 'hidden',
-            }}>
-              <img src="/logo.png" alt="Zynth" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+    <>
+      <header
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: isMobile ? 0 : (sidebarCollapsed ? 60 : 236),
+          width: isMobile ? '100vw' : (sidebarCollapsed ? 'calc(100vw - 60px)' : 'calc(100vw - 236px)'),
+          height: isMobile ? 56 : 60,
+          padding: isMobile ? '0 14px' : '0 24px',
+          transition: 'left 0.22s cubic-bezier(0.4,0,0.2,1), width 0.22s cubic-bezier(0.4,0,0.2,1)',
+          zIndex: 100,
+          backgroundColor: H_BG,
+          borderBottom: `1px solid ${H_BORDER}`,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: 12,
+        }}
+      >
+        {/* ── LEFT ── */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, minWidth: 0 }}>
+
+          {/* Mobile: hamburger + logo */}
+          {isMobile ? (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <button
+                onClick={onToggleSidebar}
+                style={{
+                  width: 34, height: 34,
+                  background: theme.isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)',
+                  borderRadius: 8,
+                  border: `1px solid ${H_BORDER}`,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  cursor: 'pointer', color: H_MUTED,
+                }}
+              >
+                {mobileSidebarOpen
+                  ? <X style={{ width: 16, height: 16 }} />
+                  : <Menu style={{ width: 16, height: 16 }} />}
+              </button>
+              <svg width="26" height="26" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M8 9 L32 9 L32 13 L8 13 Z" fill="#10b981"/>
+                <path d="M8 27 L32 27 L32 31 L8 31 Z" fill="#10b981"/>
+                <path d="M32 13 L8 27 L8 31 L10 31 L34 15 L34 13 Z" fill="#0d7a5a"/>
+                <polyline points="10,28 16,22 20,25 26,16 30,12" stroke="#f59e0b" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+                <path d="M28,10 L32,12 L29,15" stroke="#f59e0b" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+              </svg>
+              <span style={{ fontSize: 16, fontWeight: 700, color: H_TEXT, letterSpacing: '-0.02em' }}>
+                Zynth
+              </span>
             </div>
-            {/* Wordmark */}
-            <span style={{
-              color: theme.text,
-              fontWeight: 700,
-              fontSize: 18,
-              letterSpacing: '-0.01em',
-              marginLeft: 8,
-            }}>Zynth</span>
-          </div>
-        ) : (
-          <>
-            {/* Desktop: hamburger expand button + page title */}
-        {/* Expand sidebar button — desktop only, visible when sidebar is collapsed */}
-        {sidebarCollapsed && (
-          <button
-            onClick={onExpandSidebar}
-            className="hidden md:flex items-center justify-center rounded-lg transition-all"
-            style={{
-              width: 32, height: 32,
-              color: theme.textMuted,
-              backgroundColor: theme.isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)',
-              border: `1px solid ${theme.border}`,
-            }}
-            onMouseEnter={e => { e.currentTarget.style.backgroundColor = theme.isDark ? 'rgba(255,255,255,0.10)' : 'rgba(0,0,0,0.09)'; e.currentTarget.style.color = theme.accent; }}
-            onMouseLeave={e => { e.currentTarget.style.backgroundColor = theme.isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)'; e.currentTarget.style.color = theme.textMuted; }}
-            title="Expand sidebar"
-            aria-label="Expand sidebar"
-          >
-            <ChevronRight className="w-4 h-4" />
-          </button>
-        )}
-            {/* Current page title */}
-            <span className="text-[17px] font-semibold tracking-tight" style={{ color: theme.text }}>
-              {VIEW_LABELS[currentView] ?? 'Dashboard'}
-            </span>
-          </>
-        )}
-      </div>
-      
-      <div className="flex items-center gap-2 sm:gap-4">
-        {/* Theme Toggle — segmented pill */}
-        <button
-          onClick={theme.toggleTheme}
-          title={theme.isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-          aria-label={theme.isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: 2,
-            padding: 3,
-            borderRadius: 10,
-            border: `1px solid ${theme.border}`,
-            backgroundColor: theme.isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.05)',
-            cursor: 'pointer',
-            outline: 'none',
-            transition: 'border-color 0.2s ease, background-color 0.2s ease',
-          }}
-        >
-          {/* Sun — active in light mode */}
-          <span style={{
-            display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-            width: 26, height: 26, borderRadius: 7,
-            backgroundColor: !theme.isDark ? theme.accent : 'transparent',
-            color: !theme.isDark ? '#fff' : theme.muted,
-            transition: 'background-color 0.25s ease, color 0.25s ease',
-          }}>
-            <Sun size={13} />
-          </span>
-          {/* Moon — active in dark mode */}
-          <span style={{
-            display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-            width: 26, height: 26, borderRadius: 7,
-            backgroundColor: theme.isDark ? theme.accent : 'transparent',
-            color: theme.isDark ? '#fff' : theme.muted,
-            transition: 'background-color 0.25s ease, color 0.25s ease',
-          }}>
-            <Moon size={13} />
-          </span>
-        </button>
+          ) : (
+            <>
+              {/* Desktop: expand button when collapsed */}
+              {sidebarCollapsed && (
+                <button
+                  onClick={onExpandSidebar}
+                  title="Expand sidebar"
+                  style={{
+                    width: 28, height: 28, borderRadius: 7,
+                    background: theme.isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)',
+                    border: `1px solid ${H_BORDER}`,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    cursor: 'pointer', color: H_MUTED,
+                    transition: 'all 0.15s ease',
+                  }}
+                  onMouseEnter={e => { e.currentTarget.style.color = '#10b981'; e.currentTarget.style.borderColor = '#10b98140'; }}
+                  onMouseLeave={e => { e.currentTarget.style.color = H_MUTED; e.currentTarget.style.borderColor = H_BORDER; }}
+                >
+                  <ChevronRight style={{ width: 14, height: 14 }} />
+                </button>
+              )}
 
-        {/* Timezone Selector */}
-        <div className="relative" ref={dropdownRef}>
-          <button
-            onClick={() => setShowTimezoneDropdown(!showTimezoneDropdown)}
-            className="flex items-center gap-2 px-3 py-2 rounded-lg transition-all"
-            style={{ 
-              backgroundColor: theme.isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.05)',
-              color: theme.text,
-              border: `1px solid ${theme.border}`
-            }}
-            title="Select Timezone"
-          >
-            <Globe className="w-4 h-4" style={{ color: theme.accent }} />
-            <span className="hidden sm:inline text-sm font-medium">{currentTz.id.toUpperCase()}</span>
-          </button>
-
-          {showTimezoneDropdown && (
-            <div 
-              className="absolute top-full right-0 mt-2 rounded-lg border shadow-lg overflow-hidden z-50"
-              style={{ 
-                backgroundColor: theme.surface,
-                borderColor: theme.border,
-                minWidth: '250px',
-                maxHeight: '400px',
-                overflowY: 'auto'
-              }}
-            >
-              <div className="p-2">
-                <div className="text-xs font-semibold uppercase mb-2 px-2" style={{ color: theme.muted }}>
-                  Select Timezone
-                </div>
-                {timezones.map((tz) => (
-                  <button
-                    key={tz.id}
-                    onClick={() => {
-                      changeTimezone(tz.id);
-                      setShowTimezoneDropdown(false);
-                    }}
-                    className="w-full text-left px-3 py-2 rounded transition-colors text-sm"
-                    style={{
-                      backgroundColor: selectedTimezone === tz.id ? `${theme.accent}20` : 'transparent',
-                      color: selectedTimezone === tz.id ? theme.accent : theme.text,
-                      fontWeight: selectedTimezone === tz.id ? '600' : '400'
-                    }}
-                    onMouseOver={(e) => {
-                      if (selectedTimezone !== tz.id) {
-                        e.currentTarget.style.backgroundColor = theme.bg;
-                      }
-                    }}
-                    onMouseOut={(e) => {
-                      if (selectedTimezone !== tz.id) {
-                        e.currentTarget.style.backgroundColor = 'transparent';
-                      }
-                    }}
-                  >
-                    <div className="font-medium">{tz.name}</div>
-                    <div className="text-xs" style={{ color: theme.muted }}>
-                      UTC{tz.offset >= 0 ? '+' : ''}{tz.offset}
-                    </div>
-                  </button>
-                ))}
+              {/* Page title + subtitle */}
+              <div>
+                <h1 style={{
+                  fontSize: 15, fontWeight: 600, color: H_TEXT,
+                  letterSpacing: '-0.01em', lineHeight: 1.2, margin: 0,
+                }}>
+                  {VIEW_LABELS[currentView] ?? 'Dashboard'}
+                </h1>
+                {VIEW_SUBTITLES[currentView] && (
+                  <p style={{ fontSize: 11, color: '#666666', margin: 0, lineHeight: 1 }}>
+                    {VIEW_SUBTITLES[currentView]}
+                  </p>
+                )}
               </div>
-            </div>
+            </>
           )}
         </div>
 
-        {/* User Profile */}
-        {user && (
-          <div className="relative" ref={userMenuRef}>
-            <button
-              onClick={() => setShowUserMenu(v => !v)}
-              className="flex items-center gap-2.5 pl-1 pr-3 py-1 rounded-xl transition-all duration-200"
-              style={{
-                backgroundColor: showUserMenu
-                ? (theme.isDark ? 'rgba(255,255,255,0.10)' : 'rgba(0,0,0,0.08)')
-                : (theme.isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.05)'),
-              border: `1px solid ${showUserMenu ? theme.accent + '60' : theme.border}`,
+        {/* ── RIGHT ── */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+
+          {/* Theme toggle */}
+          <button
+            onClick={theme.toggleTheme}
+            title={theme.isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+            style={{
+              width: 34, height: 34,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              borderRadius: 8,
+              background: theme.isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)',
+              border: `1px solid ${H_BORDER}`,
+              cursor: 'pointer',
+              color: H_MUTED,
+              transition: 'all 0.15s ease',
             }}
-            onMouseOver={e => { if (!showUserMenu) e.currentTarget.style.backgroundColor = theme.isDark ? 'rgba(255,255,255,0.09)' : 'rgba(0,0,0,0.07)'; }}
-            onMouseOut={e => { if (!showUserMenu) e.currentTarget.style.backgroundColor = theme.isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.05)'; }}
+            onMouseEnter={e => { e.currentTarget.style.color = '#f59e0b'; e.currentTarget.style.borderColor = '#f59e0b40'; }}
+            onMouseLeave={e => { e.currentTarget.style.color = H_MUTED; e.currentTarget.style.borderColor = H_BORDER; }}
+          >
+            {theme.isDark
+              ? <Sun style={{ width: 15, height: 15 }} />
+              : <Moon style={{ width: 15, height: 15 }} />}
+          </button>
+
+          {/* Timezone selector */}
+          <div ref={dropdownRef} style={{ position: 'relative' }}>
+            <button
+              onClick={() => setShowTimezoneDropdown(p => !p)}
+              style={{
+                height: 34, padding: '0 10px',
+                display: 'flex', alignItems: 'center', gap: 6,
+                borderRadius: 8,
+                background: showTimezoneDropdown ? (theme.isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)') : (theme.isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)'),
+                border: `1px solid ${H_BORDER}`,
+                cursor: 'pointer', color: H_MUTED,
+                transition: 'all 0.15s ease',
+              }}
+              onMouseEnter={e => { if (!showTimezoneDropdown) e.currentTarget.style.background = theme.isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.06)'; }}
+              onMouseLeave={e => { if (!showTimezoneDropdown) e.currentTarget.style.background = theme.isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)'; }}
             >
-              {/* Avatar */}
-              {avatarSrc && !avatarError ? (
-                <img
-                  src={avatarSrc}
-                  alt={user.name}
-                  className="w-8 h-8 rounded-lg object-cover"
-                  style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.3)' }}
-                  onError={() => setAvatarError(true)}
-                />
-              ) : (
-                <div
-                  className="w-8 h-8 rounded-lg flex items-center justify-center text-white text-sm font-bold select-none"
-                  style={{
-                    backgroundColor: avatarBg,
-                    boxShadow: `0 1px 4px ${avatarBg}66`,
-                    fontFamily: 'system-ui, sans-serif',
-                    letterSpacing: '0.02em',
-                  }}
-                >
-                  {user.name?.charAt(0).toUpperCase()}
-                </div>
-              )}
-
-              {/* Name + role chip */}
-              <div className="hidden sm:flex flex-col items-start leading-tight">
-                <span className="text-sm font-semibold" style={{ color: theme.text, lineHeight: 1.2 }}>
-                  {user.name?.split(' ').slice(0, 2).join(' ')}
+              <Globe style={{ width: 13, height: 13, color: '#10b981' }} />
+              {!isMobile && (
+                <span style={{ fontSize: 12, fontWeight: 500, color: H_TEXT }}>
+                  {currentTz?.id?.toUpperCase() ?? 'UTC'}
                 </span>
-                <PlanBadge className="mt-0.5" />
-              </div>
-
-              <ChevronDown
-                className="w-3.5 h-3.5 transition-transform duration-200"
-                style={{
-                  color: theme.muted,
-                  transform: showUserMenu ? 'rotate(180deg)' : 'rotate(0deg)',
-                }}
-              />
+              )}
+              <ChevronDown style={{
+                width: 11, height: 11,
+                transform: showTimezoneDropdown ? 'rotate(180deg)' : 'rotate(0)',
+                transition: 'transform 0.15s ease',
+              }} />
             </button>
 
-            {/* Dropdown */}
-            {showUserMenu && (
-              <div
-                className="absolute top-full right-0 mt-2 rounded-xl border shadow-2xl z-50 overflow-hidden"
-                style={{
-                  backgroundColor: theme.surface,
-                  borderColor: theme.border,
-                  minWidth: '240px',
-                  boxShadow: theme.isDark
-                    ? '0 20px 60px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.06)'
-                    : '0 20px 60px rgba(0,0,0,0.15), 0 0 0 1px rgba(0,0,0,0.06)',
-                }}
-              >
-                {/* Profile header — clickable, opens Profile modal */}
-                <button
-                  onClick={() => { setShowUserMenu(false); setShowProfileModal(true); }}
-                  className="w-full text-left px-4 pt-4 pb-3 transition-colors"
-                  style={{ background: theme.isDark ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.02)' }}
-                  onMouseEnter={e => e.currentTarget.style.background = theme.isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.04)'}
-                  onMouseLeave={e => e.currentTarget.style.background = theme.isDark ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.02)'}
-                >
-                  <div className="flex items-center gap-3">
-                    {avatarSrc && !avatarError ? (
-                      <img
-                        src={avatarSrc}
-                        alt={user.name}
-                        className="w-11 h-11 rounded-xl object-cover"
-                        style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.3)' }}
-                      />
-                    ) : (
-                      <div
-                        className="w-11 h-11 rounded-xl flex items-center justify-center text-white text-lg font-bold select-none"
-                        style={{
-                          backgroundColor: avatarBg,
-                          boxShadow: `0 2px 8px ${avatarBg}66`,
-                        }}
-                      >
-                        {user.name?.charAt(0).toUpperCase()}
-                      </div>
-                    )}
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-semibold truncate" style={{ color: theme.text }}>
-                        {user.name}
-                      </p>
-                      <p className="text-xs truncate mt-0.5" style={{ color: theme.muted }}>
-                        {user.email}
-                      </p>
-                      <div
-                        className="inline-flex items-center gap-1 mt-1.5"
-                      >
-                        <PlanBadge />
-                      </div>
-                    </div>
-                  </div>
-                </button>
-
-                {/* Divider */}
-                <div style={{ height: '1px', backgroundColor: theme.border, margin: '0' }} />
-
-                {/* Menu items */}
-                <div className="p-1.5">
-                  <button
-                    onClick={() => { setShowUserMenu(false); setShowProfileModal(true); }}
-                    className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors duration-150 text-left"
-                    style={{ color: theme.text }}
-                    onMouseOver={e => e.currentTarget.style.backgroundColor = theme.isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.05)'}
-                    onMouseOut={e => e.currentTarget.style.backgroundColor = 'transparent'}
-                  >
-                    <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ backgroundColor: theme.isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.06)' }}>
-                      <User className="w-3.5 h-3.5" style={{ color: theme.muted }} />
-                    </div>
-                    <span>My Profile</span>
-                  </button>
-
-                  <button
-                    onClick={() => { setShowUserMenu(false); setShowSettingsModal(true); }}
-                    className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors duration-150 text-left"
-                    style={{ color: theme.text }}
-                    onMouseOver={e => e.currentTarget.style.backgroundColor = theme.isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.05)'}
-                    onMouseOut={e => e.currentTarget.style.backgroundColor = 'transparent'}
-                  >
-                    <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ backgroundColor: theme.isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.06)' }}>
-                      <Settings className="w-3.5 h-3.5" style={{ color: theme.muted }} />
-                    </div>
-                    <span>Settings</span>
-                  </button>
+            {showTimezoneDropdown && (
+              <div style={{
+                position: 'absolute', top: 'calc(100% + 6px)', right: 0,
+                width: 220,
+                background: theme.surface,
+                border: `1px solid ${H_BORDER}`,
+                borderRadius: 10,
+                boxShadow: theme.isDark ? '0 16px 48px rgba(0,0,0,0.7)' : '0 8px 32px rgba(0,0,0,0.12)',
+                zIndex: 200,
+                overflow: 'hidden',
+              }}>
+                <div style={{ padding: '8px 12px 6px', borderBottom: `1px solid ${H_BORDER}` }}>
+                  <p style={{ fontSize: 10, fontWeight: 700, color: H_MUTED, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+                    Market Timezone
+                  </p>
                 </div>
-
-                {/* Divider */}
-                <div style={{ height: '1px', backgroundColor: theme.border }} />
-
-                {/* Sign out */}
-                <div className="p-1.5">
-                  <button
-                    onClick={() => { setShowUserMenu(false); logout(); }}
-                    className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors duration-150 text-left"
-                    style={{ color: '#f87171' }}
-                    onMouseOver={e => e.currentTarget.style.backgroundColor = 'rgba(239,68,68,0.1)'}
-                    onMouseOut={e => e.currentTarget.style.backgroundColor = 'transparent'}
-                  >
-                    <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ backgroundColor: 'rgba(239,68,68,0.1)' }}>
-                      <LogOut className="w-3.5 h-3.5" />
-                    </div>
-                    <span>Sign out</span>
-                  </button>
+                <div style={{ maxHeight: 240, overflowY: 'auto', padding: '4px' }}>
+                  {timezones?.map(tz => (
+                    <button
+                      key={tz.id}
+                      onClick={() => { changeTimezone(tz.id); setShowTimezoneDropdown(false); }}
+                      style={{
+                        width: '100%', padding: '7px 10px',
+                        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                        borderRadius: 7, border: 'none',
+                        background: selectedTimezone === tz.id ? 'rgba(16,185,129,0.1)' : 'transparent',
+                        cursor: 'pointer', transition: 'background 0.12s ease',
+                        textAlign: 'left',
+                      }}
+                      onMouseEnter={e => { if (selectedTimezone !== tz.id) e.currentTarget.style.background = theme.isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)'; }}
+                      onMouseLeave={e => { if (selectedTimezone !== tz.id) e.currentTarget.style.background = 'transparent'; }}
+                    >
+                      <span style={{ fontSize: 12, color: selectedTimezone === tz.id ? '#10b981' : H_MUTED }}>
+                        {tz.label}
+                      </span>
+                      {selectedTimezone === tz.id && (
+                        <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#10b981', display: 'block' }} />
+                      )}
+                    </button>
+                  ))}
                 </div>
               </div>
             )}
           </div>
-        )}
-      </div>
-    </header>
 
-    {showProfileModal && (
-      <ProfileModal onClose={() => setShowProfileModal(false)} />
-    )}
-    {showSettingsModal && (
-      <SettingsModal
-        onClose={() => setShowSettingsModal(false)}
-        autoRefresh={autoRefresh}
-        onToggleAutoRefresh={onToggleAutoRefresh}
-      />
-    )}
-  </>
+          {/* User menu */}
+          {user && (
+            <div ref={userMenuRef} style={{ position: 'relative' }}>
+              <button
+                onClick={() => setShowUserMenu(p => !p)}
+                style={{
+                  height: 34, padding: '0 10px 0 6px',
+                  display: 'flex', alignItems: 'center', gap: 8,
+                  borderRadius: 8,
+                  background: showUserMenu ? (theme.isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)') : (theme.isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)'),
+                  border: `1px solid ${H_BORDER}`,
+                  cursor: 'pointer',
+                  transition: 'all 0.15s ease',
+                }}
+                onMouseEnter={e => { if (!showUserMenu) e.currentTarget.style.background = theme.isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.06)'; }}
+                onMouseLeave={e => { if (!showUserMenu) e.currentTarget.style.background = theme.isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)'; }}
+              >
+                {/* Avatar */}
+                {avatarSrc && !avatarError ? (
+                  <img
+                    src={avatarSrc}
+                    alt={user.name}
+                    onError={() => setAvatarError(true)}
+                    style={{ width: 24, height: 24, borderRadius: 6, objectFit: 'cover' }}
+                  />
+                ) : (
+                  <div style={{
+                    width: 24, height: 24, borderRadius: 6,
+                    background: `linear-gradient(135deg, ${avatarBg}, ${avatarBg}bb)`,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    fontSize: 11, fontWeight: 700, color: '#fff',
+                  }}>
+                    {user.name?.charAt(0).toUpperCase()}
+                  </div>
+                )}
+
+                {/* Name + plan */}
+                <div className="hidden sm:flex flex-col items-start" style={{ lineHeight: 1.2 }}>
+                  <span style={{ fontSize: 12, fontWeight: 600, color: H_TEXT }}>
+                    {user.name?.split(' ')[0]}
+                  </span>
+                  <PlanBadge className="mt-0.5" />
+                </div>
+
+                <ChevronDown style={{
+                  width: 12, height: 12, color: H_MUTED,
+                  transform: showUserMenu ? 'rotate(180deg)' : 'rotate(0)',
+                  transition: 'transform 0.15s ease',
+                }} />
+              </button>
+
+              {/* Dropdown */}
+              {showUserMenu && (
+                <div style={{
+                  position: 'absolute', top: 'calc(100% + 6px)', right: 0,
+                  width: 240,
+                  background: theme.surface,
+                  border: `1px solid ${H_BORDER}`,
+                  borderRadius: 12,
+                  boxShadow: theme.isDark ? '0 20px 60px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.04)' : '0 8px 32px rgba(0,0,0,0.12)',
+                  zIndex: 200,
+                  overflow: 'hidden',
+                }}>
+                  {/* Profile header */}
+                  <button
+                    onClick={() => { setShowUserMenu(false); setShowProfileModal(true); }}
+                    style={{
+                      width: '100%', padding: '14px 16px',
+                      display: 'flex', alignItems: 'center', gap: 12,
+                      background: theme.isDark ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.02)',
+                      border: 'none', cursor: 'pointer', textAlign: 'left',
+                      transition: 'background 0.15s ease',
+                      borderBottom: `1px solid ${H_BORDER}`,
+                    }}
+                      onMouseEnter={e => e.currentTarget.style.background = theme.isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.04)'}
+                      onMouseLeave={e => e.currentTarget.style.background = theme.isDark ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.02)'}
+                  >
+                    {avatarSrc && !avatarError ? (
+                      <img
+                        src={avatarSrc}
+                        alt={user.name}
+                        style={{ width: 40, height: 40, borderRadius: 10, objectFit: 'cover', flexShrink: 0 }}
+                      />
+                    ) : (
+                      <div style={{
+                        width: 40, height: 40, borderRadius: 10,
+                        background: `linear-gradient(135deg, ${avatarBg}, ${avatarBg}bb)`,
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        fontSize: 16, fontWeight: 700, color: '#fff', flexShrink: 0,
+                        boxShadow: `0 4px 12px ${avatarBg}40`,
+                      }}>
+                        {user.name?.charAt(0).toUpperCase()}
+                      </div>
+                    )}
+                    <div style={{ minWidth: 0, flex: 1 }}>
+                      <p style={{ fontSize: 13, fontWeight: 600, color: theme.text, margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        {user.name}
+                      </p>
+                      <p style={{ fontSize: 11, color: H_MUTED, margin: '2px 0 4px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        {user.email}
+                      </p>
+                      <PlanBadge />
+                    </div>
+                  </button>
+
+                  {/* Menu items */}
+                  <div style={{ padding: '6px' }}>
+                    {[
+                      { icon: User, label: 'My Profile', onClick: () => { setShowUserMenu(false); setShowProfileModal(true); } },
+                      { icon: Settings, label: 'Settings', onClick: () => { setShowUserMenu(false); setShowSettingsModal(true); } },
+                    ].map(item => (
+                      <button
+                        key={item.label}
+                        onClick={item.onClick}
+                        style={{
+                          width: '100%', padding: '8px 10px',
+                          display: 'flex', alignItems: 'center', gap: 10,
+                          borderRadius: 7, border: 'none',
+                          background: 'transparent', cursor: 'pointer',
+                          color: H_MUTED, fontSize: 13, textAlign: 'left',
+                          transition: 'all 0.12s ease',
+                        }}
+                        onMouseEnter={e => { e.currentTarget.style.background = theme.isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)'; e.currentTarget.style.color = theme.text; }}
+                        onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = H_MUTED; }}
+                      >
+                        <div style={{
+                          width: 28, height: 28, borderRadius: 7,
+                          background: theme.isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)',
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          flexShrink: 0,
+                        }}>
+                          <item.icon style={{ width: 13, height: 13 }} />
+                        </div>
+                        {item.label}
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Sign out */}
+                  <div style={{ borderTop: `1px solid ${H_BORDER}`, padding: '6px' }}>
+                    <button
+                      onClick={() => { setShowUserMenu(false); logout(); }}
+                      style={{
+                        width: '100%', padding: '8px 10px',
+                        display: 'flex', alignItems: 'center', gap: 10,
+                        borderRadius: 7, border: 'none',
+                        background: 'transparent', cursor: 'pointer',
+                        color: '#ef4444', fontSize: 13, textAlign: 'left',
+                        transition: 'background 0.12s ease',
+                      }}
+                      onMouseEnter={e => e.currentTarget.style.background = 'rgba(239,68,68,0.08)'}
+                      onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                    >
+                      <div style={{
+                        width: 28, height: 28, borderRadius: 7,
+                        background: 'rgba(239,68,68,0.08)',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        flexShrink: 0,
+                      }}>
+                        <LogOut style={{ width: 13, height: 13 }} />
+                      </div>
+                      Sign out
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      </header>
+
+      {showProfileModal && <ProfileModal onClose={() => setShowProfileModal(false)} />}
+      {showSettingsModal && (
+        <SettingsModal
+          onClose={() => setShowSettingsModal(false)}
+          autoRefresh={autoRefresh}
+          onToggleAutoRefresh={onToggleAutoRefresh}
+        />
+      )}
+    </>
   );
 }
 
 export default Header;
+

@@ -268,253 +268,69 @@ export default function DailyBrief() {
   return (
     <div style={{ marginBottom: 20, ...fadeStyle }}>
       {showUpgradeModal && <ProfileModal onClose={() => setShowUpgradeModal(false)} />}
-      <div>
-        <div style={{
-          backgroundColor: theme.surface,
-          borderRadius: 12,
-          border: `1px solid ${theme.border}`,
-          borderLeft: '3px solid #10b981',
-          padding: 20,
-          position: 'relative',
-          boxShadow: '0 1px 3px rgba(0,0,0,0.4)',
-        }}>
-          {/* Dismiss button */}
-          <button
-            onClick={dismiss}
-            aria-label="Dismiss daily brief"
-            style={{
-              position: 'absolute', top: 14, right: 14,
-              background: 'none', border: 'none', cursor: 'pointer',
-              color: theme.muted, fontSize: 18, lineHeight: 1,
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              width: 26, height: 26, borderRadius: 6,
-              transition: 'color 0.15s, background 0.15s',
-            }}
-            onMouseEnter={e => { e.currentTarget.style.color = theme.text; e.currentTarget.style.background = theme.border; }}
-            onMouseLeave={e => { e.currentTarget.style.color = theme.muted; e.currentTarget.style.background = 'none'; }}
-          >
-            ×
-          </button>
+      <div style={{
+        backgroundColor: theme.surface,
+        borderRadius: 12,
+        border: `1px solid ${theme.border}`,
+        padding: '12px 20px',
+        position: 'relative',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        gap: 16,
+      }}>
+        {/* Dismiss */}
+        <button
+          onClick={dismiss}
+          aria-label="Dismiss daily brief"
+          style={{
+            position: 'absolute', top: 10, right: 12,
+            background: 'none', border: 'none', cursor: 'pointer',
+            color: theme.muted, fontSize: 18, lineHeight: 1,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            width: 26, height: 26, borderRadius: 6,
+            transition: 'color 0.15s, background 0.15s',
+          }}
+          onMouseEnter={e => { e.currentTarget.style.color = theme.text; e.currentTarget.style.background = theme.border; }}
+          onMouseLeave={e => { e.currentTarget.style.color = theme.muted; e.currentTarget.style.background = 'none'; }}
+        >
+          ×
+        </button>
 
-          {/* Header */}
-          <div style={{ marginBottom: 16, paddingRight: 32 }}>
-            <div style={{ fontSize: 18, fontWeight: 700, color: theme.text, lineHeight: 1.3 }}>
-              <Sun size={16} style={{display:'inline-block',verticalAlign:'middle',marginRight:'5px',color:'#f59e0b'}} />{greeting}, {firstName}!
-            </div>
-            <div style={{ fontSize: 12, color: theme.muted, marginTop: 3 }}>{dateStr}</div>
-          </div>
+        {/* Greeting */}
+        <div>
+          <span style={{ fontSize: 14, fontWeight: 600, color: theme.text }}>
+            {greeting}, {firstName}
+          </span>
+          <span style={{ fontSize: 12, color: theme.muted, marginLeft: 10 }}>{dateStr}</span>
+        </div>
 
-          {/* 2×2 grid */}
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-            gap: 10,
-            marginBottom: 14,
-          }}>
-            {/* Block 1 — Macro Climate */}
-            <Block title="Macro Climate" theme={theme}>
-              {!canSeeMacro ? (
-                /* Blur gate — same dimensions as real content, no layout shift */
-                <div style={{ position: 'relative', minHeight: 52 }}>
-                  {/* Fake score blurred behind */}
-                  <div style={{ filter: 'blur(5px)', pointerEvents: 'none', userSelect: 'none', opacity: 0.65 }}>
-                    <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
-                      <span style={{ fontSize: 28, fontWeight: 800, color: '#22c55e', lineHeight: 1 }}>+3.2</span>
-                      <span style={{ fontSize: 13, fontWeight: 700, color: '#22c55e' }}>
-                        <span style={{display:'inline-block',width:8,height:8,borderRadius:'50%',backgroundColor:'#22c55e',verticalAlign:'middle',marginRight:3}}/> Bullish for Gold
-                      </span>
-                    </div>
-                    <div style={{ fontSize: 11, color: theme.muted }}>Based on 10 macro indicators</div>
-                  </div>
-                  {/* Lock overlay */}
-                  <div style={{
-                    position: 'absolute', inset: 0,
-                    display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-                    gap: 3,
-                  }}>
-                    <Lock size={15} style={{ color: theme.muted }} />
-                    <span style={{ fontSize: 11, fontWeight: 600, color: theme.muted, letterSpacing: '0.02em' }}>Pro Feature</span>
-                    <button
-                      onClick={() => setShowUpgradeModal(true)}
-                      style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, fontSize: 12, fontWeight: 600, color: '#10b981' }}
-                    >
-                      Upgrade →
-                    </button>
-                  </div>
-                </div>
-              ) : loading ? (
-                <>
-                  <Skeleton theme={theme} h={28} w="70%" />
-                  <Skeleton theme={theme} h={12} w="90%" />
-                </>
-              ) : macroScore === 'error' || !macroScore ? (
-                <div style={{ fontSize: 13, color: theme.muted }}>Unavailable</div>
-              ) : (
-                <>
-                  <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
-                    <span style={{ fontSize: 28, fontWeight: 800, color: macroColor, lineHeight: 1 }}>
-                      {macroScore.score > 0 ? '+' : ''}{macroScore.score.toFixed(1)}
-                    </span>
-                    <span style={{ fontSize: 13, fontWeight: 700, color: macroColor }}>
-                      {macroBullet} {macroLabel}
-                    </span>
-                  </div>
-                  <div style={{ fontSize: 11, color: theme.muted }}>Based on 10 macro indicators</div>
-                </>
-              )}
-            </Block>
-
-            {/* Block 2 — Best Session */}
-            <Block title="Your Best Session" theme={theme}>
-              {loading ? (
-                <>
-                  <Skeleton theme={theme} h={20} w="80%" />
-                  <Skeleton theme={theme} h={12} w="65%" />
-                </>
-              ) : !trades || trades.length === 0 ? (
-                <div style={{ fontSize: 12, color: theme.muted }}><BarChart2 size={12} style={{display:'inline-block',verticalAlign:'middle',marginRight:'4px'}} /> No trades logged yet</div>
-              ) : !bestSession ? (
-                <div style={{ fontSize: 12, color: theme.muted }}>Not enough data yet — log more tagged trades</div>
-              ) : (
-                <>
-                  <div style={{ fontSize: 15, fontWeight: 700, color: '#22c55e' }}>
-                      <Trophy size={13} style={{display:'inline-block',verticalAlign:'middle',marginRight:'4px'}} /> {bestSession} — {bestRate}% win rate
-                  </div>
-                  <div style={{ fontSize: 11, color: theme.muted }}>{sessionStatusText}</div>
-                </>
-              )}
-            </Block>
-
-            {/* Block 3 — Day of Week */}
-            <Block
-              title={`${todayName} Edge`}
-              theme={theme}
-              bg={
-                dowRate === null ? undefined
-                  : dowRate > 60
-                    ? (theme.isDark ? 'rgba(34,197,94,0.08)' : 'rgba(34,197,94,0.06)')
-                    : dowRate < 45
-                      ? (theme.isDark ? 'rgba(245,158,11,0.08)' : 'rgba(245,158,11,0.06)')
-                      : undefined
-              }
-              border={
-                dowRate === null ? undefined
-                  : dowRate > 60 ? 'rgba(34,197,94,0.3)'
-                  : dowRate < 45 ? 'rgba(245,158,11,0.35)'
-                  : undefined
-              }
+        {/* Macro Score */}
+        <div style={{ textAlign: 'right', paddingRight: 28 }}>
+          {!canSeeMacro ? (
+            <button
+              onClick={() => setShowUpgradeModal(true)}
+              style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center', gap: 6 }}
             >
-              {loading ? (
-                <>
-                  <Skeleton theme={theme} h={20} w="85%" />
-                  <Skeleton theme={theme} h={12} w="60%" />
-                </>
-              ) : dowRate === null ? (
-                <>
-                  <div style={{ fontSize: 13, fontWeight: 700, color: theme.muted }}>
-                      <BarChart2 size={12} style={{display:'inline-block',verticalAlign:'middle',marginRight:'4px'}} /> Not enough data yet for {todayName}s
-                  </div>
-                  <div style={{ fontSize: 11, color: theme.muted }}>
-                    {dowClosed} closed trade{dowClosed !== 1 ? 's' : ''} logged on {todayName}s · need 5+
-                  </div>
-                </>
-              ) : dowRate > 60 ? (
-                <>
-                  <div style={{ fontSize: 15, fontWeight: 700, color: '#22c55e' }}>
-                      <Check size={13} style={{display:'inline-block',verticalAlign:'middle',marginRight:'4px'}} /> Strong day — {dowRate}% win rate on {todayName}s
-                  </div>
-                  <div style={{ fontSize: 11, color: theme.muted }}>
-                    {dowWins}W / {dowClosed - dowWins}L across {dowClosed} trades
-                  </div>
-                </>
-              ) : dowRate < 45 ? (
-                <>
-                  <div style={{ fontSize: 15, fontWeight: 700, color: '#f59e0b' }}>
-                      <AlertTriangle size={13} style={{display:'inline-block',verticalAlign:'middle',marginRight:'4px'}} /> Careful — you win {dowRate}% on {todayName}s
-                  </div>
-                  <div style={{ fontSize: 11, color: theme.muted }}>
-                    {dowWins}W / {dowClosed - dowWins}L across {dowClosed} trades
-                  </div>
-                </>
-              ) : (
-                <>
-                  <div style={{ fontSize: 14, fontWeight: 700, color: theme.text }}>
-                      <TrendingUp size={13} style={{display:'inline-block',verticalAlign:'middle',marginRight:'4px'}} /> {dowRate}% win rate on {todayName}s
-                  </div>
-                  <div style={{ fontSize: 11, color: theme.muted }}>
-                    {dowWins}W / {dowClosed - dowWins}L across {dowClosed} trades
-                  </div>
-                </>
-              )}
-            </Block>
-
-            {/* Block 4 — Top News */}
-            <Block title="Top Market News" theme={theme}>
-              {loading ? (
-                <>
-                  <Skeleton theme={theme} h={14} w="100%" />
-                  <Skeleton theme={theme} h={14} w="80%" />
-                  <Skeleton theme={theme} h={11} w="50%" />
-                </>
-              ) : !topNews ? (
-                <div style={{ fontSize: 12, color: theme.muted }}>No news available</div>
-              ) : (
-                <a
-                  href={topNews.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{ textDecoration: 'none', display: 'block' }}
-                  aria-label={topNews.title}
-                >
-                  <div style={{
-                    fontSize: 13, fontWeight: 600, color: theme.text, lineHeight: 1.5,
-                    display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical',
-                    overflow: 'hidden', marginBottom: 5,
-                    transition: 'color 0.15s',
-                  }}
-                    onMouseEnter={e => e.currentTarget.style.color = '#10b981'}
-                    onMouseLeave={e => e.currentTarget.style.color = theme.text}
-                  >
-                    {topNews.title}
-                  </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
-                    {topNews.impactLevel && (
-                      <span style={{
-                        fontSize: 10, fontWeight: 700, padding: '1px 6px', borderRadius: 4,
-                        backgroundColor: topNews.impactLevel === 'High' ? 'rgba(239,68,68,0.15)' : 'rgba(245,158,11,0.15)',
-                        color: topNews.impactLevel === 'High' ? '#ef4444' : '#f59e0b',
-                      }}>
-                        {topNews.impactLevel}
-                      </span>
-                    )}
-                    <span style={{ fontSize: 11, color: theme.muted }}>
-                      {topNews.source ?? topNews.author}
-                    </span>
-                    {topNews.publishedAt && (
-                      <span style={{ fontSize: 11, color: theme.muted }}>
-                        · {timeAgoStr(topNews.publishedAt)}
-                      </span>
-                    )}
-                  </div>
-                </a>
-              )}
-            </Block>
-          </div>
-
-          {/* Bottom tip bar */}
-          <div style={{
-            borderTop: `1px solid ${theme.border}`,
-            paddingTop: 12,
-            display: 'flex',
-            alignItems: 'flex-start',
-            gap: 8,
-          }}>
-            <Info size={13} style={{ flexShrink: 0, color: theme.muted }} />
-            <p style={{ fontSize: 12, color: theme.muted, lineHeight: 1.55, margin: 0 }}>
-              <span style={{ fontWeight: 700, color: theme.text }}>Today's tip: </span>
-              {tip}
-            </p>
-          </div>
+              <Lock size={13} style={{ color: theme.muted }} />
+              <span style={{ fontSize: 12, color: theme.muted }}>Macro score</span>
+              <span style={{ fontSize: 12, fontWeight: 600, color: '#10b981' }}>Upgrade →</span>
+            </button>
+          ) : loading ? (
+            <Skeleton theme={theme} h={20} w={80} />
+          ) : macroScore && macroScore !== 'locked' && macroScore !== 'error' ? (
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
+              <span style={{ fontSize: 24, fontWeight: 800, color: macroColor, lineHeight: 1, fontVariantNumeric: 'tabular-nums' }}>
+                {macroScore.score > 0 ? '+' : ''}{macroScore.score.toFixed(1)}
+              </span>
+              <span style={{ fontSize: 11, fontWeight: 600, color: macroColor }}>{macroLabel}</span>
+            </div>
+          ) : (
+            <span style={{ fontSize: 12, color: theme.muted }}>Score unavailable</span>
+          )}
+          {canSeeMacro && !loading && macroScore && macroScore !== 'locked' && macroScore !== 'error' && (
+            <div style={{ fontSize: 10, color: theme.muted, marginTop: 1 }}>macro index · 10 indicators</div>
+          )}
         </div>
       </div>
     </div>

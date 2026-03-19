@@ -50,20 +50,20 @@ export const ThemeProvider = ({ children }) => {
     // text       → primary text   (#FAFAFA  Zinc-50)
     // muted      → secondary text (#A1A1AA  Zinc-400)
     // ────────────────────────────────────────────────────────────────
-    bg:       isDark ? '#09090B' : '#f0f2f5',
+    bg:       isDark ? '#09090B' : '#f8f8f8',
     surface:  isDark ? '#18181B' : '#ffffff',
-    surface2: isDark ? '#1C1C1F' : '#f8f9fa',
-    border:   isDark ? '#27272A' : '#d1d5db',
+    surface2: isDark ? '#1C1C1F' : '#f3f3f3',
+    border:   isDark ? '#27272A' : '#e8e8e8',
 
     // Text colors
-    text:      isDark ? '#FAFAFA' : '#111827',
-    muted:     isDark ? '#A1A1AA' : '#4b5563',
-    textMuted: isDark ? '#A1A1AA' : '#4b5563',
+    text:      isDark ? '#FAFAFA' : '#111111',
+    muted:     isDark ? '#A1A1AA' : '#888888',
+    textMuted: isDark ? '#A1A1AA' : '#888888',
 
     // Accent colors (emerald — used sparingly)
-    accent:      isDark ? '#10b981' : '#059669',
-    accentHover: isDark ? '#0ea571' : '#047857',
-    accentGlow:  isDark ? 'rgba(16,185,129,0.10)' : 'rgba(5,150,105,0.1)',
+    accent:      '#10b981',
+    accentHover: isDark ? '#0ea571' : '#059669',
+    accentGlow:  'rgba(16,185,129,0.10)',
     success: '#10b981',
     warning: isDark ? '#f59e0b' : '#d97706',
     gold:    isDark ? '#f59e0b' : '#b45309',

@@ -470,8 +470,8 @@ function EconomicCalendar() {
         {/* Row 1: Title + Print button */}
         <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <div style={{ width: 44, height: 44, borderRadius: 13, background: 'linear-gradient(135deg, #10b981, #059669)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, boxShadow: '0 4px 14px rgba(16,185,129,0.35)' }}>
-              <Calendar size={20} color="#fff" />
+            <div style={{ width: 40, height: 40, borderRadius: 10, background: theme.surface, border: `1px solid ${theme.border}`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <Calendar size={18} color="#10b981" />
             </div>
             <div>
               <h2 style={{ color: theme.text, fontWeight: 800, fontSize: 20, margin: 0, lineHeight: 1.2, letterSpacing: '-0.01em' }}>Economic Calendar</h2>
@@ -480,7 +480,7 @@ function EconomicCalendar() {
           </div>
           <button
             onClick={openPrintModal}
-            style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '7px 12px', borderRadius: 8, border: `1px solid ${theme.border}`, background: 'transparent', color: theme.text, cursor: 'pointer', fontSize: 13, fontWeight: 500, transition: 'border-color 0.15s, color 0.15s', flexShrink: 0 }}
+            style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '7px 12px', borderRadius: 8, border: `1px solid ${theme.border}`, background: theme.surface, color: theme.text, cursor: 'pointer', fontSize: 13, fontWeight: 500, transition: 'border-color 0.15s, color 0.15s', flexShrink: 0 }}
             onMouseOver={(e) => { e.currentTarget.style.borderColor = '#10b981'; e.currentTarget.style.color = '#10b981'; }}
             onMouseOut={(e) => { e.currentTarget.style.borderColor = theme.border; e.currentTarget.style.color = theme.text; }}
           >
@@ -493,7 +493,7 @@ function EconomicCalendar() {
             <button
               key={level}
               onClick={() => setFilterImpact(level)}
-              style={{ flexShrink: 0, padding: '6px 16px', borderRadius: 999, border: `1px solid ${filterImpact === level ? '#10b981' : theme.border}`, background: filterImpact === level ? '#10b981' : 'transparent', color: filterImpact === level ? '#fff' : theme.muted, cursor: 'pointer', fontSize: 12, fontWeight: 600, transition: 'all 0.15s' }}
+              style={{ flexShrink: 0, padding: '6px 16px', borderRadius: 999, border: `1px solid ${filterImpact === level ? '#10b981' : theme.border}`, background: filterImpact === level ? '#10b981' : theme.surface, color: filterImpact === level ? '#fff' : theme.muted, cursor: 'pointer', fontSize: 12, fontWeight: 600, transition: 'all 0.15s' }}
             >
               {level === 'all' ? 'All' : level.charAt(0).toUpperCase() + level.slice(1)}
             </button>
@@ -508,7 +508,7 @@ function EconomicCalendar() {
         const misses = filteredIndicators.filter(ind => { const s = getSurprise(ind.current, ind.forecast); return s !== null && s < -0.5; }).length;
         const netScore = beats - misses;
         const nextInd = [...filteredIndicators].filter(i => i.date).sort((a, b) => new Date(a.date) - new Date(b.date)).find(i => new Date(i.date) > now);
-        const pill = { display: 'inline-flex', alignItems: 'center', gap: 6, padding: '6px 14px', borderRadius: 999, background: theme.surface, border: `1px solid ${theme.border}`, fontSize: 12, fontWeight: 500 };
+            const pill = { display: 'inline-flex', alignItems: 'center', gap: 6, padding: '6px 14px', borderRadius: 999, background: theme.surface, border: `1px solid ${theme.border}`, fontSize: 12, fontWeight: 500 };
         return (
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
             <span style={{ ...pill, color: theme.muted }}><BarChart2 size={12} style={{display:'inline-block',verticalAlign:'middle',marginRight:'4px'}} />{filteredIndicators.length} Indicators</span>
@@ -525,18 +525,18 @@ function EconomicCalendar() {
       })()}
 
       {/* Table */}
-      <div style={{ background: theme.surface, border: `1px solid ${theme.border}`, borderRadius: 12, overflow: 'hidden', boxShadow: theme.isDark ? '0 4px 24px rgba(0,0,0,0.3)' : '0 4px 16px rgba(0,0,0,0.06)' }}>
+      <div style={{ background: theme.bg, border: `1px solid ${theme.border}`, borderRadius: 12, overflow: 'hidden' }}>
         <div className="cal-table-scroll">
         <table className="w-full">
-          <thead style={{ background: theme.bg, borderBottom: '2px solid #10b981' }}>
+          <thead style={{ background: theme.bg, borderBottom: `1px solid ${theme.border}` }}>
             <tr>
-              <th style={{ padding: '11px 12px', textAlign: 'left',   fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: theme.muted }}>Event</th>
-              <th className="cal-col-currency" style={{ padding: '11px 12px', textAlign: 'center', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: theme.muted }}>Currency</th>
-              <th className="cal-col-impact" style={{ padding: '11px 12px', textAlign: 'center', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: theme.muted }}>Impact</th>
-              <th style={{ padding: '11px 12px', textAlign: 'right',  fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: theme.muted }}>Actual</th>
-              <th className="cal-col-forecast" style={{ padding: '11px 12px', textAlign: 'right',  fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: theme.muted }}>Forecast</th>
-              <th className="cal-col-previous" style={{ padding: '11px 12px', textAlign: 'right',  fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: theme.muted }}>Previous</th>
-              <th className="cal-col-surprise" style={{ padding: '11px 12px', textAlign: 'center', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: theme.muted }}>Surprise</th>
+              <th style={{ padding: '12px 16px', textAlign: 'left',   fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: theme.muted }}>Event</th>
+              <th className="cal-col-currency" style={{ padding: '12px 16px', textAlign: 'center', fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: theme.muted }}>Currency</th>
+              <th className="cal-col-impact" style={{ padding: '12px 16px', textAlign: 'center', fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: theme.muted }}>Impact</th>
+              <th className="cal-col-actual" style={{ padding: '12px 16px', textAlign: 'right',  fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: theme.muted }}>Actual</th>
+              <th className="cal-col-forecast" style={{ padding: '12px 16px', textAlign: 'right',  fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: theme.muted }}>Forecast</th>
+              <th className="cal-col-previous" style={{ padding: '12px 16px', textAlign: 'right',  fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: theme.muted }}>Previous</th>
+              <th className="cal-col-surprise" style={{ padding: '12px 16px', textAlign: 'center', fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: theme.muted }}>Surprise</th>
               <th style={{ width: 36 }} />
             </tr>
           </thead>
@@ -547,12 +547,12 @@ function EconomicCalendar() {
                   key={indicator.id}
                   className="transition-colors cursor-pointer"
                   onClick={() => toggleRow(indicator.id)}
-                  style={{ backgroundColor: rowIdx % 2 === 1 ? (theme.isDark ? 'rgba(255,255,255,0.015)' : 'rgba(0,0,0,0.012)') : theme.surface, borderBottom: `1px solid ${theme.border}` }}
-                  onMouseOver={(e) => e.currentTarget.style.backgroundColor = theme.bg}
-                  onMouseOut={(e) => e.currentTarget.style.backgroundColor = rowIdx % 2 === 1 ? (theme.isDark ? 'rgba(255,255,255,0.015)' : 'rgba(0,0,0,0.012)') : theme.surface}
+                  style={{ backgroundColor: theme.surface, borderBottom: `1px solid ${theme.border}` }}
+                  onMouseOver={(e) => e.currentTarget.style.backgroundColor = theme.surface2}
+                  onMouseOut={(e) => e.currentTarget.style.backgroundColor = theme.surface}
                 >
                   {/* Event */}
-                  <td style={{ padding: '12px 12px' }}>
+                  <td style={{ padding: '14px 16px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                       {(() => {
                         const a = parseFloat(indicator.current);
@@ -584,45 +584,71 @@ function EconomicCalendar() {
                         {/* Mobile-only impact badge */}
                         <span className="cal-impact-mobile" style={{ marginTop: 4 }}>
                           {indicator.impact === 'high' ? (
-                            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 3, padding: '2px 7px', borderRadius: 4, background: 'rgba(239,68,68,0.12)', border: '1px solid rgba(239,68,68,0.4)', color: '#f87171', fontSize: 10, fontWeight: 700 }}>HIGH</span>
+                            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 3, padding: '2px 7px', borderRadius: 999, background: '#ef444415', border: '1px solid #ef444430', color: '#ef4444', fontSize: 10, fontWeight: 700 }}>HIGH</span>
                           ) : indicator.impact === 'medium' ? (
-                            <span style={{ display: 'inline-flex', alignItems: 'center', padding: '2px 7px', borderRadius: 4, background: 'rgba(245,158,11,0.12)', border: '1px solid rgba(245,158,11,0.4)', color: '#fbbf24', fontSize: 10, fontWeight: 700 }}>MED</span>
+                            <span style={{ display: 'inline-flex', alignItems: 'center', padding: '2px 7px', borderRadius: 999, background: '#f59e0b15', border: '1px solid rgba(245,158,11,0.25)', color: '#f59e0b', fontSize: 10, fontWeight: 700 }}>MED</span>
                           ) : (
-                            <span style={{ display: 'inline-flex', alignItems: 'center', padding: '2px 7px', borderRadius: 4, background: 'rgba(100,116,139,0.12)', border: '1px solid rgba(100,116,139,0.4)', color: '#94a3b8', fontSize: 10, fontWeight: 600 }}>LOW</span>
+                            <span style={{ display: 'inline-flex', alignItems: 'center', padding: '2px 7px', borderRadius: 999, background: theme.isDark ? '#ffffff08' : 'rgba(0,0,0,0.07)', border: `1px solid ${theme.border}`, color: theme.muted, fontSize: 10, fontWeight: 600 }}>LOW</span>
                           )}
                         </span>
                       </div>
                     </div>
+                    {/* Mobile 2×2 data grid */}
+                    <div className="cal-mobile-data" style={{ marginTop: 10, gridTemplateColumns: '1fr 1fr', gap: 6 }}>
+                      <div style={{ background: theme.surface2, border: `1px solid ${theme.border}`, borderRadius: 6, padding: '6px 8px' }}>
+                        <div style={{ fontSize: 9, color: theme.muted, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 3 }}>Actual</div>
+                        <div style={{ color: isNaN(parseFloat(indicator.current)) ? theme.muted : theme.text, fontWeight: 700, fontSize: 14 }}>{formatValue(indicator.current, indicator.unit)}</div>
+                      </div>
+                      <div style={{ background: theme.surface2, border: `1px solid ${theme.border}`, borderRadius: 6, padding: '6px 8px' }}>
+                        <div style={{ fontSize: 9, color: theme.muted, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 3 }}>Forecast</div>
+                        <div style={{ color: theme.muted, fontSize: 13 }}>{formatValue(indicator.forecast, indicator.unit)}</div>
+                      </div>
+                      <div style={{ background: theme.surface2, border: `1px solid ${theme.border}`, borderRadius: 6, padding: '6px 8px' }}>
+                        <div style={{ fontSize: 9, color: theme.muted, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 3 }}>Previous</div>
+                        <div style={{ color: theme.muted, fontSize: 13 }}>{formatValue(indicator.previous, indicator.unit)}</div>
+                      </div>
+                      <div style={{ background: theme.surface2, border: `1px solid ${theme.border}`, borderRadius: 6, padding: '6px 8px' }}>
+                        <div style={{ fontSize: 9, color: theme.muted, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 3 }}>Surprise</div>
+                        {(() => {
+                          const surp = getSurprise(indicator.current, indicator.forecast);
+                          if (surp === null) return <span style={{ color: theme.muted, fontSize: 12 }}>—</span>;
+                          if (Math.abs(surp) < 0.5) return <span style={{ color: theme.muted, fontSize: 12, fontWeight: 600 }}>In Line</span>;
+                          return surp > 0
+                            ? <span style={{ color: '#10b981', fontSize: 12, fontWeight: 700 }}>+{surp.toFixed(1)}%</span>
+                            : <span style={{ color: '#ef4444', fontSize: 12, fontWeight: 700 }}>{surp.toFixed(1)}%</span>;
+                        })()}
+                      </div>
+                    </div>
                   </td>
                   {/* Currency */}
-                  <td className="cal-col-currency" style={{ padding: '12px 12px', textAlign: 'center' }}>
+                  <td className="cal-col-currency" style={{ padding: '14px 16px', textAlign: 'center' }}>
                     <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '4px 10px', borderRadius: 999, background: theme.bg, border: `1px solid ${theme.border}`, color: theme.text, fontSize: 11, fontWeight: 600, whiteSpace: 'nowrap' }}>
                       {indicator.currency}
                     </span>
                   </td>
                   {/* Impact */}
-                  <td className="cal-col-impact" style={{ padding: '12px 12px', textAlign: 'center' }}>
+                  <td className="cal-col-impact" style={{ padding: '14px 16px', textAlign: 'center' }}>
                     {indicator.impact === 'high' ? (
-                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '4px 11px', borderRadius: 6, background: 'rgba(239,68,68,0.12)', border: '1px solid rgba(239,68,68,0.4)', color: '#f87171', fontSize: 11, fontWeight: 700, whiteSpace: 'nowrap' }}>
-                        <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#f87171', display: 'inline-block', animation: 'calPulse 1.5s ease-in-out infinite' }} />
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '3px 9px', borderRadius: 999, background: '#ef444415', border: '1px solid #ef444430', color: '#ef4444', fontSize: 10, fontWeight: 700, whiteSpace: 'nowrap' }}>
+                        <span style={{ width: 5, height: 5, borderRadius: '50%', background: '#ef4444', display: 'inline-block', animation: 'calPulse 1.5s ease-in-out infinite' }} />
                         HIGH
                       </span>
                     ) : indicator.impact === 'medium' ? (
-                      <span style={{ display: 'inline-flex', alignItems: 'center', padding: '4px 11px', borderRadius: 6, background: 'rgba(245,158,11,0.12)', border: '1px solid rgba(245,158,11,0.4)', color: '#fbbf24', fontSize: 11, fontWeight: 700 }}>
+                      <span style={{ display: 'inline-flex', alignItems: 'center', padding: '3px 9px', borderRadius: 999, background: '#f59e0b15', border: '1px solid rgba(245,158,11,0.25)', color: '#f59e0b', fontSize: 10, fontWeight: 700 }}>
                         MED
                       </span>
                     ) : (
-                      <span style={{ display: 'inline-flex', alignItems: 'center', padding: '4px 11px', borderRadius: 6, background: 'rgba(100,116,139,0.12)', border: '1px solid rgba(100,116,139,0.4)', color: '#94a3b8', fontSize: 11, fontWeight: 600 }}>
+                      <span style={{ display: 'inline-flex', alignItems: 'center', padding: '3px 9px', borderRadius: 999, background: theme.isDark ? '#ffffff08' : 'rgba(0,0,0,0.07)', border: `1px solid ${theme.border}`, color: theme.muted, fontSize: 10, fontWeight: 600 }}>
                         LOW
                       </span>
                     )}
                   </td>
                   {/* Actual */}
-                  <td style={{ padding: '12px 12px', textAlign: 'right' }}>
+                  <td className="cal-col-actual" style={{ padding: '14px 16px', textAlign: 'right' }}>
                     {(() => {
                       const a = parseFloat(indicator.current);
                       const f = parseFloat(indicator.forecast);
-                      const color = (isNaN(a) || isNaN(f)) ? theme.text : a > f ? '#22c55e' : a < f ? '#ef4444' : theme.muted;
+                      const color = isNaN(a) ? theme.muted : theme.text;
                       return (
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 4 }}>
                           {!isNaN(a) && !isNaN(f) && a !== f && (
@@ -634,28 +660,28 @@ function EconomicCalendar() {
                     })()}
                   </td>
                   {/* Forecast */}
-                  <td className="cal-col-forecast" style={{ padding: '12px 12px', textAlign: 'right', color: theme.muted, fontSize: 14 }}>
+                  <td className="cal-col-forecast" style={{ padding: '14px 16px', textAlign: 'right', color: theme.muted, fontSize: 14 }}>
                     ({formatValue(indicator.forecast, indicator.unit)})
                   </td>
                   {/* Previous */}
-                  <td className="cal-col-previous" style={{ padding: '12px 12px', textAlign: 'right', color: theme.muted, fontSize: 14 }}>
+                  <td className="cal-col-previous" style={{ padding: '14px 16px', textAlign: 'right', color: theme.muted, fontSize: 14 }}>
                     {formatValue(indicator.previous, indicator.unit)}
                   </td>
                   {/* Surprise */}
-                  <td className="cal-col-surprise" style={{ padding: '12px 12px', textAlign: 'center' }}>
+                  <td className="cal-col-surprise" style={{ padding: '14px 16px', textAlign: 'center' }}>
                     {(() => {
                       const surp = getSurprise(indicator.current, indicator.forecast);
                       if (surp === null) return <span style={{ color: theme.muted, fontSize: 11 }}>—</span>;
                       if (Math.abs(surp) < 0.5) return (
-                        <span style={{ padding: '3px 9px', borderRadius: 999, background: 'rgba(100,116,139,0.12)', border: '1px solid rgba(100,116,139,0.35)', color: '#94a3b8', fontSize: 11, fontWeight: 600, whiteSpace: 'nowrap' }}>In Line</span>
+                        <span style={{ padding: '3px 9px', borderRadius: 999, background: theme.isDark ? '#ffffff08' : 'rgba(0,0,0,0.07)', border: `1px solid ${theme.border}`, color: theme.muted, fontSize: 11, fontWeight: 600, whiteSpace: 'nowrap' }}>In Line</span>
                       );
                       return surp > 0
-                        ? <span style={{ padding: '3px 9px', borderRadius: 999, background: 'rgba(34,197,94,0.12)', border: '1px solid rgba(34,197,94,0.35)', color: '#4ade80', fontSize: 11, fontWeight: 700, whiteSpace: 'nowrap' }}>+{surp.toFixed(1)}% Beat</span>
-                        : <span style={{ padding: '3px 9px', borderRadius: 999, background: 'rgba(239,68,68,0.12)', border: '1px solid rgba(239,68,68,0.35)', color: '#f87171', fontSize: 11, fontWeight: 700, whiteSpace: 'nowrap' }}>{surp.toFixed(1)}% Miss</span>;
+                        ? <span style={{ padding: '3px 9px', borderRadius: 999, background: '#10b98115', border: '1px solid #10b98130', color: '#10b981', fontSize: 11, fontWeight: 700, whiteSpace: 'nowrap' }}>+{surp.toFixed(1)}% Beat</span>
+                        : <span style={{ padding: '3px 9px', borderRadius: 999, background: '#ef444415', border: '1px solid #ef444430', color: '#ef4444', fontSize: 11, fontWeight: 700, whiteSpace: 'nowrap' }}>{surp.toFixed(1)}% Miss</span>;
                     })()}
                   </td>
                   {/* Expand */}
-                  <td style={{ padding: '12px 8px', textAlign: 'center', width: 36 }}>
+                  <td style={{ padding: '14px 8px', textAlign: 'center', width: 36 }}>
                     {expandedRow === indicator.id
                       ? <ChevronUp size={16} style={{ color: theme.accent, margin: '0 auto' }} />
                       : <ChevronDown size={16} style={{ color: theme.muted, margin: '0 auto' }} />
@@ -876,19 +902,21 @@ function EconomicCalendar() {
         .cal-filter-row::-webkit-scrollbar { display: none; }
         .cal-filter-row { -ms-overflow-style: none; scrollbar-width: none; }
         .cal-impact-mobile { display: none; }
+        .cal-mobile-data { display: none; }
         .cal-table-scroll { width: 100%; }
         @media (max-width: 639px) {
           .cal-col-currency,
           .cal-col-impact,
+          .cal-col-actual,
           .cal-col-forecast,
           .cal-col-previous,
           .cal-col-surprise { display: none; }
           .cal-impact-mobile { display: inline-flex; }
+          .cal-mobile-data { display: grid !important; }
           .cal-print-label { display: none; }
           .cal-table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
           .cal-expanded-td { padding: 0 8px 16px !important; }
           .col-span-2 { grid-column: span 1 !important; }
-          .cal-actual-val { font-size: 15px !important; }
         }
       `}</style>
     </div>
