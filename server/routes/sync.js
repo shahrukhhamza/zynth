@@ -24,7 +24,7 @@
  */
 
 import { Router }  from 'express';
-import { pool }    from '../services/journalDb.js';
+import { getDb }   from '../services/journalDb.js';
 
 const router = Router();
 
@@ -53,8 +53,9 @@ router.post('/', async (req, res) => {
   const resolvedUserId = user_id ?? 'default';
 
   // 2. Ensure the mt5_ticket column exists (safe to run repeatedly)
+  const db = getDb();
   try {
-    await pool.query(`
+    await db.query(`
       ALTER TABLE trades ADD COLUMN IF NOT EXISTS mt5_ticket BIGINT UNIQUE;
     `);
   } catch (_) { /* column already there — ignore */ }
@@ -78,7 +79,7 @@ router.post('/', async (req, res) => {
     }
 
     try {
-      const { rowCount } = await pool.query(
+      const { rowCount } = await db.query(
         `INSERT INTO trades
            (user_id, pair, direction, position_size, profit_loss, mt5_ticket, created_at)
          VALUES ($1, $2, $3, $4, $5, $6, $7)
