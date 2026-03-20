@@ -47,6 +47,7 @@ import * as Users from './db/users.js';
 import { incrementScreenshotTries, initDb } from './db/users.js';
 import accountsRouter from './routes/accounts.js';
 import webhookMetaApiRouter from './routes/webhookMetaApi.js';
+import syncRouter from './routes/sync.js';
 import { UPLOADS_DIR, ensureUploadDirs } from './config/storagePaths.js';
 
 const app = express();
@@ -263,6 +264,7 @@ app.use('/api/charts', requireAuth, chartsRouter);
 app.use('/api/levels', requireAuth, levelsRouter);
 app.use('/api/accounts', accountsRouter);
 app.use('/api/webhook/metaapi', webhookMetaApiRouter);
+app.use('/api/sync', syncRouter);
 
 // ── /mt5 proxy → Python screenshot service ────────────────────────────────────
 app.use('/mt5', requireAuth);
