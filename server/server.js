@@ -29,7 +29,7 @@ import dataRouter from './routes/data.js';
 import calendarRouter from './routes/calendar.js';
 import economicRouter from './routes/economic.js';
 import authRouter from './routes/auth.js';
-import finnhubRouter from './routes/finnhub.js';
+
 import journalRouter from './routes/journal.js';
 import checklistRouter from './routes/checklist.js';
 import analysisRouter  from './routes/analysis.js';
@@ -37,7 +37,7 @@ import assistantRouter from './routes/assistant.js';
 import { initJournalDb, insertMacroSnapshot } from './services/journalDb.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import { getApiKeyManager } from './utils/apiKeyManager.js';
-import { finnhubService, TRACKED_SYMBOLS } from './services/finnhubService.js';
+
 import { startAutoReleaseScheduler, manualTrigger } from './services/autoReleaseService.js';
 import adminRouter from './routes/admin.js';
 import chartsRouter from './routes/charts.js';
@@ -48,7 +48,9 @@ import { incrementScreenshotTries, initDb } from './db/users.js';
 import accountsRouter from './routes/accounts.js';
 import webhookMetaApiRouter from './routes/webhookMetaApi.js';
 import syncRouter from './routes/sync.js';
+import cronSyncRouter from './routes/cronSync.js';
 import { UPLOADS_DIR, ensureUploadDirs } from './config/storagePaths.js';
+import cron from 'node-cron';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -255,7 +257,7 @@ app.post('/api/economic/trigger-update', async (req, res) => {
 
 app.use('/api/auth', authLimiter, authRouter);
 app.use('/api/admin', adminRouter);
-app.use('/api/finnhub', finnhubRouter);
+
 app.use('/api/journal', journalRouter);
 app.use('/api/checklist', checklistRouter);
 app.use('/api/analysis',  analysisRouter);
@@ -265,6 +267,7 @@ app.use('/api/levels', requireAuth, levelsRouter);
 app.use('/api/accounts', accountsRouter);
 app.use('/api/webhook/metaapi', webhookMetaApiRouter);
 app.use('/api/sync', syncRouter);
+app.use('/api/cron', cronSyncRouter);
 
 // ── /mt5 proxy → Python screenshot service ────────────────────────────────────
 app.use('/mt5', requireAuth);
@@ -335,58 +338,6 @@ httpServer.on('error', (err) => {
 
 wss.on('error', (err) => console.error('❌ WebSocketServer error:', err.message));
 
-wss.on('connection', (ws) => {
-  console.log(`📡 Market WS client connected (total: ${wss.clients.size})`);
-
-  const sendSnapshot = () => {
-    if (ws.readyState !== ws.OPEN) return;
-    ws.send(JSON.stringify({
-      type:    'snapshot',
-      data:    finnhubService.getPriceSnapshot(),
-      symbols: TRACKED_SYMBOLS,
-      status:  finnhubService.getStatus(),
-      ts:      Date.now(),
-    }));
-  };
-
-  const priceCache = finnhubService.getPriceSnapshot();
-  const cacheEmpty = Object.keys(priceCache).length === 0;
-
-  if (cacheEmpty) {
-    const onSeeded = () => sendSnapshot();
-    finnhubService.once('snapshot', onSeeded);
-    ws.once('close', () => finnhubService.off('snapshot', onSeeded));
-  } else if (!finnhubService.hasLiveTick) {
-    const onFirstTick = () => {
-      sendSnapshot();
-      finnhubService.off('price', onFirstTick);
-    };
-    finnhubService.once('price', onFirstTick);
-    ws.once('close', () => finnhubService.off('price', onFirstTick));
-  } else {
-    sendSnapshot();
-  }
-
-  const onPrice = (update) => {
-    if (ws.readyState === ws.OPEN)
-      ws.send(JSON.stringify({ type: 'price', data: update, ts: Date.now() }));
-  };
-  const onStatus = (status) => {
-    if (ws.readyState === ws.OPEN)
-      ws.send(JSON.stringify({ type: 'status', status, ts: Date.now() }));
-  };
-
-  finnhubService.on('price',  onPrice);
-  finnhubService.on('status', onStatus);
-
-  ws.on('close', () => {
-    finnhubService.off('price',  onPrice);
-    finnhubService.off('status', onStatus);
-    console.log(`📡 Market WS client disconnected (total: ${wss.clients.size})`);
-  });
-  ws.on('error', (err) => console.error('WS client error:', err.message));
-});
-
 // ── Start server ──────────────────────────────────────────────────────────────
 // Initialize PostgreSQL schemas BEFORE listening
 Promise.all([initDb(), initJournalDb()])
@@ -397,20 +348,22 @@ Promise.all([initDb(), initJournalDb()])
       console.log(`🔑 Polygon API Key: ${process.env.POLYGON_API_KEY ? 'Yes' : 'No'}`);
       console.log('Twelve Data key loaded:', !!process.env.TWELVE_DATA_API_KEY);
 
-      if (process.env.FINNHUB_API_KEY) {
-        setTimeout(async () => {
+      startAutoReleaseScheduler(wss);
+
+      // ── MT5 history sync — every 5 minutes ─────────────────────────────
+      if (process.env.METAAPI_TOKEN && process.env.MT5_SYNC_LOGIN) {
+        const { syncMt5History } = await import('./services/mt5HistoryService.js');
+        cron.schedule('*/5 * * * *', async () => {
           try {
-            await finnhubService.seedFromRest();
-            finnhubService.connect();
-            finnhubService.startPolling();
-            console.log('📈 Finnhub live market data service started');
-            startAutoReleaseScheduler(wss);
+            const summary = await syncMt5History();
+            console.log('[mt5Cron] Sync complete — inserted: %d, skipped: %d', summary.inserted, summary.skipped);
           } catch (err) {
-            console.warn('⚠️  Finnhub init error (non-fatal):', err.message);
+            console.error('[mt5Cron] Sync error (non-fatal):', err.message);
           }
-        }, 1000);
+        });
+        console.log('🔄 MT5 history cron scheduled (every 5 min)');
       } else {
-        console.warn('⚠️  FINNHUB_API_KEY not set — live market data disabled');
+        console.warn('⚠️  MT5 history cron disabled — set METAAPI_TOKEN + MT5_SYNC_LOGIN in Railway Variables');
       }
 
       // ── Daily macro snapshot ─────────────────────────────────────────────
