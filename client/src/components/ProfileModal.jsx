@@ -11,7 +11,7 @@ import { resolveMediaUrl } from '../utils/mediaUrl';
 const SUPPORT_EMAIL = 'getzynth@gmail.com';
 
 const AVATAR_COLOR_MAP = {
-  emerald: '#10b981', blue: '#3b82f6', purple: '#a855f7', orange: '#f97316',
+  emerald: '#10b981', blue: '#3b82f6', purple: '#0ea5e9', orange: '#f97316',
   rose: '#f43f5e', amber: '#f59e0b', cyan: '#06b6d4', indigo: '#6366f1',
 };
 
@@ -69,7 +69,7 @@ const PLAN_INFO = {
   free:  { label: 'Basic Plan', sub: 'Free forever',                     color: '#9ca3af' },
   pro:   { label: 'Pro Plan',   sub: '$1.99/month (Founding Member)', color: '#34d399' },
   elite: { label: 'Elite Plan', sub: '$4.99/month (Best Value)',       color: '#fbbf24' },
-  admin: { label: 'Admin',      sub: 'Full Access',                       color: '#a78bfa' },
+  admin: { label: 'Admin',      sub: 'Full Access',                       color: '#0ea5e9' },
 };
 
 export default function ProfileModal({ onClose, onForgotPassword }) {

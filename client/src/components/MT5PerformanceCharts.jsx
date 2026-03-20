@@ -5,7 +5,7 @@ import {
 } from 'recharts';
 import { useTheme } from '../contexts/ThemeContext';
 
-const CHART_COLORS = ['#3b82f6', '#22c55e', '#f59e0b', '#ef4444', '#a855f7', '#06b6d4'];
+const CHART_COLORS = ['#3b82f6', '#22c55e', '#f59e0b', '#ef4444', '#0ea5e9', '#06b6d4'];
 
 function ChartCard({ title, children }) {
   const theme = useTheme();

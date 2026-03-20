@@ -66,32 +66,11 @@ export async function initDb() {
     `ALTER TABLE users ADD COLUMN IF NOT EXISTS avatar_url TEXT DEFAULT NULL`,
     `ALTER TABLE users ADD COLUMN IF NOT EXISTS terms_accepted INTEGER DEFAULT 0`,
     `ALTER TABLE users ADD COLUMN IF NOT EXISTS terms_accepted_at TIMESTAMPTZ DEFAULT NULL`,
-    // MT5 broker password stored as-is (needed to reconnect to broker)
-    `ALTER TABLE mt_accounts ADD COLUMN IF NOT EXISTS broker_password TEXT`,
   ];
 
   for (const sql of migrations) {
     try { await pool.query(sql); } catch { /* column already exists */ }
   }
-
-  // ── MetaApi cloud accounts ──────────────────────────────────────────────
-  await pool.query(`
-    CREATE TABLE IF NOT EXISTS mt_accounts (
-      id                  SERIAL PRIMARY KEY,
-      user_id             INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-      meta_api_account_id TEXT    NOT NULL UNIQUE,
-      login               TEXT    NOT NULL,
-      server              TEXT    NOT NULL,
-      platform            TEXT    NOT NULL DEFAULT 'MT5',
-      label               TEXT,
-      state               TEXT    DEFAULT 'DEPLOYING',
-      created_at          TIMESTAMPTZ DEFAULT NOW()
-    )
-  `);
-
-  await pool.query(
-    `CREATE INDEX IF NOT EXISTS idx_mt_accounts_user ON mt_accounts(user_id)`
-  );
 
   console.log('✅ Database schema ready');
 }
@@ -257,50 +236,6 @@ export async function setOnboardingDone(id) {
     'UPDATE users SET onboarding_done = 1 WHERE id = $1',
     [id]
   );
-}
-
-// ── MT Accounts ───────────────────────────────────────────────────────────────
-
-export async function createMtAccount({ user_id, meta_api_account_id, login, password, server, platform, label }) {
-  const { rows } = await pool.query(
-    `INSERT INTO mt_accounts (user_id, meta_api_account_id, login, broker_password, server, platform, label, state)
-     VALUES ($1, $2, $3, $4, $5, $6, $7, 'DEPLOYED')
-     RETURNING id, meta_api_account_id, login, server, platform, label, state, created_at`,
-    [user_id, meta_api_account_id, login, password ?? null, server, platform.toUpperCase(), label ?? null]
-  );
-  return rows[0];
-}
-
-export async function getMtAccountsByUser(user_id) {
-  const { rows } = await pool.query(
-    `SELECT id, meta_api_account_id, login, server, platform, label, state, created_at
-     FROM mt_accounts WHERE user_id = $1 ORDER BY created_at DESC`,
-    [user_id]
-  );
-  return rows;
-}
-
-export async function getMtAccountByMetaId(meta_api_account_id) {
-  const { rows } = await pool.query(
-    `SELECT * FROM mt_accounts WHERE meta_api_account_id = $1`,
-    [meta_api_account_id]
-  );
-  return rows[0] ?? null;
-}
-
-export async function updateMtAccountState(meta_api_account_id, state) {
-  await pool.query(
-    `UPDATE mt_accounts SET state = $1 WHERE meta_api_account_id = $2`,
-    [state, meta_api_account_id]
-  );
-}
-
-export async function deleteMtAccount(id, user_id) {
-  const { rowCount } = await pool.query(
-    `DELETE FROM mt_accounts WHERE id = $1 AND user_id = $2`,
-    [id, user_id]
-  );
-  return rowCount > 0;
 }
 
 export default pool;

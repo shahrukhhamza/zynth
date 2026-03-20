@@ -196,7 +196,7 @@ function AdminDashboardInner() {
   const STAT_CARDS = [
     { label: 'Total Signups', value: stats?.totalUsers  ?? '—', color: '#60a5fa', Icon: Users         },
     { label: 'Today',        value: stats?.todaySignups ?? '—', color: '#34d399', Icon: CalendarCheck  },
-    { label: 'This Week',    value: stats?.weekSignups  ?? '—', color: '#a78bfa', Icon: CalendarDays   },
+    { label: 'This Week',    value: stats?.weekSignups  ?? '—', color: '#0ea5e9', Icon: CalendarDays   },
     { label: 'Pro Users',    value: stats?.proUsers     ?? '—', color: '#10b981', Icon: Zap            },
     { label: 'Elite Users',  value: stats?.eliteUsers   ?? '—', color: '#fbbf24', Icon: Crown          },
     { label: 'Free Users',   value: stats?.freeUsers    ?? '—', color: '#9ca3af', Icon: Shield         },
@@ -219,7 +219,7 @@ function AdminDashboardInner() {
         <div className="flex items-center justify-between">
           <div>
             <div className="flex items-center gap-2 mb-0.5">
-              <Crown className="w-5 h-5" style={{ color: '#a78bfa' }} />
+              <Crown className="w-5 h-5" style={{ color: '#0ea5e9' }} />
               <h1 className="text-[22px] font-extrabold" style={{ color: theme.text }}>
                 Admin Dashboard
               </h1>
@@ -369,7 +369,7 @@ function AdminDashboardInner() {
                     const isAdminUser  = u.is_admin === 1;
                     const isMutating   = mutating === u.id;
                     const rowBaseBg    = isAdminUser
-                      ? (theme.isDark ? 'rgba(139,92,246,0.06)' : 'rgba(139,92,246,0.04)')
+                      ? (theme.isDark ? 'rgba(14,165,233,0.06)' : 'rgba(14,165,233,0.04)')
                       : 'transparent';
 
                     return (
@@ -384,14 +384,14 @@ function AdminDashboardInner() {
                           <div className="flex items-center gap-2.5">
                             <div
                               className="w-7 h-7 rounded-lg flex items-center justify-center text-[11px] font-bold text-white flex-shrink-0"
-                              style={{ background: isAdminUser ? 'linear-gradient(135deg,#7c3aed,#6d28d9)' : 'linear-gradient(135deg,#3b82f6,#6366f1)' }}
+                              style={{ background: isAdminUser ? 'linear-gradient(135deg,#0ea5e9,#0284c7)' : 'linear-gradient(135deg,#3b82f6,#6366f1)' }}
                             >
                               {u.name?.charAt(0).toUpperCase() || '?'}
                             </div>
                             <div className="min-w-0">
                               <div className="font-semibold text-[13px] flex items-center gap-1" style={{ color: theme.text }}>
                                 <span className="truncate" style={{ maxWidth: 110 }}>{u.name}</span>
-                                {isAdminUser && <Crown className="w-3 h-3 flex-shrink-0" style={{ color: '#a78bfa' }} />}
+                                {isAdminUser && <Crown className="w-3 h-3 flex-shrink-0" style={{ color: '#0ea5e9' }} />}
                               </div>
                               <div className="text-[11px] truncate" style={{ color: theme.muted, maxWidth: 160 }}>{u.email}</div>
                             </div>
@@ -443,13 +443,13 @@ function AdminDashboardInner() {
                                 title={isAdminUser ? 'Revoke admin' : 'Grant admin'}
                                 className="w-7 h-7 rounded-lg flex items-center justify-center transition-all"
                                 style={{
-                                  background: isAdminUser ? 'rgba(139,92,246,0.22)' : (theme.isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)'),
-                                  color: isAdminUser ? '#a78bfa' : theme.muted,
+                                  background: isAdminUser ? 'rgba(14,165,233,0.22)' : (theme.isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)'),
+                                  color: isAdminUser ? '#0ea5e9' : theme.muted,
                                 }}
-                                onMouseEnter={e => { e.currentTarget.style.background = 'rgba(139,92,246,0.3)'; e.currentTarget.style.color = '#c4b5fd'; }}
+                                onMouseEnter={e => { e.currentTarget.style.background = 'rgba(14,165,233,0.3)'; e.currentTarget.style.color = '#7dd3fc'; }}
                                 onMouseLeave={e => {
-                                  e.currentTarget.style.background = isAdminUser ? 'rgba(139,92,246,0.22)' : (theme.isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)');
-                                  e.currentTarget.style.color = isAdminUser ? '#a78bfa' : theme.muted;
+                                  e.currentTarget.style.background = isAdminUser ? 'rgba(14,165,233,0.22)' : (theme.isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)');
+                                  e.currentTarget.style.color = isAdminUser ? '#0ea5e9' : theme.muted;
                                 }}
                               >
                                 <Crown className="w-3.5 h-3.5" />

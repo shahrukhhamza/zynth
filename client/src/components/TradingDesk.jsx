@@ -71,8 +71,8 @@ const TOOLS = [
     id: 'pip',
     title: 'Pip Value Calculator',
     Icon: Layers,
-    badge: { text: 'NEW', color: '#a855f7', bg: 'rgba(168,85,247,0.13)' },
-    accent: '#a855f7',
+    badge: { text: 'NEW', color: '#0ea5e9', bg: 'rgba(14,165,233,0.13)' },
+    accent: '#0ea5e9',
     desc: 'Instantly calculate pip values across all major currency pairs and account currencies',
   },
   {
@@ -270,7 +270,7 @@ function PositionCalc() {
       <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
         <Stat label="Dollar Risk" value={isNaN(riskAmt) ? '—' : `$${riskAmt.toFixed(2)}`} color="#f97316" large />
         <Stat label="Lot Size (Standard)" value={fmt(lots)} color="#3b82f6" large />
-        <Stat label="Mini Lots (÷10)" value={fmt(lots * 10)} color="#a855f7" />
+        <Stat label="Mini Lots (÷10)" value={fmt(lots * 10)} color="#0ea5e9" />
         <Stat label="Micro Lots (÷100)" value={fmt(lots * 100)} color="#10b981" />
         <InfoBox color="#3b82f6">
           <Info size={13} style={{display:'inline-block',verticalAlign:'middle',marginRight:'4px'}} /> Always round <strong style={{ color: '#93c5fd' }}>down</strong> to the nearest 0.01 lot to stay within your defined risk limit.
@@ -493,12 +493,12 @@ function PipCalc() {
         >
           <Inp value={pairPx} onChange={e => setPairPx(e.target.value)} step="0.00001" placeholder={String(meta.approxRate)} />
         </Field>
-        <InfoBox color="#a855f7">
+        <InfoBox color="#0ea5e9">
           <Info size={13} style={{display:'inline-block',verticalAlign:'middle',marginRight:'4px'}} /> For USD-denominated accounts only. For other accounts multiply by your USD conversion rate.
         </InfoBox>
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-        <Stat label={`Pip Value (${lots} lot${lotF !== 1 ? 's' : ''})`} value={fv(pipValueUSD)} color="#a855f7" large />
+        <Stat label={`Pip Value (${lots} lot${lotF !== 1 ? 's' : ''})`} value={fv(pipValueUSD)} color="#0ea5e9" large />
         <Stat label="Pip Size" value={meta.pipSize.toString()} color="#06b6d4" />
         <Stat label="Contract Size" value={`${meta.cs.toLocaleString()} units`} color="#f59e0b" />
         <SubCard>
@@ -508,7 +508,7 @@ function PipCalc() {
           {[['Standard (1.0 lot)', 1], ['Mini (0.1 lot)', 0.1], ['Micro (0.01 lot)', 0.01]].map(([lbl, mult]) => (
             <div key={lbl} style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, marginBottom: 6, color: T.dimText, fontFamily: FONT }}>
               <span>{lbl}</span>
-              <span style={{ fontWeight: 700, color: '#a855f7' }}>
+              <span style={{ fontWeight: 700, color: '#0ea5e9' }}>
                 {isNaN(pipValueUSD) ? '—' : `$${(pipValueUSD / lotF * mult).toFixed(2)}/pip`}
               </span>
             </div>

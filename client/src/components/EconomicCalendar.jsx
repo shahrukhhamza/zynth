@@ -1,76 +1,119 @@
 import { useState, useEffect } from 'react';
 import { fetchEconomicCalendar } from '../services/calendarApi';
-import { Calendar, TrendingUp, TrendingDown, AlertCircle, ChevronDown, ChevronUp, Activity, Lightbulb, Target, Printer, Download, X, CheckSquare, Square, ShieldCheck, BarChart2, Clock } from 'lucide-react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine, LabelList } from 'recharts';
+import {
+  Calendar, TrendingUp, TrendingDown, AlertCircle,
+  ChevronDown, ChevronUp, Activity, Lightbulb, Target,
+  Printer, Download, X, CheckSquare, Square, ShieldCheck,
+  BarChart2, Clock, RefreshCw,
+} from 'lucide-react';
+import {
+  BarChart, Bar, XAxis, YAxis, CartesianGrid,
+  Tooltip, ResponsiveContainer, ReferenceLine,
+} from 'recharts';
 import { useTheme } from '../contexts/ThemeContext';
 import { useTimezone } from '../contexts/TimezoneContext';
 import { usePlanGate } from '../hooks/usePlanGate';
 import PlanGateBanner from './PlanGateBanner';
 import ProfileModal from './ProfileModal';
 
-// ── Stable Recharts sub-components (defined at module level to keep a stable
-//    reference across renders — avoids React error #31 / unmount-remount loops)
-function CalendarTooltip({ active, payload, theme, formatDate }) {
+// ── Tooltip (stable reference) ────────────────────────────────────────────────
+function CalTooltip({ active, payload, D, formatDate }) {
   if (!active || !payload?.length) return null;
-  const data = payload[0].payload;
+  const d = payload[0].payload;
   return (
-    <div className="border p-3 rounded-lg shadow-lg" style={{
-      backgroundColor: theme.surface,
-      borderColor: theme.border,
-      boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.3)'
-    }}>
-      <p className="text-xs mb-1" style={{ color: theme.muted }}>
-        {formatDate(new Date(data.date), 'MMM dd, yyyy')}
-      </p>
-      <div className="space-y-1">
-        <p className="text-sm">
-          <span style={{ color: theme.success }}>Actual:</span>{' '}
-          <span className="font-semibold" style={{ color: theme.text }}>{data.actual}</span>
-        </p>
-        <p className="text-sm">
-          <span style={{ color: theme.accent }}>Forecast:</span>{' '}
-          <span className="font-semibold" style={{ color: theme.text }}>{data.forecast}</span>
-        </p>
-        <p className="text-sm">
-          <span style={{ color: theme.muted }}>Previous:</span>{' '}
-          <span className="font-semibold" style={{ color: theme.text }}>{data.previous}</span>
-        </p>
+    <div style={{ background: D.cardBg, border: `1px solid ${D.border}`, borderRadius: 8, padding: '10px 14px', boxShadow: '0 8px 24px rgba(0,0,0,0.2)' }}>
+      {d.date && <p style={{ fontSize: 11, color: D.textSub, margin: '0 0 6px' }}>{new Date(d.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</p>}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+        {[['Actual', d.actual, D.accent], ['Forecast', d.forecast, D.blue], ['Previous', d.previous, D.textSub]].map(([lbl, val, col]) => val != null && (
+          <div key={lbl} style={{ display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'space-between' }}>
+            <span style={{ fontSize: 11, color: D.textSub }}>{lbl}</span>
+            <span style={{ fontSize: 12, fontWeight: 700, color: col }}>{val}</span>
+          </div>
+        ))}
       </div>
     </div>
   );
 }
 
-function CalendarBarLabel({ x, y, width, value, theme }) {
+// ── Helpers ───────────────────────────────────────────────────────────────────
+function fmt(v, unit) {
+  if (v == null || v === '') return '—';
+  return `${v}${unit ?? ''}`;
+}
+
+function getSurprise(actual, forecast) {
+  const a = parseFloat(actual), f = parseFloat(forecast);
+  if (isNaN(a) || isNaN(f) || f === 0) return null;
+  return ((a - f) / Math.abs(f)) * 100;
+}
+
+function ImpactBadge({ impact, size = 'sm' }) {
+  const pad   = size === 'sm' ? '3px 9px' : '4px 12px';
+  const fsize = size === 'sm' ? 10 : 11;
+  if (impact === 'high') return (
+    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: pad, borderRadius: 99, background: '#ef444415', border: '1px solid #ef444430', color: '#ef4444', fontSize: fsize, fontWeight: 800, letterSpacing: '0.05em', whiteSpace: 'nowrap' }}>
+      <span style={{ width: 5, height: 5, borderRadius: '50%', background: '#ef4444', animation: 'calPulse 1.5s ease-in-out infinite' }} />
+      HIGH
+    </span>
+  );
+  if (impact === 'medium') return (
+    <span style={{ display: 'inline-flex', alignItems: 'center', padding: pad, borderRadius: 99, background: '#f59e0b15', border: '1px solid #f59e0b30', color: '#f59e0b', fontSize: fsize, fontWeight: 700, whiteSpace: 'nowrap' }}>
+      MED
+    </span>
+  );
   return (
-    <text
-      x={x + width / 2}
-      y={y - 5}
-      fill={theme.text}
-      fontSize="10"
-      fontWeight="600"
-      textAnchor="middle"
-    >
-      {value}
-    </text>
+    <span style={{ display: 'inline-flex', alignItems: 'center', padding: pad, borderRadius: 99, background: 'rgba(100,116,139,0.1)', border: '1px solid rgba(100,116,139,0.2)', color: '#64748b', fontSize: fsize, fontWeight: 600, whiteSpace: 'nowrap' }}>
+      LOW
+    </span>
   );
 }
 
+function SurpriseBadge({ actual, forecast }) {
+  const surp = getSurprise(actual, forecast);
+  if (surp === null) return <span style={{ color: '#64748b', fontSize: 11 }}>—</span>;
+  if (Math.abs(surp) < 0.5) return (
+    <span style={{ padding: '3px 9px', borderRadius: 99, background: 'rgba(100,116,139,0.1)', border: '1px solid rgba(100,116,139,0.2)', color: '#64748b', fontSize: 11, fontWeight: 600, whiteSpace: 'nowrap' }}>
+      In Line
+    </span>
+  );
+  return surp > 0
+    ? <span style={{ padding: '3px 9px', borderRadius: 99, background: '#10b98115', border: '1px solid #10b98130', color: '#10b981', fontSize: 11, fontWeight: 700, whiteSpace: 'nowrap' }}>+{surp.toFixed(1)}% Beat</span>
+    : <span style={{ padding: '3px 9px', borderRadius: 99, background: '#ef444415', border: '1px solid #ef444430', color: '#ef4444', fontSize: 11, fontWeight: 700, whiteSpace: 'nowrap' }}>{surp.toFixed(1)}% Miss</span>;
+}
+
+// ── Main Component ────────────────────────────────────────────────────────────
 function EconomicCalendar() {
-  const theme = useTheme();
+  const theme  = useTheme();
   const { formatDateWithTimezone } = useTimezone();
   const { isFree } = usePlanGate();
-  const [indicators, setIndicators] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
-  const [expandedRow, setExpandedRow] = useState(null);
-  const [filterImpact, setFilterImpact] = useState('all');
-  const [printModal, setPrintModal] = useState(false);
-  const [printSelection, setPrintSelection] = useState({});
 
-  useEffect(() => {
-    loadCalendar();
-  }, []);
+  const [indicators,      setIndicators]      = useState([]);
+  const [loading,         setLoading]         = useState(true);
+  const [error,           setError]           = useState(null);
+  const [showUpgradeModal,setShowUpgradeModal] = useState(false);
+  const [expandedRow,     setExpandedRow]     = useState(null);
+  const [filterImpact,    setFilterImpact]    = useState('all');
+  const [printModal,      setPrintModal]      = useState(false);
+  const [printSelection,  setPrintSelection]  = useState({});
+
+  // ── Design tokens ────────────────────────────────────────────────────────
+  const D = {
+    isDark:  theme.isDark,
+    pageBg:  theme.isDark ? '#000000' : '#f1f3f6',
+    cardBg:  theme.isDark ? '#0d0d0d' : '#ffffff',
+    cardBg2: theme.isDark ? '#111111' : '#f7f8fa',
+    border:  theme.isDark ? '#1e1e1e' : '#e5e8ed',
+    border2: theme.isDark ? '#2a2a2a' : '#d0d5de',
+    text:    theme.isDark ? '#f0f0f0' : '#0d1117',
+    textSub: theme.isDark ? '#5a6472' : '#5a6472',
+    textMute:theme.isDark ? '#2a2a2a' : '#b0b8c4',
+    accent:  '#10b981',
+    blue:    theme.isDark ? '#60a5fa' : '#2563eb',
+    gold:    theme.isDark ? '#f59e0b' : '#d97706',
+    red:     '#ef4444',
+  };
+
+  useEffect(() => { loadCalendar(); }, []);
 
   const loadCalendar = async () => {
     try {
@@ -80,847 +123,479 @@ function EconomicCalendar() {
       setError(null);
     } catch (err) {
       setError('Failed to load economic calendar');
-      console.error(err);
     } finally {
       setLoading(false);
     }
   };
 
-  const getImpactColor = (impact) => {
-    switch (impact) {
-      case 'high':
-        return 'text-red-500';
-      case 'medium':
-        return 'text-yellow-500';
-      case 'low':
-        return 'text-green-500';
-      default:
-        return 'text-terminal-muted';
-    }
-  };
+  const filtered = filterImpact === 'all' ? indicators : indicators.filter(i => i.impact === filterImpact);
 
-  const getImpactBg = (impact) => {
-    switch (impact) {
-      case 'high':
-        return 'bg-red-500/20 border-red-500';
-      case 'medium':
-        return 'bg-yellow-500/20 border-yellow-500';
-      case 'low':
-        return 'bg-green-500/20 border-green-500';
-      default:
-        return 'bg-terminal-border border-terminal-border';
-    }
-  };
-
-  const formatValue = (value, unit) => {
-    if (value === null || value === undefined) return '-';
-    return `${value}${unit}`;
-  };
-
-  const getValueColor = (actual, forecast) => {
-    if (!actual || !forecast) return '';
-    const diff = parseFloat(actual) - parseFloat(forecast);
-    if (Math.abs(diff) < 0.01) return 'text-terminal-text';
-    return diff > 0 ? 'text-terminal-success' : 'text-terminal-error';
-  };
-
-  const getSurprise = (actual, forecast) => {
-    const a = parseFloat(actual);
-    const f = parseFloat(forecast);
-    if (isNaN(a) || isNaN(f) || f === 0) return null;
-    return ((a - f) / Math.abs(f)) * 100;
-  };
-
-  const toggleRow = (id) => {
-    setExpandedRow(expandedRow === id ? null : id);
-  };
-
-  // Must be declared before the print helpers that reference them
-  const filteredIndicators = filterImpact === 'all'
-    ? indicators
-    : indicators.filter(ind => ind.impact === filterImpact);
-
-  // ── Print / Download helpers ──────────────────────────────────────────
+  // ── Print helpers ────────────────────────────────────────────────────────
   const openPrintModal = () => {
-    // Pre-select all currently visible indicators
     const sel = {};
-    filteredIndicators.forEach(ind => { sel[ind.id] = true; });
+    filtered.forEach(i => { sel[i.id] = true; });
     setPrintSelection(sel);
     setPrintModal(true);
   };
-
-  const togglePrintItem = (id) => {
-    setPrintSelection(prev => ({ ...prev, [id]: !prev[id] }));
-  };
-
-  const selectAllPrint = () => {
-    const sel = {};
-    filteredIndicators.forEach(ind => { sel[ind.id] = true; });
-    setPrintSelection(sel);
-  };
-
-  const deselectAllPrint = () => {
-    const sel = {};
-    filteredIndicators.forEach(ind => { sel[ind.id] = false; });
-    setPrintSelection(sel);
-  };
-
-  const selectedForPrint = filteredIndicators.filter(ind => printSelection[ind.id]);
+  const selectedForPrint = filtered.filter(i => printSelection[i.id]);
 
   const buildPrintHTML = () => {
-    // Build one section per selected indicator with its full history
-    const sections = selectedForPrint.map(ind => {
-      // Merge releases + historicalData, deduplicate by date, sort newest first
-      const releaseRows = (ind.releases || []).map(r => ({
-        date: r.date,
-        actual: r.actual,
-        forecast: r.forecast,
-        previous: r.previous,
-        period: r.reportingPeriod || '',
-      }));
-      const histRows = (ind.historicalData || []).map(h => ({
-        date: h.date,
-        actual: h.actual,
-        forecast: h.forecast,
-        previous: h.previous,
-        period: '',
-      }));
-
-      // Merge: prefer release data over historicalData when same date
-      const seen = new Set();
-      const allRows = [...releaseRows, ...histRows].filter(r => {
-        if (!r.date || seen.has(r.date)) return false;
-        seen.add(r.date);
-        return true;
-      }).sort((a, b) => new Date(b.date) - new Date(a.date));
-
-      // If we have no history at all, fall back to the current snapshot row
-      const dataRows = allRows.length > 0 ? allRows : [{
-        date: ind.date || '',
-        actual: ind.current,
-        forecast: ind.forecast,
-        previous: ind.previous,
-        period: ind.reportingPeriod || '',
-      }];
-
-      const impactClass = `impact-${ind.impact}`;
-      const impactLabel = ind.impact.toUpperCase();
-
-      const tableRows = dataRows.map((r, i) => {
-        const diff = parseFloat(r.actual) - parseFloat(r.forecast);
-        const actualClass = isNaN(diff) ? '' : diff >= 0 ? 'green' : 'red';
-        const formattedDate = r.date
-          ? new Date(r.date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
-          : '-';
-        return `
-        <tr>
-          <td>${formattedDate}</td>
-          ${r.period ? `<td>${r.period}</td>` : '<td>-</td>'}
-          <td class="num ${actualClass}">${r.actual != null ? r.actual + ind.unit : '-'}</td>
-          <td class="num">${r.forecast != null ? r.forecast + ind.unit : '-'}</td>
-          <td class="num">${r.previous != null ? r.previous + ind.unit : '-'}</td>
-        </tr>`;
-      }).join('');
-
-      return `
-      <div class="indicator-block">
-        <div class="indicator-header">
-          <div class="indicator-title">
-            <span class="ind-name">${ind.name}</span>
-            <span class="ind-meta">${ind.currency} &nbsp;·&nbsp; <span class="${impactClass}">${impactLabel}</span></span>
-          </div>
-          <div class="ind-summary">
-            Latest: <strong class="${parseFloat(ind.current) >= parseFloat(ind.forecast) ? 'green' : 'red'}">${formatValue(ind.current, ind.unit)}</strong>
-            &nbsp; Forecast: <strong>${formatValue(ind.forecast, ind.unit)}</strong>
-            &nbsp; Previous: <strong>${formatValue(ind.previous, ind.unit)}</strong>
-          </div>
-        </div>
-        <table>
-          <thead>
-            <tr>
-              <th>Release Date</th>
-              <th>Period</th>
-              <th class="num">Actual</th>
-              <th class="num">Forecast</th>
-              <th class="num">Previous</th>
-            </tr>
-          </thead>
-          <tbody>${tableRows}</tbody>
-        </table>
-      </div>`;
-    }).join('');
-
-    return `<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8" />
-  <title>Economic Calendar — ${new Date().toLocaleDateString()}</title>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; color: #1a1a2e; padding: 24px; }
-    h1 { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
-    .subtitle { font-size: 11px; color: #64748b; margin-bottom: 28px; }
-    .indicator-block { margin-bottom: 32px; page-break-inside: avoid; }
-    .indicator-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; flex-wrap: wrap; gap: 4px; }
-    .indicator-title { display: flex; align-items: center; gap: 10px; }
-    .ind-name { font-size: 14px; font-weight: 700; color: #2a2a2a; }
-    .ind-meta { font-size: 11px; color: #64748b; }
-    .ind-summary { font-size: 11px; color: #475569; }
-    table { width: 100%; border-collapse: collapse; }
-    th { background: #2a2a2a; color: #fff; padding: 7px 10px; text-align: left; font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em; }
-    th.num, td.num { text-align: right; }
-    td { padding: 6px 10px; border-bottom: 1px solid #e2e8f0; }
-    tr:nth-child(even) td { background: #f8fafc; }
-    .green { color: #16a34a; font-weight: 600; }
-    .red   { color: #dc2626; font-weight: 600; }
-    .impact-high   { color: #dc2626; font-weight: 700; }
-    .impact-medium { color: #d97706; font-weight: 600; }
-    .impact-low    { color: #16a34a; }
-    .footer { margin-top: 8px; font-size: 10px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 10px; }
-    @media print {
-      body { padding: 12px; }
-      .indicator-block { page-break-inside: avoid; }
-    }
-  </style>
-</head>
-<body>
-  <h1>Economic Calendar</h1>
-  <p class="subtitle">Generated: ${new Date().toLocaleString()} &nbsp;·&nbsp; ${selectedForPrint.length} indicator${selectedForPrint.length !== 1 ? 's' : ''} with full release history</p>
-  ${sections}
-  <p class="footer">Source: AI-powered analysis &nbsp;·&nbsp; Data for informational purposes only.</p>
-</body>
-</html>`;
+    const rows = selectedForPrint.map(ind => `
+      <tr>
+        <td>${ind.name}</td>
+        <td style="text-align:center">${ind.currency}</td>
+        <td style="text-align:center;font-weight:700;color:${ind.impact === 'high' ? '#dc2626' : ind.impact === 'medium' ? '#d97706' : '#16a34a'}">${ind.impact.toUpperCase()}</td>
+        <td style="text-align:right;font-weight:700">${fmt(ind.current, ind.unit)}</td>
+        <td style="text-align:right">${fmt(ind.forecast, ind.unit)}</td>
+        <td style="text-align:right">${fmt(ind.previous, ind.unit)}</td>
+        <td style="text-align:center">${(() => { const s = getSurprise(ind.current, ind.forecast); return s === null ? '—' : Math.abs(s) < 0.5 ? 'In Line' : s > 0 ? `+${s.toFixed(1)}% Beat` : `${s.toFixed(1)}% Miss`; })()}</td>
+      </tr>`).join('');
+    return `<!DOCTYPE html><html><head><meta charset="utf-8"/><title>Economic Calendar</title>
+      <style>*{box-sizing:border-box}body{font-family:'Segoe UI',Arial,sans-serif;font-size:12px;padding:24px;color:#1a1a2e}h1{font-size:20px;font-weight:700;margin-bottom:4px}.sub{font-size:11px;color:#64748b;margin-bottom:20px}table{width:100%;border-collapse:collapse}th{background:#1e293b;color:#fff;padding:8px 12px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.06em}td{padding:8px 12px;border-bottom:1px solid #e2e8f0}tr:nth-child(even) td{background:#f8fafc}.footer{margin-top:16px;font-size:10px;color:#94a3b8;border-top:1px solid #e2e8f0;padding-top:8px}</style>
+      </head><body><h1>Economic Calendar</h1><p class="sub">Generated ${new Date().toLocaleString()} · ${selectedForPrint.length} indicators</p>
+      <table><thead><tr><th>Event</th><th style="text-align:center">Currency</th><th style="text-align:center">Impact</th><th style="text-align:right">Actual</th><th style="text-align:right">Forecast</th><th style="text-align:right">Previous</th><th style="text-align:center">Surprise</th></tr></thead>
+      <tbody>${rows}</tbody></table>
+      <p class="footer">Data for informational purposes only. Verify before trading.</p></body></html>`;
   };
 
   const handlePrint = () => {
-    if (selectedForPrint.length === 0) return;
-    const html = buildPrintHTML();
+    if (!selectedForPrint.length) return;
     const win = window.open('', '_blank', 'width=900,height=650');
-    win.document.write(html);
+    win.document.write(buildPrintHTML());
     win.document.close();
-    win.focus();
-    setTimeout(() => { win.print(); }, 400);
+    setTimeout(() => win.print(), 400);
     setPrintModal(false);
   };
 
   const handleDownload = () => {
-    if (selectedForPrint.length === 0) return;
-    const html = buildPrintHTML();
-    const blob = new Blob([html], { type: 'text/html' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `economic-calendar-${new Date().toISOString().split('T')[0]}.html`;
+    if (!selectedForPrint.length) return;
+    const blob = new Blob([buildPrintHTML()], { type: 'text/html' });
+    const a    = Object.assign(document.createElement('a'), { href: URL.createObjectURL(blob), download: `economic-calendar-${new Date().toISOString().split('T')[0]}.html` });
     a.click();
-    URL.revokeObjectURL(url);
+    URL.revokeObjectURL(a.href);
     setPrintModal(false);
   };
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div style={{ color: theme.accent }}>
-          <Activity className="w-8 h-8 animate-pulse" />
-        </div>
-      </div>
-    );
-  }
+  // ── Stats ────────────────────────────────────────────────────────────────
+  const beats    = filtered.filter(i => { const s = getSurprise(i.current, i.forecast); return s !== null && s > 0.5; }).length;
+  const misses   = filtered.filter(i => { const s = getSurprise(i.current, i.forecast); return s !== null && s < -0.5; }).length;
+  const netScore = beats - misses;
+  const nextInd  = [...filtered].filter(i => i.date).sort((a, b) => new Date(a.date) - new Date(b.date)).find(i => new Date(i.date) > new Date());
 
-  if (error) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-center">
-          <AlertCircle className="w-12 h-12 mx-auto mb-2" style={{ color: theme.danger }} />
-          <p style={{ color: theme.danger }}>{error}</p>
-          <button
-            onClick={loadCalendar}
-            className="mt-4 px-4 py-2 text-white rounded-lg text-sm"
-            style={{ backgroundColor: theme.accent }}
-            onMouseOver={(e) => e.currentTarget.style.opacity = '0.9'}
-            onMouseOut={(e) => e.currentTarget.style.opacity = '1'}
-          >
-            Retry
-          </button>
-        </div>
+  // ── Loading ───────────────────────────────────────────────────────────────
+  if (loading) return (
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: 240, background: D.pageBg }}>
+      <div style={{ textAlign: 'center' }}>
+        <div style={{ width: 28, height: 28, border: `2px solid ${D.accent}`, borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 0.8s linear infinite', margin: '0 auto 10px' }} />
+        <p style={{ fontSize: 13, color: D.textSub, margin: 0 }}>Loading calendar…</p>
       </div>
-    );
-  }
+      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+    </div>
+  );
+
+  if (error) return (
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: 240, background: D.pageBg }}>
+      <div style={{ textAlign: 'center' }}>
+        <AlertCircle style={{ width: 32, height: 32, color: D.red, margin: '0 auto 10px' }} />
+        <p style={{ color: D.red, margin: '0 0 14px', fontSize: 13 }}>{error}</p>
+        <button onClick={loadCalendar} style={{ padding: '8px 18px', background: D.accent, color: '#fff', border: 'none', borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: 'pointer' }}>Retry</button>
+      </div>
+    </div>
+  );
 
   return (
-    <div className="space-y-6">
+    <div style={{ background: D.pageBg, minHeight: '100%' }}>
+      <style>{`
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes calPulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.35;transform:scale(.65)} }
+        .cal-tr { transition: background 0.12s ease; cursor: pointer; }
+        .cal-tr:hover td { background: ${D.cardBg2} !important; }
+        @media (max-width: 767px) {
+          .cal-col-hide { display: none !important; }
+          .cal-mobile-grid { display: grid !important; }
+        }
+      `}</style>
 
-      {/* Plan gate banner for free users */}
-      {isFree && (
-        <PlanGateBanner
-          feature="AI-Powered Insights"
-          requiredPlan="Pro"
-          description="Upgrade to Pro or Elite to unlock AI-generated macro analysis, impact predictions, and surprise scoring for every release."
-          onUpgradeClick={() => setShowUpgradeModal(true)}
-        />
-      )}
-      {showUpgradeModal && <ProfileModal onClose={() => setShowUpgradeModal(false)} />}
+      <div style={{ maxWidth: 1200, margin: '0 auto', padding: '24px 24px 56px' }}>
 
-      {/* Print Selection Modal */}
-      {printModal && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4"
-          style={{ backgroundColor: 'rgba(0,0,0,0.6)' }}
-          onClick={(e) => { if (e.target === e.currentTarget) setPrintModal(false); }}
-        >
-          <div className="rounded-xl shadow-2xl w-full max-w-md" style={{ backgroundColor: theme.surface, border: `1px solid ${theme.border}` }}>
-            {/* Modal header */}
-            <div className="flex items-center justify-between px-5 py-4 border-b" style={{ borderColor: theme.border }}>
-              <div className="flex items-center gap-2">
-                <Printer className="w-5 h-5" style={{ color: theme.accent }} />
-                <h3 className="text-base font-semibold" style={{ color: theme.text }}>Select Indicators to Print</h3>
+        {isFree && (
+          <div style={{ marginBottom: 20 }}>
+            <PlanGateBanner feature="AI-Powered Insights" requiredPlan="Pro" description="Upgrade to Pro to unlock AI macro analysis, impact predictions, and surprise scoring." onUpgradeClick={() => setShowUpgradeModal(true)} />
+          </div>
+        )}
+        {showUpgradeModal && <ProfileModal onClose={() => setShowUpgradeModal(false)} />}
+
+        {/* ── Print Modal ─────────────────────────────────────────────── */}
+        {printModal && (
+          <div style={{ position: 'fixed', inset: 0, zIndex: 50, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.6)', padding: 16 }} onClick={e => e.target === e.currentTarget && setPrintModal(false)}>
+            <div style={{ background: D.cardBg, border: `1px solid ${D.border}`, borderRadius: 14, width: '100%', maxWidth: 440, boxShadow: '0 24px 64px rgba(0,0,0,0.4)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 20px', borderBottom: `1px solid ${D.border}` }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <Printer style={{ width: 16, height: 16, color: D.accent }} />
+                  <span style={{ fontSize: 14, fontWeight: 700, color: D.text }}>Print / Download</span>
+                </div>
+                <button onClick={() => setPrintModal(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: D.textSub, display: 'flex' }}>
+                  <X style={{ width: 16, height: 16 }} />
+                </button>
               </div>
-              <button onClick={() => setPrintModal(false)} style={{ color: theme.muted }}>
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            {/* Select all / none */}
-            <div className="flex gap-3 px-5 py-3 border-b" style={{ borderColor: theme.border }}>
-              <button onClick={selectAllPrint} className="text-xs font-medium" style={{ color: theme.accent }}>Select All</button>
-              <span style={{ color: theme.border }}>|</span>
-              <button onClick={deselectAllPrint} className="text-xs font-medium" style={{ color: theme.muted }}>Deselect All</button>
-              <span className="ml-auto text-xs" style={{ color: theme.muted }}>
-                {selectedForPrint.length} of {filteredIndicators.length} selected
-              </span>
-            </div>
-
-            {/* Indicator list */}
-            <div className="overflow-y-auto max-h-72 px-3 py-2">
-              {filteredIndicators.map(ind => (
-                <label
-                  key={ind.id}
-                  className="flex items-center gap-3 px-2 py-2.5 rounded-lg cursor-pointer transition-colors"
-                  style={{ color: theme.text }}
-                  onMouseOver={(e) => e.currentTarget.style.backgroundColor = theme.bg}
-                  onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
-                >
-                  <span style={{ color: printSelection[ind.id] ? theme.accent : theme.muted }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 16, padding: '10px 20px', borderBottom: `1px solid ${D.border}` }}>
+                <button onClick={() => { const s = {}; filtered.forEach(i => s[i.id] = true); setPrintSelection(s); }} style={{ fontSize: 12, color: D.accent, background: 'none', border: 'none', cursor: 'pointer', fontWeight: 600 }}>Select all</button>
+                <button onClick={() => { const s = {}; filtered.forEach(i => s[i.id] = false); setPrintSelection(s); }} style={{ fontSize: 12, color: D.textSub, background: 'none', border: 'none', cursor: 'pointer' }}>Deselect all</button>
+                <span style={{ marginLeft: 'auto', fontSize: 11, color: D.textSub }}>{selectedForPrint.length}/{filtered.length}</span>
+              </div>
+              <div style={{ maxHeight: 280, overflowY: 'auto', padding: '6px' }}>
+                {filtered.map(ind => (
+                  <label key={ind.id} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 12px', borderRadius: 8, cursor: 'pointer' }}
+                    onMouseEnter={e => e.currentTarget.style.background = D.cardBg2}
+                    onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                  >
+                    <input type="checkbox" style={{ display: 'none' }} checked={!!printSelection[ind.id]} onChange={() => setPrintSelection(p => ({ ...p, [ind.id]: !p[ind.id] }))} />
                     {printSelection[ind.id]
-                      ? <CheckSquare className="w-4 h-4" />
-                      : <Square className="w-4 h-4" />}
-                  </span>
-                  <input
-                    type="checkbox"
-                    className="sr-only"
-                    checked={!!printSelection[ind.id]}
-                    onChange={() => togglePrintItem(ind.id)}
-                  />
-                  <div className="flex-1 min-w-0">
-                    <div className="text-sm font-medium truncate">{ind.name}</div>
-                    <div className="text-xs" style={{ color: theme.muted }}>
-                      {ind.reportingPeriod || ind.date || ''} &nbsp;·&nbsp;
-                      <span className={
-                        ind.impact === 'high' ? 'text-red-500' :
-                        ind.impact === 'medium' ? 'text-yellow-500' : 'text-green-500'
-                      }>{ind.impact}</span>
+                      ? <CheckSquare style={{ width: 15, height: 15, color: D.accent, flexShrink: 0 }} />
+                      : <Square     style={{ width: 15, height: 15, color: D.textSub, flexShrink: 0 }} />}
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontSize: 13, fontWeight: 600, color: D.text, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{ind.name}</div>
+                      <div style={{ fontSize: 11, color: D.textSub, marginTop: 2 }}>{ind.impact} impact</div>
                     </div>
-                  </div>
-                  <div className="text-xs font-semibold text-right" style={{
-                    color: parseFloat(ind.current) >= parseFloat(ind.forecast) ? '#22c55e' : '#ef4444'
-                  }}>
-                    {formatValue(ind.current, ind.unit)}
-                  </div>
-                </label>
-              ))}
-            </div>
-
-            {/* Actions */}
-            <div className="flex gap-3 px-5 py-4 border-t" style={{ borderColor: theme.border }}>
-              <button
-                onClick={handlePrint}
-                disabled={selectedForPrint.length === 0}
-                className="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-medium transition-opacity"
-                style={{
-                  backgroundColor: theme.accent,
-                  color: '#fff',
-                  opacity: selectedForPrint.length === 0 ? 0.4 : 1,
-                  cursor: selectedForPrint.length === 0 ? 'not-allowed' : 'pointer',
-                }}
-              >
-                <Printer className="w-4 h-4" />
-                Print
-              </button>
-              <button
-                onClick={handleDownload}
-                disabled={selectedForPrint.length === 0}
-                className="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-medium transition-opacity"
-                style={{
-                  backgroundColor: 'rgba(34,197,94,0.15)',
-                  border: `1px solid ${theme.success}`,
-                  color: theme.success,
-                  opacity: selectedForPrint.length === 0 ? 0.4 : 1,
-                  cursor: selectedForPrint.length === 0 ? 'not-allowed' : 'pointer',
-                }}
-              >
-                <Download className="w-4 h-4" />
-                Download
-              </button>
+                    <span style={{ fontSize: 12, fontWeight: 700, color: parseFloat(ind.current) >= parseFloat(ind.forecast) ? D.accent : D.red, flexShrink: 0 }}>{fmt(ind.current, ind.unit)}</span>
+                  </label>
+                ))}
+              </div>
+              <div style={{ display: 'flex', gap: 10, padding: '16px 20px', borderTop: `1px solid ${D.border}` }}>
+                <button onClick={handlePrint} disabled={!selectedForPrint.length} style={{ flex: 1, padding: '10px', background: D.accent, color: '#fff', border: 'none', borderRadius: 8, fontSize: 13, fontWeight: 700, cursor: selectedForPrint.length ? 'pointer' : 'not-allowed', opacity: selectedForPrint.length ? 1 : 0.5, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+                  <Printer style={{ width: 13, height: 13 }} /> Print
+                </button>
+                <button onClick={handleDownload} disabled={!selectedForPrint.length} style={{ flex: 1, padding: '10px', background: D.cardBg2, color: D.accent, border: `1px solid ${D.accent}40`, borderRadius: 8, fontSize: 13, fontWeight: 700, cursor: selectedForPrint.length ? 'pointer' : 'not-allowed', opacity: selectedForPrint.length ? 1 : 0.5, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+                  <Download style={{ width: 13, height: 13 }} /> Download
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {/* Header */}
-      <div>
-        {/* Row 1: Title + Print button */}
-        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <div style={{ width: 40, height: 40, borderRadius: 10, background: theme.surface, border: `1px solid ${theme.border}`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-              <Calendar size={18} color="#10b981" />
-            </div>
-            <div>
-              <h2 style={{ color: theme.text, fontWeight: 800, fontSize: 20, margin: 0, lineHeight: 1.2, letterSpacing: '-0.01em' }}>Economic Calendar</h2>
-              <p style={{ color: theme.muted, fontSize: 12, margin: '2px 0 0' }}>17 US macro indicators — Updated automatically</p>
-            </div>
+        {/* ── Page Header ──────────────────────────────────────────────── */}
+        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12, marginBottom: 20, flexWrap: 'wrap' }}>
+          <div>
+            <h1 style={{ fontSize: 22, fontWeight: 700, color: D.text, margin: 0, letterSpacing: '-0.02em' }}>Economic Calendar</h1>
+            <p style={{ fontSize: 13, color: D.textSub, margin: '4px 0 0' }}>17 US macro indicators — Updated automatically</p>
           </div>
-          <button
-            onClick={openPrintModal}
-            style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '7px 12px', borderRadius: 8, border: `1px solid ${theme.border}`, background: theme.surface, color: theme.text, cursor: 'pointer', fontSize: 13, fontWeight: 500, transition: 'border-color 0.15s, color 0.15s', flexShrink: 0 }}
-            onMouseOver={(e) => { e.currentTarget.style.borderColor = '#10b981'; e.currentTarget.style.color = '#10b981'; }}
-            onMouseOut={(e) => { e.currentTarget.style.borderColor = theme.border; e.currentTarget.style.color = theme.text; }}
-          >
-            <Printer size={15} /> <span className="cal-print-label">Print / Download</span>
-          </button>
-        </div>
-        {/* Row 2: Filter pills — scrollable on mobile */}
-        <div className="cal-filter-row" style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 14, overflowX: 'auto', paddingBottom: 2 }}>
-          {['all', 'high', 'medium', 'low'].map(level => (
-            <button
-              key={level}
-              onClick={() => setFilterImpact(level)}
-              style={{ flexShrink: 0, padding: '6px 16px', borderRadius: 999, border: `1px solid ${filterImpact === level ? '#10b981' : theme.border}`, background: filterImpact === level ? '#10b981' : theme.surface, color: filterImpact === level ? '#fff' : theme.muted, cursor: 'pointer', fontSize: 12, fontWeight: 600, transition: 'all 0.15s' }}
-            >
-              {level === 'all' ? 'All' : level.charAt(0).toUpperCase() + level.slice(1)}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Stats bar */}
-      {(() => {
-        const now = new Date();
-        const beats = filteredIndicators.filter(ind => { const s = getSurprise(ind.current, ind.forecast); return s !== null && s > 0.5; }).length;
-        const misses = filteredIndicators.filter(ind => { const s = getSurprise(ind.current, ind.forecast); return s !== null && s < -0.5; }).length;
-        const netScore = beats - misses;
-        const nextInd = [...filteredIndicators].filter(i => i.date).sort((a, b) => new Date(a.date) - new Date(b.date)).find(i => new Date(i.date) > now);
-            const pill = { display: 'inline-flex', alignItems: 'center', gap: 6, padding: '6px 14px', borderRadius: 999, background: theme.surface, border: `1px solid ${theme.border}`, fontSize: 12, fontWeight: 500 };
-        return (
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-            <span style={{ ...pill, color: theme.muted }}><BarChart2 size={12} style={{display:'inline-block',verticalAlign:'middle',marginRight:'4px'}} />{filteredIndicators.length} Indicators</span>
-            <span style={{ ...pill, color: theme.muted }}><Clock size={12} style={{display:'inline-block',verticalAlign:'middle',marginRight:'4px'}} />Last Updated: {new Date().toLocaleDateString('en-US', { day: 'numeric', month: 'short' })}</span>
-            {nextInd && (
-              <span style={{ ...pill, color: theme.muted }}><Calendar size={12} style={{display:'inline-block',verticalAlign:'middle',marginRight:'4px'}} />Next: {nextInd.name} · {new Date(nextInd.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
-            )}
-            <span style={{ ...pill, color: netScore >= 0 ? '#22c55e' : '#ef4444' }}>
-              {netScore >= 0 ? <TrendingUp size={12} style={{display:'inline-block',verticalAlign:'middle',marginRight:'4px'}} /> : <TrendingDown size={12} style={{display:'inline-block',verticalAlign:'middle',marginRight:'4px'}} />}
-              Macro Score: {netScore >= 0 ? '+' : ''}{netScore} {netScore > 2 ? 'Bullish' : netScore < -2 ? 'Bearish' : 'Neutral'}
-            </span>
+            <button onClick={loadCalendar} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 14px', background: D.cardBg, border: `1px solid ${D.border}`, borderRadius: 8, color: D.textSub, fontSize: 13, fontWeight: 500, cursor: 'pointer', transition: 'border-color 0.15s' }}
+              onMouseEnter={e => e.currentTarget.style.borderColor = D.border2}
+              onMouseLeave={e => e.currentTarget.style.borderColor = D.border}
+            >
+              <RefreshCw style={{ width: 13, height: 13 }} /> Refresh
+            </button>
+            <button onClick={openPrintModal} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 14px', background: D.cardBg, border: `1px solid ${D.border}`, borderRadius: 8, color: D.textSub, fontSize: 13, fontWeight: 500, cursor: 'pointer', transition: 'all 0.15s' }}
+              onMouseEnter={e => { e.currentTarget.style.borderColor = D.accent; e.currentTarget.style.color = D.accent; }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = D.border; e.currentTarget.style.color = D.textSub; }}
+            >
+              <Printer style={{ width: 13, height: 13 }} /> Print / Download
+            </button>
           </div>
-        );
-      })()}
+        </div>
 
-      {/* Table */}
-      <div style={{ background: theme.bg, border: `1px solid ${theme.border}`, borderRadius: 12, overflow: 'hidden' }}>
-        <div className="cal-table-scroll">
-        <table className="w-full">
-          <thead style={{ background: theme.bg, borderBottom: `1px solid ${theme.border}` }}>
-            <tr>
-              <th style={{ padding: '12px 16px', textAlign: 'left',   fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: theme.muted }}>Event</th>
-              <th className="cal-col-currency" style={{ padding: '12px 16px', textAlign: 'center', fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: theme.muted }}>Currency</th>
-              <th className="cal-col-impact" style={{ padding: '12px 16px', textAlign: 'center', fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: theme.muted }}>Impact</th>
-              <th className="cal-col-actual" style={{ padding: '12px 16px', textAlign: 'right',  fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: theme.muted }}>Actual</th>
-              <th className="cal-col-forecast" style={{ padding: '12px 16px', textAlign: 'right',  fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: theme.muted }}>Forecast</th>
-              <th className="cal-col-previous" style={{ padding: '12px 16px', textAlign: 'right',  fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: theme.muted }}>Previous</th>
-              <th className="cal-col-surprise" style={{ padding: '12px 16px', textAlign: 'center', fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: theme.muted }}>Surprise</th>
-              <th style={{ width: 36 }} />
-            </tr>
-          </thead>
-          <tbody>
-            {filteredIndicators.map((indicator, rowIdx) => (
-              <>
-                <tr
-                  key={indicator.id}
-                  className="transition-colors cursor-pointer"
-                  onClick={() => toggleRow(indicator.id)}
-                  style={{ backgroundColor: theme.surface, borderBottom: `1px solid ${theme.border}` }}
-                  onMouseOver={(e) => e.currentTarget.style.backgroundColor = theme.surface2}
-                  onMouseOut={(e) => e.currentTarget.style.backgroundColor = theme.surface}
-                >
-                  {/* Event */}
-                  <td style={{ padding: '14px 16px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                      {(() => {
-                        const a = parseFloat(indicator.current);
-                        const p = parseFloat(indicator.previous);
-                        if (!isNaN(a) && !isNaN(p)) {
-                          return a >= p
-                            ? <TrendingUp size={15} style={{ color: '#22c55e', flexShrink: 0 }} />
-                            : <TrendingDown size={15} style={{ color: '#ef4444', flexShrink: 0 }} />;
-                        }
-                        return <Activity size={15} style={{ color: theme.muted, flexShrink: 0 }} />;
-                      })()}
-                      <div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
-                          <span style={{ color: theme.text, fontWeight: 700, fontSize: 14 }}>{indicator.name}</span>
-                          {indicator.webVerified && (
-                            <span title="Data verified via Gemini + Google Search" style={{ color: '#22c55e' }}>
-                              <ShieldCheck size={12} />
-                            </span>
-                          )}
-                          {indicator.corrected && (
-                            <span style={{ background: 'rgba(234,179,8,0.15)', color: '#eab308', fontSize: 10, padding: '1px 5px', borderRadius: 4 }}>corrected</span>
-                          )}
-                        </div>
-                        <div style={{ color: theme.muted, fontSize: 11, fontStyle: 'italic', marginTop: 2 }}>
-                          {indicator.reportingPeriod
-                            ? `${indicator.reportingPeriod} · ${indicator.frequency}`
-                            : indicator.frequency}
-                        </div>
-                        {/* Mobile-only impact badge */}
-                        <span className="cal-impact-mobile" style={{ marginTop: 4 }}>
-                          {indicator.impact === 'high' ? (
-                            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 3, padding: '2px 7px', borderRadius: 999, background: '#ef444415', border: '1px solid #ef444430', color: '#ef4444', fontSize: 10, fontWeight: 700 }}>HIGH</span>
-                          ) : indicator.impact === 'medium' ? (
-                            <span style={{ display: 'inline-flex', alignItems: 'center', padding: '2px 7px', borderRadius: 999, background: '#f59e0b15', border: '1px solid rgba(245,158,11,0.25)', color: '#f59e0b', fontSize: 10, fontWeight: 700 }}>MED</span>
-                          ) : (
-                            <span style={{ display: 'inline-flex', alignItems: 'center', padding: '2px 7px', borderRadius: 999, background: theme.isDark ? '#ffffff08' : 'rgba(0,0,0,0.07)', border: `1px solid ${theme.border}`, color: theme.muted, fontSize: 10, fontWeight: 600 }}>LOW</span>
-                          )}
-                        </span>
-                      </div>
-                    </div>
-                    {/* Mobile 2×2 data grid */}
-                    <div className="cal-mobile-data" style={{ marginTop: 10, gridTemplateColumns: '1fr 1fr', gap: 6 }}>
-                      <div style={{ background: theme.surface2, border: `1px solid ${theme.border}`, borderRadius: 6, padding: '6px 8px' }}>
-                        <div style={{ fontSize: 9, color: theme.muted, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 3 }}>Actual</div>
-                        <div style={{ color: isNaN(parseFloat(indicator.current)) ? theme.muted : theme.text, fontWeight: 700, fontSize: 14 }}>{formatValue(indicator.current, indicator.unit)}</div>
-                      </div>
-                      <div style={{ background: theme.surface2, border: `1px solid ${theme.border}`, borderRadius: 6, padding: '6px 8px' }}>
-                        <div style={{ fontSize: 9, color: theme.muted, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 3 }}>Forecast</div>
-                        <div style={{ color: theme.muted, fontSize: 13 }}>{formatValue(indicator.forecast, indicator.unit)}</div>
-                      </div>
-                      <div style={{ background: theme.surface2, border: `1px solid ${theme.border}`, borderRadius: 6, padding: '6px 8px' }}>
-                        <div style={{ fontSize: 9, color: theme.muted, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 3 }}>Previous</div>
-                        <div style={{ color: theme.muted, fontSize: 13 }}>{formatValue(indicator.previous, indicator.unit)}</div>
-                      </div>
-                      <div style={{ background: theme.surface2, border: `1px solid ${theme.border}`, borderRadius: 6, padding: '6px 8px' }}>
-                        <div style={{ fontSize: 9, color: theme.muted, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 3 }}>Surprise</div>
-                        {(() => {
-                          const surp = getSurprise(indicator.current, indicator.forecast);
-                          if (surp === null) return <span style={{ color: theme.muted, fontSize: 12 }}>—</span>;
-                          if (Math.abs(surp) < 0.5) return <span style={{ color: theme.muted, fontSize: 12, fontWeight: 600 }}>In Line</span>;
-                          return surp > 0
-                            ? <span style={{ color: '#10b981', fontSize: 12, fontWeight: 700 }}>+{surp.toFixed(1)}%</span>
-                            : <span style={{ color: '#ef4444', fontSize: 12, fontWeight: 700 }}>{surp.toFixed(1)}%</span>;
-                        })()}
-                      </div>
-                    </div>
-                  </td>
-                  {/* Currency */}
-                  <td className="cal-col-currency" style={{ padding: '14px 16px', textAlign: 'center' }}>
-                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '4px 10px', borderRadius: 999, background: theme.bg, border: `1px solid ${theme.border}`, color: theme.text, fontSize: 11, fontWeight: 600, whiteSpace: 'nowrap' }}>
-                      {indicator.currency}
-                    </span>
-                  </td>
-                  {/* Impact */}
-                  <td className="cal-col-impact" style={{ padding: '14px 16px', textAlign: 'center' }}>
-                    {indicator.impact === 'high' ? (
-                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '3px 9px', borderRadius: 999, background: '#ef444415', border: '1px solid #ef444430', color: '#ef4444', fontSize: 10, fontWeight: 700, whiteSpace: 'nowrap' }}>
-                        <span style={{ width: 5, height: 5, borderRadius: '50%', background: '#ef4444', display: 'inline-block', animation: 'calPulse 1.5s ease-in-out infinite' }} />
-                        HIGH
-                      </span>
-                    ) : indicator.impact === 'medium' ? (
-                      <span style={{ display: 'inline-flex', alignItems: 'center', padding: '3px 9px', borderRadius: 999, background: '#f59e0b15', border: '1px solid rgba(245,158,11,0.25)', color: '#f59e0b', fontSize: 10, fontWeight: 700 }}>
-                        MED
-                      </span>
-                    ) : (
-                      <span style={{ display: 'inline-flex', alignItems: 'center', padding: '3px 9px', borderRadius: 999, background: theme.isDark ? '#ffffff08' : 'rgba(0,0,0,0.07)', border: `1px solid ${theme.border}`, color: theme.muted, fontSize: 10, fontWeight: 600 }}>
-                        LOW
-                      </span>
-                    )}
-                  </td>
-                  {/* Actual */}
-                  <td className="cal-col-actual" style={{ padding: '14px 16px', textAlign: 'right' }}>
-                    {(() => {
-                      const a = parseFloat(indicator.current);
-                      const f = parseFloat(indicator.forecast);
-                      const color = isNaN(a) ? theme.muted : theme.text;
-                      return (
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 4 }}>
-                          {!isNaN(a) && !isNaN(f) && a !== f && (
-                            a > f ? <TrendingUp size={13} color="#22c55e" /> : <TrendingDown size={13} color="#ef4444" />
-                          )}
-                          <span className="cal-actual-val" style={{ color, fontWeight: 700, fontSize: 17 }}>{formatValue(indicator.current, indicator.unit)}</span>
-                        </div>
-                      );
-                    })()}
-                  </td>
-                  {/* Forecast */}
-                  <td className="cal-col-forecast" style={{ padding: '14px 16px', textAlign: 'right', color: theme.muted, fontSize: 14 }}>
-                    ({formatValue(indicator.forecast, indicator.unit)})
-                  </td>
-                  {/* Previous */}
-                  <td className="cal-col-previous" style={{ padding: '14px 16px', textAlign: 'right', color: theme.muted, fontSize: 14 }}>
-                    {formatValue(indicator.previous, indicator.unit)}
-                  </td>
-                  {/* Surprise */}
-                  <td className="cal-col-surprise" style={{ padding: '14px 16px', textAlign: 'center' }}>
-                    {(() => {
-                      const surp = getSurprise(indicator.current, indicator.forecast);
-                      if (surp === null) return <span style={{ color: theme.muted, fontSize: 11 }}>—</span>;
-                      if (Math.abs(surp) < 0.5) return (
-                        <span style={{ padding: '3px 9px', borderRadius: 999, background: theme.isDark ? '#ffffff08' : 'rgba(0,0,0,0.07)', border: `1px solid ${theme.border}`, color: theme.muted, fontSize: 11, fontWeight: 600, whiteSpace: 'nowrap' }}>In Line</span>
-                      );
-                      return surp > 0
-                        ? <span style={{ padding: '3px 9px', borderRadius: 999, background: '#10b98115', border: '1px solid #10b98130', color: '#10b981', fontSize: 11, fontWeight: 700, whiteSpace: 'nowrap' }}>+{surp.toFixed(1)}% Beat</span>
-                        : <span style={{ padding: '3px 9px', borderRadius: 999, background: '#ef444415', border: '1px solid #ef444430', color: '#ef4444', fontSize: 11, fontWeight: 700, whiteSpace: 'nowrap' }}>{surp.toFixed(1)}% Miss</span>;
-                    })()}
-                  </td>
-                  {/* Expand */}
-                  <td style={{ padding: '14px 8px', textAlign: 'center', width: 36 }}>
-                    {expandedRow === indicator.id
-                      ? <ChevronUp size={16} style={{ color: theme.accent, margin: '0 auto' }} />
-                      : <ChevronDown size={16} style={{ color: theme.muted, margin: '0 auto' }} />
-                    }
-                  </td>
+        {/* ── Filter tabs ───────────────────────────────────────────────── */}
+        <div style={{ display: 'flex', gap: 6, marginBottom: 16, flexWrap: 'wrap' }}>
+          {[
+            { key: 'all',    label: 'All' },
+            { key: 'high',   label: 'High',   color: '#ef4444' },
+            { key: 'medium', label: 'Medium', color: '#f59e0b' },
+            { key: 'low',    label: 'Low',    color: '#64748b' },
+          ].map(f => {
+            const active = filterImpact === f.key;
+            return (
+              <button key={f.key} onClick={() => setFilterImpact(f.key)} style={{
+                padding: '7px 18px', borderRadius: 99, fontSize: 12, fontWeight: 700,
+                background: active ? (f.color ?? D.accent) : D.cardBg,
+                color: active ? '#fff' : D.textSub,
+                border: `1px solid ${active ? (f.color ?? D.accent) : D.border}`,
+                cursor: 'pointer', transition: 'all 0.15s',
+                letterSpacing: '0.02em',
+              }}>
+                {f.label}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* ── Stats bar ─────────────────────────────────────────────────── */}
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 16 }}>
+          {[
+            { icon: BarChart2, label: `${filtered.length} Indicators` },
+            { icon: Clock,     label: `Updated: ${new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}` },
+            nextInd && { icon: Calendar, label: `Next: ${nextInd.name} · ${new Date(nextInd.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}` },
+          ].filter(Boolean).map((item, i) => (
+            <div key={i} style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '6px 12px', borderRadius: 99, background: D.cardBg, border: `1px solid ${D.border}`, fontSize: 12, color: D.textSub }}>
+              <item.icon style={{ width: 12, height: 12 }} />
+              {item.label}
+            </div>
+          ))}
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '6px 12px', borderRadius: 99, background: netScore >= 0 ? '#10b98110' : '#ef444410', border: `1px solid ${netScore >= 0 ? '#10b98130' : '#ef444430'}`, fontSize: 12, fontWeight: 700, color: netScore >= 0 ? D.accent : D.red }}>
+            {netScore >= 0 ? <TrendingUp style={{ width: 12, height: 12 }} /> : <TrendingDown style={{ width: 12, height: 12 }} />}
+            Macro Score: {netScore >= 0 ? '+' : ''}{netScore} {netScore > 2 ? 'Bullish' : netScore < -2 ? 'Bearish' : 'Neutral'}
+          </div>
+        </div>
+
+        {/* ── Table ─────────────────────────────────────────────────────── */}
+        <div style={{ background: D.cardBg, border: `1px solid ${D.border}`, borderRadius: 12, overflow: 'hidden' }}>
+          <div style={{ overflowX: 'auto' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+              <thead>
+                <tr style={{ background: D.cardBg2, borderBottom: `1px solid ${D.border}` }}>
+                  {[
+                    { label: 'Event',    align: 'left',   cls: '' },
+                    { label: 'Currency', align: 'center', cls: 'cal-col-hide' },
+                    { label: 'Impact',   align: 'center', cls: 'cal-col-hide' },
+                    { label: 'Actual',   align: 'right',  cls: 'cal-col-hide' },
+                    { label: 'Forecast', align: 'right',  cls: 'cal-col-hide' },
+                    { label: 'Previous', align: 'right',  cls: 'cal-col-hide' },
+                    { label: 'Surprise', align: 'center', cls: 'cal-col-hide' },
+                    { label: '',         align: 'center', cls: '' },
+                  ].map((col, i) => (
+                    <th key={i} className={col.cls} style={{ padding: '12px 16px', textAlign: col.align, fontSize: 10, fontWeight: 700, color: D.textSub, letterSpacing: '0.1em', textTransform: 'uppercase', whiteSpace: 'nowrap' }}>
+                      {col.label}
+                    </th>
+                  ))}
                 </tr>
-                
-                {/* Expanded Row - AI Insights + Historical Chart */}
-                {expandedRow === indicator.id && (
-                  <tr>
-                    <td colSpan="8" className="cal-expanded-td" style={{ padding: '0 16px 24px', backgroundColor: theme.bg }}>
-                      <div className="space-y-4">
-                        
-                        {/* AI Insights Section */}
-                        {indicator.aiInsights && (
-                          <div className="rounded-lg border p-4" style={{ 
-                            backgroundColor: theme.isDark ? 'rgba(139, 92, 246, 0.1)' : 'rgba(139, 92, 246, 0.05)',
-                            borderColor: '#8b5cf6'
-                          }}>
-                            <div className="flex items-center gap-2 mb-3">
-                              <Lightbulb className="w-5 h-5" style={{ color: '#8b5cf6' }} />
-                              <h4 className="text-sm font-semibold uppercase" style={{ color: theme.text }}>
-                                AI Market Analysis
-                              </h4>
+              </thead>
+              <tbody>
+                {filtered.map((ind, idx) => {
+                  const isExp  = expandedRow === ind.id;
+                  const aNum   = parseFloat(ind.current);
+                  const pNum   = parseFloat(ind.previous);
+                  const trend  = !isNaN(aNum) && !isNaN(pNum) ? (aNum >= pNum ? 'up' : 'down') : null;
+
+                  return (
+                    <>
+                      {/* Main row */}
+                      <tr
+                        key={ind.id}
+                        className="cal-tr"
+                        onClick={() => setExpandedRow(isExp ? null : ind.id)}
+                        style={{ borderBottom: `1px solid ${D.border}` }}
+                      >
+                        {/* Event */}
+                        <td style={{ padding: '14px 16px' }}>
+                          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
+                            <div style={{ width: 28, height: 28, borderRadius: 7, flexShrink: 0, background: trend === 'up' ? '#10b98115' : trend === 'down' ? '#ef444415' : D.cardBg2, border: `1px solid ${trend === 'up' ? '#10b98130' : trend === 'down' ? '#ef444430' : D.border}`, display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: 1 }}>
+                              {trend === 'up'   ? <TrendingUp   style={{ width: 13, height: 13, color: '#10b981' }} />
+                               : trend === 'down' ? <TrendingDown style={{ width: 13, height: 13, color: '#ef4444' }} />
+                               : <Activity style={{ width: 13, height: 13, color: D.textSub }} />}
                             </div>
-                            <p className="text-sm mb-3" style={{ color: theme.text }}>
-                              {indicator.aiInsights.summary}
-                            </p>
-                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
-                              <div className="rounded p-2" style={{ backgroundColor: theme.surface }}>
-                                <div style={{ color: theme.muted }}>Impact</div>
-                                <div className="font-semibold mt-1" style={{ 
-                                  color: indicator.aiInsights.impact === 'bullish_usd' ? theme.success : theme.danger 
-                                }}>
-                                  {indicator.aiInsights.impact.replace('_', ' ').toUpperCase()}
-                                </div>
+                            <div style={{ minWidth: 0 }}>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+                                <span style={{ fontSize: 14, fontWeight: 700, color: D.text }}>{ind.name}</span>
+                                {ind.webVerified && <ShieldCheck style={{ width: 12, height: 12, color: D.accent, flexShrink: 0 }} />}
+                                {ind.corrected && <span style={{ fontSize: 9, fontWeight: 700, color: '#f59e0b', background: '#f59e0b15', border: '1px solid #f59e0b30', padding: '1px 6px', borderRadius: 4, letterSpacing: '0.06em' }}>CORRECTED</span>}
                               </div>
-                              <div className="rounded p-2" style={{ backgroundColor: theme.surface }}>
-                                <div style={{ color: theme.muted }}>Market Reaction</div>
-                                <div className="font-semibold mt-1" style={{ color: theme.text }}>
-                                  {indicator.aiInsights.marketReaction}
-                                </div>
+                              <div style={{ fontSize: 11, color: D.textSub, marginTop: 3, fontStyle: 'italic' }}>
+                                {ind.reportingPeriod ? `${ind.reportingPeriod} · ` : ''}{ind.frequency}
                               </div>
-                              <div className="rounded p-2" style={{ backgroundColor: theme.surface }}>
-                                <div style={{ color: theme.muted }}>Trading Bias</div>
-                                <div className="font-semibold mt-1" style={{ color: theme.accent }}>
-                                  {indicator.aiInsights.tradingBias}
+                              {/* Mobile: impact + data grid */}
+                              <div className="cal-mobile-grid" style={{ display: 'none', marginTop: 8 }}>
+                                <div style={{ marginBottom: 6 }}><ImpactBadge impact={ind.impact} /></div>
+                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 5 }}>
+                                  {[['Actual', fmt(ind.current, ind.unit), D.text, true], ['Forecast', `(${fmt(ind.forecast, ind.unit)})`, D.textSub, false], ['Previous', fmt(ind.previous, ind.unit), D.textSub, false]].map(([lbl, val, col, bold]) => (
+                                    <div key={lbl} style={{ background: D.cardBg2, border: `1px solid ${D.border}`, borderRadius: 6, padding: '7px 9px' }}>
+                                      <div style={{ fontSize: 9, fontWeight: 700, color: D.textSub, letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 3 }}>{lbl}</div>
+                                      <div style={{ fontSize: 13, fontWeight: bold ? 700 : 500, color: col }}>{val}</div>
+                                    </div>
+                                  ))}
+                                  <div style={{ background: D.cardBg2, border: `1px solid ${D.border}`, borderRadius: 6, padding: '7px 9px' }}>
+                                    <div style={{ fontSize: 9, fontWeight: 700, color: D.textSub, letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 3 }}>Surprise</div>
+                                    <SurpriseBadge actual={ind.current} forecast={ind.forecast} />
+                                  </div>
                                 </div>
                               </div>
                             </div>
                           </div>
-                        )}
+                        </td>
 
-                        {/* Scenario Analysis */}
-                        {indicator.scenarioAnalysis && (
-                          <div className="rounded-lg border p-4" style={{ 
-                            backgroundColor: theme.surface,
-                            borderColor: theme.border
-                          }}>
-                            <div className="flex items-center gap-2 mb-3">
-                              <Target className="w-5 h-5" style={{ color: theme.accent }} />
-                              <h4 className="text-sm font-semibold uppercase" style={{ color: theme.text }}>
-                                Pre-Release Scenario Analysis
-                              </h4>
-                            </div>
-                            <pre className="text-xs whitespace-pre-wrap font-sans" style={{ color: theme.text }}>
-                              {indicator.scenarioAnalysis}
-                            </pre>
+                        {/* Currency */}
+                        <td className="cal-col-hide" style={{ padding: '14px 16px', textAlign: 'center' }}>
+                          <span style={{ display: 'inline-flex', padding: '4px 10px', borderRadius: 99, background: D.cardBg2, border: `1px solid ${D.border}`, fontSize: 11, fontWeight: 700, color: D.text }}>
+                            {ind.currency}
+                          </span>
+                        </td>
+
+                        {/* Impact */}
+                        <td className="cal-col-hide" style={{ padding: '14px 16px', textAlign: 'center' }}>
+                          <ImpactBadge impact={ind.impact} />
+                        </td>
+
+                        {/* Actual */}
+                        <td className="cal-col-hide" style={{ padding: '14px 16px', textAlign: 'right' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 5 }}>
+                            {trend === 'up'   && <TrendingUp   style={{ width: 13, height: 13, color: '#10b981' }} />}
+                            {trend === 'down' && <TrendingDown style={{ width: 13, height: 13, color: '#ef4444' }} />}
+                            <span style={{ fontSize: 16, fontWeight: 800, color: !isNaN(aNum) ? D.text : D.textSub, letterSpacing: '-0.02em', fontVariantNumeric: 'tabular-nums' }}>
+                              {fmt(ind.current, ind.unit)}
+                            </span>
                           </div>
-                        )}
+                        </td>
 
-                        {/* Specs */}
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-                          <div>
-                            <h4 className="text-xs font-semibold uppercase mb-2" style={{ color: theme.muted }}>
-                              Source
-                            </h4>
-                            <div className="flex items-start gap-1.5">
-                              {indicator.webVerified && (
-                                <ShieldCheck className="w-4 h-4 flex-shrink-0 mt-0.5" style={{ color: theme.success }} />
+                        {/* Forecast */}
+                        <td className="cal-col-hide" style={{ padding: '14px 16px', textAlign: 'right', fontSize: 14, color: D.textSub }}>
+                          ({fmt(ind.forecast, ind.unit)})
+                        </td>
+
+                        {/* Previous */}
+                        <td className="cal-col-hide" style={{ padding: '14px 16px', textAlign: 'right', fontSize: 14, color: D.textSub }}>
+                          {fmt(ind.previous, ind.unit)}
+                        </td>
+
+                        {/* Surprise */}
+                        <td className="cal-col-hide" style={{ padding: '14px 16px', textAlign: 'center' }}>
+                          <SurpriseBadge actual={ind.current} forecast={ind.forecast} />
+                        </td>
+
+                        {/* Expand */}
+                        <td style={{ padding: '14px 10px', textAlign: 'center', width: 36 }}>
+                          {isExp
+                            ? <ChevronUp   style={{ width: 15, height: 15, color: D.accent, display: 'block', margin: '0 auto' }} />
+                            : <ChevronDown style={{ width: 15, height: 15, color: D.textSub, display: 'block', margin: '0 auto' }} />}
+                        </td>
+                      </tr>
+
+                      {/* Expanded row */}
+                      {isExp && (
+                        <tr key={`${ind.id}-exp`} style={{ borderBottom: `1px solid ${D.border}` }}>
+                          <td colSpan={8} style={{ padding: '0 16px 24px', background: D.cardBg2 }}>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: 16, paddingTop: 16 }}>
+
+                              {/* AI Insights */}
+                              {ind.aiInsights && (
+                                <div style={{ background: D.cardBg, border: '1px solid #0ea5e930', borderLeft: '3px solid #0ea5e9', borderRadius: 10, padding: '16px 18px' }}>
+                                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
+                                    <Lightbulb style={{ width: 14, height: 14, color: '#0ea5e9' }} />
+                                    <span style={{ fontSize: 10, fontWeight: 700, color: '#0ea5e9', letterSpacing: '0.1em', textTransform: 'uppercase' }}>AI Market Analysis</span>
+                                  </div>
+                                  <p style={{ fontSize: 13, color: D.text, margin: '0 0 12px', lineHeight: 1.7 }}>{ind.aiInsights.summary}</p>
+                                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8 }}>
+                                    {[
+                                      { label: 'Impact',         value: ind.aiInsights.impact?.replace('_', ' ').toUpperCase() },
+                                      { label: 'Market Reaction',value: ind.aiInsights.marketReaction },
+                                      { label: 'Trading Bias',   value: ind.aiInsights.tradingBias },
+                                    ].map(c => (
+                                      <div key={c.label} style={{ background: D.cardBg2, border: `1px solid ${D.border}`, borderRadius: 7, padding: '9px 12px' }}>
+                                        <div style={{ fontSize: 9, fontWeight: 700, color: D.textSub, letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 4 }}>{c.label}</div>
+                                        <div style={{ fontSize: 12, fontWeight: 700, color: D.text }}>{c.value}</div>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
                               )}
-                              <p className="text-sm" style={{ color: theme.text }}>{indicator.source}</p>
-                            </div>
-                            {/* Verification source links */}
-                            {indicator.verificationSources && indicator.verificationSources.length > 0 && (
-                              <div className="mt-1 space-y-0.5">
-                                {indicator.verificationSources.map((url, i) => (
-                                  <div key={i} className="text-xs truncate" style={{ color: theme.accent }}>
-                                    {url}
+
+                              {/* Scenario Analysis */}
+                              {ind.scenarioAnalysis && (
+                                <div style={{ background: D.cardBg, border: `1px solid ${D.border}`, borderLeft: `3px solid ${D.accent}`, borderRadius: 10, padding: '16px 18px' }}>
+                                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
+                                    <Target style={{ width: 14, height: 14, color: D.accent }} />
+                                    <span style={{ fontSize: 10, fontWeight: 700, color: D.accent, letterSpacing: '0.1em', textTransform: 'uppercase' }}>Pre-Release Scenario Analysis</span>
+                                  </div>
+                                  <pre style={{ fontSize: 12, color: D.text, whiteSpace: 'pre-wrap', fontFamily: 'inherit', margin: 0, lineHeight: 1.7 }}>{ind.scenarioAnalysis}</pre>
+                                </div>
+                              )}
+
+                              {/* Details */}
+                              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                                {[
+                                  { label: 'Source',       value: ind.source },
+                                  { label: 'Usual Effect', value: ind.usualEffect },
+                                  { label: 'Description',  value: ind.description, full: true },
+                                ].map(d => d.value && (
+                                  <div key={d.label} style={{ gridColumn: d.full ? '1 / -1' : undefined }}>
+                                    <div style={{ fontSize: 10, fontWeight: 700, color: D.textSub, letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 5 }}>{d.label}</div>
+                                    <p style={{ fontSize: 13, color: D.text, margin: 0, lineHeight: 1.6 }}>{d.value}</p>
                                   </div>
                                 ))}
                               </div>
-                            )}
-                          </div>
-                          <div>
-                            <h4 className="text-xs font-semibold uppercase mb-2" style={{ color: theme.muted }}>
-                              Usual Effect
-                            </h4>
-                            <p className="text-sm" style={{ color: theme.text }}>{indicator.usualEffect}</p>
-                          </div>
-                          <div className="col-span-2">
-                            <h4 className="text-xs font-semibold uppercase mb-2" style={{ color: theme.muted }}>
-                              Measures
-                            </h4>
-                            <p className="text-sm" style={{ color: theme.text }}>{indicator.description}</p>
-                          </div>
-                        </div>
 
-                        {/* Historical Chart */}
-                        <div>
-                          <h4 className="text-xs font-semibold uppercase mb-3" style={{ color: theme.muted }}>
-                            Historical Data (12 Months)
-                          </h4>
-                          <ResponsiveContainer width="100%" height={280}>
-                            <BarChart data={indicator.historicalData} margin={{ top: 20, right: 5, left: 5, bottom: 5 }}>
-                              <CartesianGrid strokeDasharray="3 3" stroke={theme.chartGrid} />
-                              <XAxis
-                                dataKey="date"
-                                stroke={theme.chartAxis}
-                                fontSize={10}
-                                tickFormatter={(date) => formatDateWithTimezone(new Date(date), 'MMM yy')}
-                              />
-                              <YAxis
-                                stroke={theme.chartAxis}
-                                fontSize={10}
-                                tickFormatter={(value) => `${value}${indicator.unit}`}
-                              />
-                              <Tooltip content={<CalendarTooltip theme={theme} formatDate={formatDateWithTimezone} />} cursor={{ fill: theme.isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)' }} />
-                              <ReferenceLine y={0} stroke={theme.chartAxis} />
-                              <Bar dataKey="actual" fill="#22C55E" name="Actual" radius={[4, 4, 0, 0]}>
-                                <LabelList content={<CalendarBarLabel theme={theme} />} />
-                              </Bar>
-                              <Bar dataKey="forecast" fill="#3B82F6" name="Forecast" radius={[4, 4, 0, 0]}>
-                                <LabelList content={<CalendarBarLabel theme={theme} />} />
-                              </Bar>
-                            </BarChart>
-                          </ResponsiveContainer>
-                        </div>
+                              {/* Historical Chart */}
+                              {ind.historicalData?.length > 0 && (
+                                <div>
+                                  <div style={{ fontSize: 10, fontWeight: 700, color: D.textSub, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 12 }}>
+                                    Historical Data (12 Months)
+                                  </div>
+                                  <ResponsiveContainer width="100%" height={240}>
+                                    <BarChart data={ind.historicalData} margin={{ top: 16, right: 4, left: 4, bottom: 4 }}>
+                                      <CartesianGrid strokeDasharray="3 3" stroke={D.border} />
+                                      <XAxis dataKey="date" stroke={D.textSub} fontSize={10} tickFormatter={d => new Date(d).toLocaleDateString('en-US', { month: 'short', year: '2-digit' })} />
+                                      <YAxis stroke={D.textSub} fontSize={10} tickFormatter={v => `${v}${ind.unit}`} />
+                                      <Tooltip content={<CalTooltip D={D} />} cursor={{ fill: theme.isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)' }} />
+                                      <ReferenceLine y={0} stroke={D.border2} />
+                                      <Bar dataKey="actual"   fill={D.accent} radius={[4,4,0,0]} name="Actual" />
+                                      <Bar dataKey="forecast" fill={D.blue}   radius={[4,4,0,0]} name="Forecast" opacity={0.6} />
+                                    </BarChart>
+                                  </ResponsiveContainer>
+                                </div>
+                              )}
 
-                        {/* Recent Releases Table */}
-                        <div>
-                          <h4 className="text-xs font-semibold uppercase mb-3" style={{ color: theme.muted }}>
-                            Recent Releases
-                          </h4>
-                          <table className="w-full text-sm">
-                            <thead className="border-b" style={{ borderColor: theme.border }}>
-                              <tr>
-                                <th className="px-3 py-2 text-left text-xs" style={{ color: theme.muted }}>Date</th>
-                                <th className="px-3 py-2 text-right text-xs" style={{ color: theme.muted }}>Actual</th>
-                                <th className="px-3 py-2 text-right text-xs" style={{ color: theme.muted }}>Forecast</th>
-                                <th className="px-3 py-2 text-right text-xs" style={{ color: theme.muted }}>Previous</th>
-                              </tr>
-                            </thead>
-                            <tbody className="divide-y" style={{ borderColor: theme.border }}>
-                              {indicator.releases.map((release, idx) => (
-                                <tr 
-                                  key={idx} 
-                                  className="transition-colors"
-                                  style={{ backgroundColor: 'transparent' }}
-                                  onMouseOver={(e) => e.currentTarget.style.backgroundColor = theme.surface}
-                                  onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
-                                >
-                                  <td className="px-3 py-2" style={{ color: theme.text }}>
-                                    {formatDateWithTimezone(new Date(release.date), 'MMM dd, yyyy')}
-                                  </td>
-                                  <td className={`px-3 py-2 text-right font-semibold ${getValueColor(release.actual, release.forecast)}`}>
-                                    {formatValue(release.actual, indicator.unit)}
-                                  </td>
-                                  <td className="px-3 py-2 text-right" style={{ color: theme.accent }}>
-                                    {formatValue(release.forecast, indicator.unit)}
-                                  </td>
-                                  <td className="px-3 py-2 text-right" style={{ color: theme.muted }}>
-                                    {formatValue(release.previous, indicator.unit)}
-                                  </td>
-                                </tr>
-                              ))}
-                            </tbody>
-                          </table>
-                        </div>
-                      </div>
-                    </td>
-                  </tr>
-                )}
-              </>
-            ))}
-          </tbody>
-        </table>
-        </div>
-      </div>
-
-      {filteredIndicators.length === 0 && (
-        <div className="text-center py-12 text-terminal-muted">
-          <Calendar className="w-12 h-12 mx-auto mb-2 opacity-50" />
-          <p>No indicators found for selected filter</p>
-        </div>
-      )}
-
-      {/* Impact colour legend */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 22, paddingTop: 4 }}>
-        {[
-          { color: '#f87171', label: 'High Impact' },
-          { color: '#fbbf24', label: 'Medium Impact' },
-          { color: '#94a3b8', label: 'Low Impact' },
-        ].map(({ color, label }) => (
-          <div key={label} style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-            <span style={{ width: 8, height: 8, borderRadius: '50%', background: color, display: 'inline-block' }} />
-            <span style={{ color: theme.muted, fontSize: 11 }}>{label}</span>
+                              {/* Recent Releases */}
+                              {ind.releases?.length > 0 && (
+                                <div>
+                                  <div style={{ fontSize: 10, fontWeight: 700, color: D.textSub, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 10 }}>Recent Releases</div>
+                                  <div style={{ background: D.cardBg, border: `1px solid ${D.border}`, borderRadius: 10, overflow: 'hidden' }}>
+                                    <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                                      <thead>
+                                        <tr style={{ background: D.cardBg2, borderBottom: `1px solid ${D.border}` }}>
+                                          {['Date','Actual','Forecast','Previous'].map((h, i) => (
+                                            <th key={h} style={{ padding: '9px 14px', textAlign: i === 0 ? 'left' : 'right', fontSize: 10, fontWeight: 700, color: D.textSub, letterSpacing: '0.08em', textTransform: 'uppercase' }}>{h}</th>
+                                          ))}
+                                        </tr>
+                                      </thead>
+                                      <tbody>
+                                        {ind.releases.map((r, i) => {
+                                          const diff = parseFloat(r.actual) - parseFloat(r.forecast);
+                                          const col  = isNaN(diff) ? D.text : diff >= 0 ? D.accent : D.red;
+                                          return (
+                                            <tr key={i} style={{ borderBottom: `1px solid ${D.border}` }}>
+                                              <td style={{ padding: '10px 14px', fontSize: 13, color: D.textSub }}>{r.date ? new Date(r.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—'}</td>
+                                              <td style={{ padding: '10px 14px', textAlign: 'right', fontSize: 13, fontWeight: 700, color: col }}>{fmt(r.actual, ind.unit)}</td>
+                                              <td style={{ padding: '10px 14px', textAlign: 'right', fontSize: 13, color: D.textSub }}>{fmt(r.forecast, ind.unit)}</td>
+                                              <td style={{ padding: '10px 14px', textAlign: 'right', fontSize: 13, color: D.textSub }}>{fmt(r.previous, ind.unit)}</td>
+                                            </tr>
+                                          );
+                                        })}
+                                      </tbody>
+                                    </table>
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          </td>
+                        </tr>
+                      )}
+                    </>
+                  );
+                })}
+              </tbody>
+            </table>
           </div>
-        ))}
-      </div>
 
-      {/* Keyframe for HIGH impact pulse dot */}
-      <style>{`
-        @keyframes calPulse {
-          0%, 100% { opacity: 1;   transform: scale(1);   }
-          50%       { opacity: 0.35; transform: scale(0.65); }
-        }
-        .cal-filter-row::-webkit-scrollbar { display: none; }
-        .cal-filter-row { -ms-overflow-style: none; scrollbar-width: none; }
-        .cal-impact-mobile { display: none; }
-        .cal-mobile-data { display: none; }
-        .cal-table-scroll { width: 100%; }
-        @media (max-width: 639px) {
-          .cal-col-currency,
-          .cal-col-impact,
-          .cal-col-actual,
-          .cal-col-forecast,
-          .cal-col-previous,
-          .cal-col-surprise { display: none; }
-          .cal-impact-mobile { display: inline-flex; }
-          .cal-mobile-data { display: grid !important; }
-          .cal-print-label { display: none; }
-          .cal-table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-          .cal-expanded-td { padding: 0 8px 16px !important; }
-          .col-span-2 { grid-column: span 1 !important; }
-        }
-      `}</style>
+          {filtered.length === 0 && (
+            <div style={{ textAlign: 'center', padding: '48px 24px', color: D.textSub }}>
+              <Calendar style={{ width: 32, height: 32, margin: '0 auto 10px', opacity: 0.4 }} />
+              <p style={{ margin: 0, fontSize: 13 }}>No indicators for selected filter</p>
+            </div>
+          )}
+        </div>
+
+        {/* ── Legend ───────────────────────────────────────────────────── */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 20, marginTop: 16 }}>
+          {[['#ef4444','High Impact'],['#f59e0b','Medium Impact'],['#64748b','Low Impact']].map(([c, l]) => (
+            <div key={l} style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+              <span style={{ width: 8, height: 8, borderRadius: '50%', background: c, display: 'inline-block' }} />
+              <span style={{ fontSize: 11, color: D.textSub }}>{l}</span>
+            </div>
+          ))}
+        </div>
+
+      </div>
     </div>
   );
 }
 
 export default EconomicCalendar;
+

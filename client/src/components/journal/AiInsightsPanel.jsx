@@ -100,7 +100,7 @@ function TradeAiCard({ trade }) {
           )}
 
           {data.coach_message && (
-            <div className="p-3 rounded-lg italic text-sm" style={{ backgroundColor: theme.isDark ? '#a78bfa11' : '#f5f3ff', border: `1px solid ${theme.isDark ? '#a78bfa33' : '#ddd6fe'}`, color: '#7c3aed' }}>
+            <div className="p-3 rounded-lg italic text-sm" style={{ backgroundColor: theme.isDark ? '#0ea5e911' : '#eff9ff', border: `1px solid ${theme.isDark ? '#0ea5e933' : '#bae6fd'}`, color: '#0ea5e9' }}>
               " {data.coach_message} "
             </div>
           )}
@@ -184,7 +184,7 @@ function ReportCard({ report }) {
           )}
 
           {data.coach_advice && (
-            <div className="p-3 rounded-lg italic text-sm" style={{ backgroundColor: theme.isDark ? '#a78bfa11' : '#f5f3ff', border: `1px solid ${theme.isDark ? '#a78bfa33' : '#ddd6fe'}`, color: '#7c3aed' }}>
+            <div className="p-3 rounded-lg italic text-sm" style={{ backgroundColor: theme.isDark ? '#0ea5e911' : '#eff9ff', border: `1px solid ${theme.isDark ? '#0ea5e933' : '#bae6fd'}`, color: '#0ea5e9' }}>
               " {data.coach_advice} "
             </div>
           )}

@@ -2,7 +2,7 @@ import { AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, Cart
 import { TrendingUp, TrendingDown, Target, AlertTriangle, Award, Activity } from 'lucide-react';
 import { useTheme } from '../../contexts/ThemeContext';
 
-const CHART_COLORS = ['#3b82f6','#22c55e','#f59e0b','#ef4444','#a78bfa','#ec4899','#14b8a6','#f97316'];
+const CHART_COLORS = ['#3b82f6','#22c55e','#f59e0b','#ef4444','#0ea5e9','#ec4899','#14b8a6','#f97316'];
 
 function StatCard({ label, value, sub, color, icon: Icon }) {
   const theme = useTheme();

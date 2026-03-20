@@ -45,12 +45,7 @@ import levelsRouter from './routes/levels.js';
 import { requireAuth, checkScreenshotTries } from './middleware/authMiddleware.js';
 import * as Users from './db/users.js';
 import { incrementScreenshotTries, initDb } from './db/users.js';
-import accountsRouter from './routes/accounts.js';
-import webhookMetaApiRouter from './routes/webhookMetaApi.js';
-import syncRouter from './routes/sync.js';
-import cronSyncRouter from './routes/cronSync.js';
 import { UPLOADS_DIR, ensureUploadDirs } from './config/storagePaths.js';
-import cron from 'node-cron';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -264,10 +259,7 @@ app.use('/api/analysis',  analysisRouter);
 app.use('/api/assistant', requireAuth, aiLimiter, assistantRouter);
 app.use('/api/charts', requireAuth, chartsRouter);
 app.use('/api/levels', requireAuth, levelsRouter);
-app.use('/api/accounts', accountsRouter);
-app.use('/api/webhook/metaapi', webhookMetaApiRouter);
-app.use('/api/sync', syncRouter);
-app.use('/api/cron', cronSyncRouter);
+
 
 // ── /mt5 proxy → Python screenshot service ────────────────────────────────────
 app.use('/mt5', requireAuth);
@@ -349,22 +341,6 @@ Promise.all([initDb(), initJournalDb()])
       console.log('Twelve Data key loaded:', !!process.env.TWELVE_DATA_API_KEY);
 
       startAutoReleaseScheduler(wss);
-
-      // ── MT5 history sync — every 5 minutes ─────────────────────────────
-      if (process.env.METAAPI_TOKEN && process.env.MT5_SYNC_LOGIN) {
-        const { syncMt5History } = await import('./services/mt5HistoryService.js');
-        cron.schedule('*/5 * * * *', async () => {
-          try {
-            const summary = await syncMt5History();
-            console.log('[mt5Cron] Sync complete — inserted: %d, skipped: %d', summary.inserted, summary.skipped);
-          } catch (err) {
-            console.error('[mt5Cron] Sync error (non-fatal):', err.message);
-          }
-        });
-        console.log('🔄 MT5 history cron scheduled (every 5 min)');
-      } else {
-        console.warn('⚠️  MT5 history cron disabled — set METAAPI_TOKEN + MT5_SYNC_LOGIN in Railway Variables');
-      }
 
       // ── Daily macro snapshot ─────────────────────────────────────────────
       setInterval(async () => {

@@ -293,34 +293,34 @@ export default function TradeDetailPage({ trade, trades, tradeIndex, onBack, onN
           <div
             className="rounded-2xl p-px"
             style={{
-              background: 'linear-gradient(135deg, rgba(139,92,246,0.75) 0%, rgba(99,102,241,0.6) 50%, rgba(59,130,246,0.75) 100%)',
+              background: 'linear-gradient(135deg, rgba(14,165,233,0.75) 0%, rgba(2,132,199,0.6) 50%, rgba(59,130,246,0.75) 100%)',
             }}
           >
             <div
               className="rounded-[calc(1rem-1px)] flex items-center gap-3.5 px-5 py-3.5"
               style={{
-                backgroundColor: theme.isDark ? '#0d0a1a' : '#f5f3ff',
+                backgroundColor: theme.isDark ? '#040d18' : '#eff9ff',
               }}
             >
               {/* Icon */}
               <div
                 className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0"
-                style={{ background: 'linear-gradient(135deg, rgba(139,92,246,0.2) 0%, rgba(59,130,246,0.2) 100%)' }}
+                style={{ background: 'linear-gradient(135deg, rgba(14,165,233,0.2) 0%, rgba(59,130,246,0.2) 100%)' }}
               >
-                <Sparkles className="w-3.5 h-3.5" style={{ color: '#a78bfa' }} />
+                <Sparkles className="w-3.5 h-3.5" style={{ color: '#0ea5e9' }} />
               </div>
               {/* Label + message */}
               <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1 min-w-0">
                 <span
                   className="text-xs font-bold uppercase tracking-widest whitespace-nowrap flex-shrink-0"
-                  style={{ color: '#a78bfa' }}
+                  style={{ color: '#0ea5e9' }}
                 >
                   AI Insight
                 </span>
-                <span className="w-px h-3 self-center flex-shrink-0" style={{ backgroundColor: 'rgba(139,92,246,0.35)' }} />
+                <span className="w-px h-3 self-center flex-shrink-0" style={{ backgroundColor: 'rgba(14,165,233,0.35)' }} />
                 <p
                   className="text-sm leading-relaxed"
-                  style={{ color: theme.isDark ? 'rgba(220,214,254,0.82)' : '#4c1d95' }}
+                  style={{ color: theme.isDark ? 'rgba(186,230,253,0.82)' : '#0c4a6e' }}
                 >
                   {aiData.coach_message}
                 </p>
@@ -418,7 +418,7 @@ export default function TradeDetailPage({ trade, trades, tradeIndex, onBack, onN
                     const entries = [
                       trade.reasoning       && { label: 'Reasoning',       value: trade.reasoning,       dotColor: theme.accent },
                       trade.lessons_learned && { label: 'Lessons Learned', value: trade.lessons_learned, dotColor: '#f59e0b'    },
-                      trade.notes           && { label: 'Notes / Remarks', value: trade.notes,           dotColor: '#a78bfa'    },
+                      trade.notes           && { label: 'Notes / Remarks', value: trade.notes,           dotColor: '#0ea5e9'    },
                     ].filter(Boolean);
                     return entries.map((e, idx) => (
                       <NoteEntry
@@ -477,7 +477,7 @@ export default function TradeDetailPage({ trade, trades, tradeIndex, onBack, onN
                 <StatLine
                   label="Emotion"
                   value={trade.emotional_state ? trade.emotional_state.charAt(0).toUpperCase() + trade.emotional_state.slice(1) : null}
-                  valueColor="#a78bfa"
+                  valueColor="#0ea5e9"
                   mono={false}
                   hideIfEmpty
                 />
@@ -489,39 +489,39 @@ export default function TradeDetailPage({ trade, trades, tradeIndex, onBack, onN
               <div
                 className="rounded-2xl overflow-hidden"
                 style={{
-                  border: '1px solid rgba(167,139,250,0.22)',
+                  border: '1px solid rgba(14,165,233,0.22)',
                   background: theme.isDark
-                    ? 'linear-gradient(160deg, #130d2e 0%, #0d0820 100%)'
-                    : 'linear-gradient(160deg, #ede9fe 0%, #f5f3ff 100%)',
+                    ? 'linear-gradient(160deg, #030d1a 0%, #051525 100%)'
+                    : 'linear-gradient(160deg, #eff9ff 0%, #f0f9ff 100%)',
                 }}
               >
-                <div className="flex items-center gap-2.5 px-5 py-4" style={{ borderBottom: '1px solid rgba(167,139,250,0.14)' }}>
-                  <Sparkles className="w-3.5 h-3.5" style={{ color: '#a78bfa' }} />
-                  <span className="text-xs font-bold uppercase tracking-widest" style={{ color: 'rgba(167,139,250,0.6)' }}>
+                <div className="flex items-center gap-2.5 px-5 py-4" style={{ borderBottom: '1px solid rgba(14,165,233,0.14)' }}>
+                  <Sparkles className="w-3.5 h-3.5" style={{ color: '#0ea5e9' }} />
+                  <span className="text-xs font-bold uppercase tracking-widest" style={{ color: 'rgba(14,165,233,0.6)' }}>
                     AI Analysis
                   </span>
                 </div>
                 <div className="p-5 space-y-4">
                   <div className="grid grid-cols-2 gap-3">
                     {aiData.psychology_score != null && (
-                      <div className="rounded-xl p-4 text-center" style={{ backgroundColor: 'rgba(167,139,250,0.08)', border: '1px solid rgba(167,139,250,0.18)' }}>
-                        <p className="text-xs uppercase tracking-wide mb-1.5" style={{ color: 'rgba(167,139,250,0.5)' }}>Psychology</p>
-                        <p className="text-2xl font-black tabular-nums" style={{ color: '#a78bfa', ...MONO }}>
+                      <div className="rounded-xl p-4 text-center" style={{ backgroundColor: 'rgba(14,165,233,0.08)', border: '1px solid rgba(14,165,233,0.18)' }}>
+                        <p className="text-xs uppercase tracking-wide mb-1.5" style={{ color: 'rgba(14,165,233,0.5)' }}>Psychology</p>
+                        <p className="text-2xl font-black tabular-nums" style={{ color: '#0ea5e9', ...MONO }}>
                           {aiData.psychology_score}<span className="text-xs font-normal">/10</span>
                         </p>
                       </div>
                     )}
                     {aiData.trade_quality && (
-                      <div className="rounded-xl p-4 text-center" style={{ backgroundColor: 'rgba(167,139,250,0.08)', border: '1px solid rgba(167,139,250,0.18)' }}>
-                        <p className="text-xs uppercase tracking-wide mb-1.5" style={{ color: 'rgba(167,139,250,0.5)' }}>Quality</p>
-                        <p className="text-sm font-black capitalize" style={{ color: '#a78bfa' }}>{aiData.trade_quality}</p>
+                      <div className="rounded-xl p-4 text-center" style={{ backgroundColor: 'rgba(14,165,233,0.08)', border: '1px solid rgba(14,165,233,0.18)' }}>
+                        <p className="text-xs uppercase tracking-wide mb-1.5" style={{ color: 'rgba(14,165,233,0.5)' }}>Quality</p>
+                        <p className="text-sm font-black capitalize" style={{ color: '#0ea5e9' }}>{aiData.trade_quality}</p>
                       </div>
                     )}
                   </div>
                   {aiData.coach_message && (
-                    <div className="flex gap-3 p-4 rounded-xl" style={{ backgroundColor: 'rgba(167,139,250,0.06)', border: '1px solid rgba(167,139,250,0.14)' }}>
-                      <Sparkles className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" style={{ color: '#a78bfa' }} />
-                      <p className="text-xs italic leading-relaxed" style={{ color: 'rgba(167,139,250,0.8)' }}>
+                    <div className="flex gap-3 p-4 rounded-xl" style={{ backgroundColor: 'rgba(14,165,233,0.06)', border: '1px solid rgba(14,165,233,0.14)' }}>
+                      <Sparkles className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" style={{ color: '#0ea5e9' }} />
+                      <p className="text-xs italic leading-relaxed" style={{ color: 'rgba(14,165,233,0.8)' }}>
                         "{aiData.coach_message}"
                       </p>
                     </div>

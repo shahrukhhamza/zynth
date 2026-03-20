@@ -28,7 +28,7 @@ const GOAL_OPTIONS = [
 const AVATAR_COLORS = [
   { value: 'emerald', label: 'Emerald', bg: '#10b981', ring: '#10b981' },
   { value: 'blue',    label: 'Blue',    bg: '#3b82f6', ring: '#3b82f6' },
-  { value: 'purple',  label: 'Purple',  bg: '#a855f7', ring: '#a855f7' },
+  { value: 'purple',  label: 'Purple',  bg: '#0ea5e9', ring: '#0ea5e9' },
   { value: 'orange',  label: 'Orange',  bg: '#f97316', ring: '#f97316' },
   { value: 'rose',    label: 'Rose',    bg: '#f43f5e', ring: '#f43f5e' },
   { value: 'amber',   label: 'Amber',   bg: '#f59e0b', ring: '#f59e0b' },

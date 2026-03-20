@@ -291,7 +291,7 @@ export default function LiveMarketTicker() {
           <SummaryCard label="Instruments" value={loaded} sub={`of ${allSymbols.length} loaded`} color="#3b82f6" icon={Activity}    theme={theme} />
           <SummaryCard label="Gainers"     value={gainers} sub="positive today"                  color="#22c55e" icon={TrendingUp}  theme={theme} />
           <SummaryCard label="Losers"      value={losers}  sub="negative today"                  color="#ef4444" icon={TrendingDown} theme={theme} />
-          <SummaryCard label="Stream"      value="Live"    sub="WebSocket feed"                  color="#a855f7" icon={Wifi}        theme={theme} />
+          <SummaryCard label="Stream"      value="Live"    sub="WebSocket feed"                  color="#0ea5e9" icon={Wifi}        theme={theme} />
         </div>
 
         {/* ── Filters + search ────────────────────────────────────────── */}

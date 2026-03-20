@@ -162,7 +162,7 @@ function TradeDetailModal({ trade, onClose }) {
             <div className="grid grid-cols-3 gap-2.5">
               <StatCard label="Session" value={trade.session ? trade.session.replace('_', ' ').toUpperCase() : '—'} />
               <StatCard label="Strategy" value={trade.strategy || '—'} color={theme.accent} />
-              <StatCard label="Emotion" value={trade.emotional_state ? trade.emotional_state.charAt(0).toUpperCase() + trade.emotional_state.slice(1) : '—'} color="#a78bfa" />
+              <StatCard label="Emotion" value={trade.emotional_state ? trade.emotional_state.charAt(0).toUpperCase() + trade.emotional_state.slice(1) : '—'} color="#0ea5e9" />
             </div>
           </div>
 
@@ -177,7 +177,7 @@ function TradeDetailModal({ trade, onClose }) {
                 <TextBlock icon={Lightbulb} label="Lessons Learned" value={trade.lessons_learned} accentColor="#f59e0b" />
               )}
               {trade.notes && (
-                <TextBlock icon={StickyNote} label="Notes / Remarks" value={trade.notes} accentColor="#a78bfa" />
+                <TextBlock icon={StickyNote} label="Notes / Remarks" value={trade.notes} accentColor="#0ea5e9" />
               )}
             </div>
           )}
@@ -216,26 +216,26 @@ function TradeDetailModal({ trade, onClose }) {
           {aiData && (
             <div>
               <SectionLabel icon={Sparkles} label="AI Analysis" />
-              <div className="rounded-xl overflow-hidden" style={{ border: '1px solid #a78bfa33', background: 'linear-gradient(135deg, #1e1040 0%, #0f0825 100%)' }}>
+              <div className="rounded-xl overflow-hidden" style={{ border: '1px solid #0ea5e933', background: 'linear-gradient(135deg, #051525 0%, #030d1a 100%)' }}>
                 <div className="p-4 space-y-3">
                   <div className="grid grid-cols-2 gap-3">
                     {aiData.psychology_score != null && (
-                      <div className="rounded-lg p-3 text-center" style={{ backgroundColor: 'rgba(167,139,250,0.1)', border: '1px solid rgba(167,139,250,0.2)' }}>
-                        <p className="text-xs uppercase tracking-wide mb-1" style={{ color: 'rgba(167,139,250,0.6)' }}>Psychology</p>
-                        <p className="text-2xl font-black" style={{ color: '#a78bfa' }}>{aiData.psychology_score}<span className="text-sm font-normal">/10</span></p>
+                      <div className="rounded-lg p-3 text-center" style={{ backgroundColor: 'rgba(14,165,233,0.1)', border: '1px solid rgba(14,165,233,0.2)' }}>
+                        <p className="text-xs uppercase tracking-wide mb-1" style={{ color: 'rgba(14,165,233,0.6)' }}>Psychology</p>
+                        <p className="text-2xl font-black" style={{ color: '#0ea5e9' }}>{aiData.psychology_score}<span className="text-sm font-normal">/10</span></p>
                       </div>
                     )}
                     {aiData.trade_quality && (
-                      <div className="rounded-lg p-3 text-center" style={{ backgroundColor: 'rgba(167,139,250,0.1)', border: '1px solid rgba(167,139,250,0.2)' }}>
-                        <p className="text-xs uppercase tracking-wide mb-1" style={{ color: 'rgba(167,139,250,0.6)' }}>Quality</p>
-                        <p className="text-base font-bold capitalize" style={{ color: '#a78bfa' }}>{aiData.trade_quality}</p>
+                      <div className="rounded-lg p-3 text-center" style={{ backgroundColor: 'rgba(14,165,233,0.1)', border: '1px solid rgba(14,165,233,0.2)' }}>
+                        <p className="text-xs uppercase tracking-wide mb-1" style={{ color: 'rgba(14,165,233,0.6)' }}>Quality</p>
+                        <p className="text-base font-bold capitalize" style={{ color: '#0ea5e9' }}>{aiData.trade_quality}</p>
                       </div>
                     )}
                   </div>
                   {aiData.coach_message && (
-                    <div className="flex gap-3 p-3 rounded-lg" style={{ backgroundColor: 'rgba(167,139,250,0.08)', border: '1px solid rgba(167,139,250,0.15)' }}>
-                      <Sparkles className="w-4 h-4 flex-shrink-0 mt-0.5" style={{ color: '#a78bfa' }} />
-                      <p className="text-sm italic leading-relaxed" style={{ color: 'rgba(167,139,250,0.9)' }}>"{aiData.coach_message}"</p>
+                    <div className="flex gap-3 p-3 rounded-lg" style={{ backgroundColor: 'rgba(14,165,233,0.08)', border: '1px solid rgba(14,165,233,0.15)' }}>
+                      <Sparkles className="w-4 h-4 flex-shrink-0 mt-0.5" style={{ color: '#0ea5e9' }} />
+                      <p className="text-sm italic leading-relaxed" style={{ color: 'rgba(14,165,233,0.9)' }}>"{aiData.coach_message}"</p>
                     </div>
                   )}
                 </div>

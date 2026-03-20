@@ -1,12 +1,7 @@
-/**
- * Economic Intelligence - All 10 high-impact USD indicators
- * Professional Bloomberg-style card layout
- */
-
 import { useState, useEffect } from 'react';
 import {
   TrendingUp, TrendingDown, Activity, Loader2, AlertCircle,
-  RefreshCcw, Brain, Lock,
+  RefreshCcw, Brain, Lock, ChevronDown, ChevronUp, Minus,
 } from 'lucide-react';
 import { API_URL } from '../config/api';
 import { useTheme } from '../contexts/ThemeContext';
@@ -14,139 +9,141 @@ import { usePlanGate } from '../hooks/usePlanGate';
 import ProfileModal from './ProfileModal';
 import { Line } from 'react-chartjs-2';
 import {
-  Chart as ChartJS,
-  CategoryScale, LinearScale, PointElement,
-  LineElement, Title, Tooltip, Legend,
+  Chart as ChartJS, CategoryScale, LinearScale,
+  PointElement, LineElement, Title, Tooltip, Legend,
 } from 'chart.js';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
-/*
- * Indicator groups - order = display order on page
- */
 const GROUPS = [
   { label: 'Labor Market',      accent: '#3b82f6', keys: ['nfp', 'unemployment', 'joblessClaims'] },
   { label: 'Inflation',         accent: '#f59e0b', keys: ['cpi', 'corePCE'] },
-  { label: 'Monetary Policy',   accent: '#8b5cf6', keys: ['fedRate'] },
-  { label: 'Growth & Activity', accent: '#22c55e', keys: ['gdp', 'retailSales', 'ismMfg'] },
+  { label: 'Monetary Policy',   accent: '#0ea5e9', keys: ['fedRate'] },
+  { label: 'Growth & Activity', accent: '#10b981', keys: ['gdp', 'retailSales', 'ismMfg'] },
   { label: 'Sentiment',         accent: '#ec4899', keys: ['consumerConf'] },
 ];
 
-/* colour scheme per impact direction */
-function ic(impactColor) {
-  if (impactColor === 'green') return { border: '#22c55e', glow: 'rgba(34,197,94,0.12)',  text: '#22c55e', badge: 'rgba(34,197,94,0.15)'  };
-  if (impactColor === 'red')   return { border: '#ef4444', glow: 'rgba(239,68,68,0.12)',  text: '#ef4444', badge: 'rgba(239,68,68,0.15)'  };
-  return                              { border: '#4b5563', glow: 'rgba(75,85,99,0.08)',   text: '#9ca3af', badge: 'rgba(75,85,99,0.15)'   };
+function impactColors(color) {
+  if (color === 'green') return { border: '#10b981', text: '#10b981', bg: 'rgba(16,185,129,0.08)', badge: 'rgba(16,185,129,0.12)' };
+  if (color === 'red')   return { border: '#ef4444', text: '#ef4444', bg: 'rgba(239,68,68,0.06)',  badge: 'rgba(239,68,68,0.12)'  };
+  return                        { border: '#374151', text: '#6b7280', bg: 'rgba(55,65,81,0.04)',   badge: 'rgba(55,65,81,0.10)'   };
 }
 
 function fmt(v, unit) {
-  if (v == null || v === '') return '--';
+  if (v == null || v === '') return '—';
   return `${v}${unit ?? ''}`;
 }
 
-/*
- * IndicatorCard - professional card matching original Bloomberg-style UI
- */
-function IndicatorCard({ data, theme, accentColor }) {
-  const c = ic(data.impactColor);
-  const surprisePositive = data.surprise > 0;
-  const surpriseNegative = data.surprise < 0;
-  const surpriseColor = surprisePositive ? '#22c55e' : surpriseNegative ? '#ef4444' : '#9ca3af';
+// ── Indicator Card ────────────────────────────────────────────────────────────
+function IndicatorCard({ data, accentColor, D }) {
+  const [expanded, setExpanded] = useState(false);
+  const ic = impactColors(data.impactColor);
+  const surpriseColor = data.surprise > 0 ? '#10b981' : data.surprise < 0 ? '#ef4444' : D.textSub;
 
   return (
-    <div
-      className="rounded-xl flex flex-col relative overflow-hidden"
-      style={{
-        backgroundColor: theme.surface,
-        border: `2px solid ${c.border}`,
-        boxShadow: `0 0 20px ${c.glow}, 0 2px 8px rgba(0,0,0,0.3)`,
-      }}
-    >
-      {/* Top accent stripe */}
-      <div style={{ height: 3, backgroundColor: c.border, width: '100%' }} />
+    <div style={{
+      background: D.cardBg,
+      border: `1px solid ${D.border}`,
+      borderRadius: 12,
+      overflow: 'hidden',
+      transition: 'border-color 0.15s ease',
+    }}>
+      {/* Top color bar */}
+      <div style={{ height: 3, background: ic.border }} />
 
-      {/* Card header */}
-      <div className="flex items-start justify-between px-5 pt-4 pb-1">
-        <h3 className="text-sm font-bold leading-tight" style={{ color: theme.text }}>
-          {data.indicator}
-        </h3>
-        {data.latestDate && (
-          <span
-            className="text-xs px-2 py-0.5 rounded-full ml-2 shrink-0"
-            style={{ backgroundColor: theme.border, color: theme.muted, fontSize: '0.68rem' }}
-          >
-            {data.latestDate}
-          </span>
+      <div style={{ padding: '16px 18px' }}>
+        {/* Header */}
+        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 8, marginBottom: 12 }}>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <h3 style={{ fontSize: 13, fontWeight: 700, color: D.text, margin: 0, lineHeight: 1.3 }}>
+              {data.indicator}
+            </h3>
+            {data.description && (
+              <p style={{ fontSize: 11, color: D.textSub, margin: '4px 0 0', lineHeight: 1.5, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                {data.description}
+              </p>
+            )}
+          </div>
+          {data.latestDate && (
+            <span style={{ fontSize: 10, fontWeight: 600, color: D.textSub, background: D.cardBg2, border: `1px solid ${D.border}`, padding: '3px 8px', borderRadius: 99, flexShrink: 0 }}>
+              {data.latestDate}
+            </span>
+          )}
+        </div>
+
+        {/* Data grid */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8, marginBottom: 12 }}>
+          {[
+            { label: 'Actual',   value: fmt(data.actual,   data.unit), color: D.text,        size: 20 },
+            { label: 'Forecast', value: fmt(data.forecast, data.unit), color: accentColor,   size: 16 },
+            { label: 'Surprise', value: data.surprise != null ? `${data.surprise > 0 ? '+' : ''}${fmt(data.surprise, data.unit)}` : '—', color: surpriseColor, size: 18 },
+          ].map(col => (
+            <div key={col.label} style={{ background: D.cardBg2, border: `1px solid ${D.border}`, borderRadius: 8, padding: '10px 12px', textAlign: 'center' }}>
+              <div style={{ fontSize: 9, fontWeight: 700, color: D.textSub, letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 5 }}>
+                {col.label}
+              </div>
+              <div style={{ fontSize: col.size, fontWeight: 800, color: col.color, lineHeight: 1, letterSpacing: '-0.02em' }}>
+                {col.value}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Impact badge */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div style={{
+            flex: 1, padding: '7px 12px', borderRadius: 8, textAlign: 'center',
+            background: ic.badge, border: `1px solid ${ic.border}40`,
+            fontSize: 11, fontWeight: 700, color: ic.text, letterSpacing: '0.04em',
+          }}>
+            {data.impact || 'Neutral for Gold'}
+          </div>
+          {data.historicalData?.length > 0 && (
+            <button
+              onClick={() => setExpanded(e => !e)}
+              style={{ marginLeft: 8, width: 30, height: 30, borderRadius: 7, background: D.cardBg2, border: `1px solid ${D.border}`, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: D.textSub, flexShrink: 0 }}
+            >
+              {expanded
+                ? <ChevronUp style={{ width: 13, height: 13 }} />
+                : <ChevronDown style={{ width: 13, height: 13 }} />}
+            </button>
+          )}
+        </div>
+
+        {/* Historical chart (expandable) */}
+        {expanded && data.historicalData?.length > 0 && (
+          <div style={{ marginTop: 12, paddingTop: 12, borderTop: `1px solid ${D.border}` }}>
+            <HistoricalChart
+              data={data.historicalData}
+              code={data.code}
+              unit={data.unit}
+              isDark={D.isDark}
+              color={accentColor}
+            />
+          </div>
         )}
-      </div>
-
-      {/* Description */}
-      {data.description && (
-        <p className="px-5 text-xs leading-relaxed" style={{ color: theme.muted }}>
-          {data.description.length > 72 ? data.description.slice(0, 72) + '...' : data.description}
-        </p>
-      )}
-
-      {/* Divider */}
-      <div className="mx-5 my-3" style={{ borderTop: `1px solid ${theme.border}` }} />
-
-      {/* Data rows */}
-      <div className="px-5 space-y-2 pb-1">
-        <div className="flex justify-between items-center">
-          <span className="text-xs font-medium" style={{ color: theme.muted }}>Actual</span>
-          <span className="text-xl font-extrabold tabular-nums tracking-tight" style={{ color: theme.text }}>
-            {fmt(data.actual, data.unit)}
-          </span>
-        </div>
-        <div className="flex justify-between items-center">
-          <span className="text-xs font-medium" style={{ color: theme.muted }}>Forecast</span>
-          <span className="text-lg font-semibold tabular-nums" style={{ color: accentColor }}>
-            {fmt(data.forecast, data.unit)}
-          </span>
-        </div>
-        <div className="flex justify-between items-center pt-1" style={{ borderTop: `1px solid ${theme.border}` }}>
-          <span className="text-xs font-semibold" style={{ color: theme.text }}>Surprise</span>
-          <span className="text-xl font-extrabold tabular-nums" style={{ color: surpriseColor }}>
-            {data.surprise != null ? (surprisePositive ? '+' : '') + fmt(data.surprise, data.unit) : '--'}
-          </span>
-        </div>
-      </div>
-
-      {/* Impact badge */}
-      <div className="mx-5 mt-3 mb-5">
-        <div
-          className="rounded-lg py-2 text-center text-sm font-bold tracking-wide"
-          style={{ backgroundColor: c.badge, color: c.text, border: `1px solid ${c.border}40` }}
-        >
-          {data.impact || 'Neutral'}
-        </div>
       </div>
     </div>
   );
 }
 
-/*
- * HistoricalChart - themed line chart
- */
-function HistoricalChart({ data, code, unit, isDark, color, title }) {
-  if (!data || data.length === 0) return null;
-
-  const gridColor = isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.06)';
-  const tickColor = isDark ? '#9ca3af' : '#6b7280';
-  const bgSurface = isDark ? '#161616' : '#ffffff';
+// ── Historical Chart ──────────────────────────────────────────────────────────
+function HistoricalChart({ data, code, unit, isDark, color }) {
+  if (!data?.length) return null;
+  const gridColor = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.05)';
+  const tickColor = isDark ? '#555' : '#9ca3af';
 
   const chartData = {
-    labels: data.map(d => (d.date ? d.date.slice(0, 7) : '')),
+    labels: data.map(d => d.date?.slice(0, 7) ?? ''),
     datasets: [{
-      label: code,
       data: data.map(d => d.value),
       borderColor: color,
-      backgroundColor: color + '18',
+      backgroundColor: color + '15',
       borderWidth: 2,
       pointRadius: 3,
-      pointHoverRadius: 6,
+      pointHoverRadius: 5,
       pointBackgroundColor: color,
-      tension: 0.35,
+      tension: 0.3,
       fill: true,
     }],
   };
@@ -157,249 +154,193 @@ function HistoricalChart({ data, code, unit, isDark, color, title }) {
     plugins: {
       legend: { display: false },
       tooltip: {
-        backgroundColor: isDark ? '#161616' : '#ffffff',
-        titleColor: isDark ? '#e8e8e8' : '#0f172a',
-        bodyColor:  isDark ? '#cbd5e1' : '#475569',
-        borderColor: isDark ? '#334155' : '#e2e8f0',
+        backgroundColor: isDark ? '#111' : '#fff',
+        titleColor: isDark ? '#e8e8e8' : '#0a0a0a',
+        bodyColor:  isDark ? '#888' : '#555',
+        borderColor: isDark ? '#2a2a2a' : '#e4e4e4',
         borderWidth: 1,
         padding: 10,
         callbacks: { label: ctx => ` ${ctx.parsed.y}${unit ?? ''}` },
       },
     },
     scales: {
-      x: {
-        ticks: { color: tickColor, maxRotation: 45, minRotation: 45, font: { size: 9 } },
-        grid:  { color: gridColor },
-        border: { color: gridColor },
-      },
-      y: {
-        ticks: { color: tickColor, font: { size: 9 }, callback: v => `${v}${unit ?? ''}` },
-        grid:  { color: gridColor },
-        border: { color: gridColor },
-      },
+      x: { ticks: { color: tickColor, maxRotation: 45, minRotation: 45, font: { size: 9 } }, grid: { color: gridColor }, border: { color: 'transparent' } },
+      y: { ticks: { color: tickColor, font: { size: 9 }, callback: v => `${v}${unit ?? ''}` }, grid: { color: gridColor }, border: { color: 'transparent' } },
     },
   };
 
   return (
-    <div
-      className="rounded-xl p-4"
-      style={{ backgroundColor: bgSurface, border: `1px solid ${color}30` }}
-    >
-      <p className="text-xs font-semibold mb-3 uppercase tracking-wider" style={{ color }}>
-        {title} - Last {data.length} Releases
+    <div>
+      <p style={{ fontSize: 10, fontWeight: 700, color, letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 10, margin: '0 0 10px' }}>
+        {code} — Last {data.length} Releases
       </p>
-      <div style={{ height: 200 }}>
+      <div style={{ height: 160 }}>
         <Line data={chartData} options={options} />
       </div>
     </div>
   );
 }
 
-/*
- * MacroScoreWidget — composite gold impact score from all indicators
- */
-function MacroScoreWidget({ macroScore, theme }) {
-  if (!macroScore) {
-    return (
-      <div
-        className="rounded-xl border px-6 py-5 animate-pulse"
-        style={{ backgroundColor: theme.surface, borderColor: theme.border }}
-      >
-        <div className="h-3 rounded-full w-40 mb-4" style={{ backgroundColor: theme.border }} />
-        <div className="h-12 rounded-full w-28 mb-5" style={{ backgroundColor: theme.border }} />
-        <div className="h-2 rounded-full w-full mb-2" style={{ backgroundColor: theme.border }} />
-        <div className="h-2 rounded-full w-3/4"       style={{ backgroundColor: theme.border }} />
+// ── Macro Score Widget ────────────────────────────────────────────────────────
+function MacroScoreWidget({ macroScore, D }) {
+  if (!macroScore) return (
+    <div style={{ background: D.cardBg, border: `1px solid ${D.border}`, borderRadius: 12, padding: '24px' }}>
+      <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
+        {[...Array(3)].map((_, i) => (
+          <div key={i} style={{ flex: 1, minWidth: 120, height: 60, background: D.cardBg2, borderRadius: 8 }} />
+        ))}
       </div>
-    );
-  }
+    </div>
+  );
 
   const { score, label, contributors = [], updatedAt } = macroScore;
-  const scoreColor = score > 0 ? '#22c55e' : score < 0 ? '#ef4444' : '#9ca3af';
-
-  // Progress bar geometry: 0% = score -10, 50% = 0, 100% = +10
-  const fillPct  = ((score + 10) / 20) * 100;
-  const barLeft  = score >= 0 ? 50 : fillPct;
-  const barWidth = Math.abs(fillPct - 50);
-
-  const minutesAgo = updatedAt != null
-    ? Math.floor((Date.now() - updatedAt) / 60000)
-    : null;
-
-  const top5 = contributors.slice(0, 5);
+  const scoreColor  = score > 0 ? '#10b981' : score < 0 ? '#ef4444' : D.textSub;
+  const fillPct     = ((score + 10) / 20) * 100;
+  const barLeft     = score >= 0 ? 50 : fillPct;
+  const barWidth    = Math.abs(fillPct - 50);
+  const minutesAgo  = updatedAt != null ? Math.floor((Date.now() - updatedAt) / 60000) : null;
+  const top5        = contributors.slice(0, 5);
 
   return (
-    <div
-      className="rounded-xl border-2 overflow-hidden"
-      style={{
-        backgroundColor: theme.surface,
-        borderColor: scoreColor + '55',
-        boxShadow: `0 0 28px ${scoreColor}12`,
-      }}
-    >
-      {/* Accent stripe */}
-      <div style={{ height: 3, backgroundColor: scoreColor }} />
+    <div style={{
+      background: D.cardBg,
+      border: `1px solid ${scoreColor}35`,
+      borderRadius: 12,
+      overflow: 'hidden',
+    }}>
+      {/* Top bar */}
+      <div style={{ height: 3, background: scoreColor }} />
 
-      <div className="flex flex-col lg:flex-row gap-6 px-6 py-5">
+      <div style={{ display: 'flex', gap: 0, flexWrap: 'wrap' }}>
 
-        {/* ── Left: big score + progress bar ───────────── */}
-        <div className="shrink-0 lg:w-60">
-          <p className="text-xs font-bold uppercase tracking-widest" style={{ color: scoreColor }}>
+        {/* Left: score */}
+        <div style={{ padding: '24px 28px', borderRight: `1px solid ${D.border}`, minWidth: 240, flex: '0 0 auto' }}>
+          <div style={{ fontSize: 10, fontWeight: 800, color: scoreColor, letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 4 }}>
             Macro Surprise Score
-          </p>
-          <p className="text-xs mt-0.5 mb-4" style={{ color: theme.muted }}>
-            Real-time gold impact score
-          </p>
+          </div>
+          <div style={{ fontSize: 11, color: D.textSub, marginBottom: 20 }}>Real-time gold impact score</div>
 
-          {/* Score number */}
-          <div className="flex items-end gap-1 mb-3">
-            <span
-              className="text-5xl font-extrabold tabular-nums leading-none"
-              style={{ color: scoreColor }}
-            >
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: 6, marginBottom: 14 }}>
+            <span style={{ fontSize: 56, fontWeight: 900, color: scoreColor, lineHeight: 1, letterSpacing: '-0.04em' }}>
               {score > 0 ? '+' : ''}{score}
             </span>
-            <span className="text-lg font-semibold pb-1" style={{ color: theme.muted }}>/ 10</span>
+            <span style={{ fontSize: 18, fontWeight: 600, color: D.textSub }}>/ 10</span>
           </div>
 
-          {/* Label badge */}
-          <span
-            className="inline-block text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full"
-            style={{ backgroundColor: scoreColor + '22', color: scoreColor }}
-          >
+          <span style={{
+            display: 'inline-block', fontSize: 11, fontWeight: 800,
+            letterSpacing: '0.08em', textTransform: 'uppercase',
+            padding: '5px 14px', borderRadius: 99,
+            background: `${scoreColor}18`, color: scoreColor,
+            border: `1px solid ${scoreColor}35`,
+          }}>
             {label}
           </span>
 
-          {/* Progress bar -10…0…+10 */}
-          <div className="mt-5">
-            <div
-              className="relative rounded-full overflow-hidden"
-              style={{ height: 8, backgroundColor: theme.border }}
-            >
-              {/* Zero-centre tick */}
-              <div
-                className="absolute inset-y-0"
-                style={{ left: '50%', width: 2, transform: 'translateX(-50%)', backgroundColor: theme.muted, opacity: 0.35 }}
-              />
-              {/* Coloured fill */}
+          {/* Progress bar */}
+          <div style={{ marginTop: 24 }}>
+            <div style={{ position: 'relative', height: 8, background: D.cardBg2, border: `1px solid ${D.border}`, borderRadius: 99, overflow: 'hidden' }}>
+              <div style={{ position: 'absolute', inset: 0, left: '50%', width: 2, transform: 'translateX(-50%)', background: D.border }} />
               {barWidth > 0 && (
-                <div
-                  className="absolute inset-y-0 rounded-full"
-                  style={{ left: `${barLeft}%`, width: `${barWidth}%`, backgroundColor: scoreColor }}
-                />
+                <div style={{ position: 'absolute', top: 0, bottom: 0, left: `${barLeft}%`, width: `${barWidth}%`, background: scoreColor, borderRadius: 99 }} />
               )}
             </div>
-            <div className="flex justify-between mt-1.5 text-xs" style={{ opacity: 0.7 }}>
-              <span style={{ color: '#ef4444' }}>−10</span>
-              <span style={{ color: theme.muted }}>0</span>
-              <span style={{ color: '#22c55e' }}>+10</span>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 6 }}>
+              <span style={{ fontSize: 10, color: '#ef4444', fontWeight: 600 }}>−10</span>
+              <span style={{ fontSize: 10, color: D.textSub }}>Neutral</span>
+              <span style={{ fontSize: 10, color: '#10b981', fontWeight: 600 }}>+10</span>
             </div>
           </div>
+
+          {minutesAgo !== null && (
+            <p style={{ fontSize: 11, color: D.textSub, marginTop: 16, margin: '16px 0 0' }}>
+              Updated {minutesAgo === 0 ? 'just now' : `${minutesAgo} min ago`}
+            </p>
+          )}
         </div>
 
-        {/* ── Right: top contributors ───────────────────── */}
-        <div className="flex-1 min-w-0">
-          <p className="text-xs font-bold uppercase tracking-wider mb-3" style={{ color: theme.muted }}>
+        {/* Right: contributors */}
+        <div style={{ padding: '24px 28px', flex: 1, minWidth: 280 }}>
+          <div style={{ fontSize: 10, fontWeight: 700, color: D.textSub, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 18 }}>
             Top Drivers
-          </p>
+          </div>
 
-          <div className="space-y-2.5">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
             {top5.map(c => {
-              const cc          = c.contribution > 0 ? '#22c55e' : c.contribution < 0 ? '#ef4444' : '#9ca3af';
-              const miniPct     = Math.min(50, Math.abs(c.contribution) / 20 * 50);
-              const miniLeft    = c.contribution >= 0 ? 50 : 50 - miniPct;
-              const badgeText   = c.impact.includes('Bull') ? 'Bull' : c.impact.includes('Bear') ? 'Bear' : 'Neut';
+              const cc        = c.contribution > 0 ? '#10b981' : c.contribution < 0 ? '#ef4444' : D.textSub;
+              const miniPct   = Math.min(50, (Math.abs(c.contribution) / 20) * 100);
+              const miniLeft  = c.contribution >= 0 ? 50 : 50 - miniPct;
+              const badgeText = c.impact?.includes('Bull') ? 'Bull' : c.impact?.includes('Bear') ? 'Bear' : 'Neut';
 
               return (
-                <div key={c.code} className="flex items-center gap-3">
-                  {/* Name */}
-                  <span
-                    className="text-xs font-medium truncate shrink-0"
-                    style={{ color: theme.text, width: 108 }}
-                  >
+                <div key={c.code} style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                  <span style={{ fontSize: 12, fontWeight: 600, color: D.text, width: 110, flexShrink: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {c.code}
                   </span>
 
                   {/* Mini bar */}
-                  <div className="flex-1 relative" style={{ height: 6, maxWidth: 160 }}>
-                    <div className="absolute inset-0 rounded-full" style={{ backgroundColor: theme.border }} />
-                    <div
-                      className="absolute inset-y-0"
-                      style={{ left: '50%', width: 1, backgroundColor: theme.muted, opacity: 0.4 }}
-                    />
+                  <div style={{ flex: 1, position: 'relative', height: 6, maxWidth: 180 }}>
+                    <div style={{ position: 'absolute', inset: 0, background: D.cardBg2, border: `1px solid ${D.border}`, borderRadius: 99 }} />
+                    <div style={{ position: 'absolute', top: 0, bottom: 0, left: '50%', width: 1, background: D.border }} />
                     {miniPct > 0 && (
-                      <div
-                        className="absolute inset-y-0 rounded-full"
-                        style={{ left: `${miniLeft}%`, width: `${miniPct}%`, backgroundColor: cc, opacity: 0.8 }}
-                      />
+                      <div style={{ position: 'absolute', top: 0, bottom: 0, left: `${miniLeft}%`, width: `${miniPct}%`, background: cc, borderRadius: 99, opacity: 0.85 }} />
                     )}
                   </div>
 
-                  {/* Value */}
-                  <span
-                    className="text-xs font-bold tabular-nums shrink-0"
-                    style={{ color: cc, width: 40, textAlign: 'right' }}
-                  >
+                  <span style={{ fontSize: 12, fontWeight: 800, color: cc, width: 40, textAlign: 'right', flexShrink: 0, fontVariantNumeric: 'tabular-nums' }}>
                     {c.contribution > 0 ? '+' : ''}{c.contribution}
                   </span>
 
-                  {/* Badge */}
-                  <span
-                    className="shrink-0 text-xs font-semibold px-1.5 py-0.5 rounded"
-                    style={{ backgroundColor: cc + '22', color: cc, fontSize: '0.65rem' }}
-                  >
+                  <span style={{ fontSize: 10, fontWeight: 700, color: cc, background: `${cc}15`, border: `1px solid ${cc}28`, padding: '2px 7px', borderRadius: 99, flexShrink: 0, letterSpacing: '0.04em' }}>
                     {badgeText}
                   </span>
                 </div>
               );
             })}
           </div>
-
-          {minutesAgo !== null && (
-            <p className="text-xs mt-5" style={{ color: theme.muted }}>
-              Updated {minutesAgo === 0 ? 'just now' : `${minutesAgo} min ago`}
-            </p>
-          )}
         </div>
       </div>
     </div>
   );
 }
 
-/*
- * Main component
- */
-function EconomicIntelligence() {
+// ── Main ──────────────────────────────────────────────────────────────────────
+export default function EconomicIntelligence() {
   const theme = useTheme();
-  const isDark = theme.isDark;
   const { isPro, isElite, isAdmin } = usePlanGate();
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
-
-  // All hooks must be before any conditional return (Rules of Hooks)
-  const [dashboard, setDashboard]   = useState(null);
-  const [loading, setLoading]       = useState(true);
-  const [error, setError]           = useState(null);
+  const [dashboard,  setDashboard]  = useState(null);
+  const [loading,    setLoading]    = useState(true);
+  const [error,      setError]      = useState(null);
   const [refreshing, setRefreshing] = useState(false);
   const [macroScore, setMacroScore] = useState(null);
 
   const canAccess = isPro || isElite || isAdmin;
+
+  // ── Design tokens ────────────────────────────────────────────────────────
+  const D = {
+    isDark:   theme.isDark,
+    pageBg:   theme.isDark ? '#000000' : '#f1f3f6',
+    cardBg:   theme.isDark ? '#0d0d0d' : '#ffffff',
+    cardBg2:  theme.isDark ? '#111111' : '#f7f8fa',
+    border:   theme.isDark ? '#1e1e1e' : '#e5e8ed',
+    text:     theme.isDark ? '#f0f0f0' : '#0d1117',
+    textSub:  theme.isDark ? '#5a6472' : '#5a6472',
+    textMute: theme.isDark ? '#2a2a2a' : '#b0b8c4',
+    accent:   '#10b981',
+  };
 
   const loadDashboard = async () => {
     if (!canAccess) return;
     try {
       setError(null);
       const token = localStorage.getItem('auth_token');
-      if (!token) {
-        setError('Please log in to access Economic Intelligence');
-        setLoading(false);
-        return;
-      }
+      if (!token) { setError('Please log in'); setLoading(false); return; }
       const headers = { Authorization: `Bearer ${token}` };
       const [dashRes, scoreRes] = await Promise.all([
         fetch(`${API_URL}/api/economic/dashboard`, { headers }),
         fetch(`${API_URL}/api/economic/macro-score`, { headers }),
       ]);
-      if (dashRes.status === 401) throw new Error('Session expired — please log in again');
-      if (dashRes.status === 403) throw new Error('Pro or Elite plan required to access Economic Intelligence');
       if (!dashRes.ok) throw new Error('Failed to load economic intelligence');
       setDashboard(await dashRes.json());
       if (scoreRes.ok) setMacroScore(await scoreRes.json());
@@ -432,67 +373,48 @@ function EconomicIntelligence() {
     return () => clearInterval(id);
   }, [canAccess]);
 
-  // Pro gate — shown after all hooks
-  if (!canAccess) {
-    return (
-      <div style={{
-        display: 'flex', flexDirection: 'column',
-        alignItems: 'center', justifyContent: 'center',
-        height: '60vh', gap: 20, textAlign: 'center', padding: '40px',
-      }}>
-        <div style={{
-          width: 64, height: 64,
-          background: 'rgba(16,185,129,0.1)',
-          border: '1px solid rgba(16,185,129,0.3)',
-          borderRadius: '50%',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-        }}>
-          <Lock style={{ color: '#10b981', width: 28, height: 28 }} />
-        </div>
-        <h2 style={{ color: theme.text, fontSize: 24, fontWeight: 700, margin: 0 }}>Pro Feature</h2>
-        <p style={{ color: theme.isDark ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.5)', fontSize: 16, maxWidth: 360, margin: 0, lineHeight: 1.5 }}>
-          Economic Intelligence and Macro Surprise Score require a Pro plan.
-          Upgrade to access 10 macro indicators and our proprietary scoring system.
-        </p>
-        <button
-          onClick={() => setShowUpgradeModal(true)}
-          style={{
-            background: '#10b981', color: 'white', border: 'none',
-            borderRadius: 10, padding: '13px 32px', fontSize: 15,
-            fontWeight: 600, cursor: 'pointer',
-          }}
-        >
-          Upgrade to Pro
-        </button>
-        <p style={{ color: theme.isDark ? 'rgba(255,255,255,0.3)' : 'rgba(0,0,0,0.3)', fontSize: 13, margin: 0 }}>
-          From $1.99/month — Founding Member price
-        </p>
-        {showUpgradeModal && (
-          <ProfileModal onClose={() => setShowUpgradeModal(false)} />
-        )}
+  // ── Pro gate ─────────────────────────────────────────────────────────────
+  if (!canAccess) return (
+    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: D.pageBg, padding: 40, textAlign: 'center', gap: 20 }}>
+      <div style={{ width: 64, height: 64, borderRadius: '50%', background: 'rgba(16,185,129,0.1)', border: '1px solid rgba(16,185,129,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <Lock style={{ width: 26, height: 26, color: '#10b981' }} />
       </div>
-    );
-  }
-
-  if (loading) return (
-    <div className="flex-1 flex items-center justify-center" style={{ minHeight: 320 }}>
-      <div className="flex flex-col items-center gap-3">
-        <Loader2 className="w-10 h-10 animate-spin" style={{ color: theme.accent }} />
-        <p className="text-sm" style={{ color: theme.muted }}>Loading economic data...</p>
+      <div>
+        <h2 style={{ fontSize: 22, fontWeight: 700, color: D.text, margin: '0 0 10px' }}>Pro Feature</h2>
+        <p style={{ fontSize: 15, color: D.textSub, maxWidth: 360, margin: '0 auto', lineHeight: 1.7 }}>
+          Economic Intelligence and Macro Surprise Score require a Pro plan. Access 10 macro indicators and our proprietary scoring system.
+        </p>
       </div>
+      <button
+        onClick={() => setShowUpgradeModal(true)}
+        style={{ background: '#10b981', color: '#fff', border: 'none', borderRadius: 10, padding: '13px 32px', fontSize: 14, fontWeight: 700, cursor: 'pointer', boxShadow: '0 4px 16px rgba(16,185,129,0.4)' }}
+      >
+        Upgrade to Pro
+      </button>
+      <p style={{ fontSize: 12, color: D.textSub, margin: 0 }}>From $1.99/month — Founding Member price</p>
+      {showUpgradeModal && <ProfileModal onClose={() => setShowUpgradeModal(false)} />}
     </div>
   );
 
+  // ── Loading ───────────────────────────────────────────────────────────────
+  if (loading) return (
+    <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', background: D.pageBg, minHeight: 320 }}>
+      <div style={{ textAlign: 'center' }}>
+        <div style={{ width: 32, height: 32, border: `2px solid ${D.accent}`, borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 0.8s linear infinite', margin: '0 auto 12px' }} />
+        <p style={{ fontSize: 13, color: D.textSub, margin: 0 }}>Loading economic data…</p>
+      </div>
+      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+    </div>
+  );
+
+  // ── Error ─────────────────────────────────────────────────────────────────
   if (error) return (
-    <div className="flex-1 p-6">
-      <div
-        className="rounded-xl border p-6 flex gap-3"
-        style={{ backgroundColor: 'rgba(239,68,68,0.08)', borderColor: '#ef4444' }}
-      >
-        <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: '#ef4444' }} />
+    <div style={{ flex: 1, padding: 24, background: D.pageBg }}>
+      <div style={{ background: 'rgba(239,68,68,0.06)', border: '1px solid #ef4444', borderRadius: 12, padding: '18px 22px', display: 'flex', gap: 12 }}>
+        <AlertCircle style={{ width: 18, height: 18, color: '#ef4444', flexShrink: 0, marginTop: 1 }} />
         <div>
-          <p className="font-semibold" style={{ color: '#ef4444' }}>Error loading economic intelligence</p>
-          <p className="text-sm mt-1" style={{ color: theme.muted }}>{error}</p>
+          <p style={{ fontSize: 14, fontWeight: 600, color: '#ef4444', margin: '0 0 4px' }}>Failed to load economic intelligence</p>
+          <p style={{ fontSize: 13, color: D.textSub, margin: 0 }}>{error}</p>
         </div>
       </div>
     </div>
@@ -501,165 +423,152 @@ function EconomicIntelligence() {
   if (!dashboard || dashboard.error) return null;
 
   const { indicators, overallSentiment, sentimentColor, summary, aiAnalysis } = dashboard;
-  const sc = ic(sentimentColor);
+  const sc = impactColors(sentimentColor);
 
   return (
-    <div className="flex-1 overflow-y-auto" style={{ backgroundColor: theme.bg }}>
-      <div className="max-w-7xl mx-auto px-6 py-6 space-y-8">
+    <div style={{ flex: 1, overflowY: 'auto', background: D.pageBg }}>
+      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
 
-        {/* Page header */}
-        <div className="flex items-center justify-between flex-wrap gap-3">
+      <div style={{ maxWidth: 1200, margin: '0 auto', padding: '24px 24px 56px' }}>
+
+        {/* ── Page Header ──────────────────────────────────────────────── */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12, marginBottom: 24 }}>
           <div>
-            <div className="flex items-center gap-2">
-              <Activity className="w-6 h-6" style={{ color: theme.accent }} />
-              <h2 className="text-2xl font-bold" style={{ color: theme.text }}>Economic Intelligence</h2>
-            </div>
-            <p className="text-sm mt-1" style={{ color: theme.muted }}>
+            <h1 style={{ fontSize: 22, fontWeight: 700, color: D.text, margin: 0, letterSpacing: '-0.02em' }}>
+              Economic Intelligence
+            </h1>
+            <p style={{ fontSize: 13, color: D.textSub, margin: '4px 0 0' }}>
               Macroeconomic surprise indicators for gold (XAUUSD)
             </p>
           </div>
           <button
             onClick={handleRefresh}
             disabled={refreshing}
-            className="px-4 py-2 rounded-lg flex items-center gap-2 text-sm font-semibold disabled:opacity-50 transition-opacity"
-            style={{ backgroundColor: theme.accent, color: '#fff' }}
+            style={{
+              background: D.accent, color: '#fff', border: 'none',
+              borderRadius: 8, padding: '9px 18px', fontSize: 13, fontWeight: 700,
+              cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 7,
+              opacity: refreshing ? 0.7 : 1, transition: 'opacity 0.15s',
+              boxShadow: `0 4px 14px ${D.accent}35`,
+            }}
           >
-            <RefreshCcw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
+            <RefreshCcw style={{ width: 14, height: 14, animation: refreshing ? 'spin 0.8s linear infinite' : 'none' }} />
             Refresh
           </button>
         </div>
 
-        {/* Macro Surprise Score widget */}
-        <MacroScoreWidget macroScore={macroScore} theme={theme} />
-
-        {/* Overall Sentiment banner */}
-        <div
-          className="rounded-xl border-2 px-7 py-6 flex items-center justify-between flex-wrap gap-4"
-          style={{ borderColor: sc.border, backgroundColor: sc.glow }}
-        >
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-widest mb-1" style={{ color: sc.text }}>
-              Overall Market Sentiment
-            </p>
-            <p className="text-4xl font-extrabold leading-none" style={{ color: sc.text }}>
-              {overallSentiment}
-            </p>
-            <div className="flex flex-wrap gap-5 mt-3 text-sm font-semibold">
-              <span style={{ color: '#22c55e' }}>
-                &#9650; {summary.bullishIndicators} Bullish
-              </span>
-              <span style={{ color: '#ef4444' }}>
-                &#9660; {summary.bearishIndicators} Bearish
-              </span>
-              <span style={{ color: '#9ca3af' }}>
-                &#9679; {summary.neutralIndicators} Neutral
-              </span>
-              <span style={{ color: theme.muted }}>
-                / {summary.totalIndicators ?? 10} indicators
-              </span>
-            </div>
-          </div>
-          {sentimentColor === 'green'
-            ? <TrendingUp  className="w-14 h-14" style={{ color: '#22c55e', opacity: 0.85 }} />
-            : sentimentColor === 'red'
-            ? <TrendingDown className="w-14 h-14" style={{ color: '#ef4444', opacity: 0.85 }} />
-            : <Activity className="w-14 h-14" style={{ color: '#9ca3af', opacity: 0.5 }} />}
+        {/* ── Macro Score ───────────────────────────────────────────────── */}
+        <div style={{ marginBottom: 20 }}>
+          <MacroScoreWidget macroScore={macroScore} D={D} />
         </div>
 
-        {/* AI Analysis */}
+        {/* ── Overall Sentiment ─────────────────────────────────────────── */}
+        <div style={{
+          background: D.cardBg, border: `1px solid ${sc.border}40`,
+          borderRadius: 12, padding: '20px 24px',
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          flexWrap: 'wrap', gap: 16, marginBottom: 20,
+          borderLeft: `4px solid ${sc.border}`,
+        }}>
+          <div>
+            <div style={{ fontSize: 10, fontWeight: 700, color: sc.text, letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 6 }}>
+              Overall Market Sentiment
+            </div>
+            <div style={{ fontSize: 32, fontWeight: 900, color: sc.text, letterSpacing: '-0.03em', marginBottom: 10 }}>
+              {overallSentiment}
+            </div>
+            <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap' }}>
+              {[
+                { label: `${summary.bullishIndicators} Bullish`, color: '#10b981', Icon: TrendingUp  },
+                { label: `${summary.bearishIndicators} Bearish`, color: '#ef4444', Icon: TrendingDown },
+                { label: `${summary.neutralIndicators} Neutral`, color: D.textSub,  Icon: Minus        },
+              ].map(s => (
+                <div key={s.label} style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                  <s.Icon style={{ width: 14, height: 14, color: s.color }} />
+                  <span style={{ fontSize: 13, fontWeight: 600, color: s.color }}>{s.label}</span>
+                </div>
+              ))}
+              <span style={{ fontSize: 13, color: D.textSub }}>/ {summary.totalIndicators ?? 10} indicators</span>
+            </div>
+          </div>
+          <div style={{
+            width: 64, height: 64, borderRadius: 18,
+            background: `${sc.border}12`,
+            border: `1px solid ${sc.border}30`,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            flexShrink: 0,
+          }}>
+            {sentimentColor === 'green'
+              ? <TrendingUp  style={{ width: 30, height: 30, color: sc.border }} />
+              : sentimentColor === 'red'
+              ? <TrendingDown style={{ width: 30, height: 30, color: sc.border }} />
+              : <Activity    style={{ width: 30, height: 30, color: D.textSub }} />}
+          </div>
+        </div>
+
+        {/* ── AI Analysis ───────────────────────────────────────────────── */}
         {aiAnalysis && !aiAnalysis.error && (
-          <div
-            className="rounded-xl border px-6 py-5 flex gap-4"
-            style={{ backgroundColor: 'rgba(139,92,246,0.07)', borderColor: '#8b5cf6' }}
-          >
-            <Brain className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: '#8b5cf6' }} />
+          <div style={{
+            background: D.cardBg,
+            border: `1px solid #0ea5e930`,
+            borderLeft: '4px solid #0ea5e9',
+            borderRadius: 12, padding: '18px 22px',
+            display: 'flex', gap: 14, marginBottom: 20,
+          }}>
+            <div style={{ width: 36, height: 36, borderRadius: 10, background: '#0ea5e915', border: '1px solid #0ea5e925', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <Brain style={{ width: 16, height: 16, color: '#0ea5e9' }} />
+            </div>
             <div>
-              <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: '#a78bfa' }}>
+              <div style={{ fontSize: 10, fontWeight: 700, color: '#0ea5e9', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 8 }}>
                 AI Macro Analysis
-              </p>
-              <p className="text-sm leading-relaxed" style={{ color: theme.text }}>{aiAnalysis.analysis}</p>
+              </div>
+              <p style={{ fontSize: 13, color: D.text, margin: 0, lineHeight: 1.7 }}>{aiAnalysis.analysis}</p>
             </div>
           </div>
         )}
 
-        {/* Indicator groups */}
+        {/* ── Indicator Groups ──────────────────────────────────────────── */}
         {GROUPS.map(group => {
           const items = group.keys
             .map(k => ({ key: k, data: indicators[k] }))
             .filter(({ data }) => data && !data.error);
           if (!items.length) return null;
 
-          const withCharts = items.filter(({ data }) => data.historicalData && data.historicalData.length > 0);
-
           return (
-            <section key={group.label}>
-              {/* Section header */}
-              <div className="flex items-center gap-3 mb-4">
-                <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: group.accent }} />
-                <h3
-                  className="text-xs font-bold uppercase tracking-widest"
-                  style={{ color: group.accent }}
-                >
+            <div key={group.label} style={{ marginBottom: 28 }}>
+              {/* Group header */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
+                <span style={{ width: 10, height: 10, borderRadius: '50%', background: group.accent, flexShrink: 0 }} />
+                <h3 style={{ fontSize: 11, fontWeight: 700, color: group.accent, letterSpacing: '0.1em', textTransform: 'uppercase', margin: 0 }}>
                   {group.label}
                 </h3>
-                <div className="flex-1" style={{ height: 1, backgroundColor: group.accent + '30' }} />
+                <div style={{ flex: 1, height: 1, background: `${group.accent}25` }} />
+                <span style={{ fontSize: 11, color: D.textSub }}>{items.length} indicator{items.length !== 1 ? 's' : ''}</span>
               </div>
 
-              {/* Cards grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 mb-5">
+              {/* Cards */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 12 }}>
                 {items.map(({ key, data }) => (
-                  <IndicatorCard
-                    key={key}
-                    data={data}
-                    theme={theme}
-                    accentColor={group.accent}
-                  />
+                  <IndicatorCard key={key} data={data} accentColor={group.accent} D={D} />
                 ))}
               </div>
-
-              {/* Charts grid */}
-              {withCharts.length > 0 && (
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-                  {withCharts.map(({ key, data }) => (
-                    <HistoricalChart
-                      key={key}
-                      data={data.historicalData}
-                      code={data.code}
-                      unit={data.unit}
-                      isDark={isDark}
-                      color={group.accent}
-                      title={data.code}
-                    />
-                  ))}
-                </div>
-              )}
-            </section>
+            </div>
           );
         })}
 
-        <p className="text-xs text-center pb-2" style={{ color: theme.muted }}>
-          Data sourced from official government releases and verified analyst consensus. Auto-refreshes every 5 minutes.
-        </p>
-
-        {/* Disclaimer */}
-        <div
-          style={{
-            backgroundColor: 'rgba(245,158,11,0.06)',
-            border: '1px solid rgba(245,158,11,0.15)',
-            borderRadius: 8,
-            padding: '10px 14px',
-            marginTop: 4,
-            marginBottom: 8,
-          }}
-        >
-          <p className="text-center" style={{ fontSize: 11, color: 'rgba(251,191,36,0.7)', lineHeight: 1.6 }}>
-            <strong style={{ color: 'rgba(251,191,36,0.9)' }}>Disclaimer:</strong> Economic data and AI analysis are for informational purposes only and do not constitute financial or investment advice.
-            All trading involves substantial risk of loss. Always verify data with primary sources before making trading decisions.
+        {/* ── Disclaimer ───────────────────────────────────────────────── */}
+        <div style={{
+          background: `rgba(245,158,11,0.05)`,
+          border: '1px solid rgba(245,158,11,0.15)',
+          borderRadius: 10, padding: '12px 16px', marginTop: 8,
+        }}>
+          <p style={{ fontSize: 11, color: 'rgba(251,191,36,0.7)', lineHeight: 1.6, margin: 0, textAlign: 'center' }}>
+            <strong style={{ color: 'rgba(251,191,36,0.9)' }}>Disclaimer:</strong> Economic data and AI analysis are for informational purposes only and do not constitute financial or investment advice. Always verify data with primary sources before making trading decisions.
           </p>
         </div>
+
       </div>
     </div>
   );
 }
 
-export default EconomicIntelligence;

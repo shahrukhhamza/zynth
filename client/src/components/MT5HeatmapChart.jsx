@@ -261,7 +261,7 @@ function CellModal({ cell, mode, onClose }) {
           {[
             { label: 'P&L',       val: fmt$(cell.profit),                  color: cell.profit >= 0 ? '#4ade80' : '#f87171' },
             { label: 'Trades',    val: cell.trades,                        color: '#93c5fd' },
-            { label: 'Win Rate',  val: `${(cell.win_rate ?? 0).toFixed(0)}%`, color: '#a78bfa' },
+            { label: 'Win Rate',  val: `${(cell.win_rate ?? 0).toFixed(0)}%`, color: '#0ea5e9' },
             { label: 'Avg Trade', val: fmt$(cell.avg_trade ?? 0),          color: (cell.avg_trade ?? 0) >= 0 ? '#4ade80' : '#f87171' },
           ].map(m => (
             <div key={m.label} style={{ background: '#0b1322', borderRadius: 8, padding: '10px 12px' }}>
@@ -445,7 +445,7 @@ export default function MT5HeatmapChart({ trades = [], heatmap: legacyHeatmap = 
           {[
             { label: 'Trades',    val: stats.totalTrades,                color: '#93c5fd' },
             { label: 'Total P&L', val: fmt$(stats.totalProfit),          color: stats.totalProfit >= 0 ? '#4ade80' : '#f87171' },
-            { label: 'Win Rate',  val: `${stats.winRate.toFixed(1)}%`,   color: '#a78bfa' },
+            { label: 'Win Rate',  val: `${stats.winRate.toFixed(1)}%`,   color: '#0ea5e9' },
           ].map(s => (
             <div key={s.label} style={{ background: bg1, border: `1px solid ${border}`, borderRadius: 8, padding: '7px 14px' }}>
               <div style={{ color: text1, fontSize: 10, marginBottom: 2 }}>{s.label}</div>

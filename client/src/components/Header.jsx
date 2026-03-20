@@ -9,7 +9,7 @@ import PlanBadge from './PlanBadge';
 import { resolveMediaUrl } from '../utils/mediaUrl';
 
 const AVATAR_COLOR_MAP = {
-  emerald: '#10b981', blue: '#3b82f6', purple: '#a855f7',
+  emerald: '#10b981', blue: '#3b82f6', purple: '#0ea5e9',
   orange: '#f97316', rose: '#f43f5e', amber: '#f59e0b',
   cyan: '#06b6d4', indigo: '#6366f1',
 };
