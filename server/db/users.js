@@ -66,6 +66,8 @@ export async function initDb() {
     `ALTER TABLE users ADD COLUMN IF NOT EXISTS avatar_url TEXT DEFAULT NULL`,
     `ALTER TABLE users ADD COLUMN IF NOT EXISTS terms_accepted INTEGER DEFAULT 0`,
     `ALTER TABLE users ADD COLUMN IF NOT EXISTS terms_accepted_at TIMESTAMPTZ DEFAULT NULL`,
+    // MT5 broker password stored as-is (needed to reconnect to broker)
+    `ALTER TABLE mt_accounts ADD COLUMN IF NOT EXISTS broker_password TEXT`,
   ];
 
   for (const sql of migrations) {
@@ -259,12 +261,12 @@ export async function setOnboardingDone(id) {
 
 // ── MT Accounts ───────────────────────────────────────────────────────────────
 
-export async function createMtAccount({ user_id, meta_api_account_id, login, server, platform, label }) {
+export async function createMtAccount({ user_id, meta_api_account_id, login, password, server, platform, label }) {
   const { rows } = await pool.query(
-    `INSERT INTO mt_accounts (user_id, meta_api_account_id, login, server, platform, label)
-     VALUES ($1, $2, $3, $4, $5, $6)
-     RETURNING *`,
-    [user_id, meta_api_account_id, login, server, platform.toUpperCase(), label ?? null]
+    `INSERT INTO mt_accounts (user_id, meta_api_account_id, login, broker_password, server, platform, label, state)
+     VALUES ($1, $2, $3, $4, $5, $6, $7, 'DEPLOYED')
+     RETURNING id, meta_api_account_id, login, server, platform, label, state, created_at`,
+    [user_id, meta_api_account_id, login, password ?? null, server, platform.toUpperCase(), label ?? null]
   );
   return rows[0];
 }
