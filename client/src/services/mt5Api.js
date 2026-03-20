@@ -27,7 +27,7 @@ client.interceptors.request.use((config) => {
 
 /**
  * Upload a screenshot image and extract trades via OCR + Gemini AI.
- * @param {File} file  PNG / JPG screenshot of MT4/MT5 trade history
+ * @param {File} file  PNG / JPG screenshot of MT5 trade history
  * @returns {Promise<{success, message, trades_extracted, analysis, behavior, ai_summary, trades}>}
  */
 export async function uploadTradeScreenshot(file) {

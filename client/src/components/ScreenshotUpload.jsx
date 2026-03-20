@@ -108,7 +108,7 @@ export default function ScreenshotUpload({ onUploaded }) {
           Screenshot Trade Import
         </h1>
         <p className="text-sm leading-relaxed max-w-md mx-auto" style={{ color: theme.muted }}>
-          Take a screenshot of your MT4 or MT5 trade history and upload it here.
+          Take a screenshot of your MT5 trade history and upload it here.
           Our AI will extract all your trades and generate a performance report instantly.
         </p>
       </div>

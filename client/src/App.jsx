@@ -25,6 +25,7 @@ import ChartsPage from './components/ChartsPage'
 import TradingDesk from './components/TradingDesk'
 import HelpCenter from './components/HelpCenter'
 import ZynthAssistant from './components/ZynthAssistant'
+import BrokerAccountConnect from './components/BrokerAccountConnect'
 import LoginPage from './components/LoginPage'
 import SignupPage from './components/SignupPage'
 import LandingPage from './components/LandingPage'
@@ -89,7 +90,7 @@ function AppShell() {
     const path = window.location.pathname.replace(/^\//, '');
     const validViews = [
       'data', 'journal', 'intelligence', 'markets', 'calendar',
-      'news', 'screenshot', 'tools', 'help', 'charts', 'backtesting', 'admin',
+      'news', 'screenshot', 'tools', 'help', 'charts', 'backtesting', 'admin', 'broker',
     ];
     if (path && validViews.includes(path)) {
       setCurrentView(path);
@@ -266,6 +267,8 @@ function AppShell() {
             <TradingDesk key="tools" />
           ) : currentView === 'help' ? (
             <div key="help" style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0 }}><HelpCenter /></div>
+          ) : currentView === 'broker' ? (
+            <div key="broker" className="flex-1 overflow-y-auto page-enter"><BrokerAccountConnect /></div>
           ) : (
             <>
               {/* News Feed */}

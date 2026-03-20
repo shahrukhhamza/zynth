@@ -213,7 +213,7 @@ def extract_trades_from_screenshot(
         f"Details: {error_detail}\n\n"
         "Tips:\n"
         "• Your Gemini API free quota may be exhausted — wait a minute and retry.\n"
-        "• Ensure you upload a clear full-screen screenshot of the MT4/MT5 History tab.\n"
+        "• Ensure you upload a clear full-screen screenshot of the MT5 History tab.\n"
         "• The image must show trade rows with symbol, direction, price, and profit columns."
     )
 

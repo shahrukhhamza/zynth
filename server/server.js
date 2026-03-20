@@ -45,6 +45,8 @@ import levelsRouter from './routes/levels.js';
 import { requireAuth, checkScreenshotTries } from './middleware/authMiddleware.js';
 import * as Users from './db/users.js';
 import { incrementScreenshotTries, initDb } from './db/users.js';
+import accountsRouter from './routes/accounts.js';
+import webhookMetaApiRouter from './routes/webhookMetaApi.js';
 import { UPLOADS_DIR, ensureUploadDirs } from './config/storagePaths.js';
 
 const app = express();
@@ -259,6 +261,8 @@ app.use('/api/analysis',  analysisRouter);
 app.use('/api/assistant', requireAuth, aiLimiter, assistantRouter);
 app.use('/api/charts', requireAuth, chartsRouter);
 app.use('/api/levels', requireAuth, levelsRouter);
+app.use('/api/accounts', accountsRouter);
+app.use('/api/webhook/metaapi', webhookMetaApiRouter);
 
 // ── /mt5 proxy → Python screenshot service ────────────────────────────────────
 app.use('/mt5', requireAuth);

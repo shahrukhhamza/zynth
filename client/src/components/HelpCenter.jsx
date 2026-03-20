@@ -626,12 +626,12 @@ Click **Select All** in the modal to include all indicators at once.
     articles: [
       {
         id: 'screenshot-guide', title: 'Screenshot Analysis — Full Guide',
-        excerpt: 'Step-by-step: take a screenshot in MT4/MT5 and import trades automatically.',
-        content: `Screenshot Analysis uses AI and OCR (Optical Character Recognition) to read your MT4/MT5 trade history screenshot and import trades automatically.
+        excerpt: 'Step-by-step: take a screenshot in MT5 and import trades automatically.',
+        content: `Screenshot Analysis uses AI and OCR (Optical Character Recognition) to read your MT5 trade history screenshot and import trades automatically.
 
 ## Step by Step
 
-1. Open **MT4 or MT5**
+1. Open **MT5**
 2. Go to **Account History** tab
 3. Right-click → select the time period
 4. Take a screenshot (Windows: \`Win+Shift+S\`)
@@ -651,7 +651,7 @@ Click **Select All** in the modal to include all indicators at once.
 ## Limitations
 
 ::warning
-The AI may occasionally misread values. Always review before confirming import. Complex or custom MT4 layouts may not read correctly.
+The AI may occasionally misread values. Always review before confirming import. Complex or custom MT5 layouts may not read correctly.
 ::
 
 ## Usage Limits
@@ -664,10 +664,9 @@ The AI may occasionally misread values. Always review before confirming import. 
       },
       {
         id: 'supported-formats', title: 'Supported Broker Formats',
-        excerpt: 'Which MT4/MT5 layouts work, what is partially supported, and what is not.',
+        excerpt: 'Which MT5 layouts work, what is partially supported, and what is not.',
         content: `## Fully Supported
 
-- MetaTrader 4 (MT4) Account History
 - MetaTrader 5 (MT5) Deals History
 - Standard history table format
 

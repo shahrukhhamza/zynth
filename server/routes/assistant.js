@@ -99,11 +99,11 @@ const QA = [
     a: 'Each trade can be analyzed individually by AI. In Trade History click any trade -> click the brain icon. You get: Psychology Score (1-10), Discipline Rating, Coach Message, Key Observations and Improvement Tips.' },
 
   // SCREENSHOT ANALYSIS / OCR
-  { q: ['screenshot analysis', 'ocr', 'import from screenshot', 'mt4 screenshot', 'mt5 screenshot', 'bulk import', 'auto import', 'trade history screenshot'],
-    a: 'Screenshot Analysis (in sidebar) lets you upload an MT4/MT5 account history screenshot. The AI reads it and automatically imports all your trades into the journal at once. Free: 2 lifetime uses. Pro: 35/month. Elite: unlimited.' },
+  { q: ['screenshot analysis', 'ocr', 'import from screenshot', 'mt5 screenshot', 'bulk import', 'auto import', 'trade history screenshot'],
+    a: 'Screenshot Analysis (in sidebar) lets you upload an MT5 account history screenshot. The AI reads it and automatically imports all your trades into the journal at once. Free: 2 lifetime uses. Pro: 35/month. Elite: unlimited.' },
 
   { q: ['how does ocr work', 'how does screenshot analysis work', 'screenshot not working'],
-    a: 'Upload a clear screenshot of your MT4/MT5 trade history table. The AI uses OCR to read each row and extract trade data (pair, direction, open/close price, profit). Results appear in a preview where you can confirm before importing.' },
+    a: 'Upload a clear screenshot of your MT5 trade history table. The AI uses OCR to read each row and extract trade data (pair, direction, open/close price, profit). Results appear in a preview where you can confirm before importing.' },
 
   { q: ['ocr limit', 'screenshot limit', 'no more screenshots', 'out of ocr'],
     a: 'Free plan: 2 lifetime screenshot analyses. Pro: 35 per month. Elite: unlimited. Upgrade via your Profile -> Upgrade Plan to get more.' },

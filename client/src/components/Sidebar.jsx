@@ -2,7 +2,7 @@
 import {
   Search, Filter, Calendar, X, Brain,
   Camera, ChevronLeft, ChevronRight, Crown, Settings, HelpCircle, Clock,
-  LayoutDashboard, Star, Zap,
+  LayoutDashboard, Star, Zap, Plug,
 } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 import { useTimezone } from '../contexts/TimezoneContext';
@@ -13,16 +13,17 @@ import PlanBadge from './PlanBadge';
 import { resolveMediaUrl } from '../utils/mediaUrl';
 
 const AVATAR_COLOR_MAP = {
-  emerald: '#10b981', blue: '#3b82f6', purple: '#a855f7', orange: '#f97316',
+  emerald: '#10b981', blue: '#3b82f6', purple: '#0ea5e9', orange: '#f97316',
   rose: '#f43f5e', amber: '#f59e0b', cyan: '#06b6d4', indigo: '#6366f1',
 };
 
 const NAV_ITEMS = [
   { key: 'data',         icon: LayoutDashboard, label: 'Dashboard',           badge: null },
   { key: 'journal',      icon: Star,            label: 'Trade Journal',       badge: null, core: true },
-  { key: 'screenshot',   icon: Camera,          label: 'Screenshot Analysis', badge: { text: 'AI', color: '#a855f7' } },
-  { key: 'intelligence', icon: Brain,           label: 'AI Insights',         badge: { text: 'AI', color: '#a855f7' } },
+  { key: 'screenshot',   icon: Camera,          label: 'Screenshot Analysis', badge: { text: 'AI', color: '#0ea5e9' } },
+  { key: 'intelligence', icon: Brain,           label: 'AI Insights',         badge: { text: 'AI', color: '#0ea5e9' } },
   { key: 'calendar',     icon: Calendar,        label: 'Economic Calendar',   badge: null },
+  { key: 'broker',       icon: Plug,            label: 'Broker Accounts',     badge: null },
   { key: 'help',         icon: HelpCircle,      label: 'Help & Docs',         badge: null },
 ];
 
