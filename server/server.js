@@ -146,6 +146,7 @@ const _normalizeOrigin = (value) => {
 
 const _allowedOriginsFromEnv = [
   process.env.CLIENT_URL,
+  process.env.CLIENT_URL1,
   process.env.CLIENT_ORIGIN,
   process.env.FRONTEND_URL,
   process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null,
@@ -155,6 +156,8 @@ const _ALLOWED_ORIGINS = new Set([
   'http://localhost:5173',
   'http://127.0.0.1:5173',
   'https://zynth.vercel.app',
+  'https://zynth.codes',
+  'https://www.zynth.codes',
   ..._allowedOriginsFromEnv,
 ]);
 

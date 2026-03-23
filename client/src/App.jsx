@@ -245,7 +245,7 @@ function AppShell() {
           ) : currentView === 'data' ? (
             <EconomicDashboard key="data" onViewChange={navigate} />
           ) : currentView === 'calendar' ? (
-            <div key="calendar" className="flex-1 overflow-y-auto p-6 page-enter">
+            <div key="calendar" className="flex-1 overflow-hidden flex flex-col page-enter">
               <EconomicCalendar />
             </div>
           ) : currentView === 'intelligence' ? (
