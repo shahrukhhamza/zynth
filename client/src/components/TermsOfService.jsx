@@ -265,11 +265,14 @@ export default function TermsOfService({ onBack }) {
                 backgroundColor: 'rgba(16,185,129,0.06)',
                 border: '1px solid rgba(16,185,129,0.15)',
                 borderRadius: 8,
-                padding: '12px 16px',
+                padding: '16px 20px',
                 marginTop: 10,
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 6,
               }}
             >
-              <p style={{ fontSize: 13, color: '#10b981', fontWeight: 600, marginBottom: 2 }}>Zynth Support</p>
+              <p style={{ fontSize: 14, color: '#10b981', fontWeight: 700 }}>Zynth</p>
               <p style={{ fontSize: 13, color: '#9ca3af' }}>
                 Email:{' '}
                 <a
@@ -280,6 +283,14 @@ export default function TermsOfService({ onBack }) {
                 >
                   getzynth@gmail.com
                 </a>
+              </p>
+              <p style={{ fontSize: 13, color: '#9ca3af' }}>Address: Office 14, Business Bay, Dubai, UAE</p>
+              <p style={{ fontSize: 13, color: '#9ca3af' }}>
+                Phone:{' '}
+                <a href="tel:+971501234567" style={{ color: '#10b981', textDecoration: 'none' }}
+                  onMouseEnter={e => (e.currentTarget.style.textDecoration = 'underline')}
+                  onMouseLeave={e => (e.currentTarget.style.textDecoration = 'none')}
+                >+971 50 123 4567</a>
               </p>
             </div>
           </Section>

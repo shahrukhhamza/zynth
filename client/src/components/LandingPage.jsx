@@ -1365,8 +1365,10 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
             <ul className="space-y-2.5">
               <li><a href="#" className="text-[13px] text-gray-500 hover:text-gray-300 transition-colors">Help Center</a></li>
               <li><a href="/terms" className="text-[13px] text-gray-500 hover:text-gray-300 transition-colors">Terms of Service</a></li>
-              <li><a href="/terms#privacy" className="text-[13px] text-gray-500 hover:text-gray-300 transition-colors">Privacy Policy</a></li>
-              <li><a href="#" className="text-[13px] text-gray-500 hover:text-gray-300 transition-colors">Risk Disclosure</a></li>
+              <li><a href="/privacy" className="text-[13px] text-gray-500 hover:text-gray-300 transition-colors">Privacy Policy</a></li>
+              <li><a href="/refund-policy" className="text-[13px] text-gray-500 hover:text-gray-300 transition-colors">Refund Policy</a></li>
+              <li><a href="/service-policy" className="text-[13px] text-gray-500 hover:text-gray-300 transition-colors">Service Policy</a></li>
+              <li><a href="/services" className="text-[13px] text-gray-500 hover:text-gray-300 transition-colors">Our Services</a></li>
             </ul>
           </div>
 
@@ -1386,10 +1388,16 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
 
         </div>
         <div className="max-w-7xl mx-auto border-t border-white/[0.04] pt-6 flex flex-col md:flex-row items-center justify-between gap-3">
-          <p className="text-[11px] text-gray-700">Trading involves risk. Past performance is not indicative of future results.</p>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+            <p style={{ fontSize: 11, color: '#374151' }}>© 2026 Zynth. All rights reserved.</p>
+            <p style={{ fontSize: 11, color: '#374151' }}>Office 14, Business Bay, Dubai, UAE &nbsp;·&nbsp; <a href="tel:+971501234567" style={{ color: '#4b5563', textDecoration: 'none' }}>+971 50 123 4567</a></p>
+          </div>
           <div className="flex gap-5">
-            <a href="/terms#privacy" className="text-[11px] text-gray-700 hover:text-gray-500 transition-colors">Privacy</a>
+            <a href="/privacy" className="text-[11px] text-gray-700 hover:text-gray-500 transition-colors">Privacy</a>
             <a href="/terms" className="text-[11px] text-gray-700 hover:text-gray-500 transition-colors">Terms</a>
+            <a href="/refund-policy" className="text-[11px] text-gray-700 hover:text-gray-500 transition-colors">Refund Policy</a>
+            <a href="/service-policy" className="text-[11px] text-gray-700 hover:text-gray-500 transition-colors">Service Policy</a>
+            <a href="/services" className="text-[11px] text-gray-700 hover:text-gray-500 transition-colors">Services</a>
             <a href="mailto:getzynth@gmail.com" className="text-[11px] text-gray-700 hover:text-gray-500 transition-colors">Contact</a>
           </div>
         </div>

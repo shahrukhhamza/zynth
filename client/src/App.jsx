@@ -32,6 +32,10 @@ import ForgotPasswordPage from './components/ForgotPasswordPage'
 import ResetPasswordPage from './components/ResetPasswordPage'
 import OnboardingFlow from './components/OnboardingFlow'
 import TermsOfService from './components/TermsOfService'
+import PrivacyPolicy from './components/PrivacyPolicy'
+import RefundPolicy from './components/RefundPolicy'
+import ServicePolicy from './components/ServicePolicy'
+import ServicesPage from './components/ServicesPage'
 import { fetchNews } from './services/api'
 import { Loader2, Sparkles } from 'lucide-react'
 
@@ -351,6 +355,10 @@ function AuthGate() {
     if (path === '/reset-password') return 'resetPassword';
     if (path === '/forgot-password') return 'forgotPassword';
     if (path === '/terms') return 'terms';
+    if (path === '/privacy') return 'privacy';
+    if (path === '/refund-policy') return 'refundPolicy';
+    if (path === '/service-policy') return 'servicePolicy';
+    if (path === '/services') return 'services';
     return 'landing';
   })
   const [showOnboarding, setShowOnboarding] = useState(false)
@@ -410,6 +418,18 @@ function AuthGate() {
 
   if (view === 'terms')
     return <TermsOfService onBack={() => setView('landing')} />
+
+  if (view === 'privacy')
+    return <PrivacyPolicy onBack={() => setView('landing')} />
+
+  if (view === 'refundPolicy')
+    return <RefundPolicy onBack={() => setView('landing')} />
+
+  if (view === 'servicePolicy')
+    return <ServicePolicy onBack={() => setView('landing')} />
+
+  if (view === 'services')
+    return <ServicesPage onBack={() => setView('landing')} />
 
   if (view === 'login')
     return <LoginPage
