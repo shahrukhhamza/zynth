@@ -19,11 +19,43 @@ const IMPACTS = [
   { value: '-1', label: 'Low',    color: '#64748b' },
 ];
 
+const TIME_FILTERS = [
+  { value: 'today',     label: 'Today'     },
+  { value: 'tomorrow',  label: 'Tomorrow'  },
+  { value: 'this_week', label: 'This Week' },
+  { value: 'next_week', label: 'Next Week' },
+];
+
+function getDateRange(filter) {
+  const fmt = d => d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  const today = new Date();
+  today.setHours(0,0,0,0);
+
+  if (filter === 'today') {
+    return fmt(today);
+  }
+  if (filter === 'tomorrow') {
+    const t = new Date(today); t.setDate(t.getDate() + 1);
+    return fmt(t);
+  }
+  // Monday of current week
+  const mon = new Date(today);
+  mon.setDate(today.getDate() - ((today.getDay() + 6) % 7));
+  if (filter === 'this_week') {
+    const sun = new Date(mon); sun.setDate(mon.getDate() + 6);
+    return `${fmt(mon)} – ${fmt(sun)}`;
+  }
+  // next_week
+  const nxtMon = new Date(mon); nxtMon.setDate(mon.getDate() + 7);
+  const nxtSun = new Date(nxtMon); nxtSun.setDate(nxtMon.getDate() + 6);
+  return `${fmt(nxtMon)} – ${fmt(nxtSun)}`;
+}
+
 /**
  * Renders the TradingView Economic Calendar embed widget.
  * Re-mounts whenever colorTheme, countryFilter, or importanceFilter changes.
  */
-function TradingViewCalendar({ colorTheme, countryFilter, importanceFilter }) {
+function TradingViewCalendar({ colorTheme, countryFilter, importanceFilter, widgetKey }) {
   const containerRef = useRef(null);
 
   useEffect(() => {
@@ -55,7 +87,7 @@ function TradingViewCalendar({ colorTheme, countryFilter, importanceFilter }) {
     return () => {
       if (containerRef.current) containerRef.current.innerHTML = '';
     };
-  }, [colorTheme, countryFilter, importanceFilter]);
+  }, [colorTheme, countryFilter, importanceFilter, widgetKey]);
 
   return (
     <div
@@ -89,6 +121,7 @@ export default function EconomicCalendar() {
 
   const [selectedCurrencies, setSelectedCurrencies] = useState(['USD']);
   const [selectedImpacts,    setSelectedImpacts]    = useState(['1', '0']);
+  const [timeFilter,         setTimeFilter]         = useState('today');
 
   const D = {
     pageBg:  theme.isDark ? '#000000' : '#f1f3f6',
@@ -103,8 +136,10 @@ export default function EconomicCalendar() {
   };
 
   const now = new Date();
-  const dateStr = now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
-  const timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', timeZoneName: 'short' });
+  const dateStr  = now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+  const timeStr  = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', timeZoneName: 'short' });
+  const rangeStr = getDateRange(timeFilter);
+  const activeTimeLabel = TIME_FILTERS.find(f => f.value === timeFilter)?.label ?? '';
 
   const countryFilter    = selectedCurrencies
     .map(c => CURRENCIES.find(x => x.code === c)?.tv)
@@ -207,6 +242,50 @@ export default function EconomicCalendar() {
           </div>
         </div>
 
+        {/* Time filter tab row */}
+        <div style={{
+          padding: '0 24px',
+          borderBottom: `1px solid ${D.border}`,
+          display: 'flex', alignItems: 'stretch', gap: 0,
+        }}>
+          {TIME_FILTERS.map(f => {
+            const active = timeFilter === f.value;
+            return (
+              <button
+                key={f.value}
+                onClick={() => setTimeFilter(f.value)}
+                style={{
+                  padding: '11px 18px',
+                  fontSize: 12, fontWeight: active ? 700 : 500,
+                  color: active ? D.accent : D.textSub,
+                  background: 'none', border: 'none', cursor: 'pointer',
+                  borderBottom: `2px solid ${active ? D.accent : 'transparent'}`,
+                  marginBottom: -1,
+                  transition: 'all 0.15s',
+                  letterSpacing: '0.01em',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                {f.label}
+              </button>
+            );
+          })}
+          {/* Date range label */}
+          <div style={{
+            marginLeft: 'auto',
+            display: 'flex', alignItems: 'center',
+            fontSize: 11, color: D.textSub, paddingRight: 4,
+            gap: 6,
+          }}>
+            <span style={{
+              color: D.accent, fontWeight: 600,
+              background: D.accentDim, border: `1px solid ${D.accent}25`,
+              padding: '2px 8px', borderRadius: 6, fontSize: 10,
+            }}>{activeTimeLabel}</span>
+            <span>{rangeStr}</span>
+          </div>
+        </div>
+
         {/* Filters row */}
         <div style={{
           padding: '10px 24px',
@@ -298,6 +377,7 @@ export default function EconomicCalendar() {
           colorTheme={colorTheme}
           countryFilter={countryFilter}
           importanceFilter={importanceFilter}
+          widgetKey={timeFilter}
         />
       </div>
     </div>
