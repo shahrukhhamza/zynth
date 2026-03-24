@@ -4,15 +4,13 @@ import { extname, join } from 'path';
 import { AVATARS_DIR, JOURNAL_UPLOADS_DIR, ensureUploadDirs } from '../config/storagePaths.js';
 
 // ── DigitalOcean Spaces config (S3-compatible, persistent object storage) ────
-// Set these four env vars in Railway → Settings → Variables to enable.
-// Create a Space at cloud.digitalocean.com/spaces, then generate an access key
-// under API → Spaces Keys.
-const DO_SPACES_KEY      = process.env.DO_SPACES_KEY?.trim();
-const DO_SPACES_SECRET   = process.env.DO_SPACES_SECRET?.trim();
-const DO_SPACES_ENDPOINT = process.env.DO_SPACES_ENDPOINT?.trim(); // e.g. https://nyc3.digitaloceanspaces.com
-const DO_SPACES_BUCKET   = process.env.DO_SPACES_BUCKET?.trim();   // your Space name, e.g. zynth-uploads
-// Optional: CDN endpoint (faster delivery). Copy from Space settings → Edge URL.
-const DO_SPACES_CDN      = process.env.DO_SPACES_CDN?.trim();      // e.g. https://zynth-uploads.nyc3.cdn.digitaloceanspaces.com
+// Variable names deliberately avoid _KEY/_SECRET suffixes to prevent
+// Railpack from treating them as Docker build secrets (causes build failures).
+const DO_SPACES_ACCESS   = process.env.DO_SPACES_ACCESS?.trim();   // replaces DO_SPACES_KEY
+const DO_SPACES_PASS     = process.env.DO_SPACES_PASS?.trim();     // replaces DO_SPACES_SECRET
+const DO_SPACES_ENDPOINT = process.env.DO_SPACES_ENDPOINT?.trim();
+const DO_SPACES_BUCKET   = process.env.DO_SPACES_BUCKET?.trim();
+const DO_SPACES_CDN      = process.env.DO_SPACES_CDN?.trim();
 const DO_SPACES_REGION   = process.env.DO_SPACES_REGION?.trim() || 'us-east-1';
 
 // ── Cloudinary config (fallback if Spaces not configured) ────────────────────
@@ -25,9 +23,9 @@ const CLOUDINARY_JOURNAL_FOLDER = process.env.CLOUDINARY_JOURNAL_FOLDER?.trim() 
 
 function hasSpacesConfig() {
   // Require real-looking credentials (not placeholder values)
-  return !!(DO_SPACES_KEY && DO_SPACES_SECRET && DO_SPACES_ENDPOINT && DO_SPACES_BUCKET
-    && DO_SPACES_KEY.length > 8 && DO_SPACES_SECRET.length > 8
-    && DO_SPACES_KEY !== 'pending' && DO_SPACES_SECRET !== 'pending');
+  return !!(DO_SPACES_ACCESS && DO_SPACES_PASS && DO_SPACES_ENDPOINT && DO_SPACES_BUCKET
+    && DO_SPACES_ACCESS.length > 8 && DO_SPACES_PASS.length > 8
+    && DO_SPACES_ACCESS !== 'pending' && DO_SPACES_PASS !== 'pending');
 }
 
 function hasCloudinaryConfig() {
@@ -42,8 +40,8 @@ async function getS3Client() {
   _s3Client = new S3Client({
     endpoint: DO_SPACES_ENDPOINT,
     region: DO_SPACES_REGION,
-    credentials: { accessKeyId: DO_SPACES_KEY, secretAccessKey: DO_SPACES_SECRET },
-    forcePathStyle: false, // Spaces uses virtual-hosted-style URLs
+    credentials: { accessKeyId: DO_SPACES_ACCESS, secretAccessKey: DO_SPACES_PASS },
+    forcePathStyle: false,
   });
   return _s3Client;
 }
