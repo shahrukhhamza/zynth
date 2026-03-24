@@ -180,19 +180,82 @@ function AlignmentStats({ hdrs }) {
         );
       })}
 
-      {/* Key insight */}
+      {/* Aligned win streak badge */}
+      {stats.alignedWinStreak > 0 && (
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '10px 14px', borderRadius: 10, backgroundColor: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.22)', fontSize: 13, color: '#10b981', fontWeight: 700 }}>
+          🔥 {stats.alignedWinStreak} consecutive macro-aligned win{stats.alignedWinStreak > 1 ? 's' : ''} — keep trading with the macro!
+        </div>
+      )}
+
+      {/* Key insight — use backend alignmentEdge when available */}
       {best && stats.stats?.[best]?.winRate != null && (
         <div style={{ padding: '12px 14px', borderRadius: 10, backgroundColor: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.22)', fontSize: 13, color: theme.text, lineHeight: 1.6 }}>
           <span style={{ color: '#10b981', fontWeight: 700 }}>⚡ Key Insight: </span>
           Your win rate when macro is <strong style={{ color: ALIGN_CFG[best].color }}>{best}</strong> is{' '}
           <strong style={{ color: ALIGN_CFG[best].color }}>{stats.stats[best].winRate}%</strong>
-          {stats.stats?.misaligned?.winRate != null && best === 'aligned'
-            ? ` vs ${stats.stats.misaligned.winRate}% when misaligned — a ${stats.stats.aligned.winRate - stats.stats.misaligned.winRate}pp edge from waiting for macro alignment.`
-            : `. Consider waiting for macro alignment before entering trades.`}
+          {stats.alignmentEdge != null && best === 'aligned'
+            ? ` vs ${stats.stats.misaligned?.winRate ?? '?'}% when misaligned — a ${stats.alignmentEdge > 0 ? '+' : ''}${stats.alignmentEdge}pp edge from waiting for macro alignment.`
+            : stats.stats?.misaligned?.winRate != null && best === 'aligned'
+              ? ` vs ${stats.stats.misaligned.winRate}% when misaligned.`
+              : '. Consider waiting for macro alignment before entering trades.'}
         </div>
       )}
 
-      {/* Pair breakdown */}
+      {/* Riskiest misaligned pair warning */}
+      {stats.riskiestMisaligned && stats.riskiestMisaligned.misalignedWinRate != null && (
+        <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10, padding: '10px 14px', borderRadius: 10, backgroundColor: 'rgba(239,68,68,0.06)', border: '1px solid rgba(239,68,68,0.2)', fontSize: 13, color: theme.text, lineHeight: 1.6 }}>
+          <span style={{ fontSize: 16, flexShrink: 0 }}>⚠️</span>
+          <span>
+            <strong style={{ color: '#ef4444' }}>{stats.riskiestMisaligned.pair}</strong>: only {stats.riskiestMisaligned.misalignedWinRate}% win rate when macro-misaligned
+            {stats.riskiestMisaligned.alignedWinRate != null ? ` (vs ${stats.riskiestMisaligned.alignedWinRate}% aligned)` : ''}
+            {' '}— avoid entering this pair against macro.
+          </span>
+        </div>
+      )}
+
+      {/* Session × alignment matrix */}
+      {stats.sessionStats && Object.keys(stats.sessionStats).length > 0 && (() => {
+        const SESSION_LABELS = { asian: 'Asian', london: 'London', new_york: 'New York', overlap: 'Overlap' };
+        const sessionsWithData = Object.entries(stats.sessionStats)
+          .filter(([, alignMap]) => Object.values(alignMap).some(v => v.total > 0));
+        if (sessionsWithData.length === 0) return null;
+        return (
+          <div style={{ marginTop: 4 }}>
+            <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.06em', color: theme.muted, marginBottom: 8 }}>SESSION ALIGNMENT MATRIX</div>
+            <div style={{ overflowX: 'auto' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
+                <thead>
+                  <tr style={{ borderBottom: `1px solid ${theme.border}` }}>
+                    <th style={{ padding: '6px 10px', textAlign: 'left', fontWeight: 600, color: theme.muted }}>Session</th>
+                    <th style={{ padding: '6px 10px', textAlign: 'center', fontWeight: 600, color: '#10b981' }}>Aligned WR</th>
+                    <th style={{ padding: '6px 10px', textAlign: 'center', fontWeight: 600, color: '#ef4444' }}>Misaligned WR</th>
+                    <th style={{ padding: '6px 10px', textAlign: 'center', fontWeight: 600, color: theme.muted }}>Neutral WR</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {sessionsWithData.map(([sess, alignMap]) => (
+                    <tr key={sess} style={{ borderBottom: `1px solid ${theme.border}` }}>
+                      <td style={{ padding: '8px 10px', fontWeight: 700, color: theme.text }}>{SESSION_LABELS[sess] || sess}</td>
+                      {['aligned', 'misaligned', 'neutral'].map(cat => {
+                        const val = alignMap[cat];
+                        const color = cat === 'aligned' ? '#10b981' : cat === 'misaligned' ? '#ef4444' : theme.muted;
+                        return (
+                          <td key={cat} style={{ padding: '8px 10px', textAlign: 'center', color: val?.total > 0 ? color : theme.muted, fontWeight: val?.total > 0 ? 700 : 400 }}>
+                            {val?.winRate != null ? `${val.winRate}%` : val?.total > 0 ? '—' : '—'}
+                            {val?.total > 0 && <span style={{ fontSize: 10, color: theme.muted, fontWeight: 400, marginLeft: 4 }}>({val.total})</span>}
+                          </td>
+                        );
+                      })}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        );
+      })()}
+
+      {/* Pair breakdown — upgraded with aligned vs misaligned win rates */}
       {stats.pairBreakdown?.length > 0 && (
         <div style={{ marginTop: 4 }}>
           <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.06em', color: theme.muted, marginBottom: 8 }}>PER-PAIR BREAKDOWN</div>
@@ -200,20 +263,37 @@ function AlignmentStats({ hdrs }) {
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
               <thead>
                 <tr style={{ borderBottom: `1px solid ${theme.border}` }}>
-                  {['Pair','Aligned','Misaligned','Neutral'].map(h => (
-                    <th key={h} style={{ padding: '6px 10px', textAlign: 'left', fontWeight: 600, color: theme.muted }}>{h}</th>
+                  {['Pair', 'Aligned WR', 'Misaligned WR', 'Trades'].map(h => (
+                    <th key={h} style={{ padding: '6px 10px', textAlign: h === 'Pair' ? 'left' : 'center', fontWeight: 600, color: theme.muted }}>{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
-                {stats.pairBreakdown.map(row => (
-                  <tr key={row.pair} style={{ borderBottom: `1px solid ${theme.border}` }}>
-                    <td style={{ padding: '8px 10px', fontWeight: 700, color: theme.text }}>{row.pair}</td>
-                    <td style={{ padding: '8px 10px', color: '#10b981', fontWeight: 600 }}>{row.aligned || 0}</td>
-                    <td style={{ padding: '8px 10px', color: '#ef4444', fontWeight: 600 }}>{row.misaligned || 0}</td>
-                    <td style={{ padding: '8px 10px', color: theme.muted }}>{row.neutral || 0}</td>
-                  </tr>
-                ))}
+                {stats.pairBreakdown.map(row => {
+                  const edge = (row.alignedWinRate != null && row.misalignedWinRate != null)
+                    ? row.alignedWinRate - row.misalignedWinRate : null;
+                  return (
+                    <tr key={row.pair} style={{ borderBottom: `1px solid ${theme.border}` }}>
+                      <td style={{ padding: '8px 10px', fontWeight: 700, color: theme.text }}>{row.pair}</td>
+                      <td style={{ padding: '8px 10px', textAlign: 'center', color: '#10b981', fontWeight: 600 }}>
+                        {row.alignedWinRate != null ? `${row.alignedWinRate}%` : '—'}
+                        {row.aligned > 0 && <span style={{ fontSize: 10, color: theme.muted, fontWeight: 400, marginLeft: 4 }}>({row.aligned})</span>}
+                      </td>
+                      <td style={{ padding: '8px 10px', textAlign: 'center', color: '#ef4444', fontWeight: 600 }}>
+                        {row.misalignedWinRate != null ? `${row.misalignedWinRate}%` : '—'}
+                        {row.misaligned > 0 && <span style={{ fontSize: 10, color: theme.muted, fontWeight: 400, marginLeft: 4 }}>({row.misaligned})</span>}
+                      </td>
+                      <td style={{ padding: '8px 10px', textAlign: 'center', color: theme.muted }}>
+                        {(row.aligned || 0) + (row.misaligned || 0) + (row.neutral || 0)}
+                        {edge != null && (
+                          <span style={{ fontSize: 10, fontWeight: 700, color: edge >= 0 ? '#10b981' : '#ef4444', marginLeft: 6 }}>
+                            {edge >= 0 ? `+${edge}pp` : `${edge}pp`}
+                          </span>
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>

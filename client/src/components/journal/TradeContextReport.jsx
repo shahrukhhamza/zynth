@@ -90,6 +90,24 @@ function AlignmentBadge({ alignment }) {
   );
 }
 
+function ConfidenceBadge({ confidence, theme }) {
+  if (confidence == null) return null;
+  const pct   = Math.min(100, Math.max(0, Math.round(confidence)));
+  const color = pct >= 70 ? '#10b981' : pct >= 40 ? '#f59e0b' : '#ef4444';
+  const label = pct >= 70 ? 'Strong' : pct >= 40 ? 'Moderate' : 'Weak';
+  return (
+    <div style={{ marginTop: 8 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 5 }}>
+        <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.06em', color: theme.muted }}>SIGNAL CONFIDENCE</span>
+        <span style={{ fontSize: 11, fontWeight: 700, color }}>{label} · {pct}%</span>
+      </div>
+      <div style={{ height: 4, borderRadius: 4, backgroundColor: theme.border, overflow: 'hidden' }}>
+        <div style={{ height: '100%', width: `${pct}%`, backgroundColor: color, borderRadius: 4, transition: 'width 0.6s ease' }} />
+      </div>
+    </div>
+  );
+}
+
 function EventRow({ ev, theme }) {
   const bias   = BIAS_STYLE[ev.bias] || BIAS_STYLE.neutral;
   const BiasIcon = bias.Icon;
@@ -116,6 +134,14 @@ function EventRow({ ev, theme }) {
           {ev.name}
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 2 }}>
+          {ev.dayOffset === -1 && (
+            <span style={{
+              fontSize: 9, fontWeight: 800, letterSpacing: '0.06em',
+              color: '#f59e0b', background: 'rgba(245,158,11,0.12)',
+              border: '1px solid rgba(245,158,11,0.28)',
+              padding: '1px 5px', borderRadius: 4, flexShrink: 0,
+            }}>PREV DAY</span>
+          )}
           <span style={{ fontSize: 10, fontWeight: 700, color: impactColor, letterSpacing: '0.05em' }}>
             {(ev.impact || '').toUpperCase()}
           </span>
@@ -284,6 +310,7 @@ export default function TradeContextReport({ tradeId, tradeDate, cacheBusted = f
           <>
             {/* Alignment badge */}
             <AlignmentBadge alignment={alignment} />
+            <ConfidenceBadge confidence={data.alignmentConfidence} theme={theme} />
 
             {/* Events list */}
             {hasEvents && (
