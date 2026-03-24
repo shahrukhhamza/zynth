@@ -3,6 +3,19 @@ import { writeFileSync } from 'fs';
 import { extname, join } from 'path';
 import { AVATARS_DIR, JOURNAL_UPLOADS_DIR, ensureUploadDirs } from '../config/storagePaths.js';
 
+// ── DigitalOcean Spaces config (S3-compatible, persistent object storage) ────
+// Set these four env vars in Railway → Settings → Variables to enable.
+// Create a Space at cloud.digitalocean.com/spaces, then generate an access key
+// under API → Spaces Keys.
+const DO_SPACES_KEY      = process.env.DO_SPACES_KEY?.trim();
+const DO_SPACES_SECRET   = process.env.DO_SPACES_SECRET?.trim();
+const DO_SPACES_ENDPOINT = process.env.DO_SPACES_ENDPOINT?.trim(); // e.g. https://nyc3.digitaloceanspaces.com
+const DO_SPACES_BUCKET   = process.env.DO_SPACES_BUCKET?.trim();   // your Space name, e.g. zynth-uploads
+// Optional: CDN endpoint (faster delivery). Copy from Space settings → Edge URL.
+const DO_SPACES_CDN      = process.env.DO_SPACES_CDN?.trim();      // e.g. https://zynth-uploads.nyc3.cdn.digitaloceanspaces.com
+const DO_SPACES_REGION   = process.env.DO_SPACES_REGION?.trim() || 'us-east-1';
+
+// ── Cloudinary config (fallback if Spaces not configured) ────────────────────
 const CLOUDINARY_CLOUD_NAME = process.env.CLOUDINARY_CLOUD_NAME?.trim();
 const CLOUDINARY_API_KEY = process.env.CLOUDINARY_API_KEY?.trim();
 const CLOUDINARY_API_SECRET = process.env.CLOUDINARY_API_SECRET?.trim();
@@ -10,8 +23,41 @@ const CLOUDINARY_API_SECRET = process.env.CLOUDINARY_API_SECRET?.trim();
 const CLOUDINARY_AVATARS_FOLDER = process.env.CLOUDINARY_AVATARS_FOLDER?.trim() || 'zynth/avatars';
 const CLOUDINARY_JOURNAL_FOLDER = process.env.CLOUDINARY_JOURNAL_FOLDER?.trim() || 'zynth/journal';
 
+function hasSpacesConfig() {
+  return !!(DO_SPACES_KEY && DO_SPACES_SECRET && DO_SPACES_ENDPOINT && DO_SPACES_BUCKET);
+}
+
 function hasCloudinaryConfig() {
   return !!(CLOUDINARY_CLOUD_NAME && CLOUDINARY_API_KEY && CLOUDINARY_API_SECRET);
+}
+
+// ── DO Spaces upload (lazy S3 client) ────────────────────────────────────────
+let _s3Client = null;
+async function getS3Client() {
+  if (_s3Client) return _s3Client;
+  const { S3Client } = await import('@aws-sdk/client-s3');
+  _s3Client = new S3Client({
+    endpoint: DO_SPACES_ENDPOINT,
+    region: DO_SPACES_REGION,
+    credentials: { accessKeyId: DO_SPACES_KEY, secretAccessKey: DO_SPACES_SECRET },
+    forcePathStyle: false, // Spaces uses virtual-hosted-style URLs
+  });
+  return _s3Client;
+}
+
+async function uploadToSpaces({ key, buffer, contentType }) {
+  const { PutObjectCommand } = await import('@aws-sdk/client-s3');
+  const s3 = await getS3Client();
+  await s3.send(new PutObjectCommand({
+    Bucket: DO_SPACES_BUCKET,
+    Key: key,
+    Body: buffer,
+    ContentType: contentType,
+    ACL: 'public-read',
+  }));
+  // Prefer CDN URL for fast delivery; fall back to direct Spaces URL
+  const base = DO_SPACES_CDN || `${DO_SPACES_ENDPOINT}/${DO_SPACES_BUCKET}`;
+  return `${base}/${key}`;
 }
 
 function cloudinarySignature(params) {
@@ -61,8 +107,16 @@ function extensionFromMime(mimeType) {
   return '.jpg';
 }
 
+/** Returns true when any durable cloud storage backend is configured. */
 export function isCloudinaryEnabled() {
-  return hasCloudinaryConfig();
+  return hasSpacesConfig() || hasCloudinaryConfig();
+}
+
+/** Which backend is active (useful for health-check endpoints). */
+export function storageBackend() {
+  if (hasSpacesConfig()) return 'do-spaces';
+  if (hasCloudinaryConfig()) return 'cloudinary';
+  return 'local'; // ephemeral — not suitable for production
 }
 
 export async function saveAvatarFromBase64(userId, avatarBase64) {
@@ -76,8 +130,20 @@ export async function saveAvatarFromBase64(userId, avatarBase64) {
     throw err;
   }
 
+  const ext = matches[1] === 'png' ? 'png' : 'jpg';
+
+  // 1️⃣ DigitalOcean Spaces (persistent, S3-compatible)
+  if (hasSpacesConfig()) {
+    const mime = ext === 'png' ? 'image/png' : 'image/jpeg';
+    return uploadToSpaces({
+      key: `avatars/user_${userId}_avatar.${ext}`,
+      buffer,
+      contentType: mime,
+    });
+  }
+
+  // 2️⃣ Cloudinary (fallback)
   if (hasCloudinaryConfig()) {
-    const ext = matches[1] === 'png' ? 'png' : 'jpg';
     return uploadToCloudinary({
       fileValue: avatarBase64,
       folder: CLOUDINARY_AVATARS_FOLDER,
@@ -86,8 +152,8 @@ export async function saveAvatarFromBase64(userId, avatarBase64) {
     });
   }
 
+  // 3️⃣ Local disk (dev only — ephemeral on Railway)
   ensureUploadDirs();
-  const ext = matches[1] === 'png' ? 'png' : 'jpg';
   const filename = `${userId}.${ext}`;
   const filePath = join(AVATARS_DIR, filename);
   writeFileSync(filePath, buffer);
@@ -97,17 +163,30 @@ export async function saveAvatarFromBase64(userId, avatarBase64) {
 export async function saveJournalScreenshot(userId, file) {
   if (!file?.buffer) return null;
 
+  const ext = extensionFromMime(file.mimetype);
+  const uniqueId = `${Date.now()}_${randomUUID()}`;
+
+  // 1️⃣ DigitalOcean Spaces (persistent, S3-compatible)
+  if (hasSpacesConfig()) {
+    return uploadToSpaces({
+      key: `journal/user_${userId}_${uniqueId}${ext}`,
+      buffer: file.buffer,
+      contentType: file.mimetype || 'image/jpeg',
+    });
+  }
+
+  // 2️⃣ Cloudinary (fallback)
   if (hasCloudinaryConfig()) {
     const blob = new Blob([file.buffer], { type: file.mimetype || 'image/jpeg' });
-    const ext = extensionFromMime(file.mimetype);
     return uploadToCloudinary({
       fileValue: blob,
       folder: CLOUDINARY_JOURNAL_FOLDER,
-      publicId: `user_${userId}_${Date.now()}_${randomUUID()}${ext}`,
+      publicId: `user_${userId}_${uniqueId}${ext}`,
       overwrite: false,
     });
   }
 
+  // 3️⃣ Local disk (dev only — ephemeral on Railway)
   ensureUploadDirs();
   const guessedExt = extname(file.originalname || '').toLowerCase() || extensionFromMime(file.mimetype);
   const filename = `${Date.now()}-${Math.round(Math.random() * 1e9)}${guessedExt}`;
