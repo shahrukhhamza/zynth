@@ -109,7 +109,7 @@ export default function EconomicCalendar() {
       ? { Authorization: `Bearer ${token}` } : {};
     setLoading(true);
     setError(null);
-    fetch(`${API_URL}/calendar?filter=${timeFilter}`, { headers })
+    fetch(`${API_URL}/api/calendar?filter=${timeFilter}`, { headers })
       .then(r => r.ok ? r.json() : Promise.reject('Failed'))
       .then(data => {
         setEvents(Array.isArray(data) ? data : []);

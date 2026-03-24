@@ -228,7 +228,7 @@ export default function EconomicDashboard({ onViewChange }) {
 
     Promise.allSettled([
       fetch(`${API_URL}/api/journal/trades?limit=200`, { headers }).then(r => r.ok ? r.json() : null),
-      fetch(`${API_URL}/api/economic`, { headers }).then(r => r.ok ? r.json() : null),
+      fetch(`${API_URL}/api/economic/dashboard`, { headers }).then(r => r.ok ? r.json() : null),
     ]).then(([allResult, eco]) => {
       // Normalize DB field names so all downstream code (t.pnl, t.date, t.emotion_before) works
       const normalize = (t) => ({
