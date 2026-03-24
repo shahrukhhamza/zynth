@@ -124,6 +124,17 @@ export async function initJournalDb() {
       CREATE INDEX IF NOT EXISTS idx_levels_user_sym ON levels(user_id, symbol);
     `);
 
+    // Idempotent column additions for Trade Context Report
+    const alterCols = [
+      `ALTER TABLE trade_journals ADD COLUMN IF NOT EXISTS macro_alignment     TEXT`,
+      `ALTER TABLE trade_journals ADD COLUMN IF NOT EXISTS macro_events_json   TEXT`,
+      `ALTER TABLE trade_journals ADD COLUMN IF NOT EXISTS macro_narrative     TEXT`,
+      `ALTER TABLE trade_journals ADD COLUMN IF NOT EXISTS macro_analysed_at   TIMESTAMPTZ`,
+    ];
+    for (const sql of alterCols) {
+      try { await pool.query(sql); } catch (_) { /* already exists */ }
+    }
+
     console.log('✅ Trade Journal PostgreSQL schema ready');
   })();
 
@@ -166,6 +177,7 @@ export async function getTrades(userId = 'default', limit = 100, offset = 0) {
   const { rows } = await pool.query(
     `SELECT t.*, j.strategy, j.reasoning, j.emotional_state,
             j.lessons_learned, j.notes, j.ai_analysis,
+            j.macro_alignment, j.macro_events_json, j.macro_narrative, j.macro_analysed_at,
             j.id AS journal_id
      FROM trades t
      LEFT JOIN trade_journals j ON j.trade_id = t.id
@@ -181,6 +193,7 @@ export async function getTradeById(id) {
   const { rows } = await pool.query(
     `SELECT t.*, j.strategy, j.reasoning, j.emotional_state,
             j.lessons_learned, j.notes, j.ai_analysis,
+            j.macro_alignment, j.macro_events_json, j.macro_narrative, j.macro_analysed_at,
             j.id AS journal_id
      FROM trades t
      LEFT JOIN trade_journals j ON j.trade_id = t.id
@@ -210,6 +223,7 @@ export async function getTradesBySymbol(userId = 'default', symbol, limit = 100,
   const { rows } = await pool.query(
     `SELECT t.*, j.strategy, j.reasoning, j.emotional_state,
             j.lessons_learned, j.notes, j.ai_analysis,
+            j.macro_alignment, j.macro_events_json, j.macro_narrative, j.macro_analysed_at,
             j.id AS journal_id
      FROM trades t
      LEFT JOIN trade_journals j ON j.trade_id = t.id
@@ -283,6 +297,23 @@ export async function upsertJournal(tradeId, data) {
 
 export async function setJournalAiAnalysis(tradeId, aiAnalysis) {
   await pool.query('UPDATE trade_journals SET ai_analysis = $1 WHERE trade_id = $2', [JSON.stringify(aiAnalysis), tradeId]);
+}
+
+export async function setMacroContext(tradeId, { alignment, eventsJson, narrative }) {
+  // Ensure journal row exists first
+  const { rows } = await pool.query('SELECT id FROM trade_journals WHERE trade_id = $1', [tradeId]);
+  if (!rows[0]) {
+    await pool.query(
+      `INSERT INTO trade_journals (trade_id) VALUES ($1) ON CONFLICT (trade_id) DO NOTHING`,
+      [tradeId]
+    );
+  }
+  await pool.query(
+    `UPDATE trade_journals
+     SET macro_alignment = $1, macro_events_json = $2, macro_narrative = $3, macro_analysed_at = NOW()
+     WHERE trade_id = $4`,
+    [alignment, JSON.stringify(eventsJson), narrative, tradeId]
+  );
 }
 
 export async function getAllTradesForUser(userId = 'default') {

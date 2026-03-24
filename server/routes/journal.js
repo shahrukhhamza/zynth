@@ -18,12 +18,13 @@ import { requireAuth, checkAiTries, requirePro } from '../middleware/authMiddlew
 import {
   insertTrade, getTrades, getTradeById, updateTrade, deleteTrade, countTrades,
   countTradesThisMonth, getTradesBySymbol, countTradesBySymbol,
-  upsertJournal, setJournalAiAnalysis,
+  upsertJournal, setJournalAiAnalysis, setMacroContext,
   getAllTradesForUser, insertReport, getReports,
 } from '../services/journalDb.js';
 import { calcMetrics } from '../services/analyticsService.js';
 import { analyzeJournalEntry, generatePerformanceReport } from '../services/journalAiService.js';
 import { saveJournalScreenshot } from '../services/fileStorageService.js';
+import { getMacroContextForTrade, getMacroAlignmentStats } from '../services/macroAlignmentService.js';
 
 // ── Multer config ─────────────────────────────────────────────────────────────
 const upload = multer({
@@ -304,6 +305,60 @@ router.post('/reports', requirePro, checkAiTries, async (req, res) => {
     res.json({ success: true, data: { id, user_id: userId, report_type: reportType, created_at: new Date().toISOString(), report_data: reportData } });
   } catch (err) {
     console.error('Report generation error:', err);
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// ── GET /trades/:id/macro-context — Trade Context Report ──────────────────────
+// No AI-try gate: event fetching is free; Gemini narrative is optional + lightweight.
+router.get('/trades/:id/macro-context', async (req, res) => {
+  try {
+    const id    = parseInt(req.params.id);
+    const trade = await getTradeById(id);
+    if (!trade) return res.status(404).json({ success: false, error: 'Trade not found' });
+
+    // Return cached context if already analysed (unless ?refresh=1)
+    if (trade.macro_alignment && !req.query.refresh) {
+      let cachedEvents = [];
+      try { cachedEvents = JSON.parse(trade.macro_events_json || '[]'); } catch (_) {}
+      return res.json({
+        success:  true,
+        cached:   true,
+        tradeDate:        (trade.created_at || '').slice(0, 10),
+        events:           cachedEvents,
+        eventCount:       cachedEvents.length,
+        alignment:        trade.macro_alignment,
+        narrative:        trade.macro_narrative || null,
+        analysedAt:       trade.macro_analysed_at,
+      });
+    }
+
+    // Compute fresh context
+    const context = await getMacroContextForTrade(trade, { withNarrative: true });
+
+    // Persist to DB for caching
+    await setMacroContext(id, {
+      alignment:  context.alignment,
+      eventsJson: context.events,
+      narrative:  context.narrative,
+    });
+
+    res.json({ success: true, cached: false, ...context });
+  } catch (err) {
+    console.error('macro-context error:', err);
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// ── GET /macro-stats — Aggregate alignment win-rate stats for all user trades ──
+router.get('/macro-stats', async (req, res) => {
+  try {
+    const userId = getUserId(req);
+    const trades = await getAllTradesForUser(userId);
+    const stats  = getMacroAlignmentStats(trades);
+    res.json({ success: true, data: stats });
+  } catch (err) {
+    console.error('macro-stats error:', err);
     res.status(500).json({ success: false, error: err.message });
   }
 });

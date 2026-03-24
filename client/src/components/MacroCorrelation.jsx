@@ -3,6 +3,7 @@ import {
   Activity, Loader2, AlertCircle, TrendingUp, TrendingDown,
   Zap, Brain, RefreshCw, Lock, ChevronRight,
   BarChart2, Calendar, AlertTriangle, Info,
+  CheckCircle2, XCircle, Minus,
 } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 import { useAuth } from '../contexts/AuthContext';
@@ -75,6 +76,149 @@ function Insight({ icon: Icon, text, color = '#f59e0b' }) {
     }}>
       {Icon && <Icon style={{ width: 15, height: 15, color, flexShrink: 0, marginTop: 1 }} />}
       <p style={{ fontSize: 13, color: theme.text, lineHeight: 1.55, margin: 0 }}>{text}</p>
+    </div>
+  );
+}
+
+// ── Section 5: Macro Alignment Stats ─────────────────────────────────────────
+const ALIGN_CFG = {
+  aligned:    { label: 'Aligned',    color: '#10b981', Icon: CheckCircle2, desc: 'Macro events supported your direction' },
+  misaligned: { label: 'Misaligned', color: '#ef4444', Icon: XCircle,      desc: 'Macro events opposed your direction'  },
+  neutral:    { label: 'Neutral',    color: '#f59e0b', Icon: Minus,        desc: 'Mixed or no macro signals'             },
+};
+
+function AlignmentStats({ hdrs }) {
+  const theme = useTheme();
+  const [stats,    setStats]    = useState(null);
+  const [loading,  setLoading]  = useState(false);
+  const [error,    setError]    = useState(null);
+
+  async function load() {
+    setLoading(true);
+    setError(null);
+    try {
+      const res  = await fetch(`${API_URL}/api/journal/macro-stats`, { headers: hdrs });
+      const json = await res.json();
+      if (!res.ok || !json.success) throw new Error(json.error || 'Failed');
+      setStats(json.data);
+    } catch (e) { setError(e.message); }
+    finally { setLoading(false); }
+  }
+
+  useEffect(() => { load(); }, []);
+
+  if (loading) return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '20px 0', color: theme.muted }}>
+      <Loader2 style={{ width: 15, height: 15, animation: 'spin 1s linear infinite' }} />
+      <span style={{ fontSize: 13 }}>Loading alignment stats…</span>
+    </div>
+  );
+
+  if (error) return (
+    <div style={{ fontSize: 13, color: '#ef4444', display: 'flex', gap: 8 }}>
+      <AlertCircle style={{ width: 14, height: 14 }} />{error}
+    </div>
+  );
+
+  if (!stats) return null;
+
+  const CATS = ['aligned', 'misaligned', 'neutral'];
+  const hasSomeData = CATS.some(c => stats.stats?.[c]?.total > 0);
+
+  if (!hasSomeData) return (
+    <div style={{ textAlign: 'center', padding: '28px 0', color: theme.muted, fontSize: 13 }}>
+      No macro-analysed trades yet. Open any trade's detail page — the Trade Context Report auto-generates macro alignment for each trade.
+    </div>
+  );
+
+  const best = CATS.reduce((acc, c) => {
+    const wr = stats.stats?.[c]?.winRate;
+    if (wr === null || wr === undefined) return acc;
+    return (acc === null || wr > stats.stats?.[acc]?.winRate) ? c : acc;
+  }, null);
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+      {/* Coverage badge */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12, color: theme.muted }}>
+        <CheckCircle2 style={{ width: 13, height: 13, color: '#10b981' }} />
+        <span>{stats.analysedCount} of {stats.totalClosed} closed trades analysed ({stats.coveragePct}% coverage)</span>
+        <button onClick={load} title="Refresh" style={{ background:'none',border:'none',cursor:'pointer',color:theme.muted,padding:'2px',marginLeft:4 }}>
+          <RefreshCw style={{ width: 12, height: 12 }} />
+        </button>
+      </div>
+
+      {/* Win rate bars */}
+      {CATS.map(cat => {
+        const s   = stats.stats?.[cat];
+        if (!s || s.total === 0) return null;
+        const cfg = ALIGN_CFG[cat];
+        const Icon = cfg.Icon;
+        const wr  = s.winRate;
+        return (
+          <div key={cat}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
+                <Icon style={{ width: 14, height: 14, color: cfg.color }} />
+                <span style={{ fontSize: 13, fontWeight: 700, color: theme.text }}>{cfg.label}</span>
+                <span style={{ fontSize: 11, color: theme.muted }}>{cfg.desc}</span>
+                {cat === best && (
+                  <span style={{ fontSize: 10, fontWeight: 700, color: '#10b981', background: 'rgba(16,185,129,0.12)', padding: '1px 7px', borderRadius: 20 }}>BEST</span>
+                )}
+              </div>
+              <span style={{ fontSize: 12, color: theme.muted }}>{s.wins}W / {s.losses}L · {s.total} trades</span>
+            </div>
+            <div style={{ height: 30, borderRadius: 7, backgroundColor: theme.border, overflow: 'hidden', position: 'relative' }}>
+              <div style={{ height: '100%', width: `${wr ?? 0}%`, backgroundColor: cfg.color, borderRadius: 7, transition: 'width 0.7s ease' }} />
+              {wr !== null && (
+                <div style={{ position: 'absolute', top: 0, left: 10, right: 10, bottom: 0, display: 'flex', alignItems: 'center', justifyContent: (wr ?? 0) > 45 ? 'flex-start' : 'flex-end' }}>
+                  <span style={{ fontSize: 12, fontWeight: 700, color: (wr ?? 0) > 45 ? '#fff' : cfg.color }}>{wr}% win rate</span>
+                </div>
+              )}
+            </div>
+          </div>
+        );
+      })}
+
+      {/* Key insight */}
+      {best && stats.stats?.[best]?.winRate != null && (
+        <div style={{ padding: '12px 14px', borderRadius: 10, backgroundColor: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.22)', fontSize: 13, color: theme.text, lineHeight: 1.6 }}>
+          <span style={{ color: '#10b981', fontWeight: 700 }}>⚡ Key Insight: </span>
+          Your win rate when macro is <strong style={{ color: ALIGN_CFG[best].color }}>{best}</strong> is{' '}
+          <strong style={{ color: ALIGN_CFG[best].color }}>{stats.stats[best].winRate}%</strong>
+          {stats.stats?.misaligned?.winRate != null && best === 'aligned'
+            ? ` vs ${stats.stats.misaligned.winRate}% when misaligned — a ${stats.stats.aligned.winRate - stats.stats.misaligned.winRate}pp edge from waiting for macro alignment.`
+            : `. Consider waiting for macro alignment before entering trades.`}
+        </div>
+      )}
+
+      {/* Pair breakdown */}
+      {stats.pairBreakdown?.length > 0 && (
+        <div style={{ marginTop: 4 }}>
+          <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.06em', color: theme.muted, marginBottom: 8 }}>PER-PAIR BREAKDOWN</div>
+          <div style={{ overflowX: 'auto' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
+              <thead>
+                <tr style={{ borderBottom: `1px solid ${theme.border}` }}>
+                  {['Pair','Aligned','Misaligned','Neutral'].map(h => (
+                    <th key={h} style={{ padding: '6px 10px', textAlign: 'left', fontWeight: 600, color: theme.muted }}>{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {stats.pairBreakdown.map(row => (
+                  <tr key={row.pair} style={{ borderBottom: `1px solid ${theme.border}` }}>
+                    <td style={{ padding: '8px 10px', fontWeight: 700, color: theme.text }}>{row.pair}</td>
+                    <td style={{ padding: '8px 10px', color: '#10b981', fontWeight: 600 }}>{row.aligned || 0}</td>
+                    <td style={{ padding: '8px 10px', color: '#ef4444', fontWeight: 600 }}>{row.misaligned || 0}</td>
+                    <td style={{ padding: '8px 10px', color: theme.muted }}>{row.neutral || 0}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -642,6 +786,16 @@ export default function MacroCorrelation() {
                 <Info size={13} style={{display:'inline-block',verticalAlign:'middle',marginRight:'4px'}} /> Run this analysis daily to build your macro score history and see the trend line.
               </p>
             )}
+          </Card>
+
+          {/* Section 5: Trade Context Report — Alignment Stats */}
+          <Card>
+            <SectionTitle
+              sub="Win rate split by whether macro events supported or opposed your trade direction. Powered by Trade Context Reports."
+            >
+              <CheckCircle2 size={15} style={{display:'inline-block',verticalAlign:'middle',marginRight:'6px'}} />Trade Context — Macro Alignment
+            </SectionTitle>
+            <AlignmentStats hdrs={hdrs} />
           </Card>
 
           {/* Section 4: AI Narrative */}

@@ -7,6 +7,7 @@ import {
 import { useTheme } from '../../contexts/ThemeContext';
 import { resolveMediaUrl } from '../../utils/mediaUrl';
 import TradeEntryForm from './TradeEntryForm';
+import TradeContextReport from './TradeContextReport';
 
 const MONO = { fontFamily: "'ui-monospace','Cascadia Code','SF Mono','Consolas',monospace" };
 
@@ -529,6 +530,13 @@ export default function TradeDetailPage({ trade, trades, tradeIndex, onBack, onN
                 </div>
               </div>
             )}
+
+            {/* ── Trade Context Report (Macro Alignment) ─── */}
+            <TradeContextReport
+              tradeId={trade.id}
+              tradeDate={date}
+            />
+
           </div>
         </div>
       </div>
