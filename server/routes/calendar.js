@@ -5,10 +5,18 @@ import { requireAuth } from '../middleware/authMiddleware.js';
 const router = express.Router();
 router.use(requireAuth);
 
-// Get all economic indicators
+/**
+ * GET /api/calendar
+ * Query params:
+ *   from=YYYY-MM-DD  (optional)
+ *   to=YYYY-MM-DD    (optional)
+ *   filter=today|tomorrow|this_week|next_week (optional, default: week)
+ */
 router.get('/', async (req, res, next) => {
   try {
-    const calendar = await getEconomicCalendar();
+    const { from, to, filter } = req.query;
+    const options = from && to ? { from, to } : { filter: filter ?? 'week' };
+    const calendar = await getEconomicCalendar(options);
     res.json(calendar);
   } catch (error) {
     next(error);
@@ -17,36 +25,22 @@ router.get('/', async (req, res, next) => {
 
 /**
  * POST /api/calendar/refresh
- * Force-clear all caches and re-fetch every indicator via
- * Gemini + Google Search grounding with cross-verification.
- * Call this right after a major data release (NFP, CPI, etc.)
- * to get the latest official numbers immediately.
  */
 router.post('/refresh', async (req, res, next) => {
   try {
-    console.log('🔄 Manual refresh requested via POST /api/calendar/refresh');
     const result = await forceRefreshCalendar();
-    res.json({
-      success: true,
-      message: `Refreshed ${result.indicators.length} indicators via Gemini web search`,
-      fetchedAt: result.fetchedAt,
-      verifiedAt: result.verifiedAt,
-      correctionCount: result.correctionCount,
-      model: result.model,
-      sources: result.sources,
-      indicators: result.indicators,
-    });
+    res.json({ success: true, count: result.indicators.length, fetchedAt: result.fetchedAt });
   } catch (error) {
-    console.error('❌ Force-refresh failed:', error.message);
     next(error);
   }
 });
 
-// Get specific indicator details with historical data
+/**
+ * GET /api/calendar/:indicatorId
+ */
 router.get('/:indicatorId', async (req, res, next) => {
   try {
-    const { indicatorId } = req.params;
-    const indicator = await getIndicatorDetails(indicatorId);
+    const indicator = await getIndicatorDetails(req.params.indicatorId);
     res.json(indicator);
   } catch (error) {
     next(error);

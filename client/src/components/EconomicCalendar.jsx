@@ -1,6 +1,13 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { useTheme } from '../contexts/ThemeContext';
 import { API_URL } from '../config/api';
+
+const TIME_FILTERS = [
+  { value: 'today',     label: 'Today'     },
+  { value: 'tomorrow',  label: 'Tomorrow'  },
+  { value: 'this_week', label: 'This Week' },
+  { value: 'next_week', label: 'Next Week' },
+];
 
 const CURRENCIES = [
   { code: 'USD', flag: '🇺🇸' },
@@ -13,18 +20,10 @@ const CURRENCIES = [
   { code: 'NZD', flag: '🇳🇿' },
 ];
 
-const TIME_FILTERS = [
-  { value: 'today',     label: 'Today'     },
-  { value: 'tomorrow',  label: 'Tomorrow'  },
-  { value: 'this_week', label: 'This Week' },
-  { value: 'next_week', label: 'Next Week' },
-];
-
-// importance: 1=low, 2=medium, 3=high
 const IMPACTS = [
-  { value: '3', label: 'High',   color: '#ef4444' },
-  { value: '2', label: 'Medium', color: '#f59e0b' },
-  { value: '1', label: 'Low',    color: '#64748b' },
+  { value: 'high',   label: 'High',   color: '#ef4444' },
+  { value: 'medium', label: 'Medium', color: '#f59e0b' },
+  { value: 'low',    label: 'Low',    color: '#64748b' },
 ];
 
 const IMPACT_COLORS = { high: '#ef4444', medium: '#f59e0b', low: '#64748b' };
@@ -34,16 +33,19 @@ function fmt(v) {
   return v;
 }
 
-function ImpactDots({ impact }) {
-  const color = IMPACT_COLORS[impact?.toLowerCase()] ?? '#64748b';
-  const count = impact === 'high' ? 3 : impact === 'medium' ? 2 : 1;
+// Three vertical bars, filled based on impact level
+function ImpactBars({ impact }) {
+  const lvl = (impact ?? '').toLowerCase();
+  const color = IMPACT_COLORS[lvl] ?? '#64748b';
+  const count = lvl === 'high' ? 3 : lvl === 'medium' ? 2 : 1;
   return (
-    <span style={{ display: 'inline-flex', gap: 2, alignItems: 'center' }}>
+    <span style={{ display: 'inline-flex', gap: 2, alignItems: 'flex-end' }}>
       {[1, 2, 3].map(i => (
         <span key={i} style={{
-          width: 7, height: 7, borderRadius: '50%',
-          background: i <= count ? color : 'transparent',
-          border: `1.5px solid ${color}`,
+          width: 4,
+          height: 6 + i * 4,
+          borderRadius: 2,
+          background: i <= count ? color : 'rgba(100,116,139,0.2)',
           display: 'inline-block',
         }} />
       ))}
@@ -51,20 +53,27 @@ function ImpactDots({ impact }) {
   );
 }
 
-function groupByDate(events) {
-  const groups = {};
-  events.forEach(e => {
-    const d = e.date ?? 'Unknown';
-    if (!groups[d]) groups[d] = [];
-    groups[d].push(e);
-  });
-  return Object.entries(groups).sort(([a], [b]) => a.localeCompare(b));
+// "YYYY-MM-DD HH:MM:SS" or ISO → "8:30 AM"
+function formatTime12h(timeStr) {
+  if (!timeStr) return '—';
+  const timePart = timeStr.includes('T')
+    ? timeStr.split('T')[1]
+    : timeStr.split(' ')[1];
+  if (!timePart) return '—';
+  const [hStr, mStr] = timePart.split(':');
+  const h = parseInt(hStr, 10);
+  if (isNaN(h)) return '—';
+  const suffix = h >= 12 ? 'PM' : 'AM';
+  const h12 = h % 12 || 12;
+  return `${h12}:${mStr ?? '00'} ${suffix}`;
 }
 
+// "YYYY-MM-DD" → "Monday, March 24, 2026"
 function formatGroupDate(dateStr) {
-  if (!dateStr || dateStr === 'Unknown') return 'Unknown Date';
+  if (!dateStr || dateStr === 'unknown') return 'Unknown Date';
   try {
-    return new Date(dateStr).toLocaleDateString('en-US', {
+    const [y, m, d] = dateStr.split('-').map(Number);
+    return new Date(y, m - 1, d).toLocaleDateString('en-US', {
       weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
     });
   } catch {
@@ -77,10 +86,11 @@ export default function EconomicCalendar() {
 
   const [timeFilter,         setTimeFilter]         = useState('today');
   const [selectedCurrencies, setSelectedCurrencies] = useState(['USD']);
-  const [selectedImpacts,    setSelectedImpacts]    = useState(['3', '2']);
+  const [selectedImpacts,    setSelectedImpacts]    = useState(['high', 'medium']);
   const [events,             setEvents]             = useState([]);
   const [loading,            setLoading]            = useState(true);
   const [error,              setError]              = useState(null);
+  const [retryKey,           setRetryKey]           = useState(0);
 
   const D = {
     pageBg:  theme.isDark ? '#000000' : '#f1f3f6',
@@ -93,15 +103,13 @@ export default function EconomicCalendar() {
     accent:  '#10b981',
   };
 
-  // ── Fetch events from backend ────────────────────────────────────────────
   useEffect(() => {
     const token = localStorage.getItem('auth_token');
-    const headers = token ? { Authorization: `Bearer ${token}` } : {};
-
+    const headers = token
+      ? { Authorization: `Bearer ${token}` } : {};
     setLoading(true);
     setError(null);
-
-    fetch(`${API_URL}/api/calendar?filter=${timeFilter}`, { headers })
+    fetch(`${API_URL}/calendar?filter=${timeFilter}`, { headers })
       .then(r => r.ok ? r.json() : Promise.reject('Failed'))
       .then(data => {
         setEvents(Array.isArray(data) ? data : []);
@@ -111,22 +119,39 @@ export default function EconomicCalendar() {
         setError('Failed to load calendar');
         setLoading(false);
       });
-  }, [timeFilter]);
+  }, [timeFilter, retryKey]);
 
-  // ── Client-side currency + impact filter ────────────────────────────────
+  // ── Client-side filter ───────────────────────────────────────────────────
   const filtered = events.filter(e => {
     const currency = (e.currency ?? '').toUpperCase();
-    const impact   = (e.impact ?? '').toLowerCase();
+    const impact   = (e.impact   ?? '').toLowerCase();
     const currOk = selectedCurrencies.length === 0
       || selectedCurrencies.includes(currency);
     const impOk = selectedImpacts.length === 0
-      || selectedImpacts.some(v =>
-          v === '3' ? impact === 'high'
-          : v === '2' ? impact === 'medium'
-          : impact === 'low'
-        );
+      || selectedImpacts.includes(impact);
     return currOk && impOk;
   });
+
+  // ── Group by date ────────────────────────────────────────────────────────
+  const grouped = {};
+  filtered.forEach(e => {
+    const day = (e.date ?? '').split('T')[0]
+      || (e.time ?? '').split(' ')[0] || 'unknown';
+    if (!grouped[day]) grouped[day] = [];
+    grouped[day].push(e);
+  });
+  const groupedEntries = Object.entries(grouped)
+    .sort(([a], [b]) => a.localeCompare(b));
+
+  // First event across all groups that has no actual → "NEXT UP"
+  const nextUpId = (() => {
+    for (const [, rows] of groupedEntries) {
+      for (const ev of rows) {
+        if (ev.actual == null || ev.actual === '') return ev.id;
+      }
+    }
+    return null;
+  })();
 
   // ── Toggle helpers ───────────────────────────────────────────────────────
   const toggleCurrency = (code) =>
@@ -154,7 +179,12 @@ export default function EconomicCalendar() {
     display: 'flex', alignItems: 'center', gap: 4,
   });
 
-  const grouped = groupByDate(filtered);
+  // Active filter summary text
+  const activeCurrStr = selectedCurrencies.join(', ');
+  const activeImpStr  = IMPACTS
+    .filter(i => selectedImpacts.includes(i.value))
+    .map(i => i.label)
+    .join(', ');
 
   return (
     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: D.cardBg, overflow: 'hidden' }}>
@@ -165,7 +195,7 @@ export default function EconomicCalendar() {
         @keyframes calSpin { to { transform: rotate(360deg); } }
       `}</style>
 
-      {/* ── Filter bar ───────────────────────────────────────────────────── */}
+      {/* ── Header / Filter bar ──────────────────────────────────────────── */}
       <div style={{
         background: D.cardBg,
         borderBottom: `1px solid ${D.border}`,
@@ -175,18 +205,19 @@ export default function EconomicCalendar() {
         flexDirection: 'column',
         gap: 12,
       }}>
-        {/* Title */}
-        <div>
+        {/* Title + live dot */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <h1 style={{ fontSize: 18, fontWeight: 700, color: D.text, margin: 0, letterSpacing: '-0.02em' }}>
             Economic Calendar
           </h1>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 3 }}>
-            <div style={{ width: 6, height: 6, borderRadius: '50%', background: D.accent, boxShadow: `0 0 5px ${D.accent}` }} />
-            <span style={{ fontSize: 11, color: D.textSub }}>Live data · Powered by Gemini AI</span>
-          </div>
+          <div style={{
+            width: 7, height: 7, borderRadius: '50%',
+            background: D.accent, boxShadow: `0 0 6px ${D.accent}`,
+            flexShrink: 0,
+          }} />
         </div>
 
-        {/* Time filter */}
+        {/* Time filter pills */}
         <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
           {TIME_FILTERS.map(f => (
             <button key={f.value} onClick={() => setTimeFilter(f.value)}
@@ -198,12 +229,17 @@ export default function EconomicCalendar() {
 
         {/* Currency filter */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'nowrap' }}>
-          <span style={{ fontSize: 10, fontWeight: 700, color: D.textSub, letterSpacing: '0.1em', textTransform: 'uppercase', width: 56, flexShrink: 0 }}>
+          <span style={{
+            fontSize: 10, fontWeight: 700, color: D.textSub,
+            letterSpacing: '0.1em', textTransform: 'uppercase',
+            width: 56, flexShrink: 0,
+          }}>
             Currency
           </span>
           <div className="cal-scroll" style={{ display: 'flex', gap: 5, overflowX: 'auto', paddingBottom: 2 }}>
             {CURRENCIES.map(c => (
-              <button key={c.code} onClick={() => toggleCurrency(c.code)} style={pill(selectedCurrencies.includes(c.code), D.accent)}>
+              <button key={c.code} onClick={() => toggleCurrency(c.code)}
+                style={pill(selectedCurrencies.includes(c.code), D.accent)}>
                 <span>{c.flag}</span><span>{c.code}</span>
               </button>
             ))}
@@ -220,10 +256,14 @@ export default function EconomicCalendar() {
 
         {/* Impact filter */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <span style={{ fontSize: 10, fontWeight: 700, color: D.textSub, letterSpacing: '0.1em', textTransform: 'uppercase', width: 56, flexShrink: 0 }}>
+          <span style={{
+            fontSize: 10, fontWeight: 700, color: D.textSub,
+            letterSpacing: '0.1em', textTransform: 'uppercase',
+            width: 56, flexShrink: 0,
+          }}>
             Impact
           </span>
-          <div style={{ display: 'flex', gap: 5 }}>
+          <div style={{ display: 'flex', gap: 5, flexWrap: 'wrap' }}>
             {IMPACTS.map(imp => (
               <button key={imp.value} onClick={() => toggleImpact(imp.value)}
                 style={pill(selectedImpacts.includes(imp.value), imp.color)}>
@@ -231,21 +271,36 @@ export default function EconomicCalendar() {
               </button>
             ))}
             <button onClick={() => setSelectedImpacts(IMPACTS.map(i => i.value))}
-              style={{ fontSize: 11, color: D.textSub, background: 'none', border: 'none', cursor: 'pointer', padding: '4px 8px', marginLeft: 4, whiteSpace: 'nowrap' }}>
+              style={{ fontSize: 11, color: D.textSub, background: 'none', border: 'none', cursor: 'pointer', padding: '4px 8px', whiteSpace: 'nowrap' }}>
               All impacts
             </button>
           </div>
+        </div>
+
+        {/* Active filters summary */}
+        <div style={{ fontSize: 11, color: D.textSub }}>
+          Showing{' '}
+          <strong style={{ color: D.text }}>{filtered.length}</strong> events
+          {' · '}Currency:{' '}
+          <strong style={{ color: D.text }}>{activeCurrStr}</strong>
+          {' · '}Impact:{' '}
+          <strong style={{ color: D.text }}>{activeImpStr}</strong>
         </div>
       </div>
 
       {/* ── Content area ─────────────────────────────────────────────────── */}
       <div style={{ flex: 1, minHeight: 0, overflowY: 'auto' }}>
 
-        {/* Loading */}
+        {/* Loading spinner */}
         {loading && (
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: 200 }}>
             <div style={{ textAlign: 'center' }}>
-              <div style={{ width: 28, height: 28, border: `2px solid ${D.accent}`, borderTopColor: 'transparent', borderRadius: '50%', animation: 'calSpin 0.8s linear infinite', margin: '0 auto 10px' }} />
+              <div style={{
+                width: 28, height: 28,
+                border: `2px solid ${D.accent}`, borderTopColor: 'transparent',
+                borderRadius: '50%', animation: 'calSpin 0.8s linear infinite',
+                margin: '0 auto 10px',
+              }} />
               <p style={{ fontSize: 13, color: D.textSub, margin: 0 }}>Loading calendar…</p>
             </div>
           </div>
@@ -257,7 +312,7 @@ export default function EconomicCalendar() {
             <div style={{ textAlign: 'center' }}>
               <p style={{ color: '#ef4444', fontSize: 13, margin: '0 0 12px' }}>{error}</p>
               <button
-                onClick={() => setTimeFilter(t => t)}
+                onClick={() => setRetryKey(k => k + 1)}
                 style={{ padding: '8px 18px', background: D.accent, color: '#fff', border: 'none', borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: 'pointer' }}>
                 Retry
               </button>
@@ -265,7 +320,7 @@ export default function EconomicCalendar() {
           </div>
         )}
 
-        {/* Empty */}
+        {/* Empty state */}
         {!loading && !error && filtered.length === 0 && (
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: 200 }}>
             <p style={{ fontSize: 13, color: D.textSub }}>No events match your filters.</p>
@@ -273,48 +328,65 @@ export default function EconomicCalendar() {
         )}
 
         {/* Events grouped by date */}
-        {!loading && !error && grouped.map(([date, rows]) => (
+        {!loading && !error && groupedEntries.map(([date, rows]) => (
           <div key={date}>
-            {/* Date heading */}
+
+            {/* Date header */}
             <div style={{
               padding: '10px 20px',
               background: D.cardBg2,
               borderBottom: `1px solid ${D.border}`,
               borderTop: `1px solid ${D.border}`,
-              fontSize: 11, fontWeight: 700, color: D.textSub,
-              textTransform: 'uppercase', letterSpacing: '0.08em',
+              display: 'flex', alignItems: 'center', gap: 10,
             }}>
-              {formatGroupDate(date)}
+              <span style={{ fontSize: 12, fontWeight: 700, color: D.text, letterSpacing: '0.02em' }}>
+                {formatGroupDate(date)}
+              </span>
+              <span style={{
+                fontSize: 10, fontWeight: 700, color: D.textSub,
+                background: D.cardBg, border: `1px solid ${D.border}`,
+                padding: '2px 8px', borderRadius: 99,
+              }}>
+                {rows.length} event{rows.length !== 1 ? 's' : ''}
+              </span>
             </div>
 
             {/* Table */}
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
               <thead>
                 <tr style={{ background: D.cardBg2, borderBottom: `1px solid ${D.border}` }}>
-                  {['Time', 'Ccy', 'Impact', 'Event', 'Actual', 'Forecast', 'Previous'].map(h => (
+                  {['TIME', 'CCY', 'IMPACT', 'EVENT', 'ACTUAL', 'FORECAST', 'PREVIOUS'].map(h => (
                     <th key={h} style={{
-                      padding: '8px 14px', textAlign: h === 'Event' ? 'left' : 'center',
+                      padding: '8px 14px',
+                      textAlign: h === 'EVENT' ? 'left' : 'center',
                       fontSize: 10, fontWeight: 700, color: D.textSub,
-                      letterSpacing: '0.08em', textTransform: 'uppercase', whiteSpace: 'nowrap',
+                      letterSpacing: '0.08em', whiteSpace: 'nowrap',
                     }}>{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
                 {rows.map((ev, i) => {
-                  const impactColor = IMPACT_COLORS[(ev.impact ?? '').toLowerCase()] ?? D.textSub;
-                  const ccy = CURRENCIES.find(c => c.code === (ev.currency ?? '').toUpperCase());
-                  const actual   = ev.current  ?? ev.actual;
-                  const forecast = ev.forecast;
-                  const previous = ev.previous;
+                  const actual   = ev.actual   ?? null;
+                  const forecast = ev.forecast ?? ev.estimate ?? null;
+                  const previous = ev.previous ?? ev.prev    ?? null;
+                  const hasActual = actual != null && actual !== '';
+
                   const beatMiss =
-                    actual != null && forecast != null && !isNaN(Number(actual)) && !isNaN(Number(forecast))
-                      ? Number(actual) > Number(forecast) ? 'beat' : Number(actual) < Number(forecast) ? 'miss' : 'in-line'
+                    hasActual && forecast != null
+                    && !isNaN(Number(actual)) && !isNaN(Number(forecast))
+                      ? Number(actual) > Number(forecast) ? 'beat'
+                      : Number(actual) < Number(forecast) ? 'miss'
+                      : 'in-line'
                       : null;
+
                   const actualColor =
-                    beatMiss === 'beat' ? D.accent
+                    beatMiss === 'beat'   ? D.accent
                     : beatMiss === 'miss' ? '#ef4444'
                     : D.text;
+
+                  const isNextUp = !hasActual && ev.id === nextUpId;
+                  const ccy = CURRENCIES.find(c => c.code === (ev.currency ?? '').toUpperCase());
 
                   return (
                     <tr key={i} className="cal-row" style={{
@@ -324,35 +396,53 @@ export default function EconomicCalendar() {
                     }}>
                       {/* Time */}
                       <td style={{ padding: '12px 14px', textAlign: 'center', fontSize: 12, color: D.textSub, whiteSpace: 'nowrap' }}>
-                        {ev.time ?? '—'}
+                        {formatTime12h(ev.time)}
                       </td>
+
                       {/* Currency */}
                       <td style={{ padding: '12px 14px', textAlign: 'center', fontSize: 13, whiteSpace: 'nowrap' }}>
                         <span title={ev.currency}>{ccy?.flag ?? ''}</span>{' '}
                         <span style={{ fontSize: 10, fontWeight: 700, color: D.textSub }}>{ev.currency ?? ''}</span>
                       </td>
-                      {/* Impact dots */}
+
+                      {/* Impact bars */}
                       <td style={{ padding: '12px 14px', textAlign: 'center' }}>
-                        <ImpactDots impact={ev.impact} />
+                        <ImpactBars impact={ev.impact} />
                       </td>
-                      {/* Event name */}
+
+                      {/* Event name + NEXT UP badge */}
                       <td style={{ padding: '12px 14px', textAlign: 'left' }}>
-                        <div style={{ fontSize: 13, fontWeight: 600, color: D.text }}>{ev.name}</div>
-                        {ev.reportingPeriod && (
-                          <div style={{ fontSize: 10, color: D.textSub, marginTop: 2, fontStyle: 'italic' }}>{ev.reportingPeriod}</div>
-                        )}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                          <span style={{ fontSize: 13, fontWeight: 600, color: D.text }}>
+                            {ev.name || ev.event}
+                          </span>
+                          {isNextUp && (
+                            <span style={{
+                              fontSize: 9, fontWeight: 800, color: D.accent,
+                              background: `${D.accent}18`,
+                              border: `1px solid ${D.accent}40`,
+                              padding: '2px 6px', borderRadius: 99,
+                              letterSpacing: '0.06em', whiteSpace: 'nowrap',
+                            }}>
+                              NEXT UP
+                            </span>
+                          )}
+                        </div>
                       </td>
+
                       {/* Actual */}
-                      <td style={{ padding: '12px 14px', textAlign: 'center', fontSize: 13, fontWeight: 700, color: actualColor, whiteSpace: 'nowrap' }}>
-                        {fmt(actual)}{actual != null ? (ev.unit ?? '') : ''}
+                      <td style={{ padding: '12px 14px', textAlign: 'center', fontSize: 13, fontWeight: 700, color: hasActual ? actualColor : D.textSub, whiteSpace: 'nowrap' }}>
+                        {hasActual ? `${fmt(actual)}${ev.unit ?? ''}` : '—'}
                       </td>
+
                       {/* Forecast */}
                       <td style={{ padding: '12px 14px', textAlign: 'center', fontSize: 12, color: D.textSub, whiteSpace: 'nowrap' }}>
-                        {fmt(forecast)}{forecast != null ? (ev.unit ?? '') : ''}
+                        {forecast != null ? `${fmt(forecast)}${ev.unit ?? ''}` : '—'}
                       </td>
+
                       {/* Previous */}
                       <td style={{ padding: '12px 14px', textAlign: 'center', fontSize: 12, color: D.textSub, whiteSpace: 'nowrap' }}>
-                        {fmt(previous)}{previous != null ? (ev.unit ?? '') : ''}
+                        {previous != null ? `${fmt(previous)}${ev.unit ?? ''}` : '—'}
                       </td>
                     </tr>
                   );
@@ -365,4 +455,3 @@ export default function EconomicCalendar() {
     </div>
   );
 }
-
