@@ -1,4 +1,4 @@
-import { createHash, randomUUID } from 'crypto';
+import { createHash, createHmac, randomUUID } from 'crypto';
 import { writeFileSync } from 'fs';
 import { extname, join } from 'path';
 import { AVATARS_DIR, JOURNAL_UPLOADS_DIR, ensureUploadDirs } from '../config/storagePaths.js';
@@ -32,32 +32,76 @@ function hasCloudinaryConfig() {
   return !!(CLOUDINARY_CLOUD_NAME && CLOUDINARY_API_KEY && CLOUDINARY_API_SECRET);
 }
 
-// ── DO Spaces upload (lazy S3 client) ────────────────────────────────────────
-let _s3Client = null;
-async function getS3Client() {
-  if (_s3Client) return _s3Client;
-  const { S3Client } = await import('@aws-sdk/client-s3');
-  _s3Client = new S3Client({
-    endpoint: DO_SPACES_ENDPOINT,
-    region: DO_SPACES_REGION,
-    credentials: { accessKeyId: DO_SPACES_ACCESS, secretAccessKey: DO_SPACES_PASS },
-    forcePathStyle: false,
-  });
-  return _s3Client;
-}
-
+// ── DO Spaces upload — zero-dependency AWS Signature V4 via native fetch ────
+// No @aws-sdk/* packages needed; uses Node's built-in crypto + fetch.
 async function uploadToSpaces({ key, buffer, contentType }) {
-  const { PutObjectCommand } = await import('@aws-sdk/client-s3');
-  const s3 = await getS3Client();
-  await s3.send(new PutObjectCommand({
-    Bucket: DO_SPACES_BUCKET,
-    Key: key,
-    Body: buffer,
-    ContentType: contentType,
-    ACL: 'public-read',
-  }));
-  // Prefer CDN URL for fast delivery; fall back to direct Spaces URL
-  const base = DO_SPACES_CDN || `${DO_SPACES_ENDPOINT}/${DO_SPACES_BUCKET}`;
+  // Virtual-hosted style: https://<bucket>.<region>.digitaloceanspaces.com/<key>
+  const endpointUrl = new URL(DO_SPACES_ENDPOINT);
+  const host = `${DO_SPACES_BUCKET}.${endpointUrl.host}`;
+  const uploadUrl = `${endpointUrl.protocol}//${host}/${key}`;
+
+  const now = new Date();
+  const datestamp  = now.toISOString().slice(0, 10).replace(/-/g, '');        // YYYYMMDD
+  const amzDatetime = now.toISOString().replace(/[:\-]|\.\d{3}/g, '').slice(0, 15) + 'Z'; // YYYYMMDDTHHmmssZ
+
+  const payloadHash = createHash('sha256').update(buffer).digest('hex');
+
+  // Canonical headers (must be sorted)
+  const canonHeaders = {
+    'content-type':         contentType,
+    'host':                 host,
+    'x-amz-acl':           'public-read',
+    'x-amz-content-sha256': payloadHash,
+    'x-amz-date':          amzDatetime,
+  };
+  const sortedKeys    = Object.keys(canonHeaders).sort();
+  const signedHeaders = sortedKeys.join(';');
+  const canonHeaderStr = sortedKeys.map(k => `${k}:${canonHeaders[k]}`).join('\n') + '\n';
+
+  const canonicalRequest = [
+    'PUT',
+    `/${key}`,
+    '',               // no query string
+    canonHeaderStr,
+    signedHeaders,
+    payloadHash,
+  ].join('\n');
+
+  const credentialScope = `${datestamp}/${DO_SPACES_REGION}/s3/aws4_request`;
+  const stringToSign = [
+    'AWS4-HMAC-SHA256',
+    amzDatetime,
+    credentialScope,
+    createHash('sha256').update(canonicalRequest).digest('hex'),
+  ].join('\n');
+
+  // Derive signing key
+  const signingKey = [DO_SPACES_REGION, 's3', 'aws4_request'].reduce(
+    (key, data) => createHmac('sha256', key).update(data).digest(),
+    createHmac('sha256', `AWS4${DO_SPACES_PASS}`).update(datestamp).digest()
+  );
+  const signature = createHmac('sha256', signingKey).update(stringToSign).digest('hex');
+
+  const authorization =
+    `AWS4-HMAC-SHA256 Credential=${DO_SPACES_ACCESS}/${credentialScope}, ` +
+    `SignedHeaders=${signedHeaders}, Signature=${signature}`;
+
+  const res = await fetch(uploadUrl, {
+    method: 'PUT',
+    headers: {
+      ...canonHeaders,
+      'Authorization': authorization,
+    },
+    body: buffer,
+    duplex: 'half',   // required by Node 18+ when body is a Buffer
+  });
+
+  if (!res.ok) {
+    const txt = await res.text().catch(() => '');
+    throw new Error(`Spaces upload failed (${res.status}): ${txt}`);
+  }
+
+  const base = DO_SPACES_CDN || `${endpointUrl.protocol}//${host}`;
   return `${base}/${key}`;
 }
 
