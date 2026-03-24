@@ -284,13 +284,13 @@ export default function TermsOfService({ onBack }) {
                   getzynth@gmail.com
                 </a>
               </p>
-              <p style={{ fontSize: 13, color: '#9ca3af' }}>Address: Office 14, Business Bay, Dubai, UAE</p>
+              <p style={{ fontSize: 13, color: '#9ca3af' }}>Address: Zynth, Azeem Town, Sihala Street 2, Islamabad, Pakistan</p>
               <p style={{ fontSize: 13, color: '#9ca3af' }}>
                 Phone:{' '}
-                <a href="tel:+971501234567" style={{ color: '#10b981', textDecoration: 'none' }}
+                <a href="tel:+923175516692" style={{ color: '#10b981', textDecoration: 'none' }}
                   onMouseEnter={e => (e.currentTarget.style.textDecoration = 'underline')}
                   onMouseLeave={e => (e.currentTarget.style.textDecoration = 'none')}
-                >+971 50 123 4567</a>
+                >+92 317 5516692</a>
               </p>
             </div>
           </Section>

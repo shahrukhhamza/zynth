@@ -151,8 +151,8 @@ export default function RefundPolicy({ onBack }) {
             <div style={{ backgroundColor: 'rgba(16,185,129,0.06)', border: '1px solid rgba(16,185,129,0.15)', borderRadius: 8, padding: '16px 20px', marginTop: 6, display: 'flex', flexDirection: 'column', gap: 6 }}>
               <p style={{ fontSize: 14, color: '#10b981', fontWeight: 700 }}>Zynth Billing Support</p>
               <p style={{ fontSize: 13, color: '#9ca3af' }}>Email: <a href="mailto:getzynth@gmail.com" style={{ color: '#10b981', textDecoration: 'none' }}>getzynth@gmail.com</a></p>
-              <p style={{ fontSize: 13, color: '#9ca3af' }}>Address: Zynth, Office 14, Business Bay, Dubai, UAE</p>
-              <p style={{ fontSize: 13, color: '#9ca3af' }}>Phone: <a href="tel:+971501234567" style={{ color: '#10b981', textDecoration: 'none' }}>+971 50 123 4567</a></p>
+              <p style={{ fontSize: 13, color: '#9ca3af' }}>Address: Zynth, Azeem Town, Sihala Street 2, Islamabad, Pakistan</p>
+              <p style={{ fontSize: 13, color: '#9ca3af' }}>Phone: <a href="tel:+923175516692" style={{ color: '#10b981', textDecoration: 'none' }}>+92 317 5516692</a></p>
               <p style={{ fontSize: 13, color: '#9ca3af' }}>Response time: Within 1–2 business days</p>
             </div>
           </Section>

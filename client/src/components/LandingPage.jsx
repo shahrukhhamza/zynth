@@ -1390,7 +1390,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
         <div className="max-w-7xl mx-auto border-t border-white/[0.04] pt-6 flex flex-col md:flex-row items-center justify-between gap-3">
           <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
             <p style={{ fontSize: 11, color: '#374151' }}>© 2026 Zynth. All rights reserved.</p>
-            <p style={{ fontSize: 11, color: '#374151' }}>Office 14, Business Bay, Dubai, UAE &nbsp;·&nbsp; <a href="tel:+971501234567" style={{ color: '#4b5563', textDecoration: 'none' }}>+971 50 123 4567</a></p>
+            <p style={{ fontSize: 11, color: '#374151' }}>Azeem Town, Sihala Street 2, Islamabad, Pakistan &nbsp;·&nbsp; <a href="tel:+923175516692" style={{ color: '#4b5563', textDecoration: 'none' }}>+92 317 5516692</a> &nbsp;·&nbsp; <a href="mailto:getzynth@gmail.com" style={{ color: '#4b5563', textDecoration: 'none' }}>getzynth@gmail.com</a></p>
           </div>
           <div className="flex gap-5">
             <a href="/privacy" className="text-[11px] text-gray-700 hover:text-gray-500 transition-colors">Privacy</a>
