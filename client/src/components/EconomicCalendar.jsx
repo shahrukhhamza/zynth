@@ -66,6 +66,24 @@ function TradingViewCalendar({ colorTheme, countryFilter, importanceFilter }) {
   );
 }
 
+// Impact bar indicator (3 bars, filled by level)
+function ImpactIcon({ level }) {
+  const colors = { '1': '#ef4444', '0': '#f59e0b', '-1': '#64748b' };
+  const filled = level === '1' ? 3 : level === '0' ? 2 : 1;
+  const color  = colors[level] ?? '#64748b';
+  return (
+    <span style={{ display: 'inline-flex', gap: 1.5, alignItems: 'flex-end', marginRight: 4 }}>
+      {[1,2,3].map(i => (
+        <span key={i} style={{
+          width: 3, height: 4 + i * 3, borderRadius: 1,
+          background: i <= filled ? color : 'rgba(100,116,139,0.25)',
+          display: 'inline-block',
+        }} />
+      ))}
+    </span>
+  );
+}
+
 export default function EconomicCalendar() {
   const theme = useTheme();
 
@@ -77,10 +95,16 @@ export default function EconomicCalendar() {
     cardBg:  theme.isDark ? '#0d0d0d' : '#ffffff',
     cardBg2: theme.isDark ? '#111111' : '#f7f8fa',
     border:  theme.isDark ? '#1e1e1e' : '#e5e8ed',
+    border2: theme.isDark ? '#2a2a2a' : '#d0d5de',
     text:    theme.isDark ? '#f0f0f0' : '#0d1117',
     textSub: theme.isDark ? '#5a6472' : '#5a6472',
     accent:  '#10b981',
+    accentDim: theme.isDark ? '#10b98115' : '#10b98112',
   };
+
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+  const timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', timeZoneName: 'short' });
 
   const countryFilter    = selectedCurrencies
     .map(c => CURRENCIES.find(x => x.code === c)?.tv)
@@ -105,13 +129,22 @@ export default function EconomicCalendar() {
     );
 
   const pill = (active, color) => ({
-    padding: '5px 13px', borderRadius: 99, fontSize: 12, fontWeight: 700,
+    padding: '5px 14px', borderRadius: 99, fontSize: 12, fontWeight: 600,
     cursor: 'pointer', userSelect: 'none', whiteSpace: 'nowrap',
     border: `1px solid ${active ? color : D.border}`,
-    background: active ? `${color}18` : D.cardBg,
+    background: active ? `${color}20` : 'transparent',
     color: active ? color : D.textSub,
     transition: 'all 0.15s',
-    display: 'flex', alignItems: 'center', gap: 4,
+    display: 'flex', alignItems: 'center', gap: 5,
+    letterSpacing: '0.01em',
+  });
+
+  const ghostBtn = (color = D.textSub) => ({
+    fontSize: 11, fontWeight: 600, color,
+    background: 'none', border: 'none', cursor: 'pointer',
+    padding: '4px 10px', whiteSpace: 'nowrap', borderRadius: 6,
+    transition: 'color 0.15s',
+    letterSpacing: '0.02em',
   });
 
   return (
@@ -119,83 +152,147 @@ export default function EconomicCalendar() {
       <style>{`
         .cal-scroll::-webkit-scrollbar { display: none; }
         .cal-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+        .cal-pill-btn:hover { opacity: 0.85; }
+        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
       `}</style>
 
-      {/* ── Filter bar ───────────────────────────────────────────────────── */}
+      {/* ══ Header card ═══════════════════════════════════════════════════ */}
       <div style={{
         background: D.cardBg,
         borderBottom: `1px solid ${D.border}`,
-        padding: '16px 20px',
         flexShrink: 0,
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 12,
       }}>
-        {/* Title */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <h1 style={{ fontSize: 18, fontWeight: 700, color: D.text, margin: 0, letterSpacing: '-0.02em' }}>
-            Economic Calendar
-          </h1>
-          <div style={{
-            width: 7, height: 7, borderRadius: '50%',
-            background: D.accent, boxShadow: `0 0 6px ${D.accent}`,
-            flexShrink: 0,
-          }} />
-          <span style={{ fontSize: 11, color: D.textSub }}>Powered by TradingView · Real-time data</span>
-        </div>
+        {/* Top accent line */}
+        <div style={{ height: 2, background: `linear-gradient(90deg, ${D.accent}, transparent)` }} />
 
-        {/* Currency filter */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'nowrap' }}>
-          <span style={{
-            fontSize: 10, fontWeight: 700, color: D.textSub,
-            letterSpacing: '0.1em', textTransform: 'uppercase',
-            width: 56, flexShrink: 0,
-          }}>
-            Currency
-          </span>
-          <div className="cal-scroll" style={{ display: 'flex', gap: 5, overflowX: 'auto', paddingBottom: 2 }}>
-            {CURRENCIES.map(c => (
-              <button key={c.code} onClick={() => toggleCurrency(c.code)}
-                style={pill(selectedCurrencies.includes(c.code), D.accent)}>
-                <span>{c.flag}</span><span>{c.code}</span>
-              </button>
-            ))}
-            <button onClick={() => setSelectedCurrencies(['USD'])}
-              style={{ fontSize: 11, color: D.accent, background: 'none', border: 'none', cursor: 'pointer', fontWeight: 700, padding: '4px 8px', whiteSpace: 'nowrap', flexShrink: 0 }}>
-              USD only
-            </button>
-            <button onClick={() => setSelectedCurrencies(CURRENCIES.map(c => c.code))}
-              style={{ fontSize: 11, color: D.textSub, background: 'none', border: 'none', cursor: 'pointer', padding: '4px 8px', whiteSpace: 'nowrap', flexShrink: 0 }}>
-              All
-            </button>
+        {/* Title row */}
+        <div style={{
+          padding: '14px 24px 12px',
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          borderBottom: `1px solid ${D.border}`,
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <h1 style={{ fontSize: 17, fontWeight: 700, color: D.text, margin: 0, letterSpacing: '-0.02em' }}>
+                  Economic Calendar
+                </h1>
+                {/* Live pulse dot */}
+                <div style={{ position: 'relative', width: 8, height: 8 }}>
+                  <div style={{
+                    width: 8, height: 8, borderRadius: '50%',
+                    background: D.accent, boxShadow: `0 0 0 0 ${D.accent}`,
+                    animation: 'pulse 2s infinite',
+                    position: 'absolute',
+                  }} />
+                </div>
+              </div>
+              <div style={{ fontSize: 11, color: D.textSub, marginTop: 2 }}>{dateStr}</div>
+            </div>
+          </div>
+
+          {/* Right: TradingView badge + time */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+            <span style={{ fontSize: 11, color: D.textSub }}>{timeStr}</span>
+            <div style={{
+              display: 'flex', alignItems: 'center', gap: 6,
+              background: D.accentDim, border: `1px solid ${D.accent}30`,
+              padding: '4px 10px', borderRadius: 8,
+            }}>
+              <div style={{ width: 6, height: 6, borderRadius: '50%', background: D.accent }} />
+              <span style={{ fontSize: 11, fontWeight: 600, color: D.accent, letterSpacing: '0.02em' }}>
+                Live · TradingView
+              </span>
+            </div>
           </div>
         </div>
 
-        {/* Impact filter */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <span style={{
-            fontSize: 10, fontWeight: 700, color: D.textSub,
-            letterSpacing: '0.1em', textTransform: 'uppercase',
-            width: 56, flexShrink: 0,
-          }}>
-            Impact
-          </span>
-          <div style={{ display: 'flex', gap: 5 }}>
-            {IMPACTS.map(imp => (
-              <button key={imp.value} onClick={() => toggleImpact(imp.value)}
-                style={pill(selectedImpacts.includes(imp.value), imp.color)}>
-                {imp.label}
-              </button>
-            ))}
-            <button onClick={() => setSelectedImpacts(IMPACTS.map(i => i.value))}
-              style={{ fontSize: 11, color: D.textSub, background: 'none', border: 'none', cursor: 'pointer', padding: '4px 8px', marginLeft: 4, whiteSpace: 'nowrap' }}>
-              All impacts
-            </button>
+        {/* Filters row */}
+        <div style={{
+          padding: '10px 24px',
+          display: 'flex', alignItems: 'center', gap: 0,
+          flexWrap: 'nowrap', overflowX: 'auto',
+        }} className="cal-scroll">
+
+          {/* Currency section */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, paddingRight: 16, flexShrink: 0 }}>
+            <span style={{
+              fontSize: 9, fontWeight: 700, color: D.textSub,
+              letterSpacing: '0.12em', textTransform: 'uppercase', flexShrink: 0,
+            }}>CCY</span>
+            <div style={{ display: 'flex', gap: 4 }}>
+              {CURRENCIES.map(c => (
+                <button key={c.code} onClick={() => toggleCurrency(c.code)}
+                  className="cal-pill-btn"
+                  style={pill(selectedCurrencies.includes(c.code), D.accent)}>
+                  <span style={{ fontSize: 13 }}>{c.flag}</span>
+                  <span style={{ fontSize: 11 }}>{c.code}</span>
+                </button>
+              ))}
+            </div>
+            <div style={{ display: 'flex', gap: 0, marginLeft: 4 }}>
+              <button onClick={() => setSelectedCurrencies(['USD'])} style={ghostBtn(D.accent)}>USD only</button>
+              <button onClick={() => setSelectedCurrencies(CURRENCIES.map(c => c.code))} style={ghostBtn(D.textSub)}>All</button>
+            </div>
+          </div>
+
+          {/* Vertical divider */}
+          <div style={{ width: 1, height: 28, background: D.border, flexShrink: 0, marginRight: 16 }} />
+
+          {/* Impact section */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
+            <span style={{
+              fontSize: 9, fontWeight: 700, color: D.textSub,
+              letterSpacing: '0.12em', textTransform: 'uppercase', flexShrink: 0,
+            }}>IMPACT</span>
+            <div style={{ display: 'flex', gap: 4 }}>
+              {IMPACTS.map(imp => (
+                <button key={imp.value} onClick={() => toggleImpact(imp.value)}
+                  className="cal-pill-btn"
+                  style={pill(selectedImpacts.includes(imp.value), imp.color)}>
+                  <ImpactIcon level={imp.value} />
+                  {imp.label}
+                </button>
+              ))}
+              <button onClick={() => setSelectedImpacts(IMPACTS.map(i => i.value))} style={ghostBtn(D.textSub)}>All</button>
+            </div>
+          </div>
+
+          {/* Vertical divider */}
+          <div style={{ width: 1, height: 28, background: D.border, flexShrink: 0, margin: '0 16px' }} />
+
+          {/* Active summary chips */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 5, flexShrink: 0 }}>
+            {selectedCurrencies.map(code => {
+              const c = CURRENCIES.find(x => x.code === code);
+              return c ? (
+                <span key={code} style={{
+                  fontSize: 11, fontWeight: 600, color: D.accent,
+                  background: D.accentDim, border: `1px solid ${D.accent}25`,
+                  padding: '3px 9px', borderRadius: 99, whiteSpace: 'nowrap',
+                }}>
+                  {c.flag} {c.code}
+                </span>
+              ) : null;
+            })}
+            {selectedImpacts.map(v => {
+              const imp = IMPACTS.find(i => i.value === v);
+              return imp ? (
+                <span key={v} style={{
+                  fontSize: 11, fontWeight: 600, color: imp.color,
+                  background: `${imp.color}12`, border: `1px solid ${imp.color}25`,
+                  padding: '3px 9px', borderRadius: 99, whiteSpace: 'nowrap',
+                  display: 'flex', alignItems: 'center', gap: 4,
+                }}>
+                  <ImpactIcon level={v} />{imp.label}
+                </span>
+              ) : null;
+            })}
           </div>
         </div>
       </div>
 
-      {/* ── TradingView Economic Calendar widget ─────────────────────────── */}
+      {/* ══ TradingView widget ════════════════════════════════════════════ */}
       <div style={{ flex: 1, minHeight: 0 }}>
         <TradingViewCalendar
           colorTheme={colorTheme}
