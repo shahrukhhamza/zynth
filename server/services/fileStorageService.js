@@ -24,7 +24,10 @@ const CLOUDINARY_AVATARS_FOLDER = process.env.CLOUDINARY_AVATARS_FOLDER?.trim() 
 const CLOUDINARY_JOURNAL_FOLDER = process.env.CLOUDINARY_JOURNAL_FOLDER?.trim() || 'zynth/journal';
 
 function hasSpacesConfig() {
-  return !!(DO_SPACES_KEY && DO_SPACES_SECRET && DO_SPACES_ENDPOINT && DO_SPACES_BUCKET);
+  // Require real-looking credentials (not placeholder values)
+  return !!(DO_SPACES_KEY && DO_SPACES_SECRET && DO_SPACES_ENDPOINT && DO_SPACES_BUCKET
+    && DO_SPACES_KEY.length > 8 && DO_SPACES_SECRET.length > 8
+    && DO_SPACES_KEY !== 'pending' && DO_SPACES_SECRET !== 'pending');
 }
 
 function hasCloudinaryConfig() {
@@ -135,11 +138,15 @@ export async function saveAvatarFromBase64(userId, avatarBase64) {
   // 1️⃣ DigitalOcean Spaces (persistent, S3-compatible)
   if (hasSpacesConfig()) {
     const mime = ext === 'png' ? 'image/png' : 'image/jpeg';
-    return uploadToSpaces({
-      key: `avatars/user_${userId}_avatar.${ext}`,
-      buffer,
-      contentType: mime,
-    });
+    try {
+      return await uploadToSpaces({
+        key: `avatars/user_${userId}_avatar.${ext}`,
+        buffer,
+        contentType: mime,
+      });
+    } catch (e) {
+      console.error('[Spaces] avatar upload failed, falling back to local:', e.message);
+    }
   }
 
   // 2️⃣ Cloudinary (fallback)
@@ -168,11 +175,15 @@ export async function saveJournalScreenshot(userId, file) {
 
   // 1️⃣ DigitalOcean Spaces (persistent, S3-compatible)
   if (hasSpacesConfig()) {
-    return uploadToSpaces({
-      key: `journal/user_${userId}_${uniqueId}${ext}`,
-      buffer: file.buffer,
-      contentType: file.mimetype || 'image/jpeg',
-    });
+    try {
+      return await uploadToSpaces({
+        key: `journal/user_${userId}_${uniqueId}${ext}`,
+        buffer: file.buffer,
+        contentType: file.mimetype || 'image/jpeg',
+      });
+    } catch (e) {
+      console.error('[Spaces] screenshot upload failed, falling back to local:', e.message);
+    }
   }
 
   // 2️⃣ Cloudinary (fallback)
