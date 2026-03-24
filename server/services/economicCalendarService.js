@@ -53,6 +53,58 @@ async function fetchFromFMP(from, to) {
   return Array.isArray(res.data) ? res.data : [];
 }
 
+async function fetchFromFinnhub(from, to) {
+  if (!FINNHUB_KEY) throw new Error('FINNHUB_API_KEY not configured');
+
+  const res = await axios.get('https://finnhub.io/api/v1/calendar/economic', {
+    params: { from, to, token: FINNHUB_KEY },
+    timeout: 10000,
+  });
+
+  return res.data?.economicCalendar ?? [];
+}
+
+function normalizeFMP(raw) {
+  return raw.map(e => ({
+    id:       `${(e.event ?? '').replace(/\s+/g, '_').toLowerCase()}_${e.date ?? ''}`,
+    event:    e.event    ?? '',
+    name:     e.event    ?? '',
+    currency: (e.country ?? 'US') === 'US' ? 'USD'
+      : (e.country ?? '').toUpperCase(),
+    country:  e.country  ?? 'US',
+    impact:   (e.impact  ?? '').toLowerCase(),
+    time:     e.date     ?? '',
+    date:     (e.date    ?? '').split(' ')[0],
+    actual:   e.actual   ?? null,
+    estimate: e.estimate ?? null,
+    forecast: e.estimate ?? null,
+    prev:     e.previous ?? null,
+    previous: e.previous ?? null,
+    unit:     e.unit     ?? '',
+    change:   e.change   ?? null,
+  }));
+}
+
+function normalizeFinnnhub(raw) {
+  return raw.map(e => ({
+    id:       `${(e.event ?? '').replace(/\s+/g, '_').toLowerCase()}_${e.time ?? e.date ?? ''}`,
+    event:    e.event    ?? '',
+    name:     e.event    ?? '',
+    currency: (e.country ?? 'USD'),
+    country:  e.country  ?? 'US',
+    impact:   guessImpact(e.event),
+    time:     e.time     ?? '',
+    date:     (e.time ?? '').split('T')[0] || (e.date ?? ''),
+    actual:   e.actual   ?? null,
+    estimate: e.estimate ?? null,
+    forecast: e.estimate ?? null,
+    prev:     e.prev     ?? null,
+    previous: e.prev     ?? null,
+    unit:     e.unit     ?? '',
+    change:   null,
+  }));
+}
+
 /**
  * Format date as YYYY-MM-DD
  */
@@ -117,28 +169,18 @@ async function getEconomicCalendar(options = {}) {
       return cached;
     }
 
-    console.log(`📅 Fetching FMP calendar: ${from} → ${to}`);
-    const raw = await fetchFromFMP(from, to);
-
-    // Normalize events
-    const events = raw.map(e => ({
-      id: `${(e.event ?? '').replace(/\s+/g, '_').toLowerCase()}_${e.date ?? ''}`,
-      event:    e.event    ?? '',
-      name:     e.event    ?? '',
-      currency: (e.country ?? 'US') === 'US' ? 'USD' 
-        : (e.country ?? '').toUpperCase(),
-      country:  e.country  ?? 'US',
-      impact:   (e.impact  ?? '').toLowerCase(),
-      time:     e.date     ?? '',
-      date:     (e.date    ?? '').split(' ')[0],
-      actual:   e.actual   ?? null,
-      estimate: e.estimate ?? null,
-      forecast: e.estimate ?? null,
-      prev:     e.previous ?? null,
-      previous: e.previous ?? null,
-      unit:     e.unit     ?? '',
-      change:   e.change   ?? null,
-    }));
+    let events;
+    try {
+      console.log(`📅 Fetching FMP calendar: ${from} → ${to}`);
+      const raw = await fetchFromFMP(from, to);
+      events = normalizeFMP(raw);
+      console.log(`✅ FMP calendar: ${events.length} events (${from} → ${to})`);
+    } catch (fmpErr) {
+      console.warn(`⚠️  FMP failed (${fmpErr.message}), falling back to Finnhub`);
+      const raw = await fetchFromFinnhub(from, to);
+      events = normalizeFinnnhub(raw);
+      console.log(`✅ Finnhub calendar: ${events.length} events (${from} → ${to})`);
+    }
 
     // Sort by time ascending
     events.sort((a, b) => {
@@ -147,8 +189,6 @@ async function getEconomicCalendar(options = {}) {
       if (!b.time) return -1;
       return new Date(a.time) - new Date(b.time);
     });
-
-    console.log(`✅ FMP calendar: ${events.length} events (${from} → ${to})`);
 
     cache.set(cacheKey, events);
     return events;
