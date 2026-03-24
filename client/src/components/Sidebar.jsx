@@ -2,7 +2,7 @@
 import {
   Search, Filter, Calendar, X, Brain,
   Camera, ChevronLeft, ChevronRight, Crown, Settings, HelpCircle, Clock,
-  LayoutDashboard, Star, Zap, Plug,
+  LayoutDashboard, Star, Zap,
 } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 import { useTimezone } from '../contexts/TimezoneContext';
@@ -23,7 +23,6 @@ const NAV_ITEMS = [
   { key: 'screenshot',   icon: Camera,          label: 'Screenshot Analysis', badge: { text: 'AI', color: '#0ea5e9' } },
   { key: 'intelligence', icon: Brain,           label: 'AI Insights',         badge: { text: 'AI', color: '#0ea5e9' } },
   { key: 'calendar',     icon: Calendar,        label: 'Economic Calendar',   badge: null },
-  { key: 'broker',       icon: Plug,            label: 'Broker Accounts',     badge: null },
   { key: 'help',         icon: HelpCircle,      label: 'Help & Docs',         badge: null },
 ];
 
