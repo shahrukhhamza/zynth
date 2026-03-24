@@ -176,7 +176,13 @@ async function getEconomicCalendar(options = {}) {
       events = normalizeFMP(raw);
       console.log(`✅ FMP calendar: ${events.length} events (${from} → ${to})`);
     } catch (fmpErr) {
-      console.warn(`⚠️  FMP failed (${fmpErr.message}), falling back to Finnhub`);
+      const fmpStatus = fmpErr?.response?.status;
+      const fmpDetail = fmpErr?.response?.data?.['Error Message'] ?? fmpErr?.response?.data ?? '';
+      console.warn(`⚠️  FMP failed [${fmpStatus ?? fmpErr.message}] ${JSON.stringify(fmpDetail)}, falling back to Finnhub`);
+      if (!FINNHUB_KEY) {
+        console.error('✗ FINNHUB_API_KEY is not set — cannot fall back');
+        return [];
+      }
       const raw = await fetchFromFinnhub(from, to);
       events = normalizeFinnnhub(raw);
       console.log(`✅ Finnhub calendar: ${events.length} events (${from} → ${to})`);
