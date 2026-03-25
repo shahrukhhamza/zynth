@@ -165,7 +165,6 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
   const [ctaInsightVisible, setCtaInsightVisible] = useState(true);
 
   // ── Custom cursor state
-  const cursorDotRef   = useRef(null);
   const cursorRingRef  = useRef(null);
   const cursorGlowRef  = useRef(null);
   const mousePos       = useRef({ x: -200, y: -200 });
@@ -178,9 +177,6 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
     const onMove = (e) => {
       mousePos.current = { x: e.clientX, y: e.clientY };
       if (!cursorVisible) setCursorVisible(true);
-      if (cursorDotRef.current) {
-        cursorDotRef.current.style.transform = `translate(${e.clientX - 4}px, ${e.clientY - 4}px)`;
-      }
       if (cursorGlowRef.current) {
         cursorGlowRef.current.style.background =
           `radial-gradient(circle 280px at ${e.clientX}px ${e.clientY}px, ${isDark ? 'rgba(59,130,246,0.055)' : 'rgba(29,78,216,0.045)'} 0%, transparent 70%)`;
@@ -194,8 +190,8 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
 
     function lerp(a, b, t) { return a + (b - a) * t; }
     function animate() {
-      ringPos.current.x = lerp(ringPos.current.x, mousePos.current.x, 0.12);
-      ringPos.current.y = lerp(ringPos.current.y, mousePos.current.y, 0.12);
+      ringPos.current.x = lerp(ringPos.current.x, mousePos.current.x, 0.28);
+      ringPos.current.y = lerp(ringPos.current.y, mousePos.current.y, 0.28);
       if (cursorRingRef.current) {
         const hover = isHovering.current;
         const size  = hover ? 48 : 28;
@@ -366,25 +362,9 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
           pointerEvents: 'none',
           zIndex: 99999,
           willChange: 'transform',
-          transition: 'width 0.18s ease, height 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease, opacity 0.2s ease',
-          opacity: cursorVisible ? 0.55 : 0,
+          transition: 'width 0.15s ease, height 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease, opacity 0.2s ease',
+          opacity: cursorVisible ? 0.7 : 0,
           mixBlendMode: isDark ? 'screen' : 'multiply',
-        }}
-      />
-      {/* Precise dot */}
-      <div
-        ref={cursorDotRef}
-        style={{
-          position: 'fixed', top: 0, left: 0,
-          width: '8px', height: '8px',
-          borderRadius: '50%',
-          background: isDark ? '#3b82f6' : '#1d4ed8',
-          pointerEvents: 'none',
-          zIndex: 100000,
-          willChange: 'transform',
-          boxShadow: isDark ? '0 0 8px rgba(59,130,246,0.8)' : '0 0 8px rgba(29,78,216,0.5)',
-          opacity: cursorVisible ? 1 : 0,
-          transition: 'opacity 0.2s ease',
         }}
       />
       <style>{`
@@ -392,12 +372,6 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
           0%, 100% { box-shadow: 0 0 0 0 rgba(245,158,11,0.25); }
           50%       { box-shadow: 0 0 0 8px rgba(245,158,11,0); }
         }
-        @keyframes cursorDotPop {
-          0%   { transform: scale(0.7); }
-          60%  { transform: scale(1.3); }
-          100% { transform: scale(1);  }
-        }
-        * { cursor: none !important; }
         @keyframes proCardGlow {
           0%, 100% { box-shadow: 0 0 0 1px rgba(59,130,246,0.2), 0 24px 60px rgba(0,0,0,0.5), 0 0 30px rgba(59,130,246,0.1); }
           50%       { box-shadow: 0 0 0 1px rgba(59,130,246,0.5), 0 24px 60px rgba(0,0,0,0.5), 0 0 60px rgba(59,130,246,0.3); }
