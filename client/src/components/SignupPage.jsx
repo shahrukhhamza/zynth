@@ -105,7 +105,7 @@ export default function SignupPage({ onSwitchToLogin, onBack }) {
     borderRadius: '10px', color: '#fff', width: '100%', fontSize: '14px',
     outline: 'none', transition: 'all 0.2s ease',
   };
-  const focusIn  = e => { e.target.style.background = 'rgba(255,255,255,0.06)'; e.target.style.borderColor = 'rgba(16,185,129,0.45)'; e.target.style.boxShadow = '0 0 0 3px rgba(16,185,129,0.07)'; };
+  const focusIn  = e => { e.target.style.background = 'rgba(255,255,255,0.06)'; e.target.style.borderColor = 'rgba(59,130,246,0.55)'; e.target.style.boxShadow = '0 0 0 3px rgba(59,130,246,0.10)'; };
   const focusOut = e => { e.target.style.background = 'rgba(255,255,255,0.04)'; e.target.style.borderColor = 'rgba(255,255,255,0.1)'; e.target.style.boxShadow = 'none'; };
 
   function setField(field, value) { setForm(f => ({ ...f, [field]: value })); }
@@ -150,7 +150,7 @@ export default function SignupPage({ onSwitchToLogin, onBack }) {
   }
 
   return (
-    <div style={{display:'flex',height:'100vh',width:'100vw',overflow:'hidden',background:'#000000',position:'relative'}}>
+    <div style={{display:'flex',height:'100vh',width:'100vw',overflow:'hidden',background:'#07090f',position:'relative'}}>
 
       <style>{`
         @keyframes formAppear {
@@ -189,8 +189,8 @@ export default function SignupPage({ onSwitchToLogin, onBack }) {
           transition: background 0.15s, border-color 0.15s;
         }
         .sp-checkbox:checked {
-          background: #10b981;
-          border-color: #10b981;
+          background: #3b82f6;
+          border-color: #3b82f6;
         }
         .sp-checkbox:checked::after {
           content: '';
@@ -217,12 +217,12 @@ export default function SignupPage({ onSwitchToLogin, onBack }) {
       {/* â”€â”€ Panels â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
 
         {/* â”€â”€ LEFT: Brand panel â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
-        <div style={{display: isMobile ? 'none' : 'flex', flex:1, flexDirection:'column', position:'relative', overflow:'hidden', minHeight:'100vh', background:'#000000', animation:'panelFadeIn 0.6s ease'}}>
+        <div style={{display: isMobile ? 'none' : 'flex', flex:1, flexDirection:'column', position:'relative', overflow:'hidden', minHeight:'100vh', background:'#07090f', animation:'panelFadeIn 0.6s ease'}}>
 
           {/* Orb 1 – bottom left */}
           <div className="pointer-events-none" style={{
             position:'absolute', width:'500px', height:'500px',
-            background:'radial-gradient(circle, rgba(16,185,129,0.12) 0%, transparent 70%)',
+            background:'radial-gradient(circle, rgba(59,130,246,0.12) 0%, transparent 70%)',
             bottom:'-150px', left:'-150px',
             filter:'blur(60px)',
             animation:'orbPulse 4s ease infinite',
@@ -230,7 +230,7 @@ export default function SignupPage({ onSwitchToLogin, onBack }) {
           {/* Orb 2 – top right */}
           <div className="pointer-events-none" style={{
             position:'absolute', width:'350px', height:'350px',
-            background:'radial-gradient(circle, rgba(16,185,129,0.07) 0%, transparent 70%)',
+            background:'radial-gradient(circle, rgba(59,130,246,0.07) 0%, transparent 70%)',
             top:'-100px', right:'-50px',
             filter:'blur(50px)',
             animation:'orbPulse 4s ease infinite 2s',
@@ -276,7 +276,7 @@ export default function SignupPage({ onSwitchToLogin, onBack }) {
             <h1 style={{fontSize:'52px',fontWeight:800,letterSpacing:'-0.03em',lineHeight:1.1,marginBottom:'16px'}}>
               <span style={{color:'#ffffff'}}>Start Trading<br /></span>
               <span style={{
-                background:'linear-gradient(135deg, #ffffff 30%, #10b981 100%)',
+                background:'linear-gradient(135deg, #ffffff 30%, #3b82f6 100%)',
                 WebkitBackgroundClip:'text',
                 WebkitTextFillColor:'transparent',
                 backgroundClip:'text',
@@ -294,12 +294,12 @@ export default function SignupPage({ onSwitchToLogin, onBack }) {
                 <div key={title} style={{display:'flex',gap:'14px',marginBottom:'22px'}}>
                   <div style={{
                     width:'40px',height:'40px',minWidth:'40px',
-                    background:'rgba(16,185,129,0.1)',
-                    border:'1px solid rgba(16,185,129,0.2)',
+                    background:'rgba(59,130,246,0.1)',
+                    border:'1px solid rgba(59,130,246,0.2)',
                     borderRadius:'10px',
                     display:'flex',alignItems:'center',justifyContent:'center',
                   }}>
-                    <Icon size={18} color="#10b981" />
+                    <Icon size={18} color="#3b82f6" />
                   </div>
                   <div>
                     <p style={{color:'#fff',fontSize:'14px',fontWeight:600,marginBottom:'2px'}}>{title}</p>
@@ -342,7 +342,7 @@ export default function SignupPage({ onSwitchToLogin, onBack }) {
                display:'flex', flexDirection:'column',
                alignItems:'center',
                overflowY:'auto',
-               background: isMobile ? '#000000' : '#0d0d0d',
+               background: isMobile ? '#07090f' : '#0c1117',
                borderLeft: isMobile ? 'none' : '1px solid rgba(255,255,255,0.07)',
                padding: isMobile ? '24px 20px' : '24px 44px',
                minHeight:'100vh',
@@ -355,13 +355,13 @@ export default function SignupPage({ onSwitchToLogin, onBack }) {
               <div style={{display:'flex',flexDirection:'column',alignItems:'center',textAlign:'center',gap:'16px',padding:'48px 0'}}>
                 <div style={{
                   width:'64px', height:'64px',
-                  background:'rgba(16,185,129,0.1)',
-                  border:'2px solid #10b981',
+                  background:'rgba(59,130,246,0.1)',
+                  border:'2px solid #3b82f6',
                   borderRadius:'50%',
                   display:'flex', alignItems:'center', justifyContent:'center',
                   animation:'checkIn 0.4s cubic-bezier(0.34,1.56,0.64,1) both',
                 }}>
-                  <CheckCircle size={32} color="#10b981" />
+                  <CheckCircle size={32} color="#3b82f6" />
                 </div>
                 <div>
                   <p style={{color:'#fff',fontWeight:700,fontSize:'20px',margin:0}}>Account created!</p>
@@ -397,7 +397,7 @@ export default function SignupPage({ onSwitchToLogin, onBack }) {
             )}
             {isMobile && (
               <div style={{display:'flex',alignItems:'center',justifyContent:'center',gap:'8px',marginBottom:'28px'}}>
-                <div style={{width:'28px',height:'28px',background:'#10b981',borderRadius:'7px',display:'flex',alignItems:'center',justifyContent:'center'}}>
+                <div style={{width:'28px',height:'28px',background:'#3b82f6',borderRadius:'7px',display:'flex',alignItems:'center',justifyContent:'center'}}>
                   <span style={{color:'#fff',fontWeight:'bold',fontSize:'14px'}}>Z</span>
                 </div>
                 <span style={{color:'#fff',fontWeight:'bold',fontSize:'17px'}}>Zynth</span>
@@ -407,13 +407,13 @@ export default function SignupPage({ onSwitchToLogin, onBack }) {
             {/* Founding banner */}
             {spotsLeft != null && spotsLeft > 0 && (
               <div style={{
-                background:'linear-gradient(135deg, rgba(16,185,129,0.08), rgba(16,185,129,0.04))',
-                border:'1px solid rgba(16,185,129,0.2)',
+                background:'linear-gradient(135deg, rgba(59,130,246,0.08), rgba(59,130,246,0.04))',
+                border:'1px solid rgba(59,130,246,0.2)',
                 borderRadius:'8px',
                 padding:'10px 14px',
                 marginBottom:'14px',
                 fontSize:'13px',
-                color:'#10b981',
+                color:'#3b82f6',
                 textAlign:'center',
               }}>
                 <Flame size={12} style={{display:'inline-block',verticalAlign:'middle',marginRight:'4px'}} />{spotsLeft} founding spots · $1.99/mo
@@ -425,7 +425,7 @@ export default function SignupPage({ onSwitchToLogin, onBack }) {
             <p style={{fontSize:'13px',marginTop:'3px',marginBottom:'14px',color:'rgba(255,255,255,0.4)'}}>
               Already have one?{' '}
               <button onClick={onSwitchToLogin}
-                      style={{color:'#10b981',background:'none',border:'none',cursor:'pointer',fontSize:'13px',padding:0}}
+                      style={{color:'#3b82f6',background:'none',border:'none',cursor:'pointer',fontSize:'13px',padding:0}}
                       onMouseEnter={e => e.currentTarget.style.textDecoration='underline'}
                       onMouseLeave={e => e.currentTarget.style.textDecoration='none'}>
                 Sign in
@@ -559,7 +559,7 @@ export default function SignupPage({ onSwitchToLogin, onBack }) {
                           height:'2px', flex:1, borderRadius:'2px',
                           transition:'all 0.3s ease',
                           background: i <= strength
-                            ? (strength===1?'#ef4444':strength===2?'#f97316':strength===3?'#f59e0b':'#10b981')
+                            ? (strength===1?'#ef4444':strength===2?'#f97316':strength===3?'#f59e0b':'#3b82f6')
                             : 'rgba(255,255,255,0.07)',
                         }} />
                       ))}
@@ -570,7 +570,7 @@ export default function SignupPage({ onSwitchToLogin, onBack }) {
                       </span>
                       <div style={{display:'flex',gap:'8px'}}>
                         {[{ok:has8,label:'8+'},{ok:hasNum,label:'123'},{ok:hasCaps,label:'Aa'},{ok:hasSpec,label:'!@'}].map(({ok,label})=>(
-                          <span key={label} style={{fontSize:'10px',color:ok?'#34d399':'rgba(255,255,255,0.2)',fontWeight:500,transition:'color 0.2s'}}>{label}</span>
+                          <span key={label} style={{fontSize:'10px',color:ok?'#3b82f6':'rgba(255,255,255,0.2)',fontWeight:500,transition:'color 0.2s'}}>{label}</span>
                         ))}
                       </div>
                     </div>
@@ -622,7 +622,7 @@ export default function SignupPage({ onSwitchToLogin, onBack }) {
                   <span style={{fontSize:'12px',color:'rgba(255,255,255,0.5)',lineHeight:1.5}}>
                     I agree to the{' '}
                     <a href="/terms" target="_blank" rel="noopener noreferrer"
-                       style={{color:'#10b981',textDecoration:'none'}}
+                     style={{color:'#3b82f6',textDecoration:'none'}}
                        onMouseEnter={e => e.currentTarget.style.textDecoration='underline'}
                        onMouseLeave={e => e.currentTarget.style.textDecoration='none'}
                        onClick={e => e.stopPropagation()}>
@@ -648,17 +648,17 @@ export default function SignupPage({ onSwitchToLogin, onBack }) {
                 style={{
                   width:'100%',
                   padding:'12px',
-                  background: loading ? 'rgba(16,185,129,0.5)' : 'linear-gradient(135deg, #10b981 0%, #0d9a6e 100%)',
+                  background: loading ? 'rgba(59,130,246,0.5)' : 'linear-gradient(135deg, #1d4ed8 0%, #0284c7 100%)',
                   border:'none', borderRadius:'10px',
                   color:'#fff', fontSize:'14px', fontWeight:600,
                   cursor: loading ? 'not-allowed' : 'pointer',
                   transition:'all 0.2s ease',
                   letterSpacing:'0.01em',
                   display:'flex', alignItems:'center', justifyContent:'center', gap:'8px',
-                  boxShadow: loading ? 'none' : '0 4px 15px rgba(16,185,129,0.2)',
+                  boxShadow: loading ? 'none' : '0 4px 15px rgba(59,130,246,0.25)',
                 }}
-                onMouseEnter={e => { if (!loading) { e.currentTarget.style.transform='translateY(-1px)'; e.currentTarget.style.boxShadow='0 8px 25px rgba(16,185,129,0.3)'; } }}
-                onMouseLeave={e => { e.currentTarget.style.transform='translateY(0)'; e.currentTarget.style.boxShadow=loading?'none':'0 4px 15px rgba(16,185,129,0.2)'; }}
+                onMouseEnter={e => { if (!loading) { e.currentTarget.style.transform='translateY(-1px)'; e.currentTarget.style.boxShadow='0 8px 25px rgba(59,130,246,0.4)'; } }}
+                onMouseLeave={e => { e.currentTarget.style.transform='translateY(0)'; e.currentTarget.style.boxShadow=loading?'none':'0 4px 15px rgba(59,130,246,0.25)'; }}
                 onMouseDown={e => { e.currentTarget.style.transform='translateY(0) scale(0.99)'; }}
                 onMouseUp={e => { e.currentTarget.style.transform='translateY(-1px) scale(1)'; }}
               >
