@@ -392,7 +392,7 @@ export default function ProfileModal({ onClose, onForgotPassword }) {
                 </div>
               </div>
             )}
-            {/* Pro usage bars */
+            {/* Pro usage bars */}
             {isPro && (
               <div className="space-y-2 mt-3">
                 <div>
