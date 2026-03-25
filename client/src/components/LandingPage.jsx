@@ -490,7 +490,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
       />
 
       {/* ═══════════════════════════ FEATURES ═══════════════════════════ */}
-      <section id="features" className={`pt-32 pb-24 px-6 transition-colors duration-300 ${isDark ? '' : 'bg-[#f4f6f9]'}`}>
+      <section id="features" className={`pt-16 pb-24 px-6 transition-colors duration-300 ${isDark ? '' : 'bg-[#f4f6f9]'}`}>
         <div className="max-w-7xl mx-auto">
 
           {/* Section label */}
@@ -501,14 +501,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
               <span className="text-[11px] font-bold tracking-[0.18em] text-blue-400">FEATURES</span>
             </div>
             <h2 className="text-[42px] font-extrabold tracking-tight mb-4">
-              <span style={{
-                background: isDark
-                  ? 'linear-gradient(90deg,#ffffff,#34d399)'
-                  : 'linear-gradient(90deg,#0a0e1a,#059669)',
-                WebkitBackgroundClip:'text',
-                WebkitTextFillColor:'transparent',
-                backgroundClip:'text',
-              }}>
+              <span className={`bg-clip-text text-transparent bg-gradient-to-r ${isDark ? 'from-white to-emerald-400' : 'from-[#0a0e1a] to-emerald-600'}`}>
                 Everything a serious trader needs
               </span>
             </h2>
@@ -574,7 +567,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
               </div>
               <h3 className="text-[32px] font-extrabold mb-4">
                 <span className={isDark ? 'text-white' : 'text-gray-900'}>Rich </span>
-                <span style={{background:'linear-gradient(90deg,#34d399,#38bdf8)', WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent', backgroundClip:'text'}}>
+                <span className="bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-sky-400">
                   Trade Journaling
                 </span>
               </h3>
@@ -648,7 +641,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
               </div>
               <h3 className="text-[32px] font-extrabold mb-4">
                 <span className={isDark ? 'text-white' : 'text-gray-900'}>Live </span>
-                <span style={{background:'linear-gradient(90deg,#38bdf8,#818cf8)', WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent', backgroundClip:'text'}}>
+                <span className="bg-clip-text text-transparent bg-gradient-to-r from-sky-400 to-violet-400">
                   Market Intelligence
                 </span>
               </h3>
@@ -722,7 +715,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
           <Reveal>
             <h2 className={`text-[36px] md:text-[48px] font-extrabold tracking-tight mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>
               See the Macro Score{' '}
-              <span style={{background:'linear-gradient(90deg,#34d399,#38bdf8)',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent',backgroundClip:'text'}}>
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-sky-400">
                 in Action
               </span>
             </h2>
@@ -786,8 +779,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
                     SAMPLE DATA
                   </span>
                 </div>
-                <p className="text-[52px] md:text-[60px] font-extrabold leading-none"
-                   style={{background:'linear-gradient(90deg,#34d399,#6ee7b7)',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent',backgroundClip:'text'}}>
+                <p className="text-[52px] md:text-[60px] font-extrabold leading-none bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-emerald-300">
                   +4.5
                 </p>
                 <p className={`text-[14px] mt-2 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Example output — score updates live from real economic data <span style={{display:'inline-block',width:8,height:8,borderRadius:'50%',backgroundColor:'#22c55e',verticalAlign:'middle',marginLeft:2}}/></p>
@@ -824,7 +816,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
               <span className="text-[11px] font-bold tracking-[0.18em] text-blue-400">RESEARCH</span>
             </div>
             <h2 className={`text-[36px] md:text-[42px] font-extrabold tracking-tight mb-3 ${isDark ? 'text-white' : 'text-gray-900'}`}>
-              <span style={{background:'linear-gradient(90deg,#38bdf8,#818cf8)',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent',backgroundClip:'text'}}>The Data Behind Better Trading</span>
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-sky-400 to-violet-400">The Data Behind Better Trading</span>
             </h2>
           </Reveal>
           <div className="grid md:grid-cols-3 gap-6 mb-6">
@@ -840,8 +832,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
                        borderColor: isDark ? 'rgba(59,130,246,0.15)' : 'rgba(59,130,246,0.12)',
                        boxShadow: isDark ? 'none' : '0 4px 20px rgba(0,0,0,0.05)',
                      }}>
-                  <p className="text-[52px] font-extrabold leading-none mb-3"
-                     style={{background:'linear-gradient(90deg,#38bdf8,#818cf8)',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent',backgroundClip:'text'}}>
+                  <p className="text-[52px] font-extrabold leading-none mb-3 bg-clip-text text-transparent bg-gradient-to-r from-sky-400 to-violet-400">
                     {stat}
                   </p>
                   <p className={`text-[13px] leading-relaxed ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>{desc}*</p>
@@ -861,7 +852,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
               <span className="text-[11px] font-bold tracking-[0.18em] text-amber-400">TESTIMONIALS</span>
             </div>
             <h2 className={`text-[42px] font-extrabold tracking-tight ${isDark ? 'text-white' : 'text-gray-900'}`}>
-              <span style={{background:'linear-gradient(90deg,#34d399,#059669)',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent',backgroundClip:'text'}}>What traders are saying</span>
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-emerald-600">What traders are saying</span>
             </h2>
           </Reveal>
           <div className="grid md:grid-cols-3 gap-6">
@@ -915,7 +906,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
               <span className="text-[11px] font-bold tracking-[0.18em] text-emerald-400">PRICING</span>
             </div>
             <h2 className={`text-[42px] font-extrabold tracking-tight mb-6 ${isDark ? 'text-white' : 'text-gray-900'}`}>
-              <span style={{background:'linear-gradient(90deg,#34d399,#059669)',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent',backgroundClip:'text'}}>Plans for Every Trader</span>
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-emerald-600">Plans for Every Trader</span>
             </h2>
             {/* Toggle */}
             <div className="inline-flex items-center gap-1 p-1 rounded-xl border"
@@ -1150,7 +1141,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
             <div className="flex-[3] text-center lg:text-left">
               <h2 className={`text-[38px] md:text-[50px] font-extrabold tracking-tight leading-[1.08] mb-5 ${isDark ? 'text-white' : 'text-gray-900'}`}>
                 Your Next Trade Could Be<br />
-                <span style={{background:'linear-gradient(90deg,#34d399,#38bdf8)',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent',backgroundClip:'text'}}>
+                <span className="bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-sky-400">
                   Your Best Trade.
                 </span>
               </h2>
