@@ -894,182 +894,227 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
       </section>
 
       {/* ═══════════════════════════ PRICING ═══════════════════════════ */}
-      <section id="pricing" className={`py-24 px-6 transition-colors duration-300 ${isDark ? '' : 'bg-[#eef1f7]'}`} style={isDark ? {background:'#07090f'} : {}}>
-        <div className="max-w-7xl mx-auto">
+      <section id="pricing" className="py-24 px-6 transition-colors duration-300" style={{background: isDark ? '#07090f' : '#eef1f7'}}>
+        <div className="max-w-6xl mx-auto">
+
+          {/* Header */}
           <Reveal className="text-center mb-12">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-5 border"
                  style={{background:'rgba(59,130,246,0.07)', borderColor:'rgba(59,130,246,0.22)'}}>
               <span className="text-[11px] font-bold tracking-[0.18em] text-blue-400">PRICING</span>
             </div>
-            <h2 className={`text-[42px] font-extrabold tracking-tight mb-6 ${isDark ? 'text-white' : 'text-gray-900'}`}>
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#1d4ed8] to-[#06b6d4]">Plans for Every Trader</span>
+            <h2 className={`text-[42px] font-extrabold tracking-tight mb-3 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+              Plans for Every Trader
             </h2>
-            {/* Toggle */}
-            <div className="inline-flex items-center gap-1 p-1 rounded-xl border"
+            <p className={`text-[16px] mb-8 ${isDark ? 'text-gray-500' : 'text-gray-500'}`}>
+              Start free. Upgrade when you're ready.
+            </p>
+            {/* Billing toggle */}
+            <div className="inline-flex items-center p-1 rounded-xl border"
                  style={{
-                   background: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.03)',
-                   borderColor: isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.07)',
+                   background: isDark ? 'rgba(255,255,255,0.03)' : '#ffffff',
+                   borderColor: isDark ? 'rgba(255,255,255,0.08)' : '#e2e8f0',
+                   boxShadow: isDark ? 'none' : '0 1px 4px rgba(0,0,0,0.06)',
                  }}>
               <button onClick={() => setAnnual(false)}
-                      className={`px-5 py-2 rounded-lg text-[13px] font-semibold transition-all ${!annual ? (isDark ? 'text-white bg-white/[0.08]' : 'text-gray-900 bg-black/[0.06]') : (isDark ? 'text-gray-500 hover:text-gray-300' : 'text-gray-400 hover:text-gray-600')}`}>
+                      className="px-5 py-2 rounded-lg text-[13px] font-semibold transition-all"
+                      style={!annual
+                        ? {background: isDark ? 'rgba(255,255,255,0.10)' : '#f1f5f9', color: isDark ? '#fff' : '#0f172a'}
+                        : {color: isDark ? '#6b7280' : '#94a3b8'}}>
                 Monthly
               </button>
               <button onClick={() => setAnnual(true)}
-                      className={`flex items-center gap-2 px-5 py-2 rounded-lg text-[13px] font-semibold transition-all ${annual ? (isDark ? 'text-white bg-white/[0.08]' : 'text-gray-900 bg-black/[0.06]') : (isDark ? 'text-gray-500 hover:text-gray-300' : 'text-gray-400 hover:text-gray-600')}`}>
+                      className="flex items-center gap-2 px-5 py-2 rounded-lg text-[13px] font-semibold transition-all"
+                      style={annual
+                        ? {background: isDark ? 'rgba(255,255,255,0.10)' : '#f1f5f9', color: isDark ? '#fff' : '#0f172a'}
+                        : {color: isDark ? '#6b7280' : '#94a3b8'}}>
                 Yearly
-                <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-md text-blue-400 bg-blue-500/15">Save 17%</span>
+                <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full"
+                      style={{background: isDark ? 'rgba(59,130,246,0.18)' : 'rgba(59,130,246,0.10)', color:'#3b82f6'}}>
+                  Save 17%
+                </span>
               </button>
             </div>
           </Reveal>
 
-          {/* Founding member callout above grid */}
+          {/* Founding member callout */}
           {(spotsLeft ?? 0) > 0 && (
-            <div style={{
-              background: isDark
-                ? 'linear-gradient(135deg, rgba(245,158,11,0.15), rgba(245,158,11,0.05))'
-                : 'linear-gradient(135deg, rgba(245,158,11,0.12), rgba(245,158,11,0.04))',
-              border: '1px solid rgba(245,158,11,0.3)',
-              borderRadius: '10px',
-              padding: '14px 20px',
-              marginBottom: '24px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              gap: '12px',
-            }}>
-              <div>
-                <p className="text-[13px]">
-                  <Flame className="w-3.5 h-3.5 text-amber-400 inline-block mr-1" />{' '}<span style={{fontWeight:'bold', color:'#fbbf24'}}>FOUNDING MEMBER OFFER</span>{' '}
-                  — First 100 users get Pro for{' '}
-                  <span className={`font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>$1.99/month</span>{' '}
-                  (regularly <span className="line-through opacity-60">$9</span>)
-                </p>
-                <p className={`text-[12px] mt-0.5 ${isDark ? 'opacity-50' : 'opacity-60 text-gray-700'}`}>
-                  Only{' '}<span style={{color:'#fbbf24', fontWeight:'bold'}}>{spotsLeft}</span>{' '}spots remaining!
-                </p>
+            <Reveal>
+              <div className="rounded-2xl border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 px-6 py-4 mb-8"
+                   style={{
+                     background: isDark ? 'rgba(245,158,11,0.07)' : '#fffbeb',
+                     borderColor: isDark ? 'rgba(245,158,11,0.22)' : '#fde68a',
+                   }}>
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
+                       style={{background: isDark ? 'rgba(245,158,11,0.14)' : 'rgba(251,191,36,0.18)'}}>
+                    <Flame className="w-4.5 h-4.5 text-amber-400" />
+                  </div>
+                  <div>
+                    <p className={`text-[13px] font-bold ${isDark ? 'text-amber-300' : 'text-amber-800'}`}>
+                      Founding Member Offer — 78% off Pro
+                    </p>
+                    <p className={`text-[12px] mt-0.5 ${isDark ? 'text-amber-400/60' : 'text-amber-700'}`}>
+                      First 100 users lock in Pro for <span className="font-bold">$1.99/mo</span> (regular $9) ·{' '}
+                      <span className="font-semibold">{spotsLeft} of 100 spots left</span>
+                    </p>
+                  </div>
+                </div>
+                <div className={`shrink-0 flex items-center gap-1.5 text-[12px] ${isDark ? 'text-amber-400/60' : 'text-amber-700'}`}>
+                  <Clock className="w-3.5 h-3.5" />
+                  <span>Expires in:</span>
+                  <span className={`font-bold ${isDark ? 'text-amber-400' : 'text-amber-800'}`}>
+                    {countdown.d}d {countdown.h}h {countdown.m}m
+                  </span>
+                </div>
               </div>
-              <div className={`shrink-0 text-[12px] ${isDark ? '' : 'text-gray-600'}`} style={isDark ? {color:'rgba(255,255,255,0.6)'} : {}}>
-                Expires in:{' '}
-                <span style={{color:'#fbbf24', fontWeight:'bold'}}>
-                  {countdown.d}d {countdown.h}h {countdown.m}m
-                </span>
-              </div>
-            </div>
+            </Reveal>
           )}
 
-          <div className="grid md:grid-cols-3 gap-6">
+          {/* Plan cards */}
+          <div className="grid md:grid-cols-3 gap-5 items-start">
             {activePlans.map((plan, i) => (
-              <Reveal key={plan.name} delay={i * 0.12}>
+              <Reveal key={plan.name} delay={i * 0.10}>
                 <div
-                   className={`relative rounded-2xl overflow-visible border transition-all hover:-translate-y-1 ${plan.highlight ? 'border-blue-500/50' : ''}`}
+                   className={`relative rounded-2xl overflow-hidden border transition-all duration-300 hover:-translate-y-1 ${plan.highlight ? 'md:scale-[1.03]' : ''}`}
                    style={plan.highlight
-                     ? {background: isDark ? '#080f1a' : '#eff6ff', animation:'glowPulse 2.2s ease-in-out infinite', borderColor: undefined}
+                     ? {
+                         background: isDark ? '#070e1c' : '#ffffff',
+                         borderColor: '#3b82f6',
+                         borderWidth: '2px',
+                         boxShadow: isDark
+                           ? '0 0 0 1px rgba(59,130,246,0.15), 0 32px 64px rgba(0,0,0,0.55), 0 0 40px rgba(59,130,246,0.12)'
+                           : '0 20px 60px rgba(59,130,246,0.16), 0 4px 20px rgba(0,0,0,0.07)',
+                       }
                      : {
                          background: isDark ? '#0c1527' : '#ffffff',
-                         borderColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.07)',
-                         boxShadow: isDark ? 'none' : '0 4px 20px rgba(0,0,0,0.05)',
+                         borderColor: isDark ? 'rgba(255,255,255,0.06)' : '#e2e8f0',
+                         boxShadow: isDark ? 'none' : '0 4px 16px rgba(0,0,0,0.04)',
                        }}>
-                  {/* Badge */}
-                  {plan.highlight ? (
-                    <div className="absolute -top-5 left-0 right-0 flex justify-center">
-                      <span className="px-3 py-1 rounded-full text-[11px] font-bold text-white flex items-center gap-1"
-                            style={{background:'linear-gradient(90deg,#f59e0b,#ef4444)'}}>
-                        <Flame className="w-2.5 h-2.5" /> {plan.badge}
-                      </span>
-                    </div>
-                  ) : plan.badge ? (
-                    <div className="absolute -top-4 left-0 right-0 flex justify-center">
-                      <span className="px-4 py-1 rounded-full text-[11px] font-bold text-white"
-                            style={{background:'linear-gradient(90deg,#3b82f6,#6366f1)'}}>
-                        {plan.badge}
-                      </span>
-                    </div>
-                  ) : null}
 
-                  <div className="p-8 pt-12">
-                    <h3 className={`text-[22px] font-bold mb-1 ${plan.highlight ? 'text-blue-400' : (isDark ? 'text-white' : 'text-gray-900')}`}>{plan.name}</h3>
-                <p className={`text-[13px] mb-4 ${isDark ? 'text-gray-500' : 'text-gray-600'}`}>{plan.desc}</p>
+                  {/* Pro card — blue gradient top strip */}
+                  {plan.highlight && (
+                    <div className="h-[3px] w-full"
+                         style={{background:'linear-gradient(90deg,#1d4ed8,#3b82f6,#06b6d4)'}} />
+                  )}
 
-                    {/* Price — show discount for plans with originalMonthly */}
+                  {/* Card badge (top-right inline) */}
+                  {plan.badge && (
+                    <div className="absolute top-5 right-5 z-10">
+                      {plan.highlight ? (
+                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold text-white"
+                              style={{background:'linear-gradient(90deg,#f59e0b,#ef4444)'}}>
+                          <Flame className="w-2.5 h-2.5" /> {plan.badge}
+                        </span>
+                      ) : (
+                        <span className="px-2.5 py-1 rounded-full text-[10px] font-bold text-white"
+                              style={{background:'linear-gradient(90deg,#3b82f6,#6366f1)'}}>
+                          {plan.badge}
+                        </span>
+                      )}
+                    </div>
+                  )}
+
+                  <div className="p-7">
+                    {/* Plan name */}
+                    <h3 className={`text-[20px] font-bold mb-1 ${plan.highlight ? (isDark ? 'text-blue-400' : 'text-blue-600') : (isDark ? 'text-white' : 'text-gray-900')}`}>
+                      {plan.name}
+                    </h3>
+                    <p className={`text-[13px] mb-6 ${isDark ? 'text-gray-500' : 'text-gray-500'}`}>{plan.desc}</p>
+
+                    {/* Price block */}
                     {plan.originalMonthly ? (
-                      <div className="mb-1">
-                        <div className="flex items-center gap-2 mb-1">
-                          <span className={`text-[15px] line-through ${isDark ? 'text-gray-600' : 'text-gray-400'}`}>${annual && plan.originalYearly ? plan.originalYearly : plan.originalMonthly}</span>
-                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-md"
-                                style={{background:'rgba(245,158,11,0.18)', color:'#fbbf24'}}>
+                      <div className="mb-5">
+                        <div className="flex items-center gap-2 mb-2">
+                          <span className={`text-[13px] line-through ${isDark ? 'text-gray-600' : 'text-gray-400'}`}>
+                            ${annual && plan.originalYearly ? plan.originalYearly : plan.originalMonthly}
+                          </span>
+                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-md border"
+                                style={{background:'rgba(245,158,11,0.12)', borderColor:'rgba(245,158,11,0.25)', color:'#f59e0b'}}>
                             {plan.discountBadge}
                           </span>
                         </div>
-                        {/* Price with drop-in + savings tooltip */}
-                        <div className="relative group flex items-end gap-1">
-                          <span className={`text-[16px] mb-3 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>$</span>
+                        <div className="flex items-end gap-1 mb-2">
+                          <span className={`text-[15px] mb-2.5 font-medium ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>$</span>
                           <span key={`${plan.name}-${annual}`}
-                                className={`font-extrabold leading-none ${isDark ? 'text-white' : 'text-gray-900'} ${plan.highlight ? 'text-[68px]' : 'text-[48px]'}`}
-                                style={{animation: plan.highlight ? 'priceDrop 0.55s cubic-bezier(0.34,1.2,0.64,1) both' : 'priceReveal 0.2s ease'}}>
+                                className={`font-extrabold leading-none ${isDark ? 'text-white' : 'text-gray-900'} ${plan.highlight ? 'text-[60px]' : 'text-[44px]'}`}
+                                style={{animation:'priceDrop 0.55s cubic-bezier(0.34,1.2,0.64,1) both'}}>
                             {annual ? plan.yearly : plan.monthly}
                           </span>
-                          <span className={`text-[13px] mb-3 ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>/month</span>
-                          {plan.highlight && (
-                            <div className="absolute -top-9 left-1/2 -translate-x-1/2 px-3 py-1.5 rounded-lg text-[11px] font-semibold whitespace-nowrap pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-                                 style={{background:'rgba(59,130,246,0.18)', border:'1px solid rgba(59,130,246,0.35)', color:'#3b82f6'}}>
-                              You save $85/year vs regular price
-                            </div>
-                          )}
+                          <span className={`text-[12px] mb-3 ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>/mo</span>
                         </div>
                         {annual && plan.yearlyBilled && (
-                          <p className="text-[11px] text-blue-500/80 mt-1">Billed as ${plan.yearlyBilled}/year</p>
+                          <p className={`text-[11px] mb-1 ${isDark ? 'text-blue-400/70' : 'text-blue-600'}`}>
+                            Billed as ${plan.yearlyBilled}/year
+                          </p>
                         )}
                         {annual && (
-                          <span className="inline-block text-[10px] font-bold px-2 py-0.5 rounded-md text-blue-400 bg-blue-500/15 mt-1">Save 17%</span>
+                          <span className="inline-block text-[10px] font-bold px-2 py-0.5 rounded-full border text-blue-500 mb-1"
+                                style={{background:'rgba(59,130,246,0.08)', borderColor:'rgba(59,130,246,0.20)'}}>
+                            Save 17%
+                          </span>
                         )}
-                        {plan.highlight && (spotsLeft ?? 0) > 0 ? (
-                          <>
-                            <p className="text-[11px] text-amber-500/90 mt-1 font-semibold">
-                              <Flame className="w-3 h-3 inline-block mr-0.5" /> Founding price · {spotsLeft} spots left
+                        {plan.highlight && (spotsLeft ?? 0) > 0 && (
+                          <div className="mt-3 pt-3 border-t space-y-1.5"
+                               style={{borderColor: isDark ? 'rgba(255,255,255,0.06)' : '#f1f5f9'}}>
+                            <p className="text-[11px] font-semibold text-amber-500 flex items-center gap-1">
+                              <Flame className="w-3 h-3 shrink-0" /> Founding price · {spotsLeft} spots left
                             </p>
-                            <div className="flex items-center gap-2 mt-1 mb-5">
-                              <span className={`text-[10px] flex items-center gap-1 ${isDark ? 'text-gray-500' : 'text-gray-400'}`}><Clock className="w-3 h-3" /> Offer expires in:</span>
-                              <span className="inline-flex items-center gap-1 text-[11px] font-bold" style={{color:'#fbbf24'}}>
-                                {[{v: countdown.d, u:'d'},{v: countdown.h, u:'h'},{v: countdown.m, u:'m'},{v: countdown.s, u:'s'}].map(({v, u}) => (
-                                  <span key={u} className="inline-flex items-center gap-0.5">
-                                    <span key={`${u}-${v}`} style={{display:'inline-block', animation:'digitFlip 0.35s ease'}}>{v}</span>{u}
-                                  </span>
-                                ))}
+                            <div className="flex items-center gap-1.5">
+                              <Clock className={`w-3 h-3 shrink-0 ${isDark ? 'text-gray-500' : 'text-gray-400'}`} />
+                              <span className={`text-[10px] ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>Expires:</span>
+                              <span className="text-[11px] font-bold" style={{color:'#f59e0b'}}>
+                                {countdown.d}d {countdown.h}h {countdown.m}m {countdown.s}s
                               </span>
                             </div>
-                          </>
-                        ) : (
-                          !annual && <p className={`text-[11px] mb-6 ${isDark ? 'text-gray-600' : 'text-gray-400'}`}>billed monthly</p>
+                          </div>
                         )}
                       </div>
                     ) : (
-                      <>
-                        <div className="flex items-end gap-1 mb-1">
-                          <span className={`text-[16px] mb-2 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>$</span>
-                          <span className={`text-[48px] font-extrabold leading-none ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                      <div className="mb-5">
+                        <div className="flex items-end gap-1 mb-2">
+                          <span className={`text-[15px] mb-2.5 font-medium ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>$</span>
+                          <span className={`text-[44px] font-extrabold leading-none ${isDark ? 'text-white' : 'text-gray-900'}`}>
                             {annual ? plan.yearly : plan.monthly}
                           </span>
-                          <span className={`text-[13px] mb-2 ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>/month</span>
+                          <span className={`text-[12px] mb-3 ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>/mo</span>
                         </div>
-                        <p className={`text-[11px] mb-6 ${isDark ? 'text-gray-600' : 'text-gray-400'}`}>
-                          {plan.yearly === 0 ? 'Free forever' : annual ? 'if billed yearly' : 'billed monthly'}
+                        <p className={`text-[11px] ${isDark ? 'text-gray-600' : 'text-gray-400'}`}>
+                          {plan.yearly === 0 ? 'Free forever' : annual ? 'Billed yearly' : 'Billed monthly'}
                         </p>
-                      </>
+                      </div>
                     )}
 
-                    <div className="space-y-3 mb-8">
+                    {/* Divider */}
+                    <div className="mb-5 border-t"
+                         style={{borderColor: isDark ? 'rgba(255,255,255,0.06)' : '#f1f5f9'}} />
+
+                    {/* Features list */}
+                    <div className="space-y-2.5 mb-7">
                       {plan.features.map(f => (
-                        <div key={f} className="flex items-center gap-3">
-                          <Check className="w-4 h-4 shrink-0 text-blue-400" />
-                          <span className={`text-[13px] ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>{f}</span>
+                        <div key={f} className="flex items-start gap-3">
+                          <div className="w-5 h-5 rounded-full flex items-center justify-center shrink-0 mt-px"
+                               style={{
+                                 background: plan.highlight
+                                   ? (isDark ? 'rgba(59,130,246,0.15)' : 'rgba(59,130,246,0.09)')
+                                   : (isDark ? 'rgba(255,255,255,0.06)' : '#f1f5f9'),
+                               }}>
+                            <Check className="w-2.5 h-2.5"
+                                   style={{color: plan.highlight ? '#3b82f6' : (isDark ? '#6b7280' : '#64748b')}} />
+                          </div>
+                          <span className={`text-[13px] leading-snug ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>{f}</span>
                         </div>
                       ))}
                     </div>
+
+                    {/* CTA button */}
                     <button onClick={onGetStarted}
-                            className="w-full py-3 rounded-xl text-[14px] font-semibold transition-all hover:brightness-110 text-white"
+                            className="w-full py-3.5 rounded-xl text-[14px] font-semibold transition-all hover:brightness-110 active:scale-[0.99]"
                             style={plan.highlight
-                              ? {background:'linear-gradient(135deg,#1d4ed8,#0284c7)', boxShadow:'0 4px 16px rgba(59,130,246,0.35)'}
-                              : {background: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)', border: isDark ? '1px solid rgba(255,255,255,0.08)' : '1px solid rgba(0,0,0,0.08)', color: isDark ? 'white' : '#374151'}}>
+                              ? {background:'linear-gradient(135deg,#1d4ed8,#0284c7)', color:'white', boxShadow:'0 4px 20px rgba(59,130,246,0.35)'}
+                              : isDark
+                                ? {background:'rgba(255,255,255,0.05)', border:'1px solid rgba(255,255,255,0.08)', color:'#e2e8f0'}
+                                : {background:'#f8fafc', border:'1px solid #e2e8f0', color:'#1e293b'}}>
                       {plan.highlight && (spotsLeft ?? 0) > 0 ? 'Claim Founding Price' : plan.cta}
                     </button>
                   </div>
@@ -1077,9 +1122,10 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
               </Reveal>
             ))}
           </div>
+
           {annual && (
-            <p className={`text-center mt-6 flex items-center justify-center gap-1.5 text-[13px] ${isDark ? '' : 'text-gray-400'}`} style={isDark ? {color:'rgba(255,255,255,0.35)'} : {}}>
-              <Info className="w-3.5 h-3.5 shrink-0" /> Yearly plan billed as one payment. Cancel anytime within 7 days for full refund.
+            <p className={`text-center mt-8 flex items-center justify-center gap-1.5 text-[12px] ${isDark ? 'text-gray-600' : 'text-gray-400'}`}>
+              <Info className="w-3.5 h-3.5 shrink-0" /> Yearly plan billed as one payment. Cancel anytime within 7 days for a full refund.
             </p>
           )}
         </div>
