@@ -13,7 +13,7 @@ body {
 
 /* Layered Dark theme base */
 .dark body {
-  background-color: #07090f;
+  background-color: #0a0a0a;
   color: #f0f4f8;
 }
 
@@ -55,12 +55,12 @@ code {
 
 /* Custom scrollbar — dark theme */
 html.dark ::-webkit-scrollbar-track {
-  background: #0B0E11;
+  background: #111111;
   border-radius: 4px;
 }
 
 html.dark ::-webkit-scrollbar-thumb {
-  background: #2B2F36;
+  background: #2b2b2b;
   border-radius: 4px;
 }
 
@@ -92,9 +92,9 @@ html.dark ::-webkit-scrollbar-thumb:hover {
 html.dark .animate-shimmer {
   background: linear-gradient(
     to right,
-    #15191E 4%,
-    #1C2128 25%,
-    #15191E 36%
+    #151515 4%,
+    #1c1c1c 25%,
+    #151515 36%
   );
   background-size: 1000px 100%;
 }

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+﻿import { useState, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import { BookOpen, List, BarChart2, Brain, X, RefreshCw, Activity, Fingerprint, TrendingUp, TrendingDown, ArrowRightLeft, Target, Shield, Clock, Layers, Zap, MessageSquare, Lightbulb, StickyNote, Camera, Sparkles, ChevronRight } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
@@ -216,7 +216,7 @@ function TradeDetailModal({ trade, onClose }) {
           {aiData && (
             <div>
               <SectionLabel icon={Sparkles} label="AI Analysis" />
-              <div className="rounded-xl overflow-hidden" style={{ border: '1px solid #0ea5e933', background: 'linear-gradient(135deg, #051525 0%, #030d1a 100%)' }}>
+              <div className="rounded-xl overflow-hidden" style={{ border: '1px solid #0ea5e933', background: 'linear-gradient(135deg, #0a0a0a 0%, #050505 100%)' }}>
                 <div className="p-4 space-y-3">
                   <div className="grid grid-cols-2 gap-3">
                     {aiData.psychology_score != null && (

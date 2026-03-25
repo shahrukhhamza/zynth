@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+﻿import { useState, useEffect, useRef, useCallback } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { API_URL } from '../config/api';
 import { getPublicStats } from '../utils/publicStats';
@@ -122,7 +122,7 @@ export default function LoginPage({ onSwitchToSignup, onBack, onForgotPassword }
   }
 
   return (
-    <div style={{display:'flex',height:'100vh',width:'100vw',overflow:'hidden',background:'#07090f',position:'relative'}}>
+    <div style={{display:'flex',height:'100vh',width:'100vw',overflow:'hidden',background:'#0a0a0a',position:'relative'}}>
 
       <style>{`
         @keyframes floatCard {
@@ -185,7 +185,7 @@ export default function LoginPage({ onSwitchToSignup, onBack, onForgotPassword }
       `}</style>
 
       {/* ── LEFT: Brand panel */}
-      <div style={{display: isMobile ? 'none' : 'flex', flex:1, flexDirection:'column', position:'relative', overflow:'hidden', minHeight:'100vh', background:'#07090f', animation:'panelFadeIn 0.6s ease'}}>
+      <div style={{display: isMobile ? 'none' : 'flex', flex:1, flexDirection:'column', position:'relative', overflow:'hidden', minHeight:'100vh', background:'#0a0a0a', animation:'panelFadeIn 0.6s ease'}}>
 
         {/* Orb 1 – bottom left */}
         <div className="pointer-events-none" style={{
@@ -310,7 +310,7 @@ export default function LoginPage({ onSwitchToSignup, onBack, onForgotPassword }
              display:'flex', flexDirection:'column',
              alignItems:'center',
              overflowY:'auto',
-             background: isMobile ? '#07090f' : '#0c1117',
+             background: isMobile ? '#0a0a0a' : '#111111',
              borderLeft: isMobile ? 'none' : '1px solid rgba(255,255,255,0.06)',
              padding: isMobile ? '32px 24px' : '48px',
              minHeight:'100vh',

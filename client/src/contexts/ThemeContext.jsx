@@ -42,17 +42,17 @@ export const ThemeProvider = ({ children }) => {
   const theme = {
     isDark,
     toggleTheme,
-    // ── Dark palette: true black backgrounds + blue accents (matches landing page) ───
-    // bg         → deepest layer  (#09090b  near-black)
-    // surface    → card / panel   (#111118  dark panel)
-    // surface2   → hover / inset  (#0c0c12  inner cells)
+    // ── Dark palette: pure black backgrounds + blue accents ───────────────────────
+    // bg         → deepest layer  (#0a0a0a  near-black, no blue tint)
+    // surface    → card / panel   (#111111  neutral dark panel)
+    // surface2   → hover / inset  (#0f0f0f  inner cells)
     // border     → subtle 1-px    rgba(255,255,255,0.07)
     // text       → primary text   (#f0f4f8)
     // muted      → secondary text (#8892a4  blue-tinted gray)
     // ────────────────────────────────────────────────────────────────
-    bg:       isDark ? '#09090b' : '#f5f7fb',
-    surface:  isDark ? '#111118' : '#ffffff',
-    surface2: isDark ? '#0c0c12' : '#eef2f7',
+    bg:       isDark ? '#0a0a0a' : '#f5f7fb',
+    surface:  isDark ? '#111111' : '#ffffff',
+    surface2: isDark ? '#0f0f0f' : '#eef2f7',
     border:   isDark ? 'rgba(255,255,255,0.07)' : '#d6dde8',
 
     // Text colors

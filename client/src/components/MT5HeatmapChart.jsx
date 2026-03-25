@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback, useRef, useEffect } from 'react';
+﻿import { useState, useMemo, useCallback, useRef, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, TrendingUp, TrendingDown, AlertTriangle, Target, Inbox } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 
@@ -237,7 +237,7 @@ function CellModal({ cell, mode, onClose }) {
     >
       <div
         style={{
-          background: '#0f1923', border: '1px solid #1e2d3d', borderRadius: 14,
+          background: '#141414', border: '1px solid #1e1e1e', borderRadius: 14,
           padding: '22px 26px', width: 310, boxShadow: '0 24px 60px rgba(0,0,0,0.7)',
         }}
         onClick={e => e.stopPropagation()}
@@ -264,7 +264,7 @@ function CellModal({ cell, mode, onClose }) {
             { label: 'Win Rate',  val: `${(cell.win_rate ?? 0).toFixed(0)}%`, color: '#0ea5e9' },
             { label: 'Avg Trade', val: fmt$(cell.avg_trade ?? 0),          color: (cell.avg_trade ?? 0) >= 0 ? '#4ade80' : '#f87171' },
           ].map(m => (
-            <div key={m.label} style={{ background: '#0b1322', borderRadius: 8, padding: '10px 12px' }}>
+            <div key={m.label} style={{ background: '#111111', borderRadius: 8, padding: '10px 12px' }}>
               <div style={{ color: '#64748b', fontSize: 11, marginBottom: 3 }}>{m.label}</div>
               <div style={{ color: m.color, fontWeight: 700, fontSize: 14 }}>{m.val}</div>
             </div>
@@ -277,7 +277,7 @@ function CellModal({ cell, mode, onClose }) {
             <div style={{ color: '#64748b', fontSize: 11, marginBottom: 6 }}>OCCURRED ON</div>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5 }}>
               {cell.dates.slice(0, 12).map(d => (
-                <span key={d} style={{ background: '#1e2d3d', color: '#94a3b8', borderRadius: 5, padding: '2px 8px', fontSize: 11 }}>
+                <span key={d} style={{ background: '#1e1e1e', color: '#94a3b8', borderRadius: 5, padding: '2px 8px', fontSize: 11 }}>
                   {d}
                 </span>
               ))}
@@ -355,10 +355,10 @@ export default function MT5HeatmapChart({ trades = [], heatmap: legacyHeatmap = 
 
   // Theme colours
   const isDark = theme !== 'light';
-  const bg0    = isDark ? '#060a12' : '#f8fafc';
-  const bg1    = isDark ? '#0b1322' : '#ffffff';
-  const bg2    = isDark ? '#111827' : '#f1f5f9';
-  const border = isDark ? '#1e2d3d' : '#e2e8f0';
+  const bg0    = isDark ? '#090909' : '#f8fafc';
+  const bg1    = isDark ? '#111111' : '#ffffff';
+  const bg2    = isDark ? '#141414' : '#f1f5f9';
+  const border = isDark ? '#1e1e1e' : '#e2e8f0';
   const text0  = isDark ? '#e2e8f0' : '#1e293b';
   const text1  = isDark ? '#94a3b8' : '#64748b';
 
@@ -488,7 +488,7 @@ export default function MT5HeatmapChart({ trades = [], heatmap: legacyHeatmap = 
                   style={{
                     width: CELL_W + 3, flexShrink: 0,
                     background: sess.color, opacity: 0.55,
-                    borderLeft: prevSess && prevSess.label !== sess.label ? '2px solid #0b1322' : 'none',
+                    borderLeft: prevSess && prevSess.label !== sess.label ? '2px solid #111111' : 'none',
                   }}
                 />
               );

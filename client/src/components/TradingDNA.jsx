@@ -1,4 +1,4 @@
-/**
+﻿/**
  * TradingDNA.jsx
  * Elite-only: deep AI-generated personality profile for the trader.
  * Generates once per month from all journal data.
@@ -107,7 +107,7 @@ function downloadDnaCard(archetype, traits, stats) {
 
   // Background
   const bg = ctx.createLinearGradient(0, 0, W, H);
-  bg.addColorStop(0, '#0a0f1e');
+  bg.addColorStop(0, '#0a0a0a');
   bg.addColorStop(1, '#071210');
   ctx.fillStyle = bg;
   ctx.fillRect(0, 0, W, H);
@@ -181,7 +181,7 @@ function downloadDnaCard(archetype, traits, stats) {
   });
 
   // Footer
-  ctx.fillStyle = '#111827';
+  ctx.fillStyle = '#141414';
   ctx.fillRect(0, H - 36, W, 36);
   ctx.fillStyle = '#4b5563';
   ctx.font = '11px system-ui, sans-serif';

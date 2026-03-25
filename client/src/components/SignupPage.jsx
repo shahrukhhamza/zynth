@@ -151,7 +151,7 @@ export default function SignupPage({ onSwitchToLogin, onBack }) {
   }
 
   return (
-    <div style={{display:'flex',height:'100vh',width:'100vw',overflow:'hidden',background:'#07090f',position:'relative'}}>
+    <div style={{display:'flex',height:'100vh',width:'100vw',overflow:'hidden',background:'#0a0a0a',position:'relative'}}>
 
       <style>{`
         @keyframes formAppear {
@@ -218,7 +218,7 @@ export default function SignupPage({ onSwitchToLogin, onBack }) {
       {/* â”€â”€ Panels â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
 
         {/* â”€â”€ LEFT: Brand panel â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
-        <div style={{display: isMobile ? 'none' : 'flex', flex:1, flexDirection:'column', position:'relative', overflow:'hidden', minHeight:'100vh', background:'#07090f', animation:'panelFadeIn 0.6s ease'}}>
+        <div style={{display: isMobile ? 'none' : 'flex', flex:1, flexDirection:'column', position:'relative', overflow:'hidden', minHeight:'100vh', background:'#0a0a0a', animation:'panelFadeIn 0.6s ease'}}>
 
           {/* Orb 1 – bottom left */}
           <div className="pointer-events-none" style={{
@@ -343,7 +343,7 @@ export default function SignupPage({ onSwitchToLogin, onBack }) {
                display:'flex', flexDirection:'column',
                alignItems:'center',
                overflowY:'auto',
-               background: isMobile ? '#07090f' : '#0c1117',
+               background: isMobile ? '#0a0a0a' : '#111111',
                borderLeft: isMobile ? 'none' : '1px solid rgba(255,255,255,0.07)',
                padding: isMobile ? '24px 20px' : '24px 44px',
                minHeight:'100vh',

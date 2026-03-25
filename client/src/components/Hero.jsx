@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { motion } from 'framer-motion';
 import { Flame, ArrowRight, Shield, Zap, Bot, Globe } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
@@ -12,7 +12,7 @@ function HeroDashboardMockup({ isDark }) {
       transition={{ delay: 0.6, duration: 0.8 }}
       className={`relative rounded-2xl overflow-hidden border backdrop-blur-xl ${
         isDark
-          ? 'border-white/10 bg-[#070b14]/80 shadow-[0_40px_120px_rgba(0,0,0,0.7)]'
+          ? 'border-white/10 bg-[#0a0a0a]/80 shadow-[0_40px_120px_rgba(0,0,0,0.7)]'
           : 'border-blue-100/80 bg-[#131c30] shadow-[0_24px_80px_rgba(0,0,0,0.22),0_4px_24px_rgba(59,130,246,0.14)]'
       }`}
     >

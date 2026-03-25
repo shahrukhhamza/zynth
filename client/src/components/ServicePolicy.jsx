@@ -1,4 +1,4 @@
-import { ArrowLeft, Zap, Clock, CheckCircle2, Server } from 'lucide-react';
+﻿import { ArrowLeft, Zap, Clock, CheckCircle2, Server } from 'lucide-react';
 
 function Section({ id, title, children }) {
   return (
@@ -19,11 +19,11 @@ export default function ServicePolicy({ onBack }) {
   };
 
   return (
-    <div style={{ backgroundColor: '#060a12', minHeight: '100vh', color: '#e2e8f0' }}>
+    <div style={{ backgroundColor: '#0a0a0a', minHeight: '100vh', color: '#e2e8f0' }}>
       {/* Sticky header */}
       <div style={{
         position: 'sticky', top: 0, zIndex: 50,
-        backgroundColor: 'rgba(6,10,18,0.95)',
+        backgroundColor: 'rgba(10,10,10,0.95)',
         backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)',
         borderBottom: '1px solid rgba(16,185,129,0.15)',
       }}>

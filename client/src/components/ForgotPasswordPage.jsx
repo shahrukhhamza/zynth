@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import axios from 'axios';
 import { API_URL } from '../config/api';
 import { TrendingUp, TrendingDown, AlertCircle, CheckCircle2, Loader2, Mail, ArrowLeft, Shield, BarChart2, Activity } from 'lucide-react';
@@ -39,7 +39,7 @@ export default function ForgotPasswordPage({ onBack }) {
   }
 
   return (
-    <div className="h-screen overflow-hidden flex flex-col bg-[#060a12]">
+    <div className="h-screen overflow-hidden flex flex-col bg-[#0a0a0a]">
       <style>{`
         @keyframes floatCard {
           0%,100% { transform: translateY(0px);   }
@@ -66,7 +66,7 @@ export default function ForgotPasswordPage({ onBack }) {
 
       {/* ── Top nav ─────────────────────────────────────────────────────── */}
       <div className="shrink-0 flex items-center justify-between px-8 h-[52px] border-b border-white/[0.06]"
-           style={{background:'rgba(6,10,18,0.98)'}}>
+           style={{background:'rgba(10,10,10,0.98)'}}>
         <button onClick={onBack}
                 className="group flex items-center gap-2 text-[13px] font-medium text-gray-400 hover:text-white transition-all duration-200 px-3 py-1.5 rounded-lg hover:bg-white/[0.05]">
           <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-0.5" />
@@ -83,7 +83,7 @@ export default function ForgotPasswordPage({ onBack }) {
 
         {/* ── LEFT: Decorative animated panel ─────────────────────────── */}
         <div className="hidden lg:flex flex-col flex-1 relative overflow-hidden"
-             style={{background:'linear-gradient(150deg,#060e1c 0%,#060c18 55%,#07111f 100%)'}}>
+             style={{background:'linear-gradient(150deg,#090909 0%,#090909 55%,#0a0a0a 100%)'}}>
 
           <div className="absolute inset-0 pointer-events-none"
                style={{backgroundImage:'linear-gradient(rgba(16,185,129,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(16,185,129,0.04) 1px,transparent 1px)',backgroundSize:'60px 60px'}} />
@@ -118,7 +118,7 @@ export default function ForgotPasswordPage({ onBack }) {
             <div key={t.sym} className="fp-ticker-float absolute"
                  style={{top:t.top,left:t.left,'--dur':t.dur,'--delay':t.delay}}>
               <div className="flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl"
-                   style={{background:'rgba(9,17,32,0.88)',border:'1px solid rgba(255,255,255,0.07)',backdropFilter:'blur(12px)',boxShadow:'0 8px 32px rgba(0,0,0,0.45)'}}>
+                   style={{background:'rgba(10,10,10,0.88)',border:'1px solid rgba(255,255,255,0.07)',backdropFilter:'blur(12px)',boxShadow:'0 8px 32px rgba(0,0,0,0.45)'}}>
                 <div className="flex flex-col leading-none">
                   <span className="text-[9px] font-bold tracking-[0.18em] text-gray-500 mb-0.5">{t.sym}</span>
                   <span className="text-[14px] font-bold text-white">{t.val}</span>
@@ -132,7 +132,7 @@ export default function ForgotPasswordPage({ onBack }) {
           ))}
 
           <div className="absolute bottom-0 left-0 right-0 h-60 pointer-events-none z-[5]"
-               style={{background:'linear-gradient(to bottom, transparent 0%, rgba(6,12,24,0.85) 60%, #060c18 100%)'}} />
+               style={{background:'linear-gradient(to bottom, transparent 0%, rgba(10,10,10,0.85) 60%, #090909 100%)'}} />
 
           <div className="absolute bottom-0 left-0 right-0 p-10 z-10">
             <div className="flex items-center gap-2 mb-5">
@@ -168,7 +168,7 @@ export default function ForgotPasswordPage({ onBack }) {
 
         {/* ── RIGHT: Form panel ────────────────────────────────────────── */}
         <div className="w-full lg:w-[460px] shrink-0 flex flex-col h-full items-center justify-center relative overflow-hidden"
-             style={{borderLeft:'1px solid rgba(255,255,255,0.04)',background:'linear-gradient(180deg,#07101e 0%,#060a12 100%)'}}>
+             style={{borderLeft:'1px solid rgba(255,255,255,0.04)',background:'linear-gradient(180deg,#0a0a0a 0%,#0a0a0a 100%)'}}>
 
           <div className="pointer-events-none absolute -top-16 left-1/2 -translate-x-1/2 w-64 h-36"
                style={{background:'radial-gradient(ellipse,rgba(16,185,129,0.13) 0%,transparent 70%)'}} />
@@ -178,7 +178,7 @@ export default function ForgotPasswordPage({ onBack }) {
             {/* Card */}
             <div className="rounded-2xl p-px"
                  style={{background:'linear-gradient(135deg,rgba(16,185,129,0.18) 0%,rgba(255,255,255,0.04) 50%,rgba(59,130,246,0.09) 100%)',boxShadow:'0 24px 60px rgba(0,0,0,0.55)'}}>
-              <div className="relative rounded-2xl px-5 py-5 bg-[#0b1322]">
+              <div className="relative rounded-2xl px-5 py-5 bg-[#111111]">
                 <div className="absolute top-0 left-[12%] right-[12%] h-px"
                      style={{background:'linear-gradient(90deg,transparent,rgba(16,185,129,0.35),transparent)'}} />
 
@@ -221,7 +221,7 @@ export default function ForgotPasswordPage({ onBack }) {
                           <input
                             type="email" autoComplete="email" value={email}
                             onChange={e => setEmail(e.target.value)} required placeholder="you@example.com"
-                            className="w-full pl-8 pr-4 py-[8px] rounded-xl text-[13px] text-white placeholder-gray-700 bg-[#0d1728] border border-white/[0.06] focus:outline-none focus:border-emerald-500/40 focus:ring-2 focus:ring-emerald-500/[0.09] transition-all duration-200"
+                            className="w-full pl-8 pr-4 py-[8px] rounded-xl text-[13px] text-white placeholder-gray-700 bg-[#131313] border border-white/[0.06] focus:outline-none focus:border-emerald-500/40 focus:ring-2 focus:ring-emerald-500/[0.09] transition-all duration-200"
                           />
                         </div>
                       </div>

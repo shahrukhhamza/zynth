@@ -1,4 +1,4 @@
-import { ArrowLeft, Shield, AlertTriangle, FileText } from 'lucide-react';
+ï»¿import { ArrowLeft, Shield, AlertTriangle, FileText } from 'lucide-react';
 
 export default function TermsOfService({ onBack }) {
   const handleBack = () => {
@@ -10,14 +10,14 @@ export default function TermsOfService({ onBack }) {
   };
 
   return (
-    <div style={{ backgroundColor: '#060a12', minHeight: '100vh', color: '#e2e8f0' }}>
+    <div style={{ backgroundColor: '#0a0a0a', minHeight: '100vh', color: '#e2e8f0' }}>
       {/* Sticky header */}
       <div
         style={{
           position: 'sticky',
           top: 0,
           zIndex: 50,
-          backgroundColor: 'rgba(6,10,18,0.95)',
+          backgroundColor: 'rgba(10,10,10,0.95)',
           backdropFilter: 'blur(12px)',
           WebkitBackdropFilter: 'blur(12px)',
           borderBottom: '1px solid rgba(16,185,129,0.15)',
@@ -98,7 +98,7 @@ export default function TermsOfService({ onBack }) {
               <p style={{ fontSize: 12, color: '#d1d5db', lineHeight: 1.7 }}>
                 Trading foreign exchange, commodities (including gold), and other financial instruments involves substantial risk of loss and is not suitable for all investors.
                 Past performance is not indicative of future results. You may lose all or more than your initial investment.
-                Zynth provides information tools only — nothing on this platform constitutes financial advice, investment recommendations, or solicitation to trade.
+                Zynth provides information tools only ï¿½ nothing on this platform constitutes financial advice, investment recommendations, or solicitation to trade.
               </p>
             </div>
           </div>
@@ -125,7 +125,7 @@ export default function TermsOfService({ onBack }) {
             <p>Zynth is <strong style={{ color: '#f87171' }}>not a brokerage, investment advisor, financial planner, or trading system</strong>. No content on this platform should be construed as a recommendation to buy, sell, or hold any financial instrument.</p>
           </Section>
 
-          {/* Section 3 — AI disclaimer */}
+          {/* Section 3 ï¿½ AI disclaimer */}
           <Section id="ai" title="3. AI Analysis Disclaimer">
             <div
               style={{
@@ -163,7 +163,7 @@ export default function TermsOfService({ onBack }) {
             <p>Zynth is not liable for any trading losses resulting from reliance on data displayed on this platform.</p>
           </Section>
 
-          {/* Section 5 — Risk warning */}
+          {/* Section 5 ï¿½ Risk warning */}
           <Section id="risk" title="5. Risk Warning for Trading">
             <div
               style={{
@@ -204,7 +204,7 @@ export default function TermsOfService({ onBack }) {
           {/* Section 7 */}
           <Section id="advisory" title="7. No Advisory Relationship">
             <p>Use of Zynth does not create any advisory, fiduciary, or professional relationship between you and Zynth or its operators. Zynth is not a Registered Investment Advisor (RIA), broker-dealer, or financial institution in any jurisdiction.</p>
-            <p>Nothing communicated through this platform — including AI summaries, economic reports, chatbot responses, or any other content — constitutes professional financial, legal, or tax advice.</p>
+            <p>Nothing communicated through this platform ï¿½ including AI summaries, economic reports, chatbot responses, or any other content ï¿½ constitutes professional financial, legal, or tax advice.</p>
           </Section>
 
           {/* Section 8 */}
@@ -237,13 +237,13 @@ export default function TermsOfService({ onBack }) {
             <p>Economic data, news, and market data may be subject to third-party licenses and terms of their respective providers.</p>
           </Section>
 
-          {/* Section 11 — Privacy */}
+          {/* Section 11 ï¿½ Privacy */}
           <Section id="privacy" title="11. Privacy and Data">
             <p>Zynth collects the following data to operate the service:</p>
             <ul>
               <li><strong style={{ color: '#e2e8f0' }}>Account data:</strong> name, email address, hashed password</li>
               <li><strong style={{ color: '#e2e8f0' }}>Usage data:</strong> feature usage counts for quota management (AI analysis requests, screenshot uploads)</li>
-              <li><strong style={{ color: '#e2e8f0' }}>Journal data:</strong> trade records you manually enter or upload — stored locally on our server</li>
+              <li><strong style={{ color: '#e2e8f0' }}>Journal data:</strong> trade records you manually enter or upload ï¿½ stored locally on our server</li>
               <li><strong style={{ color: '#e2e8f0' }}>Consent records:</strong> timestamp of when you accepted these terms</li>
             </ul>
             <p>We do not sell, rent, or share your personal data with third parties for marketing purposes.</p>

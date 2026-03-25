@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import {
   ArrowLeft, ChevronLeft, ChevronRight, Maximize2, X,
   MessageSquare, Sparkles, Camera,
@@ -300,7 +300,7 @@ export default function TradeDetailPage({ trade, trades, tradeIndex, onBack, onN
             <div
               className="rounded-[calc(1rem-1px)] flex items-center gap-3.5 px-5 py-3.5"
               style={{
-                backgroundColor: theme.isDark ? '#040d18' : '#eff9ff',
+                backgroundColor: theme.isDark ? '#050505' : '#eff9ff',
               }}
             >
               {/* Icon */}
@@ -492,7 +492,7 @@ export default function TradeDetailPage({ trade, trades, tradeIndex, onBack, onN
                 style={{
                   border: '1px solid rgba(14,165,233,0.22)',
                   background: theme.isDark
-                    ? 'linear-gradient(160deg, #030d1a 0%, #051525 100%)'
+                    ? 'linear-gradient(160deg, #050505 0%, #0a0a0a 100%)'
                     : 'linear-gradient(160deg, #eff9ff 0%, #f0f9ff 100%)',
                 }}
               >

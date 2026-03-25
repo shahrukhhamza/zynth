@@ -336,7 +336,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
   }
 
   return (
-    <div className={`min-h-screen overflow-x-hidden transition-colors duration-300 ${isDark ? 'bg-[#07090f] text-white' : 'bg-[#f4f6f9] text-[#0a0e1a]'}`}>
+    <div className={`min-h-screen overflow-x-hidden transition-colors duration-300 ${isDark ? 'bg-[#0a0a0a] text-white' : 'bg-[#f4f6f9] text-[#0a0e1a]'}`}>
 
       {/* ── Custom cursor layers ────────────────────────────────────────── */}
       {/* Full-page ambient glow that follows mouse */}
@@ -613,12 +613,12 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
             <div className="flex-1 w-full">
               <div className="rounded-2xl border overflow-hidden"
                    style={{
-                     background: isDark ? '#0c1527' : '#ffffff',
+                     background: isDark ? '#141414' : '#ffffff',
                      borderColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.07)',
                      boxShadow: isDark ? '0 20px 60px rgba(0,0,0,0.5)' : '0 20px 60px rgba(0,0,0,0.08)',
                    }}>
                 <div className="px-4 py-3 border-b flex items-center gap-2"
-                     style={{background: isDark ? '#0a1220' : '#f9fafb', borderColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.06)'}}>
+                     style={{background: isDark ? '#111111' : '#f9fafb', borderColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.06)'}}>
                   <div className="flex gap-1.5">
                     <div className="w-2.5 h-2.5 rounded-full bg-red-500/60" />
                     <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/60" />
@@ -696,12 +696,12 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
             <div className="flex-1 w-full">
               <div className="rounded-2xl border overflow-hidden"
                    style={{
-                     background: isDark ? '#0c1527' : '#ffffff',
+                     background: isDark ? '#141414' : '#ffffff',
                      borderColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.07)',
                      boxShadow: isDark ? '0 20px 60px rgba(0,0,0,0.5)' : '0 20px 60px rgba(0,0,0,0.08)',
                    }}>
                 <div className="px-4 py-3 border-b flex items-center gap-2"
-                     style={{background: isDark ? '#0a1220' : '#f9fafb', borderColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.06)'}}>
+                     style={{background: isDark ? '#111111' : '#f9fafb', borderColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.06)'}}>
                   <div className="flex gap-1.5">
                     <div className="w-2.5 h-2.5 rounded-full bg-red-500/60" />
                     <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/60" />
@@ -767,7 +767,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
       </section>
 
       {/* ═══════════════════════════ FEATURE CARDS ═══════════════════════════ */}
-      <section className={`py-16 px-6 transition-colors duration-300`} style={{background: isDark ? '#060a16' : '#eef1f7'}}>
+      <section className={`py-16 px-6 transition-colors duration-300`} style={{background: isDark ? '#0a0a0a' : '#eef1f7'}}>
         <div className="max-w-7xl mx-auto">
           <div className="grid md:grid-cols-3 gap-6">
             {FEATURE_CARDS.map(({ Icon, title, desc, bullets }, i) => (
@@ -775,7 +775,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
                 <div
                    className="rounded-2xl p-7 border h-full hover:-translate-y-1 transition-all duration-300"
                    style={{
-                     background: isDark ? '#0c1527' : '#ffffff',
+                     background: isDark ? '#141414' : '#ffffff',
                      borderColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.07)',
                      boxShadow: isDark ? 'none' : '0 4px 20px rgba(0,0,0,0.05)',
                    }}>
@@ -799,7 +799,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
       </section>
 
       {/* ═══════════════════════ MACRO SCORE SHOWCASE ══════════════════════ */}
-      <section className="py-24 px-6 relative overflow-hidden transition-colors duration-300" style={{background: isDark ? '#07090f' : '#f4f6f9'}}>
+      <section className="py-24 px-6 relative overflow-hidden transition-colors duration-300" style={{background: isDark ? '#0a0a0a' : '#f4f6f9'}}>
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[500px]"
                style={{background: isDark ? 'radial-gradient(ellipse,rgba(16,185,129,0.08) 0%,transparent 65%)' : 'radial-gradient(ellipse,rgba(59,130,246,0.07) 0%,transparent 65%)'}} />
@@ -867,7 +867,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
                 }}>
                   <line x1="100" y1="100" x2="100" y2="20"
                         stroke={isDark ? 'white' : '#0a0e1a'} strokeWidth="2.5" strokeLinecap="round" />
-                  <circle cx="100" cy="100" r="5.5" fill={isDark ? '#07090f' : '#f4f6f9'} stroke={isDark ? 'white' : '#0a0e1a'} strokeWidth="2" />
+                  <circle cx="100" cy="100" r="5.5" fill={isDark ? '#0a0a0a' : '#f4f6f9'} stroke={isDark ? 'white' : '#0a0e1a'} strokeWidth="2" />
                 </g>
               </svg>
               {/* Score number */}
@@ -904,7 +904,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
       </section>
 
       {/* ═══════════════════════ STATS + TESTIMONIALS ═══════════════════════ */}
-      <section className="py-20 px-6 transition-colors duration-300" style={{background: isDark ? '#07090f' : '#f4f6f9'}}>
+      <section className="py-20 px-6 transition-colors duration-300" style={{background: isDark ? '#0a0a0a' : '#f4f6f9'}}>
         <div className="max-w-7xl mx-auto">
 
           {/* ── Stats cards ── */}
@@ -927,7 +927,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
               <Reveal key={stat} delay={i * 0.12}>
                 <div className="rounded-2xl p-7 text-center border"
                      style={{
-                       background: isDark ? '#0c1527' : '#ffffff',
+                       background: isDark ? '#141414' : '#ffffff',
                        borderColor: isDark ? 'rgba(59,130,246,0.15)' : 'rgba(59,130,246,0.12)',
                        boxShadow: isDark ? 'none' : '0 4px 20px rgba(0,0,0,0.05)',
                      }}>
@@ -963,7 +963,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
               <Reveal key={name} delay={i * 0.14}>
                 <div className="rounded-2xl p-7 border"
                      style={{
-                       background: isDark ? '#0c1527' : '#ffffff',
+                       background: isDark ? '#141414' : '#ffffff',
                        borderColor: isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.08)',
                        boxShadow: isDark ? 'none' : '0 2px 12px rgba(0,0,0,0.06)',
                      }}>
@@ -991,7 +991,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
       </section>
 
       {/* ═══════════════════════════ PRICING ═══════════════════════════ */}
-      <section id="pricing" className="py-24 px-6 transition-colors duration-300" style={{background: isDark ? '#07090f' : '#eef1f7'}}>
+      <section id="pricing" className="py-24 px-6 transition-colors duration-300" style={{background: isDark ? '#0a0a0a' : '#eef1f7'}}>
         <div className="max-w-6xl mx-auto">
 
           {/* Header */}
@@ -1076,7 +1076,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
                    className={`relative rounded-2xl overflow-hidden border transition-all duration-300 hover:-translate-y-1 ${plan.highlight ? 'md:scale-[1.03]' : ''}`}
                    style={plan.highlight
                      ? {
-                         background: isDark ? '#070e1c' : '#ffffff',
+                         background: isDark ? '#111111' : '#ffffff',
                          borderColor: '#3b82f6',
                          borderWidth: '2px',
                          boxShadow: isDark
@@ -1084,7 +1084,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
                            : '0 20px 60px rgba(59,130,246,0.16), 0 4px 20px rgba(0,0,0,0.07)',
                        }
                      : {
-                         background: isDark ? '#0c1527' : '#ffffff',
+                         background: isDark ? '#141414' : '#ffffff',
                          borderColor: isDark ? 'rgba(255,255,255,0.06)' : '#e2e8f0',
                          boxShadow: isDark ? 'none' : '0 4px 16px rgba(0,0,0,0.04)',
                        }}>
@@ -1229,7 +1229,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
       </section>
 
       {/* ═══════════════════════════ FAQ ═══════════════════════════ */}
-      <section id="faq" className="py-24 px-6 transition-colors duration-300" style={{background: isDark ? '#060a16' : '#f4f6f9'}}>
+      <section id="faq" className="py-24 px-6 transition-colors duration-300" style={{background: isDark ? '#0a0a0a' : '#f4f6f9'}}>
         <div className="max-w-5xl mx-auto">
           <Reveal className="text-center mb-14">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-5 border"
@@ -1244,7 +1244,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
               <Reveal key={i} delay={i * 0.05}>
                 <div className="rounded-2xl border overflow-hidden"
                      style={{
-                       background: isDark ? '#0c1527' : '#ffffff',
+                       background: isDark ? '#141414' : '#ffffff',
                        borderColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.07)',
                        boxShadow: isDark ? 'none' : '0 2px 12px rgba(0,0,0,0.04)',
                      }}>
@@ -1268,7 +1268,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
       </section>
 
       {/* ═══════════════════════════ BOTTOM CTA ═══════════════════════════ */}
-      <section className="py-24 px-6 relative overflow-hidden transition-colors duration-300" style={{background: isDark ? '#07090f' : '#eef1f7'}}>
+      <section className="py-24 px-6 relative overflow-hidden transition-colors duration-300" style={{background: isDark ? '#0a0a0a' : '#eef1f7'}}>
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[500px]"
                style={{background: isDark ? 'radial-gradient(ellipse,rgba(16,185,129,0.07) 0%,transparent 65%)' : 'radial-gradient(ellipse,rgba(59,130,246,0.07) 0%,transparent 65%)'}} />
@@ -1304,7 +1304,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
             <div className="flex-[2] w-full max-w-sm lg:max-w-none">
               <div className="rounded-2xl p-6 border"
                    style={{
-                     background: isDark ? '#0c1527' : '#ffffff',
+                     background: isDark ? '#141414' : '#ffffff',
                      borderColor: isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.07)',
                      boxShadow: isDark ? 'none' : '0 4px 20px rgba(0,0,0,0.06)',
                      minHeight:'180px', display:'flex', flexDirection:'column', justifyContent:'center',
@@ -1350,7 +1350,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
       {/* ═══════════════════════════ FOOTER ═══════════════════════════ */}
       <footer className={`border-t pt-16 pb-10 px-6 transition-colors duration-300`}
               style={{
-                background: isDark ? '#07090f' : '#f4f6f9',
+                background: isDark ? '#0a0a0a' : '#f4f6f9',
                 borderColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.07)',
               }}>
         <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-10 md:gap-8 mb-12">
