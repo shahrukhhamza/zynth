@@ -6,7 +6,6 @@ const TOTAL_FOUNDING = 100;
 
 const PRO_FEATURES = [
   'AI Trade Analysis: 50/month',
-  'Screenshot OCR: 35/month',
   'Unlimited journal entries',
   'Live market feeds',
   'Advanced journaling & charting',
@@ -118,7 +117,7 @@ export default function UpgradeModal({ open, onClose, onUpgrade, spotsUsed = 0 }
                   <span className="text-[28px] font-extrabold" style={{ color: headingText }}>$0</span>
                   <span className="text-[12px] mb-1.5" style={{ color: subtleText }}>/mo</span>
                 </div>
-                {['3 AI analyses/month', '2 screenshot imports/month', 'Basic analytics', 'Community access'].map(f => (
+                {['3 AI analyses/month', 'Basic analytics', 'Community access'].map(f => (
                   <div key={f} className="flex items-center gap-2 mb-2">
                     <div className="w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: subtleText }} />
                     <span className="text-[12px]" style={{ color: subtleText }}>{f}</span>

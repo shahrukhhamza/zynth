@@ -108,16 +108,6 @@ const QA = [
   { q: ['per trade ai', 'trade score', 'psychology score', 'discipline rating'],
     a: 'Each trade can be analyzed individually by AI. In Trade History click any trade -> click the brain icon. You get: Psychology Score (1-10), Discipline Rating, Coach Message, Key Observations and Improvement Tips.' },
 
-  // SCREENSHOT ANALYSIS / OCR
-  { q: ['screenshot analysis', 'ocr', 'import from screenshot', 'mt5 screenshot', 'bulk import', 'auto import', 'trade history screenshot', 'how to use screenshot', 'upload mt5', 'import trades'],
-    a: 'Screenshot Analysis (in sidebar) lets you upload an MT5 account history screenshot. The AI reads it and automatically imports all your trades into the journal at once. Free: 2 lifetime uses. Pro: 35/month. Elite: unlimited.' },
-
-  { q: ['how does ocr work', 'how does screenshot analysis work', 'screenshot not working'],
-    a: 'Upload a clear screenshot of your MT5 trade history table. The AI uses OCR to read each row and extract trade data (pair, direction, open/close price, profit). Results appear in a preview where you can confirm before importing.' },
-
-  { q: ['ocr limit', 'screenshot limit', 'no more screenshots', 'out of ocr'],
-    a: 'Free plan: 2 lifetime screenshot analyses. Pro: 35 per month. Elite: unlimited. Upgrade via your Profile -> Upgrade Plan to get more.' },
-
   // ECONOMIC FEATURES
   { q: ['macro score', 'macro surprise score', 'surprise score', 'macro indicator', 'bullish bearish macro'],
     a: 'The Macro Surprise Score is a Pro feature showing a score from -10 to +10. It analyzes 10 major US economic indicators (NFP, CPI, GDP etc) and tells you if macro conditions are Bullish or Bearish for gold. Find it in AI Insights sidebar.' },
@@ -200,10 +190,10 @@ const QA = [
     a: 'Zynth pricing: Free ($0 forever), Pro ($1.99/month founding price, regular $9), Elite ($4.99/month founding price, regular $25). The founding price is locked in forever for the first 100 users.' },
 
   { q: ['free plan', 'what is free', 'free features', 'free limits', 'free tier'],
-    a: "Free plan: 10 journal entries lifetime, 3 AI analyses lifetime, 2 screenshot OCRs lifetime, live market overview, today's US economic events only, and market news. No credit card needed." },
+    a: "Free plan: 10 journal entries lifetime, 3 AI analyses lifetime, live market overview, today's US economic events only, and market news. No credit card needed." },
 
   { q: ['pro plan', 'what is pro', 'pro features', 'pro benefits'],
-    a: 'Pro plan ($1.99/month): unlimited journal entries, 50 AI analyses per month, 35 screenshot OCRs per month, full Economic Calendar (all countries), Macro Surprise Score, Economic Intelligence, real-time market streaming, advanced analytics.' },
+    a: 'Pro plan ($1.99/month): unlimited journal entries, 50 AI analyses per month, full Economic Calendar (all countries), Macro Surprise Score, Economic Intelligence, real-time market streaming, advanced analytics.' },
 
   { q: ['elite plan', 'what is elite', 'elite features', 'elite benefits'],
     a: 'Elite plan ($4.99/month): everything in Pro plus unlimited AI analyses, unlimited OCR, Trading DNA Report, beta access to new features before anyone else, dedicated support with 4-hour response time.' },
@@ -285,8 +275,8 @@ Tagline: "Intelligence Behind Every Trade."
 Contact: getzynth@gmail.com | Website: getzynth.com
 
 ## PLANS & PRICING
-- Free ($0 forever): 10 journal entries lifetime, 3 AI analyses lifetime, 2 screenshot OCRs lifetime, today's US economic events, live market overview, market news.
-- Pro ($1.99/month founding price, regular $9/month): unlimited journal entries, 50 AI analyses/month, 35 screenshot OCRs/month, full Economic Calendar (all countries), Macro Surprise Score, Economic Intelligence page, real-time streaming, advanced analytics.
+- Free ($0 forever): 10 journal entries lifetime, 3 AI analyses lifetime, today's US economic events, live market overview, market news.
+- Pro ($1.99/month founding price, regular $9/month): unlimited journal entries, 50 AI analyses/month, full Economic Calendar (all countries), Macro Surprise Score, Economic Intelligence page, real-time streaming, advanced analytics.
 - Elite ($4.99/month founding price, regular $25/month): everything in Pro + unlimited AI analyses, unlimited OCR, Trading DNA Report, beta feature access, 4-hour dedicated support.
 - Founding Member offer: first 100 users lock in the founding price FOREVER.
 - To upgrade: click avatar (top right) → Profile → Upgrade Plan → email getzynth@gmail.com with your chosen plan. Activation within 24 hours.
@@ -295,7 +285,7 @@ Contact: getzynth@gmail.com | Website: getzynth.com
 
 ## TRADE JOURNAL
 - Access: left sidebar → "Trade Journal".
-- To LOG a trade: Log Trade tab → select pair (e.g. XAU/USD) → BUY or SELL → entry price, exit price, lot size → outcome (WIN/LOSS) → Save Trade. Optional: add screenshot, emotional state, strategy, session, notes.
+- To LOG a trade: Log Trade tab → select pair (e.g. XAU/USD) → BUY or SELL → entry price, exit price, lot size → outcome (WIN/LOSS) → Save Trade. Optional: add emotional state, strategy, session, notes.
 - Emotional states: Calm, Confident, Anxious, Frustrated, Greedy, Fearful, Neutral, Excited, Revenge.
 - Strategies: Breakout, Trend Follow, Scalping, and more (or type custom).
 - Sessions: Asian, London, New York, London-NY Overlap.
@@ -318,12 +308,6 @@ Contact: getzynth@gmail.com | Website: getzynth.com
 - AI Insights tab: inside Trade Journal → behavioral alerts, Generate AI Report button, past reports, per-trade scores.
 - AI Report: click Generate AI Report → choose Weekly, Monthly, or Custom → get grade (A–F), highlights, concerns, psychological assessment, action items.
 - AI tries: Free = 3 lifetime, Pro = 50/month, Elite = unlimited.
-
-## SCREENSHOT ANALYSIS (OCR)
-- Access: left sidebar → "Screenshot Analysis".
-- Upload an MT5 account history screenshot → AI reads rows via OCR → auto-imports trades into journal → preview before confirming.
-- Limits: Free = 2 lifetime, Pro = 35/month, Elite = unlimited.
-- Tips for best results: use a clear, full-size screenshot; make sure the table headers are visible.
 
 ## ECONOMIC CALENDAR
 - Access: left sidebar → "Economic Calendar".
@@ -375,7 +359,7 @@ Contact: getzynth@gmail.com | Website: getzynth.com
 
 ## ZYNTH'S NATURE
 - Zynth is NOT a broker. You cannot place real trades through Zynth.
-- Zynth does NOT sync with MT4/MT5 automatically. You manually log trades or use Screenshot Analysis to import from an MT5 screenshot.
+- Zynth does NOT sync with MT4/MT5 automatically. You manually log trades through the journal.
 - All data is private to your account. Data is encrypted in transit (TLS). Never shared or sold.
 - Mobile: works in any mobile browser. Add to home screen for app-like experience. Native app on roadmap.
 
@@ -485,7 +469,7 @@ router.post('/chat', requireAuth, async (req, res) => {
 
     // Final fallback if Gemini is unavailable
     return res.json({
-      reply: 'I could not find a specific answer for that right now.\n\nFor instant help, try asking:\n\u2022 "How do I log a trade?"\n\u2022 "How do I change my timezone?"\n\u2022 "What is the Macro Score?"\n\u2022 "How do I upgrade to Pro?"\n\u2022 "How does Screenshot Analysis work?"\n\nOr email us at getzynth@gmail.com and we will help right away!',
+      reply: 'I could not find a specific answer for that right now.\n\nFor instant help, try asking:\n\u2022 "How do I log a trade?"\n\u2022 "How do I change my timezone?"\n\u2022 "What is the Macro Score?"\n\u2022 "How do I upgrade to Pro?"\n\nOr email us at getzynth@gmail.com and we will help right away!',
     });
 
   } catch (error) {

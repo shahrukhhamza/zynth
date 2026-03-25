@@ -76,18 +76,3 @@ export function checkAiTries(req, res, next) {
   next();
 }
 
-/** Gate screenshot OCR tries — free: 2, pro: 35, elite/admin: unlimited. */
-export function checkScreenshotTries(req, res, next) {
-  const { is_admin, screenshot_tries = 0 } = req.user || {};
-  const plan = normalizePlan(req.user?.plan);
-  if (is_admin === 1 || plan === 'elite') return next();
-  if (plan === 'pro') {
-    if (screenshot_tries >= 35)
-      return res.status(403).json({ error: 'limit_reached', limit: 35, upgrade: true });
-    return next();
-  }
-  // free
-  if (screenshot_tries >= 2)
-    return res.status(403).json({ error: 'limit_reached', limit: 2, upgrade: true });
-  next();
-}

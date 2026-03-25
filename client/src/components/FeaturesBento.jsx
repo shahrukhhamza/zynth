@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Brain, Search, LineChart, Shield, Zap, Cpu, BarChart3, Scan Eye } from 'lucide-react';
+import { Brain, Search, LineChart, Shield, Zap, Cpu, BarChart3 } from 'lucide-react';
 
 const FeatureCard = ({ title, description, icon: Icon, className, children }) => (
   <motion.div 
@@ -55,29 +55,7 @@ const FeaturesBento = () => {
             </div>
           </FeatureCard>
 
-          {/* 2. MT5 OCR Import (The Scanner Animation) */}
-          <FeatureCard 
-            icon={ScanEye}
-            title="MT5 Screenshot OCR"
-            description="Upload your MetaTrader history. Our vision engine extracts every entry, exit, and P&L instantly."
-            className="md:col-span-1 md:row-span-1"
-          >
-            <div className="relative mt-6 h-32 w-full rounded-xl border border-white/5 bg-[#050505] overflow-hidden">
-              {/* Laser Line */}
-              <motion.div 
-                animate={{ top: ['0%', '100%', '0%'] }}
-                transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
-                className="absolute left-0 right-0 h-[2px] bg-emerald-400 shadow-[0_0_15px_rgba(52,211,153,0.8)] z-20"
-              />
-              <div className="p-4 space-y-2 opacity-20">
-                <div className="h-2 w-full bg-white/10 rounded" />
-                <div className="h-2 w-3/4 bg-white/10 rounded" />
-                <div className="h-2 w-1/2 bg-white/10 rounded" />
-              </div>
-            </div>
-          </FeatureCard>
-
-          {/* 3. Macro Correlation (Small Card) */}
+          {/* 2. Macro Correlation (Small Card) */
           <FeatureCard 
             icon={LineChart}
             title="Macro Correlation"

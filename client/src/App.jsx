@@ -18,7 +18,7 @@ import RightPanel from './components/RightPanel'
 import EconomicDashboard from './components/EconomicDashboard'
 import EconomicCalendar from './components/EconomicCalendar'
 import EconomicIntelligence from './components/EconomicIntelligence'
-import ScreenshotImportDashboard from './components/ScreenshotImportDashboard'
+
 import LiveMarketTicker from './components/LiveMarketTicker'
 import TradeJournal from './components/TradeJournal'
 import ChartsPage from './components/ChartsPage'
@@ -93,7 +93,7 @@ function AppShell() {
     const path = window.location.pathname.replace(/^\//, '');
     const validViews = [
       'data', 'journal', 'intelligence', 'markets', 'calendar',
-      'news', 'screenshot', 'tools', 'help', 'charts', 'backtesting', 'admin',
+      'news', 'tools', 'help', 'charts', 'backtesting', 'admin',
     ];
     if (path && validViews.includes(path)) {
       setCurrentView(path);
@@ -258,8 +258,6 @@ function AppShell() {
             </div>
           ) : currentView === 'journal' ? (
             <div key="journal" className="flex-1 overflow-y-auto page-enter"><TradeJournal /></div>
-          ) : currentView === 'screenshot' ? (
-            <div key="screenshot" className="flex-1 overflow-y-auto page-enter"><ScreenshotImportDashboard /></div>
           ) : currentView === 'markets' ? (
             <LiveMarketTicker key="markets" />
           ) : currentView === 'charts' ? (

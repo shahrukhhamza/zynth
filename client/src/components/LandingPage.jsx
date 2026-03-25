@@ -65,7 +65,6 @@ const PLANS = [
       'Economic calendar',
       'Live market overview',
       '3 free AI analysis tries',
-      '2 free screenshot analyses',
     ],
     cta: 'Get Started Free',
     highlight: false,
@@ -80,7 +79,6 @@ const PLANS = [
     features: [
       'Unlimited journal entries',
       'AI Trade Analysis: 50 analyses/month',
-      'Screenshot OCR Analysis: 35/month',
       'Full Economic Intelligence',
       'Macro Surprise Score',
       'Live market feeds',
@@ -100,7 +98,6 @@ const PLANS = [
     features: [
       'Everything in Pro',
       'Unlimited AI Trade Analysis',
-      'Unlimited Screenshot OCR',
       'Custom AI reports',
       'Dedicated support',
       'Beta access to new features before public release',
@@ -118,7 +115,6 @@ const FAQS = [
   { q: 'What is the Macro Surprise Score?', a: 'The Macro Surprise Score is our proprietary indicator that analyzes 10 major economic releases and calculates a single score (-10 to +10) showing whether macro conditions are bullish or bearish for gold (XAUUSD).' },
   { q: 'Is there a free plan?', a: 'Absolutely. The Free plan gives you access to core features including live markets, economic calendar, and even 3 free AI analysis tries — no credit card required.' },
   { q: 'What does the AI analysis include?', a: 'Our AI reads your trade history and journal entries to surface patterns, identify mistakes, and give you personalized improvement suggestions.' },
-  { q: 'What is the Screenshot Analysis feature?', a: 'Upload a screenshot of your MT5 trading history and our AI will automatically extract your trades using OCR and provide a detailed performance analysis.' },
   { q: 'What markets does Zynth cover?', a: 'Zynth covers Forex (XAU/USD, EUR/USD, GBP/USD, USD/JPY), major crypto (BTC, ETH, XRP, SOL, BNB), US stocks (AAPL, TSLA, NVDA, MSFT, AMZN, GOOGL), and ETFs (SPY, GLD, TLT).' },
   { q: 'How do I get the Founding Member price?', a: 'Simply sign up and upgrade to Pro during our launch period. The first 100 users lock in $1.99/month forever — even after we raise prices.' },
 ];
@@ -140,7 +136,7 @@ const FEATURE_CARDS = [
     Icon: Brain,
     title: 'AI Trade Coaching',
     desc: 'Upload your trades or journal entries and get personalized AI feedback on your patterns, mistakes, and improvement areas.',
-    bullets: ['Advanced AI analysis', 'Screenshot & OCR trade extraction', 'Personalized to your trading style'],
+    bullets: ['Advanced AI analysis', 'Personalized to your trading style'],
   },
 ];
 

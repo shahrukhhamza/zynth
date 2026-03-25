@@ -21,7 +21,6 @@ const AVATAR_COLOR_MAP = {
 const NAV_ITEMS = [
   { key: 'data',         icon: LayoutDashboard, label: 'Dashboard',           badge: null },
   { key: 'journal',      icon: Star,            label: 'Trade Journal',       badge: null, core: true },
-  { key: 'screenshot',   icon: Camera,          label: 'Screenshot Analysis', badge: { text: 'AI', color: '#0ea5e9' } },
   { key: 'intelligence', icon: Brain,           label: 'AI Insights',         badge: { text: 'AI', color: '#0ea5e9' } },
   { key: 'calendar',     icon: Calendar,        label: 'Economic Calendar',   badge: null },
   { key: 'help',         icon: HelpCircle,      label: 'Help & Docs',         badge: null },

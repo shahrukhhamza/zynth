@@ -42,9 +42,9 @@ import { startAutoReleaseScheduler, manualTrigger } from './services/autoRelease
 import adminRouter from './routes/admin.js';
 import chartsRouter from './routes/charts.js';
 import levelsRouter from './routes/levels.js';
-import { requireAuth, checkScreenshotTries } from './middleware/authMiddleware.js';
+import { requireAuth } from './middleware/authMiddleware.js';
 import * as Users from './db/users.js';
-import { incrementScreenshotTries, initDb } from './db/users.js';
+import { initDb } from './db/users.js';
 import { UPLOADS_DIR, ensureUploadDirs } from './config/storagePaths.js';
 
 const app = express();
@@ -263,42 +263,6 @@ app.use('/api/assistant', requireAuth, aiLimiter, assistantRouter);
 app.use('/api/charts', requireAuth, chartsRouter);
 app.use('/api/levels', requireAuth, levelsRouter);
 
-
-// ── /mt5 proxy → Python screenshot service ────────────────────────────────────
-app.use('/mt5', requireAuth);
-app.post('/mt5/upload-trade-screenshot', checkScreenshotTries, (_req, _res, next) => next());
-
-const _PYTHON_SERVICE_URL = process.env.PYTHON_SERVICE_URL || 'http://localhost:8000';
-const _pythonTarget = new URL(_PYTHON_SERVICE_URL);
-const _pythonIsHttps = _pythonTarget.protocol === 'https:';
-
-app.all('/mt5/*', (req, res) => {
-  const targetPath = req.url.replace(/^\/mt5/, '') || '/';
-  const isOcrUpload = req.method === 'POST' && targetPath === '/upload-trade-screenshot';
-  const options = {
-    hostname: _pythonTarget.hostname,
-    port: _pythonTarget.port || (_pythonIsHttps ? 443 : 80),
-    path: targetPath,
-    method: req.method,
-    headers: { ...req.headers, host: _pythonTarget.host, 'x-user-id': String(req.user?.id ?? '') },
-  };
-  const requester = _pythonIsHttps ? httpsRequest : httpRequest;
-  const proxy = requester(options, (proxyRes) => {
-    if (isOcrUpload && proxyRes.statusCode >= 200 && proxyRes.statusCode < 300 && req.user?.id) {
-      try { incrementScreenshotTries(req.user.id); } catch (_) { /* non-fatal */ }
-    }
-    res.writeHead(proxyRes.statusCode, proxyRes.headers);
-    pipeline(proxyRes, res, () => {});
-  });
-  proxy.on('error', () => {
-    if (!res.headersSent) res.status(503).json({ error: 'Screenshot analysis service unavailable' });
-  });
-  if (req.method !== 'GET' && req.method !== 'HEAD') {
-    pipeline(req, proxy, () => {});
-  } else {
-    proxy.end();
-  }
-});
 
 // Serve uploaded files from configured persistent path
 ensureUploadDirs();

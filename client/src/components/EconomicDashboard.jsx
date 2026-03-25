@@ -685,9 +685,8 @@ export default function EconomicDashboard({ onViewChange }) {
         </div>
 
         {/* ══ ROW 5: QUICK ACCESS ════════════════════════════════════════ */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12 }}>
           {[
-            { view: 'screenshot',  Icon: Activity, color: '#8b5cf6', title: 'Screenshot Analysis', desc: 'Upload MT5 screenshots for instant AI trade analysis', badge: 'AI' },
             { view: 'intelligence',Icon: Zap,       color: D.blue,   title: 'AI Insights',         desc: 'Macroeconomic surprise scores and market intelligence',   badge: 'AI' },
             { view: 'calendar',    Icon: Calendar,  color: D.gold,   title: 'Economic Calendar',   desc: 'High impact economic events and their market impact',     badge: null },
           ].map(item => (

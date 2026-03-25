@@ -14,7 +14,6 @@ const QUICK_CHIPS = [
   'How do I change my timezone?',
   'What is the Macro Score?',
   'How do I upgrade my plan?',
-  'How does Screenshot Analysis work?',
   'What is profit factor?',
 ];
 
@@ -91,7 +90,7 @@ export default function ZynthAssistant() {
       role: 'assistant',
       content: `Hello ${firstName}. I'm here to help you navigate Zynth.
 
-    I can help with trade journaling, settings, analytics, plans, screenshot imports, and platform tools.
+    I can help with trade journaling, settings, analytics, plans, and platform tools.
 
     Ask a question below or use one of the suggested prompts.`,
       timestamp: new Date().toISOString(),

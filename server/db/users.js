@@ -145,13 +145,6 @@ export async function incrementAiTries(id) {
   );
 }
 
-export async function incrementScreenshotTries(id) {
-  await pool.query(
-    'UPDATE users SET screenshot_tries = screenshot_tries + 1 WHERE id = $1',
-    [id]
-  );
-}
-
 export async function setAdmin(id, isAdmin) {
   await pool.query(
     'UPDATE users SET is_admin = $1 WHERE id = $2',

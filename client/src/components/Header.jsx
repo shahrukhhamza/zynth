@@ -22,7 +22,6 @@ const VIEW_LABELS = {
   markets:      'Economic Data',
   calendar:     'Economic Calendar',
   news:         'Market News',
-  screenshot:   'Screenshot Analysis',
   help:         'Help & Support',
   backtest:     'Backtesting',
   lounge:       'Traders Lounge',
@@ -37,7 +36,6 @@ const VIEW_SUBTITLES = {
   markets:      'Live prices & correlations',
   calendar:     'Economic events & surprises',
   news:         'Real-time financial news',
-  screenshot:   'AI-powered trade analysis',
   help:         'Guides, support, and product help',
   admin:        'Platform administration',
 };

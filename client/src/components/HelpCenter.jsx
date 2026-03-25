@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react';
+﻿import { useState, useMemo, useEffect } from 'react';
 import { BookOpen, Search, ChevronRight, ArrowLeft, Rocket, BookMarked, Bot, BarChart2, Calendar, Camera, Calculator, CreditCard, Settings, Shield, Star, X, Home, Mail, LifeBuoy, Clock3, ArrowUpRight, Bug, Lightbulb, MessageSquare } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 
@@ -621,100 +621,6 @@ Click **Select All** in the modal to include all indicators at once.
     ],
   },
   {
-    key: 'screenshot', icon: Camera, color: '#7c3aed', title: 'Screenshot Analysis',
-    description: 'How OCR trade import works, supported formats, and best practices.',
-    articles: [
-      {
-        id: 'screenshot-guide', title: 'Screenshot Analysis � Full Guide',
-        excerpt: 'Step-by-step: take a screenshot in MT5 and import trades automatically.',
-        content: `Screenshot Analysis uses AI and OCR (Optical Character Recognition) to read your MT5 trade history screenshot and import trades automatically.
-
-## Step by Step
-
-1. Open **MT5**
-2. Go to **Account History** tab
-3. Right-click ? select the time period
-4. Take a screenshot (Windows: \`Win+Shift+S\`)
-5. In Zynth click **Screenshot Analysis** in the sidebar
-6. Drag and drop your screenshot or click to browse
-7. Wait 10�30 seconds for AI to process
-8. Review the extracted trades in the preview table
-9. Confirm and import to your journal
-
-## Tips for Best Results
-
-- Make sure the screenshot is clear and not blurry
-- Include the full table with all columns visible
-- Avoid cropping out column headers
-- Higher resolution = better accuracy
-
-## Limitations
-
-::warning
-The AI may occasionally misread values. Always review before confirming import. Complex or custom MT5 layouts may not read correctly.
-::
-
-## Usage Limits
-
-| Plan | Monthly Analyses |
-|---|---|
-| Free | 2 lifetime |
-| Pro | 35/month |
-| Elite | Unlimited |`,
-      },
-      {
-        id: 'supported-formats', title: 'Supported Broker Formats',
-        excerpt: 'Which MT5 layouts work, what is partially supported, and what is not.',
-        content: `## Fully Supported
-
-- MetaTrader 5 (MT5) Deals History
-- Standard history table format
-
-## Partially Supported
-
-- cTrader history (may have lower accuracy)
-- Some web-based broker reports
-
-## Not Supported
-
-- PDF statements
-- Excel/CSV files (use manual journal entry instead)
-- Heavily customized broker interfaces
-
-::tip
-If your broker format is not working well, email us at getzynth@gmail.com and we will add support for it.
-::`,
-      },
-      {
-        id: 'screenshot-performance', title: 'Performance Analytics from Screenshots',
-        excerpt: 'Explore the Charts and Performance tabs after importing screenshot trades.',
-        content: `After importing trades via Screenshot Analysis, you get access to a dedicated analytics dashboard.
-
-## Charts Tab
-
-The Charts tab shows:
-- MT5 Performance Charts � P&L breakdown by instrument, session, and strategy
-- Trading Activity Heatmap � when your trades happened and their profitability
-
-## Overview Tab
-
-Shows a summary of all imported trades including:
-- Total trades imported
-- Win rate across all trades
-- Total P&L
-- Largest win and largest loss
-
-## Heatmap Tab
-
-Same 7�24 heatmap as the main journal but filtered to your screenshot-imported trades.
-
-::tip
-Use the date range filter in the heatmap to view specific periods like "This Month" or navigate back to previous months using the arrows.
-::`,
-      },
-    ],
-  },
-  {
     key: 'tools', icon: Calculator, color: '#10b981', title: 'Trading Desk',
     description: 'Pip calculator, position sizing, and market hours tools explained.',
     articles: [
@@ -811,7 +717,6 @@ The London-NY overlap (shown in amber) is the highest volume period of the day. 
 |---|---|
 | Journal entries | 10 lifetime |
 | AI Analysis | 3 lifetime |
-| Screenshot OCR | 2 lifetime |
 | Economic Calendar | Today's US events only (High + Medium) |
 | Live Markets | 15-minute delayed |
 | Market News | 5 articles/day |
@@ -823,7 +728,6 @@ The London-NY overlap (shown in amber) is the highest volume period of the day. 
 |---|---|
 | Journal entries | Unlimited |
 | AI Analysis | 50/month |
-| Screenshot OCR | 35/month |
 | Economic Calendar | All countries, all dates |
 | Live Markets | Real-time streaming |
 | Market News | Unlimited |
@@ -838,7 +742,6 @@ Everything in Pro, plus:
 | Feature | Limit |
 |---|---|
 | AI Analysis | Unlimited |
-| Screenshot OCR | Unlimited |
 | Trading DNA Report | Monthly generation |
 | Beta Features | Early access |
 | Support | 4-hour response time |`,
@@ -918,10 +821,6 @@ When you reach 10 trades you will see a limit message when trying to add more. U
 ## AI Analysis: 3 Lifetime Tries
 
 Each time you click the AI analysis button on a trade it uses 1 try. Free users get 3 tries total (not monthly). Upgrade to Pro for 50/month.
-
-## Screenshot OCR: 2 Lifetime Tries
-
-Each screenshot upload uses 1 try. Free users get 2 total lifetime tries. Upgrade to Pro for 35/month.
 
 ## Economic Calendar: Today Only
 
@@ -1774,7 +1673,7 @@ export default function HelpCenter() {
 
                 <div style={{ padding: '16px 16px', borderRadius: 18, background: cardSoftBg, border: `1px solid ${cardSoftBorder}` }}>
                   <div style={{ color: text0, fontSize: 14, fontWeight: 700, marginBottom: 6 }}>Need a fast answer first?</div>
-                  <div style={{ color: textMuted, fontSize: 13, lineHeight: 1.6 }}>Browse the help topics below for immediate answers about journaling, analytics, screenshot imports, billing, and settings.</div>
+                  <div style={{ color: textMuted, fontSize: 13, lineHeight: 1.6 }}>Browse the help topics below for immediate answers about journaling, analytics, billing, and settings.</div>
                 </div>
               </div>
             </div>
@@ -1857,3 +1756,4 @@ export default function HelpCenter() {
     </div>
   );
 }
+

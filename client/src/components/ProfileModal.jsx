@@ -93,7 +93,6 @@ export default function ProfileModal({ onClose, onForgotPassword }) {
   const avatarFileRef                       = useRef(null);
 
   const aiUsed          = user?.ai_analysis_tries ?? 0;
-  const screenshotUsed  = user?.screenshot_tries ?? 0;
   const memberYear      = user?.created_at ? new Date(user.created_at).getFullYear() : 2026;
 
   const planKey = isAdmin ? 'admin' : (isPro ? 'pro' : (isElite ? 'elite' : 'free'));
@@ -355,7 +354,6 @@ export default function ProfileModal({ onClose, onForgotPassword }) {
             {[
               { label: 'Journal', value: journalCount },
               { label: 'AI Used',  value: aiUsed },
-              { label: 'OCR Used', value: screenshotUsed },
               { label: 'Year',     value: memberYear },
             ].map(({ label, value }) => (
               <div key={label} className="rounded-xl p-2.5 text-center"
@@ -392,19 +390,9 @@ export default function ProfileModal({ onClose, onForgotPassword }) {
                          style={{ width: `${Math.min(100, (aiUsed / 3) * 100)}%`, background: aiUsed >= 3 ? '#ef4444' : '#059669' }} />
                   </div>
                 </div>
-                <div>
-                  <div className="flex justify-between text-[11px] mb-1" style={{ color: theme.muted }}>
-                    <span>Screenshots</span>
-                    <span>{screenshotUsed}/2 used</span>
-                  </div>
-                  <div className="h-1.5 rounded-full overflow-hidden" style={{ background: theme.border }}>
-                    <div className="h-full rounded-full transition-all"
-                         style={{ width: `${Math.min(100, (screenshotUsed / 2) * 100)}%`, background: screenshotUsed >= 2 ? '#ef4444' : '#059669' }} />
-                  </div>
-                </div>
               </div>
             )}
-            {/* Pro usage bars */}
+            {/* Pro usage bars */
             {isPro && (
               <div className="space-y-2 mt-3">
                 <div>
@@ -415,16 +403,6 @@ export default function ProfileModal({ onClose, onForgotPassword }) {
                   <div className="h-1.5 rounded-full overflow-hidden" style={{ background: theme.border }}>
                     <div className="h-full rounded-full transition-all"
                          style={{ width: `${Math.min(100, (aiUsed / 50) * 100)}%`, background: aiUsed >= 50 ? '#ef4444' : '#059669' }} />
-                  </div>
-                </div>
-                <div>
-                  <div className="flex justify-between text-[11px] mb-1" style={{ color: theme.muted }}>
-                    <span>Screenshots</span>
-                    <span>{screenshotUsed}/35 used</span>
-                  </div>
-                  <div className="h-1.5 rounded-full overflow-hidden" style={{ background: theme.border }}>
-                    <div className="h-full rounded-full transition-all"
-                         style={{ width: `${Math.min(100, (screenshotUsed / 35) * 100)}%`, background: screenshotUsed >= 35 ? '#ef4444' : '#059669' }} />
                   </div>
                 </div>
               </div>
