@@ -1,66 +1,38 @@
 import { useState, useEffect, useCallback } from 'react';
 import {
-  Camera,
-  BarChart3,
-  TrendingUp,
-  Brain,
-  Clock,
-  RefreshCw,
-  CheckCircle,
-  AlertCircle,
-  Loader2,
-  ImageIcon,
-  ListOrdered,
-  Activity,
-  WifiOff,
-  Database,
-  Trash2,
+  Camera, BarChart3, TrendingUp, Brain, ListOrdered,
+  RefreshCw, Loader2, WifiOff, Database, Trash2,
+  Upload, Target, Activity, Zap,
 } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 import { useTimezone } from '../contexts/TimezoneContext';
 import { usePlanGate } from '../hooks/usePlanGate';
-import { deleteScreenshotReport, deleteScreenshotTrade, deleteScreenshotBatch, getScreenshotReport, getScreenshotBatches } from '../services/mt5Api';
-import ScreenshotUpload from './ScreenshotUpload';
+import {
+  deleteScreenshotReport, deleteScreenshotTrade,
+  deleteScreenshotBatch, getScreenshotReport, getScreenshotBatches,
+} from '../services/mt5Api';
+import ScreenshotUpload      from './ScreenshotUpload';
 import MT5PerformanceStats   from './MT5PerformanceStats';
 import MT5PerformanceCharts  from './MT5PerformanceCharts';
 import MT5AIInsights         from './MT5AIInsights';
 import MT5BehaviorInsights   from './MT5BehaviorInsights';
 import MT5HeatmapChart       from './MT5HeatmapChart';
 import MT5TradeHistory       from './MT5TradeHistory';
-import PlanGateBanner from './PlanGateBanner';
-import ProfileModal from './ProfileModal';
+import PlanGateBanner        from './PlanGateBanner';
+import ProfileModal          from './ProfileModal';
 
-// ── Tab definitions ────────────────────────────────────────────────────────
 const TABS = [
-  { id: 'overview',  label: 'Overview',    Icon: BarChart3    },
-  { id: 'charts',    label: 'Charts',      Icon: TrendingUp   },
-  { id: 'behavior',  label: 'Behaviour',   Icon: Brain        },
-  { id: 'history',   label: 'History',     Icon: ListOrdered  },
-  { id: 'upload',    label: 'Upload New',  Icon: Camera       },
+  { id: 'overview',  label: 'Overview',   Icon: BarChart3   },
+  { id: 'charts',    label: 'Charts',     Icon: TrendingUp  },
+  { id: 'behavior',  label: 'Behaviour',  Icon: Brain       },
+  { id: 'history',   label: 'History',    Icon: ListOrdered },
+  { id: 'upload',    label: 'Upload New', Icon: Upload      },
 ];
 
 const CACHE_KEY = 'screenshot_report_cache';
-
-function loadCache() {
-  try {
-    const raw = localStorage.getItem(CACHE_KEY);
-    return raw ? JSON.parse(raw) : null;
-  } catch { return null; }
-}
-
-function saveCache(result) {
-  try {
-    localStorage.setItem(CACHE_KEY, JSON.stringify({ ...result, _cachedAt: Date.now() }));
-  } catch { /* storage full — ignore */ }
-}
-
-function clearCache() {
-  try {
-    localStorage.removeItem(CACHE_KEY);
-  } catch {
-    // no-op
-  }
-}
+const loadCache  = () => { try { const r = localStorage.getItem(CACHE_KEY); return r ? JSON.parse(r) : null; } catch { return null; } };
+const saveCache  = (d) => { try { localStorage.setItem(CACHE_KEY, JSON.stringify({ ...d, _cachedAt: Date.now() })); } catch {} };
+const clearCache = ()  => { try { localStorage.removeItem(CACHE_KEY); } catch {} };
 
 export default function ScreenshotImportDashboard() {
   const theme = useTheme();
@@ -69,19 +41,17 @@ export default function ScreenshotImportDashboard() {
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const triesExhausted = !isElite && !isAdmin && screenshotTriesLeft <= 0;
 
-  // Seed state from localStorage cache immediately — data visible before service responds
-  const [data,          setData]          = useState(() => loadCache());
-  const [activeTab,     setActiveTab]     = useState(() => loadCache()?.trades?.length > 0 ? 'overview' : 'upload');
-  const [loadingInit,   setLoadingInit]   = useState(true);
-  const [serviceOnline, setServiceOnline] = useState(true);   // false = MT5 Python service unreachable
-  const [serviceError,  setServiceError]  = useState(null);   // human-readable reason
-  const [deleting,      setDeleting]      = useState(false);
+  const [data,            setData]            = useState(() => loadCache());
+  const [activeTab,       setActiveTab]       = useState(() => loadCache()?.trades?.length > 0 ? 'overview' : 'upload');
+  const [loadingInit,     setLoadingInit]     = useState(true);
+  const [serviceOnline,   setServiceOnline]   = useState(true);
+  const [serviceError,    setServiceError]    = useState(null);
+  const [deleting,        setDeleting]        = useState(false);
   const [deletingTradeId, setDeletingTradeId] = useState(null);
-  const [confirmModal,  setConfirmModal]  = useState(null); // { type: 'all' } | { type: 'trade', trade } | { type: 'batch', batch, label }
-  const [batches,       setBatches]       = useState([]);
+  const [confirmModal,    setConfirmModal]    = useState(null);
+  const [batches,         setBatches]         = useState([]);
   const [deletingBatchId, setDeletingBatchId] = useState(null);
 
-  // ── On mount: check if we already have stored screenshot trades ──────────
   const loadExisting = useCallback(async () => {
     setLoadingInit(true);
     setServiceOnline(true);
@@ -90,315 +60,207 @@ export default function ScreenshotImportDashboard() {
       const result = await getScreenshotReport();
       if (result.success && result.trades?.length > 0) {
         setData(result);
-        saveCache(result);           // keep fresh copy in localStorage
-        // Only redirect to overview if user hasn't manually chosen a tab yet
+        saveCache(result);
         setActiveTab(prev => prev === 'upload' ? 'overview' : prev);
       } else if (!loadCache()?.trades?.length) {
-        // Live service says no data and no cache — go to upload
         setActiveTab('upload');
       }
       setServiceOnline(true);
-      // Also fetch batches (non-critical — don't let failure break main report)
       try {
         const batchRes = await getScreenshotBatches();
         if (batchRes.success) setBatches(batchRes.batches ?? []);
-      } catch { /* ignore batch fetch errors */ }
+      } catch {}
     } catch (err) {
-      // Service is down — but DON'T wipe existing data; show offline banner instead
       setServiceOnline(false);
       const status = err?.response?.status;
-      if (status === 401) {
-        setServiceError('Your session has expired. Please sign out and sign back in.');
-      } else {
-        setServiceError(
-          'The analysis service is temporarily unavailable. Please try again in a moment.'
-        );
-      }
-      console.warn('[ScreenshotDashboard] Could not reach analysis service:', err.message);
+      setServiceError(status === 401
+        ? 'Your session has expired. Please sign out and sign back in.'
+        : 'The analysis service is temporarily unavailable. Please try again in a moment.'
+      );
     } finally {
       setLoadingInit(false);
     }
   }, []);
 
-  useEffect(() => {
-    loadExisting();
-  }, [loadExisting]);
+  useEffect(() => { loadExisting(); }, [loadExisting]);
 
-  // ── After a successful upload ─────────────────────────────────────────────
   const handleUploaded = (result) => {
-    setData(result);
-    saveCache(result);
-    setServiceOnline(true);
-    setServiceError(null);
+    setData(result); saveCache(result);
+    setServiceOnline(true); setServiceError(null);
     setActiveTab('overview');
-  };
-
-  const handleDeleteReport = () => {
-    if (deleting) return;
-    setConfirmModal({ type: 'all' });
-  };
-
-  const handleDeleteTrade = (trade) => {
-    setConfirmModal({ type: 'trade', trade });
-  };
-
-  const handleDeleteBatch = (batch, label) => {
-    setConfirmModal({ type: 'batch', batch, label });
   };
 
   const handleConfirmDelete = async () => {
     if (!confirmModal) return;
-
     if (confirmModal.type === 'all') {
       setDeleting(true);
       try {
         await deleteScreenshotReport();
-        clearCache();
-        setData(null);
-        setActiveTab('upload');
-        setServiceOnline(true);
-        setServiceError(null);
+        clearCache(); setData(null); setActiveTab('upload');
+        setServiceOnline(true); setServiceError(null);
       } catch (err) {
-        const status = err?.response?.status;
-        if (status === 401) {
-          setServiceError('Your session has expired. Please sign out and sign back in.');
-        } else {
-          setServiceError('Failed to delete screenshot analysis data. Please try again.');
-        }
-      } finally {
-        setDeleting(false);
-        setConfirmModal(null);
-      }
+        setServiceError(err?.response?.status === 401
+          ? 'Your session has expired.'
+          : 'Failed to delete. Please try again.');
+      } finally { setDeleting(false); setConfirmModal(null); }
     } else if (confirmModal.type === 'trade') {
-      const tradeId = confirmModal.trade.id;
-      setDeletingTradeId(tradeId);
-      try {
-        await deleteScreenshotTrade(tradeId);
-        // Remove from local state and refresh analysis from server
-        await loadExisting();
-      } catch (err) {
-        const status = err?.response?.status;
-        if (status === 401) {
-          setServiceError('Your session has expired. Please sign out and sign back in.');
-        } else {
-          setServiceError('Failed to delete trade. Please try again.');
-        }
-      } finally {
-        setDeletingTradeId(null);
-        setConfirmModal(null);
-      }
+      setDeletingTradeId(confirmModal.trade.id);
+      try { await deleteScreenshotTrade(confirmModal.trade.id); await loadExisting(); }
+      catch (err) { setServiceError('Failed to delete trade.'); }
+      finally { setDeletingTradeId(null); setConfirmModal(null); }
     } else if (confirmModal.type === 'batch') {
       const batchId = confirmModal.batch.upload_batch;
       setDeletingBatchId(batchId ?? 'null');
-      try {
-        await deleteScreenshotBatch(batchId);
-        await loadExisting();
-      } catch (err) {
-        const status = err?.response?.status;
-        if (status === 401) {
-          setServiceError('Your session has expired. Please sign out and sign back in.');
-        } else {
-          setServiceError('Failed to delete screenshot upload. Please try again.');
-        }
-      } finally {
-        setDeletingBatchId(null);
-        setConfirmModal(null);
-      }
+      try { await deleteScreenshotBatch(batchId); await loadExisting(); }
+      catch (err) { setServiceError('Failed to delete upload.'); }
+      finally { setDeletingBatchId(null); setConfirmModal(null); }
     }
   };
 
-  // ── Helpers ───────────────────────────────────────────────────────────────
-  const analysis   = data?.analysis   ?? null;
-  const behavior   = data?.behavior   ?? null;
-  const aiSummary  = data?.ai_summary ?? null;
-  const trades     = data?.trades     ?? [];
-  const heatmap    = analysis?.heatmap ?? [];
-  const hasData    = Boolean(trades.length > 0);
-  const cachedAt   = data?._cachedAt  ?? null;
+  const analysis  = data?.analysis   ?? null;
+  const behavior  = data?.behavior   ?? null;
+  const aiSummary = data?.ai_summary ?? null;
+  const trades    = data?.trades     ?? [];
+  const heatmap   = analysis?.heatmap ?? [];
+  const hasData   = trades.length > 0;
+  const cachedAt  = data?._cachedAt  ?? null;
 
-  // ── Loading state (only show spinner on first load when no cache) ────────
-  if (loadingInit && !hasData) {
-    return (
-      <div
-        className="flex-1 flex items-center justify-center h-full"
-        style={{ color: theme.muted }}
-      >
-        <Loader2 className="w-6 h-6 animate-spin mr-3" />
-        <span>Loading trade data…</span>
-      </div>
-    );
-  }
+  // ── Design tokens ─────────────────────────────────────────────────────
+  const D = {
+    pageBg:  theme.isDark ? '#000000' : '#f1f3f6',
+    cardBg:  theme.isDark ? '#0d0d0d' : '#ffffff',
+    cardBg2: theme.isDark ? '#111111' : '#f7f8fa',
+    border:  theme.isDark ? '#1e1e1e' : '#e5e8ed',
+    border2: theme.isDark ? '#2a2a2a' : '#d0d5de',
+    text:    theme.isDark ? '#f0f0f0' : '#0d1117',
+    textSub: theme.isDark ? '#5a6472' : '#5a6472',
+    accent:  '#10b981',
+    red:     '#ef4444',
+    gold:    theme.isDark ? '#f59e0b' : '#d97706',
+  };
+
+  if (loadingInit && !hasData) return (
+    <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', background: D.pageBg, gap: 10 }}>
+      <div style={{ width: 24, height: 24, border: `2px solid ${D.accent}`, borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
+      <span style={{ fontSize: 13, color: D.textSub }}>Loading trade data…</span>
+      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+    </div>
+  );
 
   return (
-    <div className="flex-1 overflow-y-auto">
-      {/* Themed delete confirmation modal */}
+    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: D.pageBg, overflow: 'hidden' }}>
+      <style>{`
+        @keyframes spin    { to { transform: rotate(360deg); } }
+        @keyframes fadeIn  { from { opacity: 0 } to { opacity: 1 } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(12px) scale(0.98) } to { opacity: 1; transform: translateY(0) scale(1) } }
+        .tab-btn { transition: all 0.15s ease; }
+        .tab-btn:hover { opacity: 0.8; }
+      `}</style>
+
+      {/* ── Delete modal ────────────────────────────────────────────────── */}
       <DeleteModal
         modal={confirmModal}
         onConfirm={handleConfirmDelete}
         onCancel={() => setConfirmModal(null)}
         isDeleting={deleting || deletingTradeId !== null}
-        theme={theme}
+        D={D}
       />
 
-      {/* Plan gate: tries counter banner OR hard block */}
       {showUpgradeModal && <ProfileModal onClose={() => setShowUpgradeModal(false)} />}
-      {triesExhausted ? (
-        <div style={{
-          margin: '24px 24px 0',
-          padding: 28,
-          borderRadius: 16,
-          background: 'rgba(239,68,68,0.06)',
-          border: '1px solid rgba(239,68,68,0.25)',
-          display: 'flex', flexDirection: 'column', alignItems: 'center',
-          textAlign: 'center', gap: 12,
-        }}>
-          <div style={{
-            width: 52, height: 52, borderRadius: '50%',
-            background: 'rgba(239,68,68,0.1)',
-            border: '1px solid rgba(239,68,68,0.3)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-          }}>
-            <Camera style={{ color: '#ef4444', width: 22, height: 22 }} />
-          </div>
-          <p style={{ color: theme.text, fontWeight: 700, fontSize: 17, margin: 0 }}>
-            Screenshot Analysis Limit Reached
-          </p>
-          <p style={{ color: theme.muted, fontSize: 14, maxWidth: 380, margin: 0, lineHeight: 1.5 }}>
-            {isFree
-              ? 'You have used your 2 lifetime free screenshot analyses. Upgrade to Pro for 35 analyses per month.'
-              : 'You have used all 35 Pro analyses this month. Upgrade to Elite for unlimited screenshot OCR.'}
-          </p>
-          <button
-            onClick={() => setShowUpgradeModal(true)}
-            style={{
-              background: '#10b981', color: 'white', border: 'none',
-              borderRadius: 10, padding: '11px 28px',
-              fontSize: 14, fontWeight: 600, cursor: 'pointer', marginTop: 4,
-            }}
-          >
-            {isFree ? 'Upgrade to Pro — $1.99/mo' : 'Upgrade to Elite — $4.99/mo'}
-          </button>
-        </div>
-      ) : (
-        /* Soft banner: tries remaining */
-        !isElite && !isAdmin && (
-          <div style={{ margin: '16px 24px 0' }}>
-            <PlanGateBanner
-              feature="Screenshot Analysis"
-              requiredPlan={isFree ? 'Pro' : 'Elite'}
-              description={
-                isElite || isAdmin ? '' :
-                isPro
-                  ? `${screenshotTriesLeft} of 35 pro analyses remaining this month`
-                  : `${screenshotTriesLeft} of 2 free lifetime ${screenshotTriesLeft === 1 ? 'analysis' : 'analyses'} remaining`
-              }
-              onUpgradeClick={() => setShowUpgradeModal(true)}
-            />
-          </div>
-        )
-      )}
-      {/* ── Header ── */}
-      <div
-        className="sticky top-0 z-10 px-6 py-4 border-b"
-        style={{ backgroundColor: theme.surface, borderColor: theme.border }}
-      >
-        <div className="flex items-center justify-between flex-wrap gap-3">
-          {/* Title + trade count */}
-          <div className="flex items-center gap-3">
-            <div
-              className="w-9 h-9 rounded-xl flex items-center justify-center"
-              style={{ backgroundColor: `${theme.accent}20`, color: theme.accent }}
-            >
-              <Camera className="w-5 h-5" />
+
+      {/* ── Header ──────────────────────────────────────────────────────── */}
+      <div style={{
+        background: D.cardBg,
+        borderBottom: `1px solid ${D.border}`,
+        padding: '18px 24px 0',
+        flexShrink: 0,
+      }}>
+        {/* Top row */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16, flexWrap: 'wrap', gap: 12 }}>
+          {/* Title */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <div style={{
+              width: 40, height: 40, borderRadius: 12,
+              background: `${D.accent}15`, border: `1px solid ${D.accent}28`,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+            }}>
+              <Camera style={{ width: 18, height: 18, color: D.accent }} />
             </div>
             <div>
-              <h1 className="text-lg font-bold leading-tight" style={{ color: theme.text }}>
-                Trade Journal
+              <h1 style={{ fontSize: 18, fontWeight: 700, color: D.text, margin: 0, letterSpacing: '-0.02em' }}>
+                Screenshot Analysis
               </h1>
-              {hasData && (
-                <p className="text-xs" style={{ color: theme.muted }}>
-                  {trades.length} trade{trades.length !== 1 ? 's' : ''} · Screenshot import
-                </p>
-              )}
+              <p style={{ fontSize: 12, color: D.textSub, margin: '2px 0 0' }}>
+                {hasData
+                  ? `${trades.length} trade${trades.length !== 1 ? 's' : ''} · AI-powered chart analysis`
+                  : 'Upload MT4/MT5 screenshots for AI analysis'}
+              </p>
             </div>
           </div>
 
-          {/* Summary pills */}
+          {/* Stats + actions */}
           {hasData && analysis && (
-            <div className="flex items-center gap-2 flex-wrap">
-              {/* Inline stats bar */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+              {/* Stat pills */}
               <div style={{
                 display: 'flex', alignItems: 'stretch',
-                background: theme.isDark ? '#111111' : theme.surface,
-                border: `1px solid ${theme.isDark ? '#1e1e1e' : theme.border}`,
-                borderRadius: 10,
-                overflow: 'hidden',
+                background: D.cardBg2, border: `1px solid ${D.border}`,
+                borderRadius: 10, overflow: 'hidden',
               }}>
-                <Pill
-                  label="Win Rate"
-                  value={`${analysis.win_rate ?? 0}%`}
-                  color={(analysis.win_rate ?? 0) >= 50 ? '#10b981' : '#ef4444'}
-                />
-                <div style={{ width: 1, background: theme.isDark ? '#1e1e1e' : theme.border, alignSelf: 'stretch' }} />
-                <Pill
-                  label="Total P&L"
-                  value={`${(analysis.total_profit ?? 0) >= 0 ? '+' : ''}${(analysis.total_profit ?? 0).toFixed(2)}`}
-                  color={(analysis.total_profit ?? 0) >= 0 ? '#10b981' : '#ef4444'}
-                />
-                {analysis.profit_factor != null && (
-                  <>
-                    <div style={{ width: 1, background: theme.isDark ? '#1e1e1e' : theme.border, alignSelf: 'stretch' }} />
-                    <Pill
-                      label="PF"
-                      value={analysis.profit_factor}
-                      color={analysis.profit_factor >= 1.5 ? '#10b981' : analysis.profit_factor >= 1 ? '#f59e0b' : '#ef4444'}
-                    />
-                  </>
-                )}
+                {[
+                  { label: 'Win Rate', value: `${analysis.win_rate ?? 0}%`, color: (analysis.win_rate ?? 0) >= 50 ? D.accent : D.red },
+                  { label: 'Total P&L', value: `${(analysis.total_profit ?? 0) >= 0 ? '+' : ''}$${Math.abs(analysis.total_profit ?? 0).toFixed(2)}`, color: (analysis.total_profit ?? 0) >= 0 ? D.accent : D.red },
+                  ...(analysis.profit_factor != null ? [{ label: 'Prof. Factor', value: analysis.profit_factor, color: analysis.profit_factor >= 1.5 ? D.accent : analysis.profit_factor >= 1 ? D.gold : D.red }] : []),
+                ].map((s, i, arr) => (
+                  <div key={s.label} style={{
+                    padding: '8px 14px', display: 'flex', flexDirection: 'column',
+                    alignItems: 'center', gap: 2,
+                    borderRight: i < arr.length - 1 ? `1px solid ${D.border}` : 'none',
+                  }}>
+                    <span style={{ fontSize: 9, fontWeight: 700, color: D.textSub, letterSpacing: '0.08em', textTransform: 'uppercase' }}>{s.label}</span>
+                    <span style={{ fontSize: 14, fontWeight: 800, color: s.color, letterSpacing: '-0.01em' }}>{s.value}</span>
+                  </div>
+                ))}
               </div>
 
               {/* Action buttons */}
-              <button
-                onClick={loadExisting}
-                className="p-1.5 rounded-lg transition-colors"
-                style={{ color: theme.isDark ? '#4a4a4a' : theme.muted, background: theme.isDark ? '#111111' : theme.surface, border: `1px solid ${theme.isDark ? '#1e1e1e' : theme.border}`, borderRadius: 8 }}
-                title="Refresh data"
-              >
-                <RefreshCw className="w-4 h-4" />
+              <button onClick={loadExisting} style={{ width: 34, height: 34, borderRadius: 8, background: D.cardBg2, border: `1px solid ${D.border}`, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: D.textSub, transition: 'all 0.15s' }}
+                onMouseEnter={e => { e.currentTarget.style.borderColor = D.accent; e.currentTarget.style.color = D.accent; }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = D.border; e.currentTarget.style.color = D.textSub; }}
+                title="Refresh">
+                <RefreshCw style={{ width: 14, height: 14 }} />
               </button>
-              <button
-                onClick={handleDeleteReport}
-                disabled={deleting}
-                className="p-1.5 rounded-lg transition-colors"
-                style={{ color: deleting ? (theme.isDark ? '#4a4a4a' : theme.muted) : '#ef4444', background: theme.isDark ? '#111111' : theme.surface, border: `1px solid ${theme.isDark ? '#1e1e1e' : theme.border}`, borderRadius: 8 }}
-                title="Delete screenshot analysis data"
-              >
-                {deleting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
+              <button onClick={() => setConfirmModal({ type: 'all' })} disabled={deleting} style={{ width: 34, height: 34, borderRadius: 8, background: D.cardBg2, border: `1px solid ${D.border}`, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: deleting ? 'not-allowed' : 'pointer', color: D.red, opacity: deleting ? 0.5 : 1, transition: 'all 0.15s' }}
+                onMouseEnter={e => { if (!deleting) { e.currentTarget.style.borderColor = D.red; e.currentTarget.style.background = `${D.red}10`; } }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = D.border; e.currentTarget.style.background = D.cardBg2; }}
+                title="Delete all data">
+                {deleting ? <Loader2 style={{ width: 14, height: 14, animation: 'spin 0.8s linear infinite' }} /> : <Trash2 style={{ width: 14, height: 14 }} />}
               </button>
             </div>
           )}
         </div>
 
-        {/* ── Tab bar ── */}
+        {/* Tab bar */}
         {hasData && (
-          <div className="flex gap-1 mt-3 overflow-x-auto pb-1 scrollbar-none" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+          <div style={{ display: 'flex', gap: 2, overflowX: 'auto', paddingBottom: 0 }}>
             {TABS.map(({ id, label, Icon }) => {
               const active = activeTab === id;
               return (
                 <button
                   key={id}
                   onClick={() => setActiveTab(id)}
-                  className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium transition-all flex-shrink-0"
+                  className="tab-btn"
                   style={{
-                    borderRadius: 8,
-                    backgroundColor: active ? (theme.isDark ? '#1e1e1e' : theme.surface2) : 'transparent',
-                    color: active ? theme.accent : (theme.isDark ? '#4a4a4a' : theme.muted),
-                    border: 'none',
-                    borderBottom: active ? `2px solid ${theme.accent}` : '2px solid transparent',
-                    outline: 'none',
+                    display: 'flex', alignItems: 'center', gap: 6,
+                    padding: '8px 14px', fontSize: 12, fontWeight: 600,
+                    border: 'none', borderRadius: 0, cursor: 'pointer',
+                    background: 'transparent', flexShrink: 0,
+                    color: active ? D.accent : D.textSub,
+                    borderBottom: `2px solid ${active ? D.accent : 'transparent'}`,
+                    transition: 'all 0.15s',
                   }}
                 >
-                  <Icon className="w-3.5 h-3.5" />
+                  <Icon style={{ width: 13, height: 13 }} />
                   {label}
                 </button>
               );
@@ -407,55 +269,67 @@ export default function ScreenshotImportDashboard() {
         )}
       </div>
 
-      {/* ── Service offline banner — only show when there's no data to display ── */}
+      {/* ── Plan gate ───────────────────────────────────────────────────── */}
+      {triesExhausted ? (
+        <div style={{ margin: '24px', padding: 28, borderRadius: 14, background: `${D.red}08`, border: `1px solid ${D.red}25`, display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: 12 }}>
+          <div style={{ width: 52, height: 52, borderRadius: '50%', background: `${D.red}10`, border: `1px solid ${D.red}30`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <Camera style={{ color: D.red, width: 22, height: 22 }} />
+          </div>
+          <p style={{ color: D.text, fontWeight: 700, fontSize: 17, margin: 0 }}>Screenshot Analysis Limit Reached</p>
+          <p style={{ color: D.textSub, fontSize: 14, maxWidth: 380, margin: 0, lineHeight: 1.6 }}>
+            {isFree
+              ? 'You have used your 2 lifetime free analyses. Upgrade to Pro for 35 analyses per month.'
+              : 'You have used all 35 Pro analyses this month. Upgrade to Elite for unlimited analyses.'}
+          </p>
+          <button onClick={() => setShowUpgradeModal(true)} style={{ background: D.accent, color: '#fff', border: 'none', borderRadius: 10, padding: '11px 28px', fontSize: 14, fontWeight: 700, cursor: 'pointer', boxShadow: `0 4px 14px ${D.accent}40` }}>
+            {isFree ? 'Upgrade to Pro — $1.99/mo' : 'Upgrade to Elite — $4.99/mo'}
+          </button>
+        </div>
+      ) : !isElite && !isAdmin && (
+        <div style={{ margin: '16px 24px 0' }}>
+          <PlanGateBanner
+            feature="Screenshot Analysis"
+            requiredPlan={isFree ? 'Pro' : 'Elite'}
+            description={isPro
+              ? `${screenshotTriesLeft} of 35 pro analyses remaining this month`
+              : `${screenshotTriesLeft} of 2 free lifetime ${screenshotTriesLeft === 1 ? 'analysis' : 'analyses'} remaining`}
+            onUpgradeClick={() => setShowUpgradeModal(true)}
+          />
+        </div>
+      )}
+
+      {/* ── Offline banner ───────────────────────────────────────────────── */}
       {!serviceOnline && !hasData && (
-        <div
-          className="mx-6 mt-4 flex items-start gap-3 rounded-xl px-4 py-3 border"
-          style={{
-            backgroundColor: theme.isDark ? 'rgba(234,179,8,0.08)' : 'rgba(234,179,8,0.06)',
-            borderColor: 'rgba(234,179,8,0.3)',
-          }}
-        >
-          <WifiOff className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: '#eab308' }} />
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold" style={{ color: '#eab308' }}>
-              Analysis Service Unavailable
-            </p>
-            <p className="text-xs mt-0.5" style={{ color: theme.muted }}>
-              {serviceError}
-            </p>
+        <div style={{ margin: '16px 24px 0', padding: '14px 16px', borderRadius: 10, background: 'rgba(234,179,8,0.08)', border: '1px solid rgba(234,179,8,0.25)', display: 'flex', alignItems: 'flex-start', gap: 12 }}>
+          <WifiOff style={{ width: 16, height: 16, color: '#eab308', flexShrink: 0, marginTop: 1 }} />
+          <div style={{ flex: 1 }}>
+            <p style={{ fontSize: 13, fontWeight: 600, color: '#eab308', margin: '0 0 3px' }}>Analysis Service Unavailable</p>
+            <p style={{ fontSize: 12, color: D.textSub, margin: 0 }}>{serviceError}</p>
             {hasData && cachedAt && (
-              <p className="text-xs mt-1 flex items-center gap-1" style={{ color: theme.muted }}>
-                <Database className="w-3 h-3" />
-                Showing data cached on{' '}
-                {formatDateWithTimezone(new Date(cachedAt), 'MMM dd, yyyy HH:mm')}
+              <p style={{ fontSize: 11, color: D.textSub, margin: '4px 0 0', display: 'flex', alignItems: 'center', gap: 4 }}>
+                <Database style={{ width: 11, height: 11 }} />
+                Cached {formatDateWithTimezone(new Date(cachedAt), 'MMM dd, yyyy HH:mm')}
               </p>
             )}
           </div>
-          <button
-            onClick={loadExisting}
-            disabled={loadingInit}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium flex-shrink-0"
-            style={{ backgroundColor: 'rgba(234,179,8,0.15)', color: '#eab308' }}
-          >
-            {loadingInit
-              ? <Loader2 className="w-3.5 h-3.5 animate-spin" />
-              : <RefreshCw className="w-3.5 h-3.5" />}
+          <button onClick={loadExisting} disabled={loadingInit} style={{ padding: '6px 12px', borderRadius: 7, background: 'rgba(234,179,8,0.15)', color: '#eab308', border: 'none', fontSize: 12, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 5, flexShrink: 0 }}>
+            {loadingInit ? <Loader2 style={{ width: 12, height: 12, animation: 'spin 0.8s linear infinite' }} /> : <RefreshCw style={{ width: 12, height: 12 }} />}
             Retry
           </button>
         </div>
       )}
 
-      {/* ── Tab content ── */}
-      <div className="p-6">
-        {/* No data / upload tab */}
+      {/* ── Tab content ─────────────────────────────────────────────────── */}
+      <div style={{ flex: 1, overflowY: 'auto', padding: 24 }}>
+
+        {/* Upload tab / no data */}
         {(!hasData || activeTab === 'upload') && !triesExhausted && (
           <ScreenshotUpload onUploaded={handleUploaded} />
         )}
 
         {/* Overview */}
         {hasData && activeTab === 'overview' && analysis && (
-          <div className="space-y-6">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
             <MT5PerformanceStats analysis={analysis} />
             <MT5AIInsights aiSummary={aiSummary} />
           </div>
@@ -463,7 +337,7 @@ export default function ScreenshotImportDashboard() {
 
         {/* Charts */}
         {hasData && activeTab === 'charts' && analysis && (
-          <div className="space-y-6">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
             <MT5PerformanceCharts analysis={analysis} trades={trades} />
             {(heatmap.length > 0 || trades.length > 0) && <MT5HeatmapChart heatmap={heatmap} trades={trades} />}
           </div>
@@ -474,115 +348,65 @@ export default function ScreenshotImportDashboard() {
           <MT5BehaviorInsights behavior={behavior} aiSummary={aiSummary} />
         )}
 
-        {/* Trade History */}
+        {/* History */}
         {hasData && activeTab === 'history' && (
-          <div className="space-y-6">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
             <ScreenshotBatchList
               batches={batches}
-              onDeleteBatch={handleDeleteBatch}
+              onDeleteBatch={(batch, label) => setConfirmModal({ type: 'batch', batch, label })}
               deletingBatchId={deletingBatchId}
-              theme={theme}
+              D={D}
             />
             <MT5TradeHistory
               trades={trades}
-              onDeleteTrade={handleDeleteTrade}
+              onDeleteTrade={(trade) => setConfirmModal({ type: 'trade', trade })}
               deletingTradeId={deletingTradeId}
             />
           </div>
         )}
+
+        {/* Empty upload state when has data but on upload tab */}
+        {hasData && activeTab === 'upload' && triesExhausted && null}
       </div>
     </div>
   );
 }
 
-// ── Small summary pill ─────────────────────────────────────────────────────
-// ── Screenshot batch list (shown at top of History tab) ───────────────────
-function ScreenshotBatchList({ batches, onDeleteBatch, deletingBatchId, theme }) {
-  if (!batches || batches.length === 0) return null;
-
+// ── Batch list ────────────────────────────────────────────────────────────────
+function ScreenshotBatchList({ batches, onDeleteBatch, deletingBatchId, D }) {
+  if (!batches?.length) return null;
   return (
     <div>
-      <h3 className="text-xs font-semibold uppercase tracking-widest mb-3" style={{ color: theme.muted }}>
+      <h3 style={{ fontSize: 11, fontWeight: 700, color: D.textSub, letterSpacing: '0.1em', textTransform: 'uppercase', margin: '0 0 12px' }}>
         Upload Sessions
       </h3>
-      <div className="space-y-2">
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
         {batches.map((batch, idx) => {
-          const label = `Screenshot ${idx + 1}`;
+          const label    = `Screenshot ${idx + 1}`;
           const batchKey = batch.upload_batch ?? 'null';
           const isDeleting = deletingBatchId === batchKey;
-          const symbols = batch.symbols
-            ? batch.symbols.split(',').slice(0, 4).join(', ') + (batch.symbols.split(',').length > 4 ? '…' : '')
-            : '—';
-          const uploadedDate = batch.uploaded_at
-            ? new Date(batch.uploaded_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
-            : null;
-
+          const symbols  = batch.symbols ? batch.symbols.split(',').slice(0, 4).join(', ') + (batch.symbols.split(',').length > 4 ? '…' : '') : '—';
+          const date     = batch.uploaded_at ? new Date(batch.uploaded_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : null;
           return (
-            <div
-              key={batchKey}
-              style={{
-                display: 'flex', alignItems: 'center', gap: 12,
-                padding: '12px 16px',
-                borderRadius: 12,
-                backgroundColor: theme.isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)',
-                border: `1px solid ${theme.border}`,
-              }}
-            >
-              {/* Index badge */}
-              <div style={{
-                width: 36, height: 36, borderRadius: 10, flexShrink: 0,
-                background: `linear-gradient(135deg, ${theme.accent}30, ${theme.accent}15)`,
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: 13, fontWeight: 700, color: theme.accent,
-              }}>
+            <div key={batchKey} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '14px 16px', borderRadius: 12, background: D.cardBg, border: `1px solid ${D.border}` }}>
+              <div style={{ width: 36, height: 36, borderRadius: 10, flexShrink: 0, background: `${D.accent}15`, border: `1px solid ${D.accent}25`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, fontWeight: 800, color: D.accent }}>
                 {idx + 1}
               </div>
-
-              {/* Info */}
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <span style={{ fontSize: 13, fontWeight: 600, color: theme.text }}>{label}</span>
-                  <span style={{
-                    fontSize: 11, fontWeight: 500,
-                    padding: '2px 8px', borderRadius: 20,
-                    backgroundColor: `${theme.accent}18`,
-                    color: theme.accent,
-                  }}>
-                    {batch.trade_count} trade{batch.trade_count !== 1 ? 's' : ''}
-                  </span>
+                  <span style={{ fontSize: 13, fontWeight: 700, color: D.text }}>{label}</span>
+                  <span style={{ fontSize: 11, fontWeight: 700, padding: '2px 8px', borderRadius: 99, background: `${D.accent}15`, color: D.accent }}>{batch.trade_count} trade{batch.trade_count !== 1 ? 's' : ''}</span>
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 3 }}>
-                  {uploadedDate && (
-                    <span style={{ fontSize: 11, color: theme.muted }}>{uploadedDate}</span>
-                  )}
-                  {symbols !== '—' && (
-                    <span style={{ fontSize: 11, color: theme.muted, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                      {symbols}
-                    </span>
-                  )}
+                <div style={{ fontSize: 11, color: D.textSub, marginTop: 3 }}>
+                  {date && <span>{date}</span>}
+                  {symbols !== '—' && <span style={{ marginLeft: 8 }}>{symbols}</span>}
                 </div>
               </div>
-
-              {/* Delete button */}
-              <button
-                onClick={() => onDeleteBatch(batch, label)}
-                disabled={isDeleting}
-                title={`Delete ${label}`}
-                style={{
-                  background: 'none', border: `1px solid rgba(239,68,68,0.25)`,
-                  borderRadius: 8, padding: '6px 10px', flexShrink: 0,
-                  display: 'flex', alignItems: 'center', gap: 5,
-                  color: isDeleting ? theme.muted : 'rgba(239,68,68,0.75)',
-                  fontSize: 11, fontWeight: 500,
-                  cursor: isDeleting ? 'not-allowed' : 'pointer',
-                  transition: 'all 0.15s',
-                }}
-                onMouseEnter={e => { if (!isDeleting) { e.currentTarget.style.backgroundColor = 'rgba(239,68,68,0.08)'; e.currentTarget.style.color = '#ef4444'; }}}
-                onMouseLeave={e => { if (!isDeleting) { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.color = 'rgba(239,68,68,0.75)'; }}}
+              <button onClick={() => onDeleteBatch(batch, label)} disabled={isDeleting} style={{ padding: '6px 12px', borderRadius: 7, background: 'none', border: `1px solid ${D.red}30`, color: isDeleting ? D.textSub : D.red, fontSize: 11, fontWeight: 600, cursor: isDeleting ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', gap: 5, transition: 'all 0.15s' }}
+                onMouseEnter={e => { if (!isDeleting) e.currentTarget.style.background = `${D.red}10`; }}
+                onMouseLeave={e => { e.currentTarget.style.background = 'none'; }}
               >
-                {isDeleting
-                  ? <Loader2 style={{ width: 12, height: 12 }} className="animate-spin" />
-                  : <Trash2 style={{ width: 12, height: 12 }} />}
+                {isDeleting ? <Loader2 style={{ width: 11, height: 11, animation: 'spin 0.8s linear infinite' }} /> : <Trash2 style={{ width: 11, height: 11 }} />}
                 Delete
               </button>
             </div>
@@ -593,153 +417,40 @@ function ScreenshotBatchList({ batches, onDeleteBatch, deletingBatchId, theme })
   );
 }
 
-// ── Small inline stat (used in summary bar) ──────────────────────────────
-function Pill({ label, value, color }) {
-  const theme = useTheme();
-  return (
-    <div style={{ padding: '7px 14px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
-      <span style={{ fontSize: 10, textTransform: 'uppercase', color: theme.isDark ? '#4a4a4a' : theme.muted, letterSpacing: '0.08em', lineHeight: 1 }}>{label}</span>
-      <span style={{ fontSize: 14, fontWeight: 700, color, lineHeight: 1.3 }}>{value}</span>
-    </div>
-  );
-}
-
-// ── Delete confirmation modal ──────────────────────────────────────────────
-function DeleteModal({ modal, onConfirm, onCancel, isDeleting, theme }) {
+// ── Delete modal ──────────────────────────────────────────────────────────────
+function DeleteModal({ modal, onConfirm, onCancel, isDeleting, D }) {
   if (!modal) return null;
-
   const isAll   = modal.type === 'all';
   const isBatch = modal.type === 'batch';
-  const isTrade = modal.type === 'trade';
   const trade   = modal.trade;
   const profit  = trade?.profit ?? 0;
 
-  const title = isAll   ? 'Delete All Data'
-              : isBatch ? `Delete ${modal.label}`
-              : 'Delete Trade';
-
-  const body = isAll ? (
-    'This will permanently remove all screenshot sessions and every imported trade across all uploads.'
-  ) : isBatch ? (
-    <>
-      All <strong style={{ color: theme.text }}>{modal.batch?.trade_count} trade{modal.batch?.trade_count !== 1 ? 's' : ''}</strong>{' '}
-      from <strong style={{ color: theme.text }}>{modal.label}</strong> will be permanently removed.
-    </>
-  ) : (
-    <>
-      The <strong style={{ color: theme.text }}>{trade?.symbol}</strong>{' '}
-      <span style={{ color: trade?.type === 'BUY' ? '#10b981' : '#ef4444', fontWeight: 600 }}>{trade?.type}</span>{' '}
-      trade{' '}
-      <span style={{ color: profit >= 0 ? '#10b981' : '#ef4444', fontWeight: 600 }}>
-        ({profit >= 0 ? '+' : ''}{profit.toFixed(2)})
-      </span>
-      {' '}will be permanently removed.
-    </>
-  );
+  const title = isAll ? 'Delete All Data' : isBatch ? `Delete ${modal.label}` : 'Delete Trade';
+  const body  = isAll
+    ? 'This will permanently remove all screenshot sessions and every imported trade.'
+    : isBatch
+    ? `All ${modal.batch?.trade_count} trade${modal.batch?.trade_count !== 1 ? 's' : ''} from ${modal.label} will be permanently removed.`
+    : `The ${trade?.symbol} ${trade?.type} trade (${profit >= 0 ? '+' : ''}${profit.toFixed(2)}) will be permanently removed.`;
 
   return (
-    <div
-      style={{
-        position: 'fixed', inset: 0, zIndex: 9999,
-        backgroundColor: 'rgba(0,0,0,0.5)',
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        padding: 16,
-        backdropFilter: 'blur(8px)',
-        WebkitBackdropFilter: 'blur(8px)',
-        animation: 'dmFadeIn 0.15s ease',
-      }}
-      onClick={(e) => { if (e.target === e.currentTarget && !isDeleting) onCancel(); }}
-    >
-      <div
-        style={{
-          backgroundColor: theme.surface,
-          border: `1px solid ${theme.border}`,
-          borderRadius: 20,
-          padding: '32px 28px 24px',
-          maxWidth: 360, width: '100%',
-          boxShadow: '0 8px 32px rgba(0,0,0,0.3), 0 2px 8px rgba(0,0,0,0.15)',
-          animation: 'dmSlideUp 0.2s cubic-bezier(0.22,1,0.36,1)',
-        }}
-      >
-        {/* Icon */}
-        <div style={{
-          width: 48, height: 48, borderRadius: 14,
-          background: 'rgba(239,68,68,0.1)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          margin: '0 auto 18px',
-        }}>
-          <Trash2 style={{ width: 20, height: 20, color: '#ef4444' }} />
+    <div style={{ position: 'fixed', inset: 0, zIndex: 9999, background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16, backdropFilter: 'blur(8px)', animation: 'fadeIn 0.15s ease' }}
+      onClick={e => { if (e.target === e.currentTarget && !isDeleting) onCancel(); }}>
+      <div style={{ background: D.cardBg, border: `1px solid ${D.border}`, borderRadius: 16, padding: '28px 24px', maxWidth: 360, width: '100%', boxShadow: '0 24px 64px rgba(0,0,0,0.4)', animation: 'slideUp 0.2s cubic-bezier(0.22,1,0.36,1)' }}>
+        <div style={{ width: 48, height: 48, borderRadius: 14, background: `${D.red}12`, border: `1px solid ${D.red}25`, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+          <Trash2 style={{ width: 20, height: 20, color: D.red }} />
         </div>
-
-        {/* Title */}
-        <h3 style={{
-          color: theme.text, fontSize: 16, fontWeight: 700,
-          textAlign: 'center', margin: '0 0 10px', letterSpacing: '-0.01em',
-        }}>
-          {title}
-        </h3>
-
-        {/* Body */}
-        <p style={{
-          color: theme.muted, fontSize: 13, textAlign: 'center',
-          lineHeight: 1.65, margin: '0 0 16px', padding: '0 4px',
-        }}>
-          {body}
-        </p>
-
-        {/* Warning note */}
-        <p style={{
-          fontSize: 11.5, textAlign: 'center', margin: '0 0 22px',
-          color: 'rgba(239,68,68,0.7)', fontWeight: 500,
-          letterSpacing: '0.01em',
-        }}>
-          This action cannot be undone.
-        </p>
-
-        {/* Buttons */}
+        <h3 style={{ color: D.text, fontSize: 16, fontWeight: 700, textAlign: 'center', margin: '0 0 8px', letterSpacing: '-0.01em' }}>{title}</h3>
+        <p style={{ color: D.textSub, fontSize: 13, textAlign: 'center', lineHeight: 1.7, margin: '0 0 8px' }}>{body}</p>
+        <p style={{ fontSize: 11, textAlign: 'center', color: `${D.red}90`, fontWeight: 600, margin: '0 0 20px' }}>This action cannot be undone.</p>
         <div style={{ display: 'flex', gap: 8 }}>
-          <button
-            onClick={onCancel}
-            disabled={isDeleting}
-            style={{
-              flex: 1, padding: '10px 16px', borderRadius: 10,
-              border: `1px solid ${theme.border}`,
-              backgroundColor: 'transparent',
-              color: theme.text, fontSize: 13.5, fontWeight: 500,
-              cursor: isDeleting ? 'not-allowed' : 'pointer',
-              opacity: isDeleting ? 0.4 : 1,
-              transition: 'opacity 0.15s',
-            }}
-          >
-            Cancel
-          </button>
-          <button
-            onClick={onConfirm}
-            disabled={isDeleting}
-            style={{
-              flex: 1, padding: '10px 16px', borderRadius: 10,
-              border: 'none',
-              background: 'linear-gradient(135deg, #f87171 0%, #ef4444 50%, #dc2626 100%)',
-              color: 'white', fontSize: 13.5, fontWeight: 600,
-              cursor: isDeleting ? 'not-allowed' : 'pointer',
-              opacity: isDeleting ? 0.7 : 1,
-              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
-              boxShadow: '0 2px 12px rgba(239,68,68,0.3)',
-              transition: 'opacity 0.15s',
-            }}
-          >
-            {isDeleting
-              ? <Loader2 style={{ width: 13, height: 13 }} className="animate-spin" />
-              : <Trash2 style={{ width: 13, height: 13 }} />}
+          <button onClick={onCancel} disabled={isDeleting} style={{ flex: 1, padding: '10px', borderRadius: 10, border: `1px solid ${D.border}`, background: 'transparent', color: D.text, fontSize: 13, fontWeight: 600, cursor: isDeleting ? 'not-allowed' : 'pointer', opacity: isDeleting ? 0.4 : 1 }}>Cancel</button>
+          <button onClick={onConfirm} disabled={isDeleting} style={{ flex: 1, padding: '10px', borderRadius: 10, border: 'none', background: D.red, color: '#fff', fontSize: 13, fontWeight: 700, cursor: isDeleting ? 'not-allowed' : 'pointer', opacity: isDeleting ? 0.7 : 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, boxShadow: `0 4px 14px ${D.red}35` }}>
+            {isDeleting ? <Loader2 style={{ width: 13, height: 13, animation: 'spin 0.8s linear infinite' }} /> : <Trash2 style={{ width: 13, height: 13 }} />}
             {isDeleting ? 'Deleting…' : 'Delete'}
           </button>
         </div>
       </div>
-
-      <style>{`
-        @keyframes dmFadeIn  { from { opacity: 0 }                            to { opacity: 1 } }
-        @keyframes dmSlideUp { from { opacity: 0; transform: translateY(12px) scale(0.98) } to { opacity: 1; transform: translateY(0) scale(1) } }
-      `}</style>
     </div>
   );
 }
+
