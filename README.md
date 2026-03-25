@@ -1,9 +1,459 @@
-# 📊 Financial News Dashboard
+# Zynth — Trading Intelligence Platform
 
-A professional-grade financial news dashboard built to resemble institutional trading terminals like Bloomberg. Features real-time news from Polygon.io (Massive.com) with focus on gold, commodities, and macroeconomic indicators.
+> A professional-grade, full-stack trading SaaS for retail traders. Institutional-level macro analysis, AI-powered trade journaling, MT5 screenshot import, and real-time market intelligence — built for gold, forex, and commodity traders.
 
-![Dashboard Preview](https://img.shields.io/badge/Status-Production%20Ready-success)
-![Tech Stack](https://img.shields.io/badge/Stack-React%20%2B%20Node.js-blue)
+![Status](https://img.shields.io/badge/Status-Production%20Ready-success)
+![Stack](https://img.shields.io/badge/Stack-React%20%2B%20Node.js%20%2B%20Python-blue)
+![Database](https://img.shields.io/badge/DB-PostgreSQL-336791?logo=postgresql)
+![Deployed on](https://img.shields.io/badge/Frontend-Vercel-black?logo=vercel)
+![Deployed on](https://img.shields.io/badge/Backend-Railway-purple)
+
+---
+
+## Table of Contents
+
+- [Overview](#overview)
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Architecture](#architecture)
+- [Project Structure](#project-structure)
+- [Getting Started](#getting-started)
+- [Environment Variables](#environment-variables)
+- [External API Integrations](#external-api-integrations)
+- [Authentication & Plan Tiers](#authentication--plan-tiers)
+- [Deployment](#deployment)
+- [Python MT5 Service](#python-mt5-service)
+
+---
+
+## Overview
+
+**Zynth** is a trading intelligence SaaS platform targeting retail traders who trade gold (XAU/USD), forex, and commodities. The platform bridges the gap between institutional-grade macro analysis and everyday retail trading by providing:
+
+- **Live market feeds** with WebSocket-powered real-time price tickers
+- **Economic intelligence** — 10 high-impact US indicators with surprise scoring and gold impact classification
+- **AI-powered trade journaling** with behavioral analytics, emotion tracking, and Gemini-generated performance reports
+- **MT5 Screenshot OCR import** — upload MetaTrader 5 trade history screenshots and have Gemini Vision extract all trades automatically
+- **Macro correlation analysis** — retroactively correlate your trades with macro conditions at the time of each trade
+- **Strategy backtester** with 6 built-in strategies across 14 symbols and 7 timeframes
+- **Trading DNA profiles** — monthly AI-generated trader archetype powered by Gemini
+
+---
+
+## Features
+
+### Live Market Dashboard
+- Real-time WebSocket price ticker (Finnhub) for XAU/USD, EUR/USD, BTC, ETH, XRP, BNB, SOL, SPY, GLD, AAPL, TSLA, MSFT, AMZN, NVDA, GOOGL
+- Live session indicators (Asian, London, New York, Sydney)
+- Daily macro score summary
+- Daily trading tips panel
+
+### Economic Intelligence Dashboard
+Tracks 10 high-impact USD indicators in real time:
+
+| Indicator | Source |
+|-----------|--------|
+| Non-Farm Payrolls (NFP) | FRED / BLS |
+| CPI & Core CPI | FRED / BLS |
+| Unemployment Rate | FRED |
+| Federal Funds Rate | FRED |
+| GDP | FRED / BEA |
+| Core PCE | FRED / BEA |
+| Initial Jobless Claims | FRED |
+| Retail Sales | FRED |
+| ISM Manufacturing | FRED |
+| Consumer Confidence | FRED |
+
+Each indicator includes:
+- **Surprise score** (Actual vs. forecast proxy = trailing 3-month average)
+- **Gold impact rating** (Bullish / Bearish / Neutral for XAU/USD)
+- **12-month historical chart**
+
+### Economic Calendar
+- Upcoming and past economic events with actual / forecast / previous values
+- Filter by impact level (High / Medium / Low), currency, and date range
+- Powered by Finnhub economic calendar API; auto-refreshes every 15 minutes
+
+### AI-Powered Trade Journal
+- Log trades manually: pair, direction, lot size, entry/exit, TP/SL, outcome, session, strategy, emotion, notes, screenshots
+- Full analytics: win rate, P&L, profit factor, expectancy, risk:reward, equity curve
+- P&L breakdown by pair, strategy, and session
+- Emotion vs. outcome correlation
+- Auto-detected behavioral flags: revenge trading, FOMO trades, overtrading days
+- CSV export
+- Gem AI analysis per trade (rate-limited by plan)
+- Monthly AI performance reports
+
+### MT5 Screenshot OCR Import
+- Upload MetaTrader 5 trade history screenshots
+- Gemini Vision AI extracts all trades automatically
+- Generates performance stats, behavioral heatmaps, equity curve, and AI narrative report
+- Batch upload tracking
+
+### Macro Correlation Analysis *(Pro+)*
+- Retroactively scores each historical trade against the macro environment at trade time
+- Weighted indicator scoring: CPI (2.0×), NFP (1.8×), etc.
+- Identifies trades taken in favorable vs. unfavorable macro conditions
+
+### Trading DNA Profile *(Elite)*
+- Monthly AI-generated trader archetype (e.g., "The Sniper", "The Scalper")
+- Radar chart across 6 trading dimensions
+- Psychological & behavioral self-assessment
+
+### Pre-Trade Checklist
+- Structured questionnaire before entering a trade
+- Readiness score (0–100) with Proceed / Wait recommendation
+- History tracking & correlation with trade outcomes
+
+### Strategy Backtester
+- 6 built-in strategies: EMA Crossover, RSI, MACD, Bollinger Bands, S/R Breakout, MA+RSI Combo
+- 14 symbols, 7 timeframes (1m → 1w)
+- Historical data via Twelve Data API
+
+### Financial News Feed
+- Real-time news from Polygon.io — auto-refreshes every 30 seconds
+- Filters: keyword, date range, impact level, sentiment
+- Automatic sentiment classification (Bullish / Bearish / Neutral)
+
+### Live Charts
+- Embedded TradingView charts for major forex, commodities, indices, and crypto
+- Full TradingView drawing tools, alerts, and indicators
+
+### Zynth AI Assistant
+- Floating chatbot with 45+ Q&A pairs covering all platform features
+- Instant responses (no Gemini call); rate-limited to 10 messages/hour
+
+### Calculators & Tools
+- Position Size Calculator
+- Pip Value Calculator
+- Risk/Reward Calculator
+- Forex Market Hours Tracker
+
+---
+
+## Tech Stack
+
+| Layer | Technology |
+|-------|-----------|
+| **Frontend** | React 18, Vite 5, TailwindCSS 3, Axios, Chart.js, Recharts, Lightweight-charts |
+| **Backend** | Node.js (ESM), Express 4, JWT auth, Helmet, express-rate-limit, ws (WebSocket), node-cron |
+| **Database** | PostgreSQL (production), SQLite (MT5 import — Python service) |
+| **Python Service** | FastAPI + uvicorn, Google Gemini Vision, MetaTrader5 SDK, pandas |
+| **Email** | Resend |
+| **File Uploads** | Multer (avatars, journal screenshots) |
+| **Caching** | node-cache (server-side), localStorage (client-side) |
+| **Auth** | JWT (7-day), bcryptjs, Google OAuth2 |
+
+---
+
+## Architecture
+
+```
+┌─────────────────────────────────────────────────────┐
+│                   React Frontend                    │
+│         (Vercel CDN — zynth.codes)                  │
+│  Components → Contexts → Hooks → Services           │
+└────────────────────┬────────────────────────────────┘
+                     │ HTTPS / REST
+                     │ WebSocket (/ws/market)
+┌────────────────────▼────────────────────────────────┐
+│              Express Backend (Railway)               │
+│  Routes → Services → PostgreSQL                     │
+│                                                     │
+│  External API integrations:                         │
+│   Finnhub · FRED · BLS · BEA · Polygon              │
+│   Twelve Data · Gemini AI · Resend                  │
+└────────────┬───────────────────────┬────────────────┘
+             │ HTTP (localhost:8000)  │ PostgreSQL
+┌────────────▼────────┐   ┌──────────▼────────────────┐
+│  FastAPI MT5 Service │   │  PostgreSQL Database       │
+│  (Python / local)   │   │  (Railway managed)         │
+│  Gemini Vision OCR  │   │  trades · users            │
+│  SQLite trades.db   │   │  journals · checklists     │
+└─────────────────────┘   └───────────────────────────┘
+```
+
+### Data Flows
+
+**Live Price Data**
+```
+Finnhub WebSocket → finnhubService.js → broadcast → /ws/market → React ticker
+```
+
+**Economic Indicators**
+```
+FRED / BLS / BEA APIs → economicIntelligenceService → surprise score → UI cards
+```
+
+**MT5 Screenshot Import**
+```
+Browser upload → Multer → FastAPI (mt5_service) → Gemini Vision → extracted trades
+  → PostgreSQL / SQLite → ScreenshotImportDashboard
+```
+
+**Trade AI Analysis**
+```
+Trade + macro context → journalAiService → Gemini → insight → saved to DB → UI
+```
+
+---
+
+## Project Structure
+
+```
+zynth/
+├── client/                        # React frontend (Vite)
+│   └── src/
+│       ├── components/            # All page & UI components
+│       │   ├── TradingDesk.jsx         # Live dashboard
+│       │   ├── EconomicDashboard.jsx   # Macro indicators
+│       │   ├── EconomicCalendar.jsx    # Calendar of events
+│       │   ├── TradeJournal.jsx        # Trade logger
+│       │   ├── ScreenshotImportDashboard.jsx  # MT5 OCR import
+│       │   ├── MacroCorrelation.jsx    # Macro-trade analysis
+│       │   ├── BacktestEngine.jsx      # Backtester
+│       │   ├── TradingDNA.jsx          # Trader archetype
+│       │   ├── AdminDashboard.jsx      # Admin panel
+│       │   └── ...                    # 40+ components total
+│       ├── contexts/              # ThemeContext, AuthContext, TimezoneContext
+│       ├── hooks/                 # usePlanGate, useMarketData, ...
+│       └── services/              # API call wrappers (mt5Api, api, ...)
+│
+├── server/                        # Node.js backend (Express ESM)
+│   ├── server.js                  # Entry point, WebSocket setup
+│   ├── routes/                    # 13 route files
+│   │   ├── auth.js                # Register, login, OAuth, password reset
+│   │   ├── journal.js             # Trades CRUD, analytics, AI analysis
+│   │   ├── economic.js            # 10 macro indicator endpoints
+│   │   ├── calendar.js            # Economic calendar
+│   │   ├── analysis.js            # Macro correlation, Trading DNA
+│   │   ├── charts.js              # Historical candle data
+│   │   ├── news.js                # Financial news feed
+│   │   ├── finnhub.js             # Real-time market data
+│   │   ├── data.js                # Gold, forex, equity prices
+│   │   ├── checklist.js           # Pre-trade checklist
+│   │   ├── assistant.js           # AI assistant Q&A
+│   │   ├── admin.js               # Admin user management
+│   │   └── levels.js              # Support/resistance levels storage
+│   ├── services/                  # 19 service files
+│   │   ├── journalDb.js           # All PostgreSQL queries
+│   │   ├── finnhubService.js      # WebSocket + REST Finnhub integration
+│   │   ├── economicIntelligenceService.js  # Surprise scoring engine
+│   │   ├── fredService.js         # FRED API
+│   │   ├── blsBeaService.js       # BLS + BEA APIs
+│   │   ├── polygonService.js      # News feed (auto-rotating API keys)
+│   │   ├── geminiAnalysisService.js        # Gemini AI analysis
+│   │   ├── journalAiService.js    # AI reports & Trading DNA
+│   │   ├── macroAlignmentService.js        # Retroactive macro scoring
+│   │   ├── analyticsService.js    # Trade metrics calculation
+│   │   ├── emailService.js        # Resend email templates
+│   │   └── ...
+│   ├── middleware/
+│   │   ├── authMiddleware.js      # JWT verify, requirePro, requireElite, requireAdmin
+│   │   └── errorHandler.js
+│   └── db/users.js                # User table queries
+│
+├── mt5_service/                   # Python FastAPI service (local only)
+│   ├── main.py                    # FastAPI app + screenshot upload endpoint
+│   ├── screenshot_ocr.py          # Gemini Vision extraction logic
+│   ├── ai_summary.py              # AI narrative generation
+│   ├── database.py                # SQLite persistence
+│   ├── journal_analyzer.py        # Performance stats computation
+│   └── trade_sync.py              # MT5 direct connection (optional)
+│
+├── economic_calendar/             # Python economic calendar module
+│   ├── economic_calendar.py       # Main calendar logic
+│   ├── data_fetcher.py            # Multi-source data fetching
+│   ├── gemini_reasoning.py        # AI reasoning on events
+│   ├── cache.py                   # Cache management
+│   └── terminal_ui.py             # CLI display
+│
+├── package.json                   # Root: concurrently scripts
+├── vercel.json                    # Frontend deployment config
+├── railway.toml                   # Backend deployment config
+├── ecosystem.config.cjs           # PM2 process config
+└── start.ps1 / start.bat          # Local dev launchers
+```
+
+---
+
+## Getting Started
+
+### Prerequisites
+- **Node.js** v18+
+- **npm** v9+
+- **Python** 3.10+ (for MT5 service)
+- **PostgreSQL** database (local or Railway)
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/shahrukhhamza/AI-DASHBOARD.git
+cd AI-DASHBOARD
+```
+
+### 2. Install dependencies
+
+```bash
+# Root + server
+npm install
+
+# Client
+cd client && npm install && cd ..
+
+# Python MT5 service
+cd mt5_service
+python -m venv ../.venv
+../.venv/Scripts/activate   # Windows
+pip install -r requirements.txt
+cd ..
+```
+
+### 3. Configure environment variables
+
+Copy `.env.example` (or create `.env` from the table below) in the project root and in `server/`.
+
+### 4. Run in development
+
+```bash
+# Starts server (port 5000), client (port 5173), and MT5 service (port 8000) concurrently
+npm run dev
+```
+
+Or use the Windows launchers:
+```powershell
+.\start.ps1
+```
+
+---
+
+## Environment Variables
+
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `DATABASE_URL` | ✅ | PostgreSQL connection string |
+| `JWT_SECRET` | ✅ | JWT signing secret |
+| `API_SECRET` | ✅ | Internal API secret |
+| `PORT` | ✅ | Backend port (default `5000`) |
+| `CLIENT_URL` | ✅ | Frontend URL (for CORS) |
+| `POLYGON_API_KEY` | ✅ | Polygon.io news API key |
+| `POLYGON_API_KEY_2` | ⚠️ | Second key for auto-rotation |
+| `FINNHUB_API_KEY` | ✅ | Finnhub real-time market data |
+| `FRED_API_KEY` | ✅ | FRED economic data |
+| `TWELVE_DATA_API_KEY` | ✅ | Historical chart data / backtester |
+| `GEMINI_API_KEY` | ✅ | Primary Google Gemini API key |
+| `GEMINI_API_KEY_2..5` | ⚠️ | Additional Gemini keys (rotation) |
+| `RESEND_API_KEY` | ✅ | Email service (password reset) |
+| `GOOGLE_CLIENT_ID` | ⚠️ | Google OAuth client ID |
+| `GOOGLE_CLIENT_SECRET` | ⚠️ | Google OAuth client secret |
+| `BLS_API_KEY` | ⚠️ | Bureau of Labor Statistics |
+| `BEA_API_KEY` | ⚠️ | Bureau of Economic Analysis |
+
+---
+
+## External API Integrations
+
+| API | Purpose | Docs |
+|-----|---------|------|
+| **Finnhub** | Real-time WebSocket prices + economic calendar | finnhub.io |
+| **FRED** | US economic indicator time-series (12 series) | fred.stlouisfed.org |
+| **BLS** | Labor statistics (payroll, CPI) | bls.gov |
+| **BEA** | GDP, PCE quarterly data | bea.gov |
+| **Polygon.io** | Financial news with sentiment | polygon.io |
+| **Twelve Data** | Historical OHLCV candles (backtester) | twelvedata.com |
+| **Google Gemini** | AI trade analysis, OCR vision, DNA reports | ai.google.dev |
+| **Resend** | Transactional email | resend.com |
+| **Google OAuth2** | Social login | cloud.google.com |
+| **Yahoo Finance** | Supplemental price data (no key needed) | — |
+
+---
+
+## Authentication & Plan Tiers
+
+All protected routes require a JWT bearer token. Middleware enforces plan-level access.
+
+| Feature | Free | Pro ($1.99/mo) | Elite ($4.99/mo) |
+|---------|------|----------------|-------------------|
+| Journal entries/month | 10 | Unlimited | Unlimited |
+| AI trade analyses/month | 3 | 50 | Unlimited |
+| Screenshot imports | 2 lifetime | 35/month | Unlimited |
+| Macro correlation | ✗ | ✓ | ✓ |
+| Live market data | ✗ | ✓ | ✓ |
+| Trading DNA profile | ✗ | ✗ | ✓ |
+| Custom reports | ✗ | ✗ | ✓ |
+| Admin panel | — | — | admin role only |
+
+**Rate limits**
+- Global: 500 requests / 15 min per IP
+- Auth: 10 attempts / 15 min
+- AI requests: 20 / hour per user
+
+---
+
+## Deployment
+
+### Frontend → Vercel
+- Auto-deploys from `main` branch
+- Config: [`vercel.json`](vercel.json)
+- `/api/*` requests are rewritten to the Railway backend
+- SPA fallback: all routes serve `index.html`
+
+### Backend → Railway
+- Start command: `node server/server.js`
+- Config: [`railway.toml`](railway.toml)
+- Managed PostgreSQL add-on
+
+### Process Manager (PM2)
+```bash
+pm2 start ecosystem.config.cjs
+```
+
+---
+
+## Python MT5 Service
+
+The `mt5_service/` directory contains a standalone **FastAPI** microservice that runs **locally alongside MetaTrader 5**.
+
+### Responsibilities
+- Accepts trade history screenshot uploads from the frontend
+- Sends images to **Gemini Vision** to extract individual trade records (pair, direction, entry/exit, P&L)
+- Computes performance statistics and behavioral analysis
+- Persists extracted trades to a local **SQLite** database (`mt5_service/data/trades.db`)
+- Optionally connects directly to a live MT5 terminal via the MetaTrader5 Python SDK
+
+### Running the service
+
+```bash
+cd mt5_service
+..\.venv\Scripts\activate
+uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+```
+
+Or use the provided launcher:
+```bat
+start-mt5-service.bat
+```
+
+The frontend communicates with this service via the Express backend proxy at `/api/mt5/*`.
+
+---
+
+## Economic Calendar Python Module
+
+The `economic_calendar/` directory is a standalone Python CLI tool that:
+- Fetches upcoming economic events from multiple sources
+- Uses Gemini AI to reason about likely market impact
+- Provides a rich terminal UI display
+- Maintains a local cache for offline access
+
+```bash
+cd economic_calendar
+python economic_calendar.py
+```
+
+---
+
+*Built with React, Node.js, Python, and Google Gemini AI.*
 
 ## ✨ Features
 
