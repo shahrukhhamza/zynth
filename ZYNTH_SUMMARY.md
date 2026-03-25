@@ -47,37 +47,32 @@ Zynth is a professional-grade trading intelligence platform built for retail tra
 - Radar chart scoring across 6 trading dimensions
 - Gives traders a deep psychological and behavioral self-assessment
 
-### 8. MT5 Screenshot OCR Import
-- Upload MetaTrader 5 trade history screenshots — the app automatically extracts trades via AI Vision OCR
-- Generates performance stats, behavioral analysis, equity charts, heatmaps, and an AI narrative report
-- No manual data entry required
-
-### 9. Strategy Backtester
+### 8. Strategy Backtester
 - Built-in backtesting engine supporting: EMA Crossover, RSI, MACD, Bollinger Bands, Support & Resistance Breakout, MA+RSI Combo
 - 14 supported symbols, 7 timeframes
 - Visualized on interactive charts
 
-### 10. Macro Correlation *(Pro Plan)*
+### 9. Macro Correlation *(Pro Plan)*
 - Automatically correlates a user's trade outcomes with macroeconomic conditions at the time of each trade
 - Helps traders understand how economic events impact their specific performance
 
-### 11. Trading Desk — Calculators & Tools
+### 10. Trading Desk — Calculators & Tools
 - **Position Size Calculator** — size your trade based on account risk %
 - **Pip Value Calculator**
 - **Risk/Reward Calculator**
 - **Forex Market Hours Tracker** — live session indicator (London, New York, Tokyo, Sydney)
 
-### 12. Pre-Trade Checklist
+### 11. Pre-Trade Checklist
 - Structured questionnaire before entering a trade
 - Scores trade readiness and recommends whether to proceed
 - History and stats tracked over time
 
-### 13. Financial News Feed
+### 12. Financial News Feed
 - Real-time financial news from Polygon.io
 - Filterable by asset/topic with sentiment badge (Bullish / Bearish / Neutral) and impact level
 - Auto-refreshes every 30 seconds
 
-### 14. Zynth AI Assistant
+### 13. Zynth AI Assistant
 - Floating chat assistant with knowledge base Q&A
 - Helps users navigate the platform and understand features
 - Rate-limited to 10 messages/hour
@@ -90,7 +85,6 @@ Zynth is a professional-grade trading intelligence platform built for retail tra
 |---|---|---|---|
 | Journal entries/month | 10 | Unlimited | Unlimited |
 | AI trade analyses | 3 | 50/month | Unlimited |
-| MT5 screenshot imports | 2 | 35 | Unlimited |
 | Macro Correlation | ✗ | ✓ | ✓ |
 | Trading DNA profile | ✗ | ✗ | ✓ |
 | Custom AI reports | ✗ | ✗ | ✓ |
@@ -115,11 +109,10 @@ Zynth is a professional-grade trading intelligence platform built for retail tra
 |---|---|
 | Frontend | React 18, Vite, TailwindCSS, TradingView, Chart.js, Recharts |
 | Backend | Node.js / Express, SQLite (embedded database) |
-| AI | Google Gemini (text analysis + Vision OCR) |
+| AI | Google Gemini (text analysis) |
 | Market Data | Finnhub (real-time WebSocket), Polygon.io, Alpha Vantage |
 | Economic Data | FRED (Federal Reserve API) |
 | Auth | JWT + Google OAuth |
-| MT5 Import | Python FastAPI microservice + Gemini Vision OCR |
 
 ---
 
@@ -127,7 +120,6 @@ Zynth is a professional-grade trading intelligence platform built for retail tra
 
 - Retail forex and gold traders who want institutional-quality tools at an affordable price
 - Traders who want to improve performance through data, journaling, and AI feedback
-- Anyone using MetaTrader 5 who wants automated trade analysis without complex setup
 
 ---
 

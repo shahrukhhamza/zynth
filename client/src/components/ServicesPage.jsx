@@ -1,4 +1,4 @@
-﻿import { ArrowLeft, BarChart2, BookOpen, Brain, Camera, Calendar, TrendingUp, Bot, Activity, ClipboardCheck, Layers, Bell } from 'lucide-react';
+﻿import { ArrowLeft, BarChart2, BookOpen, Brain, Calendar, TrendingUp, Bot, Activity, ClipboardCheck, Layers } from 'lucide-react';
 
 const SERVICES = [
   {
@@ -38,26 +38,8 @@ const SERVICES = [
     plans: ['Free (3 tries)', 'Pro (50/month)', 'Elite (Unlimited)'],
   },
   {
-    Icon: Camera,
-    number: '03',
-    name: 'Screenshot OCR Trade Import',
-    tagline: 'Import trades from any broker in seconds',
-    color: '#f59e0b',
-    bg: 'rgba(245,158,11,0.07)',
-    border: 'rgba(245,158,11,0.2)',
-    desc: 'Upload a screenshot of your MT5 or broker trading history and our AI automatically extracts all your trades using optical character recognition (OCR). No manual data entry needed — get a full AI performance review instantly.',
-    features: [
-      'Supports MT5, MT4, and most broker interfaces',
-      'Automatic trade data extraction via OCR',
-      'AI performance analysis on extracted trades',
-      'Statistical breakdown: win rate, best pairs, worst sessions',
-      'Recommendations based on your screenshot data',
-    ],
-    plans: ['Free (2 analyses)', 'Pro (35/month)', 'Elite (Unlimited)'],
-  },
-  {
     Icon: BarChart2,
-    number: '04',
+    number: '03',
     name: 'Macro Surprise Score & Economic Intelligence',
     tagline: 'Know the macro before you trade',
     color: '#0ea5e9',
@@ -75,7 +57,7 @@ const SERVICES = [
   },
   {
     Icon: Calendar,
-    number: '05',
+    number: '04',
     name: 'Economic Calendar',
     tagline: 'Never miss a high-impact release',
     color: '#ef4444',
@@ -93,7 +75,7 @@ const SERVICES = [
   },
   {
     Icon: TrendingUp,
-    number: '06',
+    number: '05',
     name: 'Live Market Data & Price Feeds',
     tagline: 'Real-time prices for the markets you trade',
     color: '#3b82f6',
@@ -111,7 +93,7 @@ const SERVICES = [
   },
   {
     Icon: Bot,
-    number: '07',
+    number: '06',
     name: 'Zynth AI Assistant',
     tagline: 'Your personal trading intelligence chatbot',
     color: '#a78bfa',
@@ -129,7 +111,7 @@ const SERVICES = [
   },
   {
     Icon: Activity,
-    number: '08',
+    number: '07',
     name: 'Macro Correlation Analysis',
     tagline: 'See how macro aligns with your trades',
     color: '#f97316',
@@ -147,7 +129,7 @@ const SERVICES = [
   },
   {
     Icon: ClipboardCheck,
-    number: '09',
+    number: '08',
     name: 'Pre-Trade Checklist',
     tagline: 'Build discipline before every entry',
     color: '#22d3ee',
@@ -164,7 +146,7 @@ const SERVICES = [
   },
   {
     Icon: Layers,
-    number: '10',
+    number: '09',
     name: 'Backtesting & Advanced Charts',
     tagline: 'Test strategies on historical data',
     color: '#6b7280',

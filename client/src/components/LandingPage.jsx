@@ -1,4 +1,5 @@
 ﻿import { useState, useEffect, useRef } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { motion, AnimatePresence, useInView } from 'framer-motion';
 import {
   BarChart2, BookOpen, Shield, Zap, Brain, Users,
@@ -331,7 +332,33 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
     sessionStorage.setItem('bannerDismissed', '1');
   }
 
+  const SEO_TITLE       = 'Zynth — AI-Powered Trading Intelligence Platform';
+  const SEO_DESCRIPTION = 'Institutional-grade macro analysis, AI trade journaling, and real-time market data for gold, forex and commodity traders.';
+  const SEO_URL         = 'https://zynth.codes';
+  const SEO_IMAGE       = 'https://zynth.codes/og-image.png';
+
   return (
+    <>
+    <Helmet>
+      {/* Primary */}
+      <title>{SEO_TITLE}</title>
+      <meta name="description" content={SEO_DESCRIPTION} />
+      <link rel="canonical" href={SEO_URL} />
+
+      {/* Open Graph */}
+      <meta property="og:type"        content="website" />
+      <meta property="og:url"         content={SEO_URL} />
+      <meta property="og:title"       content={SEO_TITLE} />
+      <meta property="og:description" content={SEO_DESCRIPTION} />
+      <meta property="og:image"       content={SEO_IMAGE} />
+
+      {/* Twitter Card */}
+      <meta name="twitter:card"        content="summary_large_image" />
+      <meta name="twitter:url"         content={SEO_URL} />
+      <meta name="twitter:title"       content={SEO_TITLE} />
+      <meta name="twitter:description" content={SEO_DESCRIPTION} />
+      <meta name="twitter:image"       content={SEO_IMAGE} />
+    </Helmet>
     <div className={`min-h-screen overflow-x-hidden transition-colors duration-300 ${isDark ? 'bg-[#0a0a0a] text-white' : 'bg-[#f4f6f9] text-[#0a0e1a]'}`}>
 
       {/* ── Custom cursor layers ────────────────────────────────────────── */}
@@ -1423,5 +1450,6 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
       </footer>
 
     </div>
+    </>
   );
 }

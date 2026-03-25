@@ -5,12 +5,11 @@
   "scripts": {
     "install-all": "npm install && cd server && npm install && cd ../client && npm install",
     "prestart": "node scripts/kill-ports.js",
-    "dev": "concurrently \"npm run server\" \"npm run client\" \"npm run mt5\"",
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
     "server": "cd server && npm run dev",
     "client": "cd client && npm run dev",
-    "mt5": "cd mt5_service && ..\\.venv\\Scripts\\python.exe -m uvicorn main:app --host 0.0.0.0 --port 8000",
     "build": "cd client && npm run build",
-    "start": "concurrently \"npm run server\" \"npm run client\" \"npm run mt5\""
+    "start": "concurrently \"npm run server\" \"npm run client\""
   },
   "keywords": [
     "financial",

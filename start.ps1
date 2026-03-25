@@ -8,8 +8,7 @@ Write-Host "========================================`n" -ForegroundColor Cyan
 # Kill any existing Node and Python server processes
 Write-Host "Stopping any existing servers..." -ForegroundColor Yellow
 Get-Process -Name node -ErrorAction SilentlyContinue | Stop-Process -Force
-# Kill Python processes holding port 8000 (uvicorn/MT5 service)
-@(5000, 8000, 5173) | ForEach-Object {
+@(5000, 5173) | ForEach-Object {
     $port = $_
     $pids = (netstat -ano 2>$null) | Select-String "LISTENING" | Select-String ":$port " |
         ForEach-Object { ($_ -split '\s+')[-1] } | Sort-Object -Unique

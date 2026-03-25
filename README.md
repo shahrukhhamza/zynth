@@ -1,6 +1,6 @@
 # Zynth — Trading Intelligence Platform
 
-> A professional-grade, full-stack trading SaaS for retail traders. Institutional-level macro analysis, AI-powered trade journaling, MT5 screenshot import, and real-time market intelligence — built for gold, forex, and commodity traders.
+> A professional-grade, full-stack trading SaaS for retail traders. Institutional-level macro analysis, AI-powered trade journaling, and real-time market intelligence — built for gold, forex, and commodity traders.
 
 ![Status](https://img.shields.io/badge/Status-Production%20Ready-success)
 ![Stack](https://img.shields.io/badge/Stack-React%20%2B%20Node.js%20%2B%20Python-blue)
@@ -22,7 +22,6 @@
 - [External API Integrations](#external-api-integrations)
 - [Authentication & Plan Tiers](#authentication--plan-tiers)
 - [Deployment](#deployment)
-- [Python MT5 Service](#python-mt5-service)
 
 ---
 
@@ -33,7 +32,6 @@
 - **Live market feeds** with WebSocket-powered real-time price tickers
 - **Economic intelligence** — 10 high-impact US indicators with surprise scoring and gold impact classification
 - **AI-powered trade journaling** with behavioral analytics, emotion tracking, and Gemini-generated performance reports
-- **MT5 Screenshot OCR import** — upload MetaTrader 5 trade history screenshots and have Gemini Vision extract all trades automatically
 - **Macro correlation analysis** — retroactively correlate your trades with macro conditions at the time of each trade
 - **Strategy backtester** with 6 built-in strategies across 14 symbols and 7 timeframes
 - **Trading DNA profiles** — monthly AI-generated trader archetype powered by Gemini
@@ -84,12 +82,6 @@ Each indicator includes:
 - Gem AI analysis per trade (rate-limited by plan)
 - Monthly AI performance reports
 
-### MT5 Screenshot OCR Import
-- Upload MetaTrader 5 trade history screenshots
-- Gemini Vision AI extracts all trades automatically
-- Generates performance stats, behavioral heatmaps, equity curve, and AI narrative report
-- Batch upload tracking
-
 ### Macro Correlation Analysis *(Pro+)*
 - Retroactively scores each historical trade against the macro environment at trade time
 - Weighted indicator scoring: CPI (2.0×), NFP (1.8×), etc.
@@ -137,8 +129,7 @@ Each indicator includes:
 |-------|-----------|
 | **Frontend** | React 18, Vite 5, TailwindCSS 3, Axios, Chart.js, Recharts, Lightweight-charts |
 | **Backend** | Node.js (ESM), Express 4, JWT auth, Helmet, express-rate-limit, ws (WebSocket), node-cron |
-| **Database** | PostgreSQL (production), SQLite (MT5 import — Python service) |
-| **Python Service** | FastAPI + uvicorn, Google Gemini Vision, MetaTrader5 SDK, pandas |
+| **Database** | PostgreSQL |
 | **Email** | Resend |
 | **File Uploads** | Multer (avatars, journal screenshots) |
 | **Caching** | node-cache (server-side), localStorage (client-side) |
@@ -163,14 +154,13 @@ Each indicator includes:
 │  External API integrations:                         │
 │   Finnhub · FRED · BLS · BEA · Polygon              │
 │   Twelve Data · Gemini AI · Resend                  │
-└────────────┬───────────────────────┬────────────────┘
-             │ HTTP (localhost:8000)  │ PostgreSQL
-┌────────────▼────────┐   ┌──────────▼────────────────┐
-│  FastAPI MT5 Service │   │  PostgreSQL Database       │
-│  (Python / local)   │   │  (Railway managed)         │
-│  Gemini Vision OCR  │   │  trades · users            │
-│  SQLite trades.db   │   │  journals · checklists     │
-└─────────────────────┘   └───────────────────────────┘
+└────────────────────────────┬───────────────────────────┘
+                             │ PostgreSQL
+              ┌──────────────▼──────────────────────────┐
+              │          PostgreSQL Database             │
+              │          (Railway managed)               │
+              │  trades · users · journals · checklists  │
+              └─────────────────────────────────────────┘
 ```
 
 ### Data Flows
@@ -183,12 +173,6 @@ Finnhub WebSocket → finnhubService.js → broadcast → /ws/market → React t
 **Economic Indicators**
 ```
 FRED / BLS / BEA APIs → economicIntelligenceService → surprise score → UI cards
-```
-
-**MT5 Screenshot Import**
-```
-Browser upload → Multer → FastAPI (mt5_service) → Gemini Vision → extracted trades
-  → PostgreSQL / SQLite → ScreenshotImportDashboard
 ```
 
 **Trade AI Analysis**
@@ -205,19 +189,36 @@ zynth/
 ├── client/                        # React frontend (Vite)
 │   └── src/
 │       ├── components/            # All page & UI components
+│       │   ├── LandingPage.jsx         # Marketing landing page
+│       │   ├── Hero.jsx / FeaturesBento.jsx / Pricing.jsx  # Landing sections
+│       │   ├── LoginPage.jsx / SignupPage.jsx  # Auth pages
+│       │   ├── ForgotPasswordPage.jsx / ResetPasswordPage.jsx
+│       │   ├── OnboardingFlow.jsx      # New user onboarding
 │       │   ├── TradingDesk.jsx         # Live dashboard
 │       │   ├── EconomicDashboard.jsx   # Macro indicators
+│       │   ├── EconomicIntelligence.jsx  # Intelligence cards
 │       │   ├── EconomicCalendar.jsx    # Calendar of events
-│       │   ├── TradeJournal.jsx        # Trade logger
-│       │   ├── ScreenshotImportDashboard.jsx  # MT5 OCR import
+│       │   ├── TradeJournal.jsx        # Trade logger (journal/)
 │       │   ├── MacroCorrelation.jsx    # Macro-trade analysis
 │       │   ├── BacktestEngine.jsx      # Backtester
 │       │   ├── TradingDNA.jsx          # Trader archetype
+│       │   ├── ChartsPage.jsx / LiveChart.jsx  # Charts
+│       │   ├── LiveMarketTicker.jsx    # Real-time price ticker
+│       │   ├── NewsFeed.jsx / NewsCard.jsx  # News feed
+│       │   ├── DailyBrief.jsx          # Daily macro summary
+│       │   ├── PreTradeChecklist.jsx   # Pre-trade readiness
+│       │   ├── ZynthAssistant.jsx      # Floating AI chatbot
 │       │   ├── AdminDashboard.jsx      # Admin panel
-│       │   └── ...                    # 40+ components total
+│       │   ├── ProfileModal.jsx / SettingsModal.jsx  # User settings
+│       │   ├── UpgradeModal.jsx / PlanBadge.jsx / PlanGateBanner.jsx
+│       │   ├── HelpCenter.jsx / ServicesPage.jsx
+│       │   ├── PrivacyPolicy.jsx / TermsOfService.jsx / RefundPolicy.jsx / ServicePolicy.jsx
+│       │   ├── Header.jsx / Sidebar.jsx / BrandLogo.jsx
+│       │   ├── DataChart.jsx / LoadingSkeleton.jsx / RightPanel.jsx
+│       │   └── ImageCropModal.jsx      # Avatar crop utility
 │       ├── contexts/              # ThemeContext, AuthContext, TimezoneContext
 │       ├── hooks/                 # usePlanGate, useMarketData, ...
-│       └── services/              # API call wrappers (mt5Api, api, ...)
+│       └── services/              # API call wrappers (api, journalApi, ...)
 │
 ├── server/                        # Node.js backend (Express ESM)
 │   ├── server.js                  # Entry point, WebSocket setup
@@ -253,14 +254,6 @@ zynth/
 │   │   └── errorHandler.js
 │   └── db/users.js                # User table queries
 │
-├── mt5_service/                   # Python FastAPI service (local only)
-│   ├── main.py                    # FastAPI app + screenshot upload endpoint
-│   ├── screenshot_ocr.py          # Gemini Vision extraction logic
-│   ├── ai_summary.py              # AI narrative generation
-│   ├── database.py                # SQLite persistence
-│   ├── journal_analyzer.py        # Performance stats computation
-│   └── trade_sync.py              # MT5 direct connection (optional)
-│
 ├── economic_calendar/             # Python economic calendar module
 │   ├── economic_calendar.py       # Main calendar logic
 │   ├── data_fetcher.py            # Multi-source data fetching
@@ -282,7 +275,6 @@ zynth/
 ### Prerequisites
 - **Node.js** v18+
 - **npm** v9+
-- **Python** 3.10+ (for MT5 service)
 - **PostgreSQL** database (local or Railway)
 
 ### 1. Clone the repository
@@ -300,13 +292,6 @@ npm install
 
 # Client
 cd client && npm install && cd ..
-
-# Python MT5 service
-cd mt5_service
-python -m venv ../.venv
-../.venv/Scripts/activate   # Windows
-pip install -r requirements.txt
-cd ..
 ```
 
 ### 3. Configure environment variables
@@ -316,7 +301,7 @@ Copy `.env.example` (or create `.env` from the table below) in the project root 
 ### 4. Run in development
 
 ```bash
-# Starts server (port 5000), client (port 5173), and MT5 service (port 8000) concurrently
+# Starts server (port 5000) and client (port 5173) concurrently
 npm run dev
 ```
 
@@ -376,7 +361,6 @@ All protected routes require a JWT bearer token. Middleware enforces plan-level 
 |---------|------|----------------|-------------------|
 | Journal entries/month | 10 | Unlimited | Unlimited |
 | AI trade analyses/month | 3 | 50 | Unlimited |
-| Screenshot imports | 2 lifetime | 35/month | Unlimited |
 | Macro correlation | ✗ | ✓ | ✓ |
 | Live market data | ✗ | ✓ | ✓ |
 | Trading DNA profile | ✗ | ✗ | ✓ |
@@ -410,34 +394,6 @@ pm2 start ecosystem.config.cjs
 
 ---
 
-## Python MT5 Service
-
-The `mt5_service/` directory contains a standalone **FastAPI** microservice that runs **locally alongside MetaTrader 5**.
-
-### Responsibilities
-- Accepts trade history screenshot uploads from the frontend
-- Sends images to **Gemini Vision** to extract individual trade records (pair, direction, entry/exit, P&L)
-- Computes performance statistics and behavioral analysis
-- Persists extracted trades to a local **SQLite** database (`mt5_service/data/trades.db`)
-- Optionally connects directly to a live MT5 terminal via the MetaTrader5 Python SDK
-
-### Running the service
-
-```bash
-cd mt5_service
-..\.venv\Scripts\activate
-uvicorn main:app --host 0.0.0.0 --port 8000 --reload
-```
-
-Or use the provided launcher:
-```bat
-start-mt5-service.bat
-```
-
-The frontend communicates with this service via the Express backend proxy at `/api/mt5/*`.
-
----
-
 ## Economic Calendar Python Module
 
 The `economic_calendar/` directory is a standalone Python CLI tool that:
@@ -454,99 +410,6 @@ python economic_calendar.py
 ---
 
 *Built with React, Node.js, Python, and Google Gemini AI.*
-
-## ✨ Features
-
-### 🔴 Real-Time News Feed
-- Fetches latest financial news from Polygon.io API
-- Auto-refresh every 30 seconds
-- Filtered for gold, inflation, interest rates, and macro-economic topics
-- Professional card-based layout with images
-
-### 📊 Market Sentiment Analysis
-- Automatic sentiment classification (Bullish/Bearish/Neutral)
-- Real-time sentiment statistics
-- Visual indicators for market mood
-
-### 🚨 High Impact Alerts
-- Highlights critical news events
-- Impact level classification (High/Medium/Low)
-- Dedicated alerts panel
-
-### 🔍 Advanced Filtering
-- Keyword search
-- Date range filtering
-- Impact level filtering
-- Quick filter tags for common topics
-
-### 🎨 Professional UI
-- Dark theme inspired by Bloomberg Terminal
-- Clean, modern design with TailwindCSS
-- Responsive layout
-- Loading skeletons for smooth UX
-
-## 🏗️ Tech Stack
-
-### Frontend
-- **React.js** - UI framework
-- **TailwindCSS** - Styling
-- **Vite** - Build tool
-- **Axios** - HTTP client
-- **date-fns** - Date formatting
-- **lucide-react** - Icons
-
-### Backend
-- **Node.js** - Runtime
-- **Express** - Web framework
-- **Polygon.io API** - Financial news data
-- **node-cache** - Response caching
-- **CORS** - Cross-origin support
-
-## 📁 Project Structure
-
-```
-financial-news-dashboard/
-├── client/                   # React frontend
-│   ├── src/
-│   │   ├── components/       # React components
-│   │   │   ├── Header.jsx
-│   │   │   ├── Sidebar.jsx
-│   │   │   ├── NewsFeed.jsx
-│   │   │   ├── RightPanel.jsx
-│   │   │   ├── NewsCard.jsx
-│   │   │   └── LoadingSkeleton.jsx
-│   │   ├── services/
-│   │   │   └── api.js        # API integration
-│   │   ├── App.jsx           # Main app component
-│   │   ├── main.jsx          # Entry point
-│   │   └── index.css         # Global styles
-│   ├── index.html
-│   ├── package.json
-│   ├── vite.config.js
-│   ├── tailwind.config.js
-│   └── postcss.config.js
-├── server/                   # Node.js backend
-│   ├── routes/
-│   │   └── news.js           # News API routes
-│   ├── services/
-│   │   └── polygonService.js # Polygon.io integration
-│   ├── middleware/
-│   │   └── errorHandler.js   # Error handling
-│   ├── server.js             # Express server
-│   └── package.json
-├── .env.example              # Environment variables template
-├── .gitignore
-├── package.json              # Root package
-└── README.md
-```
-
-## 🚀 Getting Started
-
-### Prerequisites
-
-- **Node.js** (v18 or higher)
-- **npm** or **yarn**
-- **Polygon.io API Key** (Get one at https://polygon.io/)
 
 ### Installation
 

@@ -1,4 +1,6 @@
 import { useState, useEffect, useRef, lazy, Suspense } from 'react'
+import { HelmetProvider } from 'react-helmet-async'
+import ReactGA from 'react-ga4'
 import { useTheme } from './contexts/ThemeContext'
 import { AuthProvider, useAuth } from './contexts/AuthContext'
 import Header from './components/Header'
@@ -111,6 +113,11 @@ function AppShell() {
     window.addEventListener('popstate', handlePopState);
     return () => window.removeEventListener('popstate', handlePopState);
   }, []);
+
+  // Track GA4 page view on every view change
+  useEffect(() => {
+    ReactGA.send({ hitType: 'pageview', page: '/' + currentView, title: currentView });
+  }, [currentView]);
 
   // Keep a ref in sync so loadNews always reads current filters (avoids stale closure)
   const filtersRef = useRef(filters);
@@ -295,9 +302,11 @@ function AppShell() {
 
 export default function App() {
   return (
-    <AuthProvider>
-      <AuthGate />
-    </AuthProvider>
+    <HelmetProvider>
+      <AuthProvider>
+        <AuthGate />
+      </AuthProvider>
+    </HelmetProvider>
   )
 }
 
@@ -374,6 +383,11 @@ function AuthGate() {
       setShowOnboarding(true);
     }
   }, [user?.id]) // eslint-disable-line
+
+  // Track GA4 page view for pre-auth pages (landing, login, signup, etc.)
+  useEffect(() => {
+    ReactGA.send({ hitType: 'pageview', page: '/' + view, title: view });
+  }, [view]);
 
   function handleOnboardingComplete() {
     setShowOnboarding(false);

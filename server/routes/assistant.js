@@ -359,7 +359,7 @@ Contact: getzynth@gmail.com | Website: getzynth.com
 
 ## ZYNTH'S NATURE
 - Zynth is NOT a broker. You cannot place real trades through Zynth.
-- Zynth does NOT sync with MT4/MT5 automatically. You manually log trades through the journal.
+- All trades are logged manually through the journal — there is no automatic broker sync.
 - All data is private to your account. Data is encrypted in transit (TLS). Never shared or sold.
 - Mobile: works in any mobile browser. Add to home screen for app-like experience. Native app on roadmap.
 
