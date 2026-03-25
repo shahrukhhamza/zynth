@@ -4,13 +4,13 @@ import { Flame, ArrowRight, Shield, Zap, Bot, Globe } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 
 // Upgraded Mockup with Glassmorphism and Depth
-function HeroDashboardMockup() {
+function HeroDashboardMockup({ isDark }) {
   return (
     <motion.div 
       initial={{ y: 40, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ delay: 0.6, duration: 0.8 }}
-      className="relative rounded-2xl overflow-hidden border border-white/10 bg-[#070b14]/80 backdrop-blur-xl shadow-[0_40px_120px_rgba(0,0,0,0.7)]"
+      className={`relative rounded-2xl overflow-hidden border border-white/10 bg-[#070b14]/80 backdrop-blur-xl ${isDark ? 'shadow-[0_40px_120px_rgba(0,0,0,0.7)]' : 'shadow-[0_8px_40px_rgba(0,0,0,0.13)]'}`}
     >
       {/* Top Bar */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-white/5 bg-white/5">
@@ -73,17 +73,21 @@ export default function Hero({ badgeText, spotsLeft, onGetStarted, onSignIn }) {
         {/* Animated Grid */}
         <div className={`absolute inset-0 grid-bg ${isDark ? 'opacity-40' : 'opacity-10'}`} />
         
-        {/* Dynamic Mesh Gradients (The "Unicorn" Look) */}
-        <motion.div 
-          animate={{ x: [0, 50, 0], y: [0, -30, 0] }}
-          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-          className="absolute top-[-10%] left-[-10%] w-[600px] h-[600px] bg-emerald-600/10 rounded-full blur-[120px]" 
-        />
-        <motion.div 
-          animate={{ x: [0, -50, 0], y: [0, 30, 0] }}
-          transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-          className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-indigo-600/10 rounded-full blur-[120px]" 
-        />
+        {/* Dynamic Mesh Gradients — only shown in dark mode */}
+        {isDark && (
+          <>
+            <motion.div 
+              animate={{ x: [0, 50, 0], y: [0, -30, 0] }}
+              transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+              className="absolute top-[-10%] left-[-10%] w-[600px] h-[600px] bg-emerald-600/10 rounded-full blur-[120px]" 
+            />
+            <motion.div 
+              animate={{ x: [0, -50, 0], y: [0, 30, 0] }}
+              transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+              className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-indigo-600/10 rounded-full blur-[120px]" 
+            />
+          </>
+        )}
       </div>
 
       <div className="relative z-10 max-w-5xl mx-auto">
@@ -139,7 +143,7 @@ export default function Hero({ badgeText, spotsLeft, onGetStarted, onSignIn }) {
         )}
 
         {/* CTA Buttons */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-5 mb-20">
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-5 mb-12">
           <button 
             onClick={onGetStarted}
             className="group relative px-8 py-5 bg-emerald-500 text-black font-black rounded-2xl transition-all hover:scale-105 hover:shadow-[0_0_40px_rgba(16,185,129,0.4)] flex items-center gap-3 overflow-hidden"
@@ -174,9 +178,9 @@ export default function Hero({ badgeText, spotsLeft, onGetStarted, onSignIn }) {
 
       {/* Hero Mockup with Radial Shadow */}
       <div className="relative z-10 mt-12 w-full max-w-5xl mx-auto px-4">
-        <HeroDashboardMockup />
-        {/* Glow behind the dashboard */}
-        <div className="absolute -bottom-20 left-1/2 -translate-x-1/2 w-[80%] h-40 bg-emerald-500/20 blur-[100px] pointer-events-none" />
+        <HeroDashboardMockup isDark={isDark} />
+        {/* Glow behind the dashboard — dark mode only */}
+        {isDark && <div className="absolute -bottom-20 left-1/2 -translate-x-1/2 w-[80%] h-40 bg-emerald-500/20 blur-[100px] pointer-events-none" />}
       </div>
     </section>
   );
