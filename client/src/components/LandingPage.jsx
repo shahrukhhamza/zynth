@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { API_URL } from '../config/api';
 import { getPublicStats } from '../utils/publicStats';
+import Hero from './Hero';
 
 const TOTAL_FOUNDING = 100;
 const OFFER_END_DATE = new Date('2026-04-12T23:59:59');
@@ -122,105 +123,6 @@ const FEATURE_CARDS = [
   },
 ];
 
-// Mini mockup used inside the hero
-function HeroDashboardMockup() {
-  return (
-    <div className="relative rounded-2xl overflow-hidden border border-white/[0.07]"
-         style={{background:'#0c1527', boxShadow:'0 40px 120px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.04)'}}>
-      {/* Window chrome */}
-      <div className="flex items-center gap-2 px-4 py-3 border-b border-white/[0.05]" style={{background:'#0a1220'}}>
-        <div className="flex gap-1.5">
-          <div className="w-3 h-3 rounded-full bg-red-500/70" />
-          <div className="w-3 h-3 rounded-full bg-yellow-500/70" />
-          <div className="w-3 h-3 rounded-full bg-emerald-500/70" />
-        </div>
-        <div className="flex-1 flex justify-center">
-          <div className="px-12 py-1 rounded-md text-[11px] text-gray-600 border border-white/[0.05]"
-               style={{background:'rgba(255,255,255,0.02)'}}>app.zynth.io</div>
-        </div>
-      </div>
-      {/* Body */}
-      <div className="flex h-[340px] md:h-[420px]">
-        {/* Sidebar */}
-        <div className="w-[170px] shrink-0 border-r border-white/[0.05] p-3 flex-col gap-1 hidden md:flex"
-             style={{background:'#090f1e'}}>
-          <div className="flex items-center gap-2 px-2 py-1.5 mb-2">
-            <div className="w-6 h-6 rounded-lg flex items-center justify-center shrink-0"
-                 style={{background:'linear-gradient(135deg,#059669,#0d9488)'}}>
-              <TrendingUp className="w-3 h-3 text-white" />
-            </div>
-            <span className="text-[13px] font-bold text-white">Zynth</span>
-          </div>
-          {[
-            {label:'Dashboard',active:true},{label:'Markets',active:false},
-            {label:'Journal',active:false},{label:'Analysis',active:false},
-            {label:'Calendar',active:false},{label:'Settings',active:false},
-          ].map(item => (
-            <div key={item.label}
-                 className="flex items-center gap-2 px-2.5 py-2 rounded-lg text-[12px]"
-                 style={item.active ? {background:'rgba(16,185,129,0.12)',color:'#34d399'} : {color:'#4b5563'}}>
-              <div className={`w-1.5 h-1.5 rounded-full ${item.active ? 'bg-emerald-400' : 'bg-gray-700'}`} />
-              {item.label}
-            </div>
-          ))}
-        </div>
-        {/* Main */}
-        <div className="flex-1 p-5 overflow-hidden">
-          <div className="text-[14px] font-bold text-white mb-4">Dashboard Overview</div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
-            {[
-              {label:'Win Rate', val:'68.4%', chg:'+2.1%'},
-              {label:'Total PnL', val:'+$4,280', chg:'+$380'},
-              {label:'Trades', val:'142', chg:'+12'},
-              {label:'Drawdown', val:'4.2%', chg:'-0.8%'},
-            ].map(s => (
-              <div key={s.label} className="rounded-xl p-3 border border-white/[0.05]"
-                   style={{background:'rgba(255,255,255,0.03)'}}>
-                <div className="text-[10px] text-gray-600 mb-1">{s.label}</div>
-                <div className="text-[15px] font-bold text-white">{s.val}</div>
-                <div className="text-[10px] text-emerald-400">{s.chg}</div>
-              </div>
-            ))}
-          </div>
-          {/* Chart */}
-          <div className="rounded-xl border border-white/[0.05] p-4 mb-3"
-               style={{background:'rgba(255,255,255,0.02)'}}>
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-[12px] font-semibold text-white">PnL Curve — Last 30 Days</span>
-              <span className="text-[10px] text-emerald-400">▲ +18.4%</span>
-            </div>
-            <svg viewBox="0 0 400 80" className="w-full h-14" preserveAspectRatio="none">
-              <defs>
-                <linearGradient id="pnlg" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#059669" stopOpacity="0.3" />
-                  <stop offset="100%" stopColor="#059669" stopOpacity="0" />
-                </linearGradient>
-              </defs>
-              <path d="M0,72 L30,66 L60,60 L90,54 L110,58 L130,48 L160,40 L180,44 L210,34 L240,26 L270,28 L300,18 L330,20 L360,10 L400,5 L400,80 L0,80 Z" fill="url(#pnlg)" />
-              <path d="M0,72 L30,66 L60,60 L90,54 L110,58 L130,48 L160,40 L180,44 L210,34 L240,26 L270,28 L300,18 L330,20 L360,10 L400,5"
-                    fill="none" stroke="#059669" strokeWidth="2" />
-            </svg>
-          </div>
-          {/* Recent trades */}
-          <div className="space-y-1.5">
-            {[
-              {sym:'XAU/USD', dir:'Long',  pnl:'+$320.50', up:true},
-              {sym:'BTC/USD', dir:'Short', pnl:'+$145.20', up:true},
-              {sym:'EUR/USD', dir:'Long',  pnl:'-$48.30',  up:false},
-            ].map(t => (
-              <div key={t.sym+t.dir} className="flex items-center justify-between px-3 py-2 rounded-lg text-[11px]"
-                   style={{background: t.up ? 'rgba(16,185,129,0.06)' : 'rgba(239,68,68,0.05)', border:'1px solid rgba(255,255,255,0.04)'}}>
-                <span className="font-semibold text-white">{t.sym}</span>
-                <span className="text-gray-600">{t.dir}</span>
-                <span className={t.up ? 'text-emerald-400 font-semibold' : 'text-red-400 font-semibold'}>{t.pnl}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
 
 export default function LandingPage({ onSignIn, onGetStarted }) {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -538,140 +440,13 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
       </header>
 
       {/* ═══════════════════════════ HERO ═══════════════════════════ */}
-      <section className="relative flex flex-col items-center justify-center text-center px-6 pt-20 pb-8 overflow-hidden">
-        {/* Background */}
-        <div className="absolute inset-0 pointer-events-none overflow-hidden">
-          {/* Emerald grid */}
-          <div className="absolute inset-0"
-               style={{backgroundImage:'linear-gradient(rgba(52,211,153,0.055) 1px,transparent 1px),linear-gradient(90deg,rgba(52,211,153,0.055) 1px,transparent 1px)',backgroundSize:'60px 60px'}} />
-          {/* Radar sweep */}
-          <div className="absolute inset-y-0" style={{width:'480px',background:'linear-gradient(90deg,transparent 0%,rgba(16,185,129,0.06) 50%,transparent 100%)',animation:'gridSweep 9s ease-in-out infinite'}} />
-          {/* Center radial glow */}
-          <div className="absolute -top-[10%] left-1/2 -translate-x-1/2 w-[900px] h-[700px]"
-               style={{background:'radial-gradient(ellipse,rgba(16,185,129,0.11) 0%,transparent 60%)'}} />
-        </div>
-
-        <div className="relative z-10 max-w-4xl mx-auto">
-          {/* Badge — typewriter cycling */}
-          <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full mb-8 border"
-               style={{background:'rgba(16,185,129,0.07)', borderColor:'rgba(16,185,129,0.22)'}}>
-            <span className="w-2 h-2 rounded-full bg-emerald-400 shrink-0 animate-pulse" />
-            <span className="text-[12px] font-bold tracking-[0.16em] text-emerald-400 text-center"
-                  style={{opacity: badgeFade ? 1 : 0, transition:'opacity 0.32s ease', minWidth:'172px', display:'inline-block'}}>
-              {BADGE_TEXTS[badgeIdx]}
-            </span>
-          </div>
-
-          {/* Headline */}
-          <h1 className="text-[46px] md:text-[66px] font-extrabold leading-[1.1] tracking-tight mb-6">
-            <span className="text-white block">You Know How To Trade.</span>
-            <span className="block" style={{background:'linear-gradient(90deg,#34d399,#6ee7b7,#059669,#34d399)', backgroundSize:'300% auto', WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent', backgroundClip:'text', animation:'headlineGradient 4s ease infinite'}}>
-              But Do You Know Why You Lose?
-            </span>
-            <span className="text-white block">Zynth Finds Out.</span>
-          </h1>
-
-          {/* Subtitle */}
-          <p className="text-[18px] text-gray-400 max-w-[580px] mx-auto leading-relaxed mb-6">
-            Most traders lose not because of bad strategy — but because of bad patterns they cannot see. Zynth's AI finds your blind spots, tracks your psychology, and turns your journal into your biggest competitive edge.
-          </p>
-
-          {/* Urgency Banner */}
-          {(spotsLeft ?? 0) > 0 && (
-            <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full mb-8 text-[13px] font-semibold cursor-default"
-                 style={{background:'linear-gradient(90deg,rgba(245,158,11,0.13),rgba(239,68,68,0.08))',border:'1px solid rgba(245,158,11,0.3)',animation:'urgencyPulse 2.5s ease-in-out infinite'}}>
-              <Flame className="w-3.5 h-3.5 text-amber-300" />
-              <span className="text-amber-300">{spotsLeft} founding member spots remaining</span>
-              <span className="text-gray-500">— offer ends soon</span>
-            </div>
-          )}
-
-          {/* CTAs */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
-            <button onClick={onGetStarted}
-                    className="group relative overflow-hidden flex items-center gap-2 text-[16px] font-semibold text-white px-8 py-4 rounded-2xl hover:scale-[1.03] hover:shadow-[0_8px_32px_rgba(16,185,129,0.42)]"
-                    style={{background:'linear-gradient(135deg,#059669 0%,#0d9488 100%)', boxShadow:'0 4px 20px rgba(16,185,129,0.28)'}}>
-              <span className="relative z-10 flex items-center gap-2">
-                Discover Your Trading Patterns
-                <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-              </span>
-              <span className="absolute inset-0 pointer-events-none"
-                    style={{background:'linear-gradient(90deg,transparent 0%,rgba(255,255,255,0.14) 50%,transparent 100%)',backgroundSize:'200% 100%',animation:'shimmerBtn 3s linear infinite'}} />
-            </button>
-            <button onClick={onSignIn}
-                    className="text-[16px] font-medium text-gray-300 px-8 py-4 rounded-2xl border border-white/[0.1] hover:border-white/[0.2] hover:text-white transition-all"
-                    style={{background:'rgba(255,255,255,0.03)'}}>
-              Sign In
-            </button>
-          </div>
-
-          {/* Trust signals */}
-          <div style={{display:'flex', gap:'8px', justifyContent:'center', flexWrap:'wrap'}}>
-            {[
-              {Icon: Shield, label: 'Secure & Private'},
-              {Icon: Zap,    label: 'Real-time Data'},
-              {Icon: Bot,    label: 'AI Powered'},
-            ].map(({Icon, label}) => (
-              <span key={label} style={{
-                background:'rgba(255,255,255,0.05)',
-                border:'1px solid rgba(255,255,255,0.1)',
-                borderRadius:'20px',
-                padding:'6px 14px',
-                fontSize:'12px',
-                color:'rgba(255,255,255,0.5)',
-                display:'flex', alignItems:'center', gap:'5px',
-              }}><Icon size={11} />{label}</span>
-            ))}
-          </div>
-        </div>
-
-        {/* Hero dashboard mockup */}
-        <div className="relative z-10 mt-16 w-full max-w-5xl mx-auto">
-          <HeroDashboardMockup />
-          <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 w-3/4 h-20 pointer-events-none"
-               style={{background:'radial-gradient(ellipse,rgba(16,185,129,0.1) 0%,transparent 70%)', filter:'blur(8px)'}} />
-        </div>
-      </section>
-
-      {/* ═══════════════════════ PAIN POINTS ═══════════════════════════════ */}
-      <section className="py-20 px-6" style={{background:'#060a16'}}>
-        <div className="max-w-5xl mx-auto text-center">
-          <h2 className="animate-target text-[38px] md:text-[50px] font-extrabold tracking-tight mb-4 text-white">
-            Sound Familiar?
-          </h2>
-          <p className="animate-target text-[16px] text-gray-500 mb-12 max-w-md mx-auto">
-            Every serious trader hits these walls. Here's what we hear constantly:
-          </p>
-          <div className="grid md:grid-cols-3 gap-6 mb-12">
-            {[
-              { Icon: AlertCircle,    text: 'I keep making the same trading mistakes but cannot figure out why' },
-              { Icon: FileSpreadsheet, text: 'My trades are scattered across spreadsheets and screenshots everywhere' },
-              { Icon: Brain,          text: 'I know emotions affect my trading but have no idea which ones cost me money' },
-            ].map(({ Icon, text }, i) => (
-              <div key={i}
-                   className="animate-target rounded-2xl p-7 text-left border"
-                   style={{
-                     background: 'rgba(239,68,68,0.04)',
-                     borderColor: 'rgba(239,68,68,0.18)',
-                     transitionDelay: `${i * 0.15}s`,
-                   }}>
-                <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-5"
-                     style={{background:'rgba(239,68,68,0.1)', border:'1px solid rgba(239,68,68,0.22)'}}>
-                  <Icon className="w-6 h-6 text-red-400" />
-                </div>
-                <p className="text-[15px] text-gray-300 leading-relaxed">&ldquo;{text}&rdquo;</p>
-              </div>
-            ))}
-          </div>
-          <div className="flex flex-col items-center gap-3">
-            <div className="w-px h-10" style={{background:'linear-gradient(to bottom,rgba(52,211,153,0.5),transparent)'}} />
-            <p className="animate-target text-[28px] md:text-[38px] font-extrabold"
-               style={{background:'linear-gradient(90deg,#34d399,#6ee7b7)',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent',backgroundClip:'text'}}>
-              Zynth solves all three.
-            </p>
-          </div>
-        </div>
-      </section>
+      <Hero
+        badgeText={BADGE_TEXTS[badgeIdx]}
+        badgeFade={badgeFade}
+        spotsLeft={spotsLeft}
+        onGetStarted={onGetStarted}
+        onSignIn={onSignIn}
+      />
 
       {/* ═══════════════════════════ FEATURES ═══════════════════════════ */}
       <section id="features" className="pt-32 pb-24 px-6">
