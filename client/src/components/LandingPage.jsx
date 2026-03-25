@@ -164,6 +164,80 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
   const [ctaInsightIdx, setCtaInsightIdx] = useState(0);
   const [ctaInsightVisible, setCtaInsightVisible] = useState(true);
 
+  // ── Custom cursor state
+  const cursorDotRef   = useRef(null);
+  const cursorRingRef  = useRef(null);
+  const cursorGlowRef  = useRef(null);
+  const mousePos       = useRef({ x: -200, y: -200 });
+  const ringPos        = useRef({ x: -200, y: -200 });
+  const isHovering     = useRef(false);
+  const rafId          = useRef(null);
+  const [cursorVisible, setCursorVisible] = useState(false);
+
+  useEffect(() => {
+    const onMove = (e) => {
+      mousePos.current = { x: e.clientX, y: e.clientY };
+      if (!cursorVisible) setCursorVisible(true);
+      if (cursorDotRef.current) {
+        cursorDotRef.current.style.transform = `translate(${e.clientX - 4}px, ${e.clientY - 4}px)`;
+      }
+      if (cursorGlowRef.current) {
+        cursorGlowRef.current.style.background =
+          `radial-gradient(circle 280px at ${e.clientX}px ${e.clientY}px, ${isDark ? 'rgba(59,130,246,0.055)' : 'rgba(29,78,216,0.045)'} 0%, transparent 70%)`;
+      }
+    };
+
+    const onEnterInteractive = () => { isHovering.current = true; };
+    const onLeaveInteractive = () => { isHovering.current = false; };
+    const onLeave = () => setCursorVisible(false);
+    const onEnter = () => setCursorVisible(true);
+
+    function lerp(a, b, t) { return a + (b - a) * t; }
+    function animate() {
+      ringPos.current.x = lerp(ringPos.current.x, mousePos.current.x, 0.12);
+      ringPos.current.y = lerp(ringPos.current.y, mousePos.current.y, 0.12);
+      if (cursorRingRef.current) {
+        const hover = isHovering.current;
+        const size  = hover ? 48 : 28;
+        cursorRingRef.current.style.transform = `translate(${ringPos.current.x - size / 2}px, ${ringPos.current.y - size / 2}px) scale(${hover ? 1.1 : 1})`;
+        cursorRingRef.current.style.width  = `${size}px`;
+        cursorRingRef.current.style.height = `${size}px`;
+        cursorRingRef.current.style.opacity = hover ? '1' : '0.55';
+        cursorRingRef.current.style.borderColor = hover
+          ? (isDark ? 'rgba(59,130,246,0.9)' : 'rgba(29,78,216,0.85)')
+          : (isDark ? 'rgba(59,130,246,0.5)' : 'rgba(29,78,216,0.4)');
+        cursorRingRef.current.style.boxShadow = hover
+          ? (isDark ? '0 0 18px rgba(59,130,246,0.55), 0 0 40px rgba(59,130,246,0.18)' : '0 0 18px rgba(29,78,216,0.35), 0 0 40px rgba(29,78,216,0.12)')
+          : 'none';
+      }
+      rafId.current = requestAnimationFrame(animate);
+    }
+    rafId.current = requestAnimationFrame(animate);
+
+    const selectors = 'a, button, [role="button"], input, select, textarea, label, .hover\\:-translate-y-1';
+    function attachListeners() {
+      document.querySelectorAll(selectors).forEach(el => {
+        el.addEventListener('mouseenter', onEnterInteractive);
+        el.addEventListener('mouseleave', onLeaveInteractive);
+      });
+    }
+    attachListeners();
+    const obs = new MutationObserver(attachListeners);
+    obs.observe(document.body, { childList: true, subtree: true });
+
+    document.addEventListener('mousemove', onMove, { passive: true });
+    document.addEventListener('mouseleave', onLeave);
+    document.addEventListener('mouseenter', onEnter);
+
+    return () => {
+      document.removeEventListener('mousemove', onMove);
+      document.removeEventListener('mouseleave', onLeave);
+      document.removeEventListener('mouseenter', onEnter);
+      cancelAnimationFrame(rafId.current);
+      obs.disconnect();
+    };
+  }, [isDark]);
+
   useEffect(() => {
     getPublicStats()
       .then(d => { setSpotsLeft(d?.totalUsers != null ? Math.max(0, TOTAL_FOUNDING - d.totalUsers) : 0); })
@@ -268,11 +342,62 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
 
   return (
     <div className={`min-h-screen overflow-x-hidden transition-colors duration-300 ${isDark ? 'bg-[#07090f] text-white' : 'bg-[#f4f6f9] text-[#0a0e1a]'}`}>
+
+      {/* ── Custom cursor layers ────────────────────────────────────────── */}
+      {/* Full-page ambient glow that follows mouse */}
+      <div
+        ref={cursorGlowRef}
+        style={{
+          position: 'fixed', inset: 0, zIndex: 0,
+          pointerEvents: 'none',
+          transition: 'opacity 0.3s ease',
+          opacity: cursorVisible ? 1 : 0,
+          background: 'radial-gradient(circle 280px at -400px -400px, transparent 0%, transparent 70%)',
+        }}
+      />
+      {/* Lagged ring */}
+      <div
+        ref={cursorRingRef}
+        style={{
+          position: 'fixed', top: 0, left: 0,
+          width: '28px', height: '28px',
+          borderRadius: '50%',
+          border: `1.5px solid ${isDark ? 'rgba(59,130,246,0.5)' : 'rgba(29,78,216,0.4)'}`,
+          pointerEvents: 'none',
+          zIndex: 99999,
+          willChange: 'transform',
+          transition: 'width 0.18s ease, height 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease, opacity 0.2s ease',
+          opacity: cursorVisible ? 0.55 : 0,
+          mixBlendMode: isDark ? 'screen' : 'multiply',
+        }}
+      />
+      {/* Precise dot */}
+      <div
+        ref={cursorDotRef}
+        style={{
+          position: 'fixed', top: 0, left: 0,
+          width: '8px', height: '8px',
+          borderRadius: '50%',
+          background: isDark ? '#3b82f6' : '#1d4ed8',
+          pointerEvents: 'none',
+          zIndex: 100000,
+          willChange: 'transform',
+          boxShadow: isDark ? '0 0 8px rgba(59,130,246,0.8)' : '0 0 8px rgba(29,78,216,0.5)',
+          opacity: cursorVisible ? 1 : 0,
+          transition: 'opacity 0.2s ease',
+        }}
+      />
       <style>{`
         @keyframes urgencyPulse {
           0%, 100% { box-shadow: 0 0 0 0 rgba(245,158,11,0.25); }
           50%       { box-shadow: 0 0 0 8px rgba(245,158,11,0); }
         }
+        @keyframes cursorDotPop {
+          0%   { transform: scale(0.7); }
+          60%  { transform: scale(1.3); }
+          100% { transform: scale(1);  }
+        }
+        * { cursor: none !important; }
         @keyframes proCardGlow {
           0%, 100% { box-shadow: 0 0 0 1px rgba(59,130,246,0.2), 0 24px 60px rgba(0,0,0,0.5), 0 0 30px rgba(59,130,246,0.1); }
           50%       { box-shadow: 0 0 0 1px rgba(59,130,246,0.5), 0 24px 60px rgba(0,0,0,0.5), 0 0 60px rgba(59,130,246,0.3); }
