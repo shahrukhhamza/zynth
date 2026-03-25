@@ -1,7 +1,7 @@
 ﻿import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, useInView } from 'framer-motion';
 import {
-  TrendingUp, BarChart2, BookOpen, Shield, Zap, Brain, Users,
+  BarChart2, BookOpen, Shield, Zap, Brain, Users,
   AlertCircle, FileSpreadsheet,
   Calendar, ChevronDown, ChevronUp, Check, ArrowRight, Menu, X,
   RefreshCw, Bot, Trophy, Activity, Bell, Star, Flame, Info, Clock,
@@ -780,11 +780,17 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
               </svg>
               {/* Score number */}
               <div className="text-center mt-3">
+                <div className="inline-flex items-center gap-2 mb-2">
+                  <span className="text-[10px] font-bold tracking-[0.15em] px-2 py-0.5 rounded-md"
+                        style={{background:'rgba(245,158,11,0.12)', color:'#fbbf24', border:'1px solid rgba(245,158,11,0.25)'}}>
+                    SAMPLE DATA
+                  </span>
+                </div>
                 <p className="text-[52px] md:text-[60px] font-extrabold leading-none"
                    style={{background:'linear-gradient(90deg,#34d399,#6ee7b7)',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent',backgroundClip:'text'}}>
                   +4.5
                 </p>
-                <p className={`text-[14px] mt-2 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Current macro conditions: Bullish for Gold <span style={{display:'inline-block',width:8,height:8,borderRadius:'50%',backgroundColor:'#22c55e',verticalAlign:'middle',marginLeft:2}}/></p>
+                <p className={`text-[14px] mt-2 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Example output — score updates live from real economic data <span style={{display:'inline-block',width:8,height:8,borderRadius:'50%',backgroundColor:'#22c55e',verticalAlign:'middle',marginLeft:2}}/></p>
               </div>
             </div>
 
@@ -1220,10 +1226,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
           {/* Brand column */}
           <div className="col-span-2 md:col-span-1">
             <div className="flex items-center gap-2.5 mb-3">
-              <div className="w-8 h-8 rounded-[9px] flex items-center justify-center flex-shrink-0"
-                   style={{background:'linear-gradient(145deg,#059669,#0d9488)'}}>
-                <TrendingUp className="w-4 h-4 text-white" />
-              </div>
+              <img src="/logo.png" alt="Zynth" className="w-9 h-9 object-contain" />
               <span className={`text-[16px] font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>Zynth</span>
             </div>
             <p className="text-[12px] leading-relaxed mb-4" style={{color:'rgba(52,211,153,0.5)'}}>Intelligence Behind Every Trade</p>

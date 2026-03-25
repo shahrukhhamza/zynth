@@ -102,11 +102,11 @@ export default function Hero({ badgeText, spotsLeft, onGetStarted, onSignIn }) {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="text-5xl md:text-[82px] font-black leading-[0.95] tracking-tighter mb-8"
+          className="text-5xl md:text-[82px] font-black leading-[1.05] tracking-tighter mb-8"
         >
           <span className="text-white">You Know How To Trade.</span>
           <br />
-          <span className="bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 via-emerald-200 to-emerald-500 animate-gradient-x">
+          <span className="inline-block pb-2 bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 via-emerald-200 to-emerald-500 animate-gradient-x">
             But Do You Know Why You Lose?
           </span>
         </motion.h1>
