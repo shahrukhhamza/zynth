@@ -112,7 +112,7 @@ export default function Hero({ badgeText, spotsLeft, onGetStarted, onSignIn }) {
         >
           <span className={isDark ? 'text-white' : 'text-gray-900'}>You Know How To Trade.</span>
           <br />
-          <span className="inline-block pb-2 bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 via-emerald-200 to-emerald-500 animate-gradient-x">
+          <span className="inline-block pb-2 bg-clip-text text-transparent bg-gradient-to-r from-[#1d4ed8] via-[#3b82f6] to-[#06b6d4]">
             But Do You Know Why You Lose?
           </span>
         </motion.h1>
