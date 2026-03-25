@@ -1,136 +1,180 @@
 import React from 'react';
-import { Flame, ArrowRight, Shield, Zap, Bot } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Flame, ArrowRight, Shield, Zap, Bot, Globe } from 'lucide-react';
 
+// Upgraded Mockup with Glassmorphism and Depth
 function HeroDashboardMockup() {
   return (
-    <div className="relative rounded-2xl overflow-hidden border border-white/[0.07]"
-         style={{background:'#0c1527', boxShadow:'0 40px 120px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.04)'}}>
-      <div className="flex items-center gap-2 px-4 py-3 border-b border-white/[0.05]" style={{background:'#0a1220'}}>
+    <motion.div 
+      initial={{ y: 40, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ delay: 0.6, duration: 0.8 }}
+      className="relative rounded-2xl overflow-hidden border border-white/10 bg-[#070b14]/80 backdrop-blur-xl shadow-[0_40px_120px_rgba(0,0,0,0.7)]"
+    >
+      {/* Top Bar */}
+      <div className="flex items-center justify-between px-4 py-3 border-b border-white/5 bg-white/5">
         <div className="flex gap-1.5">
-          <div className="w-3 h-3 rounded-full bg-red-500/70" />
-          <div className="w-3 h-3 rounded-full bg-yellow-500/70" />
-          <div className="w-3 h-3 rounded-full bg-emerald-500/70" />
+          <div className="w-2.5 h-2.5 rounded-full bg-red-500/50" />
+          <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/50" />
+          <div className="w-2.5 h-2.5 rounded-full bg-emerald-500/50" />
         </div>
-        <div className="flex-1 flex justify-center">
-          <div className="px-12 py-1 rounded-md text-[11px] text-gray-600 border border-white/[0.05]"
-               style={{background:'rgba(255,255,255,0.02)'}}>app.zynth.io</div>
+        <div className="flex items-center gap-2 px-6 py-1 rounded-full bg-black/40 border border-white/5 text-[10px] text-gray-500 font-mono">
+          <Globe size={10} /> app.zynth.codes
         </div>
+        <div className="w-12" /> {/* Spacer */}
       </div>
-      <div className="p-5">
-        <div className="flex items-start gap-5">
-          <div style={{width:220}}>
-            <div className="text-[11px] text-gray-400 mb-3">Equity Curve</div>
-            <div style={{height:120, borderRadius:8, background:'linear-gradient(180deg,#071021,#081228)'}} />
+
+      {/* Content Area */}
+      <div className="p-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="col-span-1 space-y-4">
+          <div className="h-32 rounded-xl bg-gradient-to-br from-emerald-500/10 to-transparent border border-emerald-500/10 flex flex-col items-center justify-center">
+             <div className="text-[10px] text-emerald-400 uppercase tracking-widest font-bold mb-1">Equity Growth</div>
+             <div className="text-xl font-mono text-white">+$4,280.50</div>
           </div>
-          <div className="flex-1">
-            <div className="flex items-center justify-between mb-3">
-              <div className="text-[12px] text-gray-400">Stats</div>
-              <div className="text-[12px] text-gray-400">Last 30 trades</div>
-            </div>
-            <div className="grid grid-cols-3 gap-3">
-              <div className="rounded-md p-3" style={{background:'rgba(255,255,255,0.02)'}}>
-                <div className="text-[10px] text-gray-400">Win Rate</div>
-                <div className="text-[16px] font-bold">56%</div>
+          <div className="grid grid-cols-2 gap-3">
+            {[ {l: 'Win Rate', v: '68%'}, {l: 'PF', v: '1.82'} ].map(s => (
+              <div key={s.l} className="p-3 rounded-xl bg-white/5 border border-white/5">
+                <div className="text-[9px] text-gray-500 uppercase">{s.l}</div>
+                <div className="text-sm font-bold text-white">{s.v}</div>
               </div>
-              <div className="rounded-md p-3" style={{background:'rgba(255,255,255,0.02)'}}>
-                <div className="text-[10px] text-gray-400">Total P&L</div>
-                <div className="text-[16px] font-bold">+$1,224</div>
-              </div>
-              <div className="rounded-md p-3" style={{background:'rgba(255,255,255,0.02)'}}>
-                <div className="text-[10px] text-gray-400">PF</div>
-                <div className="text-[16px] font-bold">1.42</div>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
+        
+        <div className="col-span-2 rounded-xl bg-white/[0.02] border border-white/5 p-4 relative overflow-hidden">
+          <div className="flex justify-between items-center mb-4">
+             <div className="text-xs font-semibold text-gray-400">Behavioral Performance</div>
+             <div className="flex gap-2">
+                <div className="h-1.5 w-12 rounded-full bg-emerald-500/20" />
+                <div className="h-1.5 w-8 rounded-full bg-white/10" />
+             </div>
+          </div>
+          <div className="space-y-3">
+            {[1, 2, 3].map(i => (
+              <div key={i} className="h-8 w-full rounded-lg bg-white/5 animate-pulse" style={{ animationDelay: `${i * 0.2}s` }} />
+            ))}
+          </div>
+          {/* Decorative "AI" Glow */}
+          <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-emerald-500/20 rounded-full blur-[50px]" />
+        </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
-export default function Hero({ badgeText, badgeFade, spotsLeft, onGetStarted, onSignIn }) {
+export default function Hero({ badgeText, spotsLeft, onGetStarted, onSignIn }) {
   return (
-    <section className="relative flex flex-col items-center justify-center text-center px-6 pt-20 pb-8 overflow-hidden">
-      <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute inset-0"
-             style={{backgroundImage:'linear-gradient(rgba(52,211,153,0.055) 1px,transparent 1px),linear-gradient(90deg,rgba(52,211,153,0.055) 1px,transparent 1px)',backgroundSize:'60px 60px'}} />
-        <div className="absolute inset-y-0" style={{width:'480px',background:'linear-gradient(90deg,transparent 0%,rgba(16,185,129,0.06) 50%,transparent 100%)',animation:'gridSweep 9s ease-in-out infinite'}} />
-        <div className="absolute -top-[10%] left-1/2 -translate-x-1/2 w-[900px] h-[700px]"
-             style={{background:'radial-gradient(ellipse,rgba(16,185,129,0.11) 0%,transparent 60%)'}} />
+    <section className="relative min-h-screen flex flex-col items-center justify-center text-center px-6 pt-32 pb-20 overflow-hidden bg-[#030303]">
+      
+      {/* --- Institutional Background Layers --- */}
+      <div className="absolute inset-0 pointer-events-none">
+        {/* Animated Grid */}
+        <div className="absolute inset-0 grid-bg opacity-40" />
+        
+        {/* Dynamic Mesh Gradients (The "Unicorn" Look) */}
+        <motion.div 
+          animate={{ x: [0, 50, 0], y: [0, -30, 0] }}
+          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+          className="absolute top-[-10%] left-[-10%] w-[600px] h-[600px] bg-emerald-600/10 rounded-full blur-[120px]" 
+        />
+        <motion.div 
+          animate={{ x: [0, -50, 0], y: [0, 30, 0] }}
+          transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+          className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-indigo-600/10 rounded-full blur-[120px]" 
+        />
       </div>
 
-      <div className="relative z-10 max-w-4xl mx-auto">
-        <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full mb-8 border"
-             style={{background:'rgba(16,185,129,0.07)', borderColor:'rgba(16,185,129,0.22)'}}>
-          <span className="w-2 h-2 rounded-full bg-emerald-400 shrink-0 animate-pulse" />
-          <span className="text-[12px] font-bold tracking-[0.16em] text-emerald-400 text-center"
-                style={{opacity: badgeFade ? 1 : 0, transition:'opacity 0.32s ease', minWidth:'172px', display:'inline-block'}}>
-            {badgeText}
+      <div className="relative z-10 max-w-5xl mx-auto">
+        {/* Badge */}
+        <motion.div 
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-10 border border-emerald-500/30 bg-emerald-500/5 backdrop-blur-md"
+        >
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+          <span className="text-[11px] font-bold tracking-[0.2em] uppercase text-emerald-400">
+            {badgeText || "Live Intelligence"}
           </span>
-        </div>
+        </motion.div>
 
-        <h1 className="text-[46px] md:text-[66px] font-extrabold leading-[1.1] tracking-tight mb-6">
-          <span className="text-white block">You Know How To Trade.</span>
-          <span className="block" style={{background:'linear-gradient(90deg,#34d399,#6ee7b7,#059669,#34d399)', backgroundSize:'300% auto', WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent', backgroundClip:'text', animation:'headlineGradient 4s ease infinite'}}>
+        {/* Headline */}
+        <motion.h1 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="text-5xl md:text-[82px] font-black leading-[0.95] tracking-tighter mb-8"
+        >
+          <span className="text-white">You Know How To Trade.</span>
+          <br />
+          <span className="bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 via-emerald-200 to-emerald-500 animate-gradient-x">
             But Do You Know Why You Lose?
           </span>
-          <span className="text-white block">Zynth Finds Out.</span>
-        </h1>
+        </motion.h1>
 
-        <p className="text-[18px] text-gray-400 max-w-[580px] mx-auto leading-relaxed mb-6">
-          Most traders lose not because of bad strategy — but because of bad patterns they cannot see. Zynth's AI finds your blind spots, tracks your psychology, and turns your journal into your biggest competitive edge.
-        </p>
+        {/* Subtext */}
+        <motion.p 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.4 }}
+          className="text-[18px] md:text-[20px] text-gray-400 max-w-[650px] mx-auto leading-relaxed mb-10 font-medium"
+        >
+          Institutional-grade behavioral analytics for retail traders. Zynth maps your blind spots and optimizes your psychology in real-time.
+        </motion.p>
 
-        {(spotsLeft ?? 0) > 0 && (
-          <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full mb-8 text-[13px] font-semibold cursor-default"
-               style={{background:'linear-gradient(90deg,rgba(245,158,11,0.13),rgba(239,68,68,0.08))',border:'1px solid rgba(245,158,11,0.3)',animation:'urgencyPulse 2.5s ease-in-out infinite'}}>
-            <Flame className="w-3.5 h-3.5 text-amber-300" />
-            <span className="text-amber-300">{spotsLeft} founding member spots remaining</span>
-            <span className="text-gray-500">— offer ends soon</span>
-          </div>
+        {/* Urgency Badge */}
+        {spotsLeft > 0 && (
+          <motion.div 
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ delay: 0.5 }}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl mb-12 border border-amber-500/20 bg-amber-500/5"
+          >
+            <Flame size={14} className="text-amber-400" />
+            <span className="text-xs font-bold text-amber-400 uppercase tracking-wider">
+              {spotsLeft} founding spots left — pricing increases soon
+            </span>
+          </motion.div>
         )}
 
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
-          <button onClick={onGetStarted}
-                  className="group relative overflow-hidden flex items-center gap-2 text-[16px] font-semibold text-white px-8 py-4 rounded-2xl hover:scale-[1.03] hover:shadow-[0_8px_32px_rgba(16,185,129,0.42)]"
-                  style={{background:'linear-gradient(135deg,#059669 0%,#0d9488 100%)', boxShadow:'0 4px 20px rgba(16,185,129,0.28)'}}>
-            <span className="relative z-10 flex items-center gap-2">
-              Discover Your Trading Patterns
-              <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+        {/* CTA Buttons */}
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-5 mb-20">
+          <button 
+            onClick={onGetStarted}
+            className="group relative px-8 py-5 bg-emerald-500 text-black font-black rounded-2xl transition-all hover:scale-105 hover:shadow-[0_0_40px_rgba(16,185,129,0.4)] flex items-center gap-3 overflow-hidden"
+          >
+            <span className="relative z-10 flex items-center gap-2 text-lg">
+              Start Your Free Journal <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
             </span>
-            <span className="absolute inset-0 pointer-events-none"
-                  style={{background:'linear-gradient(90deg,transparent 0%,rgba(255,255,255,0.14) 50%,transparent 100%)',backgroundSize:'200% 100%',animation:'shimmerBtn 3s linear infinite'}} />
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
           </button>
-          <button onClick={onSignIn}
-                  className="text-[16px] font-medium text-gray-300 px-8 py-4 rounded-2xl border border-white/[0.1] hover:border-white/[0.2] hover:text-white transition-all"
-                  style={{background:'rgba(255,255,255,0.03)'}}>
-            Sign In
+          
+          <button 
+            onClick={onSignIn}
+            className="px-8 py-5 bg-white/5 border border-white/10 text-white font-bold rounded-2xl hover:bg-white/10 transition-all hover:border-white/20"
+          >
+            Access Terminal
           </button>
         </div>
 
-        <div style={{display:'flex', gap:'8px', justifyContent:'center', flexWrap:'wrap'}}>
+        {/* Floating Trust Icons */}
+        <div className="flex justify-center gap-3 flex-wrap opacity-60">
           {[
-            {Icon: Shield, label: 'Secure & Private'},
-            {Icon: Zap,    label: 'Real-time Data'},
-            {Icon: Bot,    label: 'AI Powered'},
+            {Icon: Shield, label: 'Encrypted'},
+            {Icon: Zap, label: 'Real-time'},
+            {Icon: Bot, label: 'Gemini AI'},
           ].map(({Icon, label}) => (
-            <span key={label} style={{
-              background:'rgba(255,255,255,0.05)',
-              border:'1px solid rgba(255,255,255,0.1)',
-              borderRadius:'20px',
-              padding:'6px 14px',
-              fontSize:'12px',
-              color:'rgba(255,255,255,0.5)',
-              display:'flex', alignItems:'center', gap:'5px',
-            }}><Icon size={11} />{label}</span>
+            <div key={label} className="flex items-center gap-2 px-4 py-1.5 rounded-full border border-white/10 bg-white/5 text-[11px] font-bold uppercase tracking-widest text-gray-400">
+              <Icon size={12} className="text-emerald-500" /> {label}
+            </div>
           ))}
         </div>
       </div>
 
-      <div className="relative z-10 mt-16 w-full max-w-5xl mx-auto">
+      {/* Hero Mockup with Radial Shadow */}
+      <div className="relative z-10 mt-20 w-full max-w-5xl mx-auto px-4">
         <HeroDashboardMockup />
-        <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 w-3/4 h-20 pointer-events-none"
-             style={{background:'radial-gradient(ellipse,rgba(16,185,129,0.1) 0%,transparent 70%)', filter:'blur(8px)'}} />
+        {/* Glow behind the dashboard */}
+        <div className="absolute -bottom-20 left-1/2 -translate-x-1/2 w-[80%] h-40 bg-emerald-500/20 blur-[100px] pointer-events-none" />
       </div>
     </section>
   );
