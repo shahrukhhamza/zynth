@@ -32,6 +32,7 @@ const CustomTooltip = ({ active, payload, label, theme }) => {
 
 export default function PerformanceDashboard({ metrics }) {
   const theme = useTheme();
+  const warningColor = theme.warning;
 
   if (!metrics || metrics.totalTrades === 0) {
     return (
@@ -171,7 +172,7 @@ export default function PerformanceDashboard({ metrics }) {
       {metrics.behavioral?.length > 0 && (
         <div className="rounded-xl p-4" style={{ backgroundColor: theme.surface, border: `1px solid ${theme.border}` }}>
           <div className="flex items-center gap-2 mb-3">
-            <AlertTriangle className="w-4 h-4 text-amber-400" />
+            <AlertTriangle className="w-4 h-4" style={{ color: warningColor }} />
             <p className="text-sm font-semibold" style={{ color: theme.text }}>Behavioral Flags</p>
           </div>
           <div className="space-y-2">
@@ -180,13 +181,13 @@ export default function PerformanceDashboard({ metrics }) {
                 style={{
                   backgroundColor: b.severity === 'danger'
                     ? (theme.isDark ? '#ef444411' : '#fef2f2')
-                    : (theme.isDark ? '#f59e0b11' : '#fffbeb'),
+                    : (theme.isDark ? '#f59e0b11' : '#fff7ed'),
                   border: `1px solid ${b.severity === 'danger' ? (theme.isDark ? '#ef444433' : '#fca5a5') : (theme.isDark ? '#f59e0b33' : '#fde68a')}`
                 }}>
                 <AlertTriangle className="w-4 h-4 mt-0.5 shrink-0"
-                  style={{ color: b.severity === 'danger' ? '#ef4444' : '#f59e0b' }} />
+                  style={{ color: b.severity === 'danger' ? '#ef4444' : warningColor }} />
                 <div>
-                  <p className="text-xs font-bold uppercase tracking-wide" style={{ color: b.severity === 'danger' ? '#ef4444' : '#f59e0b' }}>
+                  <p className="text-xs font-bold uppercase tracking-wide" style={{ color: b.severity === 'danger' ? '#ef4444' : warningColor }}>
                     {b.type.replace(/_/g, ' ')}
                   </p>
                   <p className="text-xs mt-0.5" style={{ color: theme.muted }}>{b.message}</p>

@@ -329,6 +329,10 @@ export default function EconomicIntelligence() {
     textMute: theme.isDark ? 'rgba(255,255,255,0.08)' : '#b0b8c4',
     accent:   '#3b82f6',
   };
+  const disclaimerBg = theme.isDark ? 'rgba(245,158,11,0.05)' : '#fff7ed';
+  const disclaimerBorder = theme.isDark ? 'rgba(245,158,11,0.15)' : '#fdba74';
+  const disclaimerText = theme.isDark ? 'rgba(251,191,36,0.72)' : '#9a3412';
+  const disclaimerLabel = theme.isDark ? 'rgba(251,191,36,0.92)' : '#c2410c';
 
   const loadDashboard = async () => {
     if (!canAccess) return;
@@ -558,12 +562,12 @@ export default function EconomicIntelligence() {
 
         {/* ── Disclaimer ───────────────────────────────────────────────── */}
         <div style={{
-          background: `rgba(245,158,11,0.05)`,
-          border: '1px solid rgba(245,158,11,0.15)',
+          background: disclaimerBg,
+          border: `1px solid ${disclaimerBorder}`,
           borderRadius: 10, padding: '12px 16px', marginTop: 8,
         }}>
-          <p style={{ fontSize: 11, color: 'rgba(251,191,36,0.7)', lineHeight: 1.6, margin: 0, textAlign: 'center' }}>
-            <strong style={{ color: 'rgba(251,191,36,0.9)' }}>Disclaimer:</strong> Economic data and AI analysis are for informational purposes only and do not constitute financial or investment advice. Always verify data with primary sources before making trading decisions.
+          <p style={{ fontSize: 11, color: disclaimerText, lineHeight: 1.6, margin: 0, textAlign: 'center' }}>
+            <strong style={{ color: disclaimerLabel }}>Disclaimer:</strong> Economic data and AI analysis are for informational purposes only and do not constitute financial or investment advice. Always verify data with primary sources before making trading decisions.
           </p>
         </div>
 

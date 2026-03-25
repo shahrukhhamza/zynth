@@ -123,6 +123,28 @@ router.get('/trades', async (req, res) => {
   }
 });
 
+// -- GET /stats ---------------------------------------------------------------
+router.get('/stats', async (req, res) => {
+  try {
+    const userId = getUserId(req);
+    const trades = await getAllTradesForUser(userId);
+    const metrics = calcMetrics(trades);
+
+    res.json({
+      total: trades.length,
+      total_trades: metrics.totalTrades,
+      win_rate: metrics.winRate,
+      total_pnl: metrics.netPnl,
+      wins: metrics.wins,
+      losses: metrics.losses,
+      breakevens: metrics.breakevens,
+    });
+  } catch (err) {
+    console.error('GET /journal/stats error:', err);
+    res.status(500).json({ error: 'Failed to fetch journal stats.' });
+  }
+});
+
 // ── POST /trades/chart-analysis ────────────────────────────────────────────────
 router.post('/trades/chart-analysis', requireAuth, checkAiTries, async (req, res) => {
   try {

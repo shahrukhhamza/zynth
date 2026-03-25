@@ -12,18 +12,21 @@ import { useTheme } from '../contexts/ThemeContext';
  */
 export default function PlanGateBanner({ feature, requiredPlan = 'Pro', description, onUpgradeClick }) {
   const theme = useTheme();
+  const warningBg = theme.isDark ? 'rgba(245,158,11,0.08)' : '#fff7ed';
+  const warningBorder = theme.isDark ? 'rgba(245,158,11,0.25)' : '#fdba74';
+  const warningIconBg = theme.isDark ? 'rgba(245,158,11,0.15)' : 'rgba(245,158,11,0.12)';
 
   return (
     <div
       className="flex items-start gap-3 px-4 py-3 rounded-xl border mb-4"
       style={{
-        backgroundColor: theme.isDark ? 'rgba(245,158,11,0.08)' : 'rgba(245,158,11,0.06)',
-        borderColor: theme.isDark ? 'rgba(245,158,11,0.25)' : 'rgba(245,158,11,0.3)',
+        backgroundColor: warningBg,
+        borderColor: warningBorder,
       }}
     >
       <div
         className="flex-shrink-0 w-7 h-7 rounded-lg flex items-center justify-center mt-0.5"
-        style={{ backgroundColor: 'rgba(245,158,11,0.15)', color: '#f59e0b' }}
+        style={{ backgroundColor: warningIconBg, color: theme.warning }}
       >
         <Lock className="w-3.5 h-3.5" />
       </div>

@@ -68,6 +68,10 @@ function InsightList({ icon: Icon, title, items, color }) {
 
 export default function MT5AIInsights({ aiSummary }) {
   const theme = useTheme();
+  const disclaimerBg = theme.isDark ? 'rgba(245,158,11,0.06)' : '#fff7ed';
+  const disclaimerBorder = theme.isDark ? 'rgba(245,158,11,0.15)' : '#fdba74';
+  const disclaimerText = theme.isDark ? 'rgba(251,191,36,0.68)' : '#9a3412';
+  const disclaimerLabel = theme.isDark ? 'rgba(251,191,36,0.88)' : '#c2410c';
 
   if (!aiSummary) return null;
 
@@ -144,15 +148,15 @@ export default function MT5AIInsights({ aiSummary }) {
       {/* AI Disclaimer */}
       <div
         style={{
-          backgroundColor: 'rgba(245,158,11,0.06)',
-          border: '1px solid rgba(245,158,11,0.15)',
+          backgroundColor: disclaimerBg,
+          border: `1px solid ${disclaimerBorder}`,
           borderRadius: 8,
           padding: '8px 12px',
           marginTop: 10,
         }}
       >
-        <p style={{ fontSize: 10, color: 'rgba(251,191,36,0.65)', textAlign: 'center', lineHeight: 1.6 }}>
-          <strong style={{ color: 'rgba(251,191,36,0.85)' }}>Disclaimer:</strong> AI-generated insights are for informational purposes only and do not constitute financial advice.
+        <p style={{ fontSize: 10, color: disclaimerText, textAlign: 'center', lineHeight: 1.6 }}>
+          <strong style={{ color: disclaimerLabel }}>Disclaimer:</strong> AI-generated insights are for informational purposes only and do not constitute financial advice.
           Trading involves substantial risk. Past patterns are not indicative of future results.
         </p>
       </div>

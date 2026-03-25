@@ -209,7 +209,7 @@ function generateInsightCards(heatmap) {
       type: 'warning', title: 'Pattern Warning', Icon: AlertTriangle,
       headline: `${weakHr.hour}:00 during ${sess.label} is costly`,
       detail:   `${fmt$(weakHr.profit)} on ${weakHr.trades} trades — consider avoiding`,
-      color: '#fbbf24', bg: 'rgba(245,158,11,0.08)', border: 'rgba(245,158,11,0.25)',
+      color: theme.isDark ? '#fbbf24' : '#b45309', bg: theme.isDark ? 'rgba(245,158,11,0.08)' : '#fff7ed', border: theme.isDark ? 'rgba(245,158,11,0.25)' : '#fdba74',
     });
   }
   if (peakHr) {

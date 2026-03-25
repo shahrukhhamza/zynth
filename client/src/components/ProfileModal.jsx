@@ -77,7 +77,7 @@ export default function ProfileModal({ onClose, onForgotPassword }) {
   const { user, token, logout, refreshUser } = useAuth();
   const { isPro, isElite, isAdmin, isFree } = usePlanGate();
 
-  const [journalCount, setJournalCount]     = useState('—');
+  const [journalCount, setJournalCount]     = useState('--');
   const [tradingStats, setTradingStats]     = useState(null);
   const [upgradeOpen, setUpgradeOpen]       = useState(false);
   const [selectedPlan, setSelectedPlan]     = useState(null);
@@ -88,6 +88,7 @@ export default function ProfileModal({ onClose, onForgotPassword }) {
   const [avatarUploadError, setAvatarUploadError] = useState('');
   const [pendingAvatar, setPendingAvatar] = useState(null);
   const [cropSrc, setCropSrc] = useState(null);
+  const [avatarError, setAvatarError] = useState(false);
   const accordionRef                        = useRef(null);
   const avatarFileRef                       = useRef(null);
 
@@ -98,26 +99,80 @@ export default function ProfileModal({ onClose, onForgotPassword }) {
   const planKey = isAdmin ? 'admin' : (isPro ? 'pro' : (isElite ? 'elite' : 'free'));
   const planInfo = PLAN_INFO[planKey];
 
-  const avatarBg   = AVATAR_COLOR_MAP[user?.avatar_color] ?? '#059669';
-  const avatarUrl  = user?.avatar_url ? resolveMediaUrl(user.avatar_url) : null;
+  const avatarBg   = AVATAR_COLOR_MAP[user?.avatar_color] ?? '#3b82f6';
+  const avatarSrc  = user?.avatar_url ? resolveMediaUrl(user.avatar_url) : (user?.avatar ?? null);
+
+  useEffect(() => {
+    setAvatarError(false);
+  }, [avatarSrc, pendingAvatar]);
+
+  function applyComputedStats(tradesResponse) {
+    const trades = Array.isArray(tradesResponse?.data) ? tradesResponse.data : [];
+    const totalTrades = Number.isFinite(tradesResponse?.total) ? tradesResponse.total : trades.length;
+    const wins = trades.filter(t => t.outcome === 'win').length;
+    const totalPnl = trades.reduce((sum, trade) => sum + (Number(trade.profit_loss) || 0), 0);
+    const winRate = totalTrades > 0 ? (wins / totalTrades) * 100 : null;
+
+    setJournalCount(totalTrades);
+    setTradingStats({
+      win_rate: winRate,
+      total_pnl: totalPnl,
+      total_trades: totalTrades,
+    });
+  }
 
   // Fetch journal stats
   useEffect(() => {
     if (!token) return;
-    fetch(`${API_URL}/api/journal/stats`, { headers: { Authorization: `Bearer ${token}` } })
-      .then(r => r.ok ? r.json() : null)
-      .then(d => {
-        if (!d) return;
-        if (d.total != null) setJournalCount(d.total);
-        if (d.win_rate != null || d.total_pnl != null || d.total_trades != null) {
-          setTradingStats({
-            win_rate:     d.win_rate     ?? null,
-            total_pnl:    d.total_pnl    ?? null,
-            total_trades: d.total_trades ?? null,
-          });
+    let cancelled = false;
+
+    async function loadStats() {
+      try {
+        const statsResponse = await fetch(`${API_URL}/api/journal/stats`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        if (statsResponse.ok) {
+          const data = await statsResponse.json();
+          if (cancelled) return;
+
+          if (data.total != null) setJournalCount(data.total);
+          if (typeof data.total_trades === 'number') {
+            setTradingStats({
+              win_rate: data.win_rate ?? null,
+              total_pnl: data.total_pnl ?? null,
+              total_trades: data.total_trades ?? null,
+            });
+            return;
+          }
         }
-      })
-      .catch(err => console.error('Journal stats fetch error:', err));
+      } catch (err) {
+        console.error('Journal stats fetch error:', err);
+      }
+
+      try {
+        const tradesResponse = await fetch(`${API_URL}/api/journal/trades?limit=500&page=0`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (!tradesResponse.ok) throw new Error(`Trades fallback failed with ${tradesResponse.status}`);
+
+        const tradesData = await tradesResponse.json();
+        if (cancelled) return;
+        applyComputedStats(tradesData);
+      } catch (err) {
+        console.error('Journal trades fallback error:', err);
+        if (!cancelled) {
+          setJournalCount('--');
+          setTradingStats(null);
+        }
+      }
+    }
+
+    loadStats();
+
+    return () => {
+      cancelled = true;
+    };
   }, [token]);
 
   async function handleAvatarUpload(e) {
@@ -234,14 +289,14 @@ export default function ProfileModal({ onClose, onForgotPassword }) {
           <div className="flex items-start gap-4 mb-5">
             <div className="relative flex-shrink-0">
               <div className="w-14 h-14 rounded-2xl flex items-center justify-center text-white text-2xl font-extrabold select-none overflow-hidden"
-                   style={{ background: (pendingAvatar || avatarUrl) ? 'transparent' : `linear-gradient(135deg,${avatarBg} 0%,${avatarBg}cc 100%)`, boxShadow: `0 4px 16px ${avatarBg}55` }}>
+                   style={{ background: (pendingAvatar || (avatarSrc && !avatarError)) ? 'transparent' : `linear-gradient(135deg,${avatarBg} 0%,${avatarBg}cc 100%)`, boxShadow: `0 4px 16px ${avatarBg}55` }}>
                 {pendingAvatar
                   ? <img src={pendingAvatar} alt="Preview" className="w-full h-full object-cover" />
-                  : avatarUrl
-                    ? <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
+                  : avatarSrc && !avatarError
+                    ? <img src={avatarSrc} alt="Avatar" className="w-full h-full object-cover" onError={() => setAvatarError(true)} />
                     : (user?.name?.[0] ?? 'U').toUpperCase()}
               </div>
-              {/* Camera overlay — hidden while pending */}
+              {/* Camera overlay ï¿½ hidden while pending */}
               {!pendingAvatar && (
                 <button
                   onClick={() => avatarFileRef.current?.click()}
@@ -264,7 +319,7 @@ export default function ProfileModal({ onClose, onForgotPassword }) {
               <p className="text-[12px] truncate mb-1.5" style={{ color: theme.muted }}>{user?.email}</p>
               <div className="flex items-center gap-2">
                 <PlanBadge />
-                <span className="text-[11px]" style={{ color: theme.muted }}>· Member since {memberYear}</span>
+                <span className="text-[11px]" style={{ color: theme.muted }}>&bull; Member since {memberYear}</span>
               </div>
               {avatarUploadError && (
                 <p className="text-[11px] mt-1" style={{ color: theme.danger }}>{avatarUploadError}</p>
@@ -279,7 +334,7 @@ export default function ProfileModal({ onClose, onForgotPassword }) {
                     style={{ backgroundColor: theme.accent }}
                   >
                     {avatarUploading
-                      ? <><Loader2 className="w-3 h-3 animate-spin" /> Saving…</>
+                      ? <><Loader2 className="w-3 h-3 animate-spin" /> Saving...</>
                       : <><Check className="w-3 h-3" /> Save Photo</>}
                   </button>
                   <button
@@ -443,7 +498,7 @@ export default function ProfileModal({ onClose, onForgotPassword }) {
                           onClick={() => setSelectedPlan(selectedPlan === plan.id ? null : plan.id)}
                           className="w-full py-2 rounded-lg text-[12px] font-semibold text-white transition-all hover:brightness-110"
                           style={{ background: `linear-gradient(135deg,${plan.color},${plan.id === 'pro' ? '#0d9488' : '#d97706'})` }}>
-                          {selectedPlan === plan.id ? '? Selected' : 'Select'}
+                          {selectedPlan === plan.id ? 'Selected' : 'Select'}
                         </button>
                       </div>
                     ))}
@@ -501,7 +556,7 @@ export default function ProfileModal({ onClose, onForgotPassword }) {
                 <div className="grid grid-cols-3 gap-2">
                   <div className="text-center">
                     <p className="text-[14px] font-bold" style={{ color: '#34d399' }}>
-                      {tradingStats.win_rate != null ? `${tradingStats.win_rate.toFixed(1)}%` : '—'}
+                      {tradingStats.win_rate != null ? `${tradingStats.win_rate.toFixed(1)}%` : '--'}
                     </p>
                     <p className="text-[10px] mt-0.5" style={{ color: theme.muted }}>Win Rate</p>
                   </div>
@@ -510,13 +565,13 @@ export default function ProfileModal({ onClose, onForgotPassword }) {
                        style={{ color: tradingStats.total_pnl != null && tradingStats.total_pnl >= 0 ? '#34d399' : '#ef4444' }}>
                       {tradingStats.total_pnl != null
                         ? `${tradingStats.total_pnl >= 0 ? '+' : ''}${tradingStats.total_pnl.toFixed(2)}`
-                        : '—'}
+                        : '--'}
                     </p>
                     <p className="text-[10px] mt-0.5" style={{ color: theme.muted }}>Total PnL</p>
                   </div>
                   <div className="text-center">
                     <p className="text-[14px] font-bold" style={{ color: theme.text }}>
-                      {tradingStats.total_trades ?? '—'}
+                      {tradingStats.total_trades ?? '--'}
                     </p>
                     <p className="text-[10px] mt-0.5" style={{ color: theme.muted }}>Trades</p>
                   </div>
@@ -537,7 +592,7 @@ export default function ProfileModal({ onClose, onForgotPassword }) {
                 <Bell className="w-4 h-4 shrink-0" style={{ color: theme.muted }} />
                 <span>Notification Preferences</span>
               </div>
-              <span className="text-[12px]" style={{ color: theme.muted }}>Manage in Settings ?</span>
+              <span className="text-[12px]" style={{ color: theme.muted }}>Manage in Settings</span>
             </button>
 
             {/* Change Password */}
@@ -549,9 +604,9 @@ export default function ProfileModal({ onClose, onForgotPassword }) {
               onMouseOver={e => { if (pwdStatus !== 'sent') e.currentTarget.style.opacity = '0.8'; }}
               onMouseOut={e => e.currentTarget.style.opacity = pwdStatus === 'sent' ? '0.7' : '1'}>
               <Key className="w-4 h-4 shrink-0" style={{ color: theme.muted }} />
-              {pwdStatus === 'sending' ? 'Sending reset email…'
+              {pwdStatus === 'sending' ? 'Sending reset email...'
                 : pwdStatus === 'sent'   ? `Reset email sent to ${user?.email}`
-                : pwdStatus === 'error'  ? 'Failed — try again'
+                : pwdStatus === 'error'  ? 'Failed - try again'
                 : 'Change Password'}
             </button>
 

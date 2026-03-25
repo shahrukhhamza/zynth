@@ -27,6 +27,7 @@ function TradeAiCard({ trade }) {
   if (!data) return null;
 
   const gradeColor = data.trade_quality === 'excellent' ? '#22c55e' : data.trade_quality === 'good' ? '#3b82f6' : data.trade_quality === 'average' ? '#f59e0b' : '#ef4444';
+  const warningColor = theme.warning;
 
   return (
     <div className="rounded-xl overflow-hidden" style={{ border: `1px solid ${theme.border}` }}>
@@ -59,7 +60,7 @@ function TradeAiCard({ trade }) {
           <div className="grid grid-cols-2 gap-3">
             <div>
               <p className="text-xs font-semibold mb-1" style={{ color: theme.muted }}>EMOTIONAL BIAS</p>
-              <span className="px-2 py-1 rounded text-xs font-bold" style={{ backgroundColor: '#f59e0b22', color: '#f59e0b' }}>
+              <span className="px-2 py-1 rounded text-xs font-bold" style={{ backgroundColor: `${warningColor}22`, color: warningColor }}>
                 {(data.emotional_bias || 'none').toUpperCase()}
               </span>
             </div>
@@ -197,6 +198,7 @@ function ReportCard({ report }) {
 export default function AiInsightsPanel({ trades, metrics, onReportGenerated }) {
   const theme = useTheme();
   const { toast } = useToast();
+  const warningColor = theme.warning;
   const [generating, setGenerating] = useState(false);
   const [reportType, setReportType] = useState('weekly');
   const [reports, setReports] = useState([]);
@@ -252,7 +254,7 @@ export default function AiInsightsPanel({ trades, metrics, onReportGenerated }) 
       {metrics?.behavioral?.length > 0 && (
         <div className="rounded-xl p-4" style={{ backgroundColor: theme.surface, border: `1px solid ${theme.border}` }}>
           <div className="flex items-center gap-2 mb-3">
-            <AlertTriangle className="w-4 h-4 text-amber-400" />
+            <AlertTriangle className="w-4 h-4" style={{ color: warningColor }} />
             <p className="text-sm font-semibold" style={{ color: theme.text }}>Active Behavioral Alerts</p>
           </div>
           <div className="space-y-2">
@@ -261,12 +263,12 @@ export default function AiInsightsPanel({ trades, metrics, onReportGenerated }) 
                 style={{
                   backgroundColor: b.severity === 'danger'
                     ? (theme.isDark ? '#ef444411' : '#fef2f2')
-                    : (theme.isDark ? '#f59e0b11' : '#fffbeb'),
+                    : (theme.isDark ? '#f59e0b11' : '#fff7ed'),
                   border: `1px solid ${b.severity === 'danger' ? (theme.isDark ? '#ef444433' : '#fca5a5') : (theme.isDark ? '#f59e0b33' : '#fde68a')}`
                 }}>
-                <AlertTriangle className="w-4 h-4 shrink-0" style={{ color: b.severity === 'danger' ? '#ef4444' : '#f59e0b' }} />
+                <AlertTriangle className="w-4 h-4 shrink-0" style={{ color: b.severity === 'danger' ? '#ef4444' : warningColor }} />
                 <div>
-                  <span className="text-xs font-bold mr-2 uppercase" style={{ color: b.severity === 'danger' ? '#ef4444' : '#f59e0b' }}>
+                  <span className="text-xs font-bold mr-2 uppercase" style={{ color: b.severity === 'danger' ? '#ef4444' : warningColor }}>
                     {b.type.replace(/_/g, ' ')}
                   </span>
                   <span className="text-xs" style={{ color: theme.muted }}>{b.message}</span>

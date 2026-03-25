@@ -100,6 +100,9 @@ export default function PreTradeChecklist({ direction, entry_price, tp, sl, stra
   const theme       = useTheme();
   const { token }   = useAuth();
   const hdrs        = token ? { Authorization: `Bearer ${token}` } : {};
+  const warningColor = theme.isDark ? '#f59e0b' : '#b45309';
+  const warningBg = theme.isDark ? 'rgba(245,158,11,0.08)' : '#fff7ed';
+  const warningBorder = theme.isDark ? 'rgba(245,158,11,0.3)' : '#fdba74';
 
   const [screen,           setScreen]           = useState('questions'); // 'questions' | 'result'
   const [answers,          setAnswers]          = useState({ q1: null, q2: null, q3: null, q4: null, q5: null, q6: null });
@@ -207,7 +210,7 @@ export default function PreTradeChecklist({ direction, entry_price, tp, sl, stra
 
   const RESULT = {
     green_light: { Icon: CheckCircle, title: 'Green Light',           msg: 'Everything checks out. Trade with confidence but stick to your plan.', col: '#22c55e', bg: 'rgba(34,197,94,0.08)',  brd: 'rgba(34,197,94,0.3)'  },
-    caution:     { Icon: AlertTriangle, title: 'Proceed with Caution',  msg: 'Some factors are against you. Reduce position size by 50%.',            col: '#f59e0b', bg: 'rgba(245,158,11,0.08)', brd: 'rgba(245,158,11,0.3)' },
+    caution:     { Icon: AlertTriangle, title: 'Proceed with Caution',  msg: 'Some factors are against you. Reduce position size by 50%.',            col: warningColor, bg: warningBg, brd: warningBorder },
     skip:        { Icon: XCircle,      title: 'Consider Skipping',     msg: 'Multiple factors suggest this is not an ideal setup. Wait for better conditions.', col: '#ef4444', bg: 'rgba(239,68,68,0.08)', brd: 'rgba(239,68,68,0.3)' },
   };
 
