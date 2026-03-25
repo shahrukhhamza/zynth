@@ -66,7 +66,7 @@ function HeroDashboardMockup() {
 export default function Hero({ badgeText, spotsLeft, onGetStarted, onSignIn }) {
   const { isDark } = useTheme();
   return (
-    <section className={`relative min-h-screen flex flex-col items-center justify-center text-center px-6 pt-32 pb-20 overflow-hidden transition-colors duration-300 ${isDark ? 'bg-[#030303]' : 'bg-[#f4f6f9]'}`}>
+    <section className={`relative flex flex-col items-center justify-center text-center px-6 pt-28 pb-10 overflow-hidden transition-colors duration-300 ${isDark ? 'bg-[#030303]' : 'bg-[#f4f6f9]'}`}>
       
       {/* --- Institutional Background Layers --- */}
       <div className="absolute inset-0 pointer-events-none">
@@ -173,7 +173,7 @@ export default function Hero({ badgeText, spotsLeft, onGetStarted, onSignIn }) {
       </div>
 
       {/* Hero Mockup with Radial Shadow */}
-      <div className="relative z-10 mt-20 w-full max-w-5xl mx-auto px-4">
+      <div className="relative z-10 mt-12 w-full max-w-5xl mx-auto px-4">
         <HeroDashboardMockup />
         {/* Glow behind the dashboard */}
         <div className="absolute -bottom-20 left-1/2 -translate-x-1/2 w-[80%] h-40 bg-emerald-500/20 blur-[100px] pointer-events-none" />
