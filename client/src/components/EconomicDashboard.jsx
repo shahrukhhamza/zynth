@@ -345,7 +345,7 @@ export default function EconomicDashboard({ onViewChange }) {
     border2:  '#d0d5de',
     text:     '#0d1117',
     textSub:  '#5a6472',
-    textMute: '#b0b8c4',
+    textMute: '#8b97a8',
     accent:   '#10b981',
     gold:     '#d97706',
     red:      '#dc2626',

@@ -50,15 +50,15 @@ export const ThemeProvider = ({ children }) => {
     // text       → primary text   (#f0f4f8)
     // muted      → secondary text (#8892a4  blue-tinted gray)
     // ────────────────────────────────────────────────────────────────
-    bg:       isDark ? '#09090b' : '#f4f6f9',
+    bg:       isDark ? '#09090b' : '#f5f7fb',
     surface:  isDark ? '#111118' : '#ffffff',
-    surface2: isDark ? '#0c0c12' : '#f0f3f7',
-    border:   isDark ? 'rgba(255,255,255,0.07)' : '#dde2ea',
+    surface2: isDark ? '#0c0c12' : '#eef2f7',
+    border:   isDark ? 'rgba(255,255,255,0.07)' : '#d6dde8',
 
     // Text colors
     text:      isDark ? '#f0f4f8' : '#0a0e1a',
-    muted:     isDark ? '#8892a4' : '#6b7a8d',
-    textMuted: isDark ? '#8892a4' : '#6b7a8d',
+    muted:     isDark ? '#8892a4' : '#526174',
+    textMuted: isDark ? '#8892a4' : '#526174',
 
     // Accent colors (blue — matches landing page CTA/interactive style)
     accent:      '#3b82f6',

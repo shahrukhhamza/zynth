@@ -182,6 +182,18 @@ input, textarea, select {
     box-shadow   0.15s ease !important;
 }
 
+html:not(.dark) input::placeholder,
+html:not(.dark) textarea::placeholder {
+  color: #7b8798;
+  opacity: 1;
+}
+
+html.dark input::placeholder,
+html.dark textarea::placeholder {
+  color: #6b7280;
+  opacity: 1;
+}
+
 /* ── Disable all transitions (e.g. on initial paint) ─────────────────────── */
 .no-transition, .no-transition * {
   transition: none !important;

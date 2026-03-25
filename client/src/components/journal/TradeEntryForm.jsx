@@ -27,6 +27,7 @@ const INPUT_STYLE = (theme) => ({
   padding: '10px 12px',
   width: '100%',
   fontSize: '14px',
+  fontWeight: 500,
   outline: 'none',
   transition: 'border-color 0.15s',
 });
@@ -153,17 +154,21 @@ export default function TradeEntryForm({ onSaved, editTrade = null }) {
     padding: '20px 22px',
   };
   const cardTitle = {
-    fontSize: '10px', fontWeight: 700, textTransform: 'uppercase',
-    letterSpacing: '0.1em', color: theme.muted, marginBottom: '14px',
+    fontSize: '10px', fontWeight: 800, textTransform: 'uppercase',
+    letterSpacing: '0.1em', color: theme.textMuted, marginBottom: '14px',
   };
   const label = {
-    fontSize: '10px', fontWeight: 600,
-    color: theme.muted,
+    fontSize: '10px', fontWeight: 700,
+    color: theme.textMuted,
     marginBottom: '6px', display: 'block',
     textTransform: 'uppercase', letterSpacing: '0.08em',
   };
   const input = INPUT_STYLE(theme);
   const resetBorder = e => { e.target.style.borderColor = theme.border; };
+  const subtleText = theme.textMuted;
+  const inactiveControlBg = theme.isDark ? theme.surface : '#f8fafc';
+  const inactiveControlBorder = theme.isDark ? theme.border : '#cbd5e1';
+  const warningText = theme.warning;
 
   // ── Shared JSX fragments ───────────────────────────────────────────────────
   const PairDirectionBlock = (
@@ -177,7 +182,7 @@ export default function TradeEntryForm({ onSaved, editTrade = null }) {
               onFocus={e => e.target.style.borderColor='#3b82f6'} onBlur={resetBorder} />
             <button type="button" onClick={() => setCustomPair(false)}
               className="px-2 rounded text-xs"
-              style={{ backgroundColor: theme.surface2, color: theme.muted }}>↩</button>
+              style={{ backgroundColor: theme.surface2, color: subtleText }}>↩</button>
           </div>
         ) : (
           <select value={PAIRS.includes(form.pair) ? form.pair : 'CUSTOM'}
@@ -194,9 +199,9 @@ export default function TradeEntryForm({ onSaved, editTrade = null }) {
             <button key={d} type="button" onClick={() => set('direction', d)}
               className="flex-1 py-2 rounded-lg text-sm font-bold transition-colors flex items-center justify-center gap-1"
               style={{
-                backgroundColor: form.direction === d ? (d==='buy'?'#10b981':'#ef4444') : theme.surface,
-                color: form.direction === d ? '#fff' : theme.muted,
-                border: `1.5px solid ${form.direction===d?(d==='buy'?'#10b981':'#ef4444'):theme.border}`,
+                backgroundColor: form.direction === d ? (d==='buy' ? '#10b981' : '#ef4444') : inactiveControlBg,
+                color: form.direction === d ? '#fff' : subtleText,
+                border: `1.5px solid ${form.direction===d ? (d==='buy' ? '#10b981' : '#ef4444') : inactiveControlBorder}`,
               }}>
               {d==='buy'?<TrendingUp className="w-3 h-3"/>:<TrendingDown className="w-3 h-3"/>} {d.toUpperCase()}
             </button>
@@ -213,9 +218,11 @@ export default function TradeEntryForm({ onSaved, editTrade = null }) {
           <button key={o} type="button" onClick={() => set('outcome', o)}
             className="py-2 rounded-lg text-sm font-bold transition-colors"
             style={{
-              backgroundColor: form.outcome===o?(o==='win'?'#10b98122':o==='loss'?'#ef444422':'#f59e0b22'):theme.bg,
-              color: form.outcome===o?(o==='win'?'#10b981':o==='loss'?'#ef4444':'#f59e0b'):theme.muted,
-              border: `1.5px solid ${form.outcome===o?(o==='win'?'#10b98166':o==='loss'?'#ef444466':'#f59e0b66'):theme.border}`,
+              backgroundColor: form.outcome===o
+                ? (o==='win' ? (theme.isDark ? '#10b98122' : '#dcfce7') : o==='loss' ? (theme.isDark ? '#ef444422' : '#ffe4e6') : (theme.isDark ? '#f59e0b22' : '#ffedd5'))
+                : inactiveControlBg,
+              color: form.outcome===o ? (o==='win' ? '#10b981' : o==='loss' ? '#ef4444' : warningText) : subtleText,
+              border: `1.5px solid ${form.outcome===o ? (o==='win' ? (theme.isDark ? '#10b98166' : '#86efac') : o==='loss' ? (theme.isDark ? '#ef444466' : '#fda4af') : (theme.isDark ? '#f59e0b66' : '#fdba74')) : inactiveControlBorder}`,
             }}>
             {o.charAt(0).toUpperCase()+o.slice(1)}
           </button>
@@ -225,7 +232,12 @@ export default function TradeEntryForm({ onSaved, editTrade = null }) {
         <label style={label}>Profit / Loss Amount</label>
         <input type="number" step="any" value={form.profit_loss} onChange={e => set('profit_loss', e.target.value)}
           placeholder="e.g. +45.50 or -22.00"
-          style={{ ...input, color: parseFloat(form.profit_loss)>=0?'#10b981':'#ef4444' }}
+          style={{
+            ...input,
+            color: Number.isFinite(Number.parseFloat(form.profit_loss))
+              ? (Number.parseFloat(form.profit_loss) >= 0 ? '#10b981' : '#ef4444')
+              : theme.text,
+          }}
           onFocus={e => e.target.style.borderColor='#3b82f6'} onBlur={resetBorder} />
       </div>
     </>
@@ -273,20 +285,20 @@ export default function TradeEntryForm({ onSaved, editTrade = null }) {
           border: `1px solid ${theme.border}`,
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
-            <Zap style={{ width: 13, height: 13, color: quickMode ? '#f59e0b' : theme.muted }}/>
-            <span style={{ fontSize: 12, fontWeight: 700, color: quickMode ? '#f59e0b' : theme.muted }}>
+            <Zap style={{ width: 13, height: 13, color: quickMode ? warningText : subtleText }}/>
+            <span style={{ fontSize: 12, fontWeight: 700, color: quickMode ? warningText : subtleText }}>
               {quickMode ? 'Quick Log' : 'Detailed Log'}
             </span>
             {quickMode && (
-              <span style={{ fontSize: 10, color: '#f59e0b70', fontStyle: 'italic' }}>· 5 fields · mobile-friendly</span>
+              <span style={{ fontSize: 10, color: theme.isDark ? '#f59e0b90' : '#b45309', fontStyle: 'italic' }}>· 5 fields · mobile-friendly</span>
             )}
           </div>
           <button type="button" onClick={toggleQuick}
             style={{
               fontSize: 11, fontWeight: 600, padding: '4px 12px', borderRadius: 7, cursor: 'pointer',
-              border: `1.5px solid ${quickMode ? '#f59e0b55' : theme.border}`,
-              backgroundColor: quickMode ? '#f59e0b12' : 'transparent',
-              color: quickMode ? '#f59e0b' : theme.muted,
+              border: `1.5px solid ${quickMode ? (theme.isDark ? '#f59e0b55' : '#fdba74') : inactiveControlBorder}`,
+              backgroundColor: quickMode ? (theme.isDark ? '#f59e0b12' : '#ffedd5') : 'transparent',
+              color: quickMode ? warningText : subtleText,
             }}>
             Switch to {quickMode ? 'Detailed' : 'Quick'}
           </button>
@@ -381,9 +393,9 @@ export default function TradeEntryForm({ onSaved, editTrade = null }) {
                 onDragLeave={() => setDragging(false)}
                 onDrop={handleDrop}
                 onClick={() => fileRef.current?.click()}>
-                <Upload className="w-8 h-8 mx-auto mb-2" style={{ color: theme.muted }}/>
-                <p className="text-sm" style={{ color: theme.muted }}>Drop screenshot here or click to upload</p>
-                <p className="text-xs mt-1" style={{ color: theme.isDark?'#333':theme.muted }}>JPG, PNG, WebP — max 10MB</p>
+                <Upload className="w-8 h-8 mx-auto mb-2" style={{ color: subtleText }}/>
+                <p className="text-sm" style={{ color: subtleText }}>Drop screenshot here or click to upload</p>
+                <p className="text-xs mt-1" style={{ color: subtleText }}>JPG, PNG, WebP — max 10MB</p>
                 <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={e => onFile(e.target.files[0])}/>
               </div>
             )}

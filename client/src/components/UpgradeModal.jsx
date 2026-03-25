@@ -33,6 +33,15 @@ export default function UpgradeModal({ open, onClose, onUpgrade, spotsUsed = 0 }
   if (!visible) return null;
 
   const spotsLeft = Math.max(0, TOTAL_FOUNDING - spotsUsed);
+  const headingText = theme.isDark ? '#ffffff' : '#0f172a';
+  const mutedText = theme.isDark ? '#9ca3af' : '#64748b';
+  const subtleText = theme.isDark ? '#6b7280' : '#526174';
+  const panelSurface = theme.isDark ? 'rgba(255,255,255,0.06)' : '#eef2f7';
+  const freeCardBg = theme.isDark ? 'rgba(255,255,255,0.02)' : '#f8fafc';
+  const freeCardBorder = theme.isDark ? 'rgba(255,255,255,0.07)' : '#dbe3ee';
+  const launchBarBg = theme.isDark
+    ? 'linear-gradient(90deg, rgba(245,158,11,0.18), rgba(16,185,129,0.18))'
+    : 'linear-gradient(90deg, rgba(245,158,11,0.12), rgba(16,185,129,0.10))';
 
   function handleClose() {
     setVisible(false);
@@ -60,9 +69,9 @@ export default function UpgradeModal({ open, onClose, onUpgrade, spotsUsed = 0 }
           <button
             onClick={handleClose}
             className="absolute top-4 right-4 w-8 h-8 rounded-lg flex items-center justify-center transition-colors z-10"
-            style={{ background: 'rgba(255,255,255,0.06)', color: '#6b7280' }}
-            onMouseOver={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.1)'; e.currentTarget.style.color = '#fff'; }}
-            onMouseOut={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.06)'; e.currentTarget.style.color = '#6b7280'; }}
+            style={{ background: panelSurface, color: subtleText }}
+            onMouseOver={e => { e.currentTarget.style.background = theme.isDark ? 'rgba(255,255,255,0.1)' : '#e2e8f0'; e.currentTarget.style.color = headingText; }}
+            onMouseOut={e => { e.currentTarget.style.background = panelSurface; e.currentTarget.style.color = subtleText; }}
           >
             <X className="w-4 h-4" />
           </button>
@@ -70,11 +79,11 @@ export default function UpgradeModal({ open, onClose, onUpgrade, spotsUsed = 0 }
           {/* Top bar — fire badge */}
           <div
             className="flex items-center justify-center gap-2 py-2.5 text-[12px] font-bold tracking-wide"
-            style={{ background: 'linear-gradient(90deg, rgba(245,158,11,0.18), rgba(16,185,129,0.18))' }}
+            style={{ background: launchBarBg }}
           >
             <Flame size={16} style={{ color: '#fbbf24' }} />
             <span style={{ color: '#fbbf24' }}>LAUNCH DISCOUNT</span>
-            <span style={{ color: '#9ca3af' }}>·</span>
+            <span style={{ color: mutedText }}>·</span>
             <span style={{ color: '#34d399' }}>FIRST 100 USERS GET 80% OFF</span>
           </div>
 
@@ -88,10 +97,10 @@ export default function UpgradeModal({ open, onClose, onUpgrade, spotsUsed = 0 }
             </div>
 
             {/* Title */}
-            <h2 className="text-[24px] font-extrabold text-center text-white mb-2">
+            <h2 className="text-[24px] font-extrabold text-center mb-2" style={{ color: headingText }}>
               You've used your free tries!
             </h2>
-            <p className="text-[14px] text-center mb-7" style={{ color: '#9ca3af' }}>
+            <p className="text-[14px] text-center mb-7" style={{ color: mutedText }}>
               Upgrade to <span className="text-emerald-400 font-semibold">Pro</span> to unlock unlimited access
             </p>
 
@@ -100,19 +109,19 @@ export default function UpgradeModal({ open, onClose, onUpgrade, spotsUsed = 0 }
               {/* FREE card */}
               <div
                 className="rounded-xl p-4 border"
-                style={{ background: 'rgba(255,255,255,0.02)', borderColor: 'rgba(255,255,255,0.07)' }}
+                style={{ background: freeCardBg, borderColor: freeCardBorder }}
               >
-                <div className="text-[11px] font-bold tracking-widest mb-3" style={{ color: '#6b7280' }}>
+                <div className="text-[11px] font-bold tracking-widest mb-3" style={{ color: subtleText }}>
                   FREE (current)
                 </div>
                 <div className="flex items-end gap-0.5 mb-4">
-                  <span className="text-[28px] font-extrabold text-white">$0</span>
-                  <span className="text-[12px] mb-1.5" style={{ color: '#6b7280' }}>/mo</span>
+                  <span className="text-[28px] font-extrabold" style={{ color: headingText }}>$0</span>
+                  <span className="text-[12px] mb-1.5" style={{ color: subtleText }}>/mo</span>
                 </div>
                 {['3 AI analyses/month', '2 screenshot imports/month', 'Basic analytics', 'Community access'].map(f => (
                   <div key={f} className="flex items-center gap-2 mb-2">
-                    <div className="w-1.5 h-1.5 rounded-full bg-gray-600 shrink-0" />
-                    <span className="text-[12px]" style={{ color: '#6b7280' }}>{f}</span>
+                    <div className="w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: subtleText }} />
+                    <span className="text-[12px]" style={{ color: subtleText }}>{f}</span>
                   </div>
                 ))}
               </div>
@@ -131,9 +140,9 @@ export default function UpgradeModal({ open, onClose, onUpgrade, spotsUsed = 0 }
                 </div>
                 {/* Price */}
                 <div className="mb-1">
-                  <span className="text-[13px] line-through" style={{ color: '#6b7280' }}>$9</span>
-                  <span className="text-[28px] font-extrabold text-white ml-1.5">$1.99</span>
-                  <span className="text-[12px] mb-1.5 ml-0.5" style={{ color: '#9ca3af' }}>/mo</span>
+                  <span className="text-[13px] line-through" style={{ color: subtleText }}>$9</span>
+                  <span className="text-[28px] font-extrabold ml-1.5" style={{ color: headingText }}>$1.99</span>
+                  <span className="text-[12px] mb-1.5 ml-0.5" style={{ color: mutedText }}>/mo</span>
                 </div>
                 <div className="text-[10px] font-bold mb-4 px-2 py-0.5 rounded-md inline-block"
                      style={{ background: 'rgba(245,158,11,0.15)', color: '#fbbf24' }}>
@@ -142,7 +151,7 @@ export default function UpgradeModal({ open, onClose, onUpgrade, spotsUsed = 0 }
                 {PRO_FEATURES.slice(0, 4).map(f => (
                   <div key={f} className="flex items-start gap-2 mb-2">
                     <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0 mt-0.5" />
-                    <span className="text-[12px] text-white">{f}</span>
+                    <span className="text-[12px]" style={{ color: headingText }}>{f}</span>
                   </div>
                 ))}
               </div>
@@ -158,7 +167,7 @@ export default function UpgradeModal({ open, onClose, onUpgrade, spotsUsed = 0 }
               </span>
               <span className="text-[12px] font-bold" style={{ color: '#f59e0b' }}>
                 Only{' '}
-                <span className="text-white text-[14px]">{spotsLeft}</span>
+                <span className="text-[14px]" style={{ color: headingText }}>{spotsLeft}</span>
                 {' '}spots left at $1.99
               </span>
             </div>
@@ -180,9 +189,9 @@ export default function UpgradeModal({ open, onClose, onUpgrade, spotsUsed = 0 }
             <button
               onClick={handleClose}
               className="w-full mt-3 text-[13px] transition-colors"
-              style={{ color: '#4b5563' }}
-              onMouseOver={e => { e.currentTarget.style.color = '#9ca3af'; }}
-              onMouseOut={e => { e.currentTarget.style.color = '#4b5563'; }}
+              style={{ color: subtleText }}
+              onMouseOver={e => { e.currentTarget.style.color = mutedText; }}
+              onMouseOut={e => { e.currentTarget.style.color = subtleText; }}
             >
               Maybe later
             </button>

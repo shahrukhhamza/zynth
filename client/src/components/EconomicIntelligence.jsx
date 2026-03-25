@@ -131,7 +131,7 @@ function IndicatorCard({ data, accentColor, D }) {
 function HistoricalChart({ data, code, unit, isDark, color }) {
   if (!data?.length) return null;
   const gridColor = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.05)';
-  const tickColor = isDark ? theme.muted : '#9ca3af';
+  const tickColor = isDark ? theme.muted : theme.textMuted;
 
   const chartData = {
     labels: data.map(d => d.date?.slice(0, 7) ?? ''),
@@ -156,7 +156,7 @@ function HistoricalChart({ data, code, unit, isDark, color }) {
       tooltip: {
         backgroundColor: isDark ? theme.surface2 : '#fff',
         titleColor: isDark ? theme.text : '#0a0a0a',
-        bodyColor:  isDark ? theme.muted : '#555',
+        bodyColor:  isDark ? theme.muted : theme.textMuted,
         borderColor: isDark ? theme.border : '#e4e4e4',
         borderWidth: 1,
         padding: 10,
@@ -325,8 +325,8 @@ export default function EconomicIntelligence() {
     cardBg2:  theme.isDark ? theme.surface2   : '#f7f8fa',
     border:   theme.isDark ? theme.border     : '#e5e8ed',
     text:     theme.isDark ? theme.text       : '#0d1117',
-    textSub:  theme.isDark ? '#8892a4'        : '#5a6472',
-    textMute: theme.isDark ? 'rgba(255,255,255,0.08)' : '#b0b8c4',
+    textSub:  theme.isDark ? '#8892a4'        : '#526174',
+    textMute: theme.isDark ? 'rgba(255,255,255,0.08)' : '#8b97a8',
     accent:   '#3b82f6',
   };
   const disclaimerBg = theme.isDark ? 'rgba(245,158,11,0.05)' : '#fff7ed';
