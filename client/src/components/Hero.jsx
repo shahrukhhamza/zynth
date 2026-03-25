@@ -10,7 +10,11 @@ function HeroDashboardMockup({ isDark }) {
       initial={{ y: 40, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ delay: 0.6, duration: 0.8 }}
-      className={`relative rounded-2xl overflow-hidden border border-white/10 bg-[#070b14]/80 backdrop-blur-xl ${isDark ? 'shadow-[0_40px_120px_rgba(0,0,0,0.7)]' : 'shadow-[0_8px_40px_rgba(0,0,0,0.13)]'}`}
+      className={`relative rounded-2xl overflow-hidden border backdrop-blur-xl ${
+        isDark
+          ? 'border-white/10 bg-[#070b14]/80 shadow-[0_40px_120px_rgba(0,0,0,0.7)]'
+          : 'border-blue-100/80 bg-[#131c30] shadow-[0_24px_80px_rgba(0,0,0,0.22),0_4px_24px_rgba(59,130,246,0.14)]'
+      }`}
     >
       {/* Top Bar */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-white/5 bg-white/5">
@@ -163,14 +167,18 @@ export default function Hero({ badgeText, spotsLeft, onGetStarted, onSignIn }) {
         </div>
 
         {/* Floating Trust Icons */}
-        <div className="flex justify-center gap-3 flex-wrap opacity-60">
+        <div className="flex justify-center gap-3 flex-wrap">
           {[
             {Icon: Shield, label: 'Encrypted'},
             {Icon: Zap, label: 'Real-time'},
             {Icon: Bot, label: 'Gemini AI'},
           ].map(({Icon, label}) => (
-            <div key={label} className={`flex items-center gap-2 px-4 py-1.5 rounded-full border text-[11px] font-bold uppercase tracking-widest ${isDark ? 'border-white/10 bg-white/5 text-gray-400' : 'border-black/10 bg-black/[0.04] text-gray-500'}`}>
-              <Icon size={12} className="text-blue-500" /> {label}
+            <div key={label} className={`flex items-center gap-2 px-4 py-1.5 rounded-full border text-[11px] font-bold uppercase tracking-widest ${
+              isDark
+                ? 'border-white/10 bg-white/5 text-gray-400'
+                : 'border-blue-200 bg-white text-gray-700 shadow-sm'
+            }`}>
+              <Icon size={12} className={isDark ? 'text-blue-400' : 'text-blue-600'} /> {label}
             </div>
           ))}
         </div>
@@ -179,8 +187,8 @@ export default function Hero({ badgeText, spotsLeft, onGetStarted, onSignIn }) {
       {/* Hero Mockup with Radial Shadow */}
       <div className="relative z-10 mt-12 w-full max-w-5xl mx-auto px-4">
         <HeroDashboardMockup isDark={isDark} />
-        {/* Glow behind the dashboard — dark mode only */}
-        {isDark && <div className="absolute -bottom-20 left-1/2 -translate-x-1/2 w-[80%] h-40 bg-blue-500/20 blur-[100px] pointer-events-none" />}
+        {/* Glow behind the dashboard */}
+        <div className={`absolute -bottom-20 left-1/2 -translate-x-1/2 w-[80%] h-40 blur-[100px] pointer-events-none ${isDark ? 'bg-blue-500/20' : 'bg-blue-400/10'}`} />
       </div>
     </section>
   );

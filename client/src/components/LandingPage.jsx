@@ -1219,16 +1219,16 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
               <span className={`text-[16px] font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>Zynth</span>
             </div>
             <p className="text-[12px] leading-relaxed mb-4" style={{color: isDark ? 'rgba(52,211,153,0.5)' : '#6b7280'}}>Intelligence Behind Every Trade</p>
-            <p className={`text-[11px] ${isDark ? 'text-gray-700' : 'text-gray-400'}`}>© 2026 Zynth. All rights reserved.</p>
+            <p className={`text-[11px] ${isDark ? 'text-gray-700' : 'text-gray-500'}`}>© 2026 Zynth. All rights reserved.</p>
           </div>
 
           {/* Product column */}
           <div>
-            <p className={`text-[11px] font-bold tracking-[0.15em] uppercase mb-4 ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>Product</p>
+            <p className={`text-[11px] font-bold tracking-[0.15em] uppercase mb-4 ${isDark ? 'text-gray-500' : 'text-gray-500'}`}>Product</p>
             <ul className="space-y-2.5">
               {['Features','Pricing','FAQ','Changelog'].map(item => (
                 <li key={item}>
-                  <a href="#" className={`text-[13px] transition-colors ${isDark ? 'text-gray-500 hover:text-gray-300' : 'text-gray-400 hover:text-gray-700'}`}>{item}</a>
+                  <a href="#" className={`text-[13px] transition-colors ${isDark ? 'text-gray-500 hover:text-gray-300' : 'text-gray-500 hover:text-gray-800'}`}>{item}</a>
                 </li>
               ))}
             </ul>
@@ -1236,28 +1236,28 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
 
           {/* Resources column */}
           <div>
-            <p className={`text-[11px] font-bold tracking-[0.15em] uppercase mb-4 ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>Resources</p>
+            <p className={`text-[11px] font-bold tracking-[0.15em] uppercase mb-4 ${isDark ? 'text-gray-500' : 'text-gray-500'}`}>Resources</p>
             <ul className="space-y-2.5">
-              <li><a href="#" className={`text-[13px] transition-colors ${isDark ? 'text-gray-500 hover:text-gray-300' : 'text-gray-400 hover:text-gray-700'}`}>Help Center</a></li>
-              <li><a href="/terms" className={`text-[13px] transition-colors ${isDark ? 'text-gray-500 hover:text-gray-300' : 'text-gray-400 hover:text-gray-700'}`}>Terms of Service</a></li>
-              <li><a href="/privacy" className={`text-[13px] transition-colors ${isDark ? 'text-gray-500 hover:text-gray-300' : 'text-gray-400 hover:text-gray-700'}`}>Privacy Policy</a></li>
-              <li><a href="/refund-policy" className={`text-[13px] transition-colors ${isDark ? 'text-gray-500 hover:text-gray-300' : 'text-gray-400 hover:text-gray-700'}`}>Refund Policy</a></li>
-              <li><a href="/service-policy" className={`text-[13px] transition-colors ${isDark ? 'text-gray-500 hover:text-gray-300' : 'text-gray-400 hover:text-gray-700'}`}>Service Policy</a></li>
-              <li><a href="/services" className={`text-[13px] transition-colors ${isDark ? 'text-gray-500 hover:text-gray-300' : 'text-gray-400 hover:text-gray-700'}`}>Our Services</a></li>
+              <li><a href="#" className={`text-[13px] transition-colors ${isDark ? 'text-gray-500 hover:text-gray-300' : 'text-gray-500 hover:text-gray-800'}`}>Help Center</a></li>
+              <li><a href="/terms" className={`text-[13px] transition-colors ${isDark ? 'text-gray-500 hover:text-gray-300' : 'text-gray-500 hover:text-gray-800'}`}>Terms of Service</a></li>
+              <li><a href="/privacy" className={`text-[13px] transition-colors ${isDark ? 'text-gray-500 hover:text-gray-300' : 'text-gray-500 hover:text-gray-800'}`}>Privacy Policy</a></li>
+              <li><a href="/refund-policy" className={`text-[13px] transition-colors ${isDark ? 'text-gray-500 hover:text-gray-300' : 'text-gray-500 hover:text-gray-800'}`}>Refund Policy</a></li>
+              <li><a href="/service-policy" className={`text-[13px] transition-colors ${isDark ? 'text-gray-500 hover:text-gray-300' : 'text-gray-500 hover:text-gray-800'}`}>Service Policy</a></li>
+              <li><a href="/services" className={`text-[13px] transition-colors ${isDark ? 'text-gray-500 hover:text-gray-300' : 'text-gray-500 hover:text-gray-800'}`}>Our Services</a></li>
             </ul>
           </div>
 
           {/* Connect column */}
           <div>
-            <p className={`text-[11px] font-bold tracking-[0.15em] uppercase mb-4 ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>Connect</p>
+            <p className={`text-[11px] font-bold tracking-[0.15em] uppercase mb-4 ${isDark ? 'text-gray-500' : 'text-gray-500'}`}>Connect</p>
             <ul className="space-y-2.5">
               <li>
-                <a href="mailto:getzynth@gmail.com" className={`text-[13px] transition-colors ${isDark ? 'text-gray-500 hover:text-gray-300' : 'text-gray-400 hover:text-gray-700'}`}>getzynth@gmail.com</a>
+                <a href="mailto:getzynth@gmail.com" className={`text-[13px] transition-colors ${isDark ? 'text-gray-500 hover:text-gray-300' : 'text-gray-500 hover:text-gray-800'}`}>getzynth@gmail.com</a>
               </li>
             </ul>
             <div className="mt-6 flex items-center gap-2">
               <span className="w-2 h-2 rounded-full flex-shrink-0" style={{background: isDark ? '#34d399' : '#3b82f6', boxShadow: isDark ? '0 0 6px rgba(52,211,153,0.7)' : '0 0 6px rgba(59,130,246,0.7)'}} />
-              <span className={`text-[11px] ${isDark ? 'text-gray-600' : 'text-gray-400'}`}>Built for active traders</span>
+              <span className={`text-[11px] ${isDark ? 'text-gray-600' : 'text-gray-500'}`}>Built for active traders</span>
             </div>
           </div>
 
@@ -1265,8 +1265,8 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
         <div className="max-w-7xl mx-auto border-t pt-6 flex flex-col md:flex-row items-center justify-between gap-3"
              style={{borderColor: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.06)'}}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-            <p style={{ fontSize: 11, color: isDark ? '#374151' : '#9ca3af' }}>© 2026 Zynth. All rights reserved.</p>
-            <p style={{ fontSize: 11, color: isDark ? '#374151' : '#9ca3af' }}>Azeem Town, Sihala Street 2, Islamabad, Pakistan &nbsp;·&nbsp; <a href="tel:+923175516692" style={{ color: isDark ? '#4b5563' : '#6b7280', textDecoration: 'none' }}>+92 317 5516692</a> &nbsp;·&nbsp; <a href="mailto:getzynth@gmail.com" style={{ color: isDark ? '#4b5563' : '#6b7280', textDecoration: 'none' }}>getzynth@gmail.com</a></p>
+            <p style={{ fontSize: 11, color: isDark ? '#374151' : '#6b7280' }}>© 2026 Zynth. All rights reserved.</p>
+            <p style={{ fontSize: 11, color: isDark ? '#374151' : '#6b7280' }}>Azeem Town, Sihala Street 2, Islamabad, Pakistan &nbsp;·&nbsp; <a href="tel:+923175516692" style={{ color: isDark ? '#4b5563' : '#6b7280', textDecoration: 'none' }}>+92 317 5516692</a> &nbsp;·&nbsp; <a href="mailto:getzynth@gmail.com" style={{ color: isDark ? '#4b5563' : '#6b7280', textDecoration: 'none' }}>getzynth@gmail.com</a></p>
           </div>
           <div className="flex gap-5">
             {[
@@ -1277,7 +1277,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
               {href:'/services', label:'Services'},
               {href:'mailto:getzynth@gmail.com', label:'Contact'},
             ].map(({href, label}) => (
-              <a key={label} href={href} className={`text-[11px] transition-colors ${isDark ? 'text-gray-700 hover:text-gray-500' : 'text-gray-400 hover:text-gray-600'}`}>{label}</a>
+              <a key={label} href={href} className={`text-[11px] transition-colors ${isDark ? 'text-gray-700 hover:text-gray-500' : 'text-gray-500 hover:text-gray-700'}`}>{label}</a>
             ))}
           </div>
         </div>
