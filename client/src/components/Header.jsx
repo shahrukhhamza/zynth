@@ -253,7 +253,7 @@ function Header({
                       onMouseLeave={e => { if (selectedTimezone !== tz.id) e.currentTarget.style.background = 'transparent'; }}
                     >
                       <span style={{ fontSize: 12, color: selectedTimezone === tz.id ? '#3b82f6' : H_MUTED }}>
-                        {tz.label}
+                        {tz.name || tz.label || tz.id?.toUpperCase()}
                       </span>
                       {selectedTimezone === tz.id && (
                         <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#3b82f6', display: 'block' }} />
