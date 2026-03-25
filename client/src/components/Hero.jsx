@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Flame, ArrowRight, Shield, Zap, Bot, Globe } from 'lucide-react';
+import { useTheme } from '../contexts/ThemeContext';
 
 // Upgraded Mockup with Glassmorphism and Depth
 function HeroDashboardMockup() {
@@ -63,13 +64,14 @@ function HeroDashboardMockup() {
 }
 
 export default function Hero({ badgeText, spotsLeft, onGetStarted, onSignIn }) {
+  const { isDark } = useTheme();
   return (
-    <section className="relative min-h-screen flex flex-col items-center justify-center text-center px-6 pt-32 pb-20 overflow-hidden bg-[#030303]">
+    <section className={`relative min-h-screen flex flex-col items-center justify-center text-center px-6 pt-32 pb-20 overflow-hidden transition-colors duration-300 ${isDark ? 'bg-[#030303]' : 'bg-[#f4f6f9]'}`}>
       
       {/* --- Institutional Background Layers --- */}
       <div className="absolute inset-0 pointer-events-none">
         {/* Animated Grid */}
-        <div className="absolute inset-0 grid-bg opacity-40" />
+        <div className={`absolute inset-0 grid-bg ${isDark ? 'opacity-40' : 'opacity-10'}`} />
         
         {/* Dynamic Mesh Gradients (The "Unicorn" Look) */}
         <motion.div 
@@ -104,7 +106,7 @@ export default function Hero({ badgeText, spotsLeft, onGetStarted, onSignIn }) {
           transition={{ delay: 0.2 }}
           className="text-5xl md:text-[82px] font-black leading-[1.05] tracking-tighter mb-8"
         >
-          <span className="text-white">You Know How To Trade.</span>
+          <span className={isDark ? 'text-white' : 'text-gray-900'}>You Know How To Trade.</span>
           <br />
           <span className="inline-block pb-2 bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 via-emerald-200 to-emerald-500 animate-gradient-x">
             But Do You Know Why You Lose?
@@ -116,7 +118,7 @@ export default function Hero({ badgeText, spotsLeft, onGetStarted, onSignIn }) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.4 }}
-          className="text-[18px] md:text-[20px] text-gray-400 max-w-[650px] mx-auto leading-relaxed mb-10 font-medium"
+          className={`text-[18px] md:text-[20px] max-w-[650px] mx-auto leading-relaxed mb-10 font-medium ${isDark ? 'text-gray-400' : 'text-gray-600'}`}
         >
           Institutional-grade behavioral analytics for retail traders. Zynth maps your blind spots and optimizes your psychology in real-time.
         </motion.p>
@@ -150,7 +152,7 @@ export default function Hero({ badgeText, spotsLeft, onGetStarted, onSignIn }) {
           
           <button 
             onClick={onSignIn}
-            className="px-8 py-5 bg-white/5 border border-white/10 text-white font-bold rounded-2xl hover:bg-white/10 transition-all hover:border-white/20"
+            className={`px-8 py-5 font-bold rounded-2xl transition-all ${isDark ? 'bg-white/5 border border-white/10 text-white hover:bg-white/10 hover:border-white/20' : 'bg-black/[0.06] border border-black/10 text-gray-900 hover:bg-black/10 hover:border-black/20'}`}
           >
             Access Terminal
           </button>
@@ -163,7 +165,7 @@ export default function Hero({ badgeText, spotsLeft, onGetStarted, onSignIn }) {
             {Icon: Zap, label: 'Real-time'},
             {Icon: Bot, label: 'Gemini AI'},
           ].map(({Icon, label}) => (
-            <div key={label} className="flex items-center gap-2 px-4 py-1.5 rounded-full border border-white/10 bg-white/5 text-[11px] font-bold uppercase tracking-widest text-gray-400">
+            <div key={label} className={`flex items-center gap-2 px-4 py-1.5 rounded-full border text-[11px] font-bold uppercase tracking-widest ${isDark ? 'border-white/10 bg-white/5 text-gray-400' : 'border-black/10 bg-black/[0.04] text-gray-500'}`}>
               <Icon size={12} className="text-emerald-500" /> {label}
             </div>
           ))}
