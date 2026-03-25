@@ -2,6 +2,7 @@ import { useState } from 'react';
 import axios from 'axios';
 import { API_URL } from '../config/api';
 import { TrendingUp, TrendingDown, AlertCircle, CheckCircle2, Loader2, Mail, ArrowLeft, Shield, BarChart2, Activity } from 'lucide-react';
+import { BrandMark } from './BrandLogo';
 
 const TICKERS = [
   { sym: 'GOLD', val: '$5,168', chg: '+0.82%', up: true,  top: '5%',  left: '4%',  delay: '0s',   dur: '4.2s' },
@@ -72,10 +73,7 @@ export default function ForgotPasswordPage({ onBack }) {
           Back to login
         </button>
         <div className="flex items-center gap-2 select-none">
-          <div className="w-7 h-7 rounded-[9px] flex items-center justify-center"
-               style={{background:'linear-gradient(145deg,#059669,#0d9488)'}}>
-            <TrendingUp className="w-3.5 h-3.5 text-white" strokeWidth={2.5} />
-          </div>
+          <BrandMark size={28} />
           <span className="text-[15px] font-bold text-white tracking-tight">Zynth</span>
         </div>
       </div>

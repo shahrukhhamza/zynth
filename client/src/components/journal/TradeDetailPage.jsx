@@ -30,16 +30,16 @@ function StatLine({ label, value, valueColor, mono = true, hideIfEmpty = false }
   return (
     <div
       className="flex items-center justify-between"
-      style={{ padding: '10px 0', borderBottom: `1px solid ${theme.isDark ? '#111' : theme.border}` }}
+      style={{ padding: '10px 0', borderBottom: `1px solid ${theme.border}` }}
     >
       <span
         className="uppercase"
-        style={{ fontSize: '11px', fontWeight: 600, letterSpacing: '0.06em', color: theme.isDark ? '#555' : theme.muted }}
+        style={{ fontSize: '11px', fontWeight: 600, letterSpacing: '0.06em', color: theme.muted }}
       >
         {label}
       </span>
       <span
-        style={{ fontSize: '15px', fontWeight: 700, color: valueColor || (theme.isDark ? '#e8e8e8' : theme.text), ...(mono ? MONO : {}) }}
+        style={{ fontSize: '15px', fontWeight: 700, color: valueColor || theme.text, ...(mono ? MONO : {}) }}
       >
         {value || '—'}
       </span>
@@ -71,7 +71,7 @@ function CardLabel({ icon: Icon, label, accent, right }) {
     <div className="flex items-center gap-2.5 mb-4">
       <span
         className="uppercase"
-        style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '0.1em', color: theme.isDark ? '#444' : theme.muted }}
+        style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '0.1em', color: theme.muted }}
       >
         {label}
       </span>
@@ -169,9 +169,9 @@ export default function TradeDetailPage({ trade, trades, tradeIndex, onBack, onN
         : trade.created_at.slice(11, 16))
     : '';
 
-  const navBase = { color: theme.isDark ? '#888' : theme.muted, border: `1px solid ${theme.isDark ? '#1e1e1e' : theme.border}`, backgroundColor: theme.isDark ? '#111' : 'transparent', borderRadius: '7px' };
-  const navIn   = e => { e.currentTarget.style.color = theme.isDark ? '#ccc' : theme.text; e.currentTarget.style.backgroundColor = theme.isDark ? '#1e1e1e' : theme.surface2; };
-  const navOut  = e => { e.currentTarget.style.color = theme.isDark ? '#888' : theme.muted; e.currentTarget.style.backgroundColor = theme.isDark ? '#111' : 'transparent'; };
+  const navBase = { color: theme.muted, border: `1px solid ${theme.border}`, backgroundColor: theme.isDark ? theme.surface2 : 'transparent', borderRadius: '7px' };
+  const navIn   = e => { e.currentTarget.style.color = theme.text; e.currentTarget.style.backgroundColor = theme.isDark ? theme.surface : theme.surface2; };
+  const navOut  = e => { e.currentTarget.style.color = theme.muted; e.currentTarget.style.backgroundColor = theme.isDark ? theme.surface2 : 'transparent'; };
 
   return (
     <div className="min-h-screen flex flex-col" style={{ backgroundColor: theme.bg }}>
@@ -182,7 +182,7 @@ export default function TradeDetailPage({ trade, trades, tradeIndex, onBack, onN
       <div
         className="sticky top-0 z-40 flex-shrink-0"
         style={{
-          backgroundColor: theme.isDark ? 'rgba(9,9,11,0.88)' : 'rgba(255,255,255,0.88)',
+          backgroundColor: theme.isDark ? 'rgba(7,9,15,0.88)' : 'rgba(255,255,255,0.88)',
           borderBottom: `1px solid ${theme.border}`,
           backdropFilter: 'blur(20px)',
           WebkitBackdropFilter: 'blur(20px)',
@@ -215,7 +215,7 @@ export default function TradeDetailPage({ trade, trades, tradeIndex, onBack, onN
 
             <div className="w-px h-5 flex-shrink-0" style={{ backgroundColor: theme.border }} />
 
-            <span className="tracking-tight flex-shrink-0" style={{ fontSize: '14px', fontWeight: 600, color: theme.isDark ? '#e8e8e8' : theme.text }}>
+            <span className="tracking-tight flex-shrink-0" style={{ fontSize: '14px', fontWeight: 600, color: theme.text }}>
               {trade.pair}
             </span>
 
@@ -243,16 +243,16 @@ export default function TradeDetailPage({ trade, trades, tradeIndex, onBack, onN
               <Pencil className="w-3 h-3" />
               <span className="hidden sm:inline">Edit</span>
             </button>
-            <span className="tabular-nums hidden sm:block" style={{ fontSize: '11px', background: theme.isDark ? '#111' : theme.surface2, border: `1px solid ${theme.isDark ? '#1e1e1e' : theme.border}`, color: theme.isDark ? '#666' : theme.muted, padding: '4px 10px', borderRadius: '6px', ...MONO }}>
+            <span className="tabular-nums hidden sm:block" style={{ fontSize: '11px', background: theme.surface2, border: `1px solid ${theme.border}`, color: theme.muted, padding: '4px 10px', borderRadius: '6px', ...MONO }}>
               {date}{time ? ` · ${time}` : ''}
             </span>
             {trade.session && (
-              <span className="hidden md:inline-flex" style={{ fontSize: '11px', background: theme.isDark ? '#111' : theme.surface2, border: `1px solid ${theme.isDark ? '#1e1e1e' : theme.border}`, color: theme.isDark ? '#666' : theme.muted, padding: '4px 10px', borderRadius: '6px' }}>
+              <span className="hidden md:inline-flex" style={{ fontSize: '11px', background: theme.surface2, border: `1px solid ${theme.border}`, color: theme.muted, padding: '4px 10px', borderRadius: '6px' }}>
                 {trade.session.replace(/_/g, ' ').toUpperCase()}
               </span>
             )}
             {trade.strategy && (
-              <span className="hidden md:inline-flex" style={{ fontSize: '11px', background: theme.isDark ? '#111' : theme.surface2, border: `1px solid ${theme.isDark ? '#1e1e1e' : theme.border}`, color: theme.isDark ? '#666' : theme.muted, padding: '4px 10px', borderRadius: '6px' }}>
+              <span className="hidden md:inline-flex" style={{ fontSize: '11px', background: theme.surface2, border: `1px solid ${theme.border}`, color: theme.muted, padding: '4px 10px', borderRadius: '6px' }}>
                 {trade.strategy}
               </span>
             )}

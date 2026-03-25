@@ -29,13 +29,13 @@ export default function RefundPolicy({ onBack }) {
       }}>
         <div style={{ maxWidth: 860, margin: '0 auto', padding: '12px 24px', display: 'flex', alignItems: 'center', gap: 12 }}>
           <button onClick={handleBack} style={{ display: 'flex', alignItems: 'center', gap: 6, color: '#6b7280', fontSize: 13, cursor: 'pointer', background: 'none', border: 'none', padding: '4px 8px', borderRadius: 6 }}
-            onMouseEnter={e => (e.currentTarget.style.color = '#10b981')}
+            onMouseEnter={e => (e.currentTarget.style.color = '#3b82f6')}
             onMouseLeave={e => (e.currentTarget.style.color = '#6b7280')}>
             <ArrowLeft size={15} /> Back
           </button>
           <div style={{ width: 1, height: 18, backgroundColor: 'rgba(107,114,128,0.4)' }} />
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <RefreshCw size={16} style={{ color: '#10b981' }} />
+            <RefreshCw size={16} style={{ color: '#3b82f6' }} />
             <span style={{ fontSize: 14, fontWeight: 600, color: '#e2e8f0' }}>Return &amp; Refund Policy</span>
           </div>
           <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 6 }}>
@@ -55,8 +55,8 @@ export default function RefundPolicy({ onBack }) {
         {/* Quick summary boxes */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 14, marginBottom: 36 }}>
           <div style={{ padding: '16px 18px', borderRadius: 10, backgroundColor: 'rgba(16,185,129,0.07)', border: '1px solid rgba(16,185,129,0.2)' }}>
-            <CheckCircle2 size={18} style={{ color: '#10b981', marginBottom: 8 }} />
-            <p style={{ fontSize: 13, fontWeight: 700, color: '#10b981', marginBottom: 4 }}>7-Day Money Back</p>
+            <CheckCircle2 size={18} style={{ color: '#3b82f6', marginBottom: 8 }} />
+            <p style={{ fontSize: 13, fontWeight: 700, color: '#3b82f6', marginBottom: 4 }}>7-Day Money Back</p>
             <p style={{ fontSize: 12, color: '#6b7280', lineHeight: 1.6 }}>New subscribers are eligible for a full refund within 7 days of their first payment.</p>
           </div>
           <div style={{ padding: '16px 18px', borderRadius: 10, backgroundColor: 'rgba(245,158,11,0.07)', border: '1px solid rgba(245,158,11,0.2)' }}>
@@ -81,7 +81,7 @@ export default function RefundPolicy({ onBack }) {
           </Section>
 
           <Section id="refund-eligibility" title="2. Refund Eligibility">
-            <p>You are eligible for a <strong style={{ color: '#10b981' }}>full refund</strong> if:</p>
+            <p>You are eligible for a <strong style={{ color: '#3b82f6' }}>full refund</strong> if:</p>
             <ul style={{ paddingLeft: 20, display: 'flex', flexDirection: 'column', gap: 6 }}>
               <li>You are a <strong style={{ color: '#e2e8f0' }}>new subscriber</strong> requesting a refund within <strong style={{ color: '#e2e8f0' }}>7 days</strong> of your first payment</li>
               <li>The service was not substantially used (fewer than 5 AI analyses consumed)</li>
@@ -109,8 +109,8 @@ export default function RefundPolicy({ onBack }) {
           <Section id="how-to-request" title="4. How to Request a Refund">
             <p>To request a refund, please contact us within the eligible timeframe:</p>
             <div style={{ backgroundColor: 'rgba(16,185,129,0.06)', border: '1px solid rgba(16,185,129,0.15)', borderRadius: 8, padding: '16px 20px', display: 'flex', flexDirection: 'column', gap: 6 }}>
-              <p style={{ fontSize: 13, fontWeight: 700, color: '#10b981' }}>Contact Zynth Support</p>
-              <p style={{ fontSize: 13, color: '#9ca3af' }}>Email: <a href="mailto:getzynth@gmail.com" style={{ color: '#10b981', textDecoration: 'none' }}>getzynth@gmail.com</a></p>
+              <p style={{ fontSize: 13, fontWeight: 700, color: '#3b82f6' }}>Contact Zynth Support</p>
+              <p style={{ fontSize: 13, color: '#9ca3af' }}>Email: <a href="mailto:getzynth@gmail.com" style={{ color: '#3b82f6', textDecoration: 'none' }}>getzynth@gmail.com</a></p>
               <p style={{ fontSize: 13, color: '#9ca3af' }}>Subject line: <em style={{ color: '#d1d5db' }}>Refund Request — [Your Account Email]</em></p>
             </div>
             <p>Please include in your message:</p>
@@ -126,7 +126,7 @@ export default function RefundPolicy({ onBack }) {
             <p>You can cancel your Zynth subscription at any time:</p>
             <ul style={{ paddingLeft: 20, display: 'flex', flexDirection: 'column', gap: 6 }}>
               <li>Go to <strong style={{ color: '#e2e8f0' }}>Settings</strong> inside the Zynth platform and select <strong style={{ color: '#e2e8f0' }}>Manage Subscription</strong></li>
-              <li>Alternatively, email <a href="mailto:getzynth@gmail.com" style={{ color: '#10b981', textDecoration: 'none' }}>getzynth@gmail.com</a> with your cancellation request</li>
+              <li>Alternatively, email <a href="mailto:getzynth@gmail.com" style={{ color: '#3b82f6', textDecoration: 'none' }}>getzynth@gmail.com</a> with your cancellation request</li>
             </ul>
             <p>After cancellation, you will retain access to your paid plan features until the end of your current billing period. Your account will then automatically revert to the Free plan. Your trade journal data is preserved and accessible on the Free plan.</p>
           </Section>
@@ -149,10 +149,10 @@ export default function RefundPolicy({ onBack }) {
           <Section id="contact-refund" title="8. Contact">
             <p>For all refund, billing, or cancellation queries:</p>
             <div style={{ backgroundColor: 'rgba(16,185,129,0.06)', border: '1px solid rgba(16,185,129,0.15)', borderRadius: 8, padding: '16px 20px', marginTop: 6, display: 'flex', flexDirection: 'column', gap: 6 }}>
-              <p style={{ fontSize: 14, color: '#10b981', fontWeight: 700 }}>Zynth Billing Support</p>
-              <p style={{ fontSize: 13, color: '#9ca3af' }}>Email: <a href="mailto:getzynth@gmail.com" style={{ color: '#10b981', textDecoration: 'none' }}>getzynth@gmail.com</a></p>
+              <p style={{ fontSize: 14, color: '#3b82f6', fontWeight: 700 }}>Zynth Billing Support</p>
+              <p style={{ fontSize: 13, color: '#9ca3af' }}>Email: <a href="mailto:getzynth@gmail.com" style={{ color: '#3b82f6', textDecoration: 'none' }}>getzynth@gmail.com</a></p>
               <p style={{ fontSize: 13, color: '#9ca3af' }}>Address: Zynth, Azeem Town, Sihala Street 2, Islamabad, Pakistan</p>
-              <p style={{ fontSize: 13, color: '#9ca3af' }}>Phone: <a href="tel:+923175516692" style={{ color: '#10b981', textDecoration: 'none' }}>+92 317 5516692</a></p>
+              <p style={{ fontSize: 13, color: '#9ca3af' }}>Phone: <a href="tel:+923175516692" style={{ color: '#3b82f6', textDecoration: 'none' }}>+92 317 5516692</a></p>
               <p style={{ fontSize: 13, color: '#9ca3af' }}>Response time: Within 1–2 business days</p>
             </div>
           </Section>
@@ -163,12 +163,14 @@ export default function RefundPolicy({ onBack }) {
         <div style={{ marginTop: 48, borderTop: '1px solid rgba(16,185,129,0.1)', paddingTop: 24, display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
           <p style={{ fontSize: 12, color: '#4b5563' }}>© 2026 Zynth. All rights reserved.</p>
           <div style={{ display: 'flex', gap: 16 }}>
-            <a href="/terms" style={{ fontSize: 12, color: '#6b7280', textDecoration: 'none' }} onMouseEnter={e => (e.currentTarget.style.color = '#10b981')} onMouseLeave={e => (e.currentTarget.style.color = '#6b7280')}>Terms of Service</a>
-            <a href="/privacy" style={{ fontSize: 12, color: '#6b7280', textDecoration: 'none' }} onMouseEnter={e => (e.currentTarget.style.color = '#10b981')} onMouseLeave={e => (e.currentTarget.style.color = '#6b7280')}>Privacy Policy</a>
-            <a href="/service-policy" style={{ fontSize: 12, color: '#6b7280', textDecoration: 'none' }} onMouseEnter={e => (e.currentTarget.style.color = '#10b981')} onMouseLeave={e => (e.currentTarget.style.color = '#6b7280')}>Service Policy</a>
+            <a href="/terms" style={{ fontSize: 12, color: '#6b7280', textDecoration: 'none' }} onMouseEnter={e => (e.currentTarget.style.color = '#3b82f6')} onMouseLeave={e => (e.currentTarget.style.color = '#6b7280')}>Terms of Service</a>
+            <a href="/privacy" style={{ fontSize: 12, color: '#6b7280', textDecoration: 'none' }} onMouseEnter={e => (e.currentTarget.style.color = '#3b82f6')} onMouseLeave={e => (e.currentTarget.style.color = '#6b7280')}>Privacy Policy</a>
+            <a href="/service-policy" style={{ fontSize: 12, color: '#6b7280', textDecoration: 'none' }} onMouseEnter={e => (e.currentTarget.style.color = '#3b82f6')} onMouseLeave={e => (e.currentTarget.style.color = '#6b7280')}>Service Policy</a>
           </div>
         </div>
       </div>
     </div>
   );
 }
+
+

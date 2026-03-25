@@ -2,22 +2,32 @@
  * assistant.js - Zynth Assistant chatbot route
  *
  * POST /api/assistant/chat
- *   Body: { message: string }
+ *   Body: { message: string, history: [] }
  *   Returns: { reply }
  *
- * Pure static knowledge base - no Gemini, no API calls, instant responses.
- * Rate limit: 10 messages per user per hour (in-memory)
+ * Fast path: static keyword KB (instant, no API call)
+ * AI path: Gemini 1.5 Flash with full Zynth knowledge (2-4s, cached)
+ * Rate limit: 30 messages per user per hour (in-memory)
  */
 
 import { Router } from 'express';
-import { requireAuth, checkAiTries } from '../middleware/authMiddleware.js';
+import { requireAuth } from '../middleware/authMiddleware.js';
 
 const router = Router();
 
 // Rate limit store { userId: [timestamp, ...] }
 const rateLimitStore = new Map();
-const RATE_LIMIT = 10;
+const RATE_LIMIT = 30;
 const RATE_WINDOW_MS = 60 * 60 * 1000;
+
+// Gemini response cache — key: normalised message, value: { reply, ts }
+const geminiCache = new Map();
+const CACHE_TTL_MS = 60 * 60 * 1000; // 1 hour
+
+function cacheKey(msg) {
+  // Normalise: lowercase, strip punctuation, collapse whitespace
+  return msg.toLowerCase().replace(/[^a-z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim();
+}
 
 function checkRateLimit(userId) {
   const now = Date.now();
@@ -35,7 +45,7 @@ const QA = [
     a: 'Welcome to Zynth! Start by going to Trade Journal in the sidebar and logging your first trade. Then explore the Economic Calendar and Dashboard for live market data. Check AI Insights after logging 5+ trades for personalized coaching.' },
 
   // TRADE JOURNAL - LOGGING
-  { q: ['how do i log', 'log a trade', 'add a trade', 'record a trade', 'new trade', 'how to journal', 'how do i journal', 'journal a trade', 'enter a trade', 'save a trade', 'create a trade', 'journal', 'trade journal', 'log trade'],
+  { q: ['how do i log', 'how to log', 'log a trade', 'add a trade', 'record a trade', 'new trade', 'how to journal', 'how do i journal', 'journal a trade', 'enter a trade', 'save a trade', 'create a trade', 'trade journal', 'log trade', 'logging trade', 'logging a trade'],
     a: 'To log a trade: click Trade Journal in the sidebar -> Log Trade tab -> select your pair (e.g. XAU/USD) -> choose BUY or SELL -> enter entry price, exit price, lot size -> select outcome (WIN/LOSS) -> click Save Trade. You can also add a screenshot, emotional state and notes.' },
 
   { q: ['screenshot trade', 'attach screenshot', 'add screenshot', 'upload screenshot to trade', 'trade image', 'trade photo'],
@@ -67,7 +77,7 @@ const QA = [
     a: 'To export your trades: Trade Journal -> Trade History -> look for the Export CSV button in the filter bar. This downloads all your trades as a spreadsheet.' },
 
   // PERFORMANCE
-  { q: ['performance', 'analytics', 'statistics', 'stats', 'my stats', 'trading stats'],
+  { q: ['performance', 'analytics', 'statistics', 'stats', 'my stats', 'trading stats', 'understand analytics', 'view analytics', 'how analytics', 'analyze performance'],
     a: 'Your performance analytics are in Trade Journal -> Performance tab. You will see: Win Rate, Total PnL, Profit Factor, Average Win/Loss, Risk:Reward ratio, Expectancy, Equity Curve chart, P&L by pair, Strategy breakdown and Emotion analysis.' },
 
   { q: ['win rate', 'how many wins', 'winning percentage'],
@@ -99,7 +109,7 @@ const QA = [
     a: 'Each trade can be analyzed individually by AI. In Trade History click any trade -> click the brain icon. You get: Psychology Score (1-10), Discipline Rating, Coach Message, Key Observations and Improvement Tips.' },
 
   // SCREENSHOT ANALYSIS / OCR
-  { q: ['screenshot analysis', 'ocr', 'import from screenshot', 'mt5 screenshot', 'bulk import', 'auto import', 'trade history screenshot'],
+  { q: ['screenshot analysis', 'ocr', 'import from screenshot', 'mt5 screenshot', 'bulk import', 'auto import', 'trade history screenshot', 'how to use screenshot', 'upload mt5', 'import trades'],
     a: 'Screenshot Analysis (in sidebar) lets you upload an MT5 account history screenshot. The AI reads it and automatically imports all your trades into the journal at once. Free: 2 lifetime uses. Pro: 35/month. Elite: unlimited.' },
 
   { q: ['how does ocr work', 'how does screenshot analysis work', 'screenshot not working'],
@@ -151,13 +161,13 @@ const QA = [
     a: 'The Market Hours tool in Trading Desk shows a live clock with all 4 session open/close times converted to your timezone: Sydney, Tokyo, London and New York. It also shows overlap windows.' },
 
   // SETTINGS & PREFERENCES
-  { q: ['settings', 'preferences', 'options', 'configuration', 'where is settings'],
+  { q: ['settings', 'preferences', 'options', 'configuration', 'where is settings', 'setting'],
     a: 'Settings is at the bottom of the left sidebar (gear icon). You can change: timezone, dark/light theme, auto-refresh toggle, notifications toggle and market timezone display.' },
 
-  { q: ['timezone', 'change timezone', 'time zone', 'wrong time', 'time is wrong', 'pkt', 'est', 'utc', 'gmt'],
+  { q: ['timezone', 'change timezone', 'time zone', 'wrong time', 'time is wrong', 'pkt', 'est', 'utc', 'gmt', 'how to change timezone', 'where timezone'],
     a: 'To change timezone: click the timezone button in the top header bar (shows your current zone like PKT, EST or UTC) -> select your timezone from the 9 options in the dropdown. All calendar events and session times update automatically.' },
 
-  { q: ['dark mode', 'light mode', 'change theme', 'toggle theme', 'theme', 'dark background', 'white background'],
+  { q: ['dark mode', 'light mode', 'change theme', 'toggle theme', 'theme', 'dark background', 'white background', 'how to change theme', 'color theme', 'switch theme'],
     a: 'Toggle dark/light mode by clicking the sun or moon icon in the top header bar. Your preference is saved automatically.' },
 
   { q: ['notifications', 'alerts', 'turn off notifications'],
@@ -183,7 +193,7 @@ const QA = [
     a: 'To delete your account contact us at getzynth@gmail.com with the subject "Delete Account". We will process it within 24 hours.' },
 
   // PLANS & BILLING
-  { q: ['upgrade', 'upgrade plan', 'get pro', 'get elite', 'subscribe', 'buy plan', 'purchase'],
+  { q: ['upgrade', 'upgrade plan', 'get pro', 'get elite', 'subscribe', 'buy plan', 'purchase', 'how to upgrade', 'upgrade my plan', 'upgrading plan'],
     a: 'To upgrade: click your avatar top right -> Profile -> click Upgrade Plan button -> choose Pro ($1.99/month) or Elite ($4.99/month) -> email us at getzynth@gmail.com with your chosen plan. We activate within 24 hours.' },
 
   { q: ['how much', 'price', 'cost', 'pricing', 'how much does it cost', 'subscription cost'],
@@ -235,34 +245,211 @@ const QA = [
     a: 'Zynth currently runs as a web app accessible from any browser including mobile browsers. A dedicated mobile app is on our roadmap. For now you can add Zynth to your home screen from your mobile browser for an app-like experience.' },
 ];
 
-// Simple linear scan - if message includes ANY keyword, return that answer immediately
+// ── Keyword fast-path (instant answers, no API call) ─────────────────────────
 function findAnswer(userMessage) {
-  const msg = userMessage.toLowerCase();
+  const clean = (s) => s.toLowerCase().replace(/[?!.,;:]/g, ' ').replace(/\s+/g, ' ').trim();
+  const msg = clean(userMessage);
+
+  // Pass 1: direct substring
   for (const item of QA) {
     for (const kw of item.q) {
-      if (msg.includes(kw)) {
-        return item.a;
+      if (msg.includes(kw)) return item.a;
+    }
+  }
+
+  // Pass 2: word-token scoring (handles paraphrase like "how to log" vs "how do i log")
+  const msgWords = new Set(msg.split(/\s+/).filter(w => w.length > 2));
+  let bestScore = 0;
+  let bestAnswer = null;
+  for (const item of QA) {
+    for (const kw of item.q) {
+      const kwWords = kw.split(/\s+/).filter(w => w.length > 2);
+      if (kwWords.length === 0) continue;
+      const matchCount = kwWords.filter(w => msgWords.has(w)).length;
+      const score = matchCount / kwWords.length;
+      if (score >= 0.75 && matchCount > bestScore) {
+        bestScore = matchCount;
+        bestAnswer = item.a;
       }
     }
   }
-  return null;
+  return bestAnswer;
+}
+
+// ── Comprehensive Zynth knowledge base for Gemini ────────────────────────────
+const ZYNTH_SYSTEM_PROMPT = `You are the Zynth Assistant — a helpful, friendly, and knowledgeable support agent built into the Zynth trading intelligence platform. You answer user questions about Zynth accurately and concisely.
+
+## WHAT IS ZYNTH
+Zynth is a trading intelligence platform for serious traders. It is a web app (not a broker — you cannot place trades or deposit money here). It gives traders: a smart trade journal with AI coaching, live market data, economic intelligence, Macro Surprise Score, behavioral pattern detection, and Trading Desk calculators.
+Tagline: "Intelligence Behind Every Trade."
+Contact: getzynth@gmail.com | Website: getzynth.com
+
+## PLANS & PRICING
+- Free ($0 forever): 10 journal entries lifetime, 3 AI analyses lifetime, 2 screenshot OCRs lifetime, today's US economic events, live market overview, market news.
+- Pro ($1.99/month founding price, regular $9/month): unlimited journal entries, 50 AI analyses/month, 35 screenshot OCRs/month, full Economic Calendar (all countries), Macro Surprise Score, Economic Intelligence page, real-time streaming, advanced analytics.
+- Elite ($4.99/month founding price, regular $25/month): everything in Pro + unlimited AI analyses, unlimited OCR, Trading DNA Report, beta feature access, 4-hour dedicated support.
+- Founding Member offer: first 100 users lock in the founding price FOREVER.
+- To upgrade: click avatar (top right) → Profile → Upgrade Plan → email getzynth@gmail.com with your chosen plan. Activation within 24 hours.
+- Payment is manual via email (getzynth@gmail.com). 7-day money-back guarantee, no questions asked.
+- To cancel: email getzynth@gmail.com.
+
+## TRADE JOURNAL
+- Access: left sidebar → "Trade Journal".
+- To LOG a trade: Log Trade tab → select pair (e.g. XAU/USD) → BUY or SELL → entry price, exit price, lot size → outcome (WIN/LOSS) → Save Trade. Optional: add screenshot, emotional state, strategy, session, notes.
+- Emotional states: Calm, Confident, Anxious, Frustrated, Greedy, Fearful, Neutral, Excited, Revenge.
+- Strategies: Breakout, Trend Follow, Scalping, and more (or type custom).
+- Sessions: Asian, London, New York, London-NY Overlap.
+- To VIEW trades: Trade History tab — table with date, pair, direction, outcome, PnL. Click any row for full details.
+- To DELETE a trade: Trade History → click trade row → delete/trash icon → confirm.
+- To EXPORT trades: Trade History → Export CSV button.
+- To FILTER trades: filter bar in Trade History — filter by pair, outcome, strategy, date range, session.
+
+## PERFORMANCE & ANALYTICS
+- Access: Trade Journal → Performance tab.
+- Shows: Win Rate, Total PnL, Profit Factor, Average Win/Loss, Risk:Reward ratio, Expectancy, Equity Curve chart, P&L by pair, Strategy breakdown, Emotion analysis, Behavioral Flags.
+- Behavioral Flags: auto-detects revenge trading, FOMO, overtrading.
+- Win rate: % of profitable trades. Also shown per pair, strategy, session.
+- Profit Factor = total wins / total losses.
+- Expectancy = average PnL per trade.
+- Equity Curve: account value over time.
+
+## AI FEATURES
+- Per-trade AI: Trade History → click trade → brain icon → get Psychology Score (1-10), Discipline Rating, Coach Message, Key Observations, Improvement Tips.
+- AI Insights tab: inside Trade Journal → behavioral alerts, Generate AI Report button, past reports, per-trade scores.
+- AI Report: click Generate AI Report → choose Weekly, Monthly, or Custom → get grade (A–F), highlights, concerns, psychological assessment, action items.
+- AI tries: Free = 3 lifetime, Pro = 50/month, Elite = unlimited.
+
+## SCREENSHOT ANALYSIS (OCR)
+- Access: left sidebar → "Screenshot Analysis".
+- Upload an MT5 account history screenshot → AI reads rows via OCR → auto-imports trades into journal → preview before confirming.
+- Limits: Free = 2 lifetime, Pro = 35/month, Elite = unlimited.
+- Tips for best results: use a clear, full-size screenshot; make sure the table headers are visible.
+
+## ECONOMIC CALENDAR
+- Access: left sidebar → "Economic Calendar".
+- Shows upcoming economic events: impact level (High/Medium/Low), country flags, exact times in your timezone.
+- Free: today's US events only. Pro/Elite: all countries, all future dates.
+
+## AI INSIGHTS / MACRO SCORE (Pro/Elite)
+- Access: left sidebar → "AI Insights".
+- Macro Surprise Score: -10 to +10 scale — analyzes 10 major US indicators (NFP, CPI, GDP, Fed Rate, Unemployment, Core PCE, Jobless Claims, Retail Sales, ISM Manufacturing, Consumer Confidence). Score tells you if macro conditions are Bullish or Bearish for gold.
+- Economic Intelligence page: shows each of the 10 indicators with actual vs forecast and surprise analysis.
+
+## DASHBOARD
+- Shows: greeting, today's trade summary, P&L calendar, stat cards (Total PnL, Win Rate, This Week PnL, Profit Factor), quick stats, Your Edge section, Recent Trades, Quick Access shortcuts.
+- Daily Brief: appears at top of Dashboard — today's Macro Score, strongest session, win rate for today's day of week, top news. Dismiss with X.
+
+## LIVE MARKET DATA
+- Dashboard shows: Gold (XAU/USD), DXY, TLT, SPY, WTI, VIX, BTC — real-time via WebSocket.
+- TradingView chart with 12 instruments (XAU/USD, EUR/USD, BTC, SPY and more). Switch pairs with the dropdown; change timeframe (1m, 30m, 1h, D).
+- Market news feed: AI sentiment tags (Bullish/Bearish/Neutral), filter by keyword, date, impact, or tags.
+
+## TRADING DESK (Calculators)
+- Access: left sidebar → "Trading Desk".
+- 7 calculators: Pip Value Calculator, Position Size Calculator (lot size from risk %), Risk/Reward Calculator, Margin Calculator, Swap/Rollover Calculator, Profit Calculator, Market Hours Clock.
+- Position Size Calculator: enter account size + risk % + stop loss pips → get exact lot size.
+
+## SETTINGS & PREFERENCES
+- Access: gear icon at bottom of left sidebar.
+- Options: timezone, dark/light theme, auto-refresh, notifications, market timezone display.
+- Change timezone: click the timezone button in the TOP HEADER BAR (shows your current zone like PKT, EST, UTC) → select from dropdown. All calendar events and session times update immediately.
+- Change theme: click the sun/moon icon in the TOP HEADER BAR. Preference is saved automatically.
+
+## ACCOUNT & PROFILE
+- Access: click your avatar or name in the top right corner.
+- View: current plan, member since, trading stats, change password, upgrade plan, sign out.
+- Change password: Profile → Change Password → a reset email is sent. Click the link to set new password.
+- Change profile picture: Profile → click camera icon on avatar → upload photo (max 2MB) or choose from 8 color options.
+- Sign out: Profile → red Sign Out button.
+- Delete account: email getzynth@gmail.com with subject "Delete Account".
+
+## ONBOARDING & SETUP
+- First-time 4-step setup: trading experience, markets traded, goals, profile personalization.
+- Can be skipped and completed later from Profile.
+- The "Complete your profile setup" banner at the top links to the setup flow.
+
+## MARKET SESSIONS
+- Session bar: top of sidebar. Shows Tokyo, London, New York as colored pills (green = open, gray = closed).
+- Times shown in your selected timezone.
+- Tokyo: 00:00–09:00 UTC. London: 08:00–17:00 UTC. New York: 13:00–22:00 UTC.
+
+## ZYNTH'S NATURE
+- Zynth is NOT a broker. You cannot place real trades through Zynth.
+- Zynth does NOT sync with MT4/MT5 automatically. You manually log trades or use Screenshot Analysis to import from an MT5 screenshot.
+- All data is private to your account. Data is encrypted in transit (TLS). Never shared or sold.
+- Mobile: works in any mobile browser. Add to home screen for app-like experience. Native app on roadmap.
+
+## RESPONSE GUIDELINES
+- Be friendly, concise, and direct.
+- Use bullet points or numbered steps for instructions.
+- Bold key terms like **Trade Journal**, **Performance tab**, **sidebar** to help users navigate.
+- If a user asks about something you are not sure about, say so and suggest they email getzynth@gmail.com.
+- Never make up features or prices that are not listed above.
+- Keep responses under 200 words unless a topic genuinely requires more detail.
+- Do not mention that you are powered by Gemini or any other AI model. You are the Zynth Assistant.`;
+
+// ── Call Gemini for freeform answers ─────────────────────────────────────────
+async function askGemini(userMessage, history = []) {
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) return null;
+
+  try {
+    // Build conversation contents
+    const contents = [];
+
+    // Add prior turns (last 6 messages to stay within token limits)
+    for (const turn of history.slice(-6)) {
+      contents.push({
+        role: turn.role === 'user' ? 'user' : 'model',
+        parts: [{ text: turn.content }],
+      });
+    }
+
+    // Add current user message
+    contents.push({ role: 'user', parts: [{ text: userMessage }] });
+
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          systemInstruction: { parts: [{ text: ZYNTH_SYSTEM_PROMPT }] },
+          contents,
+          generationConfig: {
+            temperature: 0.4,
+            maxOutputTokens: 350,
+          },
+        }),
+      }
+    );
+
+    if (!response.ok) {
+      console.error('[Assistant] Gemini HTTP error:', response.status);
+      return null;
+    }
+
+    const data = await response.json();
+    const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+    return text?.trim() || null;
+  } catch (err) {
+    console.error('[Assistant] Gemini call failed:', err.message);
+    return null;
+  }
 }
 
 // POST /api/assistant/chat
-router.post('/chat', requireAuth, checkAiTries, async (req, res) => {
+router.post('/chat', requireAuth, async (req, res) => {
   try {
     const userId = req.user?.userId || req.user?.id || 'anon';
 
     if (!checkRateLimit(userId)) {
       return res.status(429).json({
-        error: 'You have reached the limit of 10 messages per hour. Please try again later.',
+        error: 'You have reached the limit of 30 messages per hour. Please try again later.',
       });
     }
 
-    const { message } = req.body;
-
-    console.log('[Assistant] Message received:', message);
-    console.log('[Assistant] Match found:', !!findAnswer(message || ''));
+    const { message, history = [] } = req.body;
 
     if (!message?.trim()) {
       return res.status(400).json({ error: 'Message required' });
@@ -271,16 +458,38 @@ router.post('/chat', requireAuth, checkAiTries, async (req, res) => {
       return res.status(400).json({ error: 'Message too long (max 1000 characters)' });
     }
 
-    const answer = findAnswer(message);
-    if (answer) {
-      return res.json({ reply: answer });
+    console.log('[Assistant] Message:', message.substring(0, 80));
+
+    // Fast path: keyword match (instant, no API call)
+    const staticAnswer = findAnswer(message);
+    if (staticAnswer) {
+      console.log('[Assistant] Answered via static KB');
+      return res.json({ reply: staticAnswer });
     }
 
+    // Cache path: previously seen question answered instantly
+    const ck = cacheKey(message);
+    const cached = geminiCache.get(ck);
+    if (cached && Date.now() - cached.ts < CACHE_TTL_MS) {
+      console.log('[Assistant] Answered via cache');
+      return res.json({ reply: cached.reply });
+    }
+
+    // AI path: ask Gemini with full Zynth knowledge
+    console.log('[Assistant] Falling back to Gemini');
+    const geminiReply = await askGemini(message, history);
+    if (geminiReply) {
+      geminiCache.set(ck, { reply: geminiReply, ts: Date.now() });
+      return res.json({ reply: geminiReply });
+    }
+
+    // Final fallback if Gemini is unavailable
     return res.json({
-      reply: 'I am not sure about that. Here are some things I can help with:\n\n- How to log a trade\n- Changing timezone or theme\n- Understanding your analytics\n- Upgrading your plan\n- Using Screenshot Analysis\n\nOr email us at getzynth@gmail.com for anything else!',
+      reply: 'I could not find a specific answer for that right now.\n\nFor instant help, try asking:\n\u2022 "How do I log a trade?"\n\u2022 "How do I change my timezone?"\n\u2022 "What is the Macro Score?"\n\u2022 "How do I upgrade to Pro?"\n\u2022 "How does Screenshot Analysis work?"\n\nOr email us at getzynth@gmail.com and we will help right away!',
     });
 
   } catch (error) {
+    console.error('[Assistant] Error:', error);
     res.status(500).json({ reply: 'Something went wrong. Please try again!' });
   }
 });

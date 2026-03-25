@@ -314,7 +314,7 @@ export default function DailyBrief() {
             >
               <Lock size={13} style={{ color: theme.muted }} />
               <span style={{ fontSize: 12, color: theme.muted }}>Macro score</span>
-              <span style={{ fontSize: 12, fontWeight: 600, color: '#10b981' }}>Upgrade →</span>
+              <span style={{ fontSize: 12, fontWeight: 600, color: '#3b82f6' }}>Upgrade →</span>
             </button>
           ) : loading ? (
             <Skeleton theme={theme} h={20} w={80} />
@@ -336,3 +336,4 @@ export default function DailyBrief() {
     </div>
   );
 }
+

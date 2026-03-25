@@ -127,14 +127,14 @@ export default function ScreenshotImportDashboard() {
 
   // ── Design tokens ─────────────────────────────────────────────────────
   const D = {
-    pageBg:  theme.isDark ? '#000000' : '#f1f3f6',
-    cardBg:  theme.isDark ? '#0d0d0d' : '#ffffff',
-    cardBg2: theme.isDark ? '#111111' : '#f7f8fa',
-    border:  theme.isDark ? '#1e1e1e' : '#e5e8ed',
-    border2: theme.isDark ? '#2a2a2a' : '#d0d5de',
-    text:    theme.isDark ? '#f0f0f0' : '#0d1117',
-    textSub: theme.isDark ? '#5a6472' : '#5a6472',
-    accent:  '#10b981',
+    pageBg:  theme.isDark ? theme.bg        : '#f1f3f6',
+    cardBg:  theme.isDark ? theme.surface    : '#ffffff',
+    cardBg2: theme.isDark ? theme.surface2   : '#f7f8fa',
+    border:  theme.isDark ? theme.border     : '#e5e8ed',
+    border2: theme.isDark ? 'rgba(255,255,255,0.10)' : '#d0d5de',
+    text:    theme.isDark ? theme.text      : '#0d1117',
+    textSub: theme.isDark ? '#8892a4'       : '#5a6472',
+    accent:  '#3b82f6',
     red:     '#ef4444',
     gold:    theme.isDark ? '#f59e0b' : '#d97706',
   };

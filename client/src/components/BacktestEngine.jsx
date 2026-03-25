@@ -142,7 +142,7 @@ function EquityCurve({ equityCurve, trades, theme }) {
     chartRef.current = chart;
 
     const lineSeries = chart.addSeries(LineSeries, {
-      color: '#10b981', lineWidth: 2, priceLineVisible: false,
+      color: '#3b82f6', lineWidth: 2, priceLineVisible: false,
     });
 
     // Deduplicate by time (take last value per timestamp)
@@ -155,7 +155,7 @@ function EquityCurve({ equityCurve, trades, theme }) {
     if (trades?.length) {
       const markers = [];
       for (const t of trades) {
-        markers.push({ time: t.entryTime, position: 'belowBar', color: '#10b981', shape: 'arrowUp',   text: 'B' });
+        markers.push({ time: t.entryTime, position: 'belowBar', color: '#3b82f6', shape: 'arrowUp',   text: 'B' });
         markers.push({ time: t.exitTime,  position: 'aboveBar', color: '#ef4444', shape: 'arrowDown', text: 'S' });
       }
       createSeriesMarkers(lineSeries, markers.sort((a, b) => a.time - b.time));
@@ -244,7 +244,7 @@ export default function BacktestEngine() {
   }, [isFree, symbol, interval, strategy, startDate, endDate, capital, params, token, riskMgmt]);
 
   const stratMeta    = STRATEGIES.find(s => s.id === strategy);
-  const bull = '#10b981', bear = '#ef4444';
+  const bull = '#3b82f6', bear = '#ef4444';
   const totalPnLColor = results ? (results.totalPnL >= 0 ? bull : bear) : theme.text;
 
   // Paginate trades
@@ -360,7 +360,7 @@ export default function BacktestEngine() {
                   className="w-full text-left px-3 py-2.5 rounded-xl border transition-all"
                   style={{
                     backgroundColor: strategy === s.id
-                      ? (theme.isDark ? 'rgba(16,185,129,0.12)' : 'rgba(16,185,129,0.08)')
+                      ? (theme.isDark ? 'rgba(59,130,246,0.12)' : 'rgba(59,130,246,0.08)')
                       : 'transparent',
                     borderColor: strategy === s.id ? `${theme.accent}60` : theme.border,
                     color: strategy === s.id ? theme.accent : theme.text,
@@ -655,7 +655,7 @@ export default function BacktestEngine() {
                           {pageTrades.map((t, i) => {
                             const isWin = t.result === 'WIN';
                             const rowBg = isWin
-                              ? (theme.isDark ? 'rgba(16,185,129,0.06)' : 'rgba(16,185,129,0.05)')
+                              ? (theme.isDark ? 'rgba(59,130,246,0.06)' : 'rgba(59,130,246,0.05)')
                               : (theme.isDark ? 'rgba(239,68,68,0.06)'  : 'rgba(239,68,68,0.05)');
                             return (
                               <tr key={i} style={{ backgroundColor: rowBg, borderBottom: `1px solid ${theme.border}` }}>
@@ -667,7 +667,7 @@ export default function BacktestEngine() {
                                 <td className="px-4 py-2">
                                   <span className="text-xs px-1.5 py-0.5 rounded font-semibold"
                                     style={{
-                                      backgroundColor: t.exitReason === 'SL' ? 'rgba(239,68,68,0.15)' : t.exitReason === 'TP' ? 'rgba(16,185,129,0.15)' : theme.isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)',
+                                      backgroundColor: t.exitReason === 'SL' ? 'rgba(239,68,68,0.15)' : t.exitReason === 'TP' ? 'rgba(59,130,246,0.15)' : theme.isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)',
                                       color: t.exitReason === 'SL' ? bear : t.exitReason === 'TP' ? bull : theme.muted,
                                     }}>
                                     {t.exitReason ?? 'Signal'}
@@ -681,7 +681,7 @@ export default function BacktestEngine() {
                                 </td>
                                 <td className="px-4 py-2">
                                   <span className="px-2 py-0.5 rounded-full text-xs font-bold"
-                                    style={{ backgroundColor: isWin ? 'rgba(16,185,129,0.15)' : 'rgba(239,68,68,0.15)', color: isWin ? bull : bear }}>
+                                    style={{ backgroundColor: isWin ? 'rgba(59,130,246,0.15)' : 'rgba(239,68,68,0.15)', color: isWin ? bull : bear }}>
                                     {t.result}
                                   </span>
                                 </td>
@@ -701,3 +701,4 @@ export default function BacktestEngine() {
     </div>
   );
 }
+

@@ -124,8 +124,8 @@ function StatCard({ icon: Icon, label, value, subValue, color, badge }) {
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       style={{
-        background: theme.isDark ? '#111111' : theme.surface,
-        border: `1px solid ${theme.isDark ? (hovered ? '#2a2a2a' : '#1e1e1e') : theme.border}`,
+        background: theme.surface,
+        border: `1px solid ${theme.isDark ? (hovered ? 'rgba(255,255,255,0.12)' : theme.border) : theme.border}`,
         borderRadius: 10,
         padding: '14px 16px',
         display: 'flex',
@@ -137,20 +137,20 @@ function StatCard({ icon: Icon, label, value, subValue, color, badge }) {
     >
       <div style={{
         width: 36, height: 36, borderRadius: 8,
-        background: theme.isDark ? '#1a1a1a' : theme.surface2,
+        background: theme.isDark ? theme.surface2 : theme.surface2,
         display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
       }}>
         <Icon style={{ width: 16, height: 16, color }} />
       </div>
       <div style={{ minWidth: 0, flex: 1 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
-          <p className="truncate" style={{ fontSize: 10, textTransform: 'uppercase', color: theme.isDark ? '#4a4a4a' : theme.muted, letterSpacing: '0.08em', margin: 0 }}>{label}</p>
+          <p className="truncate" style={{ fontSize: 10, textTransform: 'uppercase', color: theme.muted, letterSpacing: '0.08em', margin: 0 }}>{label}</p>
           {badge && (
             <span style={{ fontSize: 9, fontWeight: 700, padding: '1px 5px', borderRadius: 4, backgroundColor: `${color}25`, color, flexShrink: 0 }}>{badge}</span>
           )}
         </div>
         <p style={{ fontSize: 22, fontWeight: 700, color, lineHeight: 1.1, margin: 0 }}>{value ?? '—'}</p>
-        {subValue && <p style={{ fontSize: 11, marginTop: 3, color: theme.isDark ? '#4a4a4a' : theme.muted }}>{subValue}</p>}
+        {subValue && <p style={{ fontSize: 11, marginTop: 3, color: theme.muted }}>{subValue}</p>}
       </div>
     </div>
   );
@@ -247,10 +247,10 @@ export default function MT5PerformanceStats({ analysis }) {
   return (
     <section>
       <div className="flex items-center justify-between mb-3">
-        <h3 className="text-sm font-semibold uppercase tracking-wide" style={{ color: theme.isDark ? '#4a4a4a' : theme.muted }}>Performance Statistics</h3>
+        <h3 className="text-sm font-semibold uppercase tracking-wide" style={{ color: theme.muted }}>Performance Statistics</h3>
         <button onClick={() => setModalOpen(true)}
           className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg hover:opacity-80 transition-opacity"
-          style={{ background: 'rgba(16,185,129,0.1)', color: '#10b981', border: '1px solid rgba(16,185,129,0.2)' }}>
+          style={{ background: 'rgba(59,130,246,0.1)', color: '#3b82f6', border: '1px solid rgba(59,130,246,0.2)' }}>
           <Settings2 className="w-3.5 h-3.5" />
           {deposit || balance ? 'Account Settings' : 'Set Balance / Deposit'}
         </button>

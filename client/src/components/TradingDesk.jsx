@@ -96,7 +96,7 @@ const TOOLS = [
     title: 'Compound Growth Calculator',
     Icon: TrendingUp,
     badge: { text: 'POPULAR', color: '#22c55e', bg: 'rgba(34,197,94,0.13)' },
-    accent: '#10b981',
+    accent: '#3b82f6',
     desc: 'Project account growth over time with custom win rate, risk per trade, and target settings',
   },
   {
@@ -209,7 +209,7 @@ function Field({ label, hint, children }) {
   );
 }
 
-function Stat({ label, value, color = '#10b981', large }) {
+function Stat({ label, value, color = '#3b82f6', large }) {
   const T = useT();
   return (
     <div style={{ background: T.statBg, border: `1px solid ${T.border}`, borderRadius: 10, padding: '12px 14px' }}>
@@ -271,7 +271,7 @@ function PositionCalc() {
         <Stat label="Dollar Risk" value={isNaN(riskAmt) ? '—' : `$${riskAmt.toFixed(2)}`} color="#f97316" large />
         <Stat label="Lot Size (Standard)" value={fmt(lots)} color="#3b82f6" large />
         <Stat label="Mini Lots (÷10)" value={fmt(lots * 10)} color="#0ea5e9" />
-        <Stat label="Micro Lots (÷100)" value={fmt(lots * 100)} color="#10b981" />
+        <Stat label="Micro Lots (÷100)" value={fmt(lots * 100)} color="#3b82f6" />
         <InfoBox color="#3b82f6">
           <Info size={13} style={{display:'inline-block',verticalAlign:'middle',marginRight:'4px'}} /> Always round <strong style={{ color: '#93c5fd' }}>down</strong> to the nearest 0.01 lot to stay within your defined risk limit.
         </InfoBox>
@@ -372,7 +372,7 @@ function MarketHours() {
           })}
         </div>
 
-        <div style={{ fontSize: 28, fontWeight: 800, color: '#10b981', fontFamily: FONT, fontVariantNumeric: 'tabular-nums', letterSpacing: '-0.02em', paddingTop: 4 }}>
+        <div style={{ fontSize: 28, fontWeight: 800, color: '#3b82f6', fontFamily: FONT, fontVariantNumeric: 'tabular-nums', letterSpacing: '-0.02em', paddingTop: 4 }}>
           {clockStr}
         </div>
         <div style={{ fontSize: 12, color: T.dimText2, marginTop: 3, fontFamily: FONT }}>
@@ -431,10 +431,10 @@ function MarketHours() {
         ].map(o => (
           <div key={o.label} style={{
             background: o.active ? 'rgba(16,185,129,0.07)' : T.overlapBg,
-            border: `1px solid ${o.active ? 'rgba(16,185,129,0.25)' : T.overlapBdr}`,
+            border: `1px solid ${o.active ? 'rgba(59,130,246,0.25)' : T.overlapBdr}`,
             borderRadius: 10, padding: '10px 14px',
           }}>
-            <div style={{ fontSize: 12, fontWeight: 700, color: o.active ? '#10b981' : T.muted, marginBottom: 2, fontFamily: FONT }}>
+            <div style={{ fontSize: 12, fontWeight: 700, color: o.active ? '#3b82f6' : T.muted, marginBottom: 2, fontFamily: FONT }}>
               {o.label}{o.active ? <span style={{ fontSize: 10, marginLeft: 4 }}>— ACTIVE NOW</span> : ''}
             </div>
             <div style={{ fontSize: 11, color: T.dimText2, fontFamily: FONT }}>{o.time}</div>
@@ -695,7 +695,7 @@ function CompoundCalc() {
         <Field label="Monthly Return (%)"><Inp value={monthPct} onChange={e => setMonthPct(e.target.value)} step="0.5" min="0.1" /></Field>
         <Field label="Number of Months" hint="Max: 60 months"><Inp value={monthsCnt} onChange={e => setMonthsCnt(e.target.value)} min="1" max="60" /></Field>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 4 }}>
-          <Stat label="Final Balance" value={`$${money(bal)}`} color="#10b981" large />
+          <Stat label="Final Balance" value={`$${money(bal)}`} color="#3b82f6" large />
           <Stat label="Total Profit" value={`+$${money(totalGain)}`} color="#22c55e" />
           <Stat label="Total Return" value={`+${totalPct.toFixed(1)}%`} color="#f59e0b" />
         </div>
@@ -990,7 +990,7 @@ export default function TradingDesk() {
             background: 'rgba(16,185,129,0.14)', border: '1px solid rgba(16,185,129,0.28)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
           }}>
-            <Wrench size={22} style={{ color: '#10b981' }} />
+            <Wrench size={22} style={{ color: '#3b82f6' }} />
           </div>
           <div>
             <h2 style={{ fontSize: 24, fontWeight: 800, color: T.text, margin: 0, fontFamily: FONT, letterSpacing: '-0.02em' }}>

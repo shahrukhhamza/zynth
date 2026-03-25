@@ -1,4 +1,4 @@
-﻿import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { X, Check, Copy, CheckCheck, ChevronDown, Mail, Key, LogOut, TrendingUp, Bell, Zap, Camera, Loader2, CheckCircle } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 import { useAuth } from '../contexts/AuthContext';
@@ -11,7 +11,7 @@ import { resolveMediaUrl } from '../utils/mediaUrl';
 const SUPPORT_EMAIL = 'getzynth@gmail.com';
 
 const AVATAR_COLOR_MAP = {
-  emerald: '#10b981', blue: '#3b82f6', purple: '#0ea5e9', orange: '#f97316',
+  emerald: '#3b82f6', blue: '#3b82f6', purple: '#0ea5e9', orange: '#f97316',
   rose: '#f43f5e', amber: '#f59e0b', cyan: '#06b6d4', indigo: '#6366f1',
 };
 
@@ -31,7 +31,7 @@ const UPGRADE_PLANS = [
     price: '$1.99',
     priceNote: '/month',
     badge: 'Founding Member',
-    badgeStyle: { background: 'rgba(16,185,129,0.15)', color: '#34d399', border: '1px solid rgba(16,185,129,0.3)' },
+    badgeStyle: { background: 'rgba(59,130,246,0.15)', color: '#34d399', border: '1px solid rgba(59,130,246,0.3)' },
     features: [
       'Unlimited journal entries',
       'AI Trade Analysis: 50/month',
@@ -77,7 +77,7 @@ export default function ProfileModal({ onClose, onForgotPassword }) {
   const { user, token, logout, refreshUser } = useAuth();
   const { isPro, isElite, isAdmin, isFree } = usePlanGate();
 
-  const [journalCount, setJournalCount]     = useState('—');
+  const [journalCount, setJournalCount]     = useState('�');
   const [tradingStats, setTradingStats]     = useState(null);
   const [upgradeOpen, setUpgradeOpen]       = useState(false);
   const [selectedPlan, setSelectedPlan]     = useState(null);
@@ -215,7 +215,7 @@ export default function ProfileModal({ onClose, onForgotPassword }) {
           boxShadow: '0 32px 80px rgba(0,0,0,0.7)',
         }}
       >
-        {/* ── Header ── */}
+        {/* -- Header -- */}
         <div className="flex items-center justify-between px-5 py-4"
              style={{ borderBottom: `1px solid ${theme.border}` }}>
           <h2 className="text-[15px] font-bold" style={{ color: theme.text }}>My Profile</h2>
@@ -230,7 +230,7 @@ export default function ProfileModal({ onClose, onForgotPassword }) {
 
         <div className="px-5 py-5">
 
-          {/* ── Section 1: Avatar + Info ── */}
+          {/* -- Section 1: Avatar + Info -- */}
           <div className="flex items-start gap-4 mb-5">
             <div className="relative flex-shrink-0">
               <div className="w-14 h-14 rounded-2xl flex items-center justify-center text-white text-2xl font-extrabold select-none overflow-hidden"
@@ -241,7 +241,7 @@ export default function ProfileModal({ onClose, onForgotPassword }) {
                     ? <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
                     : (user?.name?.[0] ?? 'U').toUpperCase()}
               </div>
-              {/* Camera overlay — hidden while pending */}
+              {/* Camera overlay � hidden while pending */}
               {!pendingAvatar && (
                 <button
                   onClick={() => avatarFileRef.current?.click()}
@@ -264,7 +264,7 @@ export default function ProfileModal({ onClose, onForgotPassword }) {
               <p className="text-[12px] truncate mb-1.5" style={{ color: theme.muted }}>{user?.email}</p>
               <div className="flex items-center gap-2">
                 <PlanBadge />
-                <span className="text-[11px]" style={{ color: theme.muted }}>· Member since {memberYear}</span>
+                <span className="text-[11px]" style={{ color: theme.muted }}>� Member since {memberYear}</span>
               </div>
               {avatarUploadError && (
                 <p className="text-[11px] mt-1" style={{ color: theme.danger }}>{avatarUploadError}</p>
@@ -279,7 +279,7 @@ export default function ProfileModal({ onClose, onForgotPassword }) {
                     style={{ backgroundColor: theme.accent }}
                   >
                     {avatarUploading
-                      ? <><Loader2 className="w-3 h-3 animate-spin" /> Saving…</>
+                      ? <><Loader2 className="w-3 h-3 animate-spin" /> Saving�</>
                       : <><Check className="w-3 h-3" /> Save Photo</>}
                   </button>
                   <button
@@ -295,7 +295,7 @@ export default function ProfileModal({ onClose, onForgotPassword }) {
             </div>
           </div>
 
-          {/* ── Section 2: Stats Row ── */}
+          {/* -- Section 2: Stats Row -- */}
           <div className="grid grid-cols-4 gap-2 mb-5">
             {[
               { label: 'Journal', value: journalCount },
@@ -313,7 +313,7 @@ export default function ProfileModal({ onClose, onForgotPassword }) {
 
           {divider}
 
-          {/* ── Section 3: Current Plan Card ── */}
+          {/* -- Section 3: Current Plan Card -- */}
           <div className="rounded-xl p-4 mb-3"
                style={{ background: theme.isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)', border: `1px solid ${theme.border}` }}>
             <div className="flex items-start justify-between mb-2">
@@ -376,7 +376,7 @@ export default function ProfileModal({ onClose, onForgotPassword }) {
             )}
           </div>
 
-          {/* ── Section 4: Upgrade Button + Accordion ── */}
+          {/* -- Section 4: Upgrade Button + Accordion -- */}
           {isFree && (
             <div className="mb-1">
               <button
@@ -443,7 +443,7 @@ export default function ProfileModal({ onClose, onForgotPassword }) {
                           onClick={() => setSelectedPlan(selectedPlan === plan.id ? null : plan.id)}
                           className="w-full py-2 rounded-lg text-[12px] font-semibold text-white transition-all hover:brightness-110"
                           style={{ background: `linear-gradient(135deg,${plan.color},${plan.id === 'pro' ? '#0d9488' : '#d97706'})` }}>
-                          {selectedPlan === plan.id ? '✓ Selected' : 'Select'}
+                          {selectedPlan === plan.id ? '? Selected' : 'Select'}
                         </button>
                       </div>
                     ))}
@@ -488,7 +488,7 @@ export default function ProfileModal({ onClose, onForgotPassword }) {
 
           {divider}
 
-          {/* ── Section 5: Account Settings ── */}
+          {/* -- Section 5: Account Settings -- */}
           <div className="space-y-2">
             {/* Trading Stats */}
             <div className="rounded-xl px-4 py-3"
@@ -501,7 +501,7 @@ export default function ProfileModal({ onClose, onForgotPassword }) {
                 <div className="grid grid-cols-3 gap-2">
                   <div className="text-center">
                     <p className="text-[14px] font-bold" style={{ color: '#34d399' }}>
-                      {tradingStats.win_rate != null ? `${tradingStats.win_rate.toFixed(1)}%` : '—'}
+                      {tradingStats.win_rate != null ? `${tradingStats.win_rate.toFixed(1)}%` : '�'}
                     </p>
                     <p className="text-[10px] mt-0.5" style={{ color: theme.muted }}>Win Rate</p>
                   </div>
@@ -510,13 +510,13 @@ export default function ProfileModal({ onClose, onForgotPassword }) {
                        style={{ color: tradingStats.total_pnl != null && tradingStats.total_pnl >= 0 ? '#34d399' : '#ef4444' }}>
                       {tradingStats.total_pnl != null
                         ? `${tradingStats.total_pnl >= 0 ? '+' : ''}${tradingStats.total_pnl.toFixed(2)}`
-                        : '—'}
+                        : '�'}
                     </p>
                     <p className="text-[10px] mt-0.5" style={{ color: theme.muted }}>Total PnL</p>
                   </div>
                   <div className="text-center">
                     <p className="text-[14px] font-bold" style={{ color: theme.text }}>
-                      {tradingStats.total_trades ?? '—'}
+                      {tradingStats.total_trades ?? '�'}
                     </p>
                     <p className="text-[10px] mt-0.5" style={{ color: theme.muted }}>Trades</p>
                   </div>
@@ -537,7 +537,7 @@ export default function ProfileModal({ onClose, onForgotPassword }) {
                 <Bell className="w-4 h-4 shrink-0" style={{ color: theme.muted }} />
                 <span>Notification Preferences</span>
               </div>
-              <span className="text-[12px]" style={{ color: theme.muted }}>Manage in Settings →</span>
+              <span className="text-[12px]" style={{ color: theme.muted }}>Manage in Settings ?</span>
             </button>
 
             {/* Change Password */}
@@ -549,9 +549,9 @@ export default function ProfileModal({ onClose, onForgotPassword }) {
               onMouseOver={e => { if (pwdStatus !== 'sent') e.currentTarget.style.opacity = '0.8'; }}
               onMouseOut={e => e.currentTarget.style.opacity = pwdStatus === 'sent' ? '0.7' : '1'}>
               <Key className="w-4 h-4 shrink-0" style={{ color: theme.muted }} />
-              {pwdStatus === 'sending' ? 'Sending reset email…'
+              {pwdStatus === 'sending' ? 'Sending reset email�'
                 : pwdStatus === 'sent'   ? `Reset email sent to ${user?.email}`
-                : pwdStatus === 'error'  ? 'Failed — try again'
+                : pwdStatus === 'error'  ? 'Failed � try again'
                 : 'Change Password'}
             </button>
 
@@ -573,3 +573,4 @@ export default function ProfileModal({ onClose, onForgotPassword }) {
     </>
   );
 }
+

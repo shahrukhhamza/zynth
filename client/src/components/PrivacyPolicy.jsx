@@ -3,7 +3,7 @@ import { ArrowLeft, Shield, Lock, Eye, Trash2, FileText } from 'lucide-react';
 function Section({ id, title, children }) {
   return (
     <section id={id} style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-      <h2 style={{ fontSize: 17, fontWeight: 700, color: '#f1f5f9', marginBottom: 4, borderBottom: '1px solid rgba(16,185,129,0.12)', paddingBottom: 10 }}>
+      <h2 style={{ fontSize: 17, fontWeight: 700, color: '#f1f5f9', marginBottom: 4, borderBottom: '1px solid rgba(59,130,246,0.12)', paddingBottom: 10 }}>
         {title}
       </h2>
       <div style={{ fontSize: 13, color: '#9ca3af', lineHeight: 1.8, display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -25,17 +25,17 @@ export default function PrivacyPolicy({ onBack }) {
         position: 'sticky', top: 0, zIndex: 50,
         backgroundColor: 'rgba(6,10,18,0.95)',
         backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)',
-        borderBottom: '1px solid rgba(16,185,129,0.15)',
+        borderBottom: '1px solid rgba(59,130,246,0.15)',
       }}>
         <div style={{ maxWidth: 860, margin: '0 auto', padding: '12px 24px', display: 'flex', alignItems: 'center', gap: 12 }}>
           <button onClick={handleBack} style={{ display: 'flex', alignItems: 'center', gap: 6, color: '#6b7280', fontSize: 13, cursor: 'pointer', background: 'none', border: 'none', padding: '4px 8px', borderRadius: 6 }}
-            onMouseEnter={e => (e.currentTarget.style.color = '#10b981')}
+            onMouseEnter={e => (e.currentTarget.style.color = '#3b82f6')}
             onMouseLeave={e => (e.currentTarget.style.color = '#6b7280')}>
             <ArrowLeft size={15} /> Back
           </button>
           <div style={{ width: 1, height: 18, backgroundColor: 'rgba(107,114,128,0.4)' }} />
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <Shield size={16} style={{ color: '#10b981' }} />
+            <Shield size={16} style={{ color: '#3b82f6' }} />
             <span style={{ fontSize: 14, fontWeight: 600, color: '#e2e8f0' }}>Privacy Policy</span>
           </div>
           <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 6 }}>
@@ -52,9 +52,9 @@ export default function PrivacyPolicy({ onBack }) {
           <p style={{ fontSize: 13, color: '#6b7280' }}>Last updated: March 2026 &nbsp;·&nbsp; Applies to all Zynth users</p>
         </div>
 
-        <div style={{ backgroundColor: 'rgba(16,185,129,0.06)', border: '1px solid rgba(16,185,129,0.18)', borderLeft: '4px solid #10b981', borderRadius: 10, padding: '16px 20px', marginBottom: 36 }}>
+        <div style={{ backgroundColor: 'rgba(59,130,246,0.06)', border: '1px solid rgba(59,130,246,0.18)', borderLeft: '4px solid #3b82f6', borderRadius: 10, padding: '16px 20px', marginBottom: 36 }}>
           <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
-            <Lock size={18} style={{ color: '#10b981', flexShrink: 0, marginTop: 1 }} />
+            <Lock size={18} style={{ color: '#3b82f6', flexShrink: 0, marginTop: 1 }} />
             <p style={{ fontSize: 13, color: '#d1d5db', lineHeight: 1.7 }}>
               Your privacy matters to us. Zynth collects only what is necessary to operate the service. We do not sell, rent, or share your personal data with third parties for marketing purposes.
             </p>
@@ -152,7 +152,7 @@ export default function PrivacyPolicy({ onBack }) {
               <li><strong style={{ color: '#e2e8f0' }}>Right to Portability:</strong> Receive your trade journal data in a structured format</li>
               <li><strong style={{ color: '#e2e8f0' }}>Right to Object:</strong> Object to processing in certain circumstances</li>
             </ul>
-            <p>To exercise any of these rights, contact us at <a href="mailto:getzynth@gmail.com" style={{ color: '#10b981', textDecoration: 'none' }}>getzynth@gmail.com</a>. We will respond within 30 days.</p>
+            <p>To exercise any of these rights, contact us at <a href="mailto:getzynth@gmail.com" style={{ color: '#3b82f6', textDecoration: 'none' }}>getzynth@gmail.com</a>. We will respond within 30 days.</p>
           </Section>
 
           <Section id="children" title="9. Children's Privacy">
@@ -165,26 +165,27 @@ export default function PrivacyPolicy({ onBack }) {
 
           <Section id="contact-privacy" title="11. Contact Us">
             <p>For privacy-related questions, data deletion requests, or to exercise your rights, please contact:</p>
-            <div style={{ backgroundColor: 'rgba(16,185,129,0.06)', border: '1px solid rgba(16,185,129,0.15)', borderRadius: 8, padding: '16px 20px', marginTop: 10, display: 'flex', flexDirection: 'column', gap: 6 }}>
-              <p style={{ fontSize: 14, color: '#10b981', fontWeight: 700 }}>Zynth — Privacy Team</p>
-              <p style={{ fontSize: 13, color: '#9ca3af' }}>Email: <a href="mailto:getzynth@gmail.com" style={{ color: '#10b981', textDecoration: 'none' }}>getzynth@gmail.com</a></p>
+            <div style={{ backgroundColor: 'rgba(59,130,246,0.06)', border: '1px solid rgba(59,130,246,0.15)', borderRadius: 8, padding: '16px 20px', marginTop: 10, display: 'flex', flexDirection: 'column', gap: 6 }}>
+              <p style={{ fontSize: 14, color: '#3b82f6', fontWeight: 700 }}>Zynth — Privacy Team</p>
+              <p style={{ fontSize: 13, color: '#9ca3af' }}>Email: <a href="mailto:getzynth@gmail.com" style={{ color: '#3b82f6', textDecoration: 'none' }}>getzynth@gmail.com</a></p>
               <p style={{ fontSize: 13, color: '#9ca3af' }}>Mailing Address: Zynth, Azeem Town, Sihala Street 2, Islamabad, Pakistan</p>
-              <p style={{ fontSize: 13, color: '#9ca3af' }}>Phone: <a href="tel:+923175516692" style={{ color: '#10b981', textDecoration: 'none' }}>+92 317 5516692</a></p>
+              <p style={{ fontSize: 13, color: '#9ca3af' }}>Phone: <a href="tel:+923175516692" style={{ color: '#3b82f6', textDecoration: 'none' }}>+92 317 5516692</a></p>
             </div>
           </Section>
 
         </div>
 
         {/* Footer */}
-        <div style={{ marginTop: 48, borderTop: '1px solid rgba(16,185,129,0.1)', paddingTop: 24, display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
+        <div style={{ marginTop: 48, borderTop: '1px solid rgba(59,130,246,0.1)', paddingTop: 24, display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
           <p style={{ fontSize: 12, color: '#4b5563' }}>© 2026 Zynth. All rights reserved.</p>
           <div style={{ display: 'flex', gap: 16 }}>
-            <a href="/terms" style={{ fontSize: 12, color: '#6b7280', textDecoration: 'none' }} onMouseEnter={e => (e.currentTarget.style.color = '#10b981')} onMouseLeave={e => (e.currentTarget.style.color = '#6b7280')}>Terms of Service</a>
-            <a href="/refund-policy" style={{ fontSize: 12, color: '#6b7280', textDecoration: 'none' }} onMouseEnter={e => (e.currentTarget.style.color = '#10b981')} onMouseLeave={e => (e.currentTarget.style.color = '#6b7280')}>Refund Policy</a>
-            <a href="/service-policy" style={{ fontSize: 12, color: '#6b7280', textDecoration: 'none' }} onMouseEnter={e => (e.currentTarget.style.color = '#10b981')} onMouseLeave={e => (e.currentTarget.style.color = '#6b7280')}>Service Policy</a>
+            <a href="/terms" style={{ fontSize: 12, color: '#6b7280', textDecoration: 'none' }} onMouseEnter={e => (e.currentTarget.style.color = '#3b82f6')} onMouseLeave={e => (e.currentTarget.style.color = '#6b7280')}>Terms of Service</a>
+            <a href="/refund-policy" style={{ fontSize: 12, color: '#6b7280', textDecoration: 'none' }} onMouseEnter={e => (e.currentTarget.style.color = '#3b82f6')} onMouseLeave={e => (e.currentTarget.style.color = '#6b7280')}>Refund Policy</a>
+            <a href="/service-policy" style={{ fontSize: 12, color: '#6b7280', textDecoration: 'none' }} onMouseEnter={e => (e.currentTarget.style.color = '#3b82f6')} onMouseLeave={e => (e.currentTarget.style.color = '#6b7280')}>Service Policy</a>
           </div>
         </div>
       </div>
     </div>
   );
 }
+

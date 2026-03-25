@@ -6,7 +6,7 @@ const SERVICES = [
     number: '01',
     name: 'AI-Powered Trade Journal',
     tagline: 'Log, review, and grow from every trade',
-    color: '#10b981',
+    color: '#3b82f6',
     bg: 'rgba(16,185,129,0.07)',
     border: 'rgba(16,185,129,0.2)',
     desc: 'A professional-grade digital trade journal that stores your complete trading history. Log entries manually or import from screenshots. Add notes, emotions, strategy tags, and session context. Gain a full picture of your trading behavior over time.',
@@ -96,7 +96,7 @@ const SERVICES = [
     number: '06',
     name: 'Live Market Data & Price Feeds',
     tagline: 'Real-time prices for the markets you trade',
-    color: '#10b981',
+    color: '#3b82f6',
     bg: 'rgba(16,185,129,0.07)',
     border: 'rgba(16,185,129,0.2)',
     desc: 'Live and near-real-time price feeds for Forex, Gold, Crypto, US Stocks, and Indices. Monitor the markets you trade directly inside Zynth — alongside your charts, news, and economic data — for a complete trading context view.',
@@ -197,13 +197,13 @@ export default function ServicesPage({ onBack }) {
       }}>
         <div style={{ maxWidth: 1000, margin: '0 auto', padding: '12px 24px', display: 'flex', alignItems: 'center', gap: 12 }}>
           <button onClick={handleBack} style={{ display: 'flex', alignItems: 'center', gap: 6, color: '#6b7280', fontSize: 13, cursor: 'pointer', background: 'none', border: 'none', padding: '4px 8px', borderRadius: 6 }}
-            onMouseEnter={e => (e.currentTarget.style.color = '#10b981')}
+            onMouseEnter={e => (e.currentTarget.style.color = '#3b82f6')}
             onMouseLeave={e => (e.currentTarget.style.color = '#6b7280')}>
             <ArrowLeft size={15} /> Back
           </button>
           <div style={{ width: 1, height: 18, backgroundColor: 'rgba(107,114,128,0.4)' }} />
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <Layers size={16} style={{ color: '#10b981' }} />
+            <Layers size={16} style={{ color: '#3b82f6' }} />
             <span style={{ fontSize: 14, fontWeight: 600, color: '#e2e8f0' }}>Services</span>
           </div>
           <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 6 }}>
@@ -217,11 +217,11 @@ export default function ServicesPage({ onBack }) {
       <div style={{ maxWidth: 1000, margin: '0 auto', padding: '56px 24px 0' }}>
         <div style={{ textAlign: 'center', marginBottom: 56 }}>
           <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '6px 14px', borderRadius: 20, backgroundColor: 'rgba(16,185,129,0.1)', border: '1px solid rgba(16,185,129,0.2)', marginBottom: 20 }}>
-            <span style={{ fontSize: 12, fontWeight: 700, color: '#10b981', letterSpacing: '0.08em' }}>TRADING INTELLIGENCE PLATFORM</span>
+            <span style={{ fontSize: 12, fontWeight: 700, color: '#3b82f6', letterSpacing: '0.08em' }}>TRADING INTELLIGENCE PLATFORM</span>
           </div>
           <h1 style={{ fontSize: 36, fontWeight: 800, color: '#f1f5f9', marginBottom: 14, lineHeight: 1.2 }}>
             Everything You Need to Trade<br />
-            <span style={{ color: '#10b981' }}>Smarter</span>
+            <span style={{ color: '#3b82f6' }}>Smarter</span>
           </h1>
           <p style={{ fontSize: 15, color: '#6b7280', maxWidth: 560, margin: '0 auto', lineHeight: 1.7 }}>
             Zynth combines AI-powered analysis, live market data, and economic intelligence into a single platform built for serious traders.
@@ -310,7 +310,7 @@ export default function ServicesPage({ onBack }) {
         <div style={{ display: 'flex', justifyContent: 'center', gap: 20, flexWrap: 'wrap', marginBottom: 10 }}>
           {[['Terms of Service', '/terms'], ['Privacy Policy', '/privacy'], ['Refund Policy', '/refund-policy'], ['Service Policy', '/service-policy']].map(([label, href]) => (
             <a key={label} href={href} style={{ fontSize: 12, color: '#6b7280', textDecoration: 'none' }}
-              onMouseEnter={e => (e.currentTarget.style.color = '#10b981')}
+              onMouseEnter={e => (e.currentTarget.style.color = '#3b82f6')}
               onMouseLeave={e => (e.currentTarget.style.color = '#6b7280')}>{label}</a>
           ))}
         </div>
@@ -319,3 +319,5 @@ export default function ServicesPage({ onBack }) {
     </div>
   );
 }
+
+

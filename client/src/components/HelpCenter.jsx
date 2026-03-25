@@ -1,11 +1,11 @@
-﻿import { useState, useMemo, useEffect } from 'react';
-import { BookOpen, Search, ChevronRight, ArrowLeft, Rocket, BookMarked, Bot, BarChart2, Calendar, Camera, Calculator, CreditCard, Settings, Shield, Star, X, Home, Mail } from 'lucide-react';
+import { useState, useMemo, useEffect } from 'react';
+import { BookOpen, Search, ChevronRight, ArrowLeft, Rocket, BookMarked, Bot, BarChart2, Calendar, Camera, Calculator, CreditCard, Settings, Shield, Star, X, Home, Mail, LifeBuoy, Clock3, ArrowUpRight, Bug, Lightbulb, MessageSquare } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 
-// ── Article database ─────────────────────────────────────────────────────────
+// -- Article database ---------------------------------------------------------
 const CATEGORIES = [
   {
-    key: 'getting-started', icon: Rocket, emoji: '🚀', title: 'Getting Started',
+    key: 'getting-started', icon: Rocket, color: '#3b82f6', title: 'Getting Started',
     description: 'New to Zynth? Start here to set up your account and learn the basics.',
     articles: [
       {
@@ -13,10 +13,10 @@ const CATEGORIES = [
         excerpt: 'Learn what Zynth is, what tools you get, and how to make the most of the platform.',
         content: `Zynth is a trading intelligence platform that combines four powerful tools:
 
-1. Smart Trade Journal — log every trade with context, screenshots and emotion tracking
-2. AI Coaching — get personalized feedback on your trading psychology and patterns
-3. Economic Intelligence — track macro data and understand market conditions
-4. Live Market Data — real-time prices and charts for major instruments
+1. Smart Trade Journal � log every trade with context, screenshots and emotion tracking
+2. AI Coaching � get personalized feedback on your trading psychology and patterns
+3. Economic Intelligence � track macro data and understand market conditions
+4. Live Market Data � real-time prices and charts for major instruments
 
 ::tip Getting the most out of Zynth
 - Start by logging your first 10 trades
@@ -68,7 +68,7 @@ The more detail you add, the better your AI analysis will be!
 
 ## Daily Brief (top)
 
-A personalized morning card showing your Macro Score, best trading session, day-of-week performance stats and top market news. Appears once per day — dismiss with the X button.
+A personalized morning card showing your Macro Score, best trading session, day-of-week performance stats and top market news. Appears once per day � dismiss with the X button.
 
 ## Market Data Terminal (middle)
 
@@ -106,11 +106,11 @@ You can skip onboarding and complete it later from your Profile.
     ],
   },
   {
-    key: 'journal', icon: BookMarked, emoji: '📓', title: 'Trade Journal',
+    key: 'journal', icon: BookMarked, color: '#6366f1', title: 'Trade Journal',
     description: 'Learn how to log trades, read analytics, and use AI coaching.',
     articles: [
       {
-        id: 'logging-trades', title: 'Logging Trades — Complete Guide',
+        id: 'logging-trades', title: 'Logging Trades � Complete Guide',
         excerpt: 'Every field explained: instrument, direction, entry/exit, P&L, emotions and more.',
         content: `## All Fields Explained
 
@@ -118,11 +118,11 @@ You can skip onboarding and complete it later from your Profile.
 Choose from 14 preset pairs including \`XAU/USD\` (Gold), \`EUR/USD\`, \`GBP/USD\`, \`USD/JPY\`, \`BTC/USD\`, \`ETH/USD\` and more. Or type any custom instrument.
 
 **DIRECTION**
-- BUY (Long) — green button
-- SELL (Short) — red button
+- BUY (Long) � green button
+- SELL (Short) � red button
 
 **ENTRY PRICE**
-The price at which you entered the trade. For gold: typically a 4–5 digit number (e.g. \`2650.50\`)
+The price at which you entered the trade. For gold: typically a 4�5 digit number (e.g. \`2650.50\`)
 
 **EXIT PRICE**
 The price at which you closed the trade. Leave blank if trade is still open (select OPEN as outcome).
@@ -138,10 +138,10 @@ Enter lot size (e.g. \`0.01\`, \`0.1\`, \`1.0\`). Use the Position Size Calculat
 
 **SESSION**
 When did you trade?
-- Asian: 00:00–09:00 UTC
-- London: 07:00–16:00 UTC
-- New York: 13:00–22:00 UTC
-- London-NY Overlap: 13:00–16:00 UTC
+- Asian: 00:00�09:00 UTC
+- London: 07:00�16:00 UTC
+- New York: 13:00�22:00 UTC
+- London-NY Overlap: 13:00�16:00 UTC
 
 **OUTCOME**
 - WIN: trade was profitable
@@ -177,27 +177,27 @@ Attach a chart screenshot of your trade. Shows in your trade history and AI anal
 | Total Trades | Number of logged trades |
 | Win Rate | % of winning trades |
 | Net P&L | Total profit/loss in dollars |
-| Profit Factor | Gross profit ÷ gross loss (above 1.5 is good) |
+| Profit Factor | Gross profit � gross loss (above 1.5 is good) |
 | Average Win | Average size of winning trades |
 | Average Loss | Average size of losing trades |
-| Risk:Reward | Avg win ÷ avg loss ratio |
+| Risk:Reward | Avg win � avg loss ratio |
 | Expectancy | Average P&L per trade |
 
 ## Charts
 
-- **Equity Curve** — your running account value
-- **Outcome Pie** — WIN/LOSS/BE distribution
-- **P&L by Pair** — which instruments are most/least profitable
-- **Strategy Win Rate** — performance per strategy
-- **Emotion Frequency** — how often each emotional state appears
+- **Equity Curve** � your running account value
+- **Outcome Pie** � WIN/LOSS/BE distribution
+- **P&L by Pair** � which instruments are most/least profitable
+- **Strategy Win Rate** � performance per strategy
+- **Emotion Frequency** � how often each emotional state appears
 
 ## Behavioral Flags
 
 Auto-detected patterns:
-- **Revenge Trading** — trading immediately after a loss
-- **FOMO** — entering late in a move
-- **Overtrading** — too many trades in one day
-- **Tilt** — deteriorating performance after losses`,
+- **Revenge Trading** � trading immediately after a loss
+- **FOMO** � entering late in a move
+- **Overtrading** � too many trades in one day
+- **Tilt** � deteriorating performance after losses`,
       },
       {
         id: 'ai-analysis', title: 'AI Trade Analysis Explained',
@@ -206,7 +206,7 @@ Auto-detected patterns:
 
 Click the brain icon on any trade in Trade History to get:
 
-**Psychology Score (1–10)**
+**Psychology Score (1�10)**
 How psychologically sound was this trade? 10 = perfect, 1 = very problematic.
 
 **Discipline Rating**
@@ -238,10 +238,10 @@ AI analysis uses Google Gemini and may not always be 100% accurate. Use it as a 
         excerpt: 'Generate weekly or monthly AI reports with grades, highlights, and action items.',
         content: `## How to Generate a Report
 
-1. Go to **Trade Journal → AI Insights** tab
+1. Go to **Trade Journal ? AI Insights** tab
 2. Click **Generate AI Report**
 3. Choose: Weekly, Monthly or Custom range
-4. Wait 10–20 seconds for Gemini to analyze
+4. Wait 10�20 seconds for Gemini to analyze
 5. Report appears with:
    - Overall Grade (A to F)
    - Performance Summary
@@ -264,24 +264,24 @@ Generate a monthly report at the start of each new month to review the previous 
 
 The heatmap in the Performance tab shows when you trade and how you perform at different times.
 
-- **Rows** — days of the week (Mon–Sun)
-- **Columns** — hours of the day (00–23)
-- **Green cells** — profitable trading time
-- **Red cells** — losing trading time
-- **Cell number** — your P&L in that time slot
-- **Empty cells** — no trades at that time
+- **Rows** � days of the week (Mon�Sun)
+- **Columns** � hours of the day (00�23)
+- **Green cells** � profitable trading time
+- **Red cells** � losing trading time
+- **Cell number** � your P&L in that time slot
+- **Empty cells** � no trades at that time
 
 ## Session Color Bars
 
 The color bar above the chart shows trading sessions:
-- **Blue** — Asian session (00–07h)
-- **Indigo** — London session (08–12h)
-- **Amber** — New York session (13–17h)
-- **Gray** — Off-hours (18–23h)
+- **Blue** � Asian session (00�07h)
+- **Indigo** � London session (08�12h)
+- **Amber** � New York session (13�17h)
+- **Gray** � Off-hours (18�23h)
 
 ## Date Range Filter
 
-Use the period buttons (This Week / This Month / Last 3 Months / All Time) and the ← → arrows to navigate to different periods.
+Use the period buttons (This Week / This Month / Last 3 Months / All Time) and the ? ? arrows to navigate to different periods.
 
 ::tip
 Use this to find your best and worst trading times and focus on your most profitable windows.
@@ -300,22 +300,22 @@ Use this to find your best and worst trading times and focus on your most profit
    - Does this match your strategy?
    - Are you in your best session?
    - Have you had 2+ losses already today?
-3. Score is calculated 0–100
+3. Score is calculated 0�100
 
 ## Score Interpretation
 
 | Score | Meaning | Action |
 |---|---|---|
-| 80–100 | Green | Trade with confidence |
-| 50–79 | Amber | Reduce position size |
-| 0–49 | Red | Consider skipping |
+| 80�100 | Green | Trade with confidence |
+| 50�79 | Amber | Reduce position size |
+| 0�49 | Red | Consider skipping |
 
 Your checklist history is analyzed over time to show if you follow your own rules.`,
       },
     ],
   },
   {
-    key: 'ai', icon: Bot, emoji: '🤖', title: 'AI Features',
+    key: 'ai', icon: Bot, color: '#8b5cf6', title: 'AI Features',
     description: 'Deep dives into Macro Score, Daily Brief, Trading DNA, and more.',
     articles: [
       {
@@ -350,7 +350,7 @@ The Macro Surprise Score is Zynth's proprietary indicator (Pro feature). It anal
 
 ## How Surprise is Calculated
 
-\`Surprise = ((Actual - Forecast) / Forecast) × 100\`
+\`Surprise = ((Actual - Forecast) / Forecast) � 100\`
 
 Each indicator is weighted by its historical impact on gold prices.
 
@@ -361,16 +361,16 @@ Each indicator is weighted by its historical impact on gold prices.
         excerpt: 'Your personalized morning card showing Macro Score, best session, and news.',
         content: `## What the Daily Brief Shows
 
-1. **Macro Climate** — current Macro Score with bullish/bearish label
-2. **Your Best Session** — which session you perform best in based on your history
-3. **Day Edge** — your win rate for today's day of week based on past trades
-4. **Top News** — latest high-impact market news
+1. **Macro Climate** � current Macro Score with bullish/bearish label
+2. **Your Best Session** � which session you perform best in based on your history
+3. **Day Edge** � your win rate for today's day of week based on past trades
+4. **Top News** � latest high-impact market news
 
 ## Daily Tip
 
 A rotating trading wisdom tip changes each day to keep you focused.
 
-The brief appears once per day. Dismiss with X — it will reappear fresh the next day.
+The brief appears once per day. Dismiss with X � it will reappear fresh the next day.
 
 ::tip
 Best Session and Day Edge show "Not enough data" until you have logged enough trades for that day/session.
@@ -381,13 +381,13 @@ Best Session and Day Edge show "Not enough data" until you have logged enough tr
         excerpt: 'Your unique trader personality profile with archetypes, trait scores, and improvement plans.',
         content: `## What You Get
 
-- **Trader Archetype** — which type of trader you are (Sniper, Momentum Rider, etc.)
-- **8 Trait Scores** — Patience, Discipline, Risk Management, Emotional Control, Consistency, Strategy Adherence, Macro Awareness, Learning Rate
-- **Strengths** — your top 3 trading strengths with data evidence
-- **Weaknesses** — top 3 areas to improve
-- **Performance Fingerprint** — radar chart showing your unique trading profile
-- **30-Day Improvement Plan** — personalized week-by-week action plan
-- **Coach Message** — personal letter from AI coach based on your actual data
+- **Trader Archetype** � which type of trader you are (Sniper, Momentum Rider, etc.)
+- **8 Trait Scores** � Patience, Discipline, Risk Management, Emotional Control, Consistency, Strategy Adherence, Macro Awareness, Learning Rate
+- **Strengths** � your top 3 trading strengths with data evidence
+- **Weaknesses** � top 3 areas to improve
+- **Performance Fingerprint** � radar chart showing your unique trading profile
+- **30-Day Improvement Plan** � personalized week-by-week action plan
+- **Coach Message** � personal letter from AI coach based on your actual data
 
 ## Requirements
 
@@ -395,7 +395,7 @@ Best Session and Day Edge show "Not enough data" until you have logged enough tr
 - **Elite plan only**
 - Generated once per month
 
-**Find it in:** AI Insights → Trading DNA tab
+**Find it in:** AI Insights ? Trading DNA tab
 
 ::warning
 This feature requires an Elite subscription. Upgrade in your Profile.
@@ -415,16 +415,16 @@ This feature requires an Elite subscription. Upgrade in your Profile.
 
 > "You win 71% of trades when Macro Score is above +3"
 
-> "You lose 67% of trades on Fed Rate decision days — consider avoiding these"
+> "You lose 67% of trades on Fed Rate decision days � consider avoiding these"
 
-**Find it in:** AI Insights → Macro Correlation tab
+**Find it in:** AI Insights ? Macro Correlation tab
 
 **Available on:** Pro and Elite plans only`,
       },
     ],
   },
   {
-    key: 'markets', icon: BarChart2, emoji: '📊', title: 'Market Data',
+    key: 'markets', icon: BarChart2, color: '#0ea5e9', title: 'Market Data',
     description: 'Live data tiers, the TradingView chart, and the market session guide.',
     articles: [
       {
@@ -432,13 +432,13 @@ This feature requires an Elite subscription. Upgrade in your Profile.
         excerpt: 'Understand the three data tiers and what is real-time vs delayed.',
         content: `## Data Tiers
 
-**Tier 1 — Real-time WebSocket (instant):**
+**Tier 1 � Real-time WebSocket (instant):**
 \`XAU/USD\`, \`EUR/USD\`, \`BTC/USD\`, \`ETH/USD\`, \`XRP/USD\`, \`BNB/USD\`, \`SOL/USD\`
 
-**Tier 2 — Updated every 15 minutes:**
+**Tier 2 � Updated every 15 minutes:**
 \`GBP/USD\`, \`USD/JPY\`, GLD ETF, TLT, SPY
 
-**Tier 3 — Updated every 60 minutes:**
+**Tier 3 � Updated every 60 minutes:**
 AAPL, TSLA, MSFT, AMZN, NVDA, GOOGL
 
 ## Data Sources
@@ -451,9 +451,9 @@ AAPL, TSLA, MSFT, AMZN, NVDA, GOOGL
 
 | Badge | Meaning |
 |---|---|
-| 🟢 Live | WebSocket connected |
-| 🟠 Connecting | Reconnecting |
-| 🔴 Disconnected | Check your internet |
+| ?? Live | WebSocket connected |
+| ?? Connecting | Reconnecting |
+| ?? Disconnected | Check your internet |
 
 ::warning
 Free plan receives 15-minute delayed prices. Pro/Elite get real-time streaming.
@@ -488,18 +488,18 @@ The chart is powered by TradingView. A free TradingView account unlocks some adv
         content: `## Session Times (UTC)
 
 **Asian Session**
-Opens: 00:00 UTC · Closes: 09:00 UTC
+Opens: 00:00 UTC � Closes: 09:00 UTC
 Lower volatility. JPY pairs most active. Gold often ranges.
 
 **London Session**
-Opens: 07:00 UTC · Closes: 16:00 UTC
+Opens: 07:00 UTC � Closes: 16:00 UTC
 High volatility starts. EUR/GBP pairs most active. Gold moves.
 
 **New York Session**
-Opens: 13:00 UTC · Closes: 22:00 UTC
+Opens: 13:00 UTC � Closes: 22:00 UTC
 Highest volume. USD pairs most active. Major news releases.
 
-## London-NY Overlap (13:00–16:00 UTC)
+## London-NY Overlap (13:00�16:00 UTC)
 
 This is the highest volume and volatility period of the entire trading day. Most professional traders focus on this window.
 
@@ -512,9 +512,9 @@ The Market Session Bar in the sidebar shows real-time status of each session con
         excerpt: 'How to read the Surprise column, impact badges, and use Print/Export.',
         content: `## Impact Levels
 
-- **HIGH (red)** — Major market moving events: NFP, CPI, Fed Rate, GDP
-- **MEDIUM (amber)** — Significant but smaller impact: Retail Sales, ISM, Consumer Confidence
-- **LOW (gray)** — Minor market impact
+- **HIGH (red)** � Major market moving events: NFP, CPI, Fed Rate, GDP
+- **MEDIUM (amber)** � Significant but smaller impact: Retail Sales, ISM, Consumer Confidence
+- **LOW (gray)** � Minor market impact
 
 ## Reading the Table Columns
 
@@ -530,14 +530,14 @@ The Market Session Bar in the sidebar shows real-time status of each session con
 
 ## Color Coding
 
-- **Green actual** — beat forecast (positive surprise)
-- **Red actual** — missed forecast (negative surprise)
-- **Gray** — in line with forecast
+- **Green actual** � beat forecast (positive surprise)
+- **Red actual** � missed forecast (negative surprise)
+- **Gray** � in line with forecast
 
 ## Plan Access
 
-- **Free** — Today's US events, High and Medium impact only
-- **Pro/Elite** — All countries, all dates, all impacts
+- **Free** � Today's US events, High and Medium impact only
+- **Pro/Elite** � All countries, all dates, all impacts
 
 ## Print/Download
 
@@ -546,7 +546,7 @@ Click **Print / Download** to export the calendar as an HTML report for offline 
     ],
   },
   {
-    key: 'calendar', icon: Calendar, emoji: '📅', title: 'Economic Calendar',
+    key: 'calendar', icon: Calendar, color: '#f59e0b', title: 'Economic Calendar',
     description: 'Scheduled releases, impact levels, and surprise scoring explained.',
     articles: [
       {
@@ -569,34 +569,34 @@ Click any row to expand it and see:
 ## Surprise Column
 
 The **Surprise** pill shows how much the actual reading beat or missed consensus:
-- \`+X% Beat\` — green pill (positive for USD)
-- \`-X% Miss\` — red pill (negative for USD)
-- \`In Line\` — gray pill`,
+- \`+X% Beat\` � green pill (positive for USD)
+- \`-X% Miss\` � red pill (negative for USD)
+- \`In Line\` � gray pill`,
       },
       {
         id: 'macro-indicators', title: 'The 17 Tracked Indicators',
         excerpt: "What each of Zynth's 17 US macro indicators measures and why it matters.",
         content: `Zynth tracks 17 key US macro indicators and their impact on gold and forex markets.
 
-## Tier 1 — High Impact
+## Tier 1 � High Impact
 
-1. **NFP** (Non-Farm Payrolls) — Monthly job additions. Biggest gold mover.
-2. **CPI** (Consumer Price Index) — Inflation measure. Drives Fed policy.
-3. **Core PCE** — Fed's preferred inflation gauge.
-4. **Fed Rate Decision** — Interest rate announcement.
-5. **GDP Growth Rate** — Economy size change quarter-over-quarter.
+1. **NFP** (Non-Farm Payrolls) � Monthly job additions. Biggest gold mover.
+2. **CPI** (Consumer Price Index) � Inflation measure. Drives Fed policy.
+3. **Core PCE** � Fed's preferred inflation gauge.
+4. **Fed Rate Decision** � Interest rate announcement.
+5. **GDP Growth Rate** � Economy size change quarter-over-quarter.
 
-## Tier 2 — Medium Impact
+## Tier 2 � Medium Impact
 
-6. **Unemployment Rate** — % of people actively seeking work.
-7. **Retail Sales** — Consumer spending indicator.
-8. **ISM Manufacturing PMI** — Factory activity index.
-9. **Consumer Confidence** — How optimistic consumers feel.
-10. **Jobless Claims** — Weekly unemployment benefit applications.
+6. **Unemployment Rate** � % of people actively seeking work.
+7. **Retail Sales** � Consumer spending indicator.
+8. **ISM Manufacturing PMI** � Factory activity index.
+9. **Consumer Confidence** � How optimistic consumers feel.
+10. **Jobless Claims** � Weekly unemployment benefit applications.
 
-## Tier 3 — Supporting
+## Tier 3 � Supporting
 
-11–17: Core Retail Sales, PPI, Trade Balance, Housing Starts, Durable Goods, ISM Services, Building Permits`,
+11�17: Core Retail Sales, PPI, Trade Balance, Housing Starts, Durable Goods, ISM Services, Building Permits`,
       },
       {
         id: 'print-export', title: 'Print & Export the Calendar',
@@ -621,11 +621,11 @@ Click **Select All** in the modal to include all indicators at once.
     ],
   },
   {
-    key: 'screenshot', icon: Camera, emoji: '📸', title: 'Screenshot Analysis',
+    key: 'screenshot', icon: Camera, color: '#7c3aed', title: 'Screenshot Analysis',
     description: 'How OCR trade import works, supported formats, and best practices.',
     articles: [
       {
-        id: 'screenshot-guide', title: 'Screenshot Analysis — Full Guide',
+        id: 'screenshot-guide', title: 'Screenshot Analysis � Full Guide',
         excerpt: 'Step-by-step: take a screenshot in MT5 and import trades automatically.',
         content: `Screenshot Analysis uses AI and OCR (Optical Character Recognition) to read your MT5 trade history screenshot and import trades automatically.
 
@@ -633,11 +633,11 @@ Click **Select All** in the modal to include all indicators at once.
 
 1. Open **MT5**
 2. Go to **Account History** tab
-3. Right-click → select the time period
+3. Right-click ? select the time period
 4. Take a screenshot (Windows: \`Win+Shift+S\`)
 5. In Zynth click **Screenshot Analysis** in the sidebar
 6. Drag and drop your screenshot or click to browse
-7. Wait 10–30 seconds for AI to process
+7. Wait 10�30 seconds for AI to process
 8. Review the extracted trades in the preview table
 9. Confirm and import to your journal
 
@@ -693,8 +693,8 @@ If your broker format is not working well, email us at getzynth@gmail.com and we
 ## Charts Tab
 
 The Charts tab shows:
-- MT5 Performance Charts — P&L breakdown by instrument, session, and strategy
-- Trading Activity Heatmap — when your trades happened and their profitability
+- MT5 Performance Charts � P&L breakdown by instrument, session, and strategy
+- Trading Activity Heatmap � when your trades happened and their profitability
 
 ## Overview Tab
 
@@ -706,7 +706,7 @@ Shows a summary of all imported trades including:
 
 ## Heatmap Tab
 
-Same 7×24 heatmap as the main journal but filtered to your screenshot-imported trades.
+Same 7�24 heatmap as the main journal but filtered to your screenshot-imported trades.
 
 ::tip
 Use the date range filter in the heatmap to view specific periods like "This Month" or navigate back to previous months using the arrows.
@@ -715,7 +715,7 @@ Use the date range filter in the heatmap to view specific periods like "This Mon
     ],
   },
   {
-    key: 'tools', icon: Calculator, emoji: '🧮', title: 'Trading Desk',
+    key: 'tools', icon: Calculator, color: '#10b981', title: 'Trading Desk',
     description: 'Pip calculator, position sizing, and market hours tools explained.',
     articles: [
       {
@@ -723,7 +723,7 @@ Use the date range filter in the heatmap to view specific periods like "This Mon
         excerpt: 'Calculate the dollar value of 1 pip for any instrument and lot size.',
         content: `## How to Use
 
-1. Go to **Trading Desk → Pip Calculator**
+1. Go to **Trading Desk ? Pip Calculator**
 2. Select your instrument (e.g. \`XAU/USD\`)
 3. Enter lot size (e.g. \`0.1\`)
 4. Select your account currency (USD)
@@ -747,7 +747,7 @@ Use the date range filter in the heatmap to view specific periods like "This Mon
         excerpt: 'Calculate exact lot sizes to risk a fixed % of account per trade.',
         content: `## How to Use
 
-1. Go to **Trading Desk → Position Size Calculator**
+1. Go to **Trading Desk ? Position Size Calculator**
 2. Enter Account Size (e.g. \`$5,000\`)
 3. Enter Risk % (e.g. \`1%\` = risk $50)
 4. Enter Stop Loss in pips (e.g. \`20 pips\`)
@@ -761,11 +761,11 @@ Account:       $10,000
 Risk:          1% = $100
 Stop Loss:     50 pips on EUR/USD
 Pip value:     $10/pip (1 lot)
-Position Size: $100 ÷ (50 × $10) = 0.2 lots
+Position Size: $100 � (50 � $10) = 0.2 lots
 \`\`\`
 
 ::warning
-Never risk more than 1–2% per trade. This ensures you survive losing streaks.
+Never risk more than 1�2% per trade. This ensures you survive losing streaks.
 ::`,
       },
       {
@@ -789,8 +789,8 @@ Never risk more than 1–2% per trade. This ensures you survive losing streaks.
 
 ## Overlap Windows
 
-- **London-Tokyo overlap:** 07:00–09:00 UTC
-- **London-NY overlap:** 13:00–16:00 UTC (highest volume)
+- **London-Tokyo overlap:** 07:00�09:00 UTC
+- **London-NY overlap:** 13:00�16:00 UTC (highest volume)
 
 ::tip
 The London-NY overlap (shown in amber) is the highest volume period of the day. Most professional traders focus on this window.
@@ -799,7 +799,7 @@ The London-NY overlap (shown in amber) is the highest volume period of the day. 
     ],
   },
   {
-    key: 'billing', icon: CreditCard, emoji: '💳', title: 'Plans & Billing',
+    key: 'billing', icon: CreditCard, color: '#f59e0b', title: 'Plans & Billing',
     description: 'All three plans compared, how to upgrade, and refund policy.',
     articles: [
       {
@@ -817,7 +817,7 @@ The London-NY overlap (shown in amber) is the highest volume period of the day. 
 | Market News | 5 articles/day |
 | Trading Desk | Full access |
 
-## PRO PLAN ($1.99/month — Founding Price)
+## PRO PLAN ($1.99/month � Founding Price)
 
 | Feature | Limit |
 |---|---|
@@ -827,11 +827,11 @@ The London-NY overlap (shown in amber) is the highest volume period of the day. 
 | Economic Calendar | All countries, all dates |
 | Live Markets | Real-time streaming |
 | Market News | Unlimited |
-| Macro Surprise Score | ✅ Full access |
-| Economic Intelligence | ✅ Full access |
-| Macro-Journal Correlation | ✅ Full access |
+| Macro Surprise Score | ? Full access |
+| Economic Intelligence | ? Full access |
+| Macro-Journal Correlation | ? Full access |
 
-## ELITE PLAN ($4.99/month — Founding Price)
+## ELITE PLAN ($4.99/month � Founding Price)
 
 Everything in Pro, plus:
 
@@ -862,7 +862,7 @@ Everything in Pro, plus:
 
 - Bank transfer
 - PayPal
-- Other methods — contact us to arrange
+- Other methods � contact us to arrange
 
 ::tip
 Founding member price ($1.99 Pro, $4.99 Elite) is locked in forever once you subscribe, even when we raise prices.
@@ -902,7 +902,7 @@ Email **getzynth@gmail.com** with:
 - Subject: \`Refund Request\`
 - Include your registered email and reason (optional)
 
-Processing time: 3–5 business days
+Processing time: 3�5 business days
 
 ## After 7 Days
 
@@ -931,12 +931,12 @@ Free users see today's US High and Medium impact events only. No access to past 
 
 Free users see prices delayed by 15 minutes. Pro/Elite users get real-time streaming.
 
-**To upgrade:** Profile → Upgrade Plan`,
+**To upgrade:** Profile ? Upgrade Plan`,
       },
     ],
   },
   {
-    key: 'account', icon: Settings, emoji: '⚙️', title: 'Account & Settings',
+    key: 'account', icon: Settings, color: '#64748b', title: 'Account & Settings',
     description: 'Security, timezone, profile customization, and display preferences.',
     articles: [
       {
@@ -997,11 +997,11 @@ Your timezone preference is saved automatically across sessions.`,
         excerpt: 'Set your display name, upload an avatar photo, or choose an avatar color.',
         content: `## Display Name
 
-Set during onboarding or change via Profile → display name field. Shown in the header and greetings.
+Set during onboarding or change via Profile ? display name field. Shown in the header and greetings.
 
 ## Avatar Photo
 
-Click the camera icon on your avatar → upload image from device (max 2MB). Supported formats: JPG, PNG, GIF. Square images work best.
+Click the camera icon on your avatar ? upload image from device (max 2MB). Supported formats: JPG, PNG, GIF. Square images work best.
 
 ## Avatar Color
 
@@ -1026,14 +1026,14 @@ Dark mode is the default and recommended for trading (easier on the eyes during 
 
 ## Sidebar
 
-The sidebar can be collapsed to give you more screen space. Click the \`«\` arrow at the bottom of the sidebar to collapse it. Click again to expand.
+The sidebar can be collapsed to give you more screen space. Click the \`�\` arrow at the bottom of the sidebar to collapse it. Click again to expand.
 
-When collapsed, only icons are shown — hover to see labels.`,
+When collapsed, only icons are shown � hover to see labels.`,
       },
     ],
   },
   {
-    key: 'privacy', icon: Shield, emoji: '🔒', title: 'Privacy & Legal',
+    key: 'privacy', icon: Shield, color: '#64748b', title: 'Privacy & Legal',
     description: 'Privacy policy, terms of service, and risk disclaimer.',
     articles: [
       {
@@ -1135,14 +1135,14 @@ Trading foreign exchange, gold, cryptocurrencies and other financial instruments
   },
 ];
 
-// ── Flatten all articles for search ─────────────────────────────────────────
+// -- Flatten all articles for search -----------------------------------------
 const ALL_ARTICLES = CATEGORIES.flatMap(cat =>
-  cat.articles.map(art => ({ ...art, categoryKey: cat.key, categoryTitle: cat.title, categoryEmoji: cat.emoji }))
+  cat.articles.map(art => ({ ...art, categoryKey: cat.key, categoryTitle: cat.title, categoryColor: cat.color, categoryIcon: cat.icon }))
 );
 
 const POPULAR_ARTICLE_IDS = ['welcome', 'first-trade', 'ai-analysis', 'how-to-upgrade', 'timezone'];
 
-// ── Markdown-like renderer ────────────────────────────────────────────────────
+// -- Markdown-like renderer ----------------------------------------------------
 function RenderContent({ content, theme }) {
   const surface2 = theme.isDark ? '#1a2436' : '#f1f5f9';
   const border   = theme.border;
@@ -1165,8 +1165,8 @@ function RenderContent({ content, theme }) {
       }
       elements.push(
         <div key={i} style={{
-          borderLeft: `3px solid ${isWarn ? '#f59e0b' : '#10b981'}`,
-          background: isWarn ? 'rgba(245,158,11,0.08)' : 'rgba(16,185,129,0.08)',
+          borderLeft: `3px solid ${isWarn ? '#f59e0b' : '#3b82f6'}`,
+          background: isWarn ? 'rgba(245,158,11,0.08)' : 'rgba(59,130,246,0.08)',
           borderRadius: '0 8px 8px 0',
           padding: '10px 16px',
           margin: '14px 0',
@@ -1194,7 +1194,7 @@ function RenderContent({ content, theme }) {
           <table style={{ borderCollapse: 'collapse', width: '100%' }}>
             <thead>
               <tr>{(tableRows[0] || []).map((c, j) => (
-                <th key={j} style={{ padding: '8px 12px', textAlign: 'left', fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: theme.muted, borderBottom: `2px solid #10b981`, whiteSpace: 'nowrap' }}>{c.trim()}</th>
+                <th key={j} style={{ padding: '8px 12px', textAlign: 'left', fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: theme.muted, borderBottom: `2px solid #3b82f6`, whiteSpace: 'nowrap' }}>{c.trim()}</th>
               ))}</tr>
             </thead>
             <tbody>
@@ -1297,14 +1297,14 @@ function renderInline(text, theme) {
   while ((m = re.exec(text)) !== null) {
     if (m.index > last) parts.push(text.slice(last, m.index));
     if (m[2]) parts.push(<strong key={m.index} style={{ fontWeight: 700 }}>{m[2]}</strong>);
-    else if (m[3]) parts.push(<code key={m.index} style={{ fontFamily: 'monospace', fontSize: 13, background: theme.isDark ? '#1a1a1a' : '#f1f5f9', padding: '1px 6px', borderRadius: 4, color: '#10b981' }}>{m[3]}</code>);
+    else if (m[3]) parts.push(<code key={m.index} style={{ fontFamily: 'monospace', fontSize: 13, background: theme.isDark ? theme.surface2 : '#f1f5f9', padding: '1px 6px', borderRadius: 4, color: '#3b82f6' }}>{m[3]}</code>);
     last = m.index + m[0].length;
   }
   if (last < text.length) parts.push(text.slice(last));
   return parts.length > 1 ? parts : text;
 }
 
-// ── Main Component ────────────────────────────────────────────────────────────
+// -- Main Component ------------------------------------------------------------
 export default function HelpCenter() {
   const theme = useTheme();
   const [selectedCategory, setSelectedCategory] = useState(null);
@@ -1320,17 +1320,14 @@ export default function HelpCenter() {
     return () => mq.removeEventListener('change', handler);
   }, []);
 
-  // On mobile: "content panel is active" when a category or article is selected
-  const mobileShowContent = isMobile && (selectedCategory !== null || selectedArticle !== null || query.trim() !== '');
-
   const isDark   = theme.isDark !== false;
-  const bg0      = theme.bg      || (isDark ? '#0d0d0d' : '#f0f2f5');
-  const bg1      = theme.surface || (isDark ? '#141414' : '#ffffff');
-  const bg2      = theme.bg      || (isDark ? '#1a1a1a' : '#f1f5f9');
-  const border   = theme.border  || (isDark ? '#2e2e2e' : '#e2e8f0');
-  const text0    = theme.text    || (isDark ? '#e8e8e8' : '#111827');
-  const textMuted= theme.muted   || (isDark ? '#64748b' : '#94a3b8');
-  const accent   = '#10b981';
+  const bg0      = theme.bg;
+  const bg1      = theme.surface;
+  const bg2      = theme.bg;
+  const border   = theme.border;
+  const text0    = theme.text;
+  const textMuted= theme.muted;
+  const accent   = '#3b82f6';
 
   const searchResults = useMemo(() => {
     if (!query.trim()) return [];
@@ -1354,166 +1351,85 @@ export default function HelpCenter() {
   };
 
   const backToCategory = () => setSelectedArticle(null);
-  const backToHome     = () => { setSelectedArticle(null); setSelectedCategory(null); };
+  const backToHome     = () => { setSelectedArticle(null); setSelectedCategory(null); setQuery(''); };
 
   const popularArticles = POPULAR_ARTICLE_IDS.map(id => ALL_ARTICLES.find(a => a.id === id)).filter(Boolean);
+  const totalArticles = ALL_ARTICLES.length;
+  const supportActions = [
+    {
+      key: 'journal',
+      title: 'Trade Journal Help',
+      description: 'Logging trades, analytics, and AI coaching',
+      icon: BookMarked,
+      color: '#6366f1',
+      onClick: () => { setSelectedCategory('journal'); setSelectedArticle(null); setQuery(''); },
+    },
+    {
+      key: 'billing',
+      title: 'Plans and Billing',
+      description: 'Pricing, upgrades, founding member access',
+      icon: CreditCard,
+      color: '#f59e0b',
+      onClick: () => { setSelectedCategory('billing'); setSelectedArticle(null); setQuery(''); },
+    },
+    {
+      key: 'account',
+      title: 'Account Settings',
+      description: 'Timezone, theme, profile, and password',
+      icon: Settings,
+      color: '#64748b',
+      onClick: () => { setSelectedCategory('account'); setSelectedArticle(null); setQuery(''); },
+    },
+    {
+      key: 'privacy',
+      title: 'Privacy and Legal',
+      description: 'Policies, refunds, and data handling',
+      icon: Shield,
+      color: '#14b8a6',
+      onClick: () => { setSelectedCategory('privacy'); setSelectedArticle(null); setQuery(''); },
+    },
+  ];
+  const feedbackActions = [
+    {
+      key: 'feature',
+      title: 'Request Features',
+      description: 'Share product ideas and workflow improvements.',
+      icon: Lightbulb,
+      color: '#f59e0b',
+      href: 'mailto:getzynth@gmail.com?subject=Feature%20Request',
+    },
+    {
+      key: 'bug',
+      title: 'Report Bugs',
+      description: 'Send issues, screenshots, and steps to reproduce.',
+      icon: Bug,
+      color: '#ef4444',
+      href: 'mailto:getzynth@gmail.com?subject=Bug%20Report',
+    },
+    {
+      key: 'product',
+      title: 'General Feedback',
+      description: 'Tell us what feels confusing or what should improve.',
+      icon: MessageSquare,
+      color: '#3b82f6',
+      href: 'mailto:getzynth@gmail.com?subject=Product%20Feedback',
+    },
+  ];
+  const heroBackground = isDark
+    ? 'linear-gradient(135deg, rgba(21,33,69,0.96) 0%, rgba(10,14,29,0.98) 58%, rgba(4,10,24,1) 100%)'
+    : 'linear-gradient(135deg, #eff6ff 0%, #ffffff 72%, #f8fbff 100%)';
+  const heroBorder = isDark ? 'rgba(59,130,246,0.22)' : 'rgba(59,130,246,0.16)';
+  const heroSubtitle = isDark ? 'rgba(226,232,240,0.78)' : '#52637a';
+  const heroShadow = isDark ? '0 30px 70px rgba(2,6,23,0.42)' : '0 22px 48px rgba(15,23,42,0.08)';
+  const sectionEyebrow = isDark ? 'rgba(148,163,184,0.86)' : '#64748b';
+  const cardSoftBg = isDark ? 'rgba(10,14,24,0.74)' : '#f8fbff';
+  const cardSoftBorder = isDark ? 'rgba(148,163,184,0.12)' : 'rgba(148,163,184,0.18)';
 
   return (
-    <div style={{ display: 'flex', height: '100%', minHeight: 0, background: bg0 }}>
+    <div style={{ height: '100%', minHeight: 0, background: bg0 }}>
+      <div style={{ height: '100%', overflowY: 'auto', background: bg0 }}>
 
-      {/* ── LEFT PANEL ────────────────────────────────────────────── */}
-      <div style={{
-        width: isMobile ? '100%' : 268,
-        flexShrink: 0,
-        background: bg1,
-        borderRight: isMobile ? 'none' : `1px solid ${border}`,
-        display: mobileShowContent ? 'none' : 'flex',
-        flexDirection: 'column',
-        overflowY: 'auto',
-      }}>
-        {/* Panel header */}
-        <div style={{ padding: '20px 16px 14px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
-            <div style={{ width: 36, height: 36, borderRadius: 10, background: `linear-gradient(135deg, ${accent}, #059669)`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-              <BookOpen size={18} color="#fff" />
-            </div>
-            <div>
-              <div style={{ color: text0, fontWeight: 700, fontSize: 15 }}>Help &amp; Docs</div>
-              <div style={{ color: textMuted, fontSize: 11, marginTop: 1 }}>34 articles</div>
-            </div>
-          </div>
-
-          {/* Search */}
-          <div style={{ position: 'relative' }}>
-            <Search size={14} style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', color: textMuted, zIndex: 1 }} />
-            <input
-              type="text"
-              value={query}
-              onChange={e => setQuery(e.target.value)}
-              placeholder="Search documentation..."
-              style={{
-                width: '100%', padding: '8px 10px 8px 32px', borderRadius: 8,
-                border: `1px solid ${border}`, background: bg2,
-                color: text0, fontSize: 13, outline: 'none',
-                boxSizing: 'border-box',
-              }}
-            />
-            {query && (
-              <button
-                onClick={() => setQuery('')}
-                style={{ position: 'absolute', right: 8, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: textMuted, display: 'flex', alignItems: 'center' }}
-              ><X size={13} /></button>
-            )}
-          </div>
-        </div>
-
-        {/* Category list (hidden when searching) */}
-        {!query && (
-          <nav style={{ flex: 1, padding: '0 8px 16px' }}>
-            {/* Home link */}
-            <button
-              onClick={backToHome}
-              style={{
-                display: 'flex', alignItems: 'center', gap: 8,
-                width: '100%', padding: '7px 10px', borderRadius: 8, marginBottom: 4,
-                background: !selectedCategory ? 'rgba(16,185,129,0.12)' : 'transparent',
-                border: 'none', cursor: 'pointer', textAlign: 'left',
-                color: !selectedCategory ? accent : textMuted,
-                fontSize: 13, fontWeight: !selectedCategory ? 600 : 400,
-                transition: 'background 0.15s',
-              }}
-              onMouseOver={e => { if (selectedCategory) e.currentTarget.style.background = bg2; }}
-              onMouseOut={e => { if (selectedCategory) e.currentTarget.style.background = 'transparent'; }}
-            >
-              <Home size={14} style={{ display: 'inline-block', verticalAlign: 'middle', marginRight: 4 }} /> Home
-            </button>
-
-            <div style={{ height: 1, background: border, margin: '8px 4px 10px' }} />
-
-            {CATEGORIES.map(cat => {
-              const active = selectedCategory === cat.key;
-              return (
-                <button
-                  key={cat.key}
-                  onClick={() => { setSelectedCategory(cat.key); setSelectedArticle(null); }}
-                  style={{
-                    display: 'flex', alignItems: 'center', gap: 9,
-                    width: '100%', padding: '8px 10px', borderRadius: 8, marginBottom: 2,
-                    background: active ? 'rgba(16,185,129,0.12)' : 'transparent',
-                    border: 'none', cursor: 'pointer', textAlign: 'left',
-                    transition: 'background 0.15s',
-                  }}
-                  onMouseOver={e => { if (!active) e.currentTarget.style.background = bg2; }}
-                  onMouseOut={e => { if (!active) e.currentTarget.style.background = 'transparent'; }}
-                >
-                  <cat.icon size={15} style={{ flexShrink: 0 }} />
-                  <span style={{ flex: 1, color: active ? accent : text0, fontSize: 13, fontWeight: active ? 600 : 400 }}>{cat.title}</span>
-                  <span style={{ fontSize: 11, color: textMuted, background: bg2, padding: '1px 7px', borderRadius: 999, flexShrink: 0 }}>{cat.articles.length}</span>
-                  {active && <ChevronRight size={13} color={accent} style={{ flexShrink: 0 }} />}
-                </button>
-              );
-            })}
-          </nav>
-        )}
-
-        {/* Search results in left panel */}
-        {query && (
-          <div style={{ flex: 1, padding: '0 8px 16px', overflowY: 'auto' }}>
-            <div style={{ color: textMuted, fontSize: 11, padding: '0 8px 8px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
-              {searchResults.length} result{searchResults.length !== 1 ? 's' : ''}
-            </div>
-            {searchResults.length === 0 ? (
-              <div style={{ padding: '20px 10px', textAlign: 'center' }}>
-              <div style={{ fontSize: 28, marginBottom: 8 }}><Search size={28} style={{ display: 'inline-block' }} /></div>
-                <div style={{ color: text0, fontSize: 13, fontWeight: 600, marginBottom: 4 }}>No results found</div>
-                <div style={{ color: textMuted, fontSize: 12 }}>Try different keywords or email us</div>
-                <a href="mailto:getzynth@gmail.com" style={{ color: accent, fontSize: 12, display: 'block', marginTop: 6 }}>getzynth@gmail.com</a>
-              </div>
-            ) : (
-              searchResults.map(art => (
-                <button
-                  key={art.id}
-                  onClick={() => openArticle(art.id, art.categoryKey)}
-                  style={{ display: 'block', width: '100%', textAlign: 'left', padding: '9px 10px', borderRadius: 8, marginBottom: 3, background: 'transparent', border: 'none', cursor: 'pointer', transition: 'background 0.15s' }}
-                  onMouseOver={e => e.currentTarget.style.background = bg2}
-                  onMouseOut={e => e.currentTarget.style.background = 'transparent'}
-                >
-                  <div style={{ color: text0, fontSize: 13, fontWeight: 600, marginBottom: 2 }}>{art.title}</div>
-                  <div style={{ color: textMuted, fontSize: 11 }}>{art.categoryTitle}</div>
-                </button>
-              ))
-            )}
-          </div>
-        )}
-
-        {/* Bottom contact */}
-        <div style={{ padding: '12px 16px', borderTop: `1px solid ${border}` }}>
-          <div style={{ color: textMuted, fontSize: 11, marginBottom: 4 }}>Need more help?</div>
-          <a href="mailto:getzynth@gmail.com" style={{ color: accent, fontSize: 12, fontWeight: 600, textDecoration: 'none' }}>
-            getzynth@gmail.com
-          </a>
-        </div>
-      </div>
-
-      {/* ── RIGHT PANEL ───────────────────────────────────────────── */}
-      <div style={{ flex: 1, overflowY: 'auto', background: bg0, display: (!isMobile || mobileShowContent) ? 'block' : 'none' }}>
-        {/* Mobile back button */}
-        {isMobile && (
-          <button
-            onClick={() => { setSelectedCategory(null); setSelectedArticle(null); setQuery(''); }}
-            style={{
-              display: 'flex', alignItems: 'center', gap: 6,
-              padding: '12px 16px', background: 'none', border: 'none',
-              cursor: 'pointer', color: accent, fontSize: 13, fontWeight: 600,
-              borderBottom: `1px solid ${border}`, width: '100%',
-            }}
-          >
-            <ChevronRight size={16} style={{ transform: 'rotate(180deg)' }} />
-            Back to Help &amp; Docs
-          </button>
-        )}
-
-        {/* ── ARTICLE VIEW ── */}
+        {/* -- ARTICLE VIEW -- */}
         {currentArticle && (
           <div style={{ maxWidth: 720, margin: '0 auto', padding: '32px 32px 60px' }}>
             {/* Breadcrumb */}
@@ -1540,7 +1456,7 @@ export default function HelpCenter() {
               {currentArticle.title}
             </h1>
             <div style={{ color: textMuted, fontSize: 13, marginBottom: 28 }}>
-              Last updated: March 14, 2026 &nbsp;·&nbsp; {currentCategory?.title}
+              Last updated: March 14, 2026 &nbsp;�&nbsp; {currentCategory?.title}
             </div>
 
             {/* Article content */}
@@ -1576,7 +1492,7 @@ export default function HelpCenter() {
           </div>
         )}
 
-        {/* ── CATEGORY OVERVIEW ── */}
+        {/* -- CATEGORY OVERVIEW -- */}
         {!currentArticle && currentCategory && (
           <div style={{ maxWidth: 900, margin: '0 auto', padding: '32px 32px 60px' }}>
             {/* Breadcrumb */}
@@ -1588,7 +1504,9 @@ export default function HelpCenter() {
 
             {/* Category header */}
             <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 8 }}>
-              <span style={{ fontSize: 42 }}>{currentCategory.emoji}</span>
+              <div style={{ width: 52, height: 52, borderRadius: 14, background: `${currentCategory.color}18`, border: `1px solid ${currentCategory.color}30`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <currentCategory.icon size={26} color={currentCategory.color} />
+              </div>
               <div>
                 <h1 style={{ color: text0, fontWeight: 800, fontSize: 26, margin: 0 }}>{currentCategory.title}</h1>
                 <p style={{ color: textMuted, fontSize: 14, margin: '4px 0 0' }}>{currentCategory.description}</p>
@@ -1608,7 +1526,7 @@ export default function HelpCenter() {
                     cursor: 'pointer', transition: 'border-color 0.15s, box-shadow 0.15s',
                     display: 'flex', flexDirection: 'column', gap: 6,
                   }}
-                  onMouseOver={e => { e.currentTarget.style.borderColor = accent; e.currentTarget.style.boxShadow = `0 0 0 3px rgba(16,185,129,0.1)`; }}
+                  onMouseOver={e => { e.currentTarget.style.borderColor = accent; e.currentTarget.style.boxShadow = `0 0 0 3px rgba(59,130,246,0.1)`; }}
                   onMouseOut={e => { e.currentTarget.style.borderColor = border; e.currentTarget.style.boxShadow = 'none'; }}
                 >
                   <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
@@ -1625,98 +1543,313 @@ export default function HelpCenter() {
           </div>
         )}
 
-        {/* ── WELCOME / HOME SCREEN ── */}
-        {!currentArticle && !currentCategory && (
-          <div style={{ maxWidth: 780, margin: '0 auto', padding: '48px 32px 60px' }}>
-            {/* Hero */}
-            <div style={{ textAlign: 'center', marginBottom: 40 }}>
-              <div style={{ width: 64, height: 64, borderRadius: 18, background: `linear-gradient(135deg, ${accent}, #059669)`, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px', boxShadow: '0 8px 28px rgba(16,185,129,0.35)' }}>
-                <BookOpen size={30} color="#fff" />
+        {/* -- SEARCH RESULTS -- */}
+        {!currentArticle && !currentCategory && query.trim() !== '' && (
+          <div style={{ maxWidth: 980, margin: '0 auto', padding: '32px 32px 60px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, marginBottom: 18, flexWrap: 'wrap' }}>
+              <div>
+                <div style={{ color: text0, fontWeight: 800, fontSize: 28, letterSpacing: '-0.02em', marginBottom: 6 }}>Search Results</div>
+                <div style={{ color: textMuted, fontSize: 14 }}>
+                  {searchResults.length} result{searchResults.length !== 1 ? 's' : ''} for "{query}"
+                </div>
               </div>
-              <h1 style={{ color: text0, fontWeight: 800, fontSize: 32, margin: '0 0 10px', letterSpacing: '-0.02em' }}>
-                How can we help you?
-              </h1>
-              <p style={{ color: textMuted, fontSize: 16, margin: '0 0 28px' }}>
-                Browse categories or search for what you need
-              </p>
+              <button
+                onClick={() => setQuery('')}
+                style={{
+                  padding: '9px 14px',
+                  borderRadius: 10,
+                  border: `1px solid ${border}`,
+                  background: bg1,
+                  color: textMuted,
+                  cursor: 'pointer',
+                  fontSize: 13,
+                  fontWeight: 600,
+                }}
+              >
+                Clear Search
+              </button>
+            </div>
 
-              {/* Big search bar */}
-              <div style={{ position: 'relative', maxWidth: 480, margin: '0 auto' }}>
-                <Search size={17} style={{ position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)', color: textMuted }} />
+            {searchResults.length === 0 ? (
+              <div style={{ background: bg1, border: `1px solid ${border}`, borderRadius: 22, padding: '34px 28px', textAlign: 'center' }}>
+                <div style={{ width: 56, height: 56, margin: '0 auto 16px', borderRadius: 16, background: 'rgba(59,130,246,0.12)', border: '1px solid rgba(59,130,246,0.18)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <Search size={26} color={accent} />
+                </div>
+                <div style={{ color: text0, fontSize: 18, fontWeight: 700, marginBottom: 8 }}>No help articles found</div>
+                <div style={{ color: textMuted, fontSize: 14, lineHeight: 1.65, marginBottom: 14 }}>Try a different keyword, or contact support if you need direct help.</div>
+                <a href="mailto:getzynth@gmail.com" style={{ color: accent, fontSize: 14, fontWeight: 700, textDecoration: 'none' }}>getzynth@gmail.com</a>
+              </div>
+            ) : (
+              <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: 12 }}>
+                {searchResults.map(art => (
+                  <button
+                    key={art.id}
+                    onClick={() => openArticle(art.id, art.categoryKey)}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      gap: 16,
+                      padding: '16px 18px',
+                      borderRadius: 18,
+                      background: bg1,
+                      border: `1px solid ${border}`,
+                      cursor: 'pointer',
+                      textAlign: 'left',
+                      transition: 'border-color 0.15s, box-shadow 0.15s',
+                    }}
+                    onMouseOver={e => { e.currentTarget.style.borderColor = accent; e.currentTarget.style.boxShadow = isDark ? '0 12px 28px rgba(2,6,23,0.3)' : '0 12px 24px rgba(15,23,42,0.06)'; }}
+                    onMouseOut={e => { e.currentTarget.style.borderColor = border; e.currentTarget.style.boxShadow = 'none'; }}
+                  >
+                    <div style={{ minWidth: 0 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8, flexWrap: 'wrap' }}>
+                        {art.categoryIcon && <art.categoryIcon size={13} color={art.categoryColor ?? textMuted} style={{ flexShrink: 0 }} />}
+                        <span style={{ color: textMuted, fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em' }}>{art.categoryTitle}</span>
+                      </div>
+                      <div style={{ color: text0, fontSize: 15, fontWeight: 700, marginBottom: 6, lineHeight: 1.35 }}>{art.title}</div>
+                      <div style={{ color: textMuted, fontSize: 13, lineHeight: 1.55 }}>{art.excerpt}</div>
+                    </div>
+                    <ChevronRight size={16} color={textMuted} style={{ flexShrink: 0 }} />
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* -- WELCOME / HOME SCREEN -- */}
+        {!currentArticle && !currentCategory && query.trim() === '' && (
+          <div style={{ maxWidth: 1080, margin: '0 auto', padding: '32px 32px 60px' }}>
+            <div style={{
+              background: heroBackground,
+              border: `1px solid ${heroBorder}`,
+              borderRadius: 28,
+              padding: isMobile ? '24px 20px' : '34px 38px',
+              boxShadow: heroShadow,
+              marginBottom: 24,
+              overflow: 'hidden',
+            }}>
+              <div style={{ display: 'flex', alignItems: isMobile ? 'flex-start' : 'center', justifyContent: 'space-between', gap: 24, flexDirection: isMobile ? 'column' : 'row' }}>
+                <div style={{ display: 'flex', alignItems: 'flex-start', gap: 16, maxWidth: 620 }}>
+                  <div style={{ width: 64, height: 64, borderRadius: 20, background: 'linear-gradient(135deg, #2563eb, #06b6d4)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 18px 34px rgba(37,99,235,0.32)', flexShrink: 0 }}>
+                    <LifeBuoy size={30} color="#fff" />
+                  </div>
+                  <div>
+                    <div style={{ color: sectionEyebrow, fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 8 }}>Support Center</div>
+                    <h1 style={{ color: text0, fontWeight: 800, fontSize: isMobile ? 30 : 42, lineHeight: 1.05, margin: '0 0 10px', letterSpacing: '-0.03em' }}>
+                      Help &amp; Support
+                    </h1>
+                    <p style={{ color: heroSubtitle, fontSize: isMobile ? 14 : 16, lineHeight: 1.7, margin: 0, maxWidth: 520 }}>
+                      Find answers quickly, explore product guides, and contact the Zynth team when you need direct help.
+                    </p>
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+                  <div style={{ padding: '10px 14px', borderRadius: 999, background: cardSoftBg, border: `1px solid ${cardSoftBorder}`, color: text0, fontSize: 12, fontWeight: 600 }}>
+                    {totalArticles} help articles
+                  </div>
+                  <div style={{ padding: '10px 14px', borderRadius: 999, background: cardSoftBg, border: `1px solid ${cardSoftBorder}`, color: text0, fontSize: 12, fontWeight: 600, display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <Clock3 size={14} color={accent} />
+                    Replies within 24 hours
+                  </div>
+                </div>
+              </div>
+
+              <div style={{ position: 'relative', marginTop: 26, maxWidth: 620 }}>
+                <Search size={18} style={{ position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)', color: textMuted }} />
                 <input
                   type="text"
                   value={query}
                   onChange={e => setQuery(e.target.value)}
-                  placeholder="Search all documentation..."
+                  placeholder="Search guides, billing, analytics, or settings..."
                   style={{
-                    width: '100%', padding: '13px 16px 13px 46px', borderRadius: 12,
-                    border: `1px solid ${border}`, background: bg1,
-                    color: text0, fontSize: 15, outline: 'none',
+                    width: '100%',
+                    padding: '14px 16px 14px 48px',
+                    borderRadius: 14,
+                    border: `1px solid ${isDark ? 'rgba(148,163,184,0.16)' : border}`,
+                    background: isDark ? 'rgba(6,10,22,0.76)' : '#ffffff',
+                    color: text0,
+                    fontSize: 15,
+                    outline: 'none',
                     boxSizing: 'border-box',
-                    boxShadow: isDark ? '0 4px 20px rgba(0,0,0,0.3)' : '0 4px 16px rgba(0,0,0,0.07)',
+                    boxShadow: isDark ? '0 12px 28px rgba(2,6,23,0.28)' : '0 10px 24px rgba(15,23,42,0.06)',
                   }}
                 />
               </div>
             </div>
 
-            {/* Category grid */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 12, marginBottom: 44 }}>
-              {CATEGORIES.map(cat => (
-                <button
-                  key={cat.key}
-                  onClick={() => { setSelectedCategory(cat.key); setSelectedArticle(null); }}
-                  style={{
-                    textAlign: 'left', padding: '16px 18px', borderRadius: 10,
-                    background: bg1, border: `1px solid ${border}`,
-                    cursor: 'pointer', transition: 'border-color 0.15s, box-shadow 0.15s',
-                  }}
-                  onMouseOver={e => { e.currentTarget.style.borderColor = accent; e.currentTarget.style.boxShadow = `0 0 0 3px rgba(16,185,129,0.1)`; }}
-                  onMouseOut={e => { e.currentTarget.style.borderColor = border; e.currentTarget.style.boxShadow = 'none'; }}
+            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: 18, marginBottom: 28 }}>
+              <div style={{ background: bg1, border: `1px solid ${border}`, borderRadius: 22, padding: '24px 24px 22px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 18 }}>
+                  <div style={{ width: 44, height: 44, borderRadius: 14, background: 'rgba(59,130,246,0.12)', border: '1px solid rgba(59,130,246,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Mail size={20} color={accent} />
+                  </div>
+                  <div>
+                    <div style={{ color: text0, fontSize: 22, fontWeight: 800, letterSpacing: '-0.02em' }}>Contact Support</div>
+                    <div style={{ color: textMuted, fontSize: 14, marginTop: 4 }}>Reach the Zynth team for account, billing, or platform questions.</div>
+                  </div>
+                </div>
+
+                <a
+                  href="mailto:getzynth@gmail.com"
+                  style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 14, padding: '18px 18px', borderRadius: 18, textDecoration: 'none', background: isDark ? 'rgba(15,23,42,0.66)' : '#f8fbff', border: `1px solid ${isDark ? 'rgba(59,130,246,0.18)' : 'rgba(59,130,246,0.14)'}`, marginBottom: 14 }}
                 >
-                  <div style={{ fontSize: 26, marginBottom: 8 }}>{cat.emoji}</div>
-                  <div style={{ color: text0, fontWeight: 700, fontSize: 13, marginBottom: 4 }}>{cat.title}</div>
-                  <div style={{ color: textMuted, fontSize: 11 }}>{cat.articles.length} articles</div>
-                </button>
-              ))}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+                    <div style={{ width: 46, height: 46, borderRadius: 14, background: 'linear-gradient(135deg, #2563eb, #3b82f6)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                      <Mail size={20} color="#fff" />
+                    </div>
+                    <div>
+                      <div style={{ color: textMuted, fontSize: 12, marginBottom: 4 }}>Email Support</div>
+                      <div style={{ color: text0, fontSize: 18, fontWeight: 800, letterSpacing: '-0.02em' }}>getzynth@gmail.com</div>
+                      <div style={{ color: textMuted, fontSize: 13, marginTop: 4 }}>Typical response time: within 24 hours</div>
+                    </div>
+                  </div>
+                  <ArrowUpRight size={18} color={textMuted} style={{ flexShrink: 0 }} />
+                </a>
+
+                <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: 12 }}>
+                  <div style={{ padding: '16px 16px', borderRadius: 18, background: cardSoftBg, border: `1px solid ${cardSoftBorder}` }}>
+                    <div style={{ color: text0, fontSize: 14, fontWeight: 700, marginBottom: 6 }}>Billing and subscriptions</div>
+                    <div style={{ color: textMuted, fontSize: 13, lineHeight: 1.6 }}>Questions about upgrades, payments, refunds, or founding member pricing.</div>
+                  </div>
+                  <div style={{ padding: '16px 16px', borderRadius: 18, background: cardSoftBg, border: `1px solid ${cardSoftBorder}` }}>
+                    <div style={{ color: text0, fontSize: 14, fontWeight: 700, marginBottom: 6 }}>Account and setup</div>
+                    <div style={{ color: textMuted, fontSize: 13, lineHeight: 1.6 }}>Help with timezone, theme, passwords, profile setup, and account access.</div>
+                  </div>
+                </div>
+              </div>
+
+              <div style={{ background: bg1, border: `1px solid ${border}`, borderRadius: 22, padding: '24px 24px 22px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 18 }}>
+                  <div style={{ width: 44, height: 44, borderRadius: 14, background: 'rgba(99,102,241,0.12)', border: '1px solid rgba(99,102,241,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <MessageSquare size={20} color="#6366f1" />
+                  </div>
+                  <div>
+                    <div style={{ color: text0, fontSize: 22, fontWeight: 800, letterSpacing: '-0.02em' }}>Feedback &amp; Suggestions</div>
+                    <div style={{ color: textMuted, fontSize: 14, marginTop: 4 }}>Found something confusing, missing, or broken? Send it directly to us.</div>
+                  </div>
+                </div>
+
+                <div style={{ color: textMuted, fontSize: 14, lineHeight: 1.7, marginBottom: 16 }}>
+                  Product feedback helps improve the platform for everyone. Use one of the actions below to send the right type of request.
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 10, marginBottom: 16 }}>
+                  {feedbackActions.map(action => (
+                    <a
+                      key={action.key}
+                      href={action.href}
+                      style={{
+                        width: '100%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        gap: 14,
+                        padding: '14px 16px',
+                        borderRadius: 16,
+                        border: `1px solid ${border}`,
+                        background: cardSoftBg,
+                        textAlign: 'left',
+                        cursor: 'pointer',
+                        textDecoration: 'none',
+                        transition: 'border-color 0.15s, transform 0.15s',
+                      }}
+                      onMouseOver={e => { e.currentTarget.style.borderColor = action.color; e.currentTarget.style.transform = 'translateY(-1px)'; }}
+                      onMouseOut={e => { e.currentTarget.style.borderColor = border; e.currentTarget.style.transform = 'translateY(0)'; }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 14, minWidth: 0 }}>
+                        <div style={{ width: 42, height: 42, borderRadius: 13, background: `${action.color}18`, border: `1px solid ${action.color}26`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                          <action.icon size={19} color={action.color} />
+                        </div>
+                        <div style={{ minWidth: 0 }}>
+                          <div style={{ color: text0, fontSize: 14, fontWeight: 700, marginBottom: 4 }}>{action.title}</div>
+                          <div style={{ color: textMuted, fontSize: 12, lineHeight: 1.5 }}>{action.description}</div>
+                        </div>
+                      </div>
+                      <ChevronRight size={16} color={textMuted} style={{ flexShrink: 0 }} />
+                    </a>
+                  ))}
+                </div>
+
+                <div style={{ padding: '16px 16px', borderRadius: 18, background: cardSoftBg, border: `1px solid ${cardSoftBorder}` }}>
+                  <div style={{ color: text0, fontSize: 14, fontWeight: 700, marginBottom: 6 }}>Need a fast answer first?</div>
+                  <div style={{ color: textMuted, fontSize: 13, lineHeight: 1.6 }}>Browse the help topics below for immediate answers about journaling, analytics, screenshot imports, billing, and settings.</div>
+                </div>
+              </div>
             </div>
 
-            {/* Popular articles */}
-            <div style={{ marginBottom: 44 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
+            <div style={{ marginBottom: 28 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
                 <Star size={15} color={accent} />
-                <span style={{ color: text0, fontWeight: 700, fontSize: 15 }}>Popular Articles</span>
+                <span style={{ color: text0, fontWeight: 700, fontSize: 15 }}>Popular Guides</span>
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                {popularArticles.map(art => (
+              <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: 12 }}>
+                {popularArticles.slice(0, 6).map(art => (
                   <button
                     key={art.id}
                     onClick={() => openArticle(art.id, art.categoryKey)}
-                    style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 16px', borderRadius: 8, background: bg1, border: `1px solid ${border}`, cursor: 'pointer', textAlign: 'left', transition: 'border-color 0.15s' }}
-                    onMouseOver={e => e.currentTarget.style.borderColor = accent}
-                    onMouseOut={e => e.currentTarget.style.borderColor = border}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      gap: 16,
+                      padding: '16px 18px',
+                      borderRadius: 18,
+                      background: bg1,
+                      border: `1px solid ${border}`,
+                      cursor: 'pointer',
+                      textAlign: 'left',
+                      transition: 'border-color 0.15s, box-shadow 0.15s',
+                    }}
+                    onMouseOver={e => { e.currentTarget.style.borderColor = accent; e.currentTarget.style.boxShadow = isDark ? '0 12px 28px rgba(2,6,23,0.3)' : '0 12px 24px rgba(15,23,42,0.06)'; }}
+                    onMouseOut={e => { e.currentTarget.style.borderColor = border; e.currentTarget.style.boxShadow = 'none'; }}
                   >
-                    <div>
-                      <span style={{ color: textMuted, fontSize: 11, marginRight: 8 }}>{art.categoryEmoji}</span>
-                      <span style={{ color: text0, fontSize: 14, fontWeight: 500 }}>{art.title}</span>
+                    <div style={{ minWidth: 0 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8, flexWrap: 'wrap' }}>
+                        {art.categoryIcon && <art.categoryIcon size={13} color={art.categoryColor ?? textMuted} style={{ flexShrink: 0 }} />}
+                        <span style={{ color: textMuted, fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em' }}>{art.categoryTitle}</span>
+                      </div>
+                      <div style={{ color: text0, fontSize: 15, fontWeight: 700, marginBottom: 6, lineHeight: 1.35 }}>{art.title}</div>
+                      <div style={{ color: textMuted, fontSize: 13, lineHeight: 1.55 }}>{art.excerpt}</div>
                     </div>
-                    <ChevronRight size={15} color={textMuted} style={{ flexShrink: 0 }} />
+                    <ChevronRight size={16} color={textMuted} style={{ flexShrink: 0 }} />
                   </button>
                 ))}
               </div>
             </div>
 
-            {/* Contact card */}
-            <div style={{ background: bg1, border: `1px solid ${border}`, borderRadius: 12, padding: '24px 28px', textAlign: 'center' }}>
-              <div style={{ marginBottom: 10 }}><Mail size={28} style={{ display: 'inline-block' }} /></div>
-              <div style={{ color: text0, fontWeight: 700, fontSize: 16, marginBottom: 6 }}>Can't find what you need?</div>
-              <div style={{ color: textMuted, fontSize: 14, marginBottom: 12 }}>Our team is happy to help with any question.</div>
-              <a
-                href="mailto:getzynth@gmail.com"
-                style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '9px 20px', borderRadius: 8, background: accent, color: '#fff', fontWeight: 600, fontSize: 14, textDecoration: 'none' }}
-              >
-                Email Us: getzynth@gmail.com
-              </a>
-              <div style={{ color: textMuted, fontSize: 12, marginTop: 10 }}>Response time: within 24 hours</div>
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, marginBottom: 14, flexWrap: 'wrap' }}>
+                <div>
+                  <div style={{ color: text0, fontWeight: 700, fontSize: 18, marginBottom: 4 }}>Help Topics</div>
+                  <div style={{ color: textMuted, fontSize: 13 }}>Browse documentation by product area.</div>
+                </div>
+                <div style={{ color: textMuted, fontSize: 12 }}>{totalArticles} total articles</div>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 12 }}>
+                {CATEGORIES.map(cat => (
+                  <button
+                    key={cat.key}
+                    onClick={() => { setSelectedCategory(cat.key); setSelectedArticle(null); }}
+                    style={{
+                      textAlign: 'left', padding: '18px 18px', borderRadius: 18,
+                      background: bg1, border: `1px solid ${border}`,
+                      cursor: 'pointer', transition: 'border-color 0.15s, box-shadow 0.15s, transform 0.15s',
+                    }}
+                    onMouseOver={e => { e.currentTarget.style.borderColor = accent; e.currentTarget.style.boxShadow = `0 0 0 3px rgba(59,130,246,0.1)`; e.currentTarget.style.transform = 'translateY(-1px)'; }}
+                    onMouseOut={e => { e.currentTarget.style.borderColor = border; e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.transform = 'translateY(0)'; }}
+                  >
+                    <div style={{ width: 42, height: 42, borderRadius: 13, background: `${cat.color}18`, border: `1px solid ${cat.color}28`, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 14 }}>
+                      <cat.icon size={20} color={cat.color} />
+                    </div>
+                    <div style={{ color: text0, fontWeight: 700, fontSize: 14, marginBottom: 6 }}>{cat.title}</div>
+                    <div style={{ color: textMuted, fontSize: 12, lineHeight: 1.55, marginBottom: 10 }}>{cat.description}</div>
+                    <div style={{ color: textMuted, fontSize: 11, fontWeight: 600 }}>{cat.articles.length} articles</div>
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
         )}

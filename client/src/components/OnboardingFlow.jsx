@@ -1,9 +1,10 @@
 import { useState, useRef } from 'react';
-import { CheckCircle, ChevronRight, ChevronLeft, Sparkles, TrendingUp, Target, User, Camera, ArrowRight, X, BarChart2 } from 'lucide-react';
+import { CheckCircle, ChevronRight, ChevronLeft, Sparkles, TrendingUp, Target, User, Camera, ArrowRight, X } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 import { useAuth } from '../contexts/AuthContext';
 import { API_URL } from '../config/api';
 import ImageCropModal from './ImageCropModal';
+import { BrandMark } from './BrandLogo';
 
 const EXPERIENCE_OPTIONS = [
   { value: 'beginner',      label: 'Just Starting Out',   desc: 'New to trading, learning the basics' },
@@ -26,7 +27,7 @@ const GOAL_OPTIONS = [
 ];
 
 const AVATAR_COLORS = [
-  { value: 'emerald', label: 'Emerald', bg: '#10b981', ring: '#10b981' },
+  { value: 'emerald', label: 'Emerald', bg: '#3b82f6', ring: '#3b82f6' },
   { value: 'blue',    label: 'Blue',    bg: '#3b82f6', ring: '#3b82f6' },
   { value: 'purple',  label: 'Purple',  bg: '#0ea5e9', ring: '#0ea5e9' },
   { value: 'orange',  label: 'Orange',  bg: '#f97316', ring: '#f97316' },
@@ -119,7 +120,6 @@ export default function OnboardingFlow({ onComplete, onSkip }) {
   const [cropSrc, setCropSrc] = useState(null);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
-  const [logoError, setLogoError] = useState(false);
   const fileInputRef = useRef(null);
 
   const firstName = (user?.name ?? 'Trader').split(' ')[0];
@@ -241,16 +241,7 @@ export default function OnboardingFlow({ onComplete, onSkip }) {
         <div className="flex items-center justify-between px-6 pt-5 pb-3">
           {/* Logo + brand */}
           <div className="flex items-center gap-2">
-            {logoError ? (
-              <BarChart2 className="w-5 h-5" style={{ color: theme.accent }} />
-            ) : (
-              <img
-                src="/logo.png"
-                alt="Zynth"
-                style={{ height: 28 }}
-                onError={() => setLogoError(true)}
-              />
-            )}
+            <BrandMark size={28} />
             <span className="text-sm font-bold" style={{ color: theme.accent }}>Zynth</span>
           </div>
           {/* Step counter */}
@@ -284,7 +275,7 @@ export default function OnboardingFlow({ onComplete, onSkip }) {
         {step === 0 && (
           <div className="px-6 py-10 text-center">
             <div className="mb-4">
-              <Sparkles size={40} style={{ margin: '0 auto', display: 'block', color: '#10b981' }} />
+              <Sparkles size={40} style={{ margin: '0 auto', display: 'block', color: '#3b82f6' }} />
             </div>
             <h2 className="text-2xl font-bold mb-2" style={{ color: theme.text }}>
               Welcome to Zynth, {firstName}!
@@ -577,4 +568,5 @@ export default function OnboardingFlow({ onComplete, onSkip }) {
     </>
   );
 }
+
 

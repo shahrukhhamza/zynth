@@ -15,7 +15,7 @@ import {
 /* ── helpers ─────────────────────────────────────────────────────── */
 const PLAN_BADGE = {
   free:  { bg: 'rgba(107,114,128,0.15)', color: '#9ca3af', border: 'rgba(107,114,128,0.25)' },
-  pro:   { bg: 'rgba(16,185,129,0.15)',  color: '#34d399', border: 'rgba(16,185,129,0.35)'  },
+  pro:   { bg: 'rgba(59,130,246,0.15)',  color: '#34d399', border: 'rgba(59,130,246,0.35)'  },
   elite: { bg: 'rgba(245,158,11,0.15)',  color: '#fbbf24', border: 'rgba(245,158,11,0.35)'  },
 };
 
@@ -197,7 +197,7 @@ function AdminDashboardInner() {
     { label: 'Total Signups', value: stats?.totalUsers  ?? '—', color: '#60a5fa', Icon: Users         },
     { label: 'Today',        value: stats?.todaySignups ?? '—', color: '#34d399', Icon: CalendarCheck  },
     { label: 'This Week',    value: stats?.weekSignups  ?? '—', color: '#0ea5e9', Icon: CalendarDays   },
-    { label: 'Pro Users',    value: stats?.proUsers     ?? '—', color: '#10b981', Icon: Zap            },
+    { label: 'Pro Users',    value: stats?.proUsers     ?? '—', color: '#3b82f6', Icon: Zap            },
     { label: 'Elite Users',  value: stats?.eliteUsers   ?? '—', color: '#fbbf24', Icon: Crown          },
     { label: 'Free Users',   value: stats?.freeUsers    ?? '—', color: '#9ca3af', Icon: Shield         },
     { label: 'Est. Revenue', value: stats ? `$${estRevenue}/mo` : '—', color: '#f59e0b', Icon: DollarSign },
@@ -232,7 +232,7 @@ function AdminDashboardInner() {
             <button
               onClick={exportCSV}
               className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-[13px] font-semibold border transition-all hover:brightness-110"
-              style={{ background: 'rgba(16,185,129,0.10)', color: '#34d399', borderColor: 'rgba(16,185,129,0.3)' }}
+              style={{ background: 'rgba(59,130,246,0.10)', color: '#34d399', borderColor: 'rgba(59,130,246,0.3)' }}
             >
               <Download className="w-4 h-4" />
               Export CSV
@@ -303,7 +303,7 @@ function AdminDashboardInner() {
                   {(stats?.signupsByDay ?? []).map((entry, i) => (
                     <Cell
                       key={i}
-                      fill={entry.count > 0 ? '#10b981' : (theme.isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.08)')}
+                      fill={entry.count > 0 ? '#3b82f6' : (theme.isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.08)')}
                     />
                   ))}
                 </Bar>
@@ -330,7 +330,7 @@ function AdminDashboardInner() {
                   placeholder="Search name or email…"
                   className="pl-9 pr-4 py-2 rounded-xl text-[13px] border focus:outline-none"
                   style={{ background: theme.bg, borderColor: theme.border, color: theme.text, width: '220px' }}
-                  onFocus={e => (e.currentTarget.style.borderColor = '#10b981')}
+                  onFocus={e => (e.currentTarget.style.borderColor = '#3b82f6')}
                   onBlur={e => (e.currentTarget.style.borderColor = theme.border)}
                 />
               </div>
@@ -504,7 +504,7 @@ function AdminDashboardInner() {
                     placeholder="user@email.com"
                     className="flex-1 min-w-0 px-3 py-2 rounded-xl text-[12px] border focus:outline-none"
                     style={{ background: theme.bg, borderColor: theme.border, color: theme.text }}
-                    onFocus={e => (e.currentTarget.style.borderColor = '#10b981')}
+                    onFocus={e => (e.currentTarget.style.borderColor = '#3b82f6')}
                     onBlur={e => (e.currentTarget.style.borderColor = theme.border)}
                   />
                   <button
@@ -539,3 +539,4 @@ export default function AdminDashboard() {
   if (!user || user.is_admin !== 1) return null;
   return <AdminDashboardInner />;
 }
+

@@ -131,7 +131,7 @@ function IndicatorCard({ data, accentColor, D }) {
 function HistoricalChart({ data, code, unit, isDark, color }) {
   if (!data?.length) return null;
   const gridColor = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.05)';
-  const tickColor = isDark ? '#555' : '#9ca3af';
+  const tickColor = isDark ? theme.muted : '#9ca3af';
 
   const chartData = {
     labels: data.map(d => d.date?.slice(0, 7) ?? ''),
@@ -154,10 +154,10 @@ function HistoricalChart({ data, code, unit, isDark, color }) {
     plugins: {
       legend: { display: false },
       tooltip: {
-        backgroundColor: isDark ? '#111' : '#fff',
-        titleColor: isDark ? '#e8e8e8' : '#0a0a0a',
-        bodyColor:  isDark ? '#888' : '#555',
-        borderColor: isDark ? '#2a2a2a' : '#e4e4e4',
+        backgroundColor: isDark ? theme.surface2 : '#fff',
+        titleColor: isDark ? theme.text : '#0a0a0a',
+        bodyColor:  isDark ? theme.muted : '#555',
+        borderColor: isDark ? theme.border : '#e4e4e4',
         borderWidth: 1,
         padding: 10,
         callbacks: { label: ctx => ` ${ctx.parsed.y}${unit ?? ''}` },
@@ -320,14 +320,14 @@ export default function EconomicIntelligence() {
   // ── Design tokens ────────────────────────────────────────────────────────
   const D = {
     isDark:   theme.isDark,
-    pageBg:   theme.isDark ? '#000000' : '#f1f3f6',
-    cardBg:   theme.isDark ? '#0d0d0d' : '#ffffff',
-    cardBg2:  theme.isDark ? '#111111' : '#f7f8fa',
-    border:   theme.isDark ? '#1e1e1e' : '#e5e8ed',
-    text:     theme.isDark ? '#f0f0f0' : '#0d1117',
-    textSub:  theme.isDark ? '#5a6472' : '#5a6472',
-    textMute: theme.isDark ? '#2a2a2a' : '#b0b8c4',
-    accent:   '#10b981',
+    pageBg:   theme.isDark ? theme.bg        : '#f1f3f6',
+    cardBg:   theme.isDark ? theme.surface    : '#ffffff',
+    cardBg2:  theme.isDark ? theme.surface2   : '#f7f8fa',
+    border:   theme.isDark ? theme.border     : '#e5e8ed',
+    text:     theme.isDark ? theme.text       : '#0d1117',
+    textSub:  theme.isDark ? '#8892a4'        : '#5a6472',
+    textMute: theme.isDark ? 'rgba(255,255,255,0.08)' : '#b0b8c4',
+    accent:   '#3b82f6',
   };
 
   const loadDashboard = async () => {
@@ -387,7 +387,7 @@ export default function EconomicIntelligence() {
       </div>
       <button
         onClick={() => setShowUpgradeModal(true)}
-        style={{ background: '#10b981', color: '#fff', border: 'none', borderRadius: 10, padding: '13px 32px', fontSize: 14, fontWeight: 700, cursor: 'pointer', boxShadow: '0 4px 16px rgba(16,185,129,0.4)' }}
+        style={{ background: '#3b82f6', color: '#fff', border: 'none', borderRadius: 10, padding: '13px 32px', fontSize: 14, fontWeight: 700, cursor: 'pointer', boxShadow: '0 4px 16px rgba(59,130,246,0.4)' }}
       >
         Upgrade to Pro
       </button>

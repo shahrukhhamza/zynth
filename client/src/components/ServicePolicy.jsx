@@ -29,13 +29,13 @@ export default function ServicePolicy({ onBack }) {
       }}>
         <div style={{ maxWidth: 860, margin: '0 auto', padding: '12px 24px', display: 'flex', alignItems: 'center', gap: 12 }}>
           <button onClick={handleBack} style={{ display: 'flex', alignItems: 'center', gap: 6, color: '#6b7280', fontSize: 13, cursor: 'pointer', background: 'none', border: 'none', padding: '4px 8px', borderRadius: 6 }}
-            onMouseEnter={e => (e.currentTarget.style.color = '#10b981')}
+            onMouseEnter={e => (e.currentTarget.style.color = '#3b82f6')}
             onMouseLeave={e => (e.currentTarget.style.color = '#6b7280')}>
             <ArrowLeft size={15} /> Back
           </button>
           <div style={{ width: 1, height: 18, backgroundColor: 'rgba(107,114,128,0.4)' }} />
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <Zap size={16} style={{ color: '#10b981' }} />
+            <Zap size={16} style={{ color: '#3b82f6' }} />
             <span style={{ fontSize: 14, fontWeight: 600, color: '#e2e8f0' }}>Service &amp; Delivery Policy</span>
           </div>
           <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 6 }}>
@@ -55,8 +55,8 @@ export default function ServicePolicy({ onBack }) {
         {/* Key stat boxes */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 14, marginBottom: 36 }}>
           <div style={{ padding: '16px 18px', borderRadius: 10, backgroundColor: 'rgba(16,185,129,0.07)', border: '1px solid rgba(16,185,129,0.2)' }}>
-            <Zap size={18} style={{ color: '#10b981', marginBottom: 8 }} />
-            <p style={{ fontSize: 13, fontWeight: 700, color: '#10b981', marginBottom: 4 }}>Instant Access</p>
+            <Zap size={18} style={{ color: '#3b82f6', marginBottom: 8 }} />
+            <p style={{ fontSize: 13, fontWeight: 700, color: '#3b82f6', marginBottom: 4 }}>Instant Access</p>
             <p style={{ fontSize: 12, color: '#6b7280', lineHeight: 1.6 }}>Service access is granted immediately upon successful payment — no waiting period.</p>
           </div>
           <div style={{ padding: '16px 18px', borderRadius: 10, backgroundColor: 'rgba(14,165,233,0.07)', border: '1px solid rgba(14,165,233,0.2)' }}>
@@ -75,7 +75,7 @@ export default function ServicePolicy({ onBack }) {
 
           <Section id="service-description" title="1. Service Description">
             <p>
-              Zynth is a <strong style={{ color: '#e2e8f0' }}>web-based trading intelligence platform</strong> delivered as a Software-as-a-Service (SaaS). All services are provided exclusively through the Zynth web application accessible at <a href="https://app.zynth.io" style={{ color: '#10b981', textDecoration: 'none' }}>app.zynth.io</a>.
+              Zynth is a <strong style={{ color: '#e2e8f0' }}>web-based trading intelligence platform</strong> delivered as a Software-as-a-Service (SaaS). All services are provided exclusively through the Zynth web application accessible at <a href="https://app.zynth.io" style={{ color: '#3b82f6', textDecoration: 'none' }}>app.zynth.io</a>.
             </p>
             <p>The platform includes the following services depending on your subscription plan:</p>
             <ul style={{ paddingLeft: 20, display: 'flex', flexDirection: 'column', gap: 6 }}>
@@ -114,7 +114,7 @@ export default function ServicePolicy({ onBack }) {
               <li>AI analysis quotas (e.g. 50/month for Pro) reset on the 1st of each calendar month</li>
               <li>Unused quota does not roll over to the next month</li>
             </ul>
-            <p>AI-generated content is produced using Google Gemini and may occasionally produce inaccurate or incomplete results. See our <a href="/terms" style={{ color: '#10b981', textDecoration: 'none' }}>Terms of Service</a> AI disclaimer for full details.</p>
+            <p>AI-generated content is produced using Google Gemini and may occasionally produce inaccurate or incomplete results. See our <a href="/terms" style={{ color: '#3b82f6', textDecoration: 'none' }}>Terms of Service</a> AI disclaimer for full details.</p>
           </Section>
 
           <Section id="data-services" title="5. Economic and Market Data Services">
@@ -151,10 +151,10 @@ export default function ServicePolicy({ onBack }) {
           <Section id="contact-service" title="8. Contact">
             <p>For service-related enquiries or technical support:</p>
             <div style={{ backgroundColor: 'rgba(16,185,129,0.06)', border: '1px solid rgba(16,185,129,0.15)', borderRadius: 8, padding: '16px 20px', marginTop: 6, display: 'flex', flexDirection: 'column', gap: 6 }}>
-              <p style={{ fontSize: 14, color: '#10b981', fontWeight: 700 }}>Zynth Support</p>
-              <p style={{ fontSize: 13, color: '#9ca3af' }}>Email: <a href="mailto:getzynth@gmail.com" style={{ color: '#10b981', textDecoration: 'none' }}>getzynth@gmail.com</a></p>
+              <p style={{ fontSize: 14, color: '#3b82f6', fontWeight: 700 }}>Zynth Support</p>
+              <p style={{ fontSize: 13, color: '#9ca3af' }}>Email: <a href="mailto:getzynth@gmail.com" style={{ color: '#3b82f6', textDecoration: 'none' }}>getzynth@gmail.com</a></p>
               <p style={{ fontSize: 13, color: '#9ca3af' }}>Address: Zynth, Azeem Town, Sihala Street 2, Islamabad, Pakistan</p>
-              <p style={{ fontSize: 13, color: '#9ca3af' }}>Phone: <a href="tel:+923175516692" style={{ color: '#10b981', textDecoration: 'none' }}>+92 317 5516692</a></p>
+              <p style={{ fontSize: 13, color: '#9ca3af' }}>Phone: <a href="tel:+923175516692" style={{ color: '#3b82f6', textDecoration: 'none' }}>+92 317 5516692</a></p>
             </div>
           </Section>
 
@@ -164,12 +164,14 @@ export default function ServicePolicy({ onBack }) {
         <div style={{ marginTop: 48, borderTop: '1px solid rgba(16,185,129,0.1)', paddingTop: 24, display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
           <p style={{ fontSize: 12, color: '#4b5563' }}>© 2026 Zynth. All rights reserved.</p>
           <div style={{ display: 'flex', gap: 16 }}>
-            <a href="/terms" style={{ fontSize: 12, color: '#6b7280', textDecoration: 'none' }} onMouseEnter={e => (e.currentTarget.style.color = '#10b981')} onMouseLeave={e => (e.currentTarget.style.color = '#6b7280')}>Terms of Service</a>
-            <a href="/privacy" style={{ fontSize: 12, color: '#6b7280', textDecoration: 'none' }} onMouseEnter={e => (e.currentTarget.style.color = '#10b981')} onMouseLeave={e => (e.currentTarget.style.color = '#6b7280')}>Privacy Policy</a>
-            <a href="/refund-policy" style={{ fontSize: 12, color: '#6b7280', textDecoration: 'none' }} onMouseEnter={e => (e.currentTarget.style.color = '#10b981')} onMouseLeave={e => (e.currentTarget.style.color = '#6b7280')}>Refund Policy</a>
+            <a href="/terms" style={{ fontSize: 12, color: '#6b7280', textDecoration: 'none' }} onMouseEnter={e => (e.currentTarget.style.color = '#3b82f6')} onMouseLeave={e => (e.currentTarget.style.color = '#6b7280')}>Terms of Service</a>
+            <a href="/privacy" style={{ fontSize: 12, color: '#6b7280', textDecoration: 'none' }} onMouseEnter={e => (e.currentTarget.style.color = '#3b82f6')} onMouseLeave={e => (e.currentTarget.style.color = '#6b7280')}>Privacy Policy</a>
+            <a href="/refund-policy" style={{ fontSize: 12, color: '#6b7280', textDecoration: 'none' }} onMouseEnter={e => (e.currentTarget.style.color = '#3b82f6')} onMouseLeave={e => (e.currentTarget.style.color = '#6b7280')}>Refund Policy</a>
           </div>
         </div>
       </div>
     </div>
   );
 }
+
+

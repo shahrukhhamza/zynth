@@ -42,28 +42,28 @@ export const ThemeProvider = ({ children }) => {
   const theme = {
     isDark,
     toggleTheme,
-    // ── Layered Dark palette (Zinc) ──────────────────────────────────
-    // bg         → deepest layer  (#09090B  Zinc-950)
-    // surface    → card / panel   (#18181B  Zinc-900)
-    // surface2   → hover / inset  (#1C1C1F  between 900-950)
-    // border     → subtle 1-px    (#27272A  Zinc-800)
-    // text       → primary text   (#FAFAFA  Zinc-50)
-    // muted      → secondary text (#A1A1AA  Zinc-400)
+    // ── Dark palette: true black backgrounds + blue accents (matches landing page) ───
+    // bg         → deepest layer  (#09090b  near-black)
+    // surface    → card / panel   (#111118  dark panel)
+    // surface2   → hover / inset  (#0c0c12  inner cells)
+    // border     → subtle 1-px    rgba(255,255,255,0.07)
+    // text       → primary text   (#f0f4f8)
+    // muted      → secondary text (#8892a4  blue-tinted gray)
     // ────────────────────────────────────────────────────────────────
-    bg:       isDark ? '#000000' : '#f4f6f9',
-    surface:  isDark ? '#0d0d0d' : '#ffffff',
-    surface2: isDark ? '#111111' : '#f0f3f7',
-    border:   isDark ? '#1e1e1e' : '#dde2ea',
+    bg:       isDark ? '#09090b' : '#f4f6f9',
+    surface:  isDark ? '#111118' : '#ffffff',
+    surface2: isDark ? '#0c0c12' : '#f0f3f7',
+    border:   isDark ? 'rgba(255,255,255,0.07)' : '#dde2ea',
 
     // Text colors
-    text:      isDark ? '#f0f0f0' : '#0a0e1a',
-    muted:     isDark ? '#666666' : '#6b7a8d',
-    textMuted: isDark ? '#666666' : '#6b7a8d',
+    text:      isDark ? '#f0f4f8' : '#0a0e1a',
+    muted:     isDark ? '#8892a4' : '#6b7a8d',
+    textMuted: isDark ? '#8892a4' : '#6b7a8d',
 
-    // Accent colors (emerald — used sparingly)
-    accent:      '#10b981',
-    accentHover: isDark ? '#0ea571' : '#059669',
-    accentGlow:  isDark ? 'rgba(16,185,129,0.12)' : 'rgba(16,185,129,0.08)',
+    // Accent colors (blue — matches landing page CTA/interactive style)
+    accent:      '#3b82f6',
+    accentHover: isDark ? '#2563eb' : '#1d4ed8',
+    accentGlow:  isDark ? 'rgba(59,130,246,0.12)' : 'rgba(59,130,246,0.08)',
     success: '#10b981',
     warning: isDark ? '#f59e0b' : '#d97706',
     gold:    isDark ? '#f59e0b' : '#b45309',
@@ -73,7 +73,7 @@ export const ThemeProvider = ({ children }) => {
     neutral: isDark ? '#64748b' : '#4b5563',
 
     // Chart colors
-    chartGrid: isDark ? '#1F242B' : '#d1d5db',
+    chartGrid: isDark ? 'rgba(255,255,255,0.06)' : '#d1d5db',
     chartAxis: isDark ? '#5C6370' : '#4b5563',
   };
 

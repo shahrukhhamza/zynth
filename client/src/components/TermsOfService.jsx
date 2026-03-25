@@ -1,4 +1,4 @@
-ï»¿import { ArrowLeft, Shield, AlertTriangle, FileText } from 'lucide-react';
+import { ArrowLeft, Shield, AlertTriangle, FileText } from 'lucide-react';
 
 export default function TermsOfService({ onBack }) {
   const handleBack = () => {
@@ -39,7 +39,7 @@ export default function TermsOfService({ onBack }) {
               borderRadius: 6,
               transition: 'color 0.15s',
             }}
-            onMouseEnter={e => (e.currentTarget.style.color = '#10b981')}
+            onMouseEnter={e => (e.currentTarget.style.color = '#3b82f6')}
             onMouseLeave={e => (e.currentTarget.style.color = '#6b7280')}
           >
             <ArrowLeft size={15} />
@@ -47,7 +47,7 @@ export default function TermsOfService({ onBack }) {
           </button>
           <div style={{ width: 1, height: 18, backgroundColor: 'rgba(107,114,128,0.4)' }} />
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <FileText size={16} style={{ color: '#10b981' }} />
+            <FileText size={16} style={{ color: '#3b82f6' }} />
             <span style={{ fontSize: 14, fontWeight: 600, color: '#e2e8f0' }}>Terms of Service</span>
           </div>
           <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 6 }}>
@@ -98,7 +98,7 @@ export default function TermsOfService({ onBack }) {
               <p style={{ fontSize: 12, color: '#d1d5db', lineHeight: 1.7 }}>
                 Trading foreign exchange, commodities (including gold), and other financial instruments involves substantial risk of loss and is not suitable for all investors.
                 Past performance is not indicative of future results. You may lose all or more than your initial investment.
-                Zynth provides information tools only â€” nothing on this platform constitutes financial advice, investment recommendations, or solicitation to trade.
+                Zynth provides information tools only — nothing on this platform constitutes financial advice, investment recommendations, or solicitation to trade.
               </p>
             </div>
           </div>
@@ -114,7 +114,7 @@ export default function TermsOfService({ onBack }) {
 
           {/* Section 2 */}
           <Section id="service" title="2. Nature of Service">
-            <p>Zynth is a <strong style={{ color: '#10b981' }}>software information platform</strong> that aggregates and displays:</p>
+            <p>Zynth is a <strong style={{ color: '#3b82f6' }}>software information platform</strong> that aggregates and displays:</p>
             <ul>
               <li>Macroeconomic data from public and licensed sources (e.g. FRED, BLS, BEA)</li>
               <li>Market data feeds and price information</li>
@@ -125,7 +125,7 @@ export default function TermsOfService({ onBack }) {
             <p>Zynth is <strong style={{ color: '#f87171' }}>not a brokerage, investment advisor, financial planner, or trading system</strong>. No content on this platform should be construed as a recommendation to buy, sell, or hold any financial instrument.</p>
           </Section>
 
-          {/* Section 3 â€” AI disclaimer */}
+          {/* Section 3 — AI disclaimer */}
           <Section id="ai" title="3. AI Analysis Disclaimer">
             <div
               style={{
@@ -163,7 +163,7 @@ export default function TermsOfService({ onBack }) {
             <p>Zynth is not liable for any trading losses resulting from reliance on data displayed on this platform.</p>
           </Section>
 
-          {/* Section 5 â€” Risk warning */}
+          {/* Section 5 — Risk warning */}
           <Section id="risk" title="5. Risk Warning for Trading">
             <div
               style={{
@@ -204,7 +204,7 @@ export default function TermsOfService({ onBack }) {
           {/* Section 7 */}
           <Section id="advisory" title="7. No Advisory Relationship">
             <p>Use of Zynth does not create any advisory, fiduciary, or professional relationship between you and Zynth or its operators. Zynth is not a Registered Investment Advisor (RIA), broker-dealer, or financial institution in any jurisdiction.</p>
-            <p>Nothing communicated through this platform â€” including AI summaries, economic reports, chatbot responses, or any other content â€” constitutes professional financial, legal, or tax advice.</p>
+            <p>Nothing communicated through this platform — including AI summaries, economic reports, chatbot responses, or any other content — constitutes professional financial, legal, or tax advice.</p>
           </Section>
 
           {/* Section 8 */}
@@ -237,13 +237,13 @@ export default function TermsOfService({ onBack }) {
             <p>Economic data, news, and market data may be subject to third-party licenses and terms of their respective providers.</p>
           </Section>
 
-          {/* Section 11 â€” Privacy */}
+          {/* Section 11 — Privacy */}
           <Section id="privacy" title="11. Privacy and Data">
             <p>Zynth collects the following data to operate the service:</p>
             <ul>
               <li><strong style={{ color: '#e2e8f0' }}>Account data:</strong> name, email address, hashed password</li>
               <li><strong style={{ color: '#e2e8f0' }}>Usage data:</strong> feature usage counts for quota management (AI analysis requests, screenshot uploads)</li>
-              <li><strong style={{ color: '#e2e8f0' }}>Journal data:</strong> trade records you manually enter or upload â€” stored locally on our server</li>
+              <li><strong style={{ color: '#e2e8f0' }}>Journal data:</strong> trade records you manually enter or upload — stored locally on our server</li>
               <li><strong style={{ color: '#e2e8f0' }}>Consent records:</strong> timestamp of when you accepted these terms</li>
             </ul>
             <p>We do not sell, rent, or share your personal data with third parties for marketing purposes.</p>
@@ -272,12 +272,12 @@ export default function TermsOfService({ onBack }) {
                 gap: 6,
               }}
             >
-              <p style={{ fontSize: 14, color: '#10b981', fontWeight: 700 }}>Zynth</p>
+              <p style={{ fontSize: 14, color: '#3b82f6', fontWeight: 700 }}>Zynth</p>
               <p style={{ fontSize: 13, color: '#9ca3af' }}>
                 Email:{' '}
                 <a
                   href="mailto:getzynth@gmail.com"
-                  style={{ color: '#10b981', textDecoration: 'none' }}
+                  style={{ color: '#3b82f6', textDecoration: 'none' }}
                   onMouseEnter={e => (e.currentTarget.style.textDecoration = 'underline')}
                   onMouseLeave={e => (e.currentTarget.style.textDecoration = 'none')}
                 >
@@ -287,7 +287,7 @@ export default function TermsOfService({ onBack }) {
               <p style={{ fontSize: 13, color: '#9ca3af' }}>Address: Zynth, Azeem Town, Sihala Street 2, Islamabad, Pakistan</p>
               <p style={{ fontSize: 13, color: '#9ca3af' }}>
                 Phone:{' '}
-                <a href="tel:+923175516692" style={{ color: '#10b981', textDecoration: 'none' }}
+                <a href="tel:+923175516692" style={{ color: '#3b82f6', textDecoration: 'none' }}
                   onMouseEnter={e => (e.currentTarget.style.textDecoration = 'underline')}
                   onMouseLeave={e => (e.currentTarget.style.textDecoration = 'none')}
                 >+92 317 5516692</a>
@@ -309,7 +309,7 @@ export default function TermsOfService({ onBack }) {
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <Shield size={14} style={{ color: '#10b981' }} />
+            <Shield size={14} style={{ color: '#3b82f6' }} />
             <span style={{ fontSize: 11, color: '#4b5563' }}>Zynth Trading Intelligence Platform</span>
           </div>
           <span style={{ fontSize: 11, color: '#4b5563' }}>&copy; {new Date().getFullYear()} Zynth. All rights reserved.</span>
@@ -355,3 +355,5 @@ function Section({ id, title, children }) {
     </section>
   );
 }
+
+

@@ -6,6 +6,7 @@ import { useState, useRef, useEffect } from 'react';
 import ProfileModal from './ProfileModal';
 import SettingsModal from './SettingsModal';
 import PlanBadge from './PlanBadge';
+import { BrandMark } from './BrandLogo';
 import { resolveMediaUrl } from '../utils/mediaUrl';
 
 const AVATAR_COLOR_MAP = {
@@ -22,6 +23,7 @@ const VIEW_LABELS = {
   calendar:     'Economic Calendar',
   news:         'Market News',
   screenshot:   'Screenshot Analysis',
+  help:         'Help & Support',
   backtest:     'Backtesting',
   lounge:       'Traders Lounge',
   tools:        'Tools',
@@ -36,6 +38,7 @@ const VIEW_SUBTITLES = {
   calendar:     'Economic events & surprises',
   news:         'Real-time financial news',
   screenshot:   'AI-powered trade analysis',
+  help:         'Guides, support, and product help',
   admin:        'Platform administration',
 };
 
@@ -70,10 +73,10 @@ function Header({
   const currentTz = getTimezoneInfo();
 
   // Header always dark — premium feel
-  const H_BG     = theme.isDark ? '#0d0d0d' : theme.surface;
-  const H_BORDER = theme.isDark ? '#1e1e1e' : theme.border;
-  const H_TEXT   = theme.isDark ? '#d8d8d8' : theme.text;
-  const H_MUTED  = theme.isDark ? '#4a4a4a' : theme.textMuted;
+  const H_BG     = theme.isDark ? theme.bg : theme.surface;
+  const H_BORDER = theme.border;
+  const H_TEXT   = theme.text;
+  const H_MUTED  = theme.muted;
 
   const sidebarW = isMobile ? 0 : (sidebarCollapsed ? 60 : 236);
 
@@ -118,13 +121,7 @@ function Header({
                   ? <X style={{ width: 16, height: 16 }} />
                   : <Menu style={{ width: 16, height: 16 }} />}
               </button>
-              <svg width="26" height="26" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M8 9 L32 9 L32 13 L8 13 Z" fill="#10b981"/>
-                <path d="M8 27 L32 27 L32 31 L8 31 Z" fill="#10b981"/>
-                <path d="M32 13 L8 27 L8 31 L10 31 L34 15 L34 13 Z" fill="#0d7a5a"/>
-                <polyline points="10,28 16,22 20,25 26,16 30,12" stroke="#f59e0b" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
-                <path d="M28,10 L32,12 L29,15" stroke="#f59e0b" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
-              </svg>
+              <BrandMark size={26} />
               <span style={{ fontSize: 16, fontWeight: 700, color: H_TEXT, letterSpacing: '-0.02em' }}>
                 Zynth
               </span>
@@ -144,7 +141,7 @@ function Header({
                     cursor: 'pointer', color: H_MUTED,
                     transition: 'all 0.15s ease',
                   }}
-                  onMouseEnter={e => { e.currentTarget.style.color = '#10b981'; e.currentTarget.style.borderColor = '#10b98140'; }}
+                  onMouseEnter={e => { e.currentTarget.style.color = '#3b82f6'; e.currentTarget.style.borderColor = '#3b82f640'; }}
                   onMouseLeave={e => { e.currentTarget.style.color = H_MUTED; e.currentTarget.style.borderColor = H_BORDER; }}
                 >
                   <ChevronRight style={{ width: 14, height: 14 }} />
@@ -160,7 +157,7 @@ function Header({
                   {VIEW_LABELS[currentView] ?? 'Dashboard'}
                 </h1>
                 {VIEW_SUBTITLES[currentView] && (
-                  <p style={{ fontSize: 11, color: '#666666', margin: 0, lineHeight: 1 }}>
+                  <p style={{ fontSize: 11, color: H_MUTED, margin: 0, lineHeight: 1 }}>
                     {VIEW_SUBTITLES[currentView]}
                   </p>
                 )}
@@ -210,7 +207,7 @@ function Header({
               onMouseEnter={e => { if (!showTimezoneDropdown) e.currentTarget.style.background = theme.isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.06)'; }}
               onMouseLeave={e => { if (!showTimezoneDropdown) e.currentTarget.style.background = theme.isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)'; }}
             >
-              <Globe style={{ width: 13, height: 13, color: '#10b981' }} />
+              <Globe style={{ width: 13, height: 13, color: '#3b82f6' }} />
               {!isMobile && (
                 <span style={{ fontSize: 12, fontWeight: 500, color: H_TEXT }}>
                   {currentTz?.id?.toUpperCase() ?? 'UTC'}
@@ -255,11 +252,11 @@ function Header({
                       onMouseEnter={e => { if (selectedTimezone !== tz.id) e.currentTarget.style.background = theme.isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)'; }}
                       onMouseLeave={e => { if (selectedTimezone !== tz.id) e.currentTarget.style.background = 'transparent'; }}
                     >
-                      <span style={{ fontSize: 12, color: selectedTimezone === tz.id ? '#10b981' : H_MUTED }}>
+                      <span style={{ fontSize: 12, color: selectedTimezone === tz.id ? '#3b82f6' : H_MUTED }}>
                         {tz.label}
                       </span>
                       {selectedTimezone === tz.id && (
-                        <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#10b981', display: 'block' }} />
+                        <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#3b82f6', display: 'block' }} />
                       )}
                     </button>
                   ))}

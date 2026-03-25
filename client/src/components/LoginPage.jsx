@@ -3,6 +3,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { API_URL } from '../config/api';
 import { getPublicStats } from '../utils/publicStats';
 import { Eye, EyeOff, TrendingUp, TrendingDown, AlertCircle, Loader2, Mail, Lock, ArrowRight, ArrowLeft, ChevronLeft, Shield, Zap, BarChart2, Activity, BookOpen, Brain, Bot, Flame } from 'lucide-react';
+import { BrandMark } from './BrandLogo';
 
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || '';
 
@@ -228,7 +229,7 @@ export default function LoginPage({ onSwitchToSignup, onBack, onForgotPassword }
             </button>
           )}
           <div style={{display:'flex', alignItems:'center', gap:'10px'}}>
-            <img src="/logo.png" alt="Zynth" style={{height:'30px',width:'auto',objectFit:'contain'}} />
+            <BrandMark size={30} />
             <div>
               <p style={{color:'#fff',fontSize:'18px',fontWeight:700,lineHeight:1}}>Zynth</p>
               <p style={{color:'rgba(255,255,255,0.4)',fontSize:'12px',letterSpacing:'0.05em',marginTop:'3px'}}>

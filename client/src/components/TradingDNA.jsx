@@ -114,7 +114,7 @@ function downloadDnaCard(archetype, traits, stats) {
 
   // Top accent line
   const accent = ctx.createLinearGradient(0, 0, W, 0);
-  accent.addColorStop(0, '#10b981');
+  accent.addColorStop(0, '#3b82f6');
   accent.addColorStop(1, '#6366f1');
   ctx.fillStyle = accent;
   ctx.fillRect(0, 0, W, 4);
@@ -135,7 +135,7 @@ function downloadDnaCard(archetype, traits, stats) {
     ctx.fillStyle = '#6b7280';
     ctx.font = '11px system-ui, sans-serif';
     ctx.fillText(label, x, y);
-    ctx.fillStyle = '#10b981';
+    ctx.fillStyle = '#3b82f6';
     ctx.font = 'bold 22px system-ui, sans-serif';
     ctx.fillText(String(value), x, y + 26);
   };
@@ -379,11 +379,11 @@ function RadarFingerprint({ radarData = [] }) {
             <Radar
               name="Score"
               dataKey="value"
-              stroke="#10b981"
-              fill="#10b981"
+              stroke="#3b82f6"
+              fill="#3b82f6"
               fillOpacity={0.15}
               strokeWidth={2}
-              dot={{ fill: '#10b981', strokeWidth: 0, r: 4 }}
+              dot={{ fill: '#3b82f6', strokeWidth: 0, r: 4 }}
             />
           </RadarChart>
         </ResponsiveContainer>
@@ -682,3 +682,5 @@ export default function TradingDNA() {
     </div>
   );
 }
+
+

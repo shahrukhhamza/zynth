@@ -10,6 +10,7 @@ import {
 import { API_URL } from '../config/api';
 import { getPublicStats } from '../utils/publicStats';
 import Hero from './Hero';
+import { BrandMark } from './BrandLogo';
 import { useTheme } from '../contexts/ThemeContext';
 
 // Scroll-reveal wrapper — fades + slides up when entering viewport
@@ -445,10 +446,8 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
         <div
           className="relative flex items-center justify-center text-center px-12 py-3 text-[13px] font-semibold"
           style={{
-            background: isDark
-              ? 'linear-gradient(90deg, #065f46 0%, #064e3b 40%, #0f766e 80%, #065f46 100%)'
-              : 'linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 60%, #0284c7 100%)',
-            borderBottom: isDark ? '1px solid rgba(52,211,153,0.2)' : '1px solid rgba(29,78,216,0.4)',
+            background: 'linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 60%, #0284c7 100%)',
+            borderBottom: '1px solid rgba(59,130,246,0.25)',
           }}
         >
           <span>
@@ -496,7 +495,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
                     style={{animation:'liveDot 2s ease-in-out infinite', boxShadow:'0 0 6px rgba(59,130,246,0.7)'}} />
               <span className="text-[10px] font-medium text-blue-500/70 hidden sm:block">Live</span>
             </div>
-            <img src="/logo.png" alt="Zynth" className="w-9 h-9 object-contain" />
+            <BrandMark size={36} />
             <span className="text-[20px] font-bold tracking-tight">Zynth</span>
           </div>
 
@@ -1359,7 +1358,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
           {/* Brand column */}
           <div className="col-span-2 md:col-span-1">
             <div className="flex items-center gap-2.5 mb-3">
-              <img src="/logo.png" alt="Zynth" className="w-9 h-9 object-contain" />
+              <BrandMark size={36} />
               <span className={`text-[16px] font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>Zynth</span>
             </div>
             <p className="text-[12px] leading-relaxed mb-4" style={{color: isDark ? 'rgba(52,211,153,0.5)' : '#6b7280'}}>Intelligence Behind Every Trade</p>

@@ -23,7 +23,7 @@ function NewsCard({ article }) {
   const getSentimentStyle = () => {
     switch (article.sentiment) {
       case 'Bullish':
-        return { color: '#10b981', backgroundColor: 'rgba(16,185,129,0.10)', borderColor: 'rgba(16,185,129,0.25)' };
+        return { color: '#3b82f6', backgroundColor: 'rgba(59,130,246,0.10)', borderColor: 'rgba(59,130,246,0.25)' };
       case 'Bearish':
         return { color: '#ef4444', backgroundColor: 'rgba(239,68,68,0.10)', borderColor: 'rgba(239,68,68,0.25)' };
       default:
@@ -164,3 +164,4 @@ function NewsCard({ article }) {
 }
 
 export default NewsCard;
+

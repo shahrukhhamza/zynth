@@ -66,7 +66,7 @@ function loadTvScript(cb) {
 /* ── TradingView chart widget ────────────────────────────────────────────── */
 function TvChart({ symbol, interval, containerId, height = 580 }) {
   const theme  = useTheme();
-  const isDark = theme.mode === 'dark' || theme.bg === '#0a0a0a' || theme.bg?.startsWith('#0') || theme.bg?.startsWith('#1');
+  const isDark = theme.isDark;
   const widgetRef = useRef(null);
 
   const init = useCallback(() => {
@@ -88,7 +88,7 @@ function TvChart({ symbol, interval, containerId, height = 580 }) {
       theme:           isDark ? 'dark' : 'light',
       style:           '1',
       locale:          'en',
-      toolbar_bg:      isDark ? '#161616' : '#ffffff',
+      toolbar_bg:      isDark ? theme.bg : '#ffffff',
       enable_publishing: false,
       hide_top_toolbar:  false,
       hide_legend:       false,
@@ -172,7 +172,7 @@ function SymbolDropdown({ symbol, onSelect, theme }) {
                     color: s.tv === symbol ? theme.accent : theme.text,
                     fontWeight: s.tv === symbol ? 700 : 400,
                   }}
-                  onMouseEnter={e => e.currentTarget.style.background = theme.accentGlow ?? 'rgba(16,185,129,0.08)'}
+                  onMouseEnter={e => e.currentTarget.style.background = theme.accentGlow ?? 'rgba(59,130,246,0.08)'}
                   onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
                 >
                   {s.label}
@@ -232,7 +232,7 @@ export default function ChartsPage({ onNavigate, initialTab }) {
       <div className="flex items-center gap-3 mb-6">
         <div
           className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
-          style={{ background: 'rgba(16,185,129,0.15)' }}
+          style={{ background: 'rgba(59,130,246,0.15)' }}
         >
           <LineChart className="w-5 h-5" style={{ color: theme.accent }} />
         </div>
@@ -259,8 +259,8 @@ export default function ChartsPage({ onNavigate, initialTab }) {
                 padding: '10px 20px',
                 fontSize: 14, fontWeight: active ? 700 : 500,
                 border: 'none', background: 'transparent', cursor: 'pointer',
-                color: active ? '#10b981' : theme.textMuted,
-                borderBottom: active ? '2px solid #10b981' : '2px solid transparent',
+                color: active ? '#3b82f6' : theme.textMuted,
+                borderBottom: active ? '2px solid #3b82f6' : '2px solid transparent',
                 marginBottom: -2,
                 transition: 'color 0.15s, border-color 0.15s',
               }}
@@ -327,7 +327,7 @@ export default function ChartsPage({ onNavigate, initialTab }) {
             >
               <div
                 className="w-16 h-16 rounded-full flex items-center justify-center"
-                style={{ background: 'rgba(16,185,129,0.15)' }}
+                style={{ background: 'rgba(59,130,246,0.15)' }}
               >
                 <Lock size={28} style={{ color: 'rgba(255,255,255,0.6)' }} />
               </div>
@@ -335,7 +335,7 @@ export default function ChartsPage({ onNavigate, initialTab }) {
                 <h3 className="text-xl font-bold mb-1" style={{ color: '#fff' }}>Coming Soon</h3>
                 <p className="text-sm leading-relaxed" style={{ color: 'rgba(255,255,255,0.55)' }}>
                   Automated backtesting is under development.<br />
-                  In the meantime, use <strong style={{ color: '#10b981' }}>TradingView Bar Replay</strong> on
+                  In the meantime, use <strong style={{ color: '#3b82f6' }}>TradingView Bar Replay</strong> on
                   the Live Chart to backtest manually.
                 </p>
               </div>
@@ -343,7 +343,7 @@ export default function ChartsPage({ onNavigate, initialTab }) {
                 onClick={() => setActiveTab('live')}
                 style={{
                   padding: '10px 24px', borderRadius: 10, border: 'none', cursor: 'pointer',
-                  background: '#10b981', color: '#fff', fontWeight: 700, fontSize: 14,
+                  background: '#3b82f6', color: '#fff', fontWeight: 700, fontSize: 14,
                 }}
               >
                 Go to Live Chart →
@@ -355,3 +355,4 @@ export default function ChartsPage({ onNavigate, initialTab }) {
     </div>
   );
 }
+

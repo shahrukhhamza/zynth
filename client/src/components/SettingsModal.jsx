@@ -17,8 +17,8 @@ export default function SettingsModal({ onClose, autoRefresh, onToggleAutoRefres
     return () => mq.removeEventListener('change', handler);
   }, []);
 
-  const emerald = '#10b981';
-  const sheetBg = theme.isDark ? '#111111' : theme.surface;
+  const emerald = '#3b82f6';
+  const sheetBg = theme.surface;
 
   // ── Shared sub-components ────────────────────────────────────────────────
 
@@ -260,7 +260,7 @@ export default function SettingsModal({ onClose, autoRefresh, onToggleAutoRefres
             />
 
             <SectionLabel title="Timezone" />
-            <TimezoneBlock bg={theme.isDark ? '#1a1a1a' : theme.surface} />
+            <TimezoneBlock bg={theme.surface2} />
 
             <p style={{ textAlign: 'center', fontSize: 12, color: theme.muted, paddingTop: 8, paddingBottom: 8 }}>
               More settings coming in future updates.

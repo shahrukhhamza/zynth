@@ -114,10 +114,10 @@ export const REAL_ECONOMIC_DATA = {
       name: 'GDP q/q',
       currency: 'USD',
       impact: 'high',
-      current: 1.2,
-      forecast: 1.8,
-      previous: 2.3,
-      date: '2026-01-29',
+      current: 0.7,
+      forecast: null,
+      previous: null,
+      date: '2025-10-01',
       time: '08:30',
       source: 'Bureau of Economic Analysis',
       description: 'Annualized rate of change in the inflation-adjusted value of all goods and services produced by the economy. Advance estimate — first reading of the quarter.',
@@ -125,6 +125,7 @@ export const REAL_ECONOMIC_DATA = {
       frequency: 'Quarterly (Advance, Preliminary, Final)',
       unit: '%',
       historicalData: [
+        { date: '2025-10-01', actual: 0.7, forecast: null, previous: null },
         { date: '2026-01-29', actual: 1.2, forecast: 1.8, previous: 2.3 },   // Q4 2025 advance
         { date: '2025-10-30', actual: 2.3, forecast: 2.5, previous: 2.8 },   // Q3 2025 advance
         { date: '2025-07-30', actual: 2.8, forecast: 2.4, previous: 1.4 },   // Q2 2025 advance

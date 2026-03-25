@@ -325,14 +325,14 @@ export default function EconomicDashboard({ onViewChange }) {
 
   // ── Design tokens ────────────────────────────────────────────────────────
   const D = theme.isDark ? {
-    pageBg:   '#000000',
-    cardBg:   '#0d0d0d',
-    cardBg2:  '#111111',
-    border:   '#1e1e1e',
-    border2:  '#2a2a2a',
-    text:     '#f0f0f0',
-    textSub:  '#5a6472',
-    textMute: '#2a2a2a',
+    pageBg:   theme.bg,
+    cardBg:   theme.surface,
+    cardBg2:  theme.surface2,
+    border:   theme.border,
+    border2:  'rgba(255,255,255,0.10)',
+    text:     theme.text,
+    textSub:  '#8892a4',
+    textMute: 'rgba(255,255,255,0.08)',
     accent:   '#10b981',
     gold:     '#f59e0b',
     red:      '#ef4444',
@@ -355,7 +355,7 @@ export default function EconomicDashboard({ onViewChange }) {
   if (loading) return (
     <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', background: D.pageBg, height: '100%' }}>
       <div style={{ textAlign: 'center' }}>
-        <div style={{ width: 28, height: 28, border: `2px solid ${D.accent}`, borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 0.8s linear infinite', margin: '0 auto 10px' }} />
+        <div style={{ width: 28, height: 28, border: `2px solid ${theme.accent}`, borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 0.8s linear infinite', margin: '0 auto 10px' }} />
         <p style={{ fontSize: 13, color: D.textSub, margin: 0 }}>Loading your dashboard…</p>
       </div>
       <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
@@ -383,7 +383,7 @@ export default function EconomicDashboard({ onViewChange }) {
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
           <div>
             <h1 style={{ fontSize: 22, fontWeight: 700, color: D.text, margin: 0, letterSpacing: '-0.02em' }}>
-              {greeting}, <span style={{ color: D.accent }}>{firstName}</span>
+              {greeting}, <span style={{ color: theme.accent }}>{firstName}</span>
             </h1>
             <p style={{ fontSize: 13, color: D.textSub, margin: '3px 0 0' }}>{todayStr}</p>
           </div>
@@ -406,10 +406,10 @@ export default function EconomicDashboard({ onViewChange }) {
               onClick={() => goTo('journal')}
               className="new-entry-btn"
               style={{
-                padding: '9px 18px', background: D.accent, color: '#fff',
+                padding: '9px 18px', background: theme.accent, color: '#fff',
                 border: 'none', borderRadius: 8, fontSize: 13, fontWeight: 700,
                 cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6,
-                boxShadow: `0 4px 14px ${D.accent}40`,
+                boxShadow: `0 4px 14px ${theme.accent}40`,
                 transition: 'opacity 0.15s, transform 0.15s',
               }}
             >
@@ -512,7 +512,7 @@ export default function EconomicDashboard({ onViewChange }) {
             {/* Quote card */}
             <div style={{
               ...CS({ padding: '18px 20px' }),
-              borderLeft: `3px solid ${D.accent}`,
+              borderLeft: `3px solid ${theme.accent}`,
             }}>
               <div style={{ fontSize: 9, fontWeight: 700, color: D.textSub, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 10 }}>
                 Today's Mindset
@@ -567,7 +567,7 @@ export default function EconomicDashboard({ onViewChange }) {
           <div className="dc" style={{ ...CS({ padding: '20px' }) }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
               <h2 style={{ fontSize: 11, fontWeight: 700, color: D.textSub, letterSpacing: '0.12em', textTransform: 'uppercase', margin: 0 }}>Your Edge</h2>
-              <button onClick={() => goTo('journal')} style={{ fontSize: 11, color: D.accent, background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 3, fontWeight: 600 }}>
+              <button onClick={() => goTo('journal')} style={{ fontSize: 11, color: theme.accent, background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 3, fontWeight: 600 }}>
                 View all <ChevronRight style={{ width: 11, height: 11 }} />
               </button>
             </div>
@@ -575,7 +575,7 @@ export default function EconomicDashboard({ onViewChange }) {
             {edgeData ? (
               <div>
                 {[
-                  { label: 'Best Session', value: edgeData.bestSession?.key, rate: edgeData.bestSession?.rate, icon: Clock,    color: D.accent },
+                  { label: 'Best Session', value: edgeData.bestSession?.key, rate: edgeData.bestSession?.rate, icon: Clock,    color: theme.accent },
                   { label: 'Best Pair',    value: edgeData.bestPair?.key,    rate: edgeData.bestPair?.rate,    icon: Activity, color: D.gold   },
                   { label: 'Top Mindset',  value: edgeData.topEmotion?.key,  rate: edgeData.topEmotion?.rate,  icon: Brain,    color: D.blue   },
                 ].map((row, i, arr) => (
@@ -597,19 +597,19 @@ export default function EconomicDashboard({ onViewChange }) {
               </div>
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12, padding: '16px 0', textAlign: 'center' }}>
-                <div style={{ width: 48, height: 48, borderRadius: 14, background: `${D.accent}10`, border: `1px solid ${D.accent}20`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <Award style={{ width: 22, height: 22, color: D.accent }} />
+                <div style={{ width: 48, height: 48, borderRadius: 14, background: `${theme.accent}10`, border: `1px solid ${theme.accent}20`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <Award style={{ width: 22, height: 22, color: theme.accent }} />
                 </div>
                 <div>
                   <div style={{ fontSize: 13, fontWeight: 700, color: D.text, marginBottom: 5 }}>Unlock Your Edge</div>
                   <div style={{ fontSize: 12, color: D.textSub, lineHeight: 1.7 }}>
-                    Log <span style={{ color: D.accent, fontWeight: 700 }}>{Math.max(0, 5 - (allTrades?.length ?? 0))} more trade{Math.max(0, 5 - (allTrades?.length ?? 0)) !== 1 ? 's' : ''}</span> to reveal patterns
+                    Log <span style={{ color: theme.accent, fontWeight: 700 }}>{Math.max(0, 5 - (allTrades?.length ?? 0))} more trade{Math.max(0, 5 - (allTrades?.length ?? 0)) !== 1 ? 's' : ''}</span> to reveal patterns
                   </div>
                 </div>
                 {allTrades?.length > 0 && (
                   <div style={{ display: 'flex', gap: 4 }}>
                     {[...Array(5)].map((_, i) => (
-                      <div key={i} style={{ width: 22, height: 4, borderRadius: 99, background: i < allTrades.length ? D.accent : D.border2 }} />
+                      <div key={i} style={{ width: 22, height: 4, borderRadius: 99, background: i < allTrades.length ? theme.accent : D.border2 }} />
                     ))}
                   </div>
                 )}
@@ -621,7 +621,7 @@ export default function EconomicDashboard({ onViewChange }) {
           <div className="dc" style={{ ...CS({ padding: '20px' }) }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
               <h2 style={{ fontSize: 11, fontWeight: 700, color: D.textSub, letterSpacing: '0.12em', textTransform: 'uppercase', margin: 0 }}>Recent Activity</h2>
-              <button onClick={() => goTo('journal')} style={{ fontSize: 11, color: D.accent, background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 3, fontWeight: 600 }}>
+              <button onClick={() => goTo('journal')} style={{ fontSize: 11, color: theme.accent, background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 3, fontWeight: 600 }}>
                 View all <ChevronRight style={{ width: 11, height: 11 }} />
               </button>
             </div>
@@ -669,13 +669,13 @@ export default function EconomicDashboard({ onViewChange }) {
               );
             }) : (
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12, padding: '28px 0', textAlign: 'center' }}>
-                <div style={{ width: 52, height: 52, borderRadius: 16, background: `${D.accent}10`, border: `1px solid ${D.accent}18`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <BookOpen style={{ width: 24, height: 24, color: D.accent }} />
+                <div style={{ width: 52, height: 52, borderRadius: 16, background: `${theme.accent}10`, border: `1px solid ${theme.accent}18`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <BookOpen style={{ width: 24, height: 24, color: theme.accent }} />
                 </div>
                 <div>
                   <div style={{ fontSize: 14, fontWeight: 700, color: D.text, marginBottom: 5 }}>No trades logged yet</div>
                   <div style={{ fontSize: 12, color: D.textSub, marginBottom: 16, lineHeight: 1.7 }}>Start journaling to track performance and unlock AI insights</div>
-                  <button onClick={() => goTo('journal')} style={{ padding: '10px 22px', background: D.accent, color: '#fff', border: 'none', borderRadius: 8, fontSize: 13, fontWeight: 700, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 6, boxShadow: `0 4px 14px ${D.accent}35` }}>
+                  <button onClick={() => goTo('journal')} style={{ padding: '10px 22px', background: theme.accent, color: '#fff', border: 'none', borderRadius: 8, fontSize: 13, fontWeight: 700, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 6, boxShadow: `0 4px 14px ${theme.accent}35` }}>
                     <Plus style={{ width: 14, height: 14 }} /> Log Your First Trade
                   </button>
                 </div>

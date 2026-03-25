@@ -10,6 +10,7 @@ import { useAuth } from '../contexts/AuthContext';
 import ProfileModal from './ProfileModal';
 import SettingsModal from './SettingsModal';
 import PlanBadge from './PlanBadge';
+import { BrandMark } from './BrandLogo';
 import { resolveMediaUrl } from '../utils/mediaUrl';
 
 const AVATAR_COLOR_MAP = {
@@ -31,15 +32,15 @@ function NavButton({ icon: Icon, label, badge, active, collapsed, onClick, core 
   const theme = useTheme();
 
   const getBg = () => {
-    if (core) return active ? '#059669' : hov ? '#0d9e6e' : '#10b981cc';
-    if (active) return 'rgba(16,185,129,0.12)';
+    if (core) return active ? '#1d4ed8' : hov ? '#2563eb' : '#3b82f6cc';
+    if (active) return 'rgba(59,130,246,0.12)';
     if (hov) return theme.isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)';
     return 'transparent';
   };
 
   const getColor = () => {
     if (core) return '#ffffff';
-    if (active) return '#10b981';
+    if (active) return '#3b82f6';
     if (hov) return theme.text;
     return theme.muted;
   };
@@ -63,11 +64,11 @@ function NavButton({ icon: Icon, label, badge, active, collapsed, onClick, core 
         backgroundColor: getBg(),
         color: getColor(),
         border: 'none',
-        borderLeft: !core && !collapsed ? `2px solid ${active ? '#10b981' : 'transparent'}` : 'none',
+        borderLeft: !core && !collapsed ? `2px solid ${active ? '#3b82f6' : 'transparent'}` : 'none',
         boxShadow: core
           ? hov
-            ? '0 4px 20px rgba(16,185,129,0.3)'
-            : '0 2px 12px rgba(16,185,129,0.2)'
+            ? '0 4px 20px rgba(59,130,246,0.3)'
+            : '0 2px 12px rgba(59,130,246,0.2)'
           : 'none',
         transition: 'all 0.18s ease',
         cursor: 'pointer',
@@ -85,8 +86,8 @@ function NavButton({ icon: Icon, label, badge, active, collapsed, onClick, core 
           width: 3,
           height: 16,
           borderRadius: 99,
-          background: '#10b981',
-          boxShadow: '0 0 8px rgba(16,185,129,0.6)',
+          background: '#3b82f6',
+          boxShadow: '0 0 8px rgba(59,130,246,0.6)',
         }} />
       )}
 
@@ -165,8 +166,8 @@ function SidebarInner({
     if (isMobile && onMobileClose) onMobileClose();
   };
 
-  const SB_BG     = theme.isDark ? '#0d0d0d' : theme.bg;
-  const SB_BORDER = theme.isDark ? '#1e1e1e' : theme.border;
+  const SB_BG     = theme.bg;
+  const SB_BORDER = theme.border;
 
   return (
     <div style={{
@@ -189,16 +190,7 @@ function SidebarInner({
         {/* Logo + wordmark */}
         {!collapsed && (
           <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
-            <svg width="30" height="30" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M8 9 L32 9 L32 13 L8 13 Z" fill="#10b981"/>
-              <path d="M8 27 L32 27 L32 31 L8 31 Z" fill="#10b981"/>
-              <path d="M32 13 L8 27 L8 31 L10 31 L34 15 L34 13 Z" fill="#0d7a5a"/>
-              <polyline points="10,28 16,22 20,25 26,16 30,12" stroke="#f59e0b" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
-              <path d="M28,10 L32,12 L29,15" stroke="#f59e0b" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
-              <rect x="19" y="21" width="2.5" height="5" rx="0.5" fill="#f59e0b"/>
-              <line x1="20.25" y1="19.5" x2="20.25" y2="21" stroke="#f59e0b" strokeWidth="1" strokeLinecap="round"/>
-              <line x1="20.25" y1="26" x2="20.25" y2="27.5" stroke="#f59e0b" strokeWidth="1" strokeLinecap="round"/>
-            </svg>
+            <BrandMark size={30} />
             <div>
               <span style={{
                 fontSize: 16, fontWeight: 700, color: theme.text,
@@ -207,7 +199,7 @@ function SidebarInner({
                 Zynth
               </span>
               <span style={{
-                fontSize: 9, color: '#10b981', fontWeight: 600,
+                fontSize: 9, color: '#3b82f6', fontWeight: 600,
                 letterSpacing: '0.1em', textTransform: 'uppercase',
               }}>
                 BETA
@@ -218,16 +210,7 @@ function SidebarInner({
 
         {/* Collapsed: just logo */}
         {collapsed && (
-          <svg width="30" height="30" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M8 9 L32 9 L32 13 L8 13 Z" fill="#10b981"/>
-            <path d="M8 27 L32 27 L32 31 L8 31 Z" fill="#10b981"/>
-            <path d="M32 13 L8 27 L8 31 L10 31 L34 15 L34 13 Z" fill="#0d7a5a"/>
-            <polyline points="10,28 16,22 20,25 26,16 30,12" stroke="#f59e0b" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
-            <path d="M28,10 L32,12 L29,15" stroke="#f59e0b" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
-            <rect x="19" y="21" width="2.5" height="5" rx="0.5" fill="#f59e0b"/>
-            <line x1="20.25" y1="19.5" x2="20.25" y2="21" stroke="#f59e0b" strokeWidth="1" strokeLinecap="round"/>
-            <line x1="20.25" y1="26" x2="20.25" y2="27.5" stroke="#f59e0b" strokeWidth="1" strokeLinecap="round"/>
-          </svg>
+          <BrandMark size={30} />
         )}
 
         {/* Collapse toggle — desktop only */}
@@ -246,7 +229,7 @@ function SidebarInner({
               flexShrink: 0,
               transition: 'all 0.15s ease',
             }}
-            onMouseEnter={e => { e.currentTarget.style.background = theme.isDark ? 'rgba(255,255,255,0.09)' : 'rgba(0,0,0,0.08)'; e.currentTarget.style.color = '#10b981'; }}
+            onMouseEnter={e => { e.currentTarget.style.background = theme.isDark ? 'rgba(255,255,255,0.09)' : 'rgba(0,0,0,0.08)'; e.currentTarget.style.color = '#3b82f6'; }}
             onMouseLeave={e => { e.currentTarget.style.background = theme.isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)'; e.currentTarget.style.color = theme.muted; }}
           >
             {collapsed
@@ -415,7 +398,7 @@ function SidebarInner({
               <span style={{ fontSize: 9, fontWeight: 700, color: theme.muted, letterSpacing: '0.1em', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: 5 }}>
                 <Filter style={{ width: 10, height: 10 }} /> Filters
               </span>
-              <button onClick={onResetFilters} style={{ fontSize: 10, color: '#10b981', background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 3 }}>
+              <button onClick={onResetFilters} style={{ fontSize: 10, color: '#3b82f6', background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 3 }}>
                 <X style={{ width: 10, height: 10 }} /> Clear
               </button>
             </div>
@@ -431,11 +414,11 @@ function SidebarInner({
                 placeholder="Search news..."
                 style={{
                   width: '100%', padding: '7px 10px',
-                  background: theme.isDark ? '#1a1a1a' : theme.surface, border: `1px solid ${SB_BORDER}`,
+                  background: theme.surface2, border: `1px solid ${SB_BORDER}`,
                   borderRadius: 7, fontSize: 12, color: theme.text,
                   outline: 'none',
                 }}
-                onFocus={e => e.target.style.borderColor = '#10b981'}
+                onFocus={e => e.target.style.borderColor = '#3b82f6'}
                 onBlur={e => e.target.style.borderColor = SB_BORDER}
               />
             </div>
@@ -449,9 +432,9 @@ function SidebarInner({
                     onClick={() => onFilterChange({ impactLevel: level })}
                     style={{
                       padding: '6px 8px', borderRadius: 6, fontSize: 11, fontWeight: 500,
-                      background: filters.impactLevel === level ? '#10b981' : theme.isDark ? '#1a1a1a' : theme.surface2,
+                      background: filters.impactLevel === level ? '#3b82f6' : theme.surface2,
                       color: filters.impactLevel === level ? '#fff' : theme.muted,
-                      border: `1px solid ${filters.impactLevel === level ? '#10b981' : SB_BORDER}`,
+                      border: `1px solid ${filters.impactLevel === level ? '#3b82f6' : SB_BORDER}`,
                       cursor: 'pointer', transition: 'all 0.15s ease',
                     }}
                   >
@@ -465,7 +448,7 @@ function SidebarInner({
               onClick={onApplyFilters}
               style={{
                 width: '100%', padding: '8px', borderRadius: 7,
-                background: '#10b981', color: '#fff',
+                background: '#3b82f6', color: '#fff',
                 fontSize: 12, fontWeight: 600, border: 'none', cursor: 'pointer',
               }}
             >
@@ -484,7 +467,7 @@ function SidebarInner({
                       background: 'transparent', color: theme.muted,
                       border: `1px solid ${SB_BORDER}`, cursor: 'pointer', transition: 'all 0.15s ease',
                     }}
-                    onMouseEnter={e => { e.currentTarget.style.borderColor = '#10b981'; e.currentTarget.style.color = '#10b981'; }}
+                    onMouseEnter={e => { e.currentTarget.style.borderColor = '#3b82f6'; e.currentTarget.style.color = '#3b82f6'; }}
                     onMouseLeave={e => { e.currentTarget.style.borderColor = SB_BORDER; e.currentTarget.style.color = theme.muted; }}
                   >
                     {tag}
@@ -549,7 +532,7 @@ export default function Sidebar({
           zIndex: 999,
           transform: mobileOpen ? 'translateX(0)' : 'translateX(-100%)',
           transition: 'transform 0.28s cubic-bezier(0.4,0,0.2,1)',
-          borderRight: `1px solid ${theme.isDark ? '#1e1e1e' : theme.border}`,
+          borderRight: `1px solid ${theme.border}`,
           boxShadow: '8px 0 32px rgba(0,0,0,0.6)',
         }}
       >
@@ -568,7 +551,7 @@ export default function Sidebar({
           position: 'fixed', top: 0, left: 0, height: '100vh',
           width: collapsed ? 60 : 236,
           transition: 'width 0.22s cubic-bezier(0.4,0,0.2,1)',
-          borderRight: `1px solid ${theme.isDark ? '#1e1e1e' : theme.border}`,
+          borderRight: `1px solid ${theme.border}`,
           zIndex: 200,
           willChange: 'width',
           overflow: 'hidden',

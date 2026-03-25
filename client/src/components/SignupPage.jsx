@@ -2,6 +2,7 @@
 import { useAuth } from '../contexts/AuthContext';
 import { API_URL } from '../config/api';
 import { getPublicStats } from '../utils/publicStats';
+import { BrandMark } from './BrandLogo';
 
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || '';
 import {
@@ -261,7 +262,7 @@ export default function SignupPage({ onSwitchToLogin, onBack }) {
               </button>
             )}
             <div style={{display:'flex', alignItems:'center', gap:'10px'}}>
-              <img src="/logo.png" alt="Zynth" style={{height:'30px',width:'auto',objectFit:'contain'}} />
+              <BrandMark size={30} />
               <div>
                 <p style={{color:'#fff',fontSize:'18px',fontWeight:700,lineHeight:1}}>Zynth</p>
                 <p style={{color:'rgba(255,255,255,0.4)',fontSize:'12px',letterSpacing:'0.05em',marginTop:'3px'}}>

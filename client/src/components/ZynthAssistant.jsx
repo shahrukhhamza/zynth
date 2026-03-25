@@ -1,6 +1,6 @@
 ﻿import { useState, useEffect, useRef, useCallback } from 'react';
 import { createPortal } from 'react-dom';
-import { MessageCircle, X, Send, ArrowUp, AlertTriangle } from 'lucide-react';
+import { MessageCircle, X, Send, ArrowUp } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 import { useAuth } from '../contexts/AuthContext';
 import { API_URL } from '../config/api';
@@ -11,9 +11,11 @@ const PULSE_DAYS = 3;
 
 const QUICK_CHIPS = [
   'How do I log a trade?',
-  'Where is the timezone setting?',
-  'What does Macro Score mean?',
+  'How do I change my timezone?',
+  'What is the Macro Score?',
   'How do I upgrade my plan?',
+  'How does Screenshot Analysis work?',
+  'What is profit factor?',
 ];
 
 function formatTime(iso) {
@@ -32,7 +34,7 @@ function TypingDots() {
           key={i}
           style={{
             width: 7, height: 7, borderRadius: '50%',
-            backgroundColor: '#10b981',
+            backgroundColor: '#3b82f6',
             display: 'inline-block',
             animation: `assistantBounce 1.2s ease-in-out ${i * 0.2}s infinite`,
           }}
@@ -87,7 +89,11 @@ export default function ZynthAssistant() {
     const welcome = {
       id: 'welcome',
       role: 'assistant',
-      content: `Hi ${firstName}! I am the Zynth Assistant.\n\nNote: I am still being improved and may not answer all questions correctly.\n\nI can try to help with:\n- How to use app features\n- Finding settings and options\n- Understanding your analytics\n- Plan and pricing questions\n\nFor guaranteed help email us at\ngetzynth@gmail.com`,
+      content: `Hello ${firstName}. I'm here to help you navigate Zynth.
+
+    I can help with trade journaling, settings, analytics, plans, screenshot imports, and platform tools.
+
+    Ask a question below or use one of the suggested prompts.`,
       timestamp: new Date().toISOString(),
     };
     setMessages([welcome]);
@@ -164,8 +170,13 @@ export default function ZynthAssistant() {
   };
 
   // ── Styles ────────────────────────────────────────────────────────────────
-  const surface2 = theme.isDark ? '#1e1e1e' : '#f3f4f6';
+  const surface2 = theme.surface2;
   const borderColor = theme.border || (theme.isDark ? '#2e2e2e' : '#e5e7eb');
+  const headerTitleColor = theme.isDark ? '#f8fbff' : '#0f172a';
+  const headerSubtitleColor = theme.isDark ? 'rgba(239,246,255,0.82)' : '#34517a';
+  const headerCloseColor = theme.isDark ? 'rgba(239,246,255,0.78)' : '#5b6f8b';
+  const assistantBubbleBg = theme.isDark ? 'rgba(15,23,42,0.72)' : surface2;
+  const assistantBubbleBorder = theme.isDark ? '1px solid rgba(59,130,246,0.14)' : `1px solid ${borderColor}`;
 
   // ── Render ────────────────────────────────────────────────────────────────
   return createPortal(
@@ -173,24 +184,32 @@ export default function ZynthAssistant() {
       {/* Keyframe injection */}
       <style>{`
         @keyframes assistantPulse {
-          0%, 100% { box-shadow: 0 0 0 0 rgba(16,185,129,0.55); }
-          50%       { box-shadow: 0 0 0 12px rgba(16,185,129,0); }
+          0%, 100% { box-shadow: 0 0 0 0 rgba(59,130,246,0.55); }
+          50%       { box-shadow: 0 0 0 12px rgba(59,130,246,0); }
         }
         @keyframes assistantBounce {
           0%, 80%, 100% { transform: scale(0.6); opacity: 0.5; }
           40%           { transform: scale(1);   opacity: 1;   }
         }
         .zynth-chip:hover {
-          background: rgba(16,185,129,0.18) !important;
-          border-color: #10b981 !important;
-          color: #10b981 !important;
+          background: rgba(59,130,246,0.18) !important;
+          border-color: #3b82f6 !important;
+          color: #3b82f6 !important;
         }
-        .zynth-send:hover { background: #059669 !important; }
+        .zynth-send:hover { background: #2563eb !important; }
         .zynth-close:hover { background: rgba(255,255,255,0.1) !important; }
         .zynth-fab:hover { transform: scale(1.08); }
         .zynth-fab { transition: transform 0.15s ease; }
         .zynth-msg { white-space: pre-wrap; word-break: break-word; }
       `}</style>
+
+      {/* Backdrop — closes chat on click-outside */}
+      {open && (
+        <div
+          onClick={() => setOpen(false)}
+          style={{ position: 'fixed', inset: 0, zIndex: 9998 }}
+        />
+      )}
 
       {/* Chat Panel */}
       {open && (
@@ -222,25 +241,25 @@ export default function ZynthAssistant() {
             alignItems: 'center',
             gap: 10,
             background: theme.isDark
-              ? 'linear-gradient(135deg, #0d1f18 0%, #111 100%)'
-              : 'linear-gradient(135deg, #ecfdf5 0%, #f9fafb 100%)',
+              ? 'linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 100%)'
+              : 'linear-gradient(135deg, #ecf3ff 0%, #f9fafb 100%)',
             flexShrink: 0,
           }}>
             {/* Logo icon */}
             <div style={{
               width: 32, height: 32, borderRadius: 8,
-              background: 'linear-gradient(135deg, #10b981, #059669)',
+              background: 'linear-gradient(135deg, #1d4ed8, #3b82f6)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               flexShrink: 0,
             }}>
               <MessageCircle size={16} color="#fff" />
             </div>
             <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontSize: 14, fontWeight: 700, color: theme.text, lineHeight: 1.2 }}>
+              <div style={{ fontSize: 14, fontWeight: 700, color: headerTitleColor, lineHeight: 1.2 }}>
                 Zynth Assistant
               </div>
-              <div style={{ fontSize: 11, color: theme.muted, marginTop: 1 }}>
-                Ask me anything about the app
+              <div style={{ fontSize: 11, color: headerSubtitleColor, marginTop: 2, fontWeight: 500, letterSpacing: '0.01em' }}>
+                Product Support and Guidance
               </div>
             </div>
             <button
@@ -250,33 +269,11 @@ export default function ZynthAssistant() {
                 width: 28, height: 28, borderRadius: 8, border: 'none',
                 background: 'transparent', cursor: 'pointer',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                color: theme.muted, flexShrink: 0,
+                color: headerCloseColor, flexShrink: 0,
               }}
             >
               <X size={16} />
             </button>
-          </div>
-
-          {/* Under-construction banner */}
-          <div style={{
-            margin: '8px 8px 0',
-            padding: '8px 12px',
-            borderRadius: 8,
-            border: '1px solid rgba(245,158,11,0.45)',
-            background: 'rgba(245,158,11,0.08)',
-            display: 'flex',
-            alignItems: 'flex-start',
-            gap: 8,
-            flexShrink: 0,
-          }}>
-            <AlertTriangle size={13} style={{ lineHeight: 1.4, flexShrink: 0, color: '#f59e0b' }} />
-            <p style={{ margin: 0, fontSize: 12, color: '#f59e0b', lineHeight: 1.5 }}>
-              Assistant is under construction. Responses may be incomplete or inaccurate.{' '}
-              For reliable help email:{' '}
-              <a href="mailto:getzynth@gmail.com" style={{ color: '#fbbf24', fontWeight: 600 }}>
-                getzynth@gmail.com
-              </a>
-            </p>
           </div>
 
           {/* Messages */}
@@ -305,10 +302,10 @@ export default function ZynthAssistant() {
                       fontSize: 13,
                       lineHeight: 1.5,
                       background: isUser
-                        ? 'linear-gradient(135deg, #10b981, #059669)'
-                        : surface2,
+                        ? 'linear-gradient(135deg, #1d4ed8, #3b82f6)'
+                        : assistantBubbleBg,
                       color: isUser ? '#fff' : theme.text,
-                      border: isUser ? 'none' : `1px solid ${borderColor}`,
+                      border: isUser ? 'none' : assistantBubbleBorder,
                       opacity: msg.isError ? 0.75 : 1,
                     }}
                   >
@@ -409,7 +406,7 @@ export default function ZynthAssistant() {
               disabled={!input.trim() || loading}
               style={{
                 width: 36, height: 36, borderRadius: 10, border: 'none',
-                background: 'linear-gradient(135deg, #10b981, #059669)',
+                background: 'linear-gradient(135deg, #1d4ed8, #3b82f6)',
                 cursor: input.trim() && !loading ? 'pointer' : 'not-allowed',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 flexShrink: 0,
@@ -432,7 +429,7 @@ export default function ZynthAssistant() {
               position: 'absolute',
               bottom: '110%',
               right: 0,
-              background: theme.isDark ? '#1e1e1e' : '#111',
+              background: theme.surface2,
               color: '#fff',
               fontSize: 12,
               fontWeight: 500,
@@ -464,14 +461,14 @@ export default function ZynthAssistant() {
               border: 'none',
               background: open
                 ? 'linear-gradient(135deg, #374151, #1f2937)'
-                : 'linear-gradient(135deg, #10b981, #059669)',
+                : 'linear-gradient(135deg, #1d4ed8, #3b82f6)',
               cursor: 'pointer',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               boxShadow: open
                 ? '0 4px 20px rgba(0,0,0,0.3)'
                 : showPulse
-                  ? '0 4px 20px rgba(16,185,129,0.5)'
-                  : '0 4px 20px rgba(16,185,129,0.35)',
+                  ? '0 4px 20px rgba(59,130,246,0.5)'
+                  : '0 4px 20px rgba(59,130,246,0.35)',
               animation: showPulse && !open ? 'assistantPulse 2s ease-in-out infinite' : 'none',
               position: 'relative',
             }}

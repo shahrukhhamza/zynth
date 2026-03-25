@@ -20,10 +20,10 @@ function saveLast(k, v) {
 }
 
 const INPUT_STYLE = (theme) => ({
-  backgroundColor: theme.isDark ? '#0d0d0d' : theme.surface,
-  color: theme.isDark ? '#e8e8e8' : theme.text,
+  backgroundColor: theme.isDark ? theme.surface : theme.surface,
+  color: theme.text,
   borderRadius: '8px',
-  border: `1px solid ${theme.isDark ? '#252525' : theme.border}`,
+  border: `1px solid ${theme.border}`,
   padding: '10px 12px',
   width: '100%',
   fontSize: '14px',
@@ -147,23 +147,23 @@ export default function TradeEntryForm({ onSaved, editTrade = null }) {
   };
 
   const card = {
-    backgroundColor: theme.isDark ? '#111111' : theme.surface,
-    border: `1px solid ${theme.isDark ? '#1e1e1e' : theme.border}`,
+    backgroundColor: theme.surface,
+    border: `1px solid ${theme.border}`,
     borderRadius: '12px',
     padding: '20px 22px',
   };
   const cardTitle = {
     fontSize: '10px', fontWeight: 700, textTransform: 'uppercase',
-    letterSpacing: '0.1em', color: theme.isDark ? '#444' : theme.muted, marginBottom: '14px',
+    letterSpacing: '0.1em', color: theme.muted, marginBottom: '14px',
   };
   const label = {
     fontSize: '10px', fontWeight: 600,
-    color: theme.isDark ? '#555555' : theme.muted,
+    color: theme.muted,
     marginBottom: '6px', display: 'block',
     textTransform: 'uppercase', letterSpacing: '0.08em',
   };
   const input = INPUT_STYLE(theme);
-  const resetBorder = e => { e.target.style.borderColor = theme.isDark ? '#252525' : theme.border; };
+  const resetBorder = e => { e.target.style.borderColor = theme.border; };
 
   // ── Shared JSX fragments ───────────────────────────────────────────────────
   const PairDirectionBlock = (
@@ -174,15 +174,15 @@ export default function TradeEntryForm({ onSaved, editTrade = null }) {
           <div className="flex gap-2">
             <input value={form.pair} onChange={e => set('pair', e.target.value.toUpperCase())}
               placeholder="e.g. EURCAD" style={input} required
-              onFocus={e => e.target.style.borderColor='#10b981'} onBlur={resetBorder} />
+              onFocus={e => e.target.style.borderColor='#3b82f6'} onBlur={resetBorder} />
             <button type="button" onClick={() => setCustomPair(false)}
               className="px-2 rounded text-xs"
-              style={{ backgroundColor: theme.isDark ? '#1e1e1e' : theme.border, color: theme.isDark ? '#4a4a4a' : theme.muted }}>↩</button>
+              style={{ backgroundColor: theme.surface2, color: theme.muted }}>↩</button>
           </div>
         ) : (
           <select value={PAIRS.includes(form.pair) ? form.pair : 'CUSTOM'}
             onChange={e => { if (e.target.value === 'CUSTOM') { setCustomPair(true); set('pair', ''); } else set('pair', e.target.value); }}
-            style={input} onFocus={e => e.target.style.borderColor='#10b981'} onBlur={resetBorder}>
+            style={input} onFocus={e => e.target.style.borderColor='#3b82f6'} onBlur={resetBorder}>
             {PAIRS.map(p => <option key={p} value={p}>{p}</option>)}
           </select>
         )}
@@ -194,9 +194,9 @@ export default function TradeEntryForm({ onSaved, editTrade = null }) {
             <button key={d} type="button" onClick={() => set('direction', d)}
               className="flex-1 py-2 rounded-lg text-sm font-bold transition-colors flex items-center justify-center gap-1"
               style={{
-                backgroundColor: form.direction === d ? (d==='buy'?'#10b981':'#ef4444') : (theme.isDark?'#0d0d0d':theme.surface),
-                color: form.direction === d ? '#fff' : (theme.isDark?'#555':theme.muted),
-                border: `1.5px solid ${form.direction===d?(d==='buy'?'#10b981':'#ef4444'):(theme.isDark?'#252525':theme.border)}`,
+                backgroundColor: form.direction === d ? (d==='buy'?'#10b981':'#ef4444') : theme.surface,
+                color: form.direction === d ? '#fff' : theme.muted,
+                border: `1.5px solid ${form.direction===d?(d==='buy'?'#10b981':'#ef4444'):theme.border}`,
               }}>
               {d==='buy'?<TrendingUp className="w-3 h-3"/>:<TrendingDown className="w-3 h-3"/>} {d.toUpperCase()}
             </button>
@@ -213,9 +213,9 @@ export default function TradeEntryForm({ onSaved, editTrade = null }) {
           <button key={o} type="button" onClick={() => set('outcome', o)}
             className="py-2 rounded-lg text-sm font-bold transition-colors"
             style={{
-              backgroundColor: form.outcome===o?(o==='win'?'#10b98122':o==='loss'?'#ef444422':'#f59e0b22'):(theme.isDark?'#0d0d0d':theme.bg),
-              color: form.outcome===o?(o==='win'?'#10b981':o==='loss'?'#ef4444':'#f59e0b'):(theme.isDark?'#555':theme.muted),
-              border: `1.5px solid ${form.outcome===o?(o==='win'?'#10b98166':o==='loss'?'#ef444466':'#f59e0b66'):(theme.isDark?'#1e1e1e':theme.border)}`,
+              backgroundColor: form.outcome===o?(o==='win'?'#10b98122':o==='loss'?'#ef444422':'#f59e0b22'):theme.bg,
+              color: form.outcome===o?(o==='win'?'#10b981':o==='loss'?'#ef4444':'#f59e0b'):theme.muted,
+              border: `1.5px solid ${form.outcome===o?(o==='win'?'#10b98166':o==='loss'?'#ef444466':'#f59e0b66'):theme.border}`,
             }}>
             {o.charAt(0).toUpperCase()+o.slice(1)}
           </button>
@@ -226,7 +226,7 @@ export default function TradeEntryForm({ onSaved, editTrade = null }) {
         <input type="number" step="any" value={form.profit_loss} onChange={e => set('profit_loss', e.target.value)}
           placeholder="e.g. +45.50 or -22.00"
           style={{ ...input, color: parseFloat(form.profit_loss)>=0?'#10b981':'#ef4444' }}
-          onFocus={e => e.target.style.borderColor='#10b981'} onBlur={resetBorder} />
+          onFocus={e => e.target.style.borderColor='#3b82f6'} onBlur={resetBorder} />
       </div>
     </>
   );
@@ -238,9 +238,9 @@ export default function TradeEntryForm({ onSaved, editTrade = null }) {
       style={{
         display: 'flex', alignItems: 'center', gap: 5,
         padding: '4px 10px', borderRadius: 8, cursor: 'pointer',
-        border: `1.5px solid ${isRecording ? '#ef444488' : '#10b98144'}`,
-        backgroundColor: isRecording ? '#ef444415' : '#10b98110',
-        color: isRecording ? '#ef4444' : '#10b981',
+        border: `1.5px solid ${isRecording ? '#ef444488' : '#3b82f644'}`,
+        backgroundColor: isRecording ? '#ef444415' : '#3b82f610',
+        color: isRecording ? '#ef4444' : '#3b82f6',
         transition: 'all 0.15s',
       }}>
       {isRecording ? <MicOff style={{ width: 12, height: 12 }}/> : <Mic style={{ width: 12, height: 12 }}/>}
@@ -257,7 +257,7 @@ export default function TradeEntryForm({ onSaved, editTrade = null }) {
       <textarea value={form.reasoning} onChange={e => set('reasoning', e.target.value)}
         placeholder={isRecording ? '🎤 Listening… speak your trade reasoning' : 'Describe your trade setup and reasoning…'}
         rows={rows} style={{ ...input, resize: 'vertical' }}
-        onFocus={e => e.target.style.borderColor='#10b981'} onBlur={resetBorder} />
+        onFocus={e => e.target.style.borderColor='#3b82f6'} onBlur={resetBorder} />
     </div>
   );
 
@@ -269,8 +269,8 @@ export default function TradeEntryForm({ onSaved, editTrade = null }) {
         <div style={{
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
           padding: '10px 14px', borderRadius: 10,
-          backgroundColor: theme.isDark ? '#0d0d0d' : theme.surface,
-          border: `1px solid ${theme.isDark ? '#1e1e1e' : theme.border}`,
+          backgroundColor: theme.surface,
+          border: `1px solid ${theme.border}`,
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
             <Zap style={{ width: 13, height: 13, color: quickMode ? '#f59e0b' : theme.muted }}/>
@@ -284,7 +284,7 @@ export default function TradeEntryForm({ onSaved, editTrade = null }) {
           <button type="button" onClick={toggleQuick}
             style={{
               fontSize: 11, fontWeight: 600, padding: '4px 12px', borderRadius: 7, cursor: 'pointer',
-              border: `1.5px solid ${quickMode ? '#f59e0b55' : (theme.isDark ? '#252525' : theme.border)}`,
+              border: `1.5px solid ${quickMode ? '#f59e0b55' : theme.border}`,
               backgroundColor: quickMode ? '#f59e0b12' : 'transparent',
               color: quickMode ? '#f59e0b' : theme.muted,
             }}>
@@ -339,14 +339,14 @@ export default function TradeEntryForm({ onSaved, editTrade = null }) {
             <p style={cardTitle}>Trade Setup</p>
             {PairDirectionBlock}
             <div className="grid grid-cols-2 gap-3 mt-3">
-              <div><label style={label}>Entry Price</label><input type="number" step="any" value={form.entry_price} onChange={e => set('entry_price', e.target.value)} placeholder="0.00" style={input} onFocus={e => e.target.style.borderColor='#10b981'} onBlur={resetBorder}/></div>
-              <div><label style={label}>Exit Price</label><input type="number" step="any" value={form.exit_price} onChange={e => set('exit_price', e.target.value)} placeholder="0.00" style={input} onFocus={e => e.target.style.borderColor='#10b981'} onBlur={resetBorder}/></div>
-              <div><label style={label}>Take Profit (TP)</label><input type="number" step="any" value={form.tp} onChange={e => set('tp', e.target.value)} placeholder="0.00" style={input} onFocus={e => e.target.style.borderColor='#10b981'} onBlur={resetBorder}/></div>
-              <div><label style={label}>Stop Loss (SL)</label><input type="number" step="any" value={form.sl} onChange={e => set('sl', e.target.value)} placeholder="0.00" style={input} onFocus={e => e.target.style.borderColor='#10b981'} onBlur={resetBorder}/></div>
-              <div><label style={label}>Position Size (lots)</label><input type="number" step="0.01" value={form.position_size} onChange={e => set('position_size', e.target.value)} placeholder="0.01" style={input} onFocus={e => e.target.style.borderColor='#10b981'} onBlur={resetBorder}/></div>
+              <div><label style={label}>Entry Price</label><input type="number" step="any" value={form.entry_price} onChange={e => set('entry_price', e.target.value)} placeholder="0.00" style={input} onFocus={e => e.target.style.borderColor='#3b82f6'} onBlur={resetBorder}/></div>
+              <div><label style={label}>Exit Price</label><input type="number" step="any" value={form.exit_price} onChange={e => set('exit_price', e.target.value)} placeholder="0.00" style={input} onFocus={e => e.target.style.borderColor='#3b82f6'} onBlur={resetBorder}/></div>
+              <div><label style={label}>Take Profit (TP)</label><input type="number" step="any" value={form.tp} onChange={e => set('tp', e.target.value)} placeholder="0.00" style={input} onFocus={e => e.target.style.borderColor='#3b82f6'} onBlur={resetBorder}/></div>
+              <div><label style={label}>Stop Loss (SL)</label><input type="number" step="any" value={form.sl} onChange={e => set('sl', e.target.value)} placeholder="0.00" style={input} onFocus={e => e.target.style.borderColor='#3b82f6'} onBlur={resetBorder}/></div>
+              <div><label style={label}>Position Size (lots)</label><input type="number" step="0.01" value={form.position_size} onChange={e => set('position_size', e.target.value)} placeholder="0.01" style={input} onFocus={e => e.target.style.borderColor='#3b82f6'} onBlur={resetBorder}/></div>
               <div>
                 <label style={label}>Session</label>
-                <select value={form.session} onChange={e => set('session', e.target.value)} style={input} onFocus={e => e.target.style.borderColor='#10b981'} onBlur={resetBorder}>
+                <select value={form.session} onChange={e => set('session', e.target.value)} style={input} onFocus={e => e.target.style.borderColor='#3b82f6'} onBlur={resetBorder}>
                   <option value="">— Select —</option>
                   {SESSIONS.map(s => <option key={s} value={s}>{s.charAt(0).toUpperCase()+s.slice(1)}</option>)}
                 </select>
@@ -354,7 +354,7 @@ export default function TradeEntryForm({ onSaved, editTrade = null }) {
             </div>
           </div>
 
-          <hr style={{ border: 'none', borderTop: `1px solid ${theme.isDark?'#1a1a1a':theme.border}`, margin: '2px 0' }}/>
+          <hr style={{ border: 'none', borderTop: `1px solid ${theme.border}`, margin: '2px 0' }}/>
 
           {/* Outcome */}
           <div style={card}>
@@ -376,13 +376,13 @@ export default function TradeEntryForm({ onSaved, editTrade = null }) {
             ) : (
               <div
                 className="border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors"
-                style={{ borderColor: dragging?'#10b981':(theme.isDark?'#1e1e1e':theme.border), backgroundColor: dragging?'rgba(16,185,129,0.06)':'transparent' }}
+                style={{ borderColor: dragging?'#3b82f6':theme.border, backgroundColor: dragging?'rgba(59,130,246,0.06)':'transparent' }}
                 onDragOver={e => { e.preventDefault(); setDragging(true); }}
                 onDragLeave={() => setDragging(false)}
                 onDrop={handleDrop}
                 onClick={() => fileRef.current?.click()}>
-                <Upload className="w-8 h-8 mx-auto mb-2" style={{ color: theme.isDark?'#4a4a4a':theme.muted }}/>
-                <p className="text-sm" style={{ color: theme.isDark?'#4a4a4a':theme.muted }}>Drop screenshot here or click to upload</p>
+                <Upload className="w-8 h-8 mx-auto mb-2" style={{ color: theme.muted }}/>
+                <p className="text-sm" style={{ color: theme.muted }}>Drop screenshot here or click to upload</p>
                 <p className="text-xs mt-1" style={{ color: theme.isDark?'#333':theme.muted }}>JPG, PNG, WebP — max 10MB</p>
                 <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={e => onFile(e.target.files[0])}/>
               </div>
@@ -395,14 +395,14 @@ export default function TradeEntryForm({ onSaved, editTrade = null }) {
             <div className="grid grid-cols-2 gap-3 mb-3">
               <div>
                 <label style={label}>Strategy</label>
-                <select value={STRATEGIES.includes(form.strategy)?form.strategy:'Custom'} onChange={e => set('strategy', e.target.value)} style={input} onFocus={e => e.target.style.borderColor='#10b981'} onBlur={resetBorder}>
+                <select value={STRATEGIES.includes(form.strategy)?form.strategy:'Custom'} onChange={e => set('strategy', e.target.value)} style={input} onFocus={e => e.target.style.borderColor='#3b82f6'} onBlur={resetBorder}>
                   <option value="">— Select —</option>
                   {STRATEGIES.map(s => <option key={s} value={s}>{s}</option>)}
                 </select>
               </div>
               <div>
                 <label style={label}>Emotional State</label>
-                <select value={form.emotional_state} onChange={e => set('emotional_state', e.target.value)} style={input} onFocus={e => e.target.style.borderColor='#10b981'} onBlur={resetBorder}>
+                <select value={form.emotional_state} onChange={e => set('emotional_state', e.target.value)} style={input} onFocus={e => e.target.style.borderColor='#3b82f6'} onBlur={resetBorder}>
                   <option value="">— Select —</option>
                   {EMOTIONS.map(em => <option key={em} value={em}>{em.charAt(0).toUpperCase()+em.slice(1)}</option>)}
                 </select>
@@ -415,14 +415,14 @@ export default function TradeEntryForm({ onSaved, editTrade = null }) {
                 <textarea value={form.lessons_learned} onChange={e => set('lessons_learned', e.target.value)}
                   placeholder="What did this trade teach you?"
                   rows={2} style={{ ...input, resize: 'vertical' }}
-                  onFocus={e => e.target.style.borderColor='#10b981'} onBlur={resetBorder}/>
+                  onFocus={e => e.target.style.borderColor='#3b82f6'} onBlur={resetBorder}/>
               </div>
               <div>
                 <label style={label}>Additional Notes</label>
                 <textarea value={form.notes} onChange={e => set('notes', e.target.value)}
                   placeholder="Any other observations..."
                   rows={2} style={{ ...input, resize: 'vertical' }}
-                  onFocus={e => e.target.style.borderColor='#10b981'} onBlur={resetBorder}/>
+                  onFocus={e => e.target.style.borderColor='#3b82f6'} onBlur={resetBorder}/>
               </div>
             </div>
           </div>
@@ -459,3 +459,4 @@ export default function TradeEntryForm({ onSaved, editTrade = null }) {
     </form>
   );
 }
+
