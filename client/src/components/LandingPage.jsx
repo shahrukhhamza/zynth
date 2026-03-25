@@ -505,7 +505,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
                 Everything a serious trader needs
               </span>
             </h2>
-            <p className={`text-[16px] max-w-[480px] mx-auto ${isDark ? 'text-gray-500' : 'text-gray-500'}`}>One platform to replace five tabs, three spreadsheets, and two notebooks.</p>
+            <p className={`text-[16px] max-w-[480px] mx-auto ${isDark ? 'text-gray-500' : 'text-gray-600'}`}>One platform to replace five tabs, three spreadsheets, and two notebooks.</p>
           </Reveal>
 
           {/* Feature row 1 — Trade Journal */}
@@ -571,7 +571,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
                   Trade Journaling
                 </span>
               </h3>
-              <p className={`text-[15px] leading-relaxed mb-6 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+              <p className={`text-[15px] leading-relaxed mb-6 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
                 Every trade tells a story. Add notes about your setup, tag your strategy, attach screenshots, and track how you felt. When you review your journal later, the patterns become obvious.
               </p>
               {[
@@ -581,7 +581,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
               ].map(b => (
                 <div key={b} className="flex items-center gap-3 mb-3">
                   <Check className="w-4 h-4 text-blue-400 shrink-0" />
-                  <span className={`text-[14px] ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>{b}</span>
+                  <span className={`text-[14px] ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>{b}</span>
                 </div>
               ))}
               <button onClick={onGetStarted}
@@ -645,7 +645,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
                   Market Intelligence
                 </span>
               </h3>
-              <p className={`text-[15px] leading-relaxed mb-6 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+              <p className={`text-[15px] leading-relaxed mb-6 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
                 Monitor every major asset class in real time. Forex, indices, commodities, crypto — all ticking live on one screen, with economic events overlaid for full context.
               </p>
               {[
@@ -655,7 +655,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
               ].map(b => (
                 <div key={b} className="flex items-center gap-3 mb-3">
                   <Check className="w-4 h-4 text-blue-400 shrink-0" />
-                  <span className={`text-[14px] ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>{b}</span>
+                  <span className={`text-[14px] ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>{b}</span>
                 </div>
               ))}
               <button onClick={onGetStarted}
@@ -685,7 +685,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
                     <Icon className="w-6 h-6 text-blue-400" />
                   </div>
                   <h3 className={`text-[20px] font-bold mb-3 ${isDark ? 'text-white' : 'text-gray-900'}`}>{title}</h3>
-                  <p className={`text-[13px] leading-relaxed mb-5 ${isDark ? 'text-gray-500' : 'text-gray-500'}`}>{desc}</p>
+                  <p className={`text-[13px] leading-relaxed mb-5 ${isDark ? 'text-gray-500' : 'text-gray-600'}`}>{desc}</p>
                   {bullets.map(b => (
                     <div key={b} className="flex items-center gap-2 mb-2.5">
                       <Check className="w-3.5 h-3.5 text-blue-400 shrink-0" />
@@ -721,7 +721,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
             </h2>
           </Reveal>
           <Reveal delay={0.1}>
-            <p className={`text-[16px] mb-14 max-w-md mx-auto ${isDark ? 'text-gray-500' : 'text-gray-500'}`}>
+            <p className={`text-[16px] mb-14 max-w-md mx-auto ${isDark ? 'text-gray-500' : 'text-gray-600'}`}>
               Our proprietary indicator — exclusive to Zynth
             </p>
           </Reveal>
@@ -816,7 +816,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
               <span className="text-[11px] font-bold tracking-[0.18em] text-blue-400">RESEARCH</span>
             </div>
             <h2 className={`text-[36px] md:text-[42px] font-extrabold tracking-tight mb-3 ${isDark ? 'text-white' : 'text-gray-900'}`}>
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-sky-400 to-violet-400">The Data Behind Better Trading</span>
+              <span className={`bg-clip-text text-transparent bg-gradient-to-r ${isDark ? 'from-sky-400 to-violet-400' : 'from-[#1d4ed8] to-[#0284c7]'}`}>The Data Behind Better Trading</span>
             </h2>
           </Reveal>
           <div className="grid md:grid-cols-3 gap-6 mb-6">
@@ -832,10 +832,10 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
                        borderColor: isDark ? 'rgba(59,130,246,0.15)' : 'rgba(59,130,246,0.12)',
                        boxShadow: isDark ? 'none' : '0 4px 20px rgba(0,0,0,0.05)',
                      }}>
-                  <p className="text-[52px] font-extrabold leading-none mb-3 bg-clip-text text-transparent bg-gradient-to-r from-sky-400 to-violet-400">
+                  <p className="text-[52px] font-extrabold leading-none mb-3 bg-clip-text text-transparent bg-gradient-to-r from-[#1d4ed8] to-[#0284c7]">
                     {stat}
                   </p>
-                  <p className={`text-[13px] leading-relaxed ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>{desc}*</p>
+                  <p className={`text-[13px] leading-relaxed ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>{desc}*</p>
                 </div>
               </Reveal>
             ))}
@@ -862,24 +862,18 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
               { quote: 'The AI analysis identified I was overtrading on Mondays. Saved me hundreds.',                        name: 'Marcus T.', pair: 'Multi-pair Trader', floatDelay: '2s'   },
             ].map(({ quote, name, pair, floatDelay }, i) => (
               <Reveal key={name} delay={i * 0.14}>
-                <div className="rounded-2xl p-7"
+                <div className="rounded-2xl p-7 border"
                      style={{
                        background: isDark ? '#0c1527' : '#ffffff',
-                       border: '1px solid transparent',
-                       backgroundImage: isDark
-                         ? 'linear-gradient(#0c1527,#0c1527), linear-gradient(135deg,rgba(59,130,246,0.5),rgba(2,132,199,0.3),rgba(245,158,11,0.2))'
-                         : 'linear-gradient(#ffffff,#ffffff), linear-gradient(135deg,rgba(59,130,246,0.4),rgba(2,132,199,0.2),rgba(245,158,11,0.15))',
-                       backgroundOrigin: 'border-box',
-                       backgroundClip: 'padding-box, border-box',
-                       animation: `float 3.5s ease-in-out ${floatDelay} infinite`,
-                       boxShadow: isDark ? 'none' : '0 4px 20px rgba(0,0,0,0.05)',
+                       borderColor: isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.08)',
+                       boxShadow: isDark ? 'none' : '0 2px 12px rgba(0,0,0,0.06)',
                      }}>
                   <div className="flex gap-0.5 mb-4">
                     {[...Array(5)].map((_, i) => (
                       <span key={i} className="text-[17px]" style={{color:'#f59e0b'}}>★</span>
                     ))}
                   </div>
-                  <p className={`text-[14px] leading-relaxed mb-5 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>"{quote}"</p>
+                  <p className={`text-[14px] leading-relaxed mb-5 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>"{quote}"</p>
                   <div className="flex items-center gap-3">
                     <div className="w-9 h-9 rounded-full flex items-center justify-center text-[13px] font-bold text-white shrink-0"
                          style={{background:'linear-gradient(135deg,#1d4ed8,#0284c7)'}}>
@@ -992,7 +986,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
 
                   <div className="p-8 pt-12">
                     <h3 className={`text-[22px] font-bold mb-1 ${plan.highlight ? 'text-blue-400' : (isDark ? 'text-white' : 'text-gray-900')}`}>{plan.name}</h3>
-                    <p className={`text-[13px] mb-4 ${isDark ? 'text-gray-500' : 'text-gray-500'}`}>{plan.desc}</p>
+                <p className={`text-[13px] mb-4 ${isDark ? 'text-gray-500' : 'text-gray-600'}`}>{plan.desc}</p>
 
                     {/* Price — show discount for plans with originalMonthly */}
                     {plan.originalMonthly ? (
