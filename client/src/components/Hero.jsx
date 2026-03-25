@@ -28,8 +28,8 @@ function HeroDashboardMockup({ isDark }) {
       {/* Content Area */}
       <div className="p-6 grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="col-span-1 space-y-4">
-          <div className="h-32 rounded-xl bg-gradient-to-br from-emerald-500/10 to-transparent border border-emerald-500/10 flex flex-col items-center justify-center">
-             <div className="text-[10px] text-emerald-400 uppercase tracking-widest font-bold mb-1">Equity Growth</div>
+          <div className="h-32 rounded-xl bg-gradient-to-br from-blue-500/10 to-transparent border border-blue-500/10 flex flex-col items-center justify-center">
+             <div className="text-[10px] text-blue-400 uppercase tracking-widest font-bold mb-1">Equity Growth</div>
              <div className="text-xl font-mono text-white">+$4,280.50</div>
           </div>
           <div className="grid grid-cols-2 gap-3">
@@ -46,7 +46,7 @@ function HeroDashboardMockup({ isDark }) {
           <div className="flex justify-between items-center mb-4">
              <div className="text-xs font-semibold text-gray-400">Behavioral Performance</div>
              <div className="flex gap-2">
-                <div className="h-1.5 w-12 rounded-full bg-emerald-500/20" />
+                <div className="h-1.5 w-12 rounded-full bg-blue-500/20" />
                 <div className="h-1.5 w-8 rounded-full bg-white/10" />
              </div>
           </div>
@@ -56,7 +56,7 @@ function HeroDashboardMockup({ isDark }) {
             ))}
           </div>
           {/* Decorative "AI" Glow */}
-          <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-emerald-500/20 rounded-full blur-[50px]" />
+          <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-blue-500/20 rounded-full blur-[50px]" />
         </div>
       </div>
     </motion.div>
@@ -79,7 +79,7 @@ export default function Hero({ badgeText, spotsLeft, onGetStarted, onSignIn }) {
             <motion.div 
               animate={{ x: [0, 50, 0], y: [0, -30, 0] }}
               transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-              className="absolute top-[-10%] left-[-10%] w-[600px] h-[600px] bg-emerald-600/10 rounded-full blur-[120px]" 
+              className="absolute top-[-10%] left-[-10%] w-[600px] h-[600px] bg-blue-600/10 rounded-full blur-[120px]" 
             />
             <motion.div 
               animate={{ x: [0, -50, 0], y: [0, 30, 0] }}
@@ -95,10 +95,10 @@ export default function Hero({ badgeText, spotsLeft, onGetStarted, onSignIn }) {
         <motion.div 
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-10 border border-emerald-500/30 bg-emerald-500/5 backdrop-blur-md"
+          className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-10 border border-blue-500/30 bg-blue-500/5 backdrop-blur-md"
         >
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
-          <span className="text-[11px] font-bold tracking-[0.2em] uppercase text-emerald-400">
+          <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-ping" />
+          <span className="text-[11px] font-bold tracking-[0.2em] uppercase text-blue-400">
             {badgeText || "Live Intelligence"}
           </span>
         </motion.div>
@@ -146,7 +146,7 @@ export default function Hero({ badgeText, spotsLeft, onGetStarted, onSignIn }) {
         <div className="flex flex-col sm:flex-row items-center justify-center gap-5 mb-12">
           <button 
             onClick={onGetStarted}
-            className="group relative px-8 py-5 bg-emerald-500 text-black font-black rounded-2xl transition-all hover:scale-105 hover:shadow-[0_0_40px_rgba(16,185,129,0.4)] flex items-center gap-3 overflow-hidden"
+            className="group relative px-8 py-5 bg-blue-600 text-white font-black rounded-2xl transition-all hover:scale-105 hover:shadow-[0_0_40px_rgba(59,130,246,0.4)] flex items-center gap-3 overflow-hidden"
           >
             <span className="relative z-10 flex items-center gap-2 text-lg">
               Start Your Free Journal <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
@@ -170,7 +170,7 @@ export default function Hero({ badgeText, spotsLeft, onGetStarted, onSignIn }) {
             {Icon: Bot, label: 'Gemini AI'},
           ].map(({Icon, label}) => (
             <div key={label} className={`flex items-center gap-2 px-4 py-1.5 rounded-full border text-[11px] font-bold uppercase tracking-widest ${isDark ? 'border-white/10 bg-white/5 text-gray-400' : 'border-black/10 bg-black/[0.04] text-gray-500'}`}>
-              <Icon size={12} className="text-emerald-500" /> {label}
+              <Icon size={12} className="text-blue-500" /> {label}
             </div>
           ))}
         </div>
@@ -180,7 +180,7 @@ export default function Hero({ badgeText, spotsLeft, onGetStarted, onSignIn }) {
       <div className="relative z-10 mt-12 w-full max-w-5xl mx-auto px-4">
         <HeroDashboardMockup isDark={isDark} />
         {/* Glow behind the dashboard — dark mode only */}
-        {isDark && <div className="absolute -bottom-20 left-1/2 -translate-x-1/2 w-[80%] h-40 bg-emerald-500/20 blur-[100px] pointer-events-none" />}
+        {isDark && <div className="absolute -bottom-20 left-1/2 -translate-x-1/2 w-[80%] h-40 bg-blue-500/20 blur-[100px] pointer-events-none" />}
       </div>
     </section>
   );

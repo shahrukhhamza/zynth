@@ -353,21 +353,21 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
         >
           <span>
             <Flame className="w-3.5 h-3.5 text-amber-400 inline-block mr-1" />{' '}
-            <span className="text-emerald-300 font-bold">FOUNDING MEMBER OFFER</span>
+            <span className="text-blue-300 font-bold">FOUNDING MEMBER OFFER</span>
             {' '}—{' '}
             First 100 users get Pro for{' '}
             <span className="text-white font-bold">$1.99/month</span>
             {' '}(regularly{' '}
-            <span className="line-through text-emerald-600">$9</span>)
+            <span className="line-through text-blue-600">$9</span>)
             {' '}·{' '}
             <span className="text-amber-300 font-bold">Only {spotsLeft} spots remaining!</span>
           </span>
           <button
             onClick={dismissBanner}
             className="absolute right-3 w-7 h-7 flex items-center justify-center rounded-lg transition-colors"
-            style={{ color: 'rgba(167,243,208,0.6)', top: 'calc(50% - 14px)' }}
+            style={{ color: 'rgba(147,197,253,0.6)', top: 'calc(50% - 14px)' }}
             onMouseOver={e => { e.currentTarget.style.color = '#fff'; e.currentTarget.style.background = 'rgba(255,255,255,0.08)'; }}
-            onMouseOut={e => { e.currentTarget.style.color = 'rgba(167,243,208,0.6)'; e.currentTarget.style.background = 'transparent'; }}
+            onMouseOut={e => { e.currentTarget.style.color = 'rgba(147,197,253,0.6)'; e.currentTarget.style.background = 'transparent'; }}
             aria-label="Dismiss banner"
           >
             <X className="w-4 h-4" />
@@ -392,9 +392,9 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
           {/* Logo + Live dot */}
           <div className="flex items-center gap-2.5 select-none">
             <div className="flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 shrink-0"
-                    style={{animation:'liveDot 2s ease-in-out infinite', boxShadow:'0 0 6px rgba(52,211,153,0.7)'}} />
-              <span className="text-[10px] font-medium text-emerald-500/70 hidden sm:block">Live</span>
+              <span className="w-2 h-2 rounded-full bg-blue-400 shrink-0"
+                    style={{animation:'liveDot 2s ease-in-out infinite', boxShadow:'0 0 6px rgba(59,130,246,0.7)'}} />
+              <span className="text-[10px] font-medium text-blue-500/70 hidden sm:block">Live</span>
             </div>
             <img src="/logo.png" alt="Zynth" className="w-9 h-9 object-contain" />
             <span className="text-[20px] font-bold tracking-tight">Zynth</span>
@@ -431,7 +431,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
             </button>
             <button onClick={onGetStarted}
                     className="text-[13px] font-semibold text-white px-5 py-2.5 rounded-xl transition-all hover:brightness-110"
-                    style={{background:'linear-gradient(135deg,#059669,#0d9488)', boxShadow:'0 4px 16px rgba(16,185,129,0.3)'}}>
+                    style={{background:'linear-gradient(135deg,#1d4ed8,#0284c7)', boxShadow:'0 4px 16px rgba(59,130,246,0.3)'}}>
               Get Started
             </button>
           </div>
@@ -472,7 +472,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
               </button>
               <button onClick={() => { setMobileOpen(false); onGetStarted(); }}
                       className="flex-1 text-[13px] font-semibold text-white rounded-xl py-2.5"
-                      style={{background:'linear-gradient(135deg,#059669,#0d9488)'}}>
+                      style={{background:'linear-gradient(135deg,#1d4ed8,#0284c7)'}}>
                 Get Started
               </button>
             </div>
@@ -501,7 +501,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
               <span className="text-[11px] font-bold tracking-[0.18em] text-blue-400">FEATURES</span>
             </div>
             <h2 className="text-[42px] font-extrabold tracking-tight mb-4">
-              <span className={`bg-clip-text text-transparent bg-gradient-to-r ${isDark ? 'from-white to-emerald-400' : 'from-[#0a0e1a] to-emerald-600'}`}>
+              <span className={`bg-clip-text text-transparent bg-gradient-to-r ${isDark ? 'from-white to-blue-400' : 'from-[#0a0e1a] to-blue-600'}`}>
                 Everything a serious trader needs
               </span>
             </h2>
@@ -562,12 +562,12 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
             {/* Text */}
             <div className="flex-1 lg:pl-8">
               <div className="w-14 h-14 rounded-2xl flex items-center justify-center mb-5"
-                   style={{background:'linear-gradient(135deg,rgba(16,185,129,0.15),rgba(16,185,129,0.04))', border:'1px solid rgba(16,185,129,0.2)'}}>
-                <BookOpen className="w-7 h-7 text-emerald-400" />
+                   style={{background:'linear-gradient(135deg,rgba(59,130,246,0.15),rgba(59,130,246,0.04))', border:'1px solid rgba(59,130,246,0.2)'}}>
+                <BookOpen className="w-7 h-7 text-blue-400" />
               </div>
               <h3 className="text-[32px] font-extrabold mb-4">
                 <span className={isDark ? 'text-white' : 'text-gray-900'}>Rich </span>
-                <span className="bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-sky-400">
+                <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#1d4ed8] to-[#06b6d4]">
                   Trade Journaling
                 </span>
               </h3>
@@ -580,12 +580,12 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
                 'Pre-trade checklists & templates',
               ].map(b => (
                 <div key={b} className="flex items-center gap-3 mb-3">
-                  <Check className="w-4 h-4 text-emerald-400 shrink-0" />
+                  <Check className="w-4 h-4 text-blue-400 shrink-0" />
                   <span className={`text-[14px] ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>{b}</span>
                 </div>
               ))}
               <button onClick={onGetStarted}
-                      className="mt-4 flex items-center gap-2 text-[14px] font-semibold text-emerald-500 hover:text-emerald-400 transition-colors">
+                      className="mt-4 flex items-center gap-2 text-[14px] font-semibold text-blue-500 hover:text-blue-400 transition-colors">
                 Learn More <ArrowRight className="w-4 h-4" />
               </button>
             </div>
@@ -708,14 +708,14 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
         <div className="relative z-10 max-w-4xl mx-auto text-center">
           {/* Pro badge */}
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-6 border"
-               style={{background:'rgba(16,185,129,0.08)', borderColor:'rgba(16,185,129,0.32)'}}>
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
-            <span className="text-[10px] font-bold tracking-[0.2em] text-emerald-400">PRO FEATURE</span>
+               style={{background:'rgba(59,130,246,0.08)', borderColor:'rgba(59,130,246,0.32)'}}>
+            <span className="w-2 h-2 rounded-full bg-blue-400 animate-pulse shrink-0" />
+            <span className="text-[10px] font-bold tracking-[0.2em] text-blue-400">PRO FEATURE</span>
           </div>
           <Reveal>
             <h2 className={`text-[36px] md:text-[48px] font-extrabold tracking-tight mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>
               See the Macro Score{' '}
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-sky-400">
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#1d4ed8] to-[#06b6d4]">
                 in Action
               </span>
             </h2>
@@ -779,7 +779,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
                     SAMPLE DATA
                   </span>
                 </div>
-                <p className="text-[52px] md:text-[60px] font-extrabold leading-none bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-emerald-300">
+                <p className="text-[52px] md:text-[60px] font-extrabold leading-none bg-clip-text text-transparent bg-gradient-to-r from-[#1d4ed8] to-[#06b6d4]">
                   +4.5
                 </p>
                 <p className={`text-[14px] mt-2 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Example output — score updates live from real economic data <span style={{display:'inline-block',width:8,height:8,borderRadius:'50%',backgroundColor:'#22c55e',verticalAlign:'middle',marginLeft:2}}/></p>
@@ -852,7 +852,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
               <span className="text-[11px] font-bold tracking-[0.18em] text-amber-400">TESTIMONIALS</span>
             </div>
             <h2 className={`text-[42px] font-extrabold tracking-tight ${isDark ? 'text-white' : 'text-gray-900'}`}>
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-emerald-600">What traders are saying</span>
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#1d4ed8] to-[#06b6d4]">What traders are saying</span>
             </h2>
           </Reveal>
           <div className="grid md:grid-cols-3 gap-6">
@@ -867,8 +867,8 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
                        background: isDark ? '#0c1527' : '#ffffff',
                        border: '1px solid transparent',
                        backgroundImage: isDark
-                         ? 'linear-gradient(#0c1527,#0c1527), linear-gradient(135deg,rgba(16,185,129,0.5),rgba(13,148,136,0.3),rgba(245,158,11,0.2))'
-                         : 'linear-gradient(#ffffff,#ffffff), linear-gradient(135deg,rgba(16,185,129,0.4),rgba(13,148,136,0.2),rgba(245,158,11,0.15))',
+                         ? 'linear-gradient(#0c1527,#0c1527), linear-gradient(135deg,rgba(59,130,246,0.5),rgba(2,132,199,0.3),rgba(245,158,11,0.2))'
+                         : 'linear-gradient(#ffffff,#ffffff), linear-gradient(135deg,rgba(59,130,246,0.4),rgba(2,132,199,0.2),rgba(245,158,11,0.15))',
                        backgroundOrigin: 'border-box',
                        backgroundClip: 'padding-box, border-box',
                        animation: `float 3.5s ease-in-out ${floatDelay} infinite`,
@@ -882,12 +882,12 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
                   <p className={`text-[14px] leading-relaxed mb-5 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>"{quote}"</p>
                   <div className="flex items-center gap-3">
                     <div className="w-9 h-9 rounded-full flex items-center justify-center text-[13px] font-bold text-white shrink-0"
-                         style={{background:'linear-gradient(135deg,#059669,#0d9488)'}}>
+                         style={{background:'linear-gradient(135deg,#1d4ed8,#0284c7)'}}>
                       {name[0]}
                     </div>
                     <div>
                       <p className={`text-[13px] font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>{name}</p>
-                      <p className="text-[11px] text-emerald-500/70">{pair}</p>
+                      <p className="text-[11px] text-blue-500/70">{pair}</p>
                     </div>
                   </div>
                 </div>
@@ -902,11 +902,11 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
         <div className="max-w-7xl mx-auto">
           <Reveal className="text-center mb-12">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-5 border"
-                 style={{background:'rgba(16,185,129,0.07)', borderColor:'rgba(16,185,129,0.22)'}}>
-              <span className="text-[11px] font-bold tracking-[0.18em] text-emerald-400">PRICING</span>
+                 style={{background:'rgba(59,130,246,0.07)', borderColor:'rgba(59,130,246,0.22)'}}>
+              <span className="text-[11px] font-bold tracking-[0.18em] text-blue-400">PRICING</span>
             </div>
             <h2 className={`text-[42px] font-extrabold tracking-tight mb-6 ${isDark ? 'text-white' : 'text-gray-900'}`}>
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-emerald-600">Plans for Every Trader</span>
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#1d4ed8] to-[#06b6d4]">Plans for Every Trader</span>
             </h2>
             {/* Toggle */}
             <div className="inline-flex items-center gap-1 p-1 rounded-xl border"
@@ -921,7 +921,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
               <button onClick={() => setAnnual(true)}
                       className={`flex items-center gap-2 px-5 py-2 rounded-lg text-[13px] font-semibold transition-all ${annual ? (isDark ? 'text-white bg-white/[0.08]' : 'text-gray-900 bg-black/[0.06]') : (isDark ? 'text-gray-500 hover:text-gray-300' : 'text-gray-400 hover:text-gray-600')}`}>
                 Yearly
-                <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-md text-emerald-400 bg-emerald-500/15">Save 17%</span>
+                <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-md text-blue-400 bg-blue-500/15">Save 17%</span>
               </button>
             </div>
           </Reveal>
@@ -965,9 +965,9 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
             {activePlans.map((plan, i) => (
               <Reveal key={plan.name} delay={i * 0.12}>
                 <div
-                   className={`relative rounded-2xl overflow-visible border transition-all hover:-translate-y-1 ${plan.highlight ? 'border-emerald-500/50' : ''}`}
+                   className={`relative rounded-2xl overflow-visible border transition-all hover:-translate-y-1 ${plan.highlight ? 'border-blue-500/50' : ''}`}
                    style={plan.highlight
-                     ? {background: isDark ? '#08180f' : '#f0fdf4', animation:'glowPulse 2.2s ease-in-out infinite', borderColor: undefined}
+                     ? {background: isDark ? '#080f1a' : '#eff6ff', animation:'glowPulse 2.2s ease-in-out infinite', borderColor: undefined}
                      : {
                          background: isDark ? '#0c1527' : '#ffffff',
                          borderColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.07)',
@@ -991,7 +991,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
                   ) : null}
 
                   <div className="p-8 pt-12">
-                    <h3 className={`text-[22px] font-bold mb-1 ${plan.highlight ? 'text-emerald-400' : (isDark ? 'text-white' : 'text-gray-900')}`}>{plan.name}</h3>
+                    <h3 className={`text-[22px] font-bold mb-1 ${plan.highlight ? 'text-blue-400' : (isDark ? 'text-white' : 'text-gray-900')}`}>{plan.name}</h3>
                     <p className={`text-[13px] mb-4 ${isDark ? 'text-gray-500' : 'text-gray-500'}`}>{plan.desc}</p>
 
                     {/* Price — show discount for plans with originalMonthly */}
@@ -1015,16 +1015,16 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
                           <span className={`text-[13px] mb-3 ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>/month</span>
                           {plan.highlight && (
                             <div className="absolute -top-9 left-1/2 -translate-x-1/2 px-3 py-1.5 rounded-lg text-[11px] font-semibold whitespace-nowrap pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-                                 style={{background:'rgba(16,185,129,0.18)', border:'1px solid rgba(16,185,129,0.35)', color:'#34d399'}}>
+                                 style={{background:'rgba(59,130,246,0.18)', border:'1px solid rgba(59,130,246,0.35)', color:'#3b82f6'}}>
                               You save $85/year vs regular price
                             </div>
                           )}
                         </div>
                         {annual && plan.yearlyBilled && (
-                          <p className="text-[11px] text-emerald-500/80 mt-1">Billed as ${plan.yearlyBilled}/year</p>
+                          <p className="text-[11px] text-blue-500/80 mt-1">Billed as ${plan.yearlyBilled}/year</p>
                         )}
                         {annual && (
-                          <span className="inline-block text-[10px] font-bold px-2 py-0.5 rounded-md text-emerald-400 bg-emerald-500/15 mt-1">Save 17%</span>
+                          <span className="inline-block text-[10px] font-bold px-2 py-0.5 rounded-md text-blue-400 bg-blue-500/15 mt-1">Save 17%</span>
                         )}
                         {plan.highlight && (spotsLeft ?? 0) > 0 ? (
                           <>
@@ -1064,7 +1064,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
                     <div className="space-y-3 mb-8">
                       {plan.features.map(f => (
                         <div key={f} className="flex items-center gap-3">
-                          <Check className="w-4 h-4 shrink-0 text-emerald-400" />
+                          <Check className="w-4 h-4 shrink-0 text-blue-400" />
                           <span className={`text-[13px] ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>{f}</span>
                         </div>
                       ))}
@@ -1072,7 +1072,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
                     <button onClick={onGetStarted}
                             className="w-full py-3 rounded-xl text-[14px] font-semibold transition-all hover:brightness-110 text-white"
                             style={plan.highlight
-                              ? {background:'linear-gradient(135deg,#059669,#0d9488)', boxShadow:'0 4px 16px rgba(16,185,129,0.35)'}
+                              ? {background:'linear-gradient(135deg,#1d4ed8,#0284c7)', boxShadow:'0 4px 16px rgba(59,130,246,0.35)'}
                               : {background: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)', border: isDark ? '1px solid rgba(255,255,255,0.08)' : '1px solid rgba(0,0,0,0.08)', color: isDark ? 'white' : '#374151'}}>
                       {plan.highlight && (spotsLeft ?? 0) > 0 ? 'Claim Founding Price' : plan.cta}
                     </button>
@@ -1141,7 +1141,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
             <div className="flex-[3] text-center lg:text-left">
               <h2 className={`text-[38px] md:text-[50px] font-extrabold tracking-tight leading-[1.08] mb-5 ${isDark ? 'text-white' : 'text-gray-900'}`}>
                 Your Next Trade Could Be<br />
-                <span className="bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-sky-400">
+                <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#1d4ed8] to-[#06b6d4]">
                   Your Best Trade.
                 </span>
               </h2>
@@ -1149,8 +1149,8 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
                 Join traders who use data instead of guessing. Start free, upgrade when you see the results.
               </p>
               <button onClick={onGetStarted}
-                      className="group relative overflow-hidden inline-flex items-center gap-2 text-[16px] font-semibold text-white px-9 py-4 rounded-2xl hover:scale-[1.03] hover:shadow-[0_8px_32px_rgba(16,185,129,0.45)]"
-                      style={{background:'linear-gradient(135deg,#059669 0%,#0d9488 100%)', boxShadow:'0 4px 20px rgba(16,185,129,0.28)'}}>
+                      className="group relative overflow-hidden inline-flex items-center gap-2 text-[16px] font-semibold text-white px-9 py-4 rounded-2xl hover:scale-[1.03] hover:shadow-[0_8px_32px_rgba(59,130,246,0.45)]"
+                      style={{background:'linear-gradient(135deg,#1d4ed8 0%,#0284c7 100%)', boxShadow:'0 4px 20px rgba(59,130,246,0.28)'}}>
                 <span className="relative z-10 flex items-center gap-2">
                   Start Finding My Patterns
                   <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
@@ -1183,11 +1183,11 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
                     return (
                       <div className="rounded-xl px-4 py-4 border"
                            style={{
-                             background: isAmber ? 'rgba(245,158,11,0.08)' : 'rgba(16,185,129,0.06)',
-                             borderColor: isAmber ? 'rgba(245,158,11,0.25)' : 'rgba(16,185,129,0.22)',
+                             background: isAmber ? 'rgba(245,158,11,0.08)' : 'rgba(59,130,246,0.06)',
+                             borderColor: isAmber ? 'rgba(245,158,11,0.25)' : 'rgba(59,130,246,0.22)',
                            }}>
                         <p className="text-[14px] font-semibold leading-snug"
-                           style={{color: isAmber ? '#fbbf24' : '#34d399'}}>
+                           style={{color: isAmber ? '#fbbf24' : '#3b82f6'}}>
                           {insight.text}
                         </p>
                       </div>
@@ -1197,7 +1197,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
                 <div className="flex justify-center gap-2 mt-6">
                   {CTA_INSIGHTS.map((_, i) => (
                     <div key={i} className="w-1.5 h-1.5 rounded-full transition-all duration-300"
-                         style={{background: i === ctaInsightIdx ? '#34d399' : (isDark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.12)'), transform: i === ctaInsightIdx ? 'scale(1.3)' : 'scale(1)'}} />
+                         style={{background: i === ctaInsightIdx ? '#3b82f6' : (isDark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.12)'), transform: i === ctaInsightIdx ? 'scale(1.3)' : 'scale(1)'}} />
                   ))}
                 </div>
               </div>
