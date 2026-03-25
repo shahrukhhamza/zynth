@@ -274,8 +274,8 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
           50%       { box-shadow: 0 0 0 8px rgba(245,158,11,0); }
         }
         @keyframes proCardGlow {
-          0%, 100% { box-shadow: 0 0 0 1px rgba(16,185,129,0.2), 0 24px 60px rgba(0,0,0,0.5), 0 0 30px rgba(16,185,129,0.1); }
-          50%       { box-shadow: 0 0 0 1px rgba(16,185,129,0.5), 0 24px 60px rgba(0,0,0,0.5), 0 0 60px rgba(16,185,129,0.3); }
+          0%, 100% { box-shadow: 0 0 0 1px rgba(59,130,246,0.2), 0 24px 60px rgba(0,0,0,0.5), 0 0 30px rgba(59,130,246,0.1); }
+          50%       { box-shadow: 0 0 0 1px rgba(59,130,246,0.5), 0 24px 60px rgba(0,0,0,0.5), 0 0 60px rgba(59,130,246,0.3); }
         }
         @keyframes shimmerBtn {
           0%   { background-position: -200% center; }
@@ -305,8 +305,8 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
           50%       { transform: translateY(-6px); }
         }
         @keyframes glowPulse {
-          0%, 100% { box-shadow: 0 0 20px rgba(16,185,129,0.3), 0 0 0 1px rgba(16,185,129,0.3), 0 24px 60px rgba(0,0,0,0.5); }
-          50%       { box-shadow: 0 0 45px rgba(16,185,129,0.65), 0 0 0 1px rgba(16,185,129,0.6), 0 24px 60px rgba(0,0,0,0.5); }
+          0%, 100% { box-shadow: 0 0 20px rgba(59,130,246,0.3), 0 0 0 1px rgba(59,130,246,0.3), 0 24px 60px rgba(0,0,0,0.5); }
+          50%       { box-shadow: 0 0 45px rgba(59,130,246,0.65), 0 0 0 1px rgba(59,130,246,0.6), 0 24px 60px rgba(0,0,0,0.5); }
         }
         @keyframes priceDrop {
           from { transform: translateY(-18px); opacity: 0; }
@@ -319,8 +319,8 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
           100% { transform: perspective(300px) rotateX(0deg);   opacity: 1; }
         }
         @keyframes liveDot {
-          0%, 100% { box-shadow: 0 0 0 0 rgba(52,211,153,0.5); }
-          60%      { box-shadow: 0 0 0 5px rgba(52,211,153,0); }
+          0%, 100% { box-shadow: 0 0 0 0 rgba(59,130,246,0.5); }
+          60%      { box-shadow: 0 0 0 5px rgba(59,130,246,0); }
         }
         @keyframes insightFadeUp {
           from { opacity: 0; transform: translateY(12px); }
@@ -336,7 +336,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
           position: absolute;
           bottom: -3px; left: 0;
           width: 0; height: 1.5px;
-          background: #34d399;
+          background: #3b82f6;
           transition: width 0.22s ease;
         }
         .nav-link-hover:hover::after { width: 100%; }
@@ -347,18 +347,20 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
         <div
           className="relative flex items-center justify-center text-center px-12 py-3 text-[13px] font-semibold"
           style={{
-            background: 'linear-gradient(90deg, #065f46 0%, #064e3b 40%, #0f766e 80%, #065f46 100%)',
-            borderBottom: '1px solid rgba(52,211,153,0.2)',
+            background: isDark
+              ? 'linear-gradient(90deg, #065f46 0%, #064e3b 40%, #0f766e 80%, #065f46 100%)'
+              : 'linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 60%, #0284c7 100%)',
+            borderBottom: isDark ? '1px solid rgba(52,211,153,0.2)' : '1px solid rgba(29,78,216,0.4)',
           }}
         >
           <span>
             <Flame className="w-3.5 h-3.5 text-amber-400 inline-block mr-1" />{' '}
-            <span className="text-blue-300 font-bold">FOUNDING MEMBER OFFER</span>
+            <span className="text-white font-bold">FOUNDING MEMBER OFFER</span>
             {' '}—{' '}
             First 100 users get Pro for{' '}
             <span className="text-white font-bold">$1.99/month</span>
             {' '}(regularly{' '}
-            <span className="line-through text-blue-600">$9</span>)
+            <span className="line-through text-white/60">$9</span>)
             {' '}·{' '}
             <span className="text-amber-300 font-bold">Only {spotsLeft} spots remaining!</span>
           </span>
@@ -703,7 +705,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
       <section className="py-24 px-6 relative overflow-hidden transition-colors duration-300" style={{background: isDark ? '#07090f' : '#f4f6f9'}}>
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[500px]"
-               style={{background:'radial-gradient(ellipse,rgba(16,185,129,0.08) 0%,transparent 65%)'}} />
+               style={{background: isDark ? 'radial-gradient(ellipse,rgba(16,185,129,0.08) 0%,transparent 65%)' : 'radial-gradient(ellipse,rgba(59,130,246,0.07) 0%,transparent 65%)'}} />
         </div>
         <div className="relative z-10 max-w-4xl mx-auto text-center">
           {/* Pro badge */}
@@ -756,7 +758,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
                   transition: 'transform 1.6s cubic-bezier(0.34,1.2,0.64,1)',
                 }}>
                   <line x1="100" y1="100" x2="100" y2="20"
-                        stroke="rgba(52,211,153,0.55)" strokeWidth="9" strokeLinecap="round"
+                        stroke={isDark ? 'rgba(52,211,153,0.55)' : 'rgba(59,130,246,0.55)'} strokeWidth="9" strokeLinecap="round"
                         style={{filter:'blur(4px)', animation:'needleGlow 2.2s ease-in-out infinite'}} />
                 </g>
                 {/* Needle main */}
@@ -1126,7 +1128,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
       <section className="py-24 px-6 relative overflow-hidden transition-colors duration-300" style={{background: isDark ? '#07090f' : '#eef1f7'}}>
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[500px]"
-               style={{background:'radial-gradient(ellipse,rgba(16,185,129,0.07) 0%,transparent 65%)'}} />
+               style={{background: isDark ? 'radial-gradient(ellipse,rgba(16,185,129,0.07) 0%,transparent 65%)' : 'radial-gradient(ellipse,rgba(59,130,246,0.07) 0%,transparent 65%)'}} />
         </div>
         <Reveal className="relative z-10 max-w-6xl mx-auto">
           <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
@@ -1152,7 +1154,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
                 <span className="absolute inset-0 pointer-events-none"
                       style={{background:'linear-gradient(90deg,transparent 0%,rgba(255,255,255,0.14) 50%,transparent 100%)',backgroundSize:'200% 100%',animation:'shimmerBtn 3s linear infinite'}} />
               </button>
-              <p className={`text-[12px] mt-4 ${isDark ? 'text-gray-600' : 'text-gray-400'}`}>No credit card required · Cancel anytime</p>
+              <p className={`text-[12px] mt-4 ${isDark ? 'text-gray-600' : 'text-gray-500'}`}>No credit card required · Cancel anytime</p>
             </div>
 
             {/* Right 40% — cycling insight cards */}
@@ -1177,8 +1179,10 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
                     return (
                       <div className="rounded-xl px-4 py-4 border"
                            style={{
-                             background: isAmber ? 'rgba(245,158,11,0.08)' : 'rgba(59,130,246,0.06)',
-                             borderColor: isAmber ? 'rgba(245,158,11,0.25)' : 'rgba(59,130,246,0.22)',
+                             background: isAmber
+                               ? (isDark ? 'rgba(245,158,11,0.08)' : 'rgba(245,158,11,0.10)')
+                               : (isDark ? 'rgba(59,130,246,0.06)' : 'rgba(59,130,246,0.10)'),
+                             borderColor: isAmber ? 'rgba(245,158,11,0.30)' : (isDark ? 'rgba(59,130,246,0.22)' : 'rgba(59,130,246,0.38)'),
                            }}>
                         <p className="text-[14px] font-semibold leading-snug"
                            style={{color: isAmber ? '#fbbf24' : '#3b82f6'}}>
@@ -1214,7 +1218,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
               <img src="/logo.png" alt="Zynth" className="w-9 h-9 object-contain" />
               <span className={`text-[16px] font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>Zynth</span>
             </div>
-            <p className="text-[12px] leading-relaxed mb-4" style={{color:'rgba(52,211,153,0.5)'}}>Intelligence Behind Every Trade</p>
+            <p className="text-[12px] leading-relaxed mb-4" style={{color: isDark ? 'rgba(52,211,153,0.5)' : '#6b7280'}}>Intelligence Behind Every Trade</p>
             <p className={`text-[11px] ${isDark ? 'text-gray-700' : 'text-gray-400'}`}>© 2026 Zynth. All rights reserved.</p>
           </div>
 
@@ -1252,7 +1256,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
               </li>
             </ul>
             <div className="mt-6 flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full flex-shrink-0" style={{background:'#34d399', boxShadow:'0 0 6px rgba(52,211,153,0.7)'}} />
+              <span className="w-2 h-2 rounded-full flex-shrink-0" style={{background: isDark ? '#34d399' : '#3b82f6', boxShadow: isDark ? '0 0 6px rgba(52,211,153,0.7)' : '0 0 6px rgba(59,130,246,0.7)'}} />
               <span className={`text-[11px] ${isDark ? 'text-gray-600' : 'text-gray-400'}`}>Built for active traders</span>
             </div>
           </div>
