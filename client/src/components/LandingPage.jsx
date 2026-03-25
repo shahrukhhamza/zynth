@@ -194,17 +194,15 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
       ringPos.current.y = lerp(ringPos.current.y, mousePos.current.y, 0.28);
       if (cursorRingRef.current) {
         const hover = isHovering.current;
-        const size  = hover ? 48 : 28;
-        cursorRingRef.current.style.transform = `translate(${ringPos.current.x - size / 2}px, ${ringPos.current.y - size / 2}px) scale(${hover ? 1.1 : 1})`;
+        const size  = hover ? 110 : 72;
+        cursorRingRef.current.style.transform = `translate(${ringPos.current.x - size / 2}px, ${ringPos.current.y - size / 2}px)`;
         cursorRingRef.current.style.width  = `${size}px`;
         cursorRingRef.current.style.height = `${size}px`;
-        cursorRingRef.current.style.opacity = hover ? '1' : '0.55';
-        cursorRingRef.current.style.borderColor = hover
-          ? (isDark ? 'rgba(59,130,246,0.9)' : 'rgba(29,78,216,0.85)')
-          : (isDark ? 'rgba(59,130,246,0.5)' : 'rgba(29,78,216,0.4)');
-        cursorRingRef.current.style.boxShadow = hover
-          ? (isDark ? '0 0 18px rgba(59,130,246,0.55), 0 0 40px rgba(59,130,246,0.18)' : '0 0 18px rgba(29,78,216,0.35), 0 0 40px rgba(29,78,216,0.12)')
-          : 'none';
+        cursorRingRef.current.style.opacity = hover ? '1' : '0.6';
+        const color = isDark
+          ? (hover ? 'rgba(99,160,255,0.28)' : 'rgba(59,130,246,0.18)')
+          : (hover ? 'rgba(29,78,216,0.2)'  : 'rgba(59,130,246,0.13)');
+        cursorRingRef.current.style.background = `radial-gradient(circle, ${color} 0%, transparent 75%)`;
       }
       rafId.current = requestAnimationFrame(animate);
     }
@@ -351,20 +349,21 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
           background: 'radial-gradient(circle 280px at -400px -400px, transparent 0%, transparent 70%)',
         }}
       />
-      {/* Lagged ring */}
+      {/* Soft glow blob trailing cursor */}
       <div
         ref={cursorRingRef}
         style={{
           position: 'fixed', top: 0, left: 0,
-          width: '28px', height: '28px',
+          width: '72px', height: '72px',
           borderRadius: '50%',
-          border: `1.5px solid ${isDark ? 'rgba(59,130,246,0.5)' : 'rgba(29,78,216,0.4)'}`,
+          background: isDark ? 'radial-gradient(circle, rgba(59,130,246,0.18) 0%, transparent 75%)' : 'radial-gradient(circle, rgba(59,130,246,0.13) 0%, transparent 75%)',
+          filter: 'blur(18px)',
           pointerEvents: 'none',
-          zIndex: 99999,
-          willChange: 'transform',
-          transition: 'width 0.15s ease, height 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease, opacity 0.2s ease',
-          opacity: cursorVisible ? 0.7 : 0,
-          mixBlendMode: isDark ? 'screen' : 'multiply',
+          zIndex: 99998,
+          willChange: 'transform, width, height',
+          transition: 'width 0.22s ease, height 0.22s ease, opacity 0.25s ease',
+          opacity: cursorVisible ? 0.6 : 0,
+          mixBlendMode: isDark ? 'screen' : 'normal',
         }}
       />
       <style>{`
