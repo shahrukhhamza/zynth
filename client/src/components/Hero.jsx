@@ -114,10 +114,10 @@ export default function Hero({ badgeText, spotsLeft, onGetStarted, onSignIn }) {
           transition={{ delay: 0.2 }}
           className="text-5xl md:text-[82px] font-black leading-[1.05] tracking-tighter mb-8"
         >
-          <span className={isDark ? 'text-white' : 'text-gray-900'}>You Know How To Trade.</span>
+          <span className={isDark ? 'text-white' : 'text-gray-900'}>Stop Losing Trades</span>
           <br />
           <span className="inline-block pb-2 bg-clip-text text-transparent bg-gradient-to-r from-[#1d4ed8] via-[#3b82f6] to-[#06b6d4]">
-            But Do You Know Why You Lose?
+            You Could Have Won.
           </span>
         </motion.h1>
 
@@ -128,7 +128,7 @@ export default function Hero({ badgeText, spotsLeft, onGetStarted, onSignIn }) {
           transition={{ delay: 0.4 }}
           className={`text-[18px] md:text-[20px] max-w-[650px] mx-auto leading-relaxed mb-10 font-medium ${isDark ? 'text-gray-400' : 'text-gray-600'}`}
         >
-          Institutional-grade behavioral analytics for retail traders. Zynth maps your blind spots and optimizes your psychology in real-time.
+          Zynth is an AI-powered trade journal that uncovers the behavioral patterns silently destroying your P&L — and tells you exactly what to fix.
         </motion.p>
 
         {/* Urgency Badge */}
@@ -153,7 +153,7 @@ export default function Hero({ badgeText, spotsLeft, onGetStarted, onSignIn }) {
             className="group relative px-8 py-5 bg-blue-600 text-white font-black rounded-2xl transition-all hover:scale-105 hover:shadow-[0_0_40px_rgba(59,130,246,0.4)] flex items-center gap-3 overflow-hidden"
           >
             <span className="relative z-10 flex items-center gap-2 text-lg">
-              Start Your Free Journal <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
+              Analyze My Trades <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
             </span>
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
           </button>
@@ -165,6 +165,16 @@ export default function Hero({ badgeText, spotsLeft, onGetStarted, onSignIn }) {
             Access Terminal
           </button>
         </div>
+
+        {/* Trust line under CTAs */}
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.7 }}
+          className={`text-[12px] mb-6 ${isDark ? 'text-gray-600' : 'text-gray-500'}`}
+        >
+          Used by traders in 40+ countries &nbsp;·&nbsp; No credit card required &nbsp;·&nbsp; Free plan available
+        </motion.p>
 
         {/* Floating Trust Icons */}
         <div className="flex justify-center gap-3 flex-wrap">

@@ -33,6 +33,8 @@ import LandingPage from './components/LandingPage'
 import ForgotPasswordPage from './components/ForgotPasswordPage'
 import ResetPasswordPage from './components/ResetPasswordPage'
 import OnboardingFlow from './components/OnboardingFlow'
+import PreSignupOnboarding from './components/PreSignupOnboarding'
+import WelcomeScreen from './components/WelcomeScreen'
 import TermsOfService from './components/TermsOfService'
 import PrivacyPolicy from './components/PrivacyPolicy'
 import RefundPolicy from './components/RefundPolicy'
@@ -370,7 +372,10 @@ function AuthGate() {
   })
   const [showOnboarding, setShowOnboarding] = useState(false)
   const [showSkipBanner, setShowSkipBanner] = useState(false)
+  const [showPreSignupOnboarding, setShowPreSignupOnboarding] = useState(false)
+  const [showWelcomeScreen, setShowWelcomeScreen] = useState(false)
 
+  // Post-onboarding state (existing)
   useEffect(() => {
     if (!user) return;
     const done = localStorage.getItem('zynth_onboarding_done') === 'true' || !!user.onboarding_done;
@@ -381,6 +386,16 @@ function AuthGate() {
       if (!bannerDismissed) setShowSkipBanner(true);
     } else {
       setShowOnboarding(true);
+    }
+  }, [user?.id]) // eslint-disable-line
+
+  // Detect new signup → show WelcomeScreen once
+  useEffect(() => {
+    if (!user) return;
+    const isNew = sessionStorage.getItem('zynth_new_user') === 'true';
+    if (isNew) {
+      sessionStorage.removeItem('zynth_new_user');
+      setShowWelcomeScreen(true);
     }
   }, [user?.id]) // eslint-disable-line
 
@@ -418,11 +433,19 @@ function AuthGate() {
   if (user) {
     return (
       <>
-        <AppShell />
-        {showOnboarding && (
+        {showWelcomeScreen ? (
+          <WelcomeScreen
+            userName={user.name}
+            onAddFirstTrade={() => setShowWelcomeScreen(false)}
+            onSkip={() => setShowWelcomeScreen(false)}
+          />
+        ) : (
+          <AppShell />
+        )}
+        {showOnboarding && !showWelcomeScreen && (
           <OnboardingFlow onComplete={handleOnboardingComplete} onSkip={handleOnboardingSkip} />
         )}
-        {showSkipBanner && !showOnboarding && (
+        {showSkipBanner && !showOnboarding && !showWelcomeScreen && (
           <SetupReminderBanner
             onSetup={() => { setShowSkipBanner(false); setShowOnboarding(true); }}
             onDismiss={() => setShowSkipBanner(false)}
@@ -433,7 +456,11 @@ function AuthGate() {
   }
 
   if (view === 'signup')
-    return <SignupPage onSwitchToLogin={() => setView('login')} onBack={() => setView('landing')} />
+    return <SignupPage
+      onSwitchToLogin={() => setView('login')}
+      onBack={() => setView('landing')}
+      onSignupSuccess={() => sessionStorage.setItem('zynth_new_user', 'true')}
+    />
 
   if (view === 'terms')
     return <TermsOfService onBack={() => setView('landing')} />
@@ -464,9 +491,17 @@ function AuthGate() {
     return <ResetPasswordPage onBack={() => setView('login')} />
 
   return (
-    <LandingPage
-      onSignIn={() => setView('login')}
-      onGetStarted={() => setView('signup')}
-    />
+    <>
+      <LandingPage
+        onSignIn={() => setView('login')}
+        onGetStarted={() => setShowPreSignupOnboarding(true)}
+      />
+      {showPreSignupOnboarding && (
+        <PreSignupOnboarding
+          onContinueToSignup={() => { setShowPreSignupOnboarding(false); setView('signup'); }}
+          onClose={() => setShowPreSignupOnboarding(false)}
+        />
+      )}
+    </>
   )
 }

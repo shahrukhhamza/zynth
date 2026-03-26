@@ -11,6 +11,8 @@ import {
 import { API_URL } from '../config/api';
 import { getPublicStats } from '../utils/publicStats';
 import Hero from './Hero';
+import HowItWorks from './HowItWorks';
+import WhyTradersFail from './WhyTradersFail';
 import { BrandMark } from './BrandLogo';
 import { useTheme } from '../contexts/ThemeContext';
 
@@ -58,7 +60,7 @@ const PLANS = [
   {
     name: 'Free',
     monthly: 0, yearly: 0,
-    desc: 'Perfect to get started',
+    desc: 'Start tracking. Discover your patterns.',
     features: [
       'Up to 10 journal entries',
       'Manual trade entry',
@@ -67,16 +69,16 @@ const PLANS = [
       'Live market overview',
       '3 free AI analysis tries',
     ],
-    cta: 'Get Started Free',
+    cta: 'Start Free — No Card Needed',
     highlight: false,
   },
   {
     name: 'Pro',
-    monthly: 1.99, yearly: 1.66,
-    originalMonthly: 9, originalYearly: 7.50, yearlyBilled: 19.99,
-    desc: 'For active traders',
-    badge: 'FOUNDING MEMBER',
-    discountBadge: '78% OFF',
+    monthly: 5, yearly: 4.17,
+    originalMonthly: 19, originalYearly: 15.83, yearlyBilled: 49.99,
+    desc: 'For active traders serious about improving their edge.',
+    badge: 'MOST POPULAR',
+    discountBadge: '74% OFF',
     features: [
       'Unlimited journal entries',
       'AI Trade Analysis: 50 analyses/month',
@@ -86,16 +88,16 @@ const PLANS = [
       'Advanced journaling',
       'Priority support',
     ],
-    cta: 'Claim Founding Price',
+    cta: 'Start Improving My Trades',
     highlight: true,
   },
   {
     name: 'Elite',
-    monthly: 4.99, yearly: 3.99,
-    originalMonthly: 25, originalYearly: 20, yearlyBilled: 47.99,
-    desc: 'For professional traders',
+    monthly: 12, yearly: 9.99,
+    originalMonthly: 29, originalYearly: 24, yearlyBilled: 119.99,
+    desc: 'For professional traders who want every possible edge.',
     badge: 'BEST VALUE',
-    discountBadge: '80% OFF',
+    discountBadge: '59% OFF',
     features: [
       'Everything in Pro',
       'Unlimited AI Trade Analysis',
@@ -105,7 +107,7 @@ const PLANS = [
       'Dedicated email support — 4hr response',
       'API access (coming soon)',
     ],
-    cta: 'Go Elite',
+    cta: 'Analyze My Trades Now',
     highlight: false,
   },
 ];
@@ -478,14 +480,14 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
         >
           <span>
             <Flame className="w-3.5 h-3.5 text-amber-400 inline-block mr-1" />{' '}
-            <span className="text-white font-bold">FOUNDING MEMBER OFFER</span>
+            <span className="text-white font-bold">LIMITED LAUNCH OFFER</span>
             {' '}—{' '}
-            First 100 users get Pro for{' '}
-            <span className="text-white font-bold">$1.99/month</span>
+            Pro plan now just{' '}
+            <span className="text-white font-bold">$5/month</span>
             {' '}(regularly{' '}
-            <span className="line-through text-white/60">$9</span>)
+            <span className="line-through text-white/60">$19</span>)
             {' '}·{' '}
-            <span className="text-amber-300 font-bold">Only {spotsLeft} spots remaining!</span>
+            <span className="text-amber-300 font-bold">74% off — Limited time!</span>
           </span>
           <button
             onClick={dismissBanner}
@@ -613,6 +615,12 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
         onGetStarted={onGetStarted}
         onSignIn={onSignIn}
       />
+
+      {/* ═══════════════════════ HOW IT WORKS ════════════════════════ */}
+      <HowItWorks onGetStarted={onGetStarted} />
+
+      {/* ════════════════════ WHY TRADERS FAIL ══════════════════════ */}
+      <WhyTradersFail onGetStarted={onGetStarted} />
 
       {/* ═══════════════════════════ FEATURES ═══════════════════════════ */}
       <section id="features" className={`pt-16 pb-24 px-6 transition-colors duration-300 ${isDark ? '' : 'bg-[#f4f6f9]'}`}>
@@ -1027,10 +1035,10 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
               <span className="text-[11px] font-bold tracking-[0.18em] text-blue-400">PRICING</span>
             </div>
             <h2 className={`text-[42px] font-extrabold tracking-tight mb-3 ${isDark ? 'text-white' : 'text-gray-900'}`}>
-              Plans for Every Trader
+              Simple Pricing, Serious Results
             </h2>
             <p className={`text-[16px] mb-8 ${isDark ? 'text-gray-500' : 'text-gray-500'}`}>
-              Start free. Upgrade when you're ready.
+              Start free. Upgrade when you want a real edge.
             </p>
             {/* Billing toggle */}
             <div className="inline-flex items-center p-1 rounded-xl border"
@@ -1075,11 +1083,11 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
                   </div>
                   <div>
                     <p className={`text-[13px] font-bold ${isDark ? 'text-amber-300' : 'text-amber-800'}`}>
-                      Founding Member Offer — 78% off Pro
+                      Launch Offer — 74% off Pro (regular $19/mo)
                     </p>
                     <p className={`text-[12px] mt-0.5 ${isDark ? 'text-amber-400/60' : 'text-amber-700'}`}>
-                      First 100 users lock in Pro for <span className="font-bold">$1.99/mo</span> (regular $9) ·{' '}
-                      <span className="font-semibold">{spotsLeft} of 100 spots left</span>
+                      Pro is just <span className="font-bold">$5/mo</span> while this offer lasts ·{' '}
+                      <span className="font-semibold">Limited availability</span>
                     </p>
                   </div>
                 </div>
@@ -1177,15 +1185,15 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
                             Save 17%
                           </span>
                         )}
-                        {plan.highlight && (spotsLeft ?? 0) > 0 && (
+                        {plan.highlight && (
                           <div className="mt-3 pt-3 border-t space-y-1.5"
                                style={{borderColor: isDark ? 'rgba(255,255,255,0.06)' : '#f1f5f9'}}>
                             <p className="text-[11px] font-semibold text-amber-500 flex items-center gap-1">
-                              <Flame className="w-3 h-3 shrink-0" /> Founding price · {spotsLeft} spots left
+                              <Flame className="w-3 h-3 shrink-0" /> Launch offer · 74% off regular price
                             </p>
                             <div className="flex items-center gap-1.5">
                               <Clock className={`w-3 h-3 shrink-0 ${isDark ? 'text-gray-500' : 'text-gray-400'}`} />
-                              <span className={`text-[10px] ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>Expires:</span>
+                              <span className={`text-[10px] ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>Offer expires:</span>
                               <span className="text-[11px] font-bold" style={{color:'#f59e0b'}}>
                                 {countdown.d}d {countdown.h}h {countdown.m}m {countdown.s}s
                               </span>
@@ -1238,7 +1246,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
                               : isDark
                                 ? {background:'rgba(255,255,255,0.05)', border:'1px solid rgba(255,255,255,0.08)', color:'#e2e8f0'}
                                 : {background:'#f8fafc', border:'1px solid #e2e8f0', color:'#1e293b'}}>
-                      {plan.highlight && (spotsLeft ?? 0) > 0 ? 'Claim Founding Price' : plan.cta}
+                      {plan.cta}
                     </button>
                   </div>
                 </div>
@@ -1317,7 +1325,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
                       className="group relative overflow-hidden inline-flex items-center gap-2 text-[16px] font-semibold text-white px-9 py-4 rounded-2xl hover:scale-[1.03] hover:shadow-[0_8px_32px_rgba(59,130,246,0.45)]"
                       style={{background:'linear-gradient(135deg,#1d4ed8 0%,#0284c7 100%)', boxShadow:'0 4px 20px rgba(59,130,246,0.28)'}}>
                 <span className="relative z-10 flex items-center gap-2">
-                  Start Finding My Patterns
+                  Start Improving My Trades
                   <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
                 </span>
                 <span className="absolute inset-0 pointer-events-none"

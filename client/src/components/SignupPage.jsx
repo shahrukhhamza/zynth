@@ -11,7 +11,7 @@ import {
   BookOpen, Brain, Check, Shield, Zap, Bot, Flame,
 } from 'lucide-react';
 
-export default function SignupPage({ onSwitchToLogin, onBack }) {
+export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess }) {
   const { register, loginWithGoogle } = useAuth();
   useEffect(() => { window.scrollTo(0, 0); }, []);
 
@@ -137,6 +137,7 @@ export default function SignupPage({ onSwitchToLogin, onBack }) {
     setLoading(true);
     try {
       await register({ name: form.name, email: form.email, password: form.password, terms_accepted: true });
+      onSignupSuccess?.();
       setSuccess(true);
     } catch (err) {
       const errMsg = err.response?.data?.error || 'Registration failed. Please try again.';
