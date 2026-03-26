@@ -401,9 +401,16 @@ function AuthGate() {
   }
 
   if (loading) {
+    const theme = useTheme();
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-950">
-        <Loader2 className="w-8 h-8 text-emerald-400 animate-spin" />
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: theme.bg }}>
+        <div style={{ backgroundColor: theme.surface, border: `1px solid ${theme.border}`, padding: 24, borderRadius: 12, boxShadow: theme.isDark ? '0 6px 20px rgba(0,0,0,0.6)' : '0 6px 20px rgba(16,24,40,0.04)', display: 'flex', alignItems: 'center', gap: 14, minWidth: 260, justifyContent: 'center' }}>
+          <Loader2 className="w-8 h-8 animate-spin" style={{ color: theme.accent }} />
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+            <div style={{ fontSize: 14, fontWeight: 800, color: theme.text }}>Zynth</div>
+            <div style={{ fontSize: 12, color: theme.muted }}>Loading…</div>
+          </div>
+        </div>
       </div>
     )
   }
