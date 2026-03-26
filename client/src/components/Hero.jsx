@@ -3,21 +3,34 @@ import { motion } from 'framer-motion';
 import { Flame, ArrowRight, Shield, Zap, Bot, Globe } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 
-// Upgraded Mockup with Glassmorphism and Depth
+// Upgraded Mockup with real-looking metrics and behavioral insights
 function HeroDashboardMockup({ isDark }) {
+  const BEHAVIORAL_INSIGHTS = [
+    { icon: '⚠', color: '#ef4444', bg: 'rgba(239,68,68,0.1)', label: 'Overtrading after losses', value: '6 trades flagged' },
+    { icon: '✓', color: '#10b981', bg: 'rgba(16,185,129,0.1)', label: 'Best session: London', value: '+71% win rate' },
+    { icon: '↑', color: '#f59e0b', bg: 'rgba(245,158,11,0.1)', label: 'Risk increases post-drawdown', value: 'Position +40%' },
+  ];
+  const STATS = [
+    { l: 'Win Rate', v: '↑ +12%', sub: 'vs last month', color: '#10b981' },
+    { l: 'Profit Factor', v: '1.2 → 1.8', sub: 'improving', color: '#3b82f6' },
+  ];
+
   return (
-    <motion.div 
+    <motion.div
       initial={{ y: 40, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ delay: 0.6, duration: 0.8 }}
-      className={`relative rounded-2xl overflow-hidden border backdrop-blur-xl ${
-        isDark
-          ? 'border-white/10 bg-[#0a0a0a]/80 shadow-[0_40px_120px_rgba(0,0,0,0.7)]'
-          : 'border-blue-100/80 bg-[#131c30] shadow-[0_24px_80px_rgba(0,0,0,0.22),0_4px_24px_rgba(59,130,246,0.14)]'
-      }`}
+      className="relative rounded-2xl overflow-hidden border backdrop-blur-xl"
+      style={{
+        borderColor: 'rgba(255,255,255,0.08)',
+        background: isDark ? 'rgba(10,10,10,0.85)' : '#131c30',
+        boxShadow: isDark
+          ? '0 40px 120px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.04)'
+          : '0 24px 80px rgba(0,0,0,0.22), 0 4px 24px rgba(59,130,246,0.14)',
+      }}
     >
       {/* Top Bar */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-white/5 bg-white/5">
+      <div className="flex items-center justify-between px-4 py-3 border-b border-white/5 bg-white/[0.03]">
         <div className="flex gap-1.5">
           <div className="w-2.5 h-2.5 rounded-full bg-red-500/50" />
           <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/50" />
@@ -26,41 +39,71 @@ function HeroDashboardMockup({ isDark }) {
         <div className="flex items-center gap-2 px-6 py-1 rounded-full bg-black/40 border border-white/5 text-[10px] text-gray-500 font-mono">
           <Globe size={10} /> app.zynth.codes
         </div>
-        <div className="w-12" /> {/* Spacer */}
+        <div className="w-12" />
       </div>
 
       {/* Content Area */}
-      <div className="p-6 grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="col-span-1 space-y-4">
-          <div className="h-32 rounded-xl bg-gradient-to-br from-blue-500/10 to-transparent border border-blue-500/10 flex flex-col items-center justify-center">
-             <div className="text-[10px] text-blue-400 uppercase tracking-widest font-bold mb-1">Equity Growth</div>
-             <div className="text-xl font-mono text-white">+$4,280.50</div>
+      <div className="p-5 grid grid-cols-1 md:grid-cols-3 gap-5">
+        {/* Left col: equity + stats */}
+        <div className="col-span-1 space-y-3">
+          <div
+            className="h-28 rounded-xl flex flex-col items-center justify-center gap-1 border"
+            style={{
+              background: 'linear-gradient(135deg,rgba(59,130,246,0.12),rgba(6,182,212,0.06))',
+              borderColor: 'rgba(59,130,246,0.18)',
+            }}
+          >
+            <div className="text-[9px] text-blue-400 uppercase tracking-widest font-bold">P&amp;L · Last 30 days</div>
+            <div className="text-[22px] font-black font-mono text-white">+$4,280</div>
+            <div className="flex items-center gap-1 text-[10px] text-emerald-400 font-semibold">
+              <span>↑ 18.4% vs prior month</span>
+            </div>
           </div>
-          <div className="grid grid-cols-2 gap-3">
-            {[ {l: 'Win Rate', v: '68%'}, {l: 'PF', v: '1.82'} ].map(s => (
-              <div key={s.l} className="p-3 rounded-xl bg-white/5 border border-white/5">
-                <div className="text-[9px] text-gray-500 uppercase">{s.l}</div>
-                <div className="text-sm font-bold text-white">{s.v}</div>
+          <div className="grid grid-cols-2 gap-2">
+            {STATS.map(s => (
+              <div key={s.l} className="p-3 rounded-xl border" style={{ background: 'rgba(255,255,255,0.03)', borderColor: 'rgba(255,255,255,0.06)' }}>
+                <div className="text-[9px] text-gray-500 uppercase mb-1">{s.l}</div>
+                <div className="text-[12px] font-black font-mono" style={{ color: s.color }}>{s.v}</div>
+                <div className="text-[9px] text-gray-600">{s.sub}</div>
               </div>
             ))}
           </div>
         </div>
-        
-        <div className="col-span-2 rounded-xl bg-white/[0.02] border border-white/5 p-4 relative overflow-hidden">
-          <div className="flex justify-between items-center mb-4">
-             <div className="text-xs font-semibold text-gray-400">Behavioral Performance</div>
-             <div className="flex gap-2">
-                <div className="h-1.5 w-12 rounded-full bg-blue-500/20" />
-                <div className="h-1.5 w-8 rounded-full bg-white/10" />
-             </div>
+
+        {/* Right col: behavioral insights */}
+        <div
+          className="col-span-2 rounded-xl border p-4 relative overflow-hidden"
+          style={{ background: 'rgba(255,255,255,0.015)', borderColor: 'rgba(255,255,255,0.06)' }}
+        >
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <Bot size={12} className="text-blue-400" />
+              <span className="text-[11px] font-bold text-gray-300">AI Behavioral Analysis</span>
+            </div>
+            <span className="text-[9px] px-2 py-0.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 font-bold tracking-wide">LIVE</span>
           </div>
-          <div className="space-y-3">
-            {[1, 2, 3].map(i => (
-              <div key={i} className="h-8 w-full rounded-lg bg-white/5 animate-pulse" style={{ animationDelay: `${i * 0.2}s` }} />
+
+          <div className="space-y-2.5">
+            {BEHAVIORAL_INSIGHTS.map((item, i) => (
+              <motion.div
+                key={item.label}
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.9 + i * 0.15 }}
+                className="flex items-center gap-3 rounded-xl p-3 border"
+                style={{ background: item.bg, borderColor: item.bg.replace('0.1', '0.25') }}
+              >
+                <span className="text-[14px] w-5 text-center shrink-0" style={{ color: item.color }}>{item.icon}</span>
+                <div className="flex-1 min-w-0">
+                  <div className="text-[11px] font-semibold text-gray-200 truncate">{item.label}</div>
+                </div>
+                <div className="text-[10px] font-bold font-mono shrink-0" style={{ color: item.color }}>{item.value}</div>
+              </motion.div>
             ))}
           </div>
-          {/* Decorative "AI" Glow */}
-          <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-blue-500/20 rounded-full blur-[50px]" />
+
+          {/* AI glow */}
+          <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-blue-500/15 rounded-full blur-[50px] pointer-events-none" />
         </div>
       </div>
     </motion.div>
@@ -112,7 +155,7 @@ export default function Hero({ badgeText, spotsLeft, onGetStarted, onSignIn }) {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="text-5xl md:text-[82px] font-black leading-[1.05] tracking-tighter mb-8"
+          className="text-5xl md:text-[82px] font-black leading-[1.05] tracking-tighter mb-6"
         >
           <span className={isDark ? 'text-white' : 'text-gray-900'}>Stop Losing Trades</span>
           <br />
@@ -121,6 +164,21 @@ export default function Hero({ badgeText, spotsLeft, onGetStarted, onSignIn }) {
           </span>
         </motion.h1>
 
+        {/* Emotional trigger lines */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.32 }}
+          className="mb-6"
+        >
+          <p className={`text-[16px] md:text-[18px] font-semibold leading-snug ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+            You&apos;re not losing because of strategy.
+          </p>
+          <p className={`text-[16px] md:text-[18px] font-semibold leading-snug ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>
+            You&apos;re losing because you repeat mistakes you don&apos;t see.
+          </p>
+        </motion.div>
+
         {/* Subtext */}
         <motion.p 
           initial={{ opacity: 0 }}
@@ -128,7 +186,7 @@ export default function Hero({ badgeText, spotsLeft, onGetStarted, onSignIn }) {
           transition={{ delay: 0.4 }}
           className={`text-[18px] md:text-[20px] max-w-[650px] mx-auto leading-relaxed mb-10 font-medium ${isDark ? 'text-gray-400' : 'text-gray-600'}`}
         >
-          Zynth is an AI-powered trade journal that uncovers the behavioral patterns silently destroying your P&L — and tells you exactly what to fix.
+          Zynth is an AI-powered trade journal that uncovers the behavioral patterns silently destroying your P&amp;L — and tells you exactly what to fix.
         </motion.p>
 
         {/* Urgency Badge */}
@@ -166,15 +224,24 @@ export default function Hero({ badgeText, spotsLeft, onGetStarted, onSignIn }) {
           </button>
         </div>
 
-        {/* Trust line under CTAs */}
-        <motion.p
+        {/* Micro trust signals under CTA */}
+        <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.7 }}
-          className={`text-[12px] mb-6 ${isDark ? 'text-gray-600' : 'text-gray-500'}`}
+          className="flex flex-wrap items-center justify-center gap-x-5 gap-y-1.5 mb-8"
         >
-          Used by traders in 40+ countries &nbsp;·&nbsp; No credit card required &nbsp;·&nbsp; Free plan available
-        </motion.p>
+          {[
+            'No credit card required',
+            'Takes less than 30 seconds',
+            'Built for serious forex &amp; gold traders',
+          ].map((t, i) => (
+            <span key={i} className={`flex items-center gap-1.5 text-[12px] font-medium ${isDark ? 'text-gray-500' : 'text-gray-500'}`}>
+              <span className="w-1 h-1 rounded-full bg-blue-500/60 shrink-0" />
+              <span dangerouslySetInnerHTML={{ __html: t }} />
+            </span>
+          ))}
+        </motion.div>
 
         {/* Floating Trust Icons */}
         <div className="flex justify-center gap-3 flex-wrap">

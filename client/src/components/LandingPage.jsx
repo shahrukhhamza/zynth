@@ -11,6 +11,7 @@ import {
 import { API_URL } from '../config/api';
 import { getPublicStats } from '../utils/publicStats';
 import Hero from './Hero';
+import AIInsightsSection from './AIInsightsSection';
 import HowItWorks from './HowItWorks';
 import WhyTradersFail from './WhyTradersFail';
 import { BrandMark } from './BrandLogo';
@@ -557,9 +558,9 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
               Sign In
             </button>
             <button onClick={onGetStarted}
-                    className="text-[13px] font-semibold text-white px-5 py-2.5 rounded-xl transition-all hover:brightness-110"
+                    className="text-[13px] font-semibold text-white px-5 py-2.5 rounded-xl transition-all hover:brightness-110 hover:scale-[1.03]"
                     style={{background:'linear-gradient(135deg,#1d4ed8,#0284c7)', boxShadow:'0 4px 16px rgba(59,130,246,0.3)'}}>
-              Get Started
+              Analyze My Trades
             </button>
           </div>
 
@@ -600,7 +601,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
               <button onClick={() => { setMobileOpen(false); onGetStarted(); }}
                       className="flex-1 text-[13px] font-semibold text-white rounded-xl py-2.5"
                       style={{background:'linear-gradient(135deg,#1d4ed8,#0284c7)'}}>
-                Get Started
+                Analyze My Trades
               </button>
             </div>
           </div>
@@ -615,6 +616,9 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
         onGetStarted={onGetStarted}
         onSignIn={onSignIn}
       />
+
+      {/* ═══════════════ AI INSIGHTS DEMO SECTION ════════════════════ */}
+      <AIInsightsSection onGetStarted={onGetStarted} />
 
       {/* ═══════════════════════ HOW IT WORKS ════════════════════════ */}
       <HowItWorks onGetStarted={onGetStarted} />
