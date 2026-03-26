@@ -19,9 +19,9 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  X, ArrowRight, ChevronLeft,
+  X, ArrowRight, ChevronLeft, Check,
   Bitcoin, BarChart2, TrendingUp, Globe,
-  Flame, Brain, Shuffle, HelpCircle, Sparkles,
+  Flame, Brain, Shuffle, HelpCircle, Sparkles, Bot,
 } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 import { BrandMark } from './BrandLogo';
@@ -64,31 +64,52 @@ function OptionCard({ label, desc, icon: Icon, selected, onClick, theme }) {
   return (
     <button
       onClick={onClick}
-      className="w-full text-left px-4 py-4 rounded-xl border transition-all duration-200 group"
+      className="w-full text-left px-4 py-3.5 rounded-xl border transition-all duration-200 group relative overflow-hidden"
       style={{
         background: selected
-          ? theme.accentGlow
+          ? theme.isDark
+            ? 'linear-gradient(135deg,rgba(29,78,216,0.22),rgba(6,182,212,0.10))'
+            : 'linear-gradient(135deg,rgba(29,78,216,0.10),rgba(6,182,212,0.06))'
           : theme.isDark ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.02)',
-        borderColor: selected ? theme.accent : theme.border,
-        boxShadow: selected ? '0 0 0 2px rgba(59,130,246,0.15)' : 'none',
+        borderColor: selected ? '#3b82f6' : theme.border,
+        boxShadow: selected
+          ? '0 0 0 1px rgba(59,130,246,0.5), 0 0 20px rgba(59,130,246,0.12), inset 0 1px 0 rgba(255,255,255,0.05)'
+          : theme.isDark ? 'inset 0 1px 0 rgba(255,255,255,0.03)' : 'none',
+        transform: selected ? 'scale(1.02)' : 'scale(1)',
+      }}
+      onMouseEnter={e => {
+        if (!selected) {
+          e.currentTarget.style.borderColor = 'rgba(59,130,246,0.45)';
+          e.currentTarget.style.boxShadow = '0 0 0 1px rgba(59,130,246,0.2), 0 0 16px rgba(59,130,246,0.08), inset 0 1px 0 rgba(255,255,255,0.04)';
+          e.currentTarget.style.background = theme.isDark ? 'rgba(59,130,246,0.06)' : 'rgba(59,130,246,0.03)';
+        }
+      }}
+      onMouseLeave={e => {
+        if (!selected) {
+          e.currentTarget.style.borderColor = theme.border;
+          e.currentTarget.style.boxShadow = theme.isDark ? 'inset 0 1px 0 rgba(255,255,255,0.03)' : 'none';
+          e.currentTarget.style.background = theme.isDark ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.02)';
+        }
       }}
     >
       <div className="flex items-center gap-3">
         <div
-          className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0"
+          className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0 transition-all duration-200"
           style={{
             background: selected
-              ? 'rgba(59,130,246,0.2)'
+              ? 'linear-gradient(135deg,rgba(59,130,246,0.3),rgba(6,182,212,0.18))'
               : theme.isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.03)',
-            color: selected ? theme.accent : theme.muted,
+            border: selected ? '1px solid rgba(59,130,246,0.4)' : '1px solid transparent',
+            boxShadow: selected ? '0 0 12px rgba(59,130,246,0.2)' : 'none',
+            color: selected ? '#60a5fa' : theme.muted,
           }}
         >
           <Icon size={17} />
         </div>
         <div className="flex-1 min-w-0">
           <p
-            className="text-[14px] font-semibold"
-            style={{ color: selected ? theme.text : theme.text }}
+            className="text-[14px] font-semibold transition-colors duration-150"
+            style={{ color: selected ? (theme.isDark ? '#f1f5f9' : '#0f172a') : theme.text }}
           >
             {label}
           </p>
@@ -99,12 +120,15 @@ function OptionCard({ label, desc, icon: Icon, selected, onClick, theme }) {
           )}
         </div>
         <div
-          className="w-4 h-4 rounded-full border-2 flex-shrink-0 transition-colors"
+          className="w-5 h-5 rounded-full border-2 flex-shrink-0 flex items-center justify-center transition-all duration-200"
           style={{
-            borderColor: selected ? theme.accent : theme.border,
-            background: selected ? theme.accent : 'transparent',
+            borderColor: selected ? '#3b82f6' : theme.border,
+            background: selected ? 'linear-gradient(135deg,#1d4ed8,#06b6d4)' : 'transparent',
+            boxShadow: selected ? '0 0 8px rgba(59,130,246,0.4)' : 'none',
           }}
-        />
+        >
+          {selected && <Check size={10} color="#fff" strokeWidth={3} />}
+        </div>
       </div>
     </button>
   );
@@ -159,6 +183,12 @@ export default function PreSignupOnboarding({ onContinueToSignup, onClose }) {
       }}
       onClick={e => { if (e.target === e.currentTarget) onClose?.(); }}
     >
+      <style>{`
+        @keyframes dotPulse {
+          0%, 80%, 100% { opacity: 0.2; transform: scale(0.7); }
+          40%            { opacity: 1;   transform: scale(1);   }
+        }
+      `}</style>
       <motion.div
         initial={{ opacity: 0, scale: 0.96, y: 16 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -171,32 +201,35 @@ export default function PreSignupOnboarding({ onContinueToSignup, onClose }) {
           background: theme.surface,
           border: `1px solid ${theme.border}`,
           boxShadow: theme.isDark
-            ? '0 32px 80px rgba(0,0,0,0.75), 0 0 0 1px rgba(255,255,255,0.04)'
+            ? '0 32px 80px rgba(0,0,0,0.75), 0 0 0 1px rgba(255,255,255,0.04), 0 0 60px rgba(59,130,246,0.06)'
             : '0 32px 80px rgba(0,0,0,0.18)',
         }}
       >
         {/* ── Header ── */}
-        <div className="flex items-center justify-between px-6 pt-5 pb-4">
+        <div className="flex items-center justify-between px-6 pt-5 pb-3">
           <div className="flex items-center gap-2">
             <BrandMark size={26} />
             <span className="text-[13px] font-bold" style={{ color: theme.accent }}>Zynth</span>
           </div>
 
-          {/* Progress pips */}
+          {/* AI init label */}
           <div className="flex items-center gap-1.5">
-            {[1, 2, 3].map(n => (
-              <div
-                key={n}
-                className="rounded-full transition-all duration-400"
-                style={{
-                  width: step === n ? 20 : 6,
-                  height: 6,
-                  background: n <= step
-                    ? theme.accent
-                    : theme.isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)',
-                }}
-              />
-            ))}
+            <Bot size={11} style={{ color: theme.accent }} />
+            <span className="text-[10px] font-medium" style={{ color: theme.muted }}>
+              Initializing your trading profile
+            </span>
+            <span className="flex gap-[3px] items-center ml-0.5">
+              {[0, 1, 2].map(i => (
+                <span
+                  key={i}
+                  className="w-1 h-1 rounded-full"
+                  style={{
+                    background: theme.accent,
+                    animation: `dotPulse 1.4s ease-in-out ${i * 0.22}s infinite`,
+                  }}
+                />
+              ))}
+            </span>
           </div>
 
           <button
@@ -213,20 +246,50 @@ export default function PreSignupOnboarding({ onContinueToSignup, onClose }) {
           </button>
         </div>
 
-        {/* Thin progress bar */}
-        <div
-          style={{
-            height: 2,
-            background: theme.isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)',
-          }}
-        >
+        {/* Progress bar + step label */}
+        <div className="px-6 pb-3">
+          <div className="flex items-center justify-between mb-1.5">
+            {/* Step pips */}
+            <div className="flex items-center gap-1.5">
+              {[1, 2, 3].map(n => (
+                <div
+                  key={n}
+                  className="rounded-full transition-all duration-300"
+                  style={{
+                    width: step === n ? 20 : 6,
+                    height: 6,
+                    background: n <= step
+                      ? 'linear-gradient(90deg,#1d4ed8,#06b6d4)'
+                      : theme.isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)',
+                    boxShadow: n === step ? '0 0 8px rgba(59,130,246,0.5)' : 'none',
+                  }}
+                />
+              ))}
+            </div>
+            <span className="text-[10px] font-medium" style={{ color: theme.muted }}>
+              Step {step} of 3
+              {step === 1 && ' — Setting up your trading profile'}
+              {step === 2 && ' — Identifying your challenge'}
+              {step === 3 && ' — Generating your analysis'}
+            </span>
+          </div>
           <div
-            className="h-full transition-all duration-500"
             style={{
-              width: `${(step / 3) * 100}%`,
-              background: 'linear-gradient(90deg,#1d4ed8,#06b6d4)',
+              height: 2,
+              background: theme.isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)',
+              borderRadius: 99,
+              overflow: 'hidden',
             }}
-          />
+          >
+            <div
+              className="h-full transition-all duration-500"
+              style={{
+                width: `${(step / 3) * 100}%`,
+                background: 'linear-gradient(90deg,#1d4ed8,#06b6d4)',
+                boxShadow: '0 0 8px rgba(59,130,246,0.4)',
+              }}
+            />
+          </div>
         </div>
 
         {/* ── Step content with slide animation ── */}
@@ -247,7 +310,7 @@ export default function PreSignupOnboarding({ onContinueToSignup, onClose }) {
                   className="text-[11px] font-bold tracking-[0.18em] uppercase mb-2"
                   style={{ color: theme.accent }}
                 >
-                  Step 1 of 3
+                  Market Selection
                 </p>
                 <h2
                   className="text-[22px] font-extrabold mb-1 leading-snug"
@@ -255,8 +318,11 @@ export default function PreSignupOnboarding({ onContinueToSignup, onClose }) {
                 >
                   What do you trade?
                 </h2>
-                <p className="text-[13px] mb-5" style={{ color: theme.muted }}>
+                <p className="text-[12px] mb-1" style={{ color: theme.muted }}>
                   We'll personalise your experience around your market.
+                </p>
+                <p className="text-[11px] mb-5" style={{ color: theme.isDark ? 'rgba(99,130,190,0.7)' : 'rgba(100,116,139,0.7)' }}>
+                  This helps Zynth detect patterns specific to your market.
                 </p>
                 <div className="space-y-2.5">
                   {MARKETS.map(m => (
@@ -289,7 +355,7 @@ export default function PreSignupOnboarding({ onContinueToSignup, onClose }) {
                   className="text-[11px] font-bold tracking-[0.18em] uppercase mb-2"
                   style={{ color: theme.accent }}
                 >
-                  Step 2 of 3
+                  Pattern Detection
                 </p>
                 <h2
                   className="text-[22px] font-extrabold mb-1 leading-snug"
@@ -297,8 +363,11 @@ export default function PreSignupOnboarding({ onContinueToSignup, onClose }) {
                 >
                   What's your biggest problem?
                 </h2>
-                <p className="text-[13px] mb-5" style={{ color: theme.muted }}>
+                <p className="text-[12px] mb-1" style={{ color: theme.muted }}>
                   Be honest — this is what Zynth is built to fix.
+                </p>
+                <p className="text-[11px] mb-5" style={{ color: theme.isDark ? 'rgba(99,130,190,0.7)' : 'rgba(100,116,139,0.7)' }}>
+                  This helps Zynth detect patterns specific to your market.
                 </p>
                 <div className="space-y-2.5">
                   {PROBLEMS.map(p => (
@@ -418,11 +487,14 @@ export default function PreSignupOnboarding({ onContinueToSignup, onClose }) {
                   ? 'linear-gradient(135deg,#1d4ed8,#0284c7)'
                   : theme.isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.07)',
                 color: canAdvanceStep1 ? '#fff' : theme.muted,
-                boxShadow: canAdvanceStep1 ? '0 4px 16px rgba(59,130,246,0.28)' : 'none',
+                boxShadow: canAdvanceStep1 ? '0 4px 16px rgba(59,130,246,0.35)' : 'none',
+                transform: canAdvanceStep1 ? 'scale(1)' : 'scale(0.98)',
                 cursor: canAdvanceStep1 ? 'pointer' : 'not-allowed',
               }}
+              onMouseEnter={e => { if (canAdvanceStep1) { e.currentTarget.style.boxShadow = '0 8px 28px rgba(59,130,246,0.5)'; e.currentTarget.style.transform = 'scale(1.03) translateY(-1px)'; } }}
+              onMouseLeave={e => { if (canAdvanceStep1) { e.currentTarget.style.boxShadow = '0 4px 16px rgba(59,130,246,0.35)'; e.currentTarget.style.transform = 'scale(1)'; } }}
             >
-              Continue <ArrowRight size={16} />
+              Continue Analysis <ArrowRight size={16} />
             </button>
           )}
 
@@ -436,22 +508,27 @@ export default function PreSignupOnboarding({ onContinueToSignup, onClose }) {
                   ? 'linear-gradient(135deg,#1d4ed8,#0284c7)'
                   : theme.isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.07)',
                 color: canAdvanceStep2 ? '#fff' : theme.muted,
-                boxShadow: canAdvanceStep2 ? '0 4px 16px rgba(59,130,246,0.28)' : 'none',
+                boxShadow: canAdvanceStep2 ? '0 4px 16px rgba(59,130,246,0.35)' : 'none',
+                transform: canAdvanceStep2 ? 'scale(1)' : 'scale(0.98)',
                 cursor: canAdvanceStep2 ? 'pointer' : 'not-allowed',
               }}
+              onMouseEnter={e => { if (canAdvanceStep2) { e.currentTarget.style.boxShadow = '0 8px 28px rgba(59,130,246,0.5)'; e.currentTarget.style.transform = 'scale(1.03) translateY(-1px)'; } }}
+              onMouseLeave={e => { if (canAdvanceStep2) { e.currentTarget.style.boxShadow = '0 4px 16px rgba(59,130,246,0.35)'; e.currentTarget.style.transform = 'scale(1)'; } }}
             >
-              Show My Analysis <ArrowRight size={16} />
+              Continue Analysis <ArrowRight size={16} />
             </button>
           )}
 
           {step === 3 && (
             <button
               onClick={handleSignupCTA}
-              className="flex items-center gap-2 px-7 py-3 rounded-xl text-[14px] font-bold text-white transition-all hover:scale-[1.02]"
+              className="flex items-center gap-2 px-7 py-3 rounded-xl text-[14px] font-bold text-white transition-all"
               style={{
                 background: 'linear-gradient(135deg,#1d4ed8,#0284c7)',
                 boxShadow: '0 4px 20px rgba(59,130,246,0.40)',
               }}
+              onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 10px 32px rgba(59,130,246,0.55)'; e.currentTarget.style.transform = 'scale(1.03) translateY(-1px)'; }}
+              onMouseLeave={e => { e.currentTarget.style.boxShadow = '0 4px 20px rgba(59,130,246,0.40)'; e.currentTarget.style.transform = 'scale(1)'; }}
             >
               Create Free Account <ArrowRight size={16} />
             </button>
