@@ -289,9 +289,7 @@ export default function TradeEntryForm({ onSaved, editTrade = null }) {
             <span style={{ fontSize: 12, fontWeight: 700, color: quickMode ? warningText : subtleText }}>
               {quickMode ? 'Quick Log' : 'Detailed Log'}
             </span>
-            {quickMode && (
-              <span style={{ fontSize: 10, color: theme.isDark ? '#f59e0b90' : '#b45309', fontStyle: 'italic' }}>· 5 fields · mobile-friendly</span>
-            )}
+            {quickMode && null}
           </div>
           <button type="button" onClick={toggleQuick}
             style={{
@@ -312,9 +310,9 @@ export default function TradeEntryForm({ onSaved, editTrade = null }) {
         </div>
       )}
 
-      {/* ══════════════════════════════════════════════
-               QUICK LOG MODE  — 5 fields
-          ══════════════════════════════════════════════ */}
+       {/* ══════════════════════════════════════════════
+          QUICK LOG MODE
+        ══════════════════════════════════════════════ */}
       {quickMode && !editTrade ? (
         <div className="space-y-4">
 
