@@ -297,9 +297,10 @@ export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess })
                   <div style={{
                     width:'40px',height:'40px',minWidth:'40px',
                     background:'rgba(59,130,246,0.1)',
-                    border:'1px solid rgba(59,130,246,0.2)',
-                    borderRadius:'10px',
-                    display:'flex',alignItems:'center',justifyContent:'center',
+                  border:'1px solid rgba(59,130,246,0.22)',
+                  borderRadius:'10px',
+                  display:'flex',alignItems:'center',justifyContent:'center',
+                  boxShadow:'0 0 20px rgba(59,130,246,0.14)',
                   }}>
                     <Icon size={18} color="#3b82f6" />
                   </div>
@@ -344,8 +345,10 @@ export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess })
                display:'flex', flexDirection:'column',
                alignItems:'center',
                overflowY:'auto',
-               background: isMobile ? '#0a0a0a' : '#111111',
+               background: isMobile ? '#020617' : 'rgba(11,18,32,0.97)',
+               backdropFilter: isMobile ? 'none' : 'blur(12px)',
                borderLeft: isMobile ? 'none' : '1px solid rgba(255,255,255,0.07)',
+               boxShadow: isMobile ? 'none' : '-1px 0 40px rgba(0,0,0,0.4)',
                padding: isMobile ? '24px 20px' : '24px 44px',
                minHeight:'100vh',
                boxSizing:'border-box',
@@ -423,8 +426,9 @@ export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess })
             )}
 
             {/* Header */}
-            <h2 style={{fontSize: isMobile ? '22px' : '24px',fontWeight:700,color:'#fff',letterSpacing:'-0.02em',margin:0}}>Create account</h2>
-            <p style={{fontSize:'13px',marginTop:'3px',marginBottom:'14px',color:'rgba(255,255,255,0.4)'}}>
+            <h2 style={{fontSize: isMobile ? '22px' : '26px',fontWeight:800,color:'#fff',letterSpacing:'-0.025em',margin:0,lineHeight:1.15}}>Start trading with clarity,</h2>
+            <p style={{fontSize:'14px',fontWeight:500,color:'rgba(255,255,255,0.45)',marginTop:'5px',marginBottom:'16px'}}>not guesswork.</p>
+            <p style={{fontSize:'13px',marginBottom:'14px',color:'rgba(255,255,255,0.4)'}}>
               Already have one?{' '}
               <button onClick={onSwitchToLogin}
                       style={{color:'#3b82f6',background:'none',border:'none',cursor:'pointer',fontSize:'13px',padding:0}}
@@ -449,33 +453,31 @@ export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess })
               disabled={loading || googleLoading || !GOOGLE_CLIENT_ID}
               style={{
                 width:'100%', padding:'11px 16px',
-                background: googleLoading ? 'rgba(255,255,255,0.06)' : 'rgba(255,255,255,0.04)',
-                border:'1px solid rgba(255,255,255,0.13)',
+                background: googleLoading ? '#e8eaed' : '#ffffff',
+                border:'1px solid rgba(0,0,0,0.10)',
                 borderRadius:'10px',
-                color: !GOOGLE_CLIENT_ID ? 'rgba(255,255,255,0.25)' : 'rgba(255,255,255,0.9)',
+                color: !GOOGLE_CLIENT_ID ? 'rgba(0,0,0,0.25)' : '#1f2937',
                 fontSize:'14px', fontWeight:500,
                 display:'flex', alignItems:'center', justifyContent:'center', gap:'10px',
                 cursor: loading || googleLoading || !GOOGLE_CLIENT_ID ? 'not-allowed' : 'pointer',
                 transition:'all 0.2s ease',
                 letterSpacing:'0.01em',
                 marginBottom:'14px',
-                boxShadow:'inset 0 1px 0 rgba(255,255,255,0.05)',
+                boxShadow:'0 1px 4px rgba(0,0,0,0.22), 0 0 0 1px rgba(0,0,0,0.06)',
               }}
               onMouseEnter={e => {
                 if (!loading && !googleLoading && GOOGLE_CLIENT_ID) {
-                  e.currentTarget.style.background = 'rgba(255,255,255,0.08)';
-                  e.currentTarget.style.borderColor = 'rgba(255,255,255,0.25)';
+                  e.currentTarget.style.background = '#f8fafc';
+                  e.currentTarget.style.borderColor = 'rgba(0,0,0,0.16)';
                   e.currentTarget.style.transform = 'translateY(-1px)';
-                  e.currentTarget.style.boxShadow = '0 6px 20px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.07)';
-                  e.currentTarget.style.color = '#fff';
+                  e.currentTarget.style.boxShadow = '0 4px 16px rgba(0,0,0,0.20), 0 0 0 1px rgba(0,0,0,0.08)';
                 }
               }}
               onMouseLeave={e => {
-                e.currentTarget.style.background = googleLoading ? 'rgba(255,255,255,0.06)' : 'rgba(255,255,255,0.04)';
-                e.currentTarget.style.borderColor = 'rgba(255,255,255,0.13)';
+                e.currentTarget.style.background = googleLoading ? '#e8eaed' : '#ffffff';
+                e.currentTarget.style.borderColor = 'rgba(0,0,0,0.10)';
                 e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = 'inset 0 1px 0 rgba(255,255,255,0.05)';
-                e.currentTarget.style.color = !GOOGLE_CLIENT_ID ? 'rgba(255,255,255,0.25)' : 'rgba(255,255,255,0.9)';
+                e.currentTarget.style.boxShadow = '0 1px 4px rgba(0,0,0,0.22), 0 0 0 1px rgba(0,0,0,0.06)';
               }}
               onMouseDown={e => { if (!loading && !googleLoading) e.currentTarget.style.transform = 'scale(0.99)'; }}
               onMouseUp={e => { e.currentTarget.style.transform = 'translateY(-1px)'; }}
@@ -670,6 +672,12 @@ export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess })
               </button>
             </form>
 
+            {/* Trust signals */}
+            <div style={{marginTop:'12px',textAlign:'center',lineHeight:1.8}}>
+              <span style={{fontSize:'11px',color:'rgba(255,255,255,0.28)',letterSpacing:'0.01em'}}>🔒 Secure signup · 256-bit encryption</span>
+              <br />
+              <span style={{fontSize:'11px',color:'rgba(255,255,255,0.2)',letterSpacing:'0.01em'}}>Built for serious traders</span>
+            </div>
 
               </>
             )}
