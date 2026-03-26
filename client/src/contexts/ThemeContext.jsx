@@ -39,42 +39,78 @@ export const ThemeProvider = ({ children }) => {
     setTimeout(() => document.body.classList.remove('theme-transitioning'), 400);
   };
 
+  // ── Unified Design System Palette ────────────────────────────────────────────
+  //
+  // Dark (blue-tinted slate — Linear / Vercel premium feel):
+  //   bg              #020617   slate-950  deepest layer
+  //   surface         #0B1220   card / modal panels
+  //   surfaceSecondary #111827  gray-900   inset cells, hover states
+  //   border          rgba(255,255,255,0.08)
+  //   textPrimary     #E2E8F0   slate-200
+  //   textSecondary   #CBD5E1   slate-300
+  //   textMuted       #94A3B8   slate-400
+  //   primary / accent #3B82F6  blue-500
+  //
+  // Light (clean white + slate — matches Stripe / Notion):
+  //   bg              #F8FAFC   slate-50
+  //   surface         #FFFFFF
+  //   surfaceSecondary #F1F5F9  slate-100
+  //   border          rgba(0,0,0,0.06)
+  //   textPrimary     #0F172A   slate-900
+  //   textSecondary   #334155   slate-700
+  //   textMuted       #64748B   slate-500
+  //   primary / accent #2563EB  blue-600
+  //
+  // All legacy keys preserved for backward compatibility.
+  // ─────────────────────────────────────────────────────────────────────────────
+
   const theme = {
     isDark,
     toggleTheme,
-    // ── Dark palette: pure black backgrounds + blue accents ───────────────────────
-    // bg         → deepest layer  (#0a0a0a  near-black, no blue tint)
-    // surface    → card / panel   (#111111  neutral dark panel)
-    // surface2   → hover / inset  (#0f0f0f  inner cells)
-    // border     → subtle 1-px    rgba(255,255,255,0.07)
-    // text       → primary text   (#f0f4f8)
-    // muted      → secondary text (#8892a4  blue-tinted gray)
-    // ────────────────────────────────────────────────────────────────
-    bg:       isDark ? '#0a0a0a' : '#f5f7fb',
-    surface:  isDark ? '#111111' : '#ffffff',
-    surface2: isDark ? '#0f0f0f' : '#eef2f7',
-    border:   isDark ? 'rgba(255,255,255,0.07)' : '#d6dde8',
 
-    // Text colors
-    text:      isDark ? '#f0f4f8' : '#0a0e1a',
-    muted:     isDark ? '#8892a4' : '#526174',
-    textMuted: isDark ? '#8892a4' : '#526174',
+    // ── Backgrounds ────────────────────────────────────────────────────────────
+    bg:              isDark ? '#020617' : '#F8FAFC',
+    surface:         isDark ? '#0B1220' : '#FFFFFF',
+    surface2:        isDark ? '#111827' : '#F1F5F9',   // legacy alias
+    surfaceSecondary:isDark ? '#111827' : '#F1F5F9',   // canonical alias
 
-    // Accent colors (blue — matches landing page CTA/interactive style)
-    accent:      '#3b82f6',
-    accentHover: isDark ? '#2563eb' : '#1d4ed8',
-    accentGlow:  isDark ? 'rgba(59,130,246,0.12)' : 'rgba(59,130,246,0.08)',
-    success: '#10b981',
-    warning: isDark ? '#f59e0b' : '#d97706',
-    gold:    isDark ? '#f59e0b' : '#b45309',
-    danger:  isDark ? '#F43F5E' : '#e11d48',
-    bullish: '#10b981',
-    bearish: isDark ? '#F43F5E' : '#e11d48',
-    neutral: isDark ? '#64748b' : '#4b5563',
+    // ── Borders & shadows ─────────────────────────────────────────────────────
+    border:  isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)',
+    shadow:  isDark
+      ? '0 4px 30px rgba(0,0,0,0.6)'
+      : '0 4px 20px rgba(0,0,0,0.04)',
+    shadowMd: isDark
+      ? '0 12px 40px rgba(0,0,0,0.7)'
+      : '0 8px 30px rgba(0,0,0,0.07)',
+    shadowLg: isDark
+      ? '0 32px 80px rgba(0,0,0,0.75)'
+      : '0 24px 60px rgba(0,0,0,0.10)',
 
-    // Chart colors
-    chartGrid: isDark ? 'rgba(255,255,255,0.06)' : '#d1d5db',
-    chartAxis: isDark ? '#5C6370' : '#4b5563',
+    // ── Text ──────────────────────────────────────────────────────────────────
+    text:          isDark ? '#E2E8F0' : '#0F172A',   // legacy alias → textPrimary
+    textPrimary:   isDark ? '#E2E8F0' : '#0F172A',
+    textSecondary: isDark ? '#CBD5E1' : '#334155',
+    muted:         isDark ? '#94A3B8' : '#64748B',   // legacy alias → textMuted
+    textMuted:     isDark ? '#94A3B8' : '#64748B',
+
+    // ── Brand / interactive ───────────────────────────────────────────────────
+    primary:     isDark ? '#3B82F6' : '#2563EB',
+    accent:      isDark ? '#3B82F6' : '#2563EB',     // legacy alias
+    accentHover: isDark ? '#2563EB' : '#1D4ED8',
+    accentGlow:  isDark ? 'rgba(59,130,246,0.12)' : 'rgba(37,99,235,0.08)',
+
+    // ── Semantic colors ───────────────────────────────────────────────────────
+    success: '#10B981',
+    warning: isDark ? '#F59E0B' : '#D97706',
+    gold:    isDark ? '#F59E0B' : '#B45309',
+    danger:  isDark ? '#F43F5E' : '#E11D48',
+    bullish: '#10B981',
+    bearish: isDark ? '#F43F5E' : '#E11D48',
+    neutral: isDark ? '#64748B' : '#4B5563',
+
+    // ── Chart helpers ─────────────────────────────────────────────────────────
+    chartGrid: isDark ? 'rgba(255,255,255,0.06)' : '#E2E8F0',
+    chartAxis: isDark ? '#64748B' : '#4B5563',
   };
 
   return (
