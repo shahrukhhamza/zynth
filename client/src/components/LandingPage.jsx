@@ -358,6 +358,9 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
       <meta name="twitter:title"       content={SEO_TITLE} />
       <meta name="twitter:description" content={SEO_DESCRIPTION} />
       <meta name="twitter:image"       content={SEO_IMAGE} />
+
+      {/* Google Search Console Verification */}
+      <meta name="google-site-verification" content="ar5DP4kEm7pNSlXYxO2CBLT0yc1Arr-whW3ymDjeflY" />
     </Helmet>
     <div className={`min-h-screen overflow-x-hidden transition-colors duration-300 ${isDark ? 'bg-[#0a0a0a] text-white' : 'bg-[#f4f6f9] text-[#0a0e1a]'}`}>
 
