@@ -142,7 +142,7 @@ export default function Hero({ badgeText, spotsLeft, onGetStarted, onSignIn }) {
         <motion.div 
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-10 border border-blue-500/30 bg-blue-500/5 backdrop-blur-md"
+          className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-12 border border-blue-500/30 bg-blue-500/5 backdrop-blur-md"
         >
           <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-ping" />
           <span className="text-[11px] font-bold tracking-[0.2em] uppercase text-blue-400">
@@ -155,7 +155,7 @@ export default function Hero({ badgeText, spotsLeft, onGetStarted, onSignIn }) {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="text-5xl md:text-[82px] font-black leading-[1.05] tracking-tighter mb-6"
+          className="text-5xl md:text-[82px] font-black leading-[1.05] tracking-tighter mb-10"
         >
           <span className={isDark ? 'text-white' : 'text-gray-900'}>Stop Losing Trades</span>
           <br />
@@ -169,7 +169,7 @@ export default function Hero({ badgeText, spotsLeft, onGetStarted, onSignIn }) {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.32 }}
-          className="mb-6"
+          className="mb-8"
         >
           <p className={`text-[16px] md:text-[18px] font-semibold leading-snug ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
             You&apos;re not losing because of strategy.
@@ -179,14 +179,14 @@ export default function Hero({ badgeText, spotsLeft, onGetStarted, onSignIn }) {
           </p>
         </motion.div>
 
-        {/* Subtext */}
-        <motion.p 
+        {/* Short value line */}
+        <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.4 }}
-          className={`text-[18px] md:text-[20px] max-w-[650px] mx-auto leading-relaxed mb-10 font-medium ${isDark ? 'text-gray-400' : 'text-gray-600'}`}
+          className={`text-[17px] md:text-[19px] font-semibold mb-14 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}
         >
-          Zynth is an AI-powered trade journal that uncovers the behavioral patterns silently destroying your P&amp;L — and tells you exactly what to fix.
+          See exactly why your trades fail — and fix it.
         </motion.p>
 
         {/* Urgency Badge */}
@@ -205,7 +205,7 @@ export default function Hero({ badgeText, spotsLeft, onGetStarted, onSignIn }) {
         )}
 
         {/* CTA Buttons */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-5 mb-12">
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-5 mb-14">
           <button 
             onClick={onGetStarted}
             className="group relative px-8 py-5 bg-blue-600 text-white font-black rounded-2xl transition-all hover:scale-105 hover:shadow-[0_0_40px_rgba(59,130,246,0.4)] flex items-center gap-3 overflow-hidden"

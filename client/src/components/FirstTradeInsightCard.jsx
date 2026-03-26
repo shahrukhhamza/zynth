@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 import { useAuth } from '../contexts/AuthContext';
+import { IconContainer } from './ui';
 
 // ── Mock insights data ────────────────────────────────────────────────────────
 
@@ -28,6 +29,7 @@ const MOCK_INSIGHTS = [
     id: 'revenge',
     severity: 'high',
     icon: Repeat2,
+    variant: 'red',
     color: '#ef4444',
     colorBg: 'rgba(239,68,68,0.1)',
     title: 'Possible revenge trading pattern',
@@ -38,6 +40,7 @@ const MOCK_INSIGHTS = [
     id: 'session',
     severity: 'medium',
     icon: Clock,
+    variant: 'amber',
     color: '#f59e0b',
     colorBg: 'rgba(245,158,11,0.1)',
     title: 'Your win rate drops in the New York session',
@@ -48,6 +51,7 @@ const MOCK_INSIGHTS = [
     id: 'rr',
     severity: 'medium',
     icon: TrendingDown,
+    variant: 'amber',
     color: '#f59e0b',
     colorBg: 'rgba(245,158,11,0.1)',
     title: 'Inconsistent risk-to-reward ratio',
@@ -58,6 +62,7 @@ const MOCK_INSIGHTS = [
     id: 'fomo',
     severity: 'low',
     icon: AlertTriangle,
+    variant: 'blue',
     color: '#3b82f6',
     colorBg: 'rgba(59,130,246,0.1)',
     title: 'Strong setup — but entry timing was late',
@@ -107,12 +112,7 @@ function InsightRow({ insight, isOpen, onToggle, onUpgrade, theme }) {
         onClick={insight.locked ? onUpgrade : onToggle}
         style={{ cursor: 'pointer' }}
       >
-        <div
-          className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
-          style={{ background: insight.colorBg, color: insight.color }}
-        >
-          <Icon size={15} />
-        </div>
+        <IconContainer icon={Icon} variant={insight.variant} size="sm" />
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
             <span className="text-[13px] font-semibold leading-snug" style={{ color: theme.text }}>

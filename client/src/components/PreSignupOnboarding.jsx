@@ -25,6 +25,7 @@ import {
 } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 import { BrandMark } from './BrandLogo';
+import { IconContainer } from './ui';
 
 // ── Data ─────────────────────────────────────────────────────────────────────
 
@@ -93,19 +94,7 @@ function OptionCard({ label, desc, icon: Icon, selected, onClick, theme }) {
       }}
     >
       <div className="flex items-center gap-3">
-        <div
-          className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0 transition-all duration-200"
-          style={{
-            background: selected
-              ? 'linear-gradient(135deg,rgba(59,130,246,0.3),rgba(6,182,212,0.18))'
-              : theme.isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.03)',
-            border: selected ? '1px solid rgba(59,130,246,0.4)' : '1px solid transparent',
-            boxShadow: selected ? '0 0 12px rgba(59,130,246,0.2)' : 'none',
-            color: selected ? '#60a5fa' : theme.muted,
-          }}
-        >
-          <Icon size={17} />
-        </div>
+        <IconContainer icon={Icon} variant="blue" size="sm" selected={selected} />
         <div className="flex-1 min-w-0">
           <p
             className="text-[14px] font-semibold transition-colors duration-150"

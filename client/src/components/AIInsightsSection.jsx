@@ -10,11 +10,13 @@ import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { AlertTriangle, TrendingDown, Clock, TrendingUp, Bot, Sparkles } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
+import { IconContainer } from './ui';
 
 const INSIGHTS = [
   {
     id: 1,
     icon: AlertTriangle,
+    variant: 'red',
     color: '#ef4444',
     bg: 'rgba(239,68,68,0.08)',
     border: 'rgba(239,68,68,0.18)',
@@ -30,6 +32,7 @@ const INSIGHTS = [
   {
     id: 2,
     icon: TrendingDown,
+    variant: 'amber',
     color: '#f59e0b',
     bg: 'rgba(245,158,11,0.08)',
     border: 'rgba(245,158,11,0.18)',
@@ -45,6 +48,7 @@ const INSIGHTS = [
   {
     id: 3,
     icon: Clock,
+    variant: 'purple',
     color: '#8b5cf6',
     bg: 'rgba(139,92,246,0.08)',
     border: 'rgba(139,92,246,0.18)',
@@ -60,6 +64,7 @@ const INSIGHTS = [
   {
     id: 4,
     icon: TrendingUp,
+    variant: 'green',
     color: '#10b981',
     bg: 'rgba(16,185,129,0.08)',
     border: 'rgba(16,185,129,0.18)',
@@ -115,12 +120,7 @@ function InsightCard({ insight, index, isDark }) {
       <div className="relative p-5">
         {/* Top row: icon + badge */}
         <div className="flex items-start justify-between mb-3">
-          <div
-            className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
-            style={{ background: insight.bg, border: `1px solid ${insight.border}` }}
-          >
-            <Icon size={17} style={{ color: insight.color }} />
-          </div>
+          <IconContainer icon={Icon} variant={insight.variant} size="sm" />
           <span
             className="text-[10px] font-bold tracking-[0.12em] px-2.5 py-1 rounded-full"
             style={{ color: insight.badgeColor, background: insight.badgeBg, border: `1px solid ${insight.border}` }}

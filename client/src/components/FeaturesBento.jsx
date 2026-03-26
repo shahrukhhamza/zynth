@@ -1,15 +1,16 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Brain, Search, LineChart, Shield, Zap, Cpu, BarChart3 } from 'lucide-react';
+import { IconContainer } from './ui';
 
-const FeatureCard = ({ title, description, icon: Icon, className, children }) => (
+const FeatureCard = ({ title, description, icon: Icon, iconVariant = 'blue', className, children }) => (
   <motion.div 
     whileHover={{ y: -5 }}
     className={`relative overflow-hidden rounded-3xl border border-white/10 bg-[#0A0A0B] p-8 glass-card ${className}`}
   >
     <div className="relative z-10">
-      <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
-        <Icon size={24} />
+      <div className="mb-5">
+        <IconContainer icon={Icon} variant={iconVariant} size="lg" />
       </div>
       <h3 className="mb-2 text-xl font-bold text-white">{title}</h3>
       <p className="text-sm leading-relaxed text-gray-400">{description}</p>
@@ -44,6 +45,7 @@ const FeaturesBento = () => {
           {/* 1. Large Feature: AI Trade Journal (Spans 2 columns) */}
           <FeatureCard 
             icon={Brain}
+            iconVariant="purple"
             title="AI-Powered Trade Journaling"
             description="Every trade tells a story. Zynth extracts your psychology, identifies behavioral loops, and generates performance reports using Gemini 1.5 Pro."
             className="md:col-span-2 md:row-span-1"
@@ -55,9 +57,10 @@ const FeaturesBento = () => {
             </div>
           </FeatureCard>
 
-          {/* 2. Macro Correlation (Small Card) */
+          {/* 2. Macro Correlation (Small Card) */}
           <FeatureCard 
             icon={LineChart}
+            iconVariant="blue"
             title="Macro Correlation"
             description="Score your trades against 10 High-Impact US indicators. Know if you're fighting the trend or riding it."
             className="md:col-span-1 md:row-span-1"
@@ -66,6 +69,7 @@ const FeaturesBento = () => {
           {/* 4. Large Feature: Live Market Intelligence (Spans 2 columns) */}
           <FeatureCard 
             icon={Zap}
+            iconVariant="amber"
             title="Live Market Intelligence"
             description="Real-time WebSocket price tickers for Gold, Forex, and Indices with 15-minute economic calendar refreshes."
             className="md:col-span-2 md:row-span-1"
