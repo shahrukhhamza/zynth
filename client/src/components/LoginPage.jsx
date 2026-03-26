@@ -4,6 +4,7 @@ import { API_URL } from '../config/api';
 import { getPublicStats } from '../utils/publicStats';
 import { Eye, EyeOff, TrendingUp, TrendingDown, AlertCircle, Loader2, Mail, Lock, ArrowRight, ArrowLeft, ChevronLeft, Shield, Zap, BarChart2, Activity, BookOpen, Brain, Bot, Flame } from 'lucide-react';
 import { BrandMark } from './BrandLogo';
+import { useTheme } from '../contexts/ThemeContext';
 
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || '';
 
@@ -23,6 +24,7 @@ const FEATURES = [
 
 export default function LoginPage({ onSwitchToSignup, onBack, onForgotPassword }) {
   const { login, loginWithGoogle } = useAuth();
+  const { isDark } = useTheme();
   useEffect(() => { window.scrollTo(0, 0); }, []);
   const [email, setEmail]         = useState('');
   const [password, setPassword]   = useState('');
@@ -122,7 +124,7 @@ export default function LoginPage({ onSwitchToSignup, onBack, onForgotPassword }
   }
 
   return (
-    <div style={{display:'flex',height:'100vh',width:'100vw',overflow:'hidden',background:'#0a0a0a',position:'relative'}}>
+    <div style={{display:'flex',height:'100vh',width:'100vw',overflow:'hidden',background: isDark ? '#020617' : '#F8FAFC',position:'relative'}}>
 
       <style>{`
         @keyframes floatCard {
@@ -185,7 +187,7 @@ export default function LoginPage({ onSwitchToSignup, onBack, onForgotPassword }
       `}</style>
 
       {/* ── LEFT: Brand panel */}
-      <div style={{display: isMobile ? 'none' : 'flex', flex:1, flexDirection:'column', position:'relative', overflow:'hidden', minHeight:'100vh', background:'#0a0a0a', animation:'panelFadeIn 0.6s ease'}}>
+      <div style={{display: isMobile ? 'none' : 'flex', flex:1, flexDirection:'column', position:'relative', overflow:'hidden', minHeight:'100vh', background: isDark ? '#030303' : '#ebf0f7', animation:'panelFadeIn 0.6s ease'}}>
 
         {/* Orb 1 – bottom left */}
         <div className="pointer-events-none" style={{
@@ -231,8 +233,8 @@ export default function LoginPage({ onSwitchToSignup, onBack, onForgotPassword }
           <div style={{display:'flex', alignItems:'center', gap:'10px'}}>
             <BrandMark size={30} />
             <div>
-              <p style={{color:'#fff',fontSize:'18px',fontWeight:700,lineHeight:1}}>Zynth</p>
-              <p style={{color:'rgba(255,255,255,0.4)',fontSize:'12px',letterSpacing:'0.05em',marginTop:'3px'}}>
+              <p style={{color: isDark ? '#fff' : '#0f172a',fontSize:'18px',fontWeight:700,lineHeight:1}}>Zynth</p>
+              <p style={{color: isDark ? 'rgba(255,255,255,0.4)' : '#64748b',fontSize:'12px',letterSpacing:'0.05em',marginTop:'3px'}}>
                 Intelligence Behind Every Trade
               </p>
             </div>
@@ -242,15 +244,15 @@ export default function LoginPage({ onSwitchToSignup, onBack, onForgotPassword }
         {/* Center content */}
         <div className="relative z-10 flex-1 flex flex-col justify-center" style={{padding:'0 48px 96px'}}>
           <h1 style={{fontSize:'52px',fontWeight:800,letterSpacing:'-0.03em',lineHeight:1.1,marginBottom:'16px'}}>
-            <span style={{color:'#ffffff'}}>Welcome Back,<br /></span>
+            <span style={{color: isDark ? '#ffffff' : '#0f172a'}}>Welcome Back,<br /></span>
             <span style={{
-              background:'linear-gradient(135deg, #ffffff 30%, #3b82f6 100%)',
+              background: isDark ? 'linear-gradient(135deg, #ffffff 30%, #3b82f6 100%)' : 'linear-gradient(135deg, #0f172a 30%, #2563eb 100%)',
               WebkitBackgroundClip:'text',
               WebkitTextFillColor:'transparent',
               backgroundClip:'text',
             }}>Trader.</span>
           </h1>
-          <p style={{fontSize:'16px',color:'rgba(255,255,255,0.45)',lineHeight:1.7,marginBottom:'36px',maxWidth:'340px'}}>
+          <p style={{fontSize:'16px',color: isDark ? 'rgba(255,255,255,0.45)' : '#475569',lineHeight:1.7,marginBottom:'36px',maxWidth:'340px'}}>
             Your journal, AI insights and live markets are waiting for you.
           </p>
           <div>
@@ -271,8 +273,8 @@ export default function LoginPage({ onSwitchToSignup, onBack, onForgotPassword }
                   <Icon size={18} color="#3b82f6" />
                 </div>
                 <div>
-                  <p style={{color:'#fff',fontSize:'14px',fontWeight:600,marginBottom:'2px'}}>{title}</p>
-                  <p style={{color:'rgba(255,255,255,0.4)',fontSize:'13px',lineHeight:1.5}}>{desc}</p>
+                  <p style={{color: isDark ? '#fff' : '#0f172a',fontSize:'14px',fontWeight:600,marginBottom:'2px'}}>{title}</p>
+                  <p style={{color: isDark ? 'rgba(255,255,255,0.4)' : '#64748b',fontSize:'13px',lineHeight:1.5}}>{desc}</p>
                 </div>
               </div>
             ))}
@@ -288,12 +290,12 @@ export default function LoginPage({ onSwitchToSignup, onBack, onForgotPassword }
               {Icon: Bot,    label: 'AI'},
             ].map(({Icon, label}) => (
               <span key={label} style={{
-                background:'rgba(255,255,255,0.04)',
-                border:'1px solid rgba(255,255,255,0.08)',
+                background: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)',
+                border: isDark ? '1px solid rgba(255,255,255,0.08)' : '1px solid rgba(0,0,0,0.08)',
                 borderRadius:'20px',
                 padding:'5px 12px',
                 fontSize:'11px',
-                color:'rgba(255,255,255,0.4)',
+                color: isDark ? 'rgba(255,255,255,0.4)' : '#64748b',
                 display:'flex',gap:'5px',alignItems:'center',
               }}>
                 <Icon size={11} />{label}
@@ -455,9 +457,9 @@ export default function LoginPage({ onSwitchToSignup, onBack, onForgotPassword }
 
           {/* OR divider */}
           <div style={{display:'flex',alignItems:'center',gap:'10px',marginBottom:'14px'}}>
-            <div style={{flex:1,height:'1px',background:'linear-gradient(to right, transparent, rgba(255,255,255,0.1))'}} />
-            <span style={{fontSize:'11px',fontWeight:500,color:'rgba(255,255,255,0.25)',letterSpacing:'0.08em',textTransform:'uppercase'}}>or with email</span>
-            <div style={{flex:1,height:'1px',background:'linear-gradient(to left, transparent, rgba(255,255,255,0.1))'}} />
+            <div style={{flex:1,height:'1px',background: isDark ? 'linear-gradient(to right, transparent, rgba(255,255,255,0.1))' : 'linear-gradient(to right, transparent, rgba(0,0,0,0.1))'}} />
+            <span style={{fontSize:'11px',fontWeight:500,color: isDark ? 'rgba(255,255,255,0.25)' : '#94a3b8',letterSpacing:'0.08em',textTransform:'uppercase'}}>or with email</span>
+            <div style={{flex:1,height:'1px',background: isDark ? 'linear-gradient(to left, transparent, rgba(255,255,255,0.1))' : 'linear-gradient(to left, transparent, rgba(0,0,0,0.1))'}} />
           </div>
 
           <form onSubmit={handleSubmit} ref={formRef}>
@@ -465,23 +467,23 @@ export default function LoginPage({ onSwitchToSignup, onBack, onForgotPassword }
             {/* Email */}
             <div style={{marginBottom:'10px'}}>
               <div style={{position:'relative'}}>
-                <Mail size={15} color="rgba(255,255,255,0.2)" style={{position:'absolute',left:'13px',top:'50%',transform:'translateY(-50%)',pointerEvents:'none'}} />
+                <Mail size={15} color={isDark ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.25)'} style={{position:'absolute',left:'13px',top:'50%',transform:'translateY(-50%)',pointerEvents:'none'}} />
                 <input
                   type="email" autoComplete="email" value={email} required
                   onChange={e => { setEmail(e.target.value); setFieldErrors(fe => ({...fe, email:''})); }}
                   placeholder="Email address"
                   style={{
                     width:'100%', boxSizing:'border-box',
-                    background:'rgba(255,255,255,0.04)',
-                    border: fieldErrors.email ? '1px solid rgba(239,68,68,0.5)' : '1px solid rgba(255,255,255,0.1)',
+                    background: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.03)',
+                    border: fieldErrors.email ? '1px solid rgba(239,68,68,0.5)' : isDark ? '1px solid rgba(255,255,255,0.1)' : '1px solid rgba(0,0,0,0.12)',
                     boxShadow: fieldErrors.email ? '0 0 0 3px rgba(239,68,68,0.07)' : 'none',
                     borderRadius:'10px',
                     padding:'11px 14px 11px 38px',
-                    color:'#fff', fontSize:'14px',
+                    color: isDark ? '#fff' : '#0f172a', fontSize:'14px',
                     transition:'all 0.2s ease', outline:'none',
                   }}
-                  onFocus={e => { e.target.style.background='rgba(255,255,255,0.06)'; e.target.style.borderColor='rgba(59,130,246,0.55)'; e.target.style.boxShadow='0 0 0 3px rgba(59,130,246,0.10)'; }}
-                  onBlur={e => { e.target.style.background='rgba(255,255,255,0.04)'; if (fieldErrors.email) { e.target.style.borderColor='rgba(239,68,68,0.5)'; e.target.style.boxShadow='0 0 0 3px rgba(239,68,68,0.07)'; } else { e.target.style.borderColor='rgba(255,255,255,0.1)'; e.target.style.boxShadow='none'; } }}
+                  onFocus={e => { e.target.style.background= isDark ? 'rgba(255,255,255,0.06)' : 'rgba(59,130,246,0.03)'; e.target.style.borderColor='rgba(59,130,246,0.55)'; e.target.style.boxShadow='0 0 0 3px rgba(59,130,246,0.10)'; }}
+                  onBlur={e => { e.target.style.background= isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.03)'; if (fieldErrors.email) { e.target.style.borderColor='rgba(239,68,68,0.5)'; e.target.style.boxShadow='0 0 0 3px rgba(239,68,68,0.07)'; } else { e.target.style.borderColor= isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.12)'; e.target.style.boxShadow='none'; } }}
                 />
               </div>
               {fieldErrors.email && fieldErrors.email.trim() && (
@@ -503,26 +505,26 @@ export default function LoginPage({ onSwitchToSignup, onBack, onForgotPassword }
                 </button>
               </div>
               <div style={{position:'relative'}}>
-                <Lock size={15} color="rgba(255,255,255,0.2)" style={{position:'absolute',left:'13px',top:'50%',transform:'translateY(-50%)',pointerEvents:'none'}} />
+                <Lock size={15} color={isDark ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.25)'} style={{position:'absolute',left:'13px',top:'50%',transform:'translateY(-50%)',pointerEvents:'none'}} />
                 <input
                   type={showPass ? 'text' : 'password'} autoComplete="current-password" value={password} required
                   onChange={e => { setPassword(e.target.value); setFieldErrors(fe => ({...fe, password:''})); }}
                   placeholder="Password"
                   style={{
                     width:'100%', boxSizing:'border-box',
-                    background:'rgba(255,255,255,0.04)',
-                    border: fieldErrors.password ? '1px solid rgba(239,68,68,0.5)' : '1px solid rgba(255,255,255,0.1)',
+                    background: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.03)',
+                    border: fieldErrors.password ? '1px solid rgba(239,68,68,0.5)' : isDark ? '1px solid rgba(255,255,255,0.1)' : '1px solid rgba(0,0,0,0.12)',
                     boxShadow: fieldErrors.password ? '0 0 0 3px rgba(239,68,68,0.07)' : 'none',
                     borderRadius:'10px',
                     padding:'11px 40px 11px 38px',
-                    color:'#fff', fontSize:'14px',
+                    color: isDark ? '#fff' : '#0f172a', fontSize:'14px',
                     transition:'all 0.2s ease', outline:'none',
                   }}
-                  onFocus={e => { e.target.style.background='rgba(255,255,255,0.06)'; e.target.style.borderColor='rgba(59,130,246,0.55)'; e.target.style.boxShadow='0 0 0 3px rgba(59,130,246,0.10)'; }}
-                  onBlur={e => { e.target.style.background='rgba(255,255,255,0.04)'; if (fieldErrors.password) { e.target.style.borderColor='rgba(239,68,68,0.5)'; e.target.style.boxShadow='0 0 0 3px rgba(239,68,68,0.07)'; } else { e.target.style.borderColor='rgba(255,255,255,0.1)'; e.target.style.boxShadow='none'; } }}
+                  onFocus={e => { e.target.style.background= isDark ? 'rgba(255,255,255,0.06)' : 'rgba(59,130,246,0.03)'; e.target.style.borderColor='rgba(59,130,246,0.55)'; e.target.style.boxShadow='0 0 0 3px rgba(59,130,246,0.10)'; }}
+                  onBlur={e => { e.target.style.background= isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.03)'; if (fieldErrors.password) { e.target.style.borderColor='rgba(239,68,68,0.5)'; e.target.style.boxShadow='0 0 0 3px rgba(239,68,68,0.07)'; } else { e.target.style.borderColor= isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.12)'; e.target.style.boxShadow='none'; } }}
                 />
                 <button type="button" onClick={() => setShowPass(v => !v)} tabIndex={-1}
-                        style={{position:'absolute',right:'12px',top:'50%',transform:'translateY(-50%)',background:'none',border:'none',cursor:'pointer',color:'rgba(255,255,255,0.3)',padding:0,display:'flex'}}>
+                        style={{position:'absolute',right:'12px',top:'50%',transform:'translateY(-50%)',background:'none',border:'none',cursor:'pointer',color: isDark ? 'rgba(255,255,255,0.3)' : 'rgba(0,0,0,0.35)',padding:0,display:'flex'}}>
                   {showPass ? <EyeOff size={15} /> : <Eye size={15} />}
                 </button>
               </div>
@@ -566,7 +568,7 @@ export default function LoginPage({ onSwitchToSignup, onBack, onForgotPassword }
           </div>
 
           {/* Bottom link */}
-          <p style={{marginTop:'14px',textAlign:'center',fontSize:'13px',color:'rgba(255,255,255,0.35)'}}>
+          <p style={{marginTop:'14px',textAlign:'center',fontSize:'13px',color: isDark ? 'rgba(255,255,255,0.35)' : '#64748b'}}>
             Don't have an account?{' '}
             <button onClick={onSwitchToSignup}
                     style={{color:'#3b82f6',background:'none',border:'none',cursor:'pointer',fontSize:'13px',padding:0,fontWeight:500}}

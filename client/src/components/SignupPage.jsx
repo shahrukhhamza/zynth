@@ -3,6 +3,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { API_URL } from '../config/api';
 import { getPublicStats } from '../utils/publicStats';
 import { BrandMark } from './BrandLogo';
+import { useTheme } from '../contexts/ThemeContext';
 
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || '';
 import {
@@ -13,6 +14,7 @@ import {
 
 export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess }) {
   const { register, loginWithGoogle } = useAuth();
+  const { isDark } = useTheme();
   useEffect(() => { window.scrollTo(0, 0); }, []);
 
   const [form, setForm]               = useState({ name: '', email: '', password: '', confirm: '' });
@@ -101,13 +103,13 @@ export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess })
   const STRENGTH_TEXT = ['', 'text-red-400', 'text-orange-400', 'text-amber-400', 'text-emerald-400'];
 
   const inputStyle = {
-    background: 'rgba(255,255,255,0.04)',
-    border: '1px solid rgba(255,255,255,0.1)',
-    borderRadius: '10px', color: '#fff', width: '100%', fontSize: '14px',
+    background: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.03)',
+    border: isDark ? '1px solid rgba(255,255,255,0.1)' : '1px solid rgba(0,0,0,0.12)',
+    borderRadius: '10px', color: isDark ? '#fff' : '#0f172a', width: '100%', fontSize: '14px',
     outline: 'none', transition: 'all 0.2s ease',
   };
-  const focusIn  = e => { e.target.style.background = 'rgba(255,255,255,0.06)'; e.target.style.borderColor = 'rgba(59,130,246,0.55)'; e.target.style.boxShadow = '0 0 0 3px rgba(59,130,246,0.10)'; };
-  const focusOut = e => { e.target.style.background = 'rgba(255,255,255,0.04)'; e.target.style.borderColor = 'rgba(255,255,255,0.1)'; e.target.style.boxShadow = 'none'; };
+  const focusIn  = e => { e.target.style.background = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(59,130,246,0.03)'; e.target.style.borderColor = 'rgba(59,130,246,0.55)'; e.target.style.boxShadow = '0 0 0 3px rgba(59,130,246,0.10)'; };
+  const focusOut = e => { e.target.style.background = isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.03)'; e.target.style.borderColor = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.12)'; e.target.style.boxShadow = 'none'; };
 
   function setField(field, value) { setForm(f => ({ ...f, [field]: value })); }
 
@@ -152,7 +154,7 @@ export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess })
   }
 
   return (
-    <div style={{display:'flex',height:'100vh',width:'100vw',overflow:'hidden',background:'#0a0a0a',position:'relative'}}>
+    <div style={{display:'flex',height:'100vh',width:'100vw',overflow:'hidden',background: isDark ? '#020617' : '#F8FAFC',position:'relative'}}>
 
       <style>{`
         @keyframes formAppear {
@@ -219,7 +221,7 @@ export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess })
       {/* â”€â”€ Panels â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
 
         {/* â”€â”€ LEFT: Brand panel â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
-        <div style={{display: isMobile ? 'none' : 'flex', flex:1, flexDirection:'column', position:'relative', overflow:'hidden', minHeight:'100vh', background:'#0a0a0a', animation:'panelFadeIn 0.6s ease'}}>
+        <div style={{display: isMobile ? 'none' : 'flex', flex:1, flexDirection:'column', position:'relative', overflow:'hidden', minHeight:'100vh', background: isDark ? '#030303' : '#ebf0f7', animation:'panelFadeIn 0.6s ease'}}>
 
           {/* Orb 1 – bottom left */}
           <div className="pointer-events-none" style={{
@@ -265,8 +267,8 @@ export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess })
             <div style={{display:'flex', alignItems:'center', gap:'10px'}}>
               <BrandMark size={30} />
               <div>
-                <p style={{color:'#fff',fontSize:'18px',fontWeight:700,lineHeight:1}}>Zynth</p>
-                <p style={{color:'rgba(255,255,255,0.4)',fontSize:'12px',letterSpacing:'0.05em',marginTop:'3px'}}>
+                <p style={{color: isDark ? '#fff' : '#0f172a',fontSize:'18px',fontWeight:700,lineHeight:1}}>Zynth</p>
+                <p style={{color: isDark ? 'rgba(255,255,255,0.4)' : '#64748b',fontSize:'12px',letterSpacing:'0.05em',marginTop:'3px'}}>
                   Intelligence Behind Every Trade
                 </p>
               </div>
@@ -276,15 +278,15 @@ export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess })
           {/* Center content */}
           <div className="relative z-10 flex-1 flex flex-col justify-center" style={{padding:'0 48px 96px'}}>
             <h1 style={{fontSize:'52px',fontWeight:800,letterSpacing:'-0.03em',lineHeight:1.1,marginBottom:'16px'}}>
-              <span style={{color:'#ffffff'}}>Start Trading<br /></span>
+              <span style={{color: isDark ? '#ffffff' : '#0f172a'}}>Start Trading<br /></span>
               <span style={{
-                background:'linear-gradient(135deg, #ffffff 30%, #3b82f6 100%)',
+                background: isDark ? 'linear-gradient(135deg, #ffffff 30%, #3b82f6 100%)' : 'linear-gradient(135deg, #0f172a 30%, #2563eb 100%)',
                 WebkitBackgroundClip:'text',
                 WebkitTextFillColor:'transparent',
                 backgroundClip:'text',
               }}>Smarter.</span>
             </h1>
-            <p style={{fontSize:'16px',color:'rgba(255,255,255,0.45)',lineHeight:1.7,marginBottom:'36px',maxWidth:'340px'}}>
+            <p style={{fontSize:'16px',color: isDark ? 'rgba(255,255,255,0.45)' : '#475569',lineHeight:1.7,marginBottom:'36px',maxWidth:'340px'}}>
               Join traders who use data to improve their edge, not guesswork.
             </p>
             <div>
@@ -305,8 +307,8 @@ export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess })
                     <Icon size={18} color="#3b82f6" />
                   </div>
                   <div>
-                    <p style={{color:'#fff',fontSize:'14px',fontWeight:600,marginBottom:'2px'}}>{title}</p>
-                    <p style={{color:'rgba(255,255,255,0.4)',fontSize:'13px',lineHeight:1.5}}>{desc}</p>
+                    <p style={{color: isDark ? '#fff' : '#0f172a',fontSize:'14px',fontWeight:600,marginBottom:'2px'}}>{title}</p>
+                    <p style={{color: isDark ? 'rgba(255,255,255,0.4)' : '#64748b',fontSize:'13px',lineHeight:1.5}}>{desc}</p>
                   </div>
                 </div>
               ))}
@@ -322,12 +324,12 @@ export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess })
                 {Icon: Bot,    label: 'AI'},
               ].map(({Icon, label}) => (
                 <span key={label} style={{
-                  background:'rgba(255,255,255,0.04)',
-                  border:'1px solid rgba(255,255,255,0.08)',
+                  background: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)',
+                  border: isDark ? '1px solid rgba(255,255,255,0.08)' : '1px solid rgba(0,0,0,0.08)',
                   borderRadius:'20px',
                   padding:'5px 12px',
                   fontSize:'11px',
-                  color:'rgba(255,255,255,0.4)',
+                  color: isDark ? 'rgba(255,255,255,0.4)' : '#64748b',
                   display:'flex',gap:'5px',alignItems:'center',
                 }}>
                   <Icon size={11} />{label}
@@ -497,9 +499,9 @@ export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess })
 
             {/* OR divider */}
             <div style={{display:'flex',alignItems:'center',gap:'10px',marginBottom:'14px'}}>
-              <div style={{flex:1,height:'1px',background:'linear-gradient(to right, transparent, rgba(255,255,255,0.1))'}} />
-              <span style={{fontSize:'11px',fontWeight:500,color:'rgba(255,255,255,0.25)',letterSpacing:'0.08em',textTransform:'uppercase'}}>or with email</span>
-              <div style={{flex:1,height:'1px',background:'linear-gradient(to left, transparent, rgba(255,255,255,0.1))'}} />
+              <div style={{flex:1,height:'1px',background: isDark ? 'linear-gradient(to right, transparent, rgba(255,255,255,0.1))' : 'linear-gradient(to right, transparent, rgba(0,0,0,0.1))'}} />
+              <span style={{fontSize:'11px',fontWeight:500,color: isDark ? 'rgba(255,255,255,0.25)' : '#94a3b8',letterSpacing:'0.08em',textTransform:'uppercase'}}>or with email</span>
+              <div style={{flex:1,height:'1px',background: isDark ? 'linear-gradient(to left, transparent, rgba(255,255,255,0.1))' : 'linear-gradient(to left, transparent, rgba(0,0,0,0.1))'}} />
             </div>
 
                         <form onSubmit={handleSubmit} ref={formRef}>
@@ -507,7 +509,7 @@ export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess })
               {/* Full Name */}
               <div style={{marginBottom:'10px'}}>
                 <div style={{position:'relative'}}>
-                  <User size={15} color="rgba(255,255,255,0.2)" style={{position:'absolute',left:'13px',top:'50%',transform:'translateY(-50%)',pointerEvents:'none'}} />
+                  <User size={15} color={isDark ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.25)'} style={{position:'absolute',left:'13px',top:'50%',transform:'translateY(-50%)',pointerEvents:'none'}} />
                   <input type="text" autoComplete="name" required
                          value={form.name} onChange={e => { setField('name', e.target.value); setFieldErrors(fe => ({...fe, name:''})); }}
                          placeholder="Full name"
@@ -525,7 +527,7 @@ export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess })
               {/* Email */}
               <div style={{marginBottom:'10px'}}>
                 <div style={{position:'relative'}}>
-                  <Mail size={15} color="rgba(255,255,255,0.2)" style={{position:'absolute',left:'13px',top:'50%',transform:'translateY(-50%)',pointerEvents:'none'}} />
+                  <Mail size={15} color={isDark ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.25)'} style={{position:'absolute',left:'13px',top:'50%',transform:'translateY(-50%)',pointerEvents:'none'}} />
                   <input type="email" autoComplete="email" required
                          value={form.email} onChange={e => { setField('email', e.target.value); setFieldErrors(fe => ({...fe, email:''})); }}
                          placeholder="Email address"
@@ -543,7 +545,7 @@ export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess })
               {/* Password */}
               <div style={{marginBottom:'10px'}}>
                 <div style={{position:'relative'}}>
-                  <Lock size={15} color="rgba(255,255,255,0.2)" style={{position:'absolute',left:'13px',top:'50%',transform:'translateY(-50%)',pointerEvents:'none'}} />
+                  <Lock size={15} color={isDark ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.25)'} style={{position:'absolute',left:'13px',top:'50%',transform:'translateY(-50%)',pointerEvents:'none'}} />
                   <input type={showPass ? 'text' : 'password'} autoComplete="new-password" required
                          value={form.password} onChange={e => { setField('password', e.target.value); setFieldErrors(fe => ({...fe, password:''})); }}
                          placeholder="Password (min. 8 characters)"
@@ -591,7 +593,7 @@ export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess })
               {/* Confirm Password */}
               <div style={{marginBottom:'12px'}}>
                 <div style={{position:'relative'}}>
-                  <Lock size={15} color="rgba(255,255,255,0.2)" style={{position:'absolute',left:'13px',top:'50%',transform:'translateY(-50%)',pointerEvents:'none'}} />
+                  <Lock size={15} color={isDark ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.25)'} style={{position:'absolute',left:'13px',top:'50%',transform:'translateY(-50%)',pointerEvents:'none'}} />
                   <input type={showConfirm ? 'text' : 'password'} autoComplete="new-password" required
                          value={form.confirm} onChange={e => { setField('confirm', e.target.value); setFieldErrors(fe => ({...fe, confirm:''})); }}
                          placeholder="Confirm password"
@@ -618,12 +620,12 @@ export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess })
               </div>
 
               {/* Consent checkboxes */}
-              <div style={{marginBottom:'14px',display:'flex',flexDirection:'column',gap:'7px',padding:'10px 12px',background:'rgba(255,255,255,0.02)',border:'1px solid rgba(255,255,255,0.07)',borderRadius:'9px'}}>
+              <div style={{marginBottom:'14px',display:'flex',flexDirection:'column',gap:'7px',padding:'10px 12px',background: isDark ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.02)',border: isDark ? '1px solid rgba(255,255,255,0.07)' : '1px solid rgba(0,0,0,0.07)',borderRadius:'9px'}}>
                 <label style={{display:'flex',alignItems:'flex-start',gap:'10px',cursor:'pointer',userSelect:'none'}}>
                   <input type="checkbox" className="sp-checkbox"
                          checked={consent.terms}
                          onChange={e => setConsent(c => ({ ...c, terms: e.target.checked }))} />
-                  <span style={{fontSize:'12px',color:'rgba(255,255,255,0.5)',lineHeight:1.5}}>
+                  <span style={{fontSize:'12px',color: isDark ? 'rgba(255,255,255,0.5)' : '#64748b',lineHeight:1.5}}>
                     I agree to the{' '}
                     <a href="/terms" target="_blank" rel="noopener noreferrer"
                      style={{color:'#3b82f6',textDecoration:'none'}}
@@ -640,7 +642,7 @@ export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess })
                   <input type="checkbox" className="sp-checkbox"
                          checked={consent.risk}
                          onChange={e => setConsent(c => ({ ...c, risk: e.target.checked }))} />
-                  <span style={{fontSize:'12px',color:'rgba(255,255,255,0.5)',lineHeight:1.5}}>
+                  <span style={{fontSize:'12px',color: isDark ? 'rgba(255,255,255,0.5)' : '#64748b',lineHeight:1.5}}>
                     AI analysis may contain errors. I trade at my own risk.
                   </span>
                 </label>
