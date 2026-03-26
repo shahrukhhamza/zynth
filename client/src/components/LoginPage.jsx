@@ -212,19 +212,19 @@ export default function LoginPage({ onSwitchToSignup, onBack, onForgotPassword }
             <button
               onClick={onBack}
               style={{
-                background:'rgba(255,255,255,0.05)',
-                border:'1px solid rgba(255,255,255,0.1)',
+                background: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.04)',
+                border: isDark ? '1px solid rgba(255,255,255,0.1)' : '1px solid rgba(0,0,0,0.1)',
                 borderRadius:'8px',
                 padding:'7px 14px',
                 fontSize:'13px',
-                color:'rgba(255,255,255,0.5)',
+                color: isDark ? 'rgba(255,255,255,0.5)' : '#64748b',
                 display:'flex', alignItems:'center', gap:'6px',
                 cursor:'pointer',
                 transition:'all 0.2s ease',
                 flexShrink:0,
               }}
-              onMouseEnter={e => { e.currentTarget.style.background='rgba(255,255,255,0.08)'; e.currentTarget.style.color='rgba(255,255,255,0.75)'; e.currentTarget.style.borderColor='rgba(255,255,255,0.18)'; }}
-              onMouseLeave={e => { e.currentTarget.style.background='rgba(255,255,255,0.05)'; e.currentTarget.style.color='rgba(255,255,255,0.5)'; e.currentTarget.style.borderColor='rgba(255,255,255,0.1)'; }}
+              onMouseEnter={e => { e.currentTarget.style.background= isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.07)'; e.currentTarget.style.color= isDark ? 'rgba(255,255,255,0.75)' : '#334155'; e.currentTarget.style.borderColor= isDark ? 'rgba(255,255,255,0.18)' : 'rgba(0,0,0,0.18)'; }}
+              onMouseLeave={e => { e.currentTarget.style.background= isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.04)'; e.currentTarget.style.color= isDark ? 'rgba(255,255,255,0.5)' : '#64748b'; e.currentTarget.style.borderColor= isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'; }}
             >
               <ChevronLeft size={14} />
               Back
@@ -313,10 +313,10 @@ export default function LoginPage({ onSwitchToSignup, onBack, onForgotPassword }
              display:'flex', flexDirection:'column',
              alignItems:'center',
              overflowY:'auto',
-             background: isMobile ? '#020617' : 'rgba(11,18,32,0.97)',
+             background: isMobile ? (isDark ? '#020617' : '#F8FAFC') : (isDark ? 'rgba(11,18,32,0.97)' : 'rgba(255,255,255,0.98)'),
              backdropFilter: isMobile ? 'none' : 'blur(12px)',
-             borderLeft: isMobile ? 'none' : '1px solid rgba(255,255,255,0.07)',
-             boxShadow: isMobile ? 'none' : '-1px 0 40px rgba(0,0,0,0.4)',
+             borderLeft: isMobile ? 'none' : isDark ? '1px solid rgba(255,255,255,0.07)' : '1px solid rgba(0,0,0,0.07)',
+             boxShadow: isMobile ? 'none' : isDark ? '-1px 0 40px rgba(0,0,0,0.4)' : '-1px 0 24px rgba(0,0,0,0.06)',
              padding: isMobile ? '32px 24px' : '48px',
              minHeight:'100vh',
              boxSizing:'border-box',
@@ -329,20 +329,20 @@ export default function LoginPage({ onSwitchToSignup, onBack, onForgotPassword }
             <button
               onClick={onBack}
               style={{
-                background:'rgba(255,255,255,0.05)',
-                border:'1px solid rgba(255,255,255,0.1)',
+                background: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.04)',
+                border: isDark ? '1px solid rgba(255,255,255,0.1)' : '1px solid rgba(0,0,0,0.1)',
                 borderRadius:'8px',
                 padding:'7px 14px',
                 fontSize:'13px',
-                color:'rgba(255,255,255,0.5)',
+                color: isDark ? 'rgba(255,255,255,0.5)' : '#64748b',
                 display:'flex', alignItems:'center', gap:'6px',
                 cursor:'pointer',
                 transition:'all 0.2s ease',
                 marginBottom:'20px',
                 alignSelf:'flex-start',
               }}
-              onMouseEnter={e => { e.currentTarget.style.background='rgba(255,255,255,0.08)'; e.currentTarget.style.color='rgba(255,255,255,0.75)'; }}
-              onMouseLeave={e => { e.currentTarget.style.background='rgba(255,255,255,0.05)'; e.currentTarget.style.color='rgba(255,255,255,0.5)'; }}
+              onMouseEnter={e => { e.currentTarget.style.background= isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.07)'; e.currentTarget.style.color= isDark ? 'rgba(255,255,255,0.75)' : '#334155'; }}
+              onMouseLeave={e => { e.currentTarget.style.background= isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.04)'; e.currentTarget.style.color= isDark ? 'rgba(255,255,255,0.5)' : '#64748b'; }}
             >
               <ChevronLeft size={14} />
               Back
@@ -353,7 +353,7 @@ export default function LoginPage({ onSwitchToSignup, onBack, onForgotPassword }
               <div style={{width:'28px',height:'28px',background:'#3b82f6',borderRadius:'7px',display:'flex',alignItems:'center',justifyContent:'center'}}>
                 <span style={{color:'#fff',fontWeight:'bold',fontSize:'14px'}}>Z</span>
               </div>
-              <span style={{color:'#fff',fontWeight:'bold',fontSize:'17px'}}>Zynth</span>
+              <span style={{color: isDark ? '#fff' : '#0f172a',fontWeight:'bold',fontSize:'17px'}}>Zynth</span>
             </div>
           )}
 
@@ -374,9 +374,9 @@ export default function LoginPage({ onSwitchToSignup, onBack, onForgotPassword }
           )}
 
           {/* Header */}
-          <h2 style={{fontSize: isMobile ? '22px' : '26px',fontWeight:800,color:'#fff',letterSpacing:'-0.025em',margin:0,lineHeight:1.15}}>Welcome back.</h2>
-          <p style={{fontSize:'14px',fontWeight:500,color:'rgba(255,255,255,0.45)',marginTop:'5px',marginBottom:'16px'}}>Your edge is waiting.</p>
-          <p style={{fontSize:'13px',marginBottom:'14px',color:'rgba(255,255,255,0.4)'}}>
+          <h2 style={{fontSize: isMobile ? '22px' : '26px',fontWeight:800,color: isDark ? '#fff' : '#0f172a',letterSpacing:'-0.025em',margin:0,lineHeight:1.15}}>Welcome back.</h2>
+          <p style={{fontSize:'14px',fontWeight:500,color: isDark ? 'rgba(255,255,255,0.45)' : '#64748b',marginTop:'5px',marginBottom:'16px'}}>Your edge is waiting.</p>
+          <p style={{fontSize:'13px',marginBottom:'14px',color: isDark ? 'rgba(255,255,255,0.4)' : '#64748b'}}>
             New here?{' '}
             <button onClick={onSwitchToSignup}
                     style={{color:'#3b82f6',background:'none',border:'none',cursor:'pointer',fontSize:'13px',padding:0}}
@@ -443,7 +443,7 @@ export default function LoginPage({ onSwitchToSignup, onBack, onForgotPassword }
             onMouseUp={e => { e.currentTarget.style.transform = 'translateY(-1px)'; }}
           >
             {googleLoading ? (
-              <Loader2 size={17} className="animate-spin" style={{color:'rgba(255,255,255,0.55)',flexShrink:0}} />
+              <Loader2 size={17} className="animate-spin" style={{color: isDark ? 'rgba(255,255,255,0.55)' : 'rgba(0,0,0,0.45)',flexShrink:0}} />
             ) : (
               <svg width="17" height="17" viewBox="0 0 24 24" style={{flexShrink:0}}>
                 <path fill="#EA4335" d="M5.266 9.765A7.077 7.077 0 0 1 12 4.909c1.69 0 3.218.6 4.418 1.582L19.91 3C17.782 1.145 15.055 0 12 0 7.27 0 3.198 2.698 1.24 6.65l4.026 3.115z"/>
@@ -562,9 +562,9 @@ export default function LoginPage({ onSwitchToSignup, onBack, onForgotPassword }
 
           {/* Trust signals */}
           <div style={{marginTop:'16px',textAlign:'center',lineHeight:1.8}}>
-            <span style={{fontSize:'11px',color:'rgba(255,255,255,0.28)',letterSpacing:'0.01em'}}>🔒 Secure login · 256-bit encryption</span>
+            <span style={{fontSize:'11px',color: isDark ? 'rgba(255,255,255,0.28)' : '#94a3b8',letterSpacing:'0.01em'}}>🔒 Secure login · 256-bit encryption</span>
             <br />
-            <span style={{fontSize:'11px',color:'rgba(255,255,255,0.2)',letterSpacing:'0.01em'}}>Built for serious traders</span>
+            <span style={{fontSize:'11px',color: isDark ? 'rgba(255,255,255,0.2)' : '#94a3b8',letterSpacing:'0.01em'}}>Built for serious traders</span>
           </div>
 
           {/* Bottom link */}
