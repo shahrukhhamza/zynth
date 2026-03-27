@@ -211,22 +211,14 @@ export default function PaywallModal({ open, onClose, onUpgrade, feature, proble
                     className="text-[11px] font-bold tracking-[0.15em] uppercase"
                     style={{ color: mutedColor }}
                   >
-                    Pro Plan — $5/month
+                    Pro Plan — $9/month
                   </p>
-                  <div className="flex items-center gap-1.5">
-                    <span
-                      className="text-[11px] line-through"
-                      style={{ color: mutedColor }}
-                    >
-                      $19
-                    </span>
-                    <span
-                      className="text-[10px] font-bold px-2 py-0.5 rounded-full"
-                      style={{ background: 'rgba(245,158,11,0.12)', color: '#f59e0b', border: '1px solid rgba(245,158,11,0.2)' }}
-                    >
-                      74% OFF
-                    </span>
-                  </div>
+                  <span
+                    className="text-[11px] font-semibold"
+                    style={{ color: mutedColor }}
+                  >
+                    Billed monthly
+                  </span>
                 </div>
                 <div className="space-y-2">
                   {PRO_FEATURES.map(f => (

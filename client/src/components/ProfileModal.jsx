@@ -28,9 +28,9 @@ const UPGRADE_PLANS = [
   {
     id: 'pro',
     name: 'Pro',
-    price: '$1.99',
+    price: '$9',
     priceNote: '/month',
-    badge: 'Founding Member',
+    badge: 'Most Popular',
     badgeStyle: { background: 'rgba(59,130,246,0.15)', color: '#34d399', border: '1px solid rgba(59,130,246,0.3)' },
     features: [
       'Unlimited journal entries',
@@ -47,7 +47,7 @@ const UPGRADE_PLANS = [
   {
     id: 'elite',
     name: 'Elite',
-    price: '$4.99',
+    price: '$19',
     priceNote: '/month',
     badge: 'Best Value',
     badgeStyle: { background: 'rgba(245,158,11,0.15)', color: '#fbbf24', border: '1px solid rgba(245,158,11,0.3)' },
@@ -67,8 +67,8 @@ const UPGRADE_PLANS = [
 
 const PLAN_INFO = {
   free:  { label: 'Basic Plan', sub: 'Free forever',                     color: '#9ca3af' },
-  pro:   { label: 'Pro Plan',   sub: '$1.99/month (Founding Member)', color: '#34d399' },
-  elite: { label: 'Elite Plan', sub: '$4.99/month (Best Value)',       color: '#fbbf24' },
+  pro:   { label: 'Pro Plan',   sub: '$9/month',           color: '#34d399' },
+  elite: { label: 'Elite Plan', sub: '$19/month',          color: '#fbbf24' },
   admin: { label: 'Admin',      sub: 'Full Access',                       color: '#0ea5e9' },
 };
 
@@ -490,7 +490,7 @@ export default function ProfileModal({ onClose, onForgotPassword }) {
                            style={{ background: theme.isDark ? 'rgba(5,150,105,0.08)' : 'rgba(5,150,105,0.05)', border: '1px solid rgba(5,150,105,0.25)' }}>
                         <p className="text-[13px] font-bold text-emerald-400 mb-2">Great choice!</p>
                         <p className="text-[12px] leading-relaxed mb-3" style={{ color: theme.text }}>
-                          To lock in your founding price, email us at{' '}
+                          To upgrade, email us at{' '}
                           <span className="font-semibold text-emerald-400">{SUPPORT_EMAIL}</span>{' '}
                           with subject{' '}
                           <span className="font-semibold" style={{ color: theme.text }}>

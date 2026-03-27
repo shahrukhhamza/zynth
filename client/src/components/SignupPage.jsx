@@ -411,8 +411,8 @@ export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess })
               </div>
             )}
 
-            {/* Founding banner */}
-            {spotsLeft != null && spotsLeft > 0 && (
+            {/* Pro plan callout */}
+            {false && (
               <div style={{
                 background:'linear-gradient(135deg, rgba(59,130,246,0.08), rgba(59,130,246,0.04))',
                 border:'1px solid rgba(59,130,246,0.2)',

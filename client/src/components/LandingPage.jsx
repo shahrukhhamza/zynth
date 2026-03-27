@@ -75,11 +75,9 @@ const PLANS = [
   },
   {
     name: 'Pro',
-    monthly: 5, yearly: 4.17,
-    originalMonthly: 19, originalYearly: 15.83, yearlyBilled: 49.99,
+    monthly: 9, yearly: 9,
     desc: 'For active traders serious about improving their edge.',
     badge: 'MOST POPULAR',
-    discountBadge: '74% OFF',
     features: [
       'Unlimited journal entries',
       'AI Trade Analysis: 50 analyses/month',
@@ -94,11 +92,9 @@ const PLANS = [
   },
   {
     name: 'Elite',
-    monthly: 12, yearly: 9.99,
-    originalMonthly: 29, originalYearly: 24, yearlyBilled: 119.99,
+    monthly: 19, yearly: 19,
     desc: 'For professional traders who want every possible edge.',
     badge: 'BEST VALUE',
-    discountBadge: '59% OFF',
     features: [
       'Everything in Pro',
       'Unlimited AI Trade Analysis',
@@ -120,7 +116,7 @@ const FAQS = [
   { q: 'Is there a free plan?', a: 'Absolutely. The Free plan gives you access to core features including live markets, economic calendar, and even 3 free AI analysis tries — no credit card required.' },
   { q: 'What does the AI analysis include?', a: 'Our AI reads your trade history and journal entries to surface patterns, identify mistakes, and give you personalized improvement suggestions.' },
   { q: 'What markets does Zynth cover?', a: 'Zynth covers Forex (XAU/USD, EUR/USD, GBP/USD, USD/JPY), major crypto (BTC, ETH, XRP, SOL, BNB), US stocks (AAPL, TSLA, NVDA, MSFT, AMZN, GOOGL), and ETFs (SPY, GLD, TLT).' },
-  { q: 'How do I get the Founding Member price?', a: 'Simply sign up and upgrade to Pro during our launch period. The first 100 users lock in $1.99/month forever — even after we raise prices.' },
+  { q: 'What are the subscription prices?', a: 'Pro is $9/month and Elite is $19/month. Both are billed monthly and you can cancel anytime. Free plan is available with no credit card required.' },
 ];
 
 const FEATURE_CARDS = [
@@ -469,39 +465,6 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
         }
         .nav-link-hover:hover::after { width: 100%; }
       `}</style>
-
-      {/* ═══════════════════════ FOUNDING MEMBER BANNER ═══════════════════════ */}
-      {!bannerDismissed && (
-        <div
-          className="relative flex items-center justify-center text-center px-12 py-3 text-[13px] font-semibold"
-          style={{
-            background: 'linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 60%, #0284c7 100%)',
-            borderBottom: '1px solid rgba(59,130,246,0.25)',
-          }}
-        >
-          <span>
-            <Flame className="w-3.5 h-3.5 text-amber-400 inline-block mr-1" />{' '}
-            <span className="text-white font-bold">LIMITED LAUNCH OFFER</span>
-            {' '}—{' '}
-            Pro plan now just{' '}
-            <span className="text-white font-bold">$5/month</span>
-            {' '}(regularly{' '}
-            <span className="line-through text-white/60">$19</span>)
-            {' '}·{' '}
-            <span className="text-amber-300 font-bold">74% off — Limited time!</span>
-          </span>
-          <button
-            onClick={dismissBanner}
-            className="absolute right-3 w-7 h-7 flex items-center justify-center rounded-lg transition-colors"
-            style={{ color: 'rgba(147,197,253,0.6)', top: 'calc(50% - 14px)' }}
-            onMouseOver={e => { e.currentTarget.style.color = '#fff'; e.currentTarget.style.background = 'rgba(255,255,255,0.08)'; }}
-            onMouseOut={e => { e.currentTarget.style.color = 'rgba(147,197,253,0.6)'; e.currentTarget.style.background = 'transparent'; }}
-            aria-label="Dismiss banner"
-          >
-            <X className="w-4 h-4" />
-          </button>
-        </div>
-      )}
 
       {/* ═══════════════════════════════════════════════════════════════════ */}
       <header
@@ -1071,40 +1034,6 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
               </button>
             </div>
           </Reveal>
-
-          {/* Founding member callout */}
-          {(spotsLeft ?? 0) > 0 && (
-            <Reveal>
-              <div className="rounded-2xl border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 px-6 py-4 mb-8"
-                   style={{
-                     background: isDark ? 'rgba(245,158,11,0.07)' : '#fffbeb',
-                     borderColor: isDark ? 'rgba(245,158,11,0.22)' : '#fde68a',
-                   }}>
-                <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
-                       style={{background: isDark ? 'rgba(245,158,11,0.14)' : 'rgba(251,191,36,0.18)'}}>
-                    <Flame className="w-4.5 h-4.5 text-amber-400" />
-                  </div>
-                  <div>
-                    <p className={`text-[13px] font-bold ${isDark ? 'text-amber-300' : 'text-amber-800'}`}>
-                      Launch Offer — 74% off Pro (regular $19/mo)
-                    </p>
-                    <p className={`text-[12px] mt-0.5 ${isDark ? 'text-amber-400/60' : 'text-amber-700'}`}>
-                      Pro is just <span className="font-bold">$5/mo</span> while this offer lasts ·{' '}
-                      <span className="font-semibold">Limited availability</span>
-                    </p>
-                  </div>
-                </div>
-                <div className={`shrink-0 flex items-center gap-1.5 text-[12px] ${isDark ? 'text-amber-400/60' : 'text-amber-700'}`}>
-                  <Clock className="w-3.5 h-3.5" />
-                  <span>Expires in:</span>
-                  <span className={`font-bold ${isDark ? 'text-amber-400' : 'text-amber-800'}`}>
-                    {countdown.d}d {countdown.h}h {countdown.m}m
-                  </span>
-                </div>
-              </div>
-            </Reveal>
-          )}
 
           {/* Plan cards */}
           <div className="grid md:grid-cols-3 gap-5 items-start">

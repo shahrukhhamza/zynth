@@ -75,15 +75,15 @@ export default function UpgradeModal({ open, onClose, onUpgrade, spotsUsed = 0 }
             <X className="w-4 h-4" />
           </button>
 
-          {/* Top bar — fire badge */}
+          {/* Top bar */}
           <div
             className="flex items-center justify-center gap-2 py-2.5 text-[12px] font-bold tracking-wide"
             style={{ background: launchBarBg }}
           >
-            <Flame size={16} style={{ color: '#fbbf24' }} />
-            <span style={{ color: '#fbbf24' }}>LAUNCH DISCOUNT</span>
+            <Zap size={14} style={{ color: '#34d399' }} />
+            <span style={{ color: '#34d399' }}>PRO PLAN — $9/month</span>
             <span style={{ color: mutedText }}>·</span>
-            <span style={{ color: '#34d399' }}>FIRST 100 USERS GET 80% OFF</span>
+            <span style={{ color: mutedText }}>Cancel anytime</span>
           </div>
 
           <div className="px-7 pt-6 pb-8">
@@ -138,14 +138,9 @@ export default function UpgradeModal({ open, onClose, onUpgrade, spotsUsed = 0 }
                   PRO ✦
                 </div>
                 {/* Price */}
-                <div className="mb-1">
-                  <span className="text-[13px] line-through" style={{ color: subtleText }}>$9</span>
-                  <span className="text-[28px] font-extrabold ml-1.5" style={{ color: headingText }}>$1.99</span>
+                <div className="mb-4">
+                  <span className="text-[28px] font-extrabold" style={{ color: headingText }}>$9</span>
                   <span className="text-[12px] mb-1.5 ml-0.5" style={{ color: mutedText }}>/mo</span>
-                </div>
-                <div className="text-[10px] font-bold mb-4 px-2 py-0.5 rounded-md inline-block"
-                     style={{ background: 'rgba(245,158,11,0.15)', color: '#fbbf24' }}>
-                  FOUNDING PRICE
                 </div>
                 {PRO_FEATURES.slice(0, 4).map(f => (
                   <div key={f} className="flex items-start gap-2 mb-2">
@@ -156,18 +151,13 @@ export default function UpgradeModal({ open, onClose, onUpgrade, spotsUsed = 0 }
               </div>
             </div>
 
-            {/* Spots remaining */}
+            {/* Info row */}
             <div
-              className="flex items-center justify-between px-4 py-2.5 rounded-xl mb-6"
-              style={{ background: 'rgba(245,158,11,0.08)', border: '1px solid rgba(245,158,11,0.2)' }}
+              className="flex items-center justify-center px-4 py-2.5 rounded-xl mb-6"
+              style={{ background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.2)' }}
             >
-              <span className="text-[12px] font-semibold" style={{ color: '#fbbf24' }}>
-                <Flame size={13} style={{display:'inline-block',verticalAlign:'middle',marginRight:'4px'}} /> Founding member offer
-              </span>
-              <span className="text-[12px] font-bold" style={{ color: '#f59e0b' }}>
-                Only{' '}
-                <span className="text-[14px]" style={{ color: headingText }}>{spotsLeft}</span>
-                {' '}spots left at $1.99
+              <span className="text-[12px] font-semibold" style={{ color: '#34d399' }}>
+                Billed monthly · Cancel anytime
               </span>
             </div>
 
@@ -181,7 +171,7 @@ export default function UpgradeModal({ open, onClose, onUpgrade, spotsUsed = 0 }
               }}
             >
               <Zap className="w-4 h-4 inline mr-2 -mt-0.5" />
-              Upgrade to Pro — $1.99/month
+              Upgrade to Pro — $9/month
             </button>
 
             {/* Dismiss */}
