@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useCallback } from 'react';
-import PlanGateModal from '../components/PlanGateModal';
+import UpgradeModal from '../components/UpgradeModal';
 
 const UpgradeContext = createContext(null);
 
@@ -34,9 +34,9 @@ export function UpgradeProvider({ children }) {
     <UpgradeContext.Provider value={{ openUpgradeModal }}>
       {children}
       {modal && (
-        <PlanGateModal
+        <UpgradeModal
+          open
           reason={modal.reason}
-          feature={modal.feature}
           requiredPlan={modal.requiredPlan}
           headline={modal.headline}
           message={modal.message}

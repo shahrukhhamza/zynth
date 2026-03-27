@@ -25,15 +25,6 @@ const PAYMENT_METHODS = {
     subtitle: 'USD / GBP bank transfer',
     options: [
       {
-        name: 'Payoneer',
-        details: [
-          { label: 'Send To (Email)',  value: 'payments@zynth.app' },
-          { label: 'Account Name',    value: 'Zynth Technologies' },
-          { label: 'Currency',        value: 'USD or GBP' },
-        ],
-        note: 'Use "Goods & Services" when sending. Include your registered email in the note.',
-      },
-      {
         name: 'Citibank Wire Transfer',
         details: [
           { label: 'Account Name',    value: 'Zynth Technologies Ltd' },
@@ -50,16 +41,8 @@ const PAYMENT_METHODS = {
   pakistan: {
     label:    '🇵🇰 Pakistan',
     icon:     Smartphone,
-    subtitle: 'Easypaisa · JazzCash · Bank',
+    subtitle: 'JazzCash · Bank',
     options: [
-      {
-        name: 'Easypaisa',
-        details: [
-          { label: 'Account Number', value: '0300-1234567' },
-          { label: 'Account Title',  value: 'Zynth App' },
-        ],
-        note: 'Send via Easypaisa app → Send Money → Mobile Account. Screenshot required.',
-      },
       {
         name: 'JazzCash',
         details: [

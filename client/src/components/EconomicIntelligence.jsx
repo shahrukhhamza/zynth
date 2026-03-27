@@ -5,8 +5,8 @@ import {
 } from 'lucide-react';
 import { API_URL } from '../config/api';
 import { useTheme } from '../contexts/ThemeContext';
+import { useUpgrade } from '../contexts/UpgradeContext';
 import { usePlanGate } from '../hooks/usePlanGate';
-import ProfileModal from './ProfileModal';
 import { Line } from 'react-chartjs-2';
 import {
   Chart as ChartJS, CategoryScale, LinearScale,
@@ -307,8 +307,8 @@ function MacroScoreWidget({ macroScore, D }) {
 // ── Main ──────────────────────────────────────────────────────────────────────
 export default function EconomicIntelligence() {
   const theme = useTheme();
+  const { openUpgradeModal } = useUpgrade();
   const { isPro, isElite, isAdmin } = usePlanGate();
-  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const [dashboard,  setDashboard]  = useState(null);
   const [loading,    setLoading]    = useState(true);
   const [error,      setError]      = useState(null);
@@ -390,13 +390,15 @@ export default function EconomicIntelligence() {
         </p>
       </div>
       <button
-        onClick={() => setShowUpgradeModal(true)}
+        onClick={() => openUpgradeModal({
+          requiredPlan: 'pro',
+          reason: 'Economic Intelligence is available on Pro and Elite plans.',
+        })}
         style={{ background: '#3b82f6', color: '#fff', border: 'none', borderRadius: 10, padding: '13px 32px', fontSize: 14, fontWeight: 700, cursor: 'pointer', boxShadow: '0 4px 16px rgba(59,130,246,0.4)' }}
       >
         Upgrade to Pro
       </button>
       <p style={{ fontSize: 12, color: D.textSub, margin: 0 }}>From $9/month — Pro plan</p>
-      {showUpgradeModal && <ProfileModal onClose={() => setShowUpgradeModal(false)} />}
     </div>
   );
 

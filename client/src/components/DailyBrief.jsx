@@ -3,9 +3,9 @@ import { Lock, BarChart2, Check, AlertTriangle, TrendingUp, Info, Trophy, Sun } 
 import { useTheme } from '../contexts/ThemeContext';
 import { useAuth } from '../contexts/AuthContext';
 import { useTimezone } from '../contexts/TimezoneContext';
+import { useUpgrade } from '../contexts/UpgradeContext';
 import { API_URL } from '../config/api';
 import { usePlanGate } from '../hooks/usePlanGate';
-import ProfileModal from './ProfileModal';
 
 // ── Session definitions (UTC hours) ─────────────────────────────────────────
 const SESSIONS = [
@@ -103,10 +103,10 @@ export default function DailyBrief() {
   const theme   = useTheme();
   const { user, token } = useAuth();
   const { getTimezoneInfo } = useTimezone();
+  const { openUpgradeModal } = useUpgrade();
 
   const { isPro, isElite, isAdmin } = usePlanGate();
   const canSeeMacro = isPro || isElite || isAdmin;
-  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
 
   const [visible, setVisible] = useState(false);
   const [shown,   setShown]   = useState(false);  // mount → visible animation
@@ -267,7 +267,6 @@ export default function DailyBrief() {
 
   return (
     <div style={{ marginBottom: 20, ...fadeStyle }}>
-      {showUpgradeModal && <ProfileModal onClose={() => setShowUpgradeModal(false)} />}
       <div style={{
         backgroundColor: theme.surface,
         borderRadius: 12,
@@ -309,7 +308,10 @@ export default function DailyBrief() {
         <div style={{ textAlign: 'right', paddingRight: 28 }}>
           {!canSeeMacro ? (
             <button
-              onClick={() => setShowUpgradeModal(true)}
+              onClick={() => openUpgradeModal({
+                requiredPlan: 'pro',
+                reason: 'Macro score requires a Pro or Elite plan.',
+              })}
               style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center', gap: 6 }}
             >
               <Lock size={13} style={{ color: theme.muted }} />
