@@ -341,7 +341,7 @@ export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess })
 
         {/* â”€â”€ RIGHT: Signup form â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
         <div style={{
-               width: isMobile ? '100vw' : '460px',
+               width: isMobile ? '100%' : '460px',
                minWidth: isMobile ? 'unset' : '460px',
                flexShrink: 0,
                display:'flex', flexDirection:'column',

@@ -210,8 +210,8 @@ export default function PaymentOptionsModal({ plan: initialPlan = 'pro', onClose
       <div
         onClick={e => e.stopPropagation()}
         style={{
-          width: '100%',
-          maxWidth: 520,
+          width: '95%',
+          maxWidth: 'min(520px, 95vw)',
           maxHeight: '90vh',
           background: card,
           borderRadius: 20,
@@ -264,7 +264,7 @@ export default function PaymentOptionsModal({ plan: initialPlan = 'pro', onClose
             <label style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 0.5, color: theme.muted, display: 'block', marginBottom: 7 }}>
               Select Plan
             </label>
-            <div style={{ display: 'flex', gap: 10 }}>
+            <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
               {['pro', 'elite'].map(p => (
                 <button
                   key={p}
@@ -289,7 +289,7 @@ export default function PaymentOptionsModal({ plan: initialPlan = 'pro', onClose
             <label style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 0.5, color: theme.muted, display: 'block', marginBottom: 7 }}>
               Payment Region
             </label>
-            <div style={{ display: 'flex', gap: 10 }}>
+            <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
               {Object.entries(PAYMENT_METHODS).map(([key, m]) => {
                 const Icon = m.icon;
                 const active = region === key;
@@ -299,7 +299,7 @@ export default function PaymentOptionsModal({ plan: initialPlan = 'pro', onClose
                     type="button"
                     onClick={() => setRegion(key)}
                     style={{
-                      flex: 1, padding: '10px 12px', borderRadius: 10, cursor: 'pointer',
+                      flex: '1 1 calc(50% - 5px)', minWidth: '140px', padding: '10px 12px', borderRadius: 10, cursor: 'pointer',
                       border: `2px solid ${active ? '#3b82f6' : theme.border}`,
                       background: active ? 'rgba(59,130,246,0.08)' : surface,
                       display: 'flex', alignItems: 'center', gap: 8, transition: 'all 0.15s',

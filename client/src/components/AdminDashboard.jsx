@@ -334,7 +334,7 @@ function AdminDashboardInner() {
                   onChange={e => setSearch(e.target.value)}
                   placeholder="Search name or email…"
                   className="pl-9 pr-4 py-2 rounded-xl text-[13px] border focus:outline-none"
-                  style={{ background: theme.bg, borderColor: theme.border, color: theme.text, width: '220px' }}
+                  style={{ background: theme.bg, borderColor: theme.border, color: theme.text, width: '100%', maxWidth: '220px' }}
                   onFocus={e => (e.currentTarget.style.borderColor = '#3b82f6')}
                   onBlur={e => (e.currentTarget.style.borderColor = theme.border)}
                 />

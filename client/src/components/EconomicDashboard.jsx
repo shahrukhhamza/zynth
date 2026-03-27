@@ -419,7 +419,7 @@ export default function EconomicDashboard({ onViewChange }) {
         </div>
 
         {/* ══ ROW 2: STAT CARDS ══════════════════════════════════════════ */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 12 }}>
           {[
             {
               label: 'Total P&L',
@@ -501,7 +501,7 @@ export default function EconomicDashboard({ onViewChange }) {
         </div>
 
         {/* ══ ROW 3: MONTHLY CALENDAR + QUICK STATS ══════════════════════ */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 280px', gap: 16 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr', sm: {gridTemplateColumns: '1fr 280px'}, gap: 16 }}>
 
           {/* Monthly P&L Calendar */}
           <MonthlyCalendar trades={allTrades} D={D} />
@@ -527,7 +527,7 @@ export default function EconomicDashboard({ onViewChange }) {
               <div style={{ fontSize: 11, fontWeight: 700, color: D.textSub, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 14 }}>
                 Quick Stats
               </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(110px, 1fr))', gap: 8 }}>
                 {[
                   { label: 'Avg Win',    value: quickStats ? `+$${quickStats.avgWin.toFixed(0)}`    : '+$0.00', color: D.accent },
                   { label: 'Avg Loss',   value: quickStats ? `-$${quickStats.avgLoss.toFixed(0)}`   : '+$0.00', color: quickStats ? D.red : D.textSub },

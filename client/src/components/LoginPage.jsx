@@ -307,7 +307,7 @@ export default function LoginPage({ onSwitchToSignup, onBack, onForgotPassword }
 
 {/* ── RIGHT: Form panel ──────────────────────────────────────────── */}
       <div style={{
-             width: isMobile ? '100vw' : '480px',
+             width: isMobile ? '100%' : '480px',
              minWidth: isMobile ? 'unset' : '480px',
              flexShrink: 0,
              display:'flex', flexDirection:'column',

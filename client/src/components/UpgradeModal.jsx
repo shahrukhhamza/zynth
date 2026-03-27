@@ -236,9 +236,9 @@ export default function UpgradeModal({
       onClick={e => { if (e.target === e.currentTarget) handleClose(); }}
     >
       <div
-        className="relative w-full max-w-3xl rounded-2xl p-[1px]"
+        className="relative w-[95%] max-w-md sm:max-w-lg md:max-w-3xl rounded-2xl p-[1px]"
         style={{
-          maxHeight: '92vh',
+          maxHeight: 'min(92vh, 100%)',
           background: 'linear-gradient(140deg, rgba(59,130,246,0.65), rgba(6,182,212,0.55), rgba(245,158,11,0.5))',
           boxShadow: '0 36px 110px rgba(0,0,0,0.82)',
         }}
@@ -301,7 +301,7 @@ export default function UpgradeModal({
               </div>
             )}
 
-            <div className="mt-5 grid grid-cols-1 gap-3 md:grid-cols-2">
+            <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-3">
               {Object.values(PLANS).map(plan => {
                 const active = selectedPlan === plan.id;
                 return (
@@ -342,7 +342,7 @@ export default function UpgradeModal({
               })}
             </div>
 
-            <div className="mt-5 flex flex-wrap gap-2">
+            <div className="mt-5 flex gap-2 overflow-x-auto pb-1">
               {Object.values(PAYMENT_METHODS).map(r => {
                 const active = region === r.key;
                 const Icon = r.Icon;
@@ -368,11 +368,13 @@ export default function UpgradeModal({
               <select
                 value={methodKey}
                 onChange={e => setMethodKey(e.target.value)}
-                className="w-full appearance-none rounded-xl border px-3 py-2.5 pr-9 text-sm"
+                className="w-full appearance-none rounded-lg border px-4 py-3 pr-9 text-sm font-medium"
                 style={{
                   borderColor: theme.isDark ? 'rgba(255,255,255,0.12)' : '#dbe3ee',
                   background: panelSurface,
                   color: headingText,
+                  WebkitAppearance: 'none',
+                  MozAppearance: 'none',
                 }}
               >
                 {currentRegion.methods.map(m => (
@@ -392,9 +394,9 @@ export default function UpgradeModal({
               </div>
               <div className="space-y-1.5">
                 {currentMethod.details.map(d => (
-                  <div key={d.label} className="flex items-center justify-between gap-2 text-xs">
-                    <span style={{ color: mutedText }}>{d.label}</span>
-                    <span className="inline-flex items-center gap-2" style={{ color: headingText }}>
+                  <div key={d.label} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1.5 sm:gap-2 text-xs">
+                    <span style={{ color: mutedText }} className="font-semibold">{d.label}</span>
+                    <span className="inline-flex items-center gap-2 flex-wrap justify-end" style={{ color: headingText }}>
                       {d.value}
                       <button
                         type="button"

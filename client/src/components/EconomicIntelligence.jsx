@@ -214,7 +214,7 @@ function MacroScoreWidget({ macroScore, D }) {
       <div style={{ display: 'flex', gap: 0, flexWrap: 'wrap' }}>
 
         {/* Left: score */}
-        <div style={{ padding: '24px 28px', borderRight: `1px solid ${D.border}`, minWidth: 240, flex: '0 0 auto' }}>
+        <div style={{ padding: '24px 28px', borderRight: `1px solid ${D.border}`, borderBottom: 'none', minWidth: '100%', flex: '0 0 100%' }}>
           <div style={{ fontSize: 10, fontWeight: 800, color: scoreColor, letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 4 }}>
             Macro Surprise Score
           </div>
@@ -260,7 +260,7 @@ function MacroScoreWidget({ macroScore, D }) {
         </div>
 
         {/* Right: contributors */}
-        <div style={{ padding: '24px 28px', flex: 1, minWidth: 280 }}>
+        <div style={{ padding: '24px 28px', flex: 1, minWidth: '100%' }}>
           <div style={{ fontSize: 10, fontWeight: 700, color: D.textSub, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 18 }}>
             Top Drivers
           </div>
@@ -435,7 +435,7 @@ export default function EconomicIntelligence() {
     <div style={{ flex: 1, overflowY: 'auto', background: D.pageBg }}>
       <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
 
-      <div style={{ maxWidth: 1200, margin: '0 auto', padding: '24px 24px 56px' }}>
+      <div style={{ maxWidth: 1200, margin: '0 auto', padding: '24px 16px 56px' }}>
 
         {/* ── Page Header ──────────────────────────────────────────────── */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12, marginBottom: 24 }}>
