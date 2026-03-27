@@ -1393,7 +1393,7 @@ export default function HelpCenter() {
       </aside>
 
       {/* ── Main panel ── */}
-      <main style={{ flex: 1, minWidth: 0, height: '100%', overflowY: 'auto' }}>
+      <main style={{ flex: 1, minWidth: 0, height: '100%', overflowY: 'auto', overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
 
         {/* Mobile top bar */}
         {isMobile && (
@@ -1451,7 +1451,7 @@ export default function HelpCenter() {
             <div style={{ height: 1, background: border, margin: '28px 0 36px' }} />
 
             {/* Content */}
-            <div>
+            <div style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
               <RenderContent content={currentArticle.content} theme={{ ...theme, isDark, text: text0, muted: textMuted, border }} />
             </div>
 
@@ -1471,7 +1471,7 @@ export default function HelpCenter() {
                       onMouseOut={e => { e.currentTarget.style.borderColor = border; e.currentTarget.style.background = bg1; e.currentTarget.style.transform = 'translateX(0)'; }}
                     >
                       <div style={{ minWidth: 0 }}>
-                        <div style={{ color: text0, fontSize: 14, fontWeight: 600, marginBottom: 3, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{art.title}</div>
+                        <div style={{ color: text0, fontSize: 14, fontWeight: 600, marginBottom: 3, lineHeight: 1.35, wordBreak: 'break-word' }}>{art.title}</div>
                         <div style={{ color: textMuted, fontSize: 12, lineHeight: 1.5 }}>{art.excerpt}</div>
                       </div>
                       <ChevronRight size={15} color={textMuted} style={{ flexShrink: 0 }} />
@@ -1680,7 +1680,7 @@ export default function HelpCenter() {
                       </div>
                       <div style={{ flex: 1, minWidth: 0 }}>
                         <div style={{ color: text0, fontSize: 14, fontWeight: 700, marginBottom: 3 }}>{art.title}</div>
-                        <div style={{ color: textMuted, fontSize: 12, lineHeight: 1.5, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{art.excerpt}</div>
+                        <div style={{ color: textMuted, fontSize: 12, lineHeight: 1.5, wordBreak: 'break-word' }}>{art.excerpt}</div>
                       </div>
                       <ChevronRight size={14} color={textMuted} style={{ flexShrink: 0 }} />
                     </button>

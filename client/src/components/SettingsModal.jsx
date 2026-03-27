@@ -179,7 +179,7 @@ export default function SettingsModal({ onClose, autoRefresh, onToggleAutoRefres
         {/* Sheet */}
         <div style={{
           position: 'fixed', bottom: 0, left: 0, right: 0,
-          height: '85vh',
+          height: '100dvh',
           borderRadius: '20px 20px 0 0',
           backgroundColor: sheetBg,
           zIndex: 1000,
@@ -188,7 +188,7 @@ export default function SettingsModal({ onClose, autoRefresh, onToggleAutoRefres
           overflow: 'hidden',
         }}>
           {/* Drag handle */}
-          <div style={{ display: 'flex', justifyContent: 'center', paddingTop: 8, paddingBottom: 2, flexShrink: 0 }}>
+          <div style={{ display: 'flex', justifyContent: 'center', paddingTop: 6, paddingBottom: 2, flexShrink: 0 }}>
             <div style={{ width: 40, height: 4, backgroundColor: 'rgba(255,255,255,0.2)', borderRadius: 2 }} />
           </div>
 
@@ -197,7 +197,7 @@ export default function SettingsModal({ onClose, autoRefresh, onToggleAutoRefres
             position: 'sticky', top: 0,
             backgroundColor: sheetBg,
             zIndex: 10,
-            padding: '10px 20px 12px',
+            padding: '8px 20px 10px',
             borderBottom: '1px solid rgba(255,255,255,0.06)',
             display: 'flex', alignItems: 'center', justifyContent: 'space-between',
             flexShrink: 0,
