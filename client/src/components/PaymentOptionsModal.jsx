@@ -27,7 +27,7 @@ const PAYMENT_METHODS = {
       {
         name: 'Citibank Wire Transfer',
         details: [
-          { label: 'Account Name',    value: 'Zynth Technologies Ltd' },
+          { label: 'Account Name',    value: 'Shahrukh Hamza' },
           { label: 'Account Number',  value: '70584510002334445' },
           { label: 'SWIFT / BIC',     value: 'CITIUS33' },
           { label: 'Routing Number',  value: '031100209' },
