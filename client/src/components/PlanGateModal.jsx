@@ -2,6 +2,8 @@ import { useEffect } from 'react';
 import { Zap, X, Check, ArrowRight } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 import { PLANS_CONFIG, FEATURE_LABELS } from '../config/planFeatures';
+import { track } from '../services/track';
+import { useUpgradeIntelligence } from '../hooks/useUpgradeIntelligence';
 
 /**
  * PlanGateModal
@@ -13,8 +15,9 @@ import { PLANS_CONFIG, FEATURE_LABELS } from '../config/planFeatures';
  *   requiredPlan — 'pro' | 'elite'
  *   onClose      — dismiss handler
  */
-export default function PlanGateModal({ reason, feature, requiredPlan = 'pro', onClose }) {
+export default function PlanGateModal({ reason, feature, requiredPlan = 'pro', onClose, headline, message }) {
   const { isDark, text, muted } = useTheme();
+  const { upgradeMetadata } = useUpgradeIntelligence();
 
   useEffect(() => {
     const handler = (e) => { if (e.key === 'Escape') onClose(); };
@@ -22,17 +25,29 @@ export default function PlanGateModal({ reason, feature, requiredPlan = 'pro', o
     return () => window.removeEventListener('keydown', handler);
   }, [onClose]);
 
+  // Track modal impression once per session (deduped by plan+feature)
+  useEffect(() => {
+    const sessionKey = `zynth_modal_tracked_${requiredPlan}_${feature ?? 'x'}`;
+    if (sessionStorage.getItem(sessionKey)) return;
+    sessionStorage.setItem(sessionKey, '1');
+    const source = feature
+      ? (/ai/i.test(feature) ? 'ai_limit' : feature)
+      : (reason?.toLowerCase().includes('journal') ? 'journal_limit' : 'ai_limit');
+    track('upgrade_modal_opened', { requiredPlan, feature: feature ?? 'unknown', source });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const targetPlan = PLANS_CONFIG[requiredPlan] ?? PLANS_CONFIG.pro;
   const higherPlan = requiredPlan === 'pro' ? PLANS_CONFIG.elite : null;
 
   const highlightFeatures = {
     pro: [
-      'Unlimited journal entries',
-      '50 AI analyses per month',
+      'Unlimited trade journaling',
+      'AI-powered insights (up to 50/month)',
+      'Advanced performance analytics',
+      'Behavioral insights to fix mistakes',
       'Real-time market data',
       'Full economic calendar',
-      'Advanced analytics',
-      'Behavioral insights',
     ],
     elite: [
       'Everything in Pro, plus:',
@@ -51,6 +66,10 @@ export default function PlanGateModal({ reason, feature, requiredPlan = 'pro', o
   // Navigate to /pricing and close modal
   function goToPricing(e) {
     e.preventDefault();
+    const source = feature
+      ? (/ai/i.test(feature) ? 'ai_limit' : feature)
+      : (reason?.toLowerCase().includes('journal') ? 'journal_limit' : 'ai_limit');
+    track('upgrade_clicked', { requiredPlan, feature: feature ?? 'unknown', source, plan: requiredPlan, ...upgradeMetadata });
     window.history.pushState({}, '', '/pricing');
     window.dispatchEvent(new PopStateEvent('popstate'));
     onClose();
@@ -95,11 +114,11 @@ export default function PlanGateModal({ reason, feature, requiredPlan = 'pro', o
               <Zap size={20} color="#fff" />
             </div>
             <div>
-              <div style={{ color: text, fontWeight: 800, fontSize: 17, lineHeight: 1.2 }}>
-                Upgrade to {targetPlan.name}
+              <div style={{ color: text, fontWeight: 800, fontSize: 18, lineHeight: 1.2 }}>
+                {headline ?? "You've reached your limit"}
               </div>
-              <div style={{ color: muted, fontSize: 13, marginTop: 2 }}>
-                ${targetPlan.price}/month &bull; Cancel anytime
+              <div style={{ color: muted, fontSize: 13, marginTop: 3 }}>
+                {message ?? 'Upgrade to continue improving your trading performance'}
               </div>
             </div>
           </div>
@@ -159,7 +178,7 @@ export default function PlanGateModal({ reason, feature, requiredPlan = 'pro', o
             onMouseOver={(e) => { e.currentTarget.style.filter = 'brightness(1.1)'; }}
             onMouseOut={(e) => { e.currentTarget.style.filter = 'brightness(1)'; }}
           >
-            View Plans <ArrowRight size={13} />
+            Unlock {targetPlan.name} <ArrowRight size={13} />
           </a>
         </div>
 

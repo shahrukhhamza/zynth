@@ -43,7 +43,9 @@ import RefundPage from './components/RefundPage'
 import ServicePolicy from './components/ServicePolicy'
 import ServicesPage from './components/ServicesPage'
 import { fetchNews } from './services/api'
-import { UpgradeProvider } from './contexts/UpgradeContext'
+import { UpgradeProvider, useUpgrade } from './contexts/UpgradeContext'
+import { useUpgradeIntelligence } from './hooks/useUpgradeIntelligence'
+import UpgradeNudgeBanner from './components/UpgradeNudgeBanner'
 import { Loader2, Sparkles } from 'lucide-react'
 
 // Lazily loaded — chunk is only downloaded when an admin user navigates to the admin view.
@@ -54,6 +56,8 @@ const AdminDashboard = lazy(() => import('./components/AdminDashboard'))
 function AppShell() {
   const theme = useTheme();
   const { user } = useAuth();
+  const { openUpgradeModal } = useUpgrade();
+  const intel = useUpgradeIntelligence();
   const [currentView, setCurrentView] = useState('data'); // Start with data view
 
   // Wrap setCurrentView so all navigation automatically syncs the browser URL
@@ -86,6 +90,46 @@ function AppShell() {
   };
 
   useAutoCloseSidebarOnDesktop(setMobileSidebarOpen);
+
+  // ── Behavioral upgrade triggers ────────────────────────────────────────────
+  // Return-user trigger: user previously hit a limit, came back to a new session
+  useEffect(() => {
+    if (!intel.shouldAutoOpen) return;
+    openUpgradeModal({
+      reason:       intel.autoOpenReason,
+      requiredPlan: intel.suggestedPlan,
+      headline:     intel.personalizedHeadline,
+      message:      intel.personalizedMessage,
+    });
+    intel.clearAutoOpen();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [intel.shouldAutoOpen]);
+
+  // AI-2 trigger: user runs 2 AI analyses in a single session (soft prompt)
+  useEffect(() => {
+    if (!intel.shouldAiSessionTrigger) return;
+    openUpgradeModal({
+      reason:       'You\'ve used 2 AI analyses this session.',
+      requiredPlan: intel.suggestedPlan,
+      headline:     'Making the most of AI?',
+      message:      'You\'re actively using AI insights. Upgrade to unlock unlimited analyses and never hit a wall.',
+    });
+    intel.clearAiSessionTrigger();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [intel.shouldAiSessionTrigger]);
+
+  // Trade-3 trigger: user logs 3 trades in a single session (soft prompt)
+  useEffect(() => {
+    if (!intel.shouldTradeSessionTrigger) return;
+    openUpgradeModal({
+      reason:       'You\'ve logged 3 trades this session.',
+      requiredPlan: 'pro',
+      headline:     'Building a strong record?',
+      message:      'You\'re building a strong trading record. Upgrade to go unlimited and never lose a trade to a paywall.',
+    });
+    intel.clearTradeSessionTrigger();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [intel.shouldTradeSessionTrigger]);
 
   useEffect(() => {
     const mq = window.matchMedia('(max-width: 767px)');
@@ -301,6 +345,7 @@ function AppShell() {
         </div>
       </div>
       <ZynthAssistant />
+      <UpgradeNudgeBanner urgencyLevel={intel.urgencyLevel} />
     </div>
   )
 }

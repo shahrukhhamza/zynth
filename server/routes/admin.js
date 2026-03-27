@@ -1,6 +1,7 @@
-import { Router } from 'express';
+﻿import { Router } from 'express';
 import * as Users from '../db/users.js';
 import { requireAuth, requireAdmin } from '../middleware/authMiddleware.js';
+import { getUserEvents, getAnalyticsEnhanced } from '../db/events.js';
 
 const router = Router();
 
@@ -171,4 +172,32 @@ router.get('/export-emails', async (req, res) => {
   }
 });
 
+// ── GET /api/admin/user/:id/events ────────────────────────────────────────
+router.get('/user/:id/events', async (req, res) => {
+  try {
+    const id     = Number(req.params.id);
+    const limit  = Math.min(500, Math.max(1, parseInt(req.query.limit) || 100));
+    if (!Number.isFinite(id) || id < 1)
+      return res.status(400).json({ error: 'Invalid user id.' });
+
+    const [user, events] = await Promise.all([
+      Users.findById(id),
+      getUserEvents(id, limit),
+    ]);
+    if (!user) return res.status(404).json({ error: 'User not found.' });
+
+    res.json({ user: { id: user.id, name: user.name, email: user.email, plan: user.plan }, events });
+  } catch (err) {
+    console.error('admin/user-events error:', err);
+    res.status(500).json({ error: 'Failed to fetch user events.' });
+  }
+});
+router.get('/analytics', async (req, res) => {
+  try {
+    res.json(await getAnalyticsEnhanced());
+  } catch (err) {
+    console.error('admin/analytics error:', err);
+    res.status(500).json({ error: 'Failed to fetch analytics.' });
+  }
+});
 export default router;

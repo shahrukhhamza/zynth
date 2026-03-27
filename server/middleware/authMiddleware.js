@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken';
 import * as Users from '../db/users.js';
+import { trackEvent } from '../db/events.js';
 
 const JWT_EXPIRES = '7d';
 
@@ -83,6 +84,7 @@ export async function checkAiTries(req, res, next) {
     // Use the live monthly count (auto-resets if month rolled over)
     const monthlyCount = await Users.getMonthlyAiCount(userId);
     if (monthlyCount >= 50) {
+      trackEvent(userId, 'ai_limit_hit', { plan: 'pro', limit: 50, count: monthlyCount });
       return res.status(403).json({ error: 'limit_reached', limit: 50, plan: 'pro', upgrade: true, requiredPlan: 'elite' });
     }
     // Attach fresh count so the route can pass it through to the client
@@ -93,6 +95,7 @@ export async function checkAiTries(req, res, next) {
   // Free: 2 lifetime analyses
   const lifetimeUsed = req.user?.ai_analysis_tries ?? 0;
   if (lifetimeUsed >= 2) {
+    trackEvent(userId, 'ai_limit_hit', { plan: 'free', limit: 2, count: lifetimeUsed });
     return res.status(403).json({ error: 'limit_reached', limit: 2, plan: 'free', upgrade: true, requiredPlan: 'pro' });
   }
   next();

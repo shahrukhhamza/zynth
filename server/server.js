@@ -42,9 +42,11 @@ import { startAutoReleaseScheduler, manualTrigger } from './services/autoRelease
 import adminRouter from './routes/admin.js';
 import chartsRouter from './routes/charts.js';
 import levelsRouter from './routes/levels.js';
+import eventsRouter from './routes/events.js';
 import { requireAuth } from './middleware/authMiddleware.js';
 import * as Users from './db/users.js';
 import { initDb } from './db/users.js';
+import { initEventsDb } from './db/events.js';
 import { UPLOADS_DIR, ensureUploadDirs } from './config/storagePaths.js';
 
 const app = express();
@@ -255,6 +257,7 @@ app.post('/api/economic/trigger-update', async (req, res) => {
 
 app.use('/api/auth', authLimiter, authRouter);
 app.use('/api/admin', adminRouter);
+app.use('/api/events', eventsRouter);
 
 app.use('/api/journal', journalRouter);
 app.use('/api/checklist', checklistRouter);
@@ -299,7 +302,7 @@ wss.on('error', (err) => console.error('❌ WebSocketServer error:', err.message
 
 // ── Start server ──────────────────────────────────────────────────────────────
 // Initialize PostgreSQL schemas BEFORE listening
-Promise.all([initDb(), initJournalDb()])
+Promise.all([initDb(), initJournalDb(), initEventsDb()])
   .then(() => {
     httpServer.listen(PORT, HOST, () => {
       console.log(`🚀 Server running on ${HOST}:${PORT}`);

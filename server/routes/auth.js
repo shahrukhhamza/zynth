@@ -6,6 +6,7 @@ import * as Users from '../db/users.js';
 import { signToken, requireAuth, requireAdmin } from '../middleware/authMiddleware.js';
 import { sendPasswordResetEmail } from '../services/emailService.js';
 import { saveAvatarFromBase64 } from '../services/fileStorageService.js';
+import { trackEvent } from '../db/events.js';
 
 const router = Router();
 
@@ -74,6 +75,8 @@ router.post('/register', async (req, res) => {
     const row = await Users.findById(result.id);
     const user = buildUser(row);
     const token = signToken(user);
+
+    trackEvent(result.id, 'user_signup', { name: name.trim(), email });
 
     res.status(201).json({ user, token });
   } catch (err) {

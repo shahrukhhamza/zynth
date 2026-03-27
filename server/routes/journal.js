@@ -16,6 +16,7 @@ import { Router } from 'express';
 import multer from 'multer';
 import { requireAuth, checkAiTries, requirePro } from '../middleware/authMiddleware.js';
 import * as Users from '../db/users.js';
+import { trackEvent } from '../db/events.js';
 import {
   insertTrade, getTrades, getTradeById, updateTrade, deleteTrade, countTrades,
   countTradesThisMonth, getTradesBySymbol, countTradesBySymbol,
@@ -47,8 +48,10 @@ async function checkJournalLimit(req, res, next) {
   const { plan, is_admin } = req.user || {};
   if (is_admin === 1 || plan === 'pro' || plan === 'elite') return next();
   const count = await countTradesThisMonth(getUserId(req));
-  if (count >= 10)
+  if (count >= 10) {
+    trackEvent(req.user?.id, 'journal_limit_hit', { count, plan: plan ?? 'free' });
     return res.status(403).json({ error: 'journal_limit_reached', limit: 10, upgrade: true });
+  }
   next();
 }
 
@@ -98,6 +101,7 @@ router.post('/trades', checkJournalLimit, upload.single('screenshot'), async (re
     }
 
     const trade = await getTradeById(tradeId);
+    trackEvent(getUserId(req), 'trade_added', { pair: tradeData.pair, direction: tradeData.direction });
     res.status(201).json({ success: true, data: trade });
   } catch (err) {
     console.error('POST /journal/trades error:', err);
@@ -289,6 +293,8 @@ router.post('/trades/:id/analyze', requireAuth, checkAiTries, async (req, res) =
     } else if (plan !== 'elite' && req.user?.is_admin !== 1) {
       await Users.incrementAiTries(req.user.id);
     }
+
+    trackEvent(req.user.id, 'ai_used', { trade_id: id, plan });
 
     res.json({ success: true, data: analysis });
   } catch (err) {

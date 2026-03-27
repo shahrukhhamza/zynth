@@ -4,12 +4,14 @@ import { useAuth } from '../contexts/AuthContext';
 import { useToast } from '../contexts/ToastContext';
 import { useConfirm } from '../contexts/ConfirmContext';
 import { API_URL } from '../config/api';
+import AnalyticsDashboard from './AnalyticsDashboard';
+import UserActivityTimeline from './UserActivityTimeline';
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell,
 } from 'recharts';
 import {
   Users, Crown, Trash2, Search, RefreshCw,
-  DollarSign, Zap, Shield, Download, CalendarDays, CalendarCheck,
+  DollarSign, Zap, Shield, Download, CalendarDays, CalendarCheck, Activity,
 } from 'lucide-react';
 
 /* ── helpers ─────────────────────────────────────────────────────── */
@@ -53,6 +55,7 @@ function AdminDashboardInner() {
   const [mutating, setMutating]         = useState(null);   // userId being mutated
   const [qa, setQa]                     = useState({ pro: '', elite: '', reset: '' });
   const [qaLoading, setQaLoading]       = useState('');
+  const [selectedUserId, setSelectedUserId] = useState(null);
   const { toast } = useToast();
   const { confirm } = useConfirm();
 
@@ -423,7 +426,18 @@ function AdminDashboardInner() {
                         {/* Actions */}
                         <td className="px-4 py-3">
                           <div className="flex items-center gap-1.5">
-                              {/* Plan select */}
+                              {/* Activity timeline */}
+                              <button
+                                onClick={() => setSelectedUserId(u.id)}
+                                disabled={isMutating}
+                                title="View activity timeline"
+                                className="w-7 h-7 rounded-lg flex items-center justify-center transition-all"
+                                style={{ background: 'rgba(99,102,241,0.12)', color: '#818cf8' }}
+                                onMouseEnter={e => { e.currentTarget.style.background = 'rgba(99,102,241,0.25)'; }}
+                                onMouseLeave={e => { e.currentTarget.style.background = 'rgba(99,102,241,0.12)'; }}
+                              >
+                                <Activity className="w-3.5 h-3.5" />
+                              </button>}
                               <select
                                 value={u.plan || 'free'}
                                 onChange={e => changePlan(u.id, e.target.value)}
@@ -521,8 +535,20 @@ function AdminDashboardInner() {
           </div>
 
         </div>
+
+        {/* Analytics section */}
+        <AnalyticsDashboard />
+
       </div>
     </div>
+
+    {/* User activity timeline modal */}
+    {selectedUserId && (
+      <UserActivityTimeline
+        userId={selectedUserId}
+        onClose={() => setSelectedUserId(null)}
+      />
+    )}
   );
 }
 
