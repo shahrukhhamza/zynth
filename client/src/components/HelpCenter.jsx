@@ -29,7 +29,9 @@ const CATEGORIES = [
       {
         id: 'first-trade', title: 'Your First Trade Journal Entry',
         excerpt: 'A step-by-step walkthrough of logging your very first trade.',
-        content: `Follow these steps to log your first trade:
+        If you are not satisfied within the first 7 days of your subscription we will refund your payment in full. No questions asked.
+        
+        Refunds are not available after the 7-day period. However you can cancel your subscription at any time and you will retain access until the end of your billing period.`,
 
 ## Step-by-Step Guide
 

@@ -1409,7 +1409,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
             <ul className="space-y-2.5">
               {['Features','Pricing','FAQ','Changelog'].map(item => (
                 <li key={item}>
-                  <a href="#" className={`text-[13px] transition-colors ${isDark ? 'text-gray-500 hover:text-gray-300' : 'text-gray-500 hover:text-gray-800'}`}>{item}</a>
+                  <a href={item === 'Pricing' ? '/pricing' : '#'} className={`text-[13px] transition-colors ${isDark ? 'text-gray-500 hover:text-gray-300' : 'text-gray-500 hover:text-gray-800'}`}>{item}</a>
                 </li>
               ))}
             </ul>
@@ -1422,7 +1422,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
               <li><a href="#" className={`text-[13px] transition-colors ${isDark ? 'text-gray-500 hover:text-gray-300' : 'text-gray-500 hover:text-gray-800'}`}>Help Center</a></li>
               <li><a href="/terms" className={`text-[13px] transition-colors ${isDark ? 'text-gray-500 hover:text-gray-300' : 'text-gray-500 hover:text-gray-800'}`}>Terms of Service</a></li>
               <li><a href="/privacy" className={`text-[13px] transition-colors ${isDark ? 'text-gray-500 hover:text-gray-300' : 'text-gray-500 hover:text-gray-800'}`}>Privacy Policy</a></li>
-              <li><a href="/refund-policy" className={`text-[13px] transition-colors ${isDark ? 'text-gray-500 hover:text-gray-300' : 'text-gray-500 hover:text-gray-800'}`}>Refund Policy</a></li>
+              <li><a href="/refund" className={`text-[13px] transition-colors ${isDark ? 'text-gray-500 hover:text-gray-300' : 'text-gray-500 hover:text-gray-800'}`}>Refund Policy</a></li>
               <li><a href="/service-policy" className={`text-[13px] transition-colors ${isDark ? 'text-gray-500 hover:text-gray-300' : 'text-gray-500 hover:text-gray-800'}`}>Service Policy</a></li>
               <li><a href="/services" className={`text-[13px] transition-colors ${isDark ? 'text-gray-500 hover:text-gray-300' : 'text-gray-500 hover:text-gray-800'}`}>Our Services</a></li>
             </ul>
@@ -1453,7 +1453,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
             {[
               {href:'/privacy', label:'Privacy'},
               {href:'/terms', label:'Terms'},
-              {href:'/refund-policy', label:'Refund Policy'},
+              {href:'/refund', label:'Refund Policy'},
               {href:'/service-policy', label:'Service Policy'},
               {href:'/services', label:'Services'},
               {href:'mailto:getzynth@gmail.com', label:'Contact'},

@@ -38,6 +38,8 @@ import WelcomeScreen from './components/WelcomeScreen'
 import TermsOfService from './components/TermsOfService'
 import PrivacyPolicy from './components/PrivacyPolicy'
 import RefundPolicy from './components/RefundPolicy'
+import PricingPage from './components/PricingPage'
+import RefundPage from './components/RefundPage'
 import ServicePolicy from './components/ServicePolicy'
 import ServicesPage from './components/ServicesPage'
 import { fetchNews } from './services/api'
@@ -365,7 +367,8 @@ function AuthGate() {
     if (path === '/forgot-password') return 'forgotPassword';
     if (path === '/terms') return 'terms';
     if (path === '/privacy') return 'privacy';
-    if (path === '/refund-policy') return 'refundPolicy';
+    if (path === '/refund-policy' || path === '/refund') return 'refundPolicy';
+    if (path === '/pricing') return 'pricing';
     if (path === '/service-policy') return 'servicePolicy';
     if (path === '/services') return 'services';
     return 'landing';
@@ -470,6 +473,9 @@ function AuthGate() {
 
   if (view === 'refundPolicy')
     return <RefundPolicy onBack={() => setView('landing')} />
+
+  if (view === 'pricing')
+    return <PricingPage onBack={() => setView('landing')} />
 
   if (view === 'servicePolicy')
     return <ServicePolicy onBack={() => setView('landing')} />

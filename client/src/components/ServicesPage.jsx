@@ -290,7 +290,7 @@ export default function ServicesPage({ onBack }) {
       {/* Footer */}
       <div style={{ borderTop: '1px solid rgba(16,185,129,0.08)', padding: '24px', textAlign: 'center' }}>
         <div style={{ display: 'flex', justifyContent: 'center', gap: 20, flexWrap: 'wrap', marginBottom: 10 }}>
-          {[['Terms of Service', '/terms'], ['Privacy Policy', '/privacy'], ['Refund Policy', '/refund-policy'], ['Service Policy', '/service-policy']].map(([label, href]) => (
+          {[['Terms of Service', '/terms'], ['Privacy Policy', '/privacy'], ['Refund Policy', '/refund'], ['Service Policy', '/service-policy']].map(([label, href]) => (
             <a key={label} href={href} style={{ fontSize: 12, color: '#6b7280', textDecoration: 'none' }}
               onMouseEnter={e => (e.currentTarget.style.color = '#3b82f6')}
               onMouseLeave={e => (e.currentTarget.style.color = '#6b7280')}>{label}</a>
