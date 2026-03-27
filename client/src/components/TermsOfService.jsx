@@ -260,7 +260,8 @@ export default function TermsOfService({ onBack }) {
           {/* Section 13 */}
           <Section title="13. Subscription, Billing, and Refunds">
             <p>Zynth offers both free and paid subscription plans ("Pro" and "Elite").</p>
-            <p>By subscribing to a paid plan, you agree to the following:</p>
+            <p style={{ marginTop: 10 }}>Payments are processed securely through third-party payment providers (such as Paddle), which act as the Merchant of Record. Zynth does not store or have access to your full payment details (e.g., credit card information).</p>
+            <p style={{ marginTop: 10 }}>By subscribing to a paid plan, you agree to the following:</p>
             <ul style={{ paddingLeft: 20, margin: '8px 0' }}>
               <li style={{ marginBottom: 6 }}>Billing is recurring and charged on a monthly basis.</li>
               <li style={{ marginBottom: 6 }}>Your subscription will automatically renew at the end of each billing period unless canceled before renewal.</li>
