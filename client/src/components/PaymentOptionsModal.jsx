@@ -209,7 +209,19 @@ export default function PaymentOptionsModal({ plan: initialPlan = 'pro', onClose
     >
       <div
         onClick={e => e.stopPropagation()}
-        style={{ width: '100%', maxWidth: 520, background: card, borderRadius: 20, border: `1px solid ${theme.border}`, overflow: 'hidden', boxShadow: '0 32px 80px rgba(0,0,0,0.6)', marginBlock: 'auto' }}
+        style={{
+          width: '100%',
+          maxWidth: 520,
+          maxHeight: '90vh',
+          background: card,
+          borderRadius: 20,
+          border: `1px solid ${theme.border}`,
+          overflow: 'hidden',
+          boxShadow: '0 32px 80px rgba(0,0,0,0.6)',
+          marginBlock: 'auto',
+          display: 'flex',
+          flexDirection: 'column',
+        }}
       >
         {/* Gradient bar */}
         <div style={{ height: 3, background: 'linear-gradient(90deg,#1d4ed8,#3b82f6,#06b6d4)' }} />
@@ -225,7 +237,7 @@ export default function PaymentOptionsModal({ plan: initialPlan = 'pro', onClose
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} style={{ padding: '18px 22px 22px', display: 'flex', flexDirection: 'column', gap: 16 }}>
+        <form onSubmit={handleSubmit} style={{ padding: '18px 22px 22px', display: 'flex', flexDirection: 'column', gap: 16, overflowY: 'auto', minHeight: 0 }}>
 
           {/* Trust chips */}
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
@@ -374,6 +386,10 @@ export default function PaymentOptionsModal({ plan: initialPlan = 'pro', onClose
             display: 'flex',
             flexDirection: 'column',
             gap: 12,
+            position: 'sticky',
+            bottom: -1,
+            zIndex: 3,
+            boxShadow: theme.isDark ? '0 -10px 30px rgba(2,6,23,0.45)' : '0 -8px 24px rgba(15,23,42,0.08)',
           }}>
             <div>
               <div style={{ fontSize: 12, fontWeight: 700, color: theme.text, marginBottom: 4 }}>
@@ -410,6 +426,20 @@ export default function PaymentOptionsModal({ plan: initialPlan = 'pro', onClose
               onChange={e => setFile(e.target.files[0] ?? null)}
             />
 
+            {file && (
+              <div style={{
+                fontSize: 12,
+                color: '#10B981',
+                background: 'rgba(16,185,129,0.08)',
+                border: '1px solid rgba(16,185,129,0.22)',
+                borderRadius: 8,
+                padding: '7px 10px',
+                fontWeight: 700,
+              }}>
+                Payment proof attached ✅
+              </div>
+            )}
+
             {/* Error */}
             {error && (
               <div style={{ padding: '8px 12px', borderRadius: 8, background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', color: '#f87171', fontSize: 13 }}>
@@ -427,7 +457,7 @@ export default function PaymentOptionsModal({ plan: initialPlan = 'pro', onClose
                 border: 'none',
                 cursor: submitting ? 'not-allowed' : 'pointer',
                 background: 'linear-gradient(135deg,#2563eb,#0ea5e9,#10b981)',
-                boxShadow: '0 8px 22px rgba(14,165,233,0.25)',
+                boxShadow: '0 10px 28px rgba(14,165,233,0.32)',
                 color: '#fff',
                 fontWeight: 800,
                 fontSize: 14,
