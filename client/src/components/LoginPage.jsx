@@ -124,7 +124,7 @@ export default function LoginPage({ onSwitchToSignup, onBack, onForgotPassword }
   }
 
   return (
-    <div style={{display:'flex',height:'100vh',width:'100vw',overflow:'hidden',background: isDark ? '#020617' : '#F8FAFC',position:'relative'}}>
+    <div style={{display:'flex',height:'100vh',width:'100%',overflow:'hidden',background: isDark ? '#020617' : '#F8FAFC',position:'relative'}}>
 
       <style>{`
         @keyframes floatCard {

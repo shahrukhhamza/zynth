@@ -380,14 +380,14 @@ export default function EconomicDashboard({ onViewChange }) {
       <div style={{ maxWidth: 1200, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 20 }}>
 
         {/* ══ ROW 1: HEADER ══════════════════════════════════════════════ */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 10, marginBottom: 4 }}>
           <div>
             <h1 style={{ fontSize: 22, fontWeight: 700, color: D.text, margin: 0, letterSpacing: '-0.02em' }}>
               {greeting}, <span style={{ color: theme.accent }}>{firstName}</span>
             </h1>
             <p style={{ fontSize: 13, color: D.textSub, margin: '3px 0 0' }}>{todayStr}</p>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
             {sessions.length > 0 ? sessions.map(s => (
               <span key={s.name} style={{
                 fontSize: 11, fontWeight: 700, padding: '5px 12px', borderRadius: 99,
@@ -501,7 +501,7 @@ export default function EconomicDashboard({ onViewChange }) {
         </div>
 
         {/* ══ ROW 3: MONTHLY CALENDAR + QUICK STATS ══════════════════════ */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr', sm: {gridTemplateColumns: '1fr 280px'}, gap: 16 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 16 }}>
 
           {/* Monthly P&L Calendar */}
           <MonthlyCalendar trades={allTrades} D={D} />

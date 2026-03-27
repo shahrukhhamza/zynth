@@ -66,7 +66,7 @@ export default function PricingPage({ onBack }) {
         backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)',
         borderBottom: `1px solid ${border}`,
       }}>
-        <div style={{ maxWidth: 1080, margin: '0 auto', padding: '0 24px', height: 60, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div style={{ maxWidth: 1080, margin: '0 auto', padding: '0 16px', height: 60, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <BrandMark size={32} />
             <span style={{ fontSize: 16, fontWeight: 800, color: text }}>Zynth</span>
@@ -83,17 +83,17 @@ export default function PricingPage({ onBack }) {
       </nav>
 
       {/* ── Hero heading ── */}
-      <div style={{ textAlign: 'center', padding: '64px 24px 48px' }}>
-        <h1 style={{ fontSize: 40, fontWeight: 900, letterSpacing: '-0.02em', color: text, marginBottom: 12 }}>
+      <div style={{ textAlign: 'center', padding: '52px 16px 40px' }}>
+        <h1 style={{ fontSize: 'clamp(30px, 8vw, 40px)', fontWeight: 900, letterSpacing: '-0.02em', color: text, marginBottom: 12 }}>
           Simple, transparent pricing
         </h1>
-        <p style={{ fontSize: 16, color: muted, maxWidth: 480, margin: '0 auto' }}>
+        <p style={{ fontSize: 15, color: muted, maxWidth: 480, margin: '0 auto' }}>
           Start free. Upgrade when you’re ready.
         </p>
       </div>
 
       {/* ── Plan cards ── */}
-      <div style={{ maxWidth: 1080, margin: '0 auto', padding: '0 24px' }}>
+      <div style={{ maxWidth: 1080, margin: '0 auto', padding: '0 16px' }}>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 20, alignItems: 'start' }}>
           {PLANS.map(plan => {
             const isH        = plan.highlight;

@@ -1081,8 +1081,8 @@ function RenderContent({ content, theme }) {
       }
       const isHeader = tableRows.length >= 2;
       elements.push(
-        <div key={i} style={{ overflowX: 'auto', margin: '14px 0' }}>
-          <table style={{ borderCollapse: 'collapse', width: '100%' }}>
+        <div key={i} style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch', margin: '14px 0' }}>
+          <table style={{ borderCollapse: 'collapse', width: '100%', minWidth: 620 }}>
             <thead>
               <tr>{(tableRows[0] || []).map((c, j) => (
                 <th key={j} style={{ padding: '8px 12px', textAlign: 'left', fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: theme.muted, borderBottom: `2px solid #3b82f6`, whiteSpace: 'nowrap' }}>{c.trim()}</th>
@@ -1112,7 +1112,7 @@ function RenderContent({ content, theme }) {
         i++;
       }
       elements.push(
-        <pre key={i} style={{ background: surface2, border: `1px solid ${border}`, borderRadius: 8, padding: '12px 16px', overflowX: 'auto', fontFamily: 'monospace', fontSize: 13, color: theme.text, margin: '14px 0' }}>
+        <pre key={i} style={{ background: surface2, border: `1px solid ${border}`, borderRadius: 8, padding: '12px 16px', overflowX: 'auto', WebkitOverflowScrolling: 'touch', fontFamily: 'monospace', fontSize: 13, color: theme.text, margin: '14px 0' }}>
           {codeLines.join('\n')}
         </pre>
       );

@@ -85,7 +85,7 @@ function Header({
           position: 'fixed',
           top: 0,
           left: isMobile ? 0 : (sidebarCollapsed ? 60 : 236),
-          width: isMobile ? '100vw' : (sidebarCollapsed ? 'calc(100vw - 60px)' : 'calc(100vw - 236px)'),
+          width: isMobile ? '100%' : (sidebarCollapsed ? 'calc(100vw - 60px)' : 'calc(100vw - 236px)'),
           height: isMobile ? 56 : 60,
           padding: isMobile ? '0 14px' : '0 24px',
           transition: 'left 0.22s cubic-bezier(0.4,0,0.2,1), width 0.22s cubic-bezier(0.4,0,0.2,1)',
@@ -221,7 +221,8 @@ function Header({
             {showTimezoneDropdown && (
               <div style={{
                 position: 'absolute', top: 'calc(100% + 6px)', right: 0,
-                width: 220,
+                width: isMobile ? 'calc(100vw - 32px)' : 220,
+                maxWidth: 220,
                 background: theme.surface,
                 border: `1px solid ${H_BORDER}`,
                 borderRadius: 10,
@@ -318,7 +319,8 @@ function Header({
               {showUserMenu && (
                 <div style={{
                   position: 'absolute', top: 'calc(100% + 6px)', right: 0,
-                  width: 240,
+                  width: isMobile ? 'calc(100vw - 32px)' : 240,
+                  maxWidth: 240,
                   background: theme.surface,
                   border: `1px solid ${H_BORDER}`,
                   borderRadius: 12,

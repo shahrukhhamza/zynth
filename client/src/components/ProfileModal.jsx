@@ -257,17 +257,17 @@ export default function ProfileModal({ onClose, onForgotPassword }) {
       />
     )}
     <div
-      className="fixed inset-0 z-[100] modal-overlay flex items-end sm:items-center justify-center p-0 sm:p-4"
+      className="fixed inset-0 z-[100] modal-overlay flex items-end sm:items-center justify-center p-2 sm:p-4"
       style={{ backgroundColor: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(6px)' }}
       onClick={e => { if (e.target === e.currentTarget) onClose(); }}
     >
       <div
-        className="modal-content relative w-full sm:rounded-2xl overflow-y-auto"
+        className="modal-content relative w-[95%] sm:w-full sm:rounded-2xl overflow-y-auto"
         style={{
           background: theme.surface,
           border: `1px solid ${theme.border}`,
           maxWidth: 460,
-          maxHeight: '92vh',
+          maxHeight: 'min(92vh, calc(100dvh - 16px))',
           boxShadow: '0 32px 80px rgba(0,0,0,0.7)',
         }}
       >

@@ -77,9 +77,9 @@ export function Modal({
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 10, scale: 0.97 }}
             transition={{ duration: 0.26, ease: [0.22, 1, 0.36, 1] }}
-            className="relative w-full overflow-hidden flex flex-col"
+            className="relative w-[95%] sm:w-full overflow-hidden flex flex-col"
             style={{
-              maxWidth,
+              maxWidth: `min(${maxWidth}px, 95vw)`,
               maxHeight: '90vh',
               borderRadius: 20,
               background: theme.surface,
