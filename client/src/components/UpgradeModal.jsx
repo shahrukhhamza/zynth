@@ -238,6 +238,7 @@ export default function UpgradeModal({
       <div
         className="relative w-full max-w-3xl rounded-2xl p-[1px]"
         style={{
+          maxHeight: '92vh',
           background: 'linear-gradient(140deg, rgba(59,130,246,0.65), rgba(6,182,212,0.55), rgba(245,158,11,0.5))',
           boxShadow: '0 36px 110px rgba(0,0,0,0.82)',
         }}
@@ -248,6 +249,9 @@ export default function UpgradeModal({
             background: theme.isDark
               ? 'linear-gradient(180deg, rgba(8,12,20,0.98), rgba(6,9,16,0.98))'
               : '#ffffff',
+            display: 'flex',
+            flexDirection: 'column',
+            maxHeight: 'calc(92vh - 2px)',
           }}
         >
 
@@ -261,7 +265,7 @@ export default function UpgradeModal({
             <X className="w-4 h-4" />
           </button>
 
-          <form onSubmit={submitPayment} className="px-6 py-6">
+          <form onSubmit={submitPayment} className="px-6 py-6" style={{ overflowY: 'auto', minHeight: 0 }}>
             <div className="flex flex-wrap items-center gap-2 text-[11px] font-semibold">
               {[
                 { text: 'Secure payment', Icon: ShieldCheck },
@@ -408,6 +412,9 @@ export default function UpgradeModal({
 
             <div className="mt-4 rounded-xl border p-3"
               style={{ borderColor: theme.isDark ? 'rgba(255,255,255,0.1)' : '#dbe3ee', background: panelSurface }}>
+              <div className="mb-2 text-xs font-semibold" style={{ color: headingText }}>
+                Upload payment screenshot to activate your plan
+              </div>
               <div
                 onClick={() => fileRef.current?.click()}
                 className="cursor-pointer rounded-lg border-2 border-dashed p-4 text-center"
@@ -440,32 +447,61 @@ export default function UpgradeModal({
               />
             </div>
 
-            {error && (
-              <div className="mt-3 rounded-lg border px-3 py-2 text-xs"
-                style={{ borderColor: 'rgba(239,68,68,0.32)', background: 'rgba(239,68,68,0.12)', color: '#f87171' }}>
-                {error}
-              </div>
-            )}
-
-            <button
-              type="submit"
-              disabled={submitting || !proof}
-              className="mt-4 w-full rounded-xl py-3 text-sm font-bold text-white"
+            <div
+              className="mt-4 rounded-xl border p-3"
               style={{
-                background: 'linear-gradient(135deg,#1d4ed8,#06b6d4)',
-                opacity: submitting || !proof ? 0.7 : 1,
-                cursor: submitting || !proof ? 'not-allowed' : 'pointer',
+                position: 'sticky',
+                bottom: -1,
+                zIndex: 2,
+                borderColor: theme.isDark ? 'rgba(59,130,246,0.22)' : 'rgba(59,130,246,0.2)',
+                background: theme.isDark ? 'rgba(8,12,20,0.95)' : '#ffffff',
+                boxShadow: theme.isDark ? '0 -12px 28px rgba(2,6,23,0.45)' : '0 -10px 22px rgba(15,23,42,0.08)',
               }}
             >
-              {submitting
-                ? <span className="inline-flex items-center gap-2"><Loader2 size={14} style={{ animation: 'spin 1s linear infinite' }} />Processing…</span>
-                : 'Complete Payment'
-              }
-            </button>
+              {error && (
+                <div className="mb-2 rounded-lg border px-3 py-2 text-xs"
+                  style={{ borderColor: 'rgba(239,68,68,0.32)', background: 'rgba(239,68,68,0.12)', color: '#f87171' }}>
+                  {error}
+                </div>
+              )}
 
-            <div className="mt-3 text-center text-xs" style={{ color: mutedText }}>
-              <Landmark size={12} style={{ display: 'inline', marginRight: 4 }} />
-              Secure verification and activation with no page reloads.
+              <button
+                type="submit"
+                disabled={submitting || !proof}
+                className="w-full rounded-xl py-3 text-sm font-bold text-white"
+                style={{
+                  background: 'linear-gradient(135deg,#1d4ed8,#06b6d4)',
+                  boxShadow: '0 10px 26px rgba(14,165,233,0.28)',
+                  opacity: submitting || !proof ? 0.7 : 1,
+                  cursor: submitting || !proof ? 'not-allowed' : 'pointer',
+                }}
+              >
+                {submitting
+                  ? <span className="inline-flex items-center gap-2"><Loader2 size={14} style={{ animation: 'spin 1s linear infinite' }} />Submitting...</span>
+                  : 'Complete Payment'
+                }
+              </button>
+
+              <button
+                type="button"
+                onClick={handleClose}
+                disabled={submitting}
+                className="mt-2 w-full rounded-xl py-2.5 text-xs font-semibold"
+                style={{
+                  border: `1px solid ${theme.isDark ? 'rgba(255,255,255,0.12)' : '#dbe3ee'}`,
+                  background: panelSurface,
+                  color: headingText,
+                  cursor: submitting ? 'not-allowed' : 'pointer',
+                  opacity: submitting ? 0.75 : 1,
+                }}
+              >
+                Cancel
+              </button>
+
+              <div className="mt-2 text-center text-xs" style={{ color: mutedText }}>
+                <Landmark size={12} style={{ display: 'inline', marginRight: 4 }} />
+                Verification usually takes a few minutes.
+              </div>
             </div>
           </form>
 
