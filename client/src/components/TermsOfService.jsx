@@ -1,4 +1,5 @@
 ﻿import { ArrowLeft, Shield, AlertTriangle, FileText } from 'lucide-react';
+import { BrandMark } from './BrandLogo';
 
 export default function TermsOfService({ onBack }) {
   const handleBack = () => {
@@ -50,24 +51,9 @@ export default function TermsOfService({ onBack }) {
             <FileText size={16} style={{ color: '#3b82f6' }} />
             <span style={{ fontSize: 14, fontWeight: 600, color: '#e2e8f0' }}>Terms of Service</span>
           </div>
-          <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 6 }}>
-            <div
-              style={{
-                width: 28,
-                height: 28,
-                borderRadius: 7,
-                background: 'linear-gradient(135deg, #059669, #0d9488)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontWeight: 800,
-                fontSize: 13,
-                color: '#fff',
-              }}
-            >
-              Z
-            </div>
-            <span style={{ fontSize: 13, fontWeight: 700, color: '#e2e8f0' }}>ZYNTH</span>
+          <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 8 }}>
+            <BrandMark size={28} />
+            <span style={{ fontSize: 14, fontWeight: 700, color: '#e2e8f0' }}>Zynth</span>
           </div>
         </div>
       </div>

@@ -1,4 +1,5 @@
 import { ArrowLeft, Shield, Lock, Eye, Trash2, FileText } from 'lucide-react';
+import { BrandMark } from './BrandLogo';
 
 function Section({ id, title, children }) {
   return (
@@ -19,11 +20,11 @@ export default function PrivacyPolicy({ onBack }) {
   };
 
   return (
-    <div style={{ backgroundColor: '#060a12', minHeight: '100vh', color: '#e2e8f0' }}>
+    <div style={{ backgroundColor: '#0a0a0a', minHeight: '100vh', color: '#e2e8f0' }}>
       {/* Sticky header */}
       <div style={{
         position: 'sticky', top: 0, zIndex: 50,
-        backgroundColor: 'rgba(6,10,18,0.95)',
+        backgroundColor: 'rgba(10,10,10,0.95)',
         backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)',
         borderBottom: '1px solid rgba(59,130,246,0.15)',
       }}>
@@ -38,9 +39,9 @@ export default function PrivacyPolicy({ onBack }) {
             <Shield size={16} style={{ color: '#3b82f6' }} />
             <span style={{ fontSize: 14, fontWeight: 600, color: '#e2e8f0' }}>Privacy Policy</span>
           </div>
-          <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 6 }}>
-            <div style={{ width: 28, height: 28, borderRadius: 7, background: 'linear-gradient(135deg, #059669, #0d9488)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: 13, color: '#fff' }}>Z</div>
-            <span style={{ fontSize: 13, fontWeight: 700, color: '#e2e8f0' }}>ZYNTH</span>
+          <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 8 }}>
+            <BrandMark size={28} />
+            <span style={{ fontSize: 14, fontWeight: 700, color: '#e2e8f0' }}>Zynth</span>
           </div>
         </div>
       </div>
