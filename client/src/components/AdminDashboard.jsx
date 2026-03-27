@@ -6,6 +6,7 @@ import { useConfirm } from '../contexts/ConfirmContext';
 import { API_URL } from '../config/api';
 import AnalyticsDashboard from './AnalyticsDashboard';
 import UserActivityTimeline from './UserActivityTimeline';
+import PaymentRequests from './PaymentRequests';
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell,
 } from 'recharts';
@@ -214,6 +215,7 @@ function AdminDashboardInner() {
 
   /* ── render ────────────────────────────────────────────────────── */
   return (
+    <>
     <div className="flex-1 overflow-y-auto" style={{ background: theme.bg, color: theme.text }}>
 
       <div className="max-w-7xl mx-auto p-6 space-y-6">
@@ -437,7 +439,7 @@ function AdminDashboardInner() {
                                 onMouseLeave={e => { e.currentTarget.style.background = 'rgba(99,102,241,0.12)'; }}
                               >
                                 <Activity className="w-3.5 h-3.5" />
-                              </button>}
+                              </button>
                               <select
                                 value={u.plan || 'free'}
                                 onChange={e => changePlan(u.id, e.target.value)}
@@ -539,6 +541,9 @@ function AdminDashboardInner() {
         {/* Analytics section */}
         <AnalyticsDashboard />
 
+        {/* Manual payment requests */}
+        <PaymentRequests />
+
       </div>
     </div>
 
@@ -549,6 +554,7 @@ function AdminDashboardInner() {
         onClose={() => setSelectedUserId(null)}
       />
     )}
+    </>
   );
 }
 

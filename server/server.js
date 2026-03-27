@@ -43,10 +43,12 @@ import adminRouter from './routes/admin.js';
 import chartsRouter from './routes/charts.js';
 import levelsRouter from './routes/levels.js';
 import eventsRouter from './routes/events.js';
+import paymentsRouter from './routes/payments.js';
 import { requireAuth } from './middleware/authMiddleware.js';
 import * as Users from './db/users.js';
 import { initDb } from './db/users.js';
 import { initEventsDb } from './db/events.js';
+import { initPaymentsDb } from './db/payments.js';
 import { UPLOADS_DIR, ensureUploadDirs } from './config/storagePaths.js';
 
 const app = express();
@@ -258,6 +260,7 @@ app.post('/api/economic/trigger-update', async (req, res) => {
 app.use('/api/auth', authLimiter, authRouter);
 app.use('/api/admin', adminRouter);
 app.use('/api/events', eventsRouter);
+app.use('/api/payments', paymentsRouter);
 
 app.use('/api/journal', journalRouter);
 app.use('/api/checklist', checklistRouter);
@@ -302,7 +305,7 @@ wss.on('error', (err) => console.error('❌ WebSocketServer error:', err.message
 
 // ── Start server ──────────────────────────────────────────────────────────────
 // Initialize PostgreSQL schemas BEFORE listening
-Promise.all([initDb(), initJournalDb(), initEventsDb()])
+Promise.all([initDb(), initJournalDb(), initEventsDb(), initPaymentsDb()])
   .then(() => {
     httpServer.listen(PORT, HOST, () => {
       console.log(`🚀 Server running on ${HOST}:${PORT}`);
