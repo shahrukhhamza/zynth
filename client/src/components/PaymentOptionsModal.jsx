@@ -106,7 +106,7 @@ function DetailRow({ label, value, theme }) {
 // ── Main component ────────────────────────────────────────────────────────────
 export default function PaymentOptionsModal({ plan: initialPlan = 'pro', onClose }) {
   const theme       = useTheme();
-  const { token } = useAuth();
+  const { token, user } = useAuth();
 
   const [region,      setRegion]      = useState('international');  // 'international' | 'pakistan'
   const [optionIdx,   setOptionIdx]   = useState(0);               // which sub-option
@@ -134,16 +134,22 @@ export default function PaymentOptionsModal({ plan: initialPlan = 'pro', onClose
 
   async function handleSubmit(e) {
     e.preventDefault();
+    if (!file) {
+      setError('Please upload payment proof');
+      return;
+    }
     setError(null);
     setSubmitting(true);
 
     try {
       const form = new FormData();
+      form.append('userId', String(user?.id ?? '')); // extra metadata for traceability
       form.append('plan',   selectedPlan);
       form.append('method', `${currentRegion.label} — ${currentOption.name}`);
       form.append('amount', price + '/month');
+      form.append('proofFileName', file.name);
       if (note.trim()) form.append('note', note.trim());
-      if (file)        form.append('proof', file);
+      form.append('proof', file);
 
       const r = await fetch(`${API_URL}/api/payments/submit`, {
         method: 'POST',
@@ -176,19 +182,19 @@ export default function PaymentOptionsModal({ plan: initialPlan = 'pro', onClose
             <div style={{ width: 56, height: 56, borderRadius: '50%', background: 'rgba(16,185,129,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <CheckCircle size={28} color="#10B981" />
             </div>
-            <div style={{ fontSize: 20, fontWeight: 800, color: theme.text }}>Payment submitted!</div>
+            <div style={{ fontSize: 20, fontWeight: 800, color: theme.text }}>Payment Submitted 🎉</div>
             <div style={{ fontSize: 14, color: theme.muted, lineHeight: 1.6 }}>
-              Payment submitted successfully 🎉<br />
+              We've received your payment proof.<br />
               Your account will be upgraded shortly.
             </div>
             <div style={{ fontSize: 12, color: theme.muted, padding: '8px 16px', borderRadius: 8, background: surface, border: `1px solid ${theme.border}` }}>
-              Instant activation after verification (usually within minutes).
+              Verification usually takes a few minutes.
             </div>
             <button
               onClick={onClose}
               style={{ marginTop: 8, padding: '10px 28px', borderRadius: 10, background: '#10B981', color: '#fff', fontWeight: 700, fontSize: 14, border: 'none', cursor: 'pointer' }}
             >
-              Done
+              Continue
             </button>
           </div>
         </div>
@@ -359,16 +365,33 @@ export default function PaymentOptionsModal({ plan: initialPlan = 'pro', onClose
             />
           </div>
 
-          {/* File upload */}
-          <div>
-            <label style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 0.5, color: theme.muted, display: 'block', marginBottom: 7 }}>
-              Payment Screenshot <span style={{ fontWeight: 400, color: theme.muted, textTransform: 'none' }}>(required)</span>
-            </label>
+          {/* Action area */}
+          <div style={{
+            borderRadius: 12,
+            border: `1px solid ${theme.border}`,
+            background: theme.isDark ? 'rgba(2,6,23,0.4)' : '#f8fafc',
+            padding: 14,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 12,
+          }}>
+            <div>
+              <div style={{ fontSize: 12, fontWeight: 700, color: theme.text, marginBottom: 4 }}>
+                Upload payment screenshot to activate your plan
+              </div>
+              <div style={{ fontSize: 11, color: theme.muted }}>
+                Verification usually takes a few minutes
+              </div>
+            </div>
+
             <div
               onClick={() => fileRef.current?.click()}
               style={{
-                borderRadius: 10, border: `2px dashed ${file ? '#10B981' : theme.border}`,
-                padding: '16px', textAlign: 'center', cursor: 'pointer',
+                borderRadius: 10,
+                border: `2px dashed ${file ? '#10B981' : theme.border}`,
+                padding: '16px',
+                textAlign: 'center',
+                cursor: 'pointer',
                 background: file ? 'rgba(16,185,129,0.04)' : surface,
                 transition: 'all 0.2s',
               }}
@@ -386,32 +409,62 @@ export default function PaymentOptionsModal({ plan: initialPlan = 'pro', onClose
               style={{ display: 'none' }}
               onChange={e => setFile(e.target.files[0] ?? null)}
             />
+
+            {/* Error */}
+            {error && (
+              <div style={{ padding: '8px 12px', borderRadius: 8, background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', color: '#f87171', fontSize: 13 }}>
+                {error}
+              </div>
+            )}
+
+            <button
+              type="submit"
+              disabled={submitting}
+              style={{
+                width: '100%',
+                padding: '12px',
+                borderRadius: 10,
+                border: 'none',
+                cursor: submitting ? 'not-allowed' : 'pointer',
+                background: 'linear-gradient(135deg,#2563eb,#0ea5e9,#10b981)',
+                boxShadow: '0 8px 22px rgba(14,165,233,0.25)',
+                color: '#fff',
+                fontWeight: 800,
+                fontSize: 14,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 8,
+                opacity: submitting ? 0.75 : 1,
+                transition: 'opacity 0.15s',
+              }}
+            >
+              {submitting
+                ? <><Loader2 size={16} style={{ animation: 'spin 1s linear infinite' }} />Submitting...</>
+                : 'Submit Payment'
+              }
+            </button>
+
+            <button
+              type="button"
+              onClick={onClose}
+              disabled={submitting}
+              style={{
+                width: '100%',
+                padding: '10px 12px',
+                borderRadius: 10,
+                border: `1px solid ${theme.border}`,
+                background: surface,
+                color: theme.text,
+                fontWeight: 700,
+                fontSize: 13,
+                cursor: submitting ? 'not-allowed' : 'pointer',
+                opacity: submitting ? 0.7 : 1,
+              }}
+            >
+              Cancel
+            </button>
           </div>
-
-          {/* Error */}
-          {error && (
-            <div style={{ padding: '8px 12px', borderRadius: 8, background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', color: '#f87171', fontSize: 13 }}>
-              {error}
-            </div>
-          )}
-
-          {/* Submit */}
-          <button
-            type="submit"
-            disabled={submitting || !file}
-            style={{
-              padding: '12px', borderRadius: 10, border: 'none', cursor: submitting ? 'not-allowed' : 'pointer',
-              background: 'linear-gradient(135deg,#1d4ed8,#0284c7)',
-              color: '#fff', fontWeight: 700, fontSize: 14,
-              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-              opacity: (submitting || !file) ? 0.7 : 1, transition: 'opacity 0.15s',
-            }}
-          >
-            {submitting
-              ? <><Loader2 size={16} style={{ animation: 'spin 1s linear infinite' }} />Submitting…</>
-              : `Submit Payment for ${PLAN_LABELS[selectedPlan]}`
-            }
-          </button>
 
         </form>
       </div>
