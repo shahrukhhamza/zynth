@@ -29,11 +29,7 @@ const CATEGORIES = [
       {
         id: 'first-trade', title: 'Your First Trade Journal Entry',
         excerpt: 'A step-by-step walkthrough of logging your very first trade.',
-        If you are not satisfied within the first 7 days of your subscription we will refund your payment in full. No questions asked.
-        
-        Refunds are not available after the 7-day period. However you can cancel your subscription at any time and you will retain access until the end of your billing period.`,
-
-## Step-by-Step Guide
+        content: `## Step-by-Step Guide
 
 **Step 1:** Click **Trade Journal** in the sidebar
 
@@ -1204,31 +1200,30 @@ function renderInline(text, theme) {
   if (last < text.length) parts.push(text.slice(last));
   return parts.length > 1 ? parts : text;
 }
-
 // -- Main Component ------------------------------------------------------------
 export default function HelpCenter() {
   const theme = useTheme();
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedArticle,  setSelectedArticle]  = useState(null);
   const [query, setQuery] = useState('');
-  const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth < 900);
 
   useEffect(() => {
-    const mq = window.matchMedia('(max-width: 767px)');
+    const mq = window.matchMedia('(max-width: 899px)');
     setIsMobile(mq.matches);
-    const handler = (e) => setIsMobile(e.matches);
+    const handler = (e) => { setIsMobile(e.matches); if (!e.matches) setSidebarOpen(false); };
     mq.addEventListener('change', handler);
     return () => mq.removeEventListener('change', handler);
   }, []);
 
-  const isDark   = theme.isDark !== false;
-  const bg0      = theme.bg;
-  const bg1      = theme.surface;
-  const bg2      = theme.bg;
-  const border   = theme.border;
-  const text0    = theme.text;
-  const textMuted= theme.muted;
-  const accent   = '#3b82f6';
+  const isDark    = theme.isDark !== false;
+  const bg0       = theme.bg;
+  const bg1       = theme.surface;
+  const border    = theme.border;
+  const text0     = theme.text;
+  const textMuted = theme.muted;
+  const accent    = '#3b82f6';
 
   const searchResults = useMemo(() => {
     if (!query.trim()) return [];
@@ -1237,138 +1232,239 @@ export default function HelpCenter() {
       a.title.toLowerCase().includes(q) ||
       a.excerpt.toLowerCase().includes(q) ||
       a.content.toLowerCase().includes(q)
-    ).slice(0, 12);
+    ).slice(0, 14);
   }, [query]);
 
   const currentCategory = CATEGORIES.find(c => c.key === selectedCategory);
-  const currentArticle  = selectedArticle
-    ? ALL_ARTICLES.find(a => a.id === selectedArticle)
-    : null;
+  const currentArticle  = selectedArticle ? ALL_ARTICLES.find(a => a.id === selectedArticle) : null;
 
   const openArticle = (articleId, catKey) => {
     setSelectedArticle(articleId);
     if (catKey) setSelectedCategory(catKey);
     setQuery('');
+    setSidebarOpen(false);
   };
 
   const backToCategory = () => setSelectedArticle(null);
   const backToHome     = () => { setSelectedArticle(null); setSelectedCategory(null); setQuery(''); };
-
+  const totalArticles  = ALL_ARTICLES.length;
   const popularArticles = POPULAR_ARTICLE_IDS.map(id => ALL_ARTICLES.find(a => a.id === id)).filter(Boolean);
-  const totalArticles = ALL_ARTICLES.length;
-  const supportActions = [
-    {
-      key: 'journal',
-      title: 'Trade Journal Help',
-      description: 'Logging trades, analytics, and AI coaching',
-      icon: BookMarked,
-      color: '#6366f1',
-      onClick: () => { setSelectedCategory('journal'); setSelectedArticle(null); setQuery(''); },
-    },
-    {
-      key: 'billing',
-      title: 'Plans and Billing',
-      description: 'Pricing, upgrades, founding member access',
-      icon: CreditCard,
-      color: '#f59e0b',
-      onClick: () => { setSelectedCategory('billing'); setSelectedArticle(null); setQuery(''); },
-    },
-    {
-      key: 'account',
-      title: 'Account Settings',
-      description: 'Timezone, theme, profile, and password',
-      icon: Settings,
-      color: '#64748b',
-      onClick: () => { setSelectedCategory('account'); setSelectedArticle(null); setQuery(''); },
-    },
-    {
-      key: 'privacy',
-      title: 'Privacy and Legal',
-      description: 'Policies, refunds, and data handling',
-      icon: Shield,
-      color: '#14b8a6',
-      onClick: () => { setSelectedCategory('privacy'); setSelectedArticle(null); setQuery(''); },
-    },
-  ];
+
   const feedbackActions = [
-    {
-      key: 'feature',
-      title: 'Request Features',
-      description: 'Share product ideas and workflow improvements.',
-      icon: Lightbulb,
-      color: '#f59e0b',
-      href: 'mailto:getzynth@gmail.com?subject=Feature%20Request',
-    },
-    {
-      key: 'bug',
-      title: 'Report Bugs',
-      description: 'Send issues, screenshots, and steps to reproduce.',
-      icon: Bug,
-      color: '#ef4444',
-      href: 'mailto:getzynth@gmail.com?subject=Bug%20Report',
-    },
-    {
-      key: 'product',
-      title: 'General Feedback',
-      description: 'Tell us what feels confusing or what should improve.',
-      icon: MessageSquare,
-      color: '#3b82f6',
-      href: 'mailto:getzynth@gmail.com?subject=Product%20Feedback',
-    },
+    { key: 'feature', title: 'Request a Feature',  description: 'Share product ideas and workflow improvements.', icon: Lightbulb,    color: '#f59e0b', href: 'mailto:getzynth@gmail.com?subject=Feature%20Request' },
+    { key: 'bug',     title: 'Report a Bug',        description: 'Send issues, screenshots and steps to reproduce.', icon: Bug,      color: '#ef4444', href: 'mailto:getzynth@gmail.com?subject=Bug%20Report' },
+    { key: 'product', title: 'General Feedback',    description: "Tell us what's confusing or should improve.",  icon: MessageSquare, color: '#3b82f6', href: 'mailto:getzynth@gmail.com?subject=Product%20Feedback' },
   ];
-  const heroBackground = isDark
-    ? 'linear-gradient(135deg, rgba(21,33,69,0.96) 0%, rgba(10,14,29,0.98) 58%, rgba(4,10,24,1) 100%)'
-    : 'linear-gradient(135deg, #eff6ff 0%, #ffffff 72%, #f8fbff 100%)';
-  const heroBorder = isDark ? 'rgba(59,130,246,0.22)' : 'rgba(59,130,246,0.16)';
-  const heroSubtitle = isDark ? 'rgba(226,232,240,0.78)' : '#52637a';
-  const heroShadow = isDark ? '0 30px 70px rgba(2,6,23,0.42)' : '0 22px 48px rgba(15,23,42,0.08)';
-  const sectionEyebrow = isDark ? 'rgba(148,163,184,0.86)' : '#64748b';
-  const cardSoftBg = isDark ? 'rgba(10,14,24,0.74)' : '#f8fbff';
-  const cardSoftBorder = isDark ? 'rgba(148,163,184,0.12)' : 'rgba(148,163,184,0.18)';
+
+  // ── Sidebar geometry ──────────────────────────────────────────────────────
+  const sidebarW   = 260;
+  const sidebarBg  = isDark ? '#0d1117' : '#f8fafc';
+  const sideBorder = isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.08)';
+
+  // ── Sidebar JSX (shared between desktop and mobile drawer) ───────────────
+  const SidebarInner = () => (
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden' }}>
+
+      {/* Logo row */}
+      <div style={{ padding: '18px 14px 14px', borderBottom: `1px solid ${sideBorder}`, flexShrink: 0 }}>
+        <button
+          onClick={backToHome}
+          style={{ display: 'flex', alignItems: 'center', gap: 10, background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
+        >
+          <div style={{ width: 30, height: 30, borderRadius: 9, background: 'linear-gradient(135deg, #2563eb, #06b6d4)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <LifeBuoy size={15} color="#fff" />
+          </div>
+          <span style={{ color: text0, fontWeight: 700, fontSize: 14, letterSpacing: '-0.01em' }}>Help Center</span>
+        </button>
+      </div>
+
+      {/* Search */}
+      <div style={{ padding: '10px 10px 6px', flexShrink: 0 }}>
+        <div style={{ position: 'relative' }}>
+          <Search size={13} style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', color: textMuted, pointerEvents: 'none' }} />
+          <input
+            type="text"
+            value={query}
+            onChange={e => setQuery(e.target.value)}
+            placeholder="Search articles..."
+            style={{ width: '100%', padding: '8px 28px 8px 28px', borderRadius: 8, border: `1px solid ${border}`, background: bg0, color: text0, fontSize: 13, outline: 'none', boxSizing: 'border-box' }}
+            onFocus={e => { e.target.style.borderColor = accent; e.target.style.boxShadow = '0 0 0 3px rgba(59,130,246,0.14)'; }}
+            onBlur={e => { e.target.style.borderColor = border; e.target.style.boxShadow = 'none'; }}
+          />
+          {query && (
+            <button onClick={() => setQuery('')} style={{ position: 'absolute', right: 8, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: textMuted, padding: 2, display: 'flex', alignItems: 'center' }}>
+              <X size={12} />
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Nav */}
+      <nav style={{ flex: 1, overflowY: 'auto', padding: '4px 8px 12px' }}>
+        {/* All Topics */}
+        <button
+          onClick={backToHome}
+          style={{
+            width: '100%', display: 'flex', alignItems: 'center', gap: 9, padding: '8px 10px', borderRadius: 7, border: 'none', cursor: 'pointer', textAlign: 'left', fontSize: 13, fontWeight: 600, transition: 'background 0.15s, color 0.15s', marginBottom: 6,
+            background: (!selectedCategory && !selectedArticle && !query) ? (isDark ? 'rgba(59,130,246,0.12)' : 'rgba(59,130,246,0.08)') : 'transparent',
+            color: (!selectedCategory && !selectedArticle && !query) ? accent : textMuted,
+          }}
+          onMouseOver={e => { if (selectedCategory || selectedArticle || query) { e.currentTarget.style.background = isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)'; e.currentTarget.style.color = text0; } }}
+          onMouseOut={e => { if (selectedCategory || selectedArticle || query) { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = textMuted; } }}
+        >
+          <Home size={14} />
+          All Topics
+        </button>
+
+        <div style={{ color: textMuted, fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', padding: '4px 10px 4px', marginBottom: 2 }}>
+          Categories
+        </div>
+
+        {CATEGORIES.map(cat => {
+          const isActive = cat.key === selectedCategory;
+          return (
+            <button
+              key={cat.key}
+              onClick={() => { setSelectedCategory(cat.key); setSelectedArticle(null); setQuery(''); setSidebarOpen(false); }}
+              style={{
+                width: '100%', display: 'flex', alignItems: 'center', gap: 9, padding: '7px 10px', borderRadius: 7, border: 'none', cursor: 'pointer', textAlign: 'left', fontSize: 13, transition: 'background 0.15s, color 0.15s', marginBottom: 1,
+                background: isActive ? (isDark ? 'rgba(59,130,246,0.12)' : 'rgba(59,130,246,0.08)') : 'transparent',
+                fontWeight: isActive ? 600 : 500,
+                color: isActive ? accent : textMuted,
+              }}
+              onMouseOver={e => { if (!isActive) { e.currentTarget.style.background = isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)'; e.currentTarget.style.color = text0; } }}
+              onMouseOut={e => { if (!isActive) { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = textMuted; } }}
+            >
+              <cat.icon size={14} color={isActive ? accent : cat.color} style={{ flexShrink: 0 }} />
+              <span style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{cat.title}</span>
+              <span style={{ fontSize: 11, color: textMuted, fontWeight: 500, flexShrink: 0 }}>{cat.articles.length}</span>
+            </button>
+          );
+        })}
+      </nav>
+
+      {/* Support footer */}
+      <div style={{ padding: '10px 10px 14px', borderTop: `1px solid ${sideBorder}`, flexShrink: 0 }}>
+        <a
+          href="mailto:getzynth@gmail.com"
+          style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 12px', borderRadius: 8, background: isDark ? 'rgba(59,130,246,0.08)' : 'rgba(59,130,246,0.06)', border: '1px solid rgba(59,130,246,0.16)', textDecoration: 'none', transition: 'background 0.15s' }}
+          onMouseOver={e => { e.currentTarget.style.background = isDark ? 'rgba(59,130,246,0.14)' : 'rgba(59,130,246,0.1)'; }}
+          onMouseOut={e => { e.currentTarget.style.background = isDark ? 'rgba(59,130,246,0.08)' : 'rgba(59,130,246,0.06)'; }}
+        >
+          <Mail size={14} color={accent} style={{ flexShrink: 0 }} />
+          <div>
+            <div style={{ color: text0, fontSize: 12, fontWeight: 600 }}>Contact Support</div>
+            <div style={{ color: textMuted, fontSize: 11 }}>getzynth@gmail.com</div>
+          </div>
+        </a>
+      </div>
+    </div>
+  );
 
   return (
-    <div style={{ height: '100%', minHeight: 0, background: bg0 }}>
-      <div style={{ height: '100%', overflowY: 'auto', background: bg0 }}>
+    <div style={{ display: 'flex', height: '100%', background: bg0, minHeight: 0 }}>
 
-        {/* -- ARTICLE VIEW -- */}
+      {/* Mobile backdrop */}
+      {isMobile && sidebarOpen && (
+        <div
+          onClick={() => setSidebarOpen(false)}
+          style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.48)', zIndex: 40, backdropFilter: 'blur(2px)' }}
+        />
+      )}
+
+      {/* ── Sidebar ── */}
+      <aside style={{
+        width: sidebarW,
+        flexShrink: 0,
+        background: sidebarBg,
+        borderRight: `1px solid ${sideBorder}`,
+        position: isMobile ? 'fixed' : 'sticky',
+        top: 0,
+        left: isMobile ? (sidebarOpen ? 0 : -sidebarW - 1) : 0,
+        height: '100%',
+        zIndex: isMobile ? 50 : 1,
+        transition: isMobile ? 'left 0.24s cubic-bezier(.4,0,.2,1)' : 'none',
+        overflow: 'hidden',
+      }}>
+        {/* Mobile close */}
+        {isMobile && (
+          <button
+            onClick={() => setSidebarOpen(false)}
+            style={{ position: 'absolute', top: 12, right: 12, background: 'none', border: 'none', cursor: 'pointer', color: textMuted, zIndex: 2, display: 'flex', alignItems: 'center', padding: 4 }}
+          >
+            <X size={17} />
+          </button>
+        )}
+        <SidebarInner />
+      </aside>
+
+      {/* ── Main panel ── */}
+      <main style={{ flex: 1, minWidth: 0, height: '100%', overflowY: 'auto' }}>
+
+        {/* Mobile top bar */}
+        {isMobile && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px', borderBottom: `1px solid ${border}`, background: bg0, position: 'sticky', top: 0, zIndex: 10, flexShrink: 0 }}>
+            <button
+              onClick={() => setSidebarOpen(true)}
+              style={{ background: 'none', border: 'none', cursor: 'pointer', color: textMuted, padding: 4, display: 'flex', alignItems: 'center', flexShrink: 0 }}
+            >
+              <BookOpen size={20} />
+            </button>
+            <div style={{ position: 'relative', flex: 1 }}>
+              <Search size={14} style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', color: textMuted, pointerEvents: 'none' }} />
+              <input
+                type="text"
+                value={query}
+                onChange={e => setQuery(e.target.value)}
+                placeholder="Search..."
+                style={{ width: '100%', padding: '8px 10px 8px 30px', borderRadius: 8, border: `1px solid ${border}`, background: bg1, color: text0, fontSize: 14, outline: 'none', boxSizing: 'border-box' }}
+                onFocus={e => { e.target.style.borderColor = accent; e.target.style.boxShadow = '0 0 0 3px rgba(59,130,246,0.14)'; }}
+                onBlur={e => { e.target.style.borderColor = border; e.target.style.boxShadow = 'none'; }}
+              />
+            </div>
+          </div>
+        )}
+
+        {/* ═══════════════════════════════════════════
+            ARTICLE VIEW
+        ═══════════════════════════════════════════ */}
         {currentArticle && (
-          <div style={{ maxWidth: 720, margin: '0 auto', padding: '32px 32px 60px' }}>
+          <div style={{ maxWidth: 780, margin: '0 auto', padding: isMobile ? '24px 16px 80px' : '44px 52px 96px', width: '100%' }}>
+
             {/* Breadcrumb */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 24, flexWrap: 'wrap' }}>
-              <button onClick={backToHome} style={{ background: 'none', border: 'none', cursor: 'pointer', color: textMuted, fontSize: 12 }}>Help</button>
-              <ChevronRight size={12} color={textMuted} />
-              <button onClick={backToCategory} style={{ background: 'none', border: 'none', cursor: 'pointer', color: textMuted, fontSize: 12 }}>{currentCategory?.title}</button>
-              <ChevronRight size={12} color={textMuted} />
-              <span style={{ color: text0, fontSize: 12 }}>{currentArticle.title}</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 28, flexWrap: 'wrap' }}>
+              <button onClick={backToHome} style={{ background: 'none', border: 'none', cursor: 'pointer', color: textMuted, fontSize: 13, padding: 0, fontWeight: 500 }}>Help</button>
+              <ChevronRight size={13} color={textMuted} />
+              <button onClick={backToCategory} style={{ background: 'none', border: 'none', cursor: 'pointer', color: textMuted, fontSize: 13, padding: 0, fontWeight: 500 }}>{currentCategory?.title}</button>
+              <ChevronRight size={13} color={textMuted} />
+              <span style={{ color: text0, fontSize: 13, fontWeight: 600 }}>{currentArticle.title}</span>
             </div>
 
-            {/* Back button */}
-            <button
-              onClick={backToCategory}
-              style={{ display: 'inline-flex', alignItems: 'center', gap: 6, marginBottom: 20, background: bg2, border: `1px solid ${border}`, borderRadius: 8, padding: '6px 12px', cursor: 'pointer', color: textMuted, fontSize: 13, transition: 'color 0.15s' }}
-              onMouseOver={e => e.currentTarget.style.color = text0}
-              onMouseOut={e => e.currentTarget.style.color = textMuted}
-            >
-              <ArrowLeft size={14} /> Back to {currentCategory?.title}
-            </button>
+            {/* Category badge */}
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '4px 10px', borderRadius: 999, background: `${currentCategory?.color || accent}14`, border: `1px solid ${currentCategory?.color || accent}28`, marginBottom: 14 }}>
+              {currentCategory && <currentCategory.icon size={12} color={currentCategory.color} />}
+              <span style={{ color: currentCategory?.color || accent, fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em' }}>{currentCategory?.title}</span>
+            </div>
 
-            {/* Article header */}
-            <h1 style={{ color: text0, fontWeight: 800, fontSize: 28, lineHeight: 1.25, margin: '0 0 8px', letterSpacing: '-0.02em' }}>
+            {/* Title */}
+            <h1 style={{ color: text0, fontWeight: 800, fontSize: isMobile ? 26 : 34, lineHeight: 1.15, margin: '0 0 12px', letterSpacing: '-0.03em' }}>
               {currentArticle.title}
             </h1>
-            <div style={{ color: textMuted, fontSize: 13, marginBottom: 28 }}>
-              Last updated: March 14, 2026 &nbsp;�&nbsp; {currentCategory?.title}
-            </div>
+            <p style={{ color: textMuted, fontSize: 16, margin: '0 0 0', lineHeight: 1.65 }}>
+              {currentArticle.excerpt}
+            </p>
 
-            {/* Article content */}
+            <div style={{ height: 1, background: border, margin: '28px 0 36px' }} />
+
+            {/* Content */}
             <div>
               <RenderContent content={currentArticle.content} theme={{ ...theme, isDark, text: text0, muted: textMuted, border }} />
             </div>
 
-            {/* Other articles in this category */}
+            {/* Related articles */}
             {currentCategory && currentCategory.articles.filter(a => a.id !== currentArticle.id).length > 0 && (
-              <div style={{ marginTop: 48, paddingTop: 24, borderTop: `1px solid ${border}` }}>
-                <div style={{ color: textMuted, fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 14 }}>
+              <div style={{ marginTop: 60, paddingTop: 28, borderTop: `1px solid ${border}` }}>
+                <div style={{ color: textMuted, fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.09em', marginBottom: 14 }}>
                   More in {currentCategory.title}
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -1376,141 +1472,129 @@ export default function HelpCenter() {
                     <button
                       key={art.id}
                       onClick={() => openArticle(art.id, currentCategory.key)}
-                      style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 16px', borderRadius: 8, background: bg1, border: `1px solid ${border}`, cursor: 'pointer', textAlign: 'left', transition: 'border-color 0.15s' }}
-                      onMouseOver={e => e.currentTarget.style.borderColor = accent}
-                      onMouseOut={e => e.currentTarget.style.borderColor = border}
+                      style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, padding: '13px 16px', borderRadius: 10, background: bg1, border: `1px solid ${border}`, cursor: 'pointer', textAlign: 'left', transition: 'border-color 0.15s, background 0.15s, transform 0.15s' }}
+                      onMouseOver={e => { e.currentTarget.style.borderColor = accent; e.currentTarget.style.background = isDark ? 'rgba(59,130,246,0.04)' : 'rgba(59,130,246,0.02)'; e.currentTarget.style.transform = 'translateX(3px)'; }}
+                      onMouseOut={e => { e.currentTarget.style.borderColor = border; e.currentTarget.style.background = bg1; e.currentTarget.style.transform = 'translateX(0)'; }}
                     >
-                      <div>
-                        <div style={{ color: text0, fontSize: 14, fontWeight: 600, marginBottom: 2 }}>{art.title}</div>
-                        <div style={{ color: textMuted, fontSize: 12 }}>{art.excerpt}</div>
+                      <div style={{ minWidth: 0 }}>
+                        <div style={{ color: text0, fontSize: 14, fontWeight: 600, marginBottom: 3, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{art.title}</div>
+                        <div style={{ color: textMuted, fontSize: 12, lineHeight: 1.5 }}>{art.excerpt}</div>
                       </div>
-                      <ChevronRight size={16} color={textMuted} style={{ flexShrink: 0, marginLeft: 12 }} />
+                      <ChevronRight size={15} color={textMuted} style={{ flexShrink: 0 }} />
                     </button>
                   ))}
                 </div>
               </div>
             )}
+
+            {/* Still need help CTA */}
+            <div style={{ marginTop: 52, padding: '20px 24px', borderRadius: 14, background: isDark ? 'rgba(59,130,246,0.06)' : 'rgba(59,130,246,0.04)', border: '1px solid rgba(59,130,246,0.16)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap' }}>
+              <div>
+                <div style={{ color: text0, fontWeight: 700, fontSize: 14, marginBottom: 3 }}>Still need help?</div>
+                <div style={{ color: textMuted, fontSize: 13 }}>Our support team typically replies within 24 hours.</div>
+              </div>
+              <a href="mailto:getzynth@gmail.com" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '9px 18px', borderRadius: 8, background: accent, color: '#fff', fontSize: 13, fontWeight: 700, textDecoration: 'none', flexShrink: 0, transition: 'opacity 0.15s' }} onMouseOver={e => { e.currentTarget.style.opacity = '0.88'; }} onMouseOut={e => { e.currentTarget.style.opacity = '1'; }}>
+                <Mail size={14} />
+                Contact Support
+              </a>
+            </div>
           </div>
         )}
 
-        {/* -- CATEGORY OVERVIEW -- */}
+        {/* ═══════════════════════════════════════════
+            CATEGORY VIEW
+        ═══════════════════════════════════════════ */}
         {!currentArticle && currentCategory && (
-          <div style={{ maxWidth: 900, margin: '0 auto', padding: '32px 32px 60px' }}>
+          <div style={{ maxWidth: 860, margin: '0 auto', padding: isMobile ? '24px 16px 80px' : '44px 52px 96px', width: '100%' }}>
+
             {/* Breadcrumb */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 24 }}>
-              <button onClick={backToHome} style={{ background: 'none', border: 'none', cursor: 'pointer', color: textMuted, fontSize: 12 }}>Help</button>
-              <ChevronRight size={12} color={textMuted} />
-              <span style={{ color: text0, fontSize: 12 }}>{currentCategory.title}</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 28, flexWrap: 'wrap' }}>
+              <button onClick={backToHome} style={{ background: 'none', border: 'none', cursor: 'pointer', color: textMuted, fontSize: 13, padding: 0, fontWeight: 500 }}>Help</button>
+              <ChevronRight size={13} color={textMuted} />
+              <span style={{ color: text0, fontSize: 13, fontWeight: 600 }}>{currentCategory.title}</span>
             </div>
 
             {/* Category header */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 8 }}>
-              <div style={{ width: 52, height: 52, borderRadius: 14, background: `${currentCategory.color}18`, border: `1px solid ${currentCategory.color}30`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: 18, marginBottom: 8 }}>
+              <div style={{ width: 54, height: 54, borderRadius: 15, background: `${currentCategory.color}18`, border: `1px solid ${currentCategory.color}30`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                 <currentCategory.icon size={26} color={currentCategory.color} />
               </div>
               <div>
-                <h1 style={{ color: text0, fontWeight: 800, fontSize: 26, margin: 0 }}>{currentCategory.title}</h1>
-                <p style={{ color: textMuted, fontSize: 14, margin: '4px 0 0' }}>{currentCategory.description}</p>
+                <h1 style={{ color: text0, fontWeight: 800, fontSize: isMobile ? 24 : 30, margin: 0, letterSpacing: '-0.02em' }}>{currentCategory.title}</h1>
+                <p style={{ color: textMuted, fontSize: 14, margin: '6px 0 0', lineHeight: 1.65 }}>{currentCategory.description}</p>
               </div>
             </div>
-            <div style={{ height: 1, background: border, margin: '20px 0 24px' }} />
+            <div style={{ height: 1, background: border, margin: '22px 0 30px' }} />
 
-            {/* Article cards grid */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 14 }}>
-              {currentCategory.articles.map((art, i) => (
+            {/* Articles */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+              {currentCategory.articles.map((art, idx) => (
                 <button
                   key={art.id}
                   onClick={() => openArticle(art.id, currentCategory.key)}
-                  style={{
-                    textAlign: 'left', padding: '18px 20px', borderRadius: 10,
-                    background: bg1, border: `1px solid ${border}`,
-                    cursor: 'pointer', transition: 'border-color 0.15s, box-shadow 0.15s',
-                    display: 'flex', flexDirection: 'column', gap: 6,
-                  }}
-                  onMouseOver={e => { e.currentTarget.style.borderColor = accent; e.currentTarget.style.boxShadow = `0 0 0 3px rgba(59,130,246,0.1)`; }}
-                  onMouseOut={e => { e.currentTarget.style.borderColor = border; e.currentTarget.style.boxShadow = 'none'; }}
+                  style={{ display: 'flex', alignItems: 'center', gap: 16, padding: '16px 20px', borderRadius: 12, background: bg1, border: `1px solid ${border}`, cursor: 'pointer', textAlign: 'left', transition: 'border-color 0.15s, box-shadow 0.15s, transform 0.15s' }}
+                  onMouseOver={e => { e.currentTarget.style.borderColor = accent; e.currentTarget.style.boxShadow = `0 4px 20px rgba(59,130,246,0.1)`; e.currentTarget.style.transform = 'translateY(-1px)'; }}
+                  onMouseOut={e => { e.currentTarget.style.borderColor = border; e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.transform = 'translateY(0)'; }}
                 >
-                  <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
-                    <div style={{ color: textMuted, fontSize: 11, fontWeight: 600, background: bg2, padding: '2px 8px', borderRadius: 999, marginBottom: 6 }}>
-                      #{i + 1}
-                    </div>
-                    <ChevronRight size={14} color={textMuted} />
+                  <div style={{ width: 36, height: 36, borderRadius: 10, background: `${currentCategory.color}14`, border: `1px solid ${currentCategory.color}22`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, color: currentCategory.color, fontSize: 13, fontWeight: 700 }}>
+                    {idx + 1}
                   </div>
-                  <div style={{ color: text0, fontWeight: 700, fontSize: 14, lineHeight: 1.3 }}>{art.title}</div>
-                  <div style={{ color: textMuted, fontSize: 13, lineHeight: 1.5 }}>{art.excerpt}</div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ color: text0, fontWeight: 700, fontSize: 15, marginBottom: 4 }}>{art.title}</div>
+                    <div style={{ color: textMuted, fontSize: 13, lineHeight: 1.5 }}>{art.excerpt}</div>
+                  </div>
+                  <ChevronRight size={16} color={textMuted} style={{ flexShrink: 0 }} />
                 </button>
               ))}
             </div>
           </div>
         )}
 
-        {/* -- SEARCH RESULTS -- */}
+        {/* ═══════════════════════════════════════════
+            SEARCH RESULTS
+        ═══════════════════════════════════════════ */}
         {!currentArticle && !currentCategory && query.trim() !== '' && (
-          <div style={{ maxWidth: 980, margin: '0 auto', padding: '32px 32px 60px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, marginBottom: 18, flexWrap: 'wrap' }}>
+          <div style={{ maxWidth: 860, margin: '0 auto', padding: isMobile ? '24px 16px 80px' : '44px 52px 96px', width: '100%' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, marginBottom: 28, flexWrap: 'wrap' }}>
               <div>
-                <div style={{ color: text0, fontWeight: 800, fontSize: 28, letterSpacing: '-0.02em', marginBottom: 6 }}>Search Results</div>
+                <h1 style={{ color: text0, fontWeight: 800, fontSize: 26, letterSpacing: '-0.02em', margin: '0 0 6px' }}>Search Results</h1>
                 <div style={{ color: textMuted, fontSize: 14 }}>
-                  {searchResults.length} result{searchResults.length !== 1 ? 's' : ''} for "{query}"
+                  <strong style={{ color: text0 }}>{searchResults.length}</strong> result{searchResults.length !== 1 ? 's' : ''} for &ldquo;{query}&rdquo;
                 </div>
               </div>
-              <button
-                onClick={() => setQuery('')}
-                style={{
-                  padding: '9px 14px',
-                  borderRadius: 10,
-                  border: `1px solid ${border}`,
-                  background: bg1,
-                  color: textMuted,
-                  cursor: 'pointer',
-                  fontSize: 13,
-                  fontWeight: 600,
-                }}
-              >
-                Clear Search
+              <button onClick={() => setQuery('')} style={{ padding: '8px 14px', borderRadius: 8, border: `1px solid ${border}`, background: bg1, color: textMuted, cursor: 'pointer', fontSize: 13, fontWeight: 600 }}>
+                Clear
               </button>
             </div>
 
             {searchResults.length === 0 ? (
-              <div style={{ background: bg1, border: `1px solid ${border}`, borderRadius: 22, padding: '34px 28px', textAlign: 'center' }}>
-                <div style={{ width: 56, height: 56, margin: '0 auto 16px', borderRadius: 16, background: 'rgba(59,130,246,0.12)', border: '1px solid rgba(59,130,246,0.18)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <Search size={26} color={accent} />
+              <div style={{ textAlign: 'center', padding: '60px 28px', background: bg1, border: `1px solid ${border}`, borderRadius: 16 }}>
+                <div style={{ width: 50, height: 50, margin: '0 auto 14px', borderRadius: 14, background: 'rgba(59,130,246,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <Search size={22} color={accent} />
                 </div>
-                <div style={{ color: text0, fontSize: 18, fontWeight: 700, marginBottom: 8 }}>No help articles found</div>
-                <div style={{ color: textMuted, fontSize: 14, lineHeight: 1.65, marginBottom: 14 }}>Try a different keyword, or contact support if you need direct help.</div>
+                <div style={{ color: text0, fontSize: 18, fontWeight: 700, marginBottom: 8 }}>No results found</div>
+                <div style={{ color: textMuted, fontSize: 14, lineHeight: 1.65, marginBottom: 14 }}>Try different keywords, or contact support directly.</div>
                 <a href="mailto:getzynth@gmail.com" style={{ color: accent, fontSize: 14, fontWeight: 700, textDecoration: 'none' }}>getzynth@gmail.com</a>
               </div>
             ) : (
-              <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: 12 }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                 {searchResults.map(art => (
                   <button
                     key={art.id}
                     onClick={() => openArticle(art.id, art.categoryKey)}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      gap: 16,
-                      padding: '16px 18px',
-                      borderRadius: 18,
-                      background: bg1,
-                      border: `1px solid ${border}`,
-                      cursor: 'pointer',
-                      textAlign: 'left',
-                      transition: 'border-color 0.15s, box-shadow 0.15s',
-                    }}
-                    onMouseOver={e => { e.currentTarget.style.borderColor = accent; e.currentTarget.style.boxShadow = isDark ? '0 12px 28px rgba(2,6,23,0.3)' : '0 12px 24px rgba(15,23,42,0.06)'; }}
+                    style={{ display: 'flex', alignItems: 'center', gap: 16, padding: '16px 20px', borderRadius: 12, background: bg1, border: `1px solid ${border}`, cursor: 'pointer', textAlign: 'left', transition: 'border-color 0.15s, box-shadow 0.15s' }}
+                    onMouseOver={e => { e.currentTarget.style.borderColor = accent; e.currentTarget.style.boxShadow = isDark ? '0 8px 24px rgba(2,6,23,0.3)' : '0 8px 20px rgba(15,23,42,0.07)'; }}
                     onMouseOut={e => { e.currentTarget.style.borderColor = border; e.currentTarget.style.boxShadow = 'none'; }}
                   >
-                    <div style={{ minWidth: 0 }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8, flexWrap: 'wrap' }}>
-                        {art.categoryIcon && <art.categoryIcon size={13} color={art.categoryColor ?? textMuted} style={{ flexShrink: 0 }} />}
-                        <span style={{ color: textMuted, fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em' }}>{art.categoryTitle}</span>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 6, flexWrap: 'wrap' }}>
+                        {art.categoryIcon && <art.categoryIcon size={12} color={art.categoryColor ?? textMuted} style={{ flexShrink: 0 }} />}
+                        <span style={{ color: art.categoryColor ?? textMuted, fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em' }}>{art.categoryTitle}</span>
                       </div>
-                      <div style={{ color: text0, fontSize: 15, fontWeight: 700, marginBottom: 6, lineHeight: 1.35 }}>{art.title}</div>
+                      <div style={{ color: text0, fontSize: 15, fontWeight: 700, marginBottom: 5 }}>{art.title}</div>
                       <div style={{ color: textMuted, fontSize: 13, lineHeight: 1.55 }}>{art.excerpt}</div>
                     </div>
-                    <ChevronRight size={16} color={textMuted} style={{ flexShrink: 0 }} />
+                    <ChevronRight size={15} color={textMuted} style={{ flexShrink: 0 }} />
                   </button>
                 ))}
               </div>
@@ -1518,244 +1602,200 @@ export default function HelpCenter() {
           </div>
         )}
 
-        {/* -- WELCOME / HOME SCREEN -- */}
+        {/* ═══════════════════════════════════════════
+            HOME VIEW
+        ═══════════════════════════════════════════ */}
         {!currentArticle && !currentCategory && query.trim() === '' && (
-          <div style={{ maxWidth: 1080, margin: '0 auto', padding: '32px 32px 60px' }}>
-            <div style={{
-              background: heroBackground,
-              border: `1px solid ${heroBorder}`,
-              borderRadius: 28,
-              padding: isMobile ? '24px 20px' : '34px 38px',
-              boxShadow: heroShadow,
-              marginBottom: 24,
-              overflow: 'hidden',
-            }}>
-              <div style={{ display: 'flex', alignItems: isMobile ? 'flex-start' : 'center', justifyContent: 'space-between', gap: 24, flexDirection: isMobile ? 'column' : 'row' }}>
-                <div style={{ display: 'flex', alignItems: 'flex-start', gap: 16, maxWidth: 620 }}>
-                  <div style={{ width: 64, height: 64, borderRadius: 20, background: 'linear-gradient(135deg, #2563eb, #06b6d4)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 18px 34px rgba(37,99,235,0.32)', flexShrink: 0 }}>
-                    <LifeBuoy size={30} color="#fff" />
-                  </div>
-                  <div>
-                    <div style={{ color: sectionEyebrow, fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 8 }}>Support Center</div>
-                    <h1 style={{ color: text0, fontWeight: 800, fontSize: isMobile ? 30 : 42, lineHeight: 1.05, margin: '0 0 10px', letterSpacing: '-0.03em' }}>
-                      Help &amp; Support
-                    </h1>
-                    <p style={{ color: heroSubtitle, fontSize: isMobile ? 14 : 16, lineHeight: 1.7, margin: 0, maxWidth: 520 }}>
-                      Find answers quickly, explore product guides, and contact the Zynth team when you need direct help.
-                    </p>
-                  </div>
-                </div>
+          <div style={{ maxWidth: 920, margin: '0 auto', padding: isMobile ? '24px 16px 80px' : '44px 48px 96px', width: '100%' }}>
 
-                <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-                  <div style={{ padding: '10px 14px', borderRadius: 999, background: cardSoftBg, border: `1px solid ${cardSoftBorder}`, color: text0, fontSize: 12, fontWeight: 600 }}>
-                    {totalArticles} help articles
-                  </div>
-                  <div style={{ padding: '10px 14px', borderRadius: 999, background: cardSoftBg, border: `1px solid ${cardSoftBorder}`, color: text0, fontSize: 12, fontWeight: 600, display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <Clock3 size={14} color={accent} />
-                    Replies within 24 hours
-                  </div>
+            {/* Hero banner */}
+            <div style={{
+              background: isDark ? 'linear-gradient(135deg, rgba(21,33,69,0.97) 0%, rgba(10,14,29,0.99) 60%, rgba(4,10,24,1) 100%)' : 'linear-gradient(135deg, #eff6ff 0%, #f8fbff 100%)',
+              border: `1px solid ${isDark ? 'rgba(59,130,246,0.2)' : 'rgba(59,130,246,0.14)'}`,
+              borderRadius: isMobile ? 16 : 22,
+              padding: isMobile ? '28px 20px' : '42px 44px',
+              marginBottom: 32,
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 16 }}>
+                <div style={{ width: 52, height: 52, borderRadius: 16, background: 'linear-gradient(135deg, #2563eb, #06b6d4)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 12px 28px rgba(37,99,235,0.28)', flexShrink: 0 }}>
+                  <LifeBuoy size={26} color="#fff" />
+                </div>
+                <div>
+                  <div style={{ color: isDark ? 'rgba(148,163,184,0.86)' : '#64748b', fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em' }}>Support Center</div>
+                  <h1 style={{ color: text0, fontWeight: 800, fontSize: isMobile ? 26 : 38, lineHeight: 1.1, margin: 0, letterSpacing: '-0.03em' }}>
+                    How can we help?
+                  </h1>
                 </div>
               </div>
+              <p style={{ color: isDark ? 'rgba(226,232,240,0.78)' : '#52637a', fontSize: isMobile ? 14 : 16, lineHeight: 1.7, margin: '0 0 22px', maxWidth: 540 }}>
+                Find answers quickly, explore product guides, and contact the Zynth team when you need direct help.
+              </p>
 
-              <div style={{ position: 'relative', marginTop: 26, maxWidth: 620 }}>
-                <Search size={18} style={{ position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)', color: textMuted }} />
+              {/* Hero search */}
+              <div style={{ position: 'relative', maxWidth: 580 }}>
+                <Search size={18} style={{ position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)', color: textMuted, pointerEvents: 'none' }} />
                 <input
                   type="text"
                   value={query}
                   onChange={e => setQuery(e.target.value)}
-                  placeholder="Search guides, billing, analytics, or settings..."
+                  placeholder="Search guides, billing, analytics, settings..."
                   style={{
                     width: '100%',
-                    padding: '14px 16px 14px 48px',
-                    borderRadius: 14,
-                    border: `1px solid ${isDark ? 'rgba(148,163,184,0.16)' : border}`,
-                    background: isDark ? 'rgba(6,10,22,0.76)' : '#ffffff',
+                    padding: '14px 120px 14px 48px',
+                    borderRadius: 12,
+                    border: `1px solid ${isDark ? 'rgba(148,163,184,0.18)' : border}`,
+                    background: isDark ? 'rgba(6,10,22,0.82)' : '#ffffff',
                     color: text0,
                     fontSize: 15,
                     outline: 'none',
                     boxSizing: 'border-box',
-                    boxShadow: isDark ? '0 12px 28px rgba(2,6,23,0.28)' : '0 10px 24px rgba(15,23,42,0.06)',
+                    boxShadow: isDark ? '0 8px 28px rgba(2,6,23,0.32)' : '0 8px 22px rgba(15,23,42,0.07)',
+                    transition: 'border-color 0.15s, box-shadow 0.15s',
                   }}
+                  onFocus={e => { e.target.style.borderColor = accent; e.target.style.boxShadow = `0 0 0 3px rgba(59,130,246,0.15), ${isDark ? '0 8px 28px rgba(2,6,23,0.32)' : '0 8px 22px rgba(15,23,42,0.07)'}`; }}
+                  onBlur={e => { e.target.style.borderColor = isDark ? 'rgba(148,163,184,0.18)' : border; e.target.style.boxShadow = isDark ? '0 8px 28px rgba(2,6,23,0.32)' : '0 8px 22px rgba(15,23,42,0.07)'; }}
                 />
-              </div>
-            </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: 18, marginBottom: 28 }}>
-              <div style={{ background: bg1, border: `1px solid ${border}`, borderRadius: 22, padding: '24px 24px 22px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 18 }}>
-                  <div style={{ width: 44, height: 44, borderRadius: 14, background: 'rgba(59,130,246,0.12)', border: '1px solid rgba(59,130,246,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <Mail size={20} color={accent} />
+                <div style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '4px 8px', borderRadius: 6, background: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.05)', border: `1px solid ${isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'}` }}>
+                    <Clock3 size={11} color={textMuted} />
+                    <span style={{ color: textMuted, fontSize: 11, fontWeight: 600 }}>24hr response</span>
                   </div>
-                  <div>
-                    <div style={{ color: text0, fontSize: 22, fontWeight: 800, letterSpacing: '-0.02em' }}>Contact Support</div>
-                    <div style={{ color: textMuted, fontSize: 14, marginTop: 4 }}>Reach the Zynth team for account, billing, or platform questions.</div>
-                  </div>
-                </div>
-
-                <a
-                  href="mailto:getzynth@gmail.com"
-                  style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 14, padding: '18px 18px', borderRadius: 18, textDecoration: 'none', background: isDark ? 'rgba(15,23,42,0.66)' : '#f8fbff', border: `1px solid ${isDark ? 'rgba(59,130,246,0.18)' : 'rgba(59,130,246,0.14)'}`, marginBottom: 14 }}
-                >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-                    <div style={{ width: 46, height: 46, borderRadius: 14, background: 'linear-gradient(135deg, #2563eb, #3b82f6)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                      <Mail size={20} color="#fff" />
-                    </div>
-                    <div>
-                      <div style={{ color: textMuted, fontSize: 12, marginBottom: 4 }}>Email Support</div>
-                      <div style={{ color: text0, fontSize: 18, fontWeight: 800, letterSpacing: '-0.02em' }}>getzynth@gmail.com</div>
-                      <div style={{ color: textMuted, fontSize: 13, marginTop: 4 }}>Typical response time: within 24 hours</div>
-                    </div>
-                  </div>
-                  <ArrowUpRight size={18} color={textMuted} style={{ flexShrink: 0 }} />
-                </a>
-
-                <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: 12 }}>
-                  <div style={{ padding: '16px 16px', borderRadius: 18, background: cardSoftBg, border: `1px solid ${cardSoftBorder}` }}>
-                    <div style={{ color: text0, fontSize: 14, fontWeight: 700, marginBottom: 6 }}>Billing and subscriptions</div>
-                    <div style={{ color: textMuted, fontSize: 13, lineHeight: 1.6 }}>Questions about upgrades, payments, refunds, or founding member pricing.</div>
-                  </div>
-                  <div style={{ padding: '16px 16px', borderRadius: 18, background: cardSoftBg, border: `1px solid ${cardSoftBorder}` }}>
-                    <div style={{ color: text0, fontSize: 14, fontWeight: 700, marginBottom: 6 }}>Account and setup</div>
-                    <div style={{ color: textMuted, fontSize: 13, lineHeight: 1.6 }}>Help with timezone, theme, passwords, profile setup, and account access.</div>
-                  </div>
-                </div>
-              </div>
-
-              <div style={{ background: bg1, border: `1px solid ${border}`, borderRadius: 22, padding: '24px 24px 22px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 18 }}>
-                  <div style={{ width: 44, height: 44, borderRadius: 14, background: 'rgba(99,102,241,0.12)', border: '1px solid rgba(99,102,241,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <MessageSquare size={20} color="#6366f1" />
-                  </div>
-                  <div>
-                    <div style={{ color: text0, fontSize: 22, fontWeight: 800, letterSpacing: '-0.02em' }}>Feedback &amp; Suggestions</div>
-                    <div style={{ color: textMuted, fontSize: 14, marginTop: 4 }}>Found something confusing, missing, or broken? Send it directly to us.</div>
-                  </div>
-                </div>
-
-                <div style={{ color: textMuted, fontSize: 14, lineHeight: 1.7, marginBottom: 16 }}>
-                  Product feedback helps improve the platform for everyone. Use one of the actions below to send the right type of request.
-                </div>
-
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 10, marginBottom: 16 }}>
-                  {feedbackActions.map(action => (
-                    <a
-                      key={action.key}
-                      href={action.href}
-                      style={{
-                        width: '100%',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        gap: 14,
-                        padding: '14px 16px',
-                        borderRadius: 16,
-                        border: `1px solid ${border}`,
-                        background: cardSoftBg,
-                        textAlign: 'left',
-                        cursor: 'pointer',
-                        textDecoration: 'none',
-                        transition: 'border-color 0.15s, transform 0.15s',
-                      }}
-                      onMouseOver={e => { e.currentTarget.style.borderColor = action.color; e.currentTarget.style.transform = 'translateY(-1px)'; }}
-                      onMouseOut={e => { e.currentTarget.style.borderColor = border; e.currentTarget.style.transform = 'translateY(0)'; }}
-                    >
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 14, minWidth: 0 }}>
-                        <div style={{ width: 42, height: 42, borderRadius: 13, background: `${action.color}18`, border: `1px solid ${action.color}26`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                          <action.icon size={19} color={action.color} />
-                        </div>
-                        <div style={{ minWidth: 0 }}>
-                          <div style={{ color: text0, fontSize: 14, fontWeight: 700, marginBottom: 4 }}>{action.title}</div>
-                          <div style={{ color: textMuted, fontSize: 12, lineHeight: 1.5 }}>{action.description}</div>
-                        </div>
-                      </div>
-                      <ChevronRight size={16} color={textMuted} style={{ flexShrink: 0 }} />
-                    </a>
-                  ))}
-                </div>
-
-                <div style={{ padding: '16px 16px', borderRadius: 18, background: cardSoftBg, border: `1px solid ${cardSoftBorder}` }}>
-                  <div style={{ color: text0, fontSize: 14, fontWeight: 700, marginBottom: 6 }}>Need a fast answer first?</div>
-                  <div style={{ color: textMuted, fontSize: 13, lineHeight: 1.6 }}>Browse the help topics below for immediate answers about journaling, analytics, billing, and settings.</div>
                 </div>
               </div>
             </div>
 
-            <div style={{ marginBottom: 28 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
-                <Star size={15} color={accent} />
+            {/* Popular articles */}
+            <div style={{ marginBottom: 36 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
+                <Star size={14} color={accent} />
                 <span style={{ color: text0, fontWeight: 700, fontSize: 15 }}>Popular Guides</span>
               </div>
-              <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: 12 }}>
-                {popularArticles.slice(0, 6).map(art => (
-                  <button
-                    key={art.id}
-                    onClick={() => openArticle(art.id, art.categoryKey)}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      gap: 16,
-                      padding: '16px 18px',
-                      borderRadius: 18,
-                      background: bg1,
-                      border: `1px solid ${border}`,
-                      cursor: 'pointer',
-                      textAlign: 'left',
-                      transition: 'border-color 0.15s, box-shadow 0.15s',
-                    }}
-                    onMouseOver={e => { e.currentTarget.style.borderColor = accent; e.currentTarget.style.boxShadow = isDark ? '0 12px 28px rgba(2,6,23,0.3)' : '0 12px 24px rgba(15,23,42,0.06)'; }}
-                    onMouseOut={e => { e.currentTarget.style.borderColor = border; e.currentTarget.style.boxShadow = 'none'; }}
-                  >
-                    <div style={{ minWidth: 0 }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8, flexWrap: 'wrap' }}>
-                        {art.categoryIcon && <art.categoryIcon size={13} color={art.categoryColor ?? textMuted} style={{ flexShrink: 0 }} />}
-                        <span style={{ color: textMuted, fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em' }}>{art.categoryTitle}</span>
+              <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: 10 }}>
+                {popularArticles.map(art => {
+                  const cat = CATEGORIES.find(c => c.key === art.categoryKey);
+                  return (
+                    <button
+                      key={art.id}
+                      onClick={() => openArticle(art.id, art.categoryKey)}
+                      style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '14px 16px', borderRadius: 12, background: bg1, border: `1px solid ${border}`, cursor: 'pointer', textAlign: 'left', transition: 'border-color 0.15s, box-shadow 0.15s, transform 0.15s' }}
+                      onMouseOver={e => { e.currentTarget.style.borderColor = accent; e.currentTarget.style.boxShadow = `0 4px 18px rgba(59,130,246,0.1)`; e.currentTarget.style.transform = 'translateY(-1px)'; }}
+                      onMouseOut={e => { e.currentTarget.style.borderColor = border; e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.transform = 'translateY(0)'; }}
+                    >
+                      <div style={{ width: 38, height: 38, borderRadius: 10, background: `${cat?.color || accent}14`, border: `1px solid ${cat?.color || accent}22`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                        {cat && <cat.icon size={18} color={cat.color} />}
                       </div>
-                      <div style={{ color: text0, fontSize: 15, fontWeight: 700, marginBottom: 6, lineHeight: 1.35 }}>{art.title}</div>
-                      <div style={{ color: textMuted, fontSize: 13, lineHeight: 1.55 }}>{art.excerpt}</div>
-                    </div>
-                    <ChevronRight size={16} color={textMuted} style={{ flexShrink: 0 }} />
-                  </button>
-                ))}
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ color: text0, fontSize: 14, fontWeight: 700, marginBottom: 3 }}>{art.title}</div>
+                        <div style={{ color: textMuted, fontSize: 12, lineHeight: 1.5, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{art.excerpt}</div>
+                      </div>
+                      <ChevronRight size={14} color={textMuted} style={{ flexShrink: 0 }} />
+                    </button>
+                  );
+                })}
               </div>
             </div>
 
-            <div>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, marginBottom: 14, flexWrap: 'wrap' }}>
-                <div>
-                  <div style={{ color: text0, fontWeight: 700, fontSize: 18, marginBottom: 4 }}>Help Topics</div>
-                  <div style={{ color: textMuted, fontSize: 13 }}>Browse documentation by product area.</div>
-                </div>
-                <div style={{ color: textMuted, fontSize: 12 }}>{totalArticles} total articles</div>
+            {/* Browse topics grid */}
+            <div style={{ marginBottom: 36 }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+                <span style={{ color: text0, fontWeight: 700, fontSize: 15 }}>Browse by Topic</span>
+                <span style={{ color: textMuted, fontSize: 12 }}>{totalArticles} articles total</span>
               </div>
-
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 12 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr 1fr' : 'repeat(4, 1fr)', gap: 12 }}>
                 {CATEGORIES.map(cat => (
                   <button
                     key={cat.key}
                     onClick={() => { setSelectedCategory(cat.key); setSelectedArticle(null); }}
-                    style={{
-                      textAlign: 'left', padding: '18px 18px', borderRadius: 18,
-                      background: bg1, border: `1px solid ${border}`,
-                      cursor: 'pointer', transition: 'border-color 0.15s, box-shadow 0.15s, transform 0.15s',
-                    }}
-                    onMouseOver={e => { e.currentTarget.style.borderColor = accent; e.currentTarget.style.boxShadow = `0 0 0 3px rgba(59,130,246,0.1)`; e.currentTarget.style.transform = 'translateY(-1px)'; }}
+                    style={{ textAlign: 'left', padding: '18px 16px', borderRadius: 14, background: bg1, border: `1px solid ${border}`, cursor: 'pointer', transition: 'border-color 0.18s, box-shadow 0.18s, transform 0.18s' }}
+                    onMouseOver={e => { e.currentTarget.style.borderColor = cat.color; e.currentTarget.style.boxShadow = `0 6px 22px ${cat.color}20`; e.currentTarget.style.transform = 'translateY(-2px)'; }}
                     onMouseOut={e => { e.currentTarget.style.borderColor = border; e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.transform = 'translateY(0)'; }}
                   >
-                    <div style={{ width: 42, height: 42, borderRadius: 13, background: `${cat.color}18`, border: `1px solid ${cat.color}28`, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 14 }}>
+                    <div style={{ width: 40, height: 40, borderRadius: 11, background: `${cat.color}16`, border: `1px solid ${cat.color}26`, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 12 }}>
                       <cat.icon size={20} color={cat.color} />
                     </div>
-                    <div style={{ color: text0, fontWeight: 700, fontSize: 14, marginBottom: 6 }}>{cat.title}</div>
-                    <div style={{ color: textMuted, fontSize: 12, lineHeight: 1.55, marginBottom: 10 }}>{cat.description}</div>
-                    <div style={{ color: textMuted, fontSize: 11, fontWeight: 600 }}>{cat.articles.length} articles</div>
+                    <div style={{ color: text0, fontWeight: 700, fontSize: 13, marginBottom: 5 }}>{cat.title}</div>
+                    <div style={{ color: textMuted, fontSize: 11, lineHeight: 1.55, marginBottom: 8 }}>{cat.description}</div>
+                    <div style={{ color: cat.color, fontSize: 11, fontWeight: 700 }}>{cat.articles.length} articles →</div>
                   </button>
                 ))}
               </div>
             </div>
+
+            {/* Contact & Feedback */}
+            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: 16 }}>
+
+              {/* Contact Support */}
+              <div style={{ background: bg1, border: `1px solid ${border}`, borderRadius: 16, padding: '24px 22px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 18 }}>
+                  <div style={{ width: 40, height: 40, borderRadius: 12, background: 'rgba(59,130,246,0.12)', border: '1px solid rgba(59,130,246,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Mail size={18} color={accent} />
+                  </div>
+                  <div>
+                    <div style={{ color: text0, fontSize: 16, fontWeight: 800 }}>Contact Support</div>
+                    <div style={{ color: textMuted, fontSize: 13, marginTop: 2 }}>Replies within 24 hours</div>
+                  </div>
+                </div>
+                <a
+                  href="mailto:getzynth@gmail.com"
+                  style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '14px 16px', borderRadius: 10, textDecoration: 'none', background: isDark ? 'rgba(15,23,42,0.6)' : '#f8fbff', border: '1px solid rgba(59,130,246,0.16)', marginBottom: 12, transition: 'border-color 0.15s' }}
+                  onMouseOver={e => { e.currentTarget.style.borderColor = accent; }}
+                  onMouseOut={e => { e.currentTarget.style.borderColor = 'rgba(59,130,246,0.16)'; }}
+                >
+                  <div style={{ width: 40, height: 40, borderRadius: 11, background: 'linear-gradient(135deg, #2563eb, #3b82f6)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <Mail size={18} color="#fff" />
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ color: text0, fontWeight: 700, fontSize: 14 }}>getzynth@gmail.com</div>
+                    <div style={{ color: textMuted, fontSize: 12, marginTop: 2 }}>General support and account help</div>
+                  </div>
+                  <ArrowUpRight size={16} color={textMuted} />
+                </a>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+                  {[{ label: 'Billing & Plans', desc: 'Upgrades, payments, refunds' }, { label: 'Account Setup', desc: 'Timezone, theme, profile' }].map(item => (
+                    <div key={item.label} style={{ padding: '12px 14px', borderRadius: 10, background: isDark ? 'rgba(10,14,24,0.7)' : '#f8fbff', border: `1px solid ${isDark ? 'rgba(148,163,184,0.1)' : 'rgba(148,163,184,0.18)'}` }}>
+                      <div style={{ color: text0, fontSize: 13, fontWeight: 700, marginBottom: 4 }}>{item.label}</div>
+                      <div style={{ color: textMuted, fontSize: 12, lineHeight: 1.5 }}>{item.desc}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Feedback */}
+              <div style={{ background: bg1, border: `1px solid ${border}`, borderRadius: 16, padding: '24px 22px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 18 }}>
+                  <div style={{ width: 40, height: 40, borderRadius: 12, background: 'rgba(99,102,241,0.12)', border: '1px solid rgba(99,102,241,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <MessageSquare size={18} color="#6366f1" />
+                  </div>
+                  <div>
+                    <div style={{ color: text0, fontSize: 16, fontWeight: 800 }}>Feedback & Ideas</div>
+                    <div style={{ color: textMuted, fontSize: 13, marginTop: 2 }}>Help shape the product</div>
+                  </div>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                  {feedbackActions.map(action => (
+                    <a
+                      key={action.key}
+                      href={action.href}
+                      style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 14px', borderRadius: 10, border: `1px solid ${border}`, background: isDark ? 'rgba(10,14,24,0.7)' : '#f8fbff', textDecoration: 'none', transition: 'border-color 0.15s, transform 0.15s' }}
+                      onMouseOver={e => { e.currentTarget.style.borderColor = action.color; e.currentTarget.style.transform = 'translateX(3px)'; }}
+                      onMouseOut={e => { e.currentTarget.style.borderColor = border; e.currentTarget.style.transform = 'translateX(0)'; }}
+                    >
+                      <div style={{ width: 36, height: 36, borderRadius: 10, background: `${action.color}14`, border: `1px solid ${action.color}26`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                        <action.icon size={17} color={action.color} />
+                      </div>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ color: text0, fontSize: 14, fontWeight: 700 }}>{action.title}</div>
+                        <div style={{ color: textMuted, fontSize: 12, marginTop: 2 }}>{action.description}</div>
+                      </div>
+                      <ChevronRight size={14} color={textMuted} style={{ flexShrink: 0 }} />
+                    </a>
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
         )}
-      </div>
+      </main>
     </div>
   );
 }
-

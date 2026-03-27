@@ -367,7 +367,8 @@ function AuthGate() {
     if (path === '/forgot-password') return 'forgotPassword';
     if (path === '/terms') return 'terms';
     if (path === '/privacy') return 'privacy';
-    if (path === '/refund-policy' || path === '/refund') return 'refundPolicy';
+    if (path === '/refund-policy') return 'refundPolicy';
+    if (path === '/refund') return 'refundSimple';
     if (path === '/pricing') return 'pricing';
     if (path === '/service-policy') return 'servicePolicy';
     if (path === '/services') return 'services';
@@ -473,6 +474,9 @@ function AuthGate() {
 
   if (view === 'refundPolicy')
     return <RefundPolicy onBack={() => setView('landing')} />
+
+  if (view === 'refundSimple')
+    return <RefundPage onBack={() => setView('landing')} />
 
   if (view === 'pricing')
     return <PricingPage onBack={() => setView('landing')} />
