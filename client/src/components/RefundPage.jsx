@@ -45,9 +45,15 @@ export default function RefundPage({ onBack }) {
         <div style={{ display: 'flex', flexDirection: 'column', gap: 20, fontSize: 15, lineHeight: 1.85, color: prose }}>
           <p>At Zynth, we strive to provide a valuable experience for all users.</p>
 
+          {/* 7-Day Guarantee callout */}
+          <div style={{ padding: '22px 24px', borderRadius: 14, background: isDark ? 'rgba(22,163,74,0.07)' : 'rgba(22,163,74,0.05)', border: `1px solid ${isDark ? 'rgba(22,163,74,0.25)' : 'rgba(22,163,74,0.2)'}` }}>
+            <p style={{ margin: '0 0 10px', fontWeight: 800, fontSize: 17, color: isDark ? '#4ade80' : '#16a34a' }}>7-Day Money Back Guarantee</p>
+            <p style={{ margin: 0 }}>If you are not satisfied within the first <strong style={{ color: isDark ? '#e2e8f0' : '#0f172a' }}>7 days</strong> of your subscription, you are eligible for a full refund. No questions asked.</p>
+          </div>
+
           <p>All subscriptions are billed in advance. Due to the nature of digital products, payments are generally non-refundable.</p>
 
-          <p>However, users may request a refund within <strong style={{ color: isDark ? '#e2e8f0' : '#0f172a' }}>7 days</strong> of the initial purchase by contacting support. Each request will be reviewed on a case-by-case basis.</p>
+          <p>After 7 days, refunds are not available. You may cancel your subscription anytime and retain access until the end of your billing period.</p>
 
           <p>Zynth reserves the right to approve or deny refund requests at its sole discretion.</p>
 
