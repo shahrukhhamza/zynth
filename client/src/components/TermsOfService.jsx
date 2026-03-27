@@ -258,7 +258,35 @@ export default function TermsOfService({ onBack }) {
           </Section>
 
           {/* Section 13 */}
-          <Section title="13. Contact">
+          <Section title="13. Subscription, Billing, and Refunds">
+            <p>Zynth offers both free and paid subscription plans ("Pro" and "Elite").</p>
+            <p>By subscribing to a paid plan, you agree to the following:</p>
+            <ul style={{ paddingLeft: 20, margin: '8px 0' }}>
+              <li style={{ marginBottom: 6 }}>Billing is recurring and charged on a monthly basis.</li>
+              <li style={{ marginBottom: 6 }}>Your subscription will automatically renew at the end of each billing period unless canceled before renewal.</li>
+              <li style={{ marginBottom: 6 }}>You are responsible for managing your subscription and cancellation.</li>
+            </ul>
+
+            <p style={{ fontWeight: 700, marginTop: 14 }}>Refund Policy</p>
+            <ul style={{ paddingLeft: 20, margin: '8px 0' }}>
+              <li style={{ marginBottom: 6 }}>We offer a 7-day money-back guarantee for new subscriptions.</li>
+              <li style={{ marginBottom: 6 }}>If you request a refund within 7 days of your initial payment, you will receive a full refund.</li>
+              <li style={{ marginBottom: 6 }}>Refunds are not available after the 7-day period.</li>
+              <li style={{ marginBottom: 6 }}>Abuse of the refund policy (e.g., repeated usage and refund requests) may result in denial of future refunds.</li>
+            </ul>
+
+            <p>To request a refund or cancel your subscription, contact: <a href="mailto:getzynth@gmail.com" style={{ color: '#3b82f6', textDecoration: 'none' }} onMouseEnter={e => (e.currentTarget.style.textDecoration = 'underline')} onMouseLeave={e => (e.currentTarget.style.textDecoration = 'none')}>getzynth@gmail.com</a></p>
+
+            <p style={{ fontWeight: 700, marginTop: 14 }}>Cancellation</p>
+            <ul style={{ paddingLeft: 20, margin: '8px 0' }}>
+              <li style={{ marginBottom: 6 }}>You may cancel your subscription at any time.</li>
+              <li style={{ marginBottom: 6 }}>After cancellation, you will retain access until the end of your current billing cycle.</li>
+              <li style={{ marginBottom: 6 }}>No partial refunds are provided for unused time beyond the refund window.</li>
+            </ul>
+          </Section>
+
+          {/* Section 14 */}
+          <Section title="14. Contact">
             <p>If you have questions about these Terms of Service, privacy practices, or need to request account deletion, please contact:</p>
             <div
               style={{
