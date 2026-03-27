@@ -66,6 +66,9 @@ export async function initDb() {
     `ALTER TABLE users ADD COLUMN IF NOT EXISTS avatar_url TEXT DEFAULT NULL`,
     `ALTER TABLE users ADD COLUMN IF NOT EXISTS terms_accepted INTEGER DEFAULT 0`,
     `ALTER TABLE users ADD COLUMN IF NOT EXISTS terms_accepted_at TIMESTAMPTZ DEFAULT NULL`,
+    // Monthly AI tracking for Pro plan
+    `ALTER TABLE users ADD COLUMN IF NOT EXISTS ai_monthly_count INTEGER DEFAULT 0`,
+    `ALTER TABLE users ADD COLUMN IF NOT EXISTS ai_month_reset TIMESTAMPTZ DEFAULT NOW()`,
   ];
 
   for (const sql of migrations) {
@@ -90,7 +93,7 @@ export async function findById(id) {
     `SELECT id, name, email, avatar, created_at, plan, plan_expires_at,
             ai_analysis_tries, screenshot_tries, is_admin, trading_experience,
             markets_traded, goals, avatar_color, onboarding_done, avatar_url,
-            terms_accepted, terms_accepted_at
+            terms_accepted, terms_accepted_at, ai_monthly_count, ai_month_reset
      FROM users WHERE id = $1`,
     [id]
   );
@@ -143,6 +146,60 @@ export async function incrementAiTries(id) {
     'UPDATE users SET ai_analysis_tries = ai_analysis_tries + 1 WHERE id = $1',
     [id]
   );
+}
+
+/**
+ * Increment the monthly AI counter for Pro users.
+ * Automatically resets the count when a new calendar month begins.
+ */
+export async function incrementMonthlyAiCount(id) {
+  const now = new Date();
+  const { rows } = await pool.query(
+    'SELECT ai_monthly_count, ai_month_reset FROM users WHERE id = $1',
+    [id]
+  );
+  if (!rows[0]) return;
+  const lastReset = rows[0].ai_month_reset ? new Date(rows[0].ai_month_reset) : null;
+  const sameMonth = lastReset &&
+    lastReset.getFullYear() === now.getFullYear() &&
+    lastReset.getMonth()    === now.getMonth();
+  if (!sameMonth) {
+    // New month — reset counter and mark reset time
+    await pool.query(
+      'UPDATE users SET ai_monthly_count = 1, ai_month_reset = $1 WHERE id = $2',
+      [now.toISOString(), id]
+    );
+  } else {
+    await pool.query(
+      'UPDATE users SET ai_monthly_count = ai_monthly_count + 1 WHERE id = $1',
+      [id]
+    );
+  }
+}
+
+/**
+ * Returns the current monthly AI count for a user, resetting if the month rolled over.
+ */
+export async function getMonthlyAiCount(id) {
+  const now = new Date();
+  const { rows } = await pool.query(
+    'SELECT ai_monthly_count, ai_month_reset FROM users WHERE id = $1',
+    [id]
+  );
+  if (!rows[0]) return 0;
+  const lastReset = rows[0].ai_month_reset ? new Date(rows[0].ai_month_reset) : null;
+  const sameMonth = lastReset &&
+    lastReset.getFullYear() === now.getFullYear() &&
+    lastReset.getMonth()    === now.getMonth();
+  if (!sameMonth) {
+    // Stale — reset silently and report 0
+    await pool.query(
+      'UPDATE users SET ai_monthly_count = 0, ai_month_reset = $1 WHERE id = $2',
+      [now.toISOString(), id]
+    );
+    return 0;
+  }
+  return rows[0].ai_monthly_count ?? 0;
 }
 
 export async function setAdmin(id, isAdmin) {

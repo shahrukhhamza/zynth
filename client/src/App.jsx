@@ -43,6 +43,7 @@ import RefundPage from './components/RefundPage'
 import ServicePolicy from './components/ServicePolicy'
 import ServicesPage from './components/ServicesPage'
 import { fetchNews } from './services/api'
+import { UpgradeProvider } from './contexts/UpgradeContext'
 import { Loader2, Sparkles } from 'lucide-react'
 
 // Lazily loaded — chunk is only downloaded when an admin user navigates to the admin view.
@@ -308,7 +309,9 @@ export default function App() {
   return (
     <HelmetProvider>
       <AuthProvider>
-        <AuthGate />
+        <UpgradeProvider>
+          <AuthGate />
+        </UpgradeProvider>
       </AuthProvider>
     </HelmetProvider>
   )

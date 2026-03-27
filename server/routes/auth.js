@@ -3,7 +3,7 @@ import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
 import { OAuth2Client } from 'google-auth-library';
 import * as Users from '../db/users.js';
-import { signToken, requireAuth } from '../middleware/authMiddleware.js';
+import { signToken, requireAuth, requireAdmin } from '../middleware/authMiddleware.js';
 import { sendPasswordResetEmail } from '../services/emailService.js';
 import { saveAvatarFromBase64 } from '../services/fileStorageService.js';
 
@@ -24,6 +24,7 @@ function buildUser(row) {
     plan:                normalizePlan(row.plan),
     plan_expires_at:     row.plan_expires_at ?? null,
     ai_analysis_tries:   row.ai_analysis_tries ?? 0,
+    ai_monthly_count:    row.ai_monthly_count  ?? 0,
     screenshot_tries:    row.screenshot_tries ?? 0,
     is_admin:            row.is_admin ?? 0,
     trading_experience:  row.trading_experience ?? null,
@@ -188,7 +189,9 @@ router.get('/me', requireAuth, async (req, res) => {
 });
 
 // ── POST /api/auth/upgrade-plan ───────────────────────────────────────────
-router.post('/upgrade-plan', requireAuth, async (req, res) => {
+// Admin-only: used by payment webhooks / admin panel to change a user's plan.
+// Do NOT call this directly from client-side code — wire Paddle webhooks instead.
+router.post('/upgrade-plan', requireAuth, requireAdmin, async (req, res) => {
   try {
     const { plan, expiresAt = null } = req.body;
     const validPlans = ['free', 'pro', 'elite'];

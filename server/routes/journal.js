@@ -15,6 +15,7 @@
 import { Router } from 'express';
 import multer from 'multer';
 import { requireAuth, checkAiTries, requirePro } from '../middleware/authMiddleware.js';
+import * as Users from '../db/users.js';
 import {
   insertTrade, getTrades, getTradeById, updateTrade, deleteTrade, countTrades,
   countTradesThisMonth, getTradesBySymbol, countTradesBySymbol,
@@ -198,6 +199,14 @@ Be direct, specific, and data-driven. No generic advice. Format as plain text wi
     const analysis = gemRes.data?.candidates?.[0]?.content?.parts?.[0]?.text;
     if (!analysis) return res.status(500).json({ success: false, error: 'Empty AI response' });
 
+    // Record the AI usage against the correct counter
+    const plan = String(req.user?.plan ?? 'free').toLowerCase();
+    if (plan === 'pro') {
+      await Users.incrementMonthlyAiCount(req.user.id);
+    } else if (plan !== 'elite' && req.user?.is_admin !== 1) {
+      await Users.incrementAiTries(req.user.id);
+    }
+
     res.json({ success: true, analysis, symbol, tradeCount: trades.length });
   } catch (err) {
     console.error('chart-analysis error:', err.message);
@@ -255,7 +264,7 @@ router.delete('/trades/:id', async (req, res) => {
 });
 
 // ── POST /trades/:id/analyze — AI journal analysis ────────────────────────────
-router.post('/trades/:id/analyze', checkAiTries, async (req, res) => {
+router.post('/trades/:id/analyze', requireAuth, checkAiTries, async (req, res) => {
   try {
     const id    = parseInt(req.params.id);
     const trade = await getTradeById(id);
@@ -272,6 +281,14 @@ router.post('/trades/:id/analyze', checkAiTries, async (req, res) => {
     // Persist the analysis
     await upsertJournal(id, {}); // ensure journal row exists
     await setJournalAiAnalysis(id, analysis);
+
+    // Record AI usage
+    const plan = String(req.user?.plan ?? 'free').toLowerCase();
+    if (plan === 'pro') {
+      await Users.incrementMonthlyAiCount(req.user.id);
+    } else if (plan !== 'elite' && req.user?.is_admin !== 1) {
+      await Users.incrementAiTries(req.user.id);
+    }
 
     res.json({ success: true, data: analysis });
   } catch (err) {
