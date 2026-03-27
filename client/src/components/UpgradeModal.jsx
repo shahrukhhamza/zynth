@@ -465,38 +465,41 @@ export default function UpgradeModal({
                 </div>
               )}
 
-              <button
-                type="submit"
-                disabled={submitting || !proof}
-                className="w-full rounded-xl py-3 text-sm font-bold text-white"
-                style={{
-                  background: 'linear-gradient(135deg,#1d4ed8,#06b6d4)',
-                  boxShadow: '0 10px 26px rgba(14,165,233,0.28)',
-                  opacity: submitting || !proof ? 0.7 : 1,
-                  cursor: submitting || !proof ? 'not-allowed' : 'pointer',
-                }}
-              >
-                {submitting
-                  ? <span className="inline-flex items-center gap-2"><Loader2 size={14} style={{ animation: 'spin 1s linear infinite' }} />Submitting...</span>
-                  : 'Complete Payment'
-                }
-              </button>
+              <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                <button
+                  type="button"
+                  onClick={handleClose}
+                  disabled={submitting}
+                  className="rounded-lg py-2 px-4 text-xs font-semibold flex-shrink-0"
+                  style={{
+                    minWidth: '80px',
+                    border: `1px solid ${theme.isDark ? 'rgba(255,255,255,0.12)' : '#dbe3ee'}`,
+                    background: panelSurface,
+                    color: headingText,
+                    cursor: submitting ? 'not-allowed' : 'pointer',
+                    opacity: submitting ? 0.75 : 1,
+                  }}
+                >
+                  Cancel
+                </button>
 
-              <button
-                type="button"
-                onClick={handleClose}
-                disabled={submitting}
-                className="mt-2 w-full rounded-xl py-2.5 text-xs font-semibold"
-                style={{
-                  border: `1px solid ${theme.isDark ? 'rgba(255,255,255,0.12)' : '#dbe3ee'}`,
-                  background: panelSurface,
-                  color: headingText,
-                  cursor: submitting ? 'not-allowed' : 'pointer',
-                  opacity: submitting ? 0.75 : 1,
-                }}
-              >
-                Cancel
-              </button>
+                <button
+                  type="submit"
+                  disabled={submitting || !proof}
+                  className="flex-1 rounded-lg py-2.5 px-4 text-sm font-bold text-white inline-flex items-center justify-center"
+                  style={{
+                    background: 'linear-gradient(135deg,#1d4ed8,#06b6d4)',
+                    boxShadow: '0 8px 20px rgba(14,165,233,0.24)',
+                    opacity: submitting || !proof ? 0.65 : 1,
+                    cursor: submitting || !proof ? 'not-allowed' : 'pointer',
+                  }}
+                >
+                  {submitting
+                    ? <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><Loader2 size={14} style={{ animation: 'spin 1s linear infinite' }} />Submitting</span>
+                    : 'Complete Payment'
+                  }
+                </button>
+              </div>
 
               <div className="mt-2 text-center text-xs" style={{ color: mutedText }}>
                 <Landmark size={12} style={{ display: 'inline', marginRight: 4 }} />
