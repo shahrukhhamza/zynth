@@ -1,9 +1,10 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Zap, X, Check, ArrowRight } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 import { PLANS_CONFIG, FEATURE_LABELS } from '../config/planFeatures';
 import { track } from '../services/track';
 import { useUpgradeIntelligence } from '../hooks/useUpgradeIntelligence';
+import PaymentOptionsModal from './PaymentOptionsModal';
 
 /**
  * PlanGateModal
@@ -18,6 +19,7 @@ import { useUpgradeIntelligence } from '../hooks/useUpgradeIntelligence';
 export default function PlanGateModal({ reason, feature, requiredPlan = 'pro', onClose, headline, message }) {
   const { isDark, text, muted } = useTheme();
   const { upgradeMetadata } = useUpgradeIntelligence();
+  const [paymentPlan, setPaymentPlan] = useState(null);
 
   useEffect(() => {
     const handler = (e) => { if (e.key === 'Escape') onClose(); };
@@ -63,19 +65,26 @@ export default function PlanGateModal({ reason, feature, requiredPlan = 'pro', o
   const card = isDark ? '#141414' : '#ffffff';
   const blue = '#3b82f6';
 
-  // Navigate to /pricing and close modal
-  function goToPricing(e) {
-    e.preventDefault();
+  // Open payment modal in-place without navigation.
+  function openPayment(plan) {
     const source = feature
       ? (/ai/i.test(feature) ? 'ai_limit' : feature)
       : (reason?.toLowerCase().includes('journal') ? 'journal_limit' : 'ai_limit');
-    track('upgrade_clicked', { requiredPlan, feature: feature ?? 'unknown', source, plan: requiredPlan, ...upgradeMetadata });
-    window.history.pushState({}, '', '/pricing');
-    window.dispatchEvent(new PopStateEvent('popstate'));
-    onClose();
+    track('upgrade_clicked', { requiredPlan, feature: feature ?? 'unknown', source, plan, ...upgradeMetadata });
+    setPaymentPlan(plan);
   }
 
   return (
+    <>
+    {paymentPlan && (
+      <PaymentOptionsModal
+        plan={paymentPlan}
+        onClose={() => {
+          setPaymentPlan(null);
+          onClose();
+        }}
+      />
+    )}
     <div
       onClick={onClose}
       style={{
@@ -163,9 +172,9 @@ export default function PlanGateModal({ reason, feature, requiredPlan = 'pro', o
             <span style={{ color: text, fontWeight: 800, fontSize: 24 }}>${targetPlan.price}</span>
             <span style={{ color: muted, fontSize: 13 }}>/month</span>
           </div>
-          <a
-            href="/pricing"
-            onClick={goToPricing}
+          <button
+            type="button"
+            onClick={() => openPayment(requiredPlan)}
             style={{
               display: 'inline-flex', alignItems: 'center', gap: 6,
               padding: '10px 18px', borderRadius: 9,
@@ -179,7 +188,7 @@ export default function PlanGateModal({ reason, feature, requiredPlan = 'pro', o
             onMouseOut={(e) => { e.currentTarget.style.filter = 'brightness(1)'; }}
           >
             Unlock {targetPlan.name} <ArrowRight size={13} />
-          </a>
+          </button>
         </div>
 
         {/* Elite upsell row (only when targeting Pro) */}
@@ -189,9 +198,13 @@ export default function PlanGateModal({ reason, feature, requiredPlan = 'pro', o
               Need unlimited AI?&nbsp;
               <strong style={{ color: text }}>Elite is ${higherPlan.price}/mo</strong>
             </span>
-            <a href="/pricing" onClick={goToPricing} style={{ color: blue, fontSize: 13, fontWeight: 700, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 3, whiteSpace: 'nowrap' }}>
+            <button
+              type="button"
+              onClick={() => openPayment('elite')}
+              style={{ color: blue, fontSize: 13, fontWeight: 700, background: 'transparent', border: 'none', padding: 0, display: 'flex', alignItems: 'center', gap: 3, whiteSpace: 'nowrap', cursor: 'pointer' }}
+            >
               See Elite <ArrowRight size={12} />
-            </a>
+            </button>
           </div>
         )}
 
@@ -206,5 +219,6 @@ export default function PlanGateModal({ reason, feature, requiredPlan = 'pro', o
         </div>
       </div>
     </div>
+    </>
   );
 }

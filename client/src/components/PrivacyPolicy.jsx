@@ -165,16 +165,18 @@ export default function PrivacyPolicy({ onBack }) {
           </Section>
 
           <Section id="payments-billing" title="11. Payments and Billing Data">
-            <p>Zynth uses third-party payment providers (such as Paddle) to process all payments for Pro and Elite subscriptions.</p>
-            <p style={{ marginTop: 10 }}>We do not collect, store, or have access to your full payment information (such as credit card numbers). All payment data is handled securely by our payment provider in accordance with their privacy and security policies.</p>
+            <p>Zynth supports paid plan activation through a secure in-app payment workflow with manual verification.</p>
+            <p style={{ marginTop: 10 }}>We do not collect, store, or have access to full card information. Payment verification is based on the payment method you choose and any payment proof you submit through the platform.</p>
             <p style={{ marginTop: 10 }}>When you subscribe to a paid plan, we may store limited billing-related information, including:</p>
             <ul style={{ paddingLeft: 20, marginTop: 8, display: 'flex', flexDirection: 'column', gap: 4 }}>
               <li>Subscription status (Free, Pro, Elite)</li>
-              <li>Billing cycle and renewal dates</li>
+              <li>Plan activation and expiration dates</li>
+              <li>Selected payment method</li>
+              <li>Payment proof verification status</li>
               <li>Payment confirmation status</li>
             </ul>
             <p style={{ marginTop: 10 }}>This information is used solely to manage your subscription and enforce plan-based feature access.</p>
-            <p style={{ marginTop: 10 }}>For more information on how your payment data is handled, please refer to Paddle's Privacy Policy.</p>
+            <p style={{ marginTop: 10 }}>Uploaded payment proof is used only for verification, fraud prevention, and plan activation support.</p>
           </Section>
 
           <Section id="contact-privacy" title="12. Contact Us">

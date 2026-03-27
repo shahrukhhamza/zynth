@@ -1,14 +1,13 @@
 import { useState, useEffect, useRef } from 'react';
-import { X, Check, Copy, CheckCheck, ChevronDown, Mail, Key, LogOut, TrendingUp, Bell, Zap, Camera, Loader2, CheckCircle } from 'lucide-react';
+import { X, Check, ChevronDown, Key, LogOut, TrendingUp, Bell, Zap, Camera, Loader2, CheckCircle } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 import { useAuth } from '../contexts/AuthContext';
 import { usePlanGate } from '../hooks/usePlanGate';
 import PlanBadge from './PlanBadge';
 import ImageCropModal from './ImageCropModal';
+import PaymentOptionsModal from './PaymentOptionsModal';
 import { API_URL } from '../config/api';
 import { resolveMediaUrl } from '../utils/mediaUrl';
-
-const SUPPORT_EMAIL = 'getzynth@gmail.com';
 
 const AVATAR_COLOR_MAP = {
   emerald: '#3b82f6', blue: '#3b82f6', purple: '#0ea5e9', orange: '#f97316',
@@ -81,7 +80,7 @@ export default function ProfileModal({ onClose, onForgotPassword }) {
   const [tradingStats, setTradingStats]     = useState(null);
   const [upgradeOpen, setUpgradeOpen]       = useState(false);
   const [selectedPlan, setSelectedPlan]     = useState(null);
-  const [emailCopied, setEmailCopied]       = useState(false);
+  const [paymentPlan, setPaymentPlan]       = useState(null);
   const [pwdStatus, setPwdStatus]           = useState(null);
   const [avatarUploading, setAvatarUploading] = useState(false);
   const [avatarUploadDone, setAvatarUploadDone] = useState(false);
@@ -219,13 +218,6 @@ export default function ProfileModal({ onClose, onForgotPassword }) {
     }
   }
 
-  function handleCopyEmail() {
-    navigator.clipboard.writeText(SUPPORT_EMAIL).then(() => {
-      setEmailCopied(true);
-      setTimeout(() => setEmailCopied(false), 2000);
-    });
-  }
-
   async function handleChangePassword() {
     if (!user?.email) return;
     setPwdStatus('sending');
@@ -252,6 +244,16 @@ export default function ProfileModal({ onClose, onForgotPassword }) {
         imageSrc={cropSrc}
         onConfirm={handleCropConfirm}
         onCancel={() => setCropSrc(null)}
+      />
+    )}
+    {paymentPlan && (
+      <PaymentOptionsModal
+        plan={paymentPlan}
+        onClose={() => {
+          setPaymentPlan(null);
+          setUpgradeOpen(false);
+          setSelectedPlan(null);
+        }}
       />
     )}
     <div
@@ -490,27 +492,16 @@ export default function ProfileModal({ onClose, onForgotPassword }) {
                            style={{ background: theme.isDark ? 'rgba(5,150,105,0.08)' : 'rgba(5,150,105,0.05)', border: '1px solid rgba(5,150,105,0.25)' }}>
                         <p className="text-[13px] font-bold text-emerald-400 mb-2">Great choice!</p>
                         <p className="text-[12px] leading-relaxed mb-3" style={{ color: theme.text }}>
-                          To upgrade, email us at{' '}
-                          <span className="font-semibold text-emerald-400">{SUPPORT_EMAIL}</span>{' '}
-                          with subject{' '}
-                          <span className="font-semibold" style={{ color: theme.text }}>
-                            "{p.name} Upgrade Request"
-                          </span>{' '}
-                          and we'll activate your account within 24 hours.
+                          Continue to secure payment to complete your {p.name} upgrade.
+                          Instant activation after verification (usually within minutes).
                         </p>
-                        <div className="flex gap-2">
-                          <a href={`mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent(p.name + ' Upgrade Request')}`}
-                             className="flex-1 py-2 rounded-lg text-[12px] font-semibold text-white text-center transition-all hover:brightness-110"
-                             style={{ background: 'linear-gradient(135deg,#059669,#0d9488)' }}>
-                            <Mail className="w-3 h-3 inline mr-1" />
-                            Open Email
-                          </a>
-                          <button onClick={handleCopyEmail}
-                                  className="px-3 py-2 rounded-lg text-[12px] font-semibold transition-all"
-                                  style={{ background: theme.isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.06)', color: theme.muted, border: `1px solid ${theme.border}` }}>
-                            {emailCopied ? <CheckCheck className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-                          </button>
-                        </div>
+                        <button
+                          onClick={() => setPaymentPlan(selectedPlan)}
+                          className="w-full py-2 rounded-lg text-[12px] font-semibold text-white transition-all hover:brightness-110"
+                          style={{ background: 'linear-gradient(135deg,#059669,#0d9488)' }}
+                        >
+                          Continue to Payment
+                        </button>
                       </div>
                     );
                   })()}

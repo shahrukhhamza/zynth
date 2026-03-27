@@ -20,7 +20,7 @@ import { API_URL } from '../config/api';
 // Edit these constants to match your actual account details.
 const PAYMENT_METHODS = {
   international: {
-    label:    'International',
+    label:    '🌍 International',
     icon:     Globe,
     subtitle: 'USD / GBP bank transfer',
     options: [
@@ -48,7 +48,7 @@ const PAYMENT_METHODS = {
     ],
   },
   pakistan: {
-    label:    'Pakistan',
+    label:    '🇵🇰 Pakistan',
     icon:     Smartphone,
     subtitle: 'Easypaisa · JazzCash · Bank',
     options: [
@@ -195,10 +195,11 @@ export default function PaymentOptionsModal({ plan: initialPlan = 'pro', onClose
             </div>
             <div style={{ fontSize: 20, fontWeight: 800, color: theme.text }}>Payment submitted!</div>
             <div style={{ fontSize: 14, color: theme.muted, lineHeight: 1.6 }}>
-              We've received your payment request. Your <strong style={{ color: theme.text }}>{PLAN_LABELS[selectedPlan]}</strong> plan will be activated within <strong style={{ color: theme.text }}>24 hours</strong> once we verify the payment.
+              Payment submitted successfully 🎉<br />
+              Your account will be upgraded shortly.
             </div>
             <div style={{ fontSize: 12, color: theme.muted, padding: '8px 16px', borderRadius: 8, background: surface, border: `1px solid ${theme.border}` }}>
-              You'll receive a notification once your account is upgraded.
+              Instant activation after verification (usually within minutes).
             </div>
             <button
               onClick={onClose}
@@ -227,8 +228,8 @@ export default function PaymentOptionsModal({ plan: initialPlan = 'pro', onClose
         {/* Header */}
         <div style={{ padding: '20px 22px 0', display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
           <div>
-            <div style={{ fontSize: 17, fontWeight: 800, color: theme.text }}>Manual Payment</div>
-            <div style={{ fontSize: 13, color: theme.muted, marginTop: 2 }}>Choose a payment method and send your proof</div>
+            <div style={{ fontSize: 20, fontWeight: 800, color: theme.text }}>Complete Your Upgrade 🚀</div>
+            <div style={{ fontSize: 13, color: theme.muted, marginTop: 2 }}>Secure your premium access in under 1 minute</div>
           </div>
           <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: theme.muted, padding: 4, display: 'flex', alignItems: 'center' }}>
             <X size={17} />
@@ -236,6 +237,26 @@ export default function PaymentOptionsModal({ plan: initialPlan = 'pro', onClose
         </div>
 
         <form onSubmit={handleSubmit} style={{ padding: '18px 22px 22px', display: 'flex', flexDirection: 'column', gap: 16 }}>
+
+          {/* Trust chips */}
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+            {['Secure payment', 'Trusted by early users', 'No hidden charges'].map((chip) => (
+              <span
+                key={chip}
+                style={{
+                  fontSize: 11,
+                  fontWeight: 700,
+                  color: theme.isDark ? '#93c5fd' : '#1d4ed8',
+                  background: theme.isDark ? 'rgba(59,130,246,0.14)' : 'rgba(59,130,246,0.08)',
+                  border: `1px solid ${theme.isDark ? 'rgba(59,130,246,0.28)' : 'rgba(59,130,246,0.22)'}`,
+                  padding: '5px 9px',
+                  borderRadius: 999,
+                }}
+              >
+                {chip}
+              </span>
+            ))}
+          </div>
 
           {/* Plan selector */}
           <div>
@@ -394,13 +415,13 @@ export default function PaymentOptionsModal({ plan: initialPlan = 'pro', onClose
           {/* Submit */}
           <button
             type="submit"
-            disabled={submitting}
+            disabled={submitting || !file}
             style={{
               padding: '12px', borderRadius: 10, border: 'none', cursor: submitting ? 'not-allowed' : 'pointer',
               background: 'linear-gradient(135deg,#1d4ed8,#0284c7)',
               color: '#fff', fontWeight: 700, fontSize: 14,
               display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-              opacity: submitting ? 0.7 : 1, transition: 'opacity 0.15s',
+              opacity: (submitting || !file) ? 0.7 : 1, transition: 'opacity 0.15s',
             }}
           >
             {submitting

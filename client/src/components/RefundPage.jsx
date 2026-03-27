@@ -84,7 +84,7 @@ export default function RefundPage({ onBack }) {
           {/* Payment Processing */}
           <div>
             <p style={{ fontWeight: 700, color: isDark ? '#e2e8f0' : '#0f172a', marginBottom: 8 }}>Payment Processing</p>
-            <p style={{ margin: 0 }}>Payments and refunds are handled securely by our payment provider (such as Paddle), which acts as the Merchant of Record. Zynth does not store or process your payment details directly.</p>
+            <p style={{ margin: 0 }}>Payments are submitted through Zynth's secure in-app payment flow and verified manually. Zynth does not store card details, and uploaded payment proof is used only for verification and account activation.</p>
           </div>
 
           {/* Refund Processing */}

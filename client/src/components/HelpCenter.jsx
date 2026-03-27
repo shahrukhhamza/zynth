@@ -396,7 +396,7 @@ Best Session and Day Edge show "Not enough data" until you have logged enough tr
 **Find it in:** AI Insights ? Trading DNA tab
 
 ::warning
-This feature requires an Elite subscription. Upgrade in your Profile.
+This feature requires an Elite subscription. Open the upgrade modal to continue.
 ::`,
       },
       {
@@ -750,19 +750,16 @@ Everything in Pro, plus:
         content: `## Steps to Upgrade
 
 1. Click your avatar/name in the top right
-2. Click **Upgrade Plan** in your profile
-3. Choose **Pro** ($9/month) or **Elite** ($19/month)
-4. Email **getzynth@gmail.com** with:
-   - Subject: \`Pro Upgrade Request\` or \`Elite Upgrade Request\`
-   - Include: your registered email address
-5. We will process and activate your account within 24 hours
-6. You will receive a confirmation email
+      2. Click **Upgrade Plan**
+      3. Choose **Pro** ($9/month) or **Elite** ($19/month)
+      4. Complete payment inside the secure in-app modal
+      5. Upload your payment proof screenshot
+      6. Instant activation after verification (usually within minutes)
 
 ## Payment Methods
 
-- Bank transfer
-- PayPal
-- Other methods � contact us to arrange
+      - 🌍 International: Payoneer / USD Bank Transfer
+      - 🇵🇰 Pakistan: Easypaisa / JazzCash / Local Bank Transfer
 
 ::tip
 Pro is $9/month and Elite is $19/month. Cancel anytime.
@@ -785,7 +782,7 @@ Pro is $9/month and Elite is $19/month. Cancel anytime.
 
 ## How to Upgrade
 
-Visit the Pricing page or click **Upgrade Plan** in your profile, then follow the steps to complete your subscription.`,
+Click **Upgrade Plan**, pick your plan, and complete payment in the in-app modal. No redirects required.`,
       },
       {
         id: 'refund-policy', title: 'Refund Policy',
@@ -796,7 +793,7 @@ If you are not satisfied within the first 7 days of your subscription we will re
 
 ## How to Request a Refund
 
-Email **getzynth@gmail.com** with:
+Contact **getzynth@gmail.com** with:
 - Subject: \`Refund Request\`
 - Include your registered email and reason (optional)
 
