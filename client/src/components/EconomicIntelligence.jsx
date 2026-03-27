@@ -395,7 +395,7 @@ export default function EconomicIntelligence() {
       >
         Upgrade to Pro
       </button>
-      <p style={{ fontSize: 12, color: D.textSub, margin: 0 }}>From $1.99/month — Founding Member price</p>
+      <p style={{ fontSize: 12, color: D.textSub, margin: 0 }}>From $9/month — Pro plan</p>
       {showUpgradeModal && <ProfileModal onClose={() => setShowUpgradeModal(false)} />}
     </div>
   );

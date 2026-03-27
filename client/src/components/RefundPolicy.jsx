@@ -140,9 +140,9 @@ export default function RefundPolicy({ onBack }) {
             </p>
           </Section>
 
-          <Section id="founding-pricing" title="7. Founding Member Pricing">
+          <Section id="current-pricing" title="7. Current Pricing">
             <p>
-              Users who subscribed at Founding Member pricing (locked-in rate) retain that rate for as long as their subscription remains active and in good standing. Cancelling and resubscribing forfeits the Founding Member rate, which may no longer be available.
+              All subscriptions are billed at the current published rates: Pro at $9/month and Elite at $19/month. Prices are subject to change with prior notice to active subscribers.
             </p>
           </Section>
 

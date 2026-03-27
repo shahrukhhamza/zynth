@@ -190,19 +190,7 @@ export default function Hero({ badgeText, spotsLeft, onGetStarted, onSignIn }) {
         </motion.p>
 
         {/* Urgency Badge */}
-        {spotsLeft > 0 && (
-          <motion.div 
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ delay: 0.5 }}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl mb-12 border border-amber-500/20 bg-amber-500/5"
-          >
-            <Flame size={14} className="text-amber-400" />
-            <span className="text-xs font-bold text-amber-400 uppercase tracking-wider">
-              {spotsLeft} founding spots left — pricing increases soon
-            </span>
-          </motion.div>
-        )}
+        {false && null}
 
         {/* CTA Buttons */}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-5 mb-14">

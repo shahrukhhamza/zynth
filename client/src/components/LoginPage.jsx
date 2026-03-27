@@ -357,21 +357,8 @@ export default function LoginPage({ onSwitchToSignup, onBack, onForgotPassword }
             </div>
           )}
 
-          {/* Founding banner */}
-          {spotsLeft != null && spotsLeft > 0 && (
-            <div style={{
-              background:'linear-gradient(135deg, rgba(59,130,246,0.08), rgba(59,130,246,0.04))',
-              border:'1px solid rgba(59,130,246,0.2)',
-              borderRadius:'8px',
-              padding:'10px 14px',
-              marginBottom:'28px',
-              fontSize:'13px',
-              color:'#3b82f6',
-              textAlign:'center',
-            }}>
-              <Flame size={12} style={{display:'inline-block',verticalAlign:'middle',marginRight:'4px'}} />{spotsLeft} founding spots · $1.99/mo
-            </div>
-          )}
+          {/* Plan promo */}
+          {false && null}
 
           {/* Header */}
           <h2 style={{fontSize: isMobile ? '22px' : '26px',fontWeight:800,color: isDark ? '#fff' : '#0f172a',letterSpacing:'-0.025em',margin:0,lineHeight:1.15}}>Welcome back.</h2>

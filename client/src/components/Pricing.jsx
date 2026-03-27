@@ -30,7 +30,7 @@ const PricingCard = ({ tier, price, description, features, icon: Icon, highlight
         <span className="text-4xl font-black text-white">${price}</span>
         <span className="text-gray-500 text-sm">/month</span>
       </div>
-      {highlight && <p className="text-[10px] text-emerald-500 font-bold mt-2 uppercase tracking-tighter">Billed annually — 78% OFF Founding Price</p>}
+      {highlight && <p className="text-[10px] text-emerald-500 font-bold mt-2 uppercase tracking-tighter">Billed monthly · Cancel anytime</p>}
     </div>
 
     <ul className="space-y-4 mb-10 flex-1">
@@ -68,15 +68,8 @@ const Pricing = ({ spotsLeft }) => {
             Institutional Tools. <span className="text-emerald-400">Retail Prices.</span>
           </motion.h2>
           
-          {/* Founding Member Urgency Banner */}
-          <div className="inline-flex items-center gap-4 p-1 pr-6 rounded-full bg-white/5 border border-white/10 backdrop-blur-md">
-            <div className="bg-amber-500/10 px-4 py-2 rounded-full flex items-center gap-2">
-              <Flame size={16} className="text-amber-500 animate-pulse" />
-              <span className="text-amber-500 font-bold text-xs uppercase tracking-widest">Founding Offer</span>
-            </div>
-            <span className="text-gray-300 text-xs font-medium">
-               Only <span className="text-white font-bold">{spotsLeft || 95} spots remaining</span> — Secure $1.99/mo forever.
-            </span>
+          <div className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full bg-white/5 border border-white/10 backdrop-blur-md">
+            <span className="text-gray-300 text-xs font-medium">Pro: <span className="text-white font-bold">$9/month</span> · Elite: <span className="text-white font-bold">$19/month</span> · Cancel anytime</span>
           </div>
         </div>
 
