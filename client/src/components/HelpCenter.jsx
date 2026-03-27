@@ -720,7 +720,7 @@ The London-NY overlap (shown in amber) is the highest volume period of the day. 
 | Market News | 5 articles/day |
 | Trading Desk | Full access |
 
-## PRO PLAN ($1.99/month � Founding Price)
+## PRO PLAN ($9/month)
 
 | Feature | Limit |
 |---|---|
@@ -733,7 +733,7 @@ The London-NY overlap (shown in amber) is the highest volume period of the day. 
 | Economic Intelligence | ? Full access |
 | Macro-Journal Correlation | ? Full access |
 
-## ELITE PLAN ($4.99/month � Founding Price)
+## ELITE PLAN ($19/month)
 
 Everything in Pro, plus:
 
@@ -751,13 +751,12 @@ Everything in Pro, plus:
 
 1. Click your avatar/name in the top right
 2. Click **Upgrade Plan** in your profile
-3. Choose **Pro** ($1.99) or **Elite** ($4.99)
-4. Note the founding member price (only for first 100 users)
-5. Email **getzynth@gmail.com** with:
+3. Choose **Pro** ($9/month) or **Elite** ($19/month)
+4. Email **getzynth@gmail.com** with:
    - Subject: \`Pro Upgrade Request\` or \`Elite Upgrade Request\`
    - Include: your registered email address
-6. We will process and activate your account within 24 hours
-7. You will receive a confirmation email
+5. We will process and activate your account within 24 hours
+6. You will receive a confirmation email
 
 ## Payment Methods
 
@@ -766,29 +765,27 @@ Everything in Pro, plus:
 - Other methods � contact us to arrange
 
 ::tip
-Founding member price ($1.99 Pro, $4.99 Elite) is locked in forever once you subscribe, even when we raise prices.
+Pro is $9/month and Elite is $19/month. Cancel anytime.
 ::`,
       },
       {
-        id: 'founding-member', title: 'Founding Member Offer',
-        excerpt: 'Price locked forever for the first 100 users.',
-        content: `## What It Means
+        id: 'founding-member', title: 'Plan Pricing',
+        excerpt: 'Current pricing for Pro and Elite plans.',
+        content: `## Current Pricing
 
-- Pro plan: **$1.99/month** (regular price $9)
-- Elite plan: **$4.99/month** (regular price $25)
-- Price is locked in **FOREVER**
-- Even after we raise prices for new users, your price never changes
-- You get all future features at this price
+- **Pro plan**: $9/month
+- **Elite plan**: $19/month
+- Billed monthly. Cancel anytime.
 
-## How Many Spots Are Left
+## What's Included
 
-The counter on the landing page shows real-time remaining spots based on actual user count.
+**Pro ($9/month):** Unlimited journal entries, 50 AI analyses/month, real-time markets, full economic calendar, macro intelligence tools.
 
-## After 100 Users
+**Elite ($19/month):** Everything in Pro, plus unlimited AI analyses, monthly Trading DNA Report, beta feature early access, and priority support.
 
-Founding member offer ends automatically. New users pay regular price ($9 Pro, $25 Elite). Existing founding members keep their price permanently.
+## How to Upgrade
 
-This offer is our way of rewarding early supporters who help us grow.`,
+Visit the Pricing page or click **Upgrade Plan** in your profile, then follow the steps to complete your subscription.`,
       },
       {
         id: 'refund-policy', title: 'Refund Policy',
