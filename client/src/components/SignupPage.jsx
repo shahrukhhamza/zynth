@@ -155,7 +155,7 @@ export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess })
   }
 
   return (
-    <div style={{ minHeight:'100vh', background: isDark?'#020617':'#f8fafc', position:'relative', overflowX:'hidden', overflowY:'auto' }}>
+    <div style={{ minHeight:'100vh', background: isDark?'#020617':'#f5f8fd', position:'relative', overflowX:'hidden', overflowY:'auto' }}>
       <style>{`
         @keyframes blobDrift {
           0%,100% { transform: translate(0px,0px)    scale(1);     }
@@ -172,6 +172,22 @@ export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess })
         @keyframes cardIn {
           from { opacity:0; transform:translateY(20px) scale(0.988); }
           to   { opacity:1; transform:translateY(0)     scale(1);     }
+        }
+        @keyframes fadeUp {
+          from { opacity:0; transform:translateY(10px); }
+          to   { opacity:1; transform:translateY(0); }
+        }
+        @keyframes panelFloat {
+          0%,100% { transform:translateY(0px); }
+          50%     { transform:translateY(-6px); }
+        }
+        @keyframes rowReveal {
+          from { opacity:0; transform:translateY(7px); }
+          to   { opacity:1; transform:translateY(0); }
+        }
+        @keyframes liveBlink {
+          0%,100% { opacity:1; transform:scale(1); }
+          50%     { opacity:0.55; transform:scale(0.9); }
         }
         @keyframes formShake {
           0%,100% { transform:translateX(0);   }
@@ -199,20 +215,12 @@ export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess })
         }
       `}</style>
 
-      {/* ── Grid texture ───────────────────────────────────────────────── */}
-      <div style={{ position:'fixed', inset:0, pointerEvents:'none', zIndex:0,
-        backgroundImage: isDark
-          ? 'linear-gradient(rgba(255,255,255,0.022) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.022) 1px, transparent 1px)'
-          : 'linear-gradient(rgba(0,0,0,0.034) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.034) 1px, transparent 1px)',
-        backgroundSize:'42px 42px',
-      }} />
-
       {/* ── Blob 1 – top-left drift ─────────────────────────────────────── */}
       <div style={{ position:'fixed', top:'-220px', left:'-180px', width:'720px', height:'720px',
         pointerEvents:'none', zIndex:0,
         background: isDark
           ? 'radial-gradient(circle, rgba(59,130,246,0.11) 0%, rgba(99,102,241,0.055) 35%, transparent 65%)'
-          : 'radial-gradient(circle, rgba(99,102,241,0.09) 0%, rgba(168,85,247,0.04) 35%, transparent 65%)',
+          : 'radial-gradient(circle, rgba(56,189,248,0.22) 0%, rgba(59,130,246,0.12) 35%, transparent 65%)',
         filter:'blur(82px)', animation:'blobDrift 18s ease-in-out infinite',
       }} />
 
@@ -221,7 +229,7 @@ export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess })
         pointerEvents:'none', zIndex:0,
         background: isDark
           ? 'radial-gradient(circle, rgba(99,102,241,0.09) 0%, rgba(59,130,246,0.04) 35%, transparent 65%)'
-          : 'radial-gradient(circle, rgba(59,130,246,0.07) 0%, rgba(99,102,241,0.03) 35%, transparent 65%)',
+          : 'radial-gradient(circle, rgba(14,165,233,0.18) 0%, rgba(99,102,241,0.1) 35%, transparent 65%)',
         filter:'blur(82px)', animation:'blobDrift2 22s ease-in-out infinite',
       }} />
 
@@ -229,24 +237,25 @@ export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess })
       <div style={{ position:'fixed', inset:0, pointerEvents:'none', zIndex:0,
         background: isDark
           ? 'radial-gradient(ellipse 100% 100% at 50% 50%, transparent 40%, rgba(2,6,23,0.62) 100%)'
-          : 'radial-gradient(ellipse 100% 100% at 50% 50%, transparent 40%, rgba(240,244,250,0.64) 100%)',
+          : 'radial-gradient(ellipse 100% 100% at 50% 50%, transparent 34%, rgba(223,232,245,0.78) 100%)',
       }} />
 
       {/* Nav */}
       <div style={{ position:'fixed', top:0, left:0, right:0, zIndex:20, height:'52px',
         display:'flex', alignItems:'center', justifyContent:'space-between', padding:'0 24px',
-        borderBottom: isDark?'1px solid rgba(255,255,255,0.045)':'1px solid rgba(0,0,0,0.045)',
-        background: isDark?'rgba(2,6,23,0.65)':'rgba(248,250,252,0.75)',
+        borderBottom: isDark?'1px solid rgba(255,255,255,0.045)':'1px solid rgba(148,163,184,0.28)',
+        background: isDark?'rgba(2,6,23,0.65)':'rgba(255,255,255,0.76)',
         backdropFilter:'blur(20px)', WebkitBackdropFilter:'blur(20px)',
+        boxShadow: isDark?'none':'0 2px 14px rgba(148,163,184,0.18)',
       }}>
         <div>
           {onBack && (
             <button onClick={onBack}
               style={{ display:'flex', alignItems:'center', gap:'5px', fontSize:'12.5px',
-                color: isDark?'rgba(255,255,255,0.36)':'#94a3b8', background:'none', border:'none',
+                color: isDark?'rgba(255,255,255,0.36)':'#64748b', background:'none', border:'none',
                 cursor:'pointer', padding:'4px 7px', borderRadius:'6px', transition:'all 0.12s' }}
               onMouseEnter={e => { e.currentTarget.style.color=isDark?'rgba(255,255,255,0.76)':'#475569'; e.currentTarget.style.background=isDark?'rgba(255,255,255,0.05)':'rgba(0,0,0,0.03)'; }}
-              onMouseLeave={e => { e.currentTarget.style.color=isDark?'rgba(255,255,255,0.36)':'#94a3b8'; e.currentTarget.style.background='transparent'; }}>
+              onMouseLeave={e => { e.currentTarget.style.color=isDark?'rgba(255,255,255,0.36)':'#64748b'; e.currentTarget.style.background='transparent'; }}>
               <ChevronLeft size={13} /> Back
             </button>
           )}
@@ -256,15 +265,119 @@ export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess })
           <span style={{ fontSize:'14px', fontWeight:700, letterSpacing:'-0.022em', color: isDark?'rgba(255,255,255,0.86)':'#0f172a' }}>Zynth</span>
         </div>
         <button onClick={onSwitchToLogin}
-          style={{ fontSize:'12.5px', fontWeight:500, color: isDark?'rgba(255,255,255,0.36)':'#94a3b8', background:'none', border:'none', cursor:'pointer', padding:'4px 2px', transition:'color 0.12s' }}
+          style={{ fontSize:'12.5px', fontWeight:500, color: isDark?'rgba(255,255,255,0.36)':'#64748b', background:'none', border:'none', cursor:'pointer', padding:'4px 2px', transition:'color 0.12s' }}
           onMouseEnter={e => e.currentTarget.style.color='#3b82f6'}
-          onMouseLeave={e => e.currentTarget.style.color=isDark?'rgba(255,255,255,0.36)':'#94a3b8'}>
+          onMouseLeave={e => e.currentTarget.style.color=isDark?'rgba(255,255,255,0.36)':'#64748b'}>
           Sign in →
         </button>
       </div>
 
       {/* Page body */}
-      <div style={{ position:'relative', zIndex:1, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', minHeight:'100vh', padding:'64px 20px 48px', boxSizing:'border-box' }}>
+      <div style={{ position:'relative', zIndex:1, minHeight:'100vh', padding:'76px 24px 48px', boxSizing:'border-box' }}>
+        <div style={{ width:'100%', maxWidth:'1240px', margin:'0 auto', minHeight:'calc(100vh - 124px)', display:'grid', gridTemplateColumns:isMobile?'1fr':'1.05fr 0.95fr', alignItems:'center', gap:isMobile?'0':'52px' }}>
+
+          {!isMobile && (
+            <div style={{ paddingRight:'24px', animation:'fadeUp 0.52s ease both', display:'flex', flexDirection:'column', justifyContent:'center' }}>
+              <h1 style={{ fontSize:'clamp(36px,3.8vw,56px)', lineHeight:1.04, margin:'0 0 18px', letterSpacing:'-0.04em', fontWeight:800, color:isDark?'#f8fafc':'#0f172a', maxWidth:'560px' }}>
+                See the macro picture.<br />Act with precision.
+              </h1>
+              <p style={{ margin:'0 0 44px', fontSize:'16px', lineHeight:1.68, maxWidth:'460px', color:isDark?'rgba(255,255,255,0.46)':'#5a6a82', fontWeight:400 }}>
+                Turn economic data into structured trade context — with AI interpretation built into your workflow.
+              </p>
+
+              {/* Product calendar preview */}
+              <div style={{ width:'100%', maxWidth:'560px', borderRadius:'20px', overflow:'hidden', animation:'fadeUp 0.6s ease 0.14s both, panelFloat 8s ease-in-out 1.1s infinite',
+                background: isDark?'rgba(9,14,30,0.96)':'#ffffff',
+                border: isDark?'1px solid rgba(255,255,255,0.07)':'1px solid rgba(203,213,225,0.65)',
+                boxShadow: isDark?'0 28px 72px rgba(0,0,0,0.60), 0 0 0 0.5px rgba(255,255,255,0.05) inset':'0 20px 56px rgba(15,23,42,0.12), 0 1px 0 #fff inset',
+              }}>
+
+                {/* Window chrome */}
+                <div style={{ padding:'11px 16px', display:'flex', alignItems:'center', justifyContent:'space-between',
+                  background: isDark?'rgba(13,19,36,0.92)':'rgba(248,250,252,1)',
+                  borderBottom: isDark?'1px solid rgba(255,255,255,0.055)':'1px solid rgba(203,213,225,0.55)',
+                }}>
+                  <div style={{ display:'flex', alignItems:'center', gap:'12px' }}>
+                    <div style={{ display:'flex', gap:'5px' }}>
+                      <span style={{ width:'8px', height:'8px', borderRadius:'50%', background:'#f87171' }} />
+                      <span style={{ width:'8px', height:'8px', borderRadius:'50%', background:'#fbbf24' }} />
+                      <span style={{ width:'8px', height:'8px', borderRadius:'50%', background:'#4ade80' }} />
+                    </div>
+                    <span style={{ fontSize:'11.5px', fontWeight:600, letterSpacing:'0.01em', color:isDark?'rgba(255,255,255,0.36)':'#94a3b8' }}>Macro Calendar</span>
+                  </div>
+                  <div style={{ padding:'3px 9px', borderRadius:'99px', fontSize:'10.5px', fontWeight:700, letterSpacing:'0.04em',
+                    color: isDark?'rgba(147,197,253,0.78)':'#3b82f6',
+                    background: isDark?'rgba(59,130,246,0.10)':'rgba(59,130,246,0.07)',
+                    border: isDark?'1px solid rgba(59,130,246,0.22)':'1px solid rgba(59,130,246,0.16)',
+                    animation:'fadeUp 0.46s ease 0.2s both',
+                  }}>4 events this week</div>
+                </div>
+
+                {/* Section label */}
+                <div style={{ padding:'10px 16px 6px', borderBottom: isDark?'1px solid rgba(255,255,255,0.038)':'1px solid rgba(203,213,225,0.44)',
+                  background: isDark?'rgba(9,14,30,1)':'#fff',
+                  animation:'fadeUp 0.48s ease 0.23s both',
+                }}>
+                  <span style={{ fontSize:'10.5px', fontWeight:700, letterSpacing:'0.06em', textTransform:'uppercase', color:isDark?'rgba(255,255,255,0.24)':'#94a3b8' }}>Upcoming High-Impact Events</span>
+                </div>
+
+                {/* Calendar rows */}
+                {[
+                  { date:'Mar 28', day:'Fri', name:'Core PCE Price Index',     impact:'high',   expect:'2.7%',  prev:'2.8%',  ai:true  },
+                  { date:'Apr 02', day:'Wed', name:'FOMC Meeting Minutes',      impact:'high',   expect:'—',     prev:'—',     ai:true  },
+                  { date:'Apr 04', day:'Fri', name:'Non-Farm Payrolls',         impact:'high',   expect:'215K',  prev:'272K',  ai:false },
+                  { date:'Apr 10', day:'Thu', name:'CPI · Consumer Price Index', impact:'medium', expect:'3.1%',  prev:'3.2%',  ai:true  },
+                ].map((ev, i) => (
+                  <div key={i} style={{ display:'flex', alignItems:'center', padding:'10px 16px', gap:'12px',
+                    borderTop: i===0?'none':(isDark?'1px solid rgba(255,255,255,0.038)':'1px solid rgba(203,213,225,0.44)'),
+                    background: i===0?(isDark?'rgba(239,68,68,0.04)':'rgba(239,68,68,0.018)'):'transparent',
+                    opacity:0, animation:`rowReveal 0.48s ease ${0.24 + i * 0.08}s forwards`,
+                  }}>
+                    {/* Date badge */}
+                    <div style={{ minWidth:'40px', textAlign:'center', flexShrink:0 }}>
+                      <div style={{ fontSize:'10px', fontWeight:600, color:isDark?'rgba(255,255,255,0.28)':'#94a3b8', textTransform:'uppercase', letterSpacing:'0.04em' }}>{ev.day}</div>
+                      <div style={{ fontSize:'13px', fontWeight:700, color:isDark?'#e2e8f0':'#1e293b', letterSpacing:'-0.01em' }}>{ev.date.split(' ')[1]}</div>
+                    </div>
+                    {/* Impact dot */}
+                    <span style={{ width:'7px', height:'7px', borderRadius:'50%', flexShrink:0,
+                      background: ev.impact==='high'?'#ef4444':'#f59e0b',
+                      boxShadow: ev.impact==='high'?'0 0 7px rgba(239,68,68,0.55)':'0 0 7px rgba(245,158,11,0.55)',
+                      animation:'liveBlink 2.5s ease-in-out infinite',
+                    }} />
+                    {/* Event name */}
+                    <div style={{ flex:1, minWidth:0 }}>
+                      <div style={{ fontSize:'12.5px', fontWeight:600, color:isDark?'rgba(255,255,255,0.76)':'#1e293b', whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>{ev.name}</div>
+                      <div style={{ fontSize:'11px', color:isDark?'rgba(255,255,255,0.28)':'#94a3b8', marginTop:'1px' }}>Est. {ev.expect} &middot; Prev. {ev.prev}</div>
+                    </div>
+                    {/* AI tag */}
+                    {ev.ai && (
+                      <div style={{ padding:'2.5px 8px', borderRadius:'7px', flexShrink:0, fontSize:'10.5px', fontWeight:700, letterSpacing:'0.02em',
+                        color: isDark?'rgba(147,197,253,0.80)':'#3b82f6',
+                        background: isDark?'rgba(59,130,246,0.12)':'rgba(59,130,246,0.08)',
+                        border: isDark?'1px solid rgba(59,130,246,0.20)':'1px solid rgba(59,130,246,0.14)',
+                      }}>AI ⚡</div>
+                    )}
+                  </div>
+                ))}
+
+                {/* AI signal strip */}
+                <div style={{ margin:'10px 12px 12px', padding:'11px 14px', borderRadius:'13px',
+                  background: isDark?'linear-gradient(120deg,rgba(99,102,241,0.10),rgba(59,130,246,0.07))':'linear-gradient(120deg,rgba(99,102,241,0.055),rgba(59,130,246,0.03))',
+                  border: isDark?'1px solid rgba(99,102,241,0.17)':'1px solid rgba(99,102,241,0.11)',
+                  animation:'fadeUp 0.52s ease 0.58s both',
+                }}>
+                  <div style={{ fontSize:'10px', fontWeight:700, letterSpacing:'0.07em', textTransform:'uppercase', color:isDark?'rgba(165,180,252,0.70)':'#6366f1', marginBottom:'5px' }}>AI Context</div>
+                  <div style={{ fontSize:'12.5px', lineHeight:1.58, color:isDark?'rgba(255,255,255,0.54)':'#475569' }}>
+                    PCE expected below prior. Fed pivot narrative{' '}
+                    <span style={{ color:isDark?'rgba(165,180,252,0.84)':'#6366f1', fontWeight:600 }}>gaining traction heading into April.</span>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          )}
+
+          <div style={{ display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', minHeight:isMobile?'auto':'calc(100vh - 160px)' }}>
 
         {success ? (
           /* ── Success screen ─────────────────────────────────────────── */
@@ -293,22 +406,27 @@ export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess })
             {/* Card */}
             <div ref={formRef} style={{
               width:'100%', maxWidth:'400px',
-              background: isDark?'rgba(9,14,30,0.78)':'rgba(255,255,255,0.97)',
+              background: isDark?'rgba(9,14,30,0.78)':'linear-gradient(168deg, rgba(255,255,255,0.97) 0%, rgba(246,250,255,0.95) 52%, rgba(241,247,255,0.93) 100%)',
               backdropFilter:'blur(32px)', WebkitBackdropFilter:'blur(32px)',
-              border: isDark?'1px solid rgba(255,255,255,0.077)':'1px solid rgba(0,0,0,0.060)',
+              border: isDark?'1px solid rgba(255,255,255,0.077)':'1px solid rgba(148,163,184,0.34)',
               borderRadius:'18px', padding:'28px 28px 24px',
+              overflow:'hidden', position:'relative',
               boxShadow: isDark
                 ? '0 0 0 0.5px rgba(255,255,255,0.055) inset, 0 20px 60px rgba(0,0,0,0.84), 0 0 0 1px rgba(59,130,246,0.07)'
-                : '0 0 0 1px rgba(0,0,0,0.033), 0 6px 28px rgba(15,23,42,0.09), 0 1.5px 6px rgba(15,23,42,0.04)',
+                : '0 0 0 1px rgba(148,163,184,0.18), 0 24px 52px rgba(15,23,42,0.16), 0 10px 28px rgba(59,130,246,0.10), 0 1px 0 rgba(255,255,255,0.9) inset',
               animation:'cardIn 0.45s cubic-bezier(0.22,1,0.36,1) 0.06s both',
             }}>
 
+              <div style={{ position:'absolute', top:0, left:0, right:0, height:'1px',
+                background:isDark?'linear-gradient(90deg, transparent, rgba(148,197,255,0.6), transparent)':'linear-gradient(90deg, transparent, rgba(59,130,246,0.45), transparent)',
+                opacity:0.8 }} />
+
               {/* Heading */}
-              <div style={{ marginBottom:'20px' }}>
+              <div style={{ marginBottom:'20px', animation:'fadeUp 0.45s ease 0.11s both' }}>
                 <h1 style={{ fontSize:'21px', fontWeight:700, letterSpacing:'-0.028em', margin:'0 0 5px', color: isDark?'#f1f5f9':'#0f172a', lineHeight:1.2 }}>
                   Create your account.
                 </h1>
-                <p style={{ fontSize:'13.5px', color: isDark?'rgba(255,255,255,0.38)':'#94a3b8', margin:0 }}>
+                <p style={{ fontSize:'13.5px', color: isDark?'rgba(255,255,255,0.38)':'#64748b', margin:0 }}>
                   {spotsLeft != null && <><span style={{ color:'#f59e0b', fontWeight:600 }}>{spotsLeft} spots</span> left at this price.{' '}</>}
                   Already on Zynth?{' '}
                   <button onClick={onSwitchToLogin}
@@ -326,15 +444,16 @@ export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess })
               <button type="button" onClick={handleGoogleClick} disabled={loading||googleLoading||!GOOGLE_CLIENT_ID}
                 style={{ width:'100%', padding:'10px 16px',
                   background: isDark?'rgba(255,255,255,0.96)':'#ffffff',
-                  border: isDark?'1px solid rgba(255,255,255,0.10)':'1px solid rgba(0,0,0,0.08)',
+                  border: isDark?'1px solid rgba(255,255,255,0.10)':'1px solid rgba(148,163,184,0.34)',
                   borderRadius:'11px', color:!GOOGLE_CLIENT_ID?'rgba(0,0,0,0.3)':'#1e293b',
                   fontSize:'13.5px', fontWeight:500,
                   display:'flex', alignItems:'center', justifyContent:'center', gap:'10px',
                   cursor:loading||googleLoading||!GOOGLE_CLIENT_ID?'not-allowed':'pointer',
                   transition:'all 0.18s ease', marginBottom:'14px',
-                  boxShadow: isDark?'0 1px 0 rgba(255,255,255,0.10) inset, 0 2px 8px rgba(0,0,0,0.36)':'0 1px 3px rgba(15,23,42,0.09), 0 0 0 1px rgba(0,0,0,0.04)' }}
-                onMouseEnter={e => { if(!loading&&!googleLoading&&GOOGLE_CLIENT_ID){ e.currentTarget.style.transform='translateY(-1px)'; e.currentTarget.style.boxShadow=isDark?'0 1px 0 rgba(255,255,255,0.10) inset, 0 6px 20px rgba(0,0,0,0.46)':'0 4px 14px rgba(15,23,42,0.12)'; }}}
-                onMouseLeave={e => { e.currentTarget.style.transform=''; e.currentTarget.style.boxShadow=isDark?'0 1px 0 rgba(255,255,255,0.10) inset, 0 2px 8px rgba(0,0,0,0.36)':'0 1px 3px rgba(15,23,42,0.09), 0 0 0 1px rgba(0,0,0,0.04)'; }}>
+                  boxShadow: isDark?'0 1px 0 rgba(255,255,255,0.10) inset, 0 2px 8px rgba(0,0,0,0.36)':'0 6px 16px rgba(15,23,42,0.08), 0 1px 0 rgba(255,255,255,0.8) inset',
+                  animation:'fadeUp 0.45s ease 0.15s both' }}
+                onMouseEnter={e => { if(!loading&&!googleLoading&&GOOGLE_CLIENT_ID){ e.currentTarget.style.transform='translateY(-1px)'; e.currentTarget.style.boxShadow=isDark?'0 1px 0 rgba(255,255,255,0.10) inset, 0 6px 20px rgba(0,0,0,0.46)':'0 10px 24px rgba(15,23,42,0.12), 0 1px 0 rgba(255,255,255,0.85) inset'; }}}
+                onMouseLeave={e => { e.currentTarget.style.transform=''; e.currentTarget.style.boxShadow=isDark?'0 1px 0 rgba(255,255,255,0.10) inset, 0 2px 8px rgba(0,0,0,0.36)':'0 6px 16px rgba(15,23,42,0.08), 0 1px 0 rgba(255,255,255,0.8) inset'; }}>
                 {googleLoading
                   ? <Loader2 size={16} className="animate-spin" style={{ color:'rgba(0,0,0,0.40)', flexShrink:0 }} />
                   : <svg width="16" height="16" viewBox="0 0 24 24" style={{ flexShrink:0 }}>
@@ -347,60 +466,60 @@ export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess })
               </button>
 
               {/* Divider */}
-              <div style={{ display:'flex', alignItems:'center', gap:'10px', marginBottom:'14px' }}>
-                <div style={{ flex:1, height:'1px', background: isDark?'rgba(255,255,255,0.07)':'rgba(0,0,0,0.07)' }} />
-                <span style={{ fontSize:'10.5px', fontWeight:500, color: isDark?'rgba(255,255,255,0.22)':'#cbd5e1', textTransform:'uppercase', letterSpacing:'0.09em' }}>or</span>
-                <div style={{ flex:1, height:'1px', background: isDark?'rgba(255,255,255,0.07)':'rgba(0,0,0,0.07)' }} />
+              <div style={{ display:'flex', alignItems:'center', gap:'10px', marginBottom:'14px', animation:'fadeUp 0.45s ease 0.19s both' }}>
+                <div style={{ flex:1, height:'1px', background: isDark?'rgba(255,255,255,0.07)':'rgba(148,163,184,0.32)' }} />
+                <span style={{ fontSize:'10.5px', fontWeight:600, color: isDark?'rgba(255,255,255,0.22)':'#94a3b8', textTransform:'uppercase', letterSpacing:'0.09em' }}>or</span>
+                <div style={{ flex:1, height:'1px', background: isDark?'rgba(255,255,255,0.07)':'rgba(148,163,184,0.32)' }} />
               </div>
 
               {/* Form */}
-              <form onSubmit={handleSubmit}>
+              <form onSubmit={handleSubmit} style={{ animation:'fadeUp 0.45s ease 0.23s both' }}>
 
                 {/* Name */}
                 <div style={{ marginBottom:'11px' }}>
-                  <label style={{ display:'block', fontSize:'12px', fontWeight:500, letterSpacing:'0.01em', color: isDark?'rgba(255,255,255,0.48)':'#64748b', marginBottom:'5px' }}>Full name</label>
+                  <label style={{ display:'block', fontSize:'12px', fontWeight:600, letterSpacing:'0.01em', color: isDark?'rgba(255,255,255,0.48)':'#475569', marginBottom:'5px' }}>Full name</label>
                   <input type="text" autoComplete="name" value={form.name} required
                     onChange={e => { setField('name', e.target.value); setFieldErrors(fe => ({...fe, name:''})); }}
                     placeholder="Jane Smith"
                     style={{ width:'100%', boxSizing:'border-box', outline:'none', fontSize:'14px', transition:'all 0.18s ease',
-                      background: isDark?'rgba(255,255,255,0.044)':'rgba(0,0,0,0.024)',
-                      border: fieldErrors.name?'1px solid rgba(239,68,68,0.55)':isDark?'1px solid rgba(255,255,255,0.088)':'1px solid rgba(0,0,0,0.088)',
+                      background: isDark?'rgba(255,255,255,0.044)':'rgba(255,255,255,0.84)',
+                      border: fieldErrors.name?'1px solid rgba(239,68,68,0.55)':isDark?'1px solid rgba(255,255,255,0.088)':'1px solid rgba(148,163,184,0.42)',
                       borderRadius:'10px', padding:'10px 13px', color: isDark?'#f1f5f9':'#0f172a' }}
-                    onFocus={e => { e.target.style.borderColor='rgba(59,130,246,0.52)'; e.target.style.boxShadow='0 0 0 3px rgba(59,130,246,0.10)'; e.target.style.background=isDark?'rgba(255,255,255,0.06)':'#fff'; }}
-                    onBlur={e => { if(!fieldErrors.name){ e.target.style.borderColor=isDark?'rgba(255,255,255,0.088)':'rgba(0,0,0,0.088)'; e.target.style.boxShadow='none'; e.target.style.background=isDark?'rgba(255,255,255,0.044)':'rgba(0,0,0,0.024)'; }}}
+                    onFocus={e => { e.target.style.borderColor='rgba(59,130,246,0.56)'; e.target.style.boxShadow='0 0 0 3px rgba(59,130,246,0.14), 0 6px 18px rgba(59,130,246,0.10)'; e.target.style.background=isDark?'rgba(255,255,255,0.06)':'#ffffff'; }}
+                    onBlur={e => { if(!fieldErrors.name){ e.target.style.borderColor=isDark?'rgba(255,255,255,0.088)':'rgba(148,163,184,0.42)'; e.target.style.boxShadow='none'; e.target.style.background=isDark?'rgba(255,255,255,0.044)':'rgba(255,255,255,0.84)'; }}}
                   />
                   {fieldErrors.name && <div style={{ display:'flex', alignItems:'center', gap:'4px', marginTop:'5px' }}><AlertCircle size={11} color="#ef4444"/><span style={{ fontSize:'11px', color:'#ef4444' }}>{fieldErrors.name}</span></div>}
                 </div>
 
                 {/* Email */}
                 <div style={{ marginBottom:'11px' }}>
-                  <label style={{ display:'block', fontSize:'12px', fontWeight:500, letterSpacing:'0.01em', color: isDark?'rgba(255,255,255,0.48)':'#64748b', marginBottom:'5px' }}>Email</label>
+                  <label style={{ display:'block', fontSize:'12px', fontWeight:600, letterSpacing:'0.01em', color: isDark?'rgba(255,255,255,0.48)':'#475569', marginBottom:'5px' }}>Email</label>
                   <input type="email" autoComplete="email" value={form.email} required
                     onChange={e => { setField('email', e.target.value); setFieldErrors(fe => ({...fe, email:''})); }}
                     placeholder="you@example.com"
                     style={{ width:'100%', boxSizing:'border-box', outline:'none', fontSize:'14px', transition:'all 0.18s ease',
-                      background: isDark?'rgba(255,255,255,0.044)':'rgba(0,0,0,0.024)',
-                      border: fieldErrors.email?'1px solid rgba(239,68,68,0.55)':isDark?'1px solid rgba(255,255,255,0.088)':'1px solid rgba(0,0,0,0.088)',
+                      background: isDark?'rgba(255,255,255,0.044)':'rgba(255,255,255,0.84)',
+                      border: fieldErrors.email?'1px solid rgba(239,68,68,0.55)':isDark?'1px solid rgba(255,255,255,0.088)':'1px solid rgba(148,163,184,0.42)',
                       borderRadius:'10px', padding:'10px 13px', color: isDark?'#f1f5f9':'#0f172a' }}
-                    onFocus={e => { e.target.style.borderColor='rgba(59,130,246,0.52)'; e.target.style.boxShadow='0 0 0 3px rgba(59,130,246,0.10)'; e.target.style.background=isDark?'rgba(255,255,255,0.06)':'#fff'; }}
-                    onBlur={e => { if(!fieldErrors.email){ e.target.style.borderColor=isDark?'rgba(255,255,255,0.088)':'rgba(0,0,0,0.088)'; e.target.style.boxShadow='none'; e.target.style.background=isDark?'rgba(255,255,255,0.044)':'rgba(0,0,0,0.024)'; }}}
+                    onFocus={e => { e.target.style.borderColor='rgba(59,130,246,0.56)'; e.target.style.boxShadow='0 0 0 3px rgba(59,130,246,0.14), 0 6px 18px rgba(59,130,246,0.10)'; e.target.style.background=isDark?'rgba(255,255,255,0.06)':'#ffffff'; }}
+                    onBlur={e => { if(!fieldErrors.email){ e.target.style.borderColor=isDark?'rgba(255,255,255,0.088)':'rgba(148,163,184,0.42)'; e.target.style.boxShadow='none'; e.target.style.background=isDark?'rgba(255,255,255,0.044)':'rgba(255,255,255,0.84)'; }}}
                   />
                   {fieldErrors.email && <div style={{ display:'flex', alignItems:'center', gap:'4px', marginTop:'5px' }}><AlertCircle size={11} color="#ef4444"/><span style={{ fontSize:'11px', color:'#ef4444' }}>{fieldErrors.email}</span></div>}
                 </div>
 
                 {/* Password */}
                 <div style={{ marginBottom: form.password.length > 0 ? '6px' : '11px' }}>
-                  <label style={{ display:'block', fontSize:'12px', fontWeight:500, letterSpacing:'0.01em', color: isDark?'rgba(255,255,255,0.48)':'#64748b', marginBottom:'5px' }}>Password</label>
+                  <label style={{ display:'block', fontSize:'12px', fontWeight:600, letterSpacing:'0.01em', color: isDark?'rgba(255,255,255,0.48)':'#475569', marginBottom:'5px' }}>Password</label>
                   <div style={{ position:'relative' }}>
                     <input type={showPass?'text':'password'} autoComplete="new-password" value={form.password} required
                       onChange={e => { setField('password', e.target.value); setFieldErrors(fe => ({...fe, password:''})); }}
                       placeholder="Min. 8 characters"
                       style={{ width:'100%', boxSizing:'border-box', outline:'none', fontSize:'14px', transition:'all 0.18s ease',
-                        background: isDark?'rgba(255,255,255,0.044)':'rgba(0,0,0,0.024)',
-                        border: fieldErrors.password?'1px solid rgba(239,68,68,0.55)':isDark?'1px solid rgba(255,255,255,0.088)':'1px solid rgba(0,0,0,0.088)',
+                        background: isDark?'rgba(255,255,255,0.044)':'rgba(255,255,255,0.84)',
+                        border: fieldErrors.password?'1px solid rgba(239,68,68,0.55)':isDark?'1px solid rgba(255,255,255,0.088)':'1px solid rgba(148,163,184,0.42)',
                         borderRadius:'10px', padding:'10px 36px 10px 13px', color: isDark?'#f1f5f9':'#0f172a' }}
-                      onFocus={e => { e.target.style.borderColor='rgba(59,130,246,0.52)'; e.target.style.boxShadow='0 0 0 3px rgba(59,130,246,0.10)'; e.target.style.background=isDark?'rgba(255,255,255,0.06)':'#fff'; }}
-                      onBlur={e => { if(!fieldErrors.password){ e.target.style.borderColor=isDark?'rgba(255,255,255,0.088)':'rgba(0,0,0,0.088)'; e.target.style.boxShadow='none'; e.target.style.background=isDark?'rgba(255,255,255,0.044)':'rgba(0,0,0,0.024)'; }}}
+                      onFocus={e => { e.target.style.borderColor='rgba(59,130,246,0.56)'; e.target.style.boxShadow='0 0 0 3px rgba(59,130,246,0.14), 0 6px 18px rgba(59,130,246,0.10)'; e.target.style.background=isDark?'rgba(255,255,255,0.06)':'#ffffff'; }}
+                      onBlur={e => { if(!fieldErrors.password){ e.target.style.borderColor=isDark?'rgba(255,255,255,0.088)':'rgba(148,163,184,0.42)'; e.target.style.boxShadow='none'; e.target.style.background=isDark?'rgba(255,255,255,0.044)':'rgba(255,255,255,0.84)'; }}}
                     />
                     <button type="button" onClick={() => setShowPass(v=>!v)} tabIndex={-1}
                       style={{ position:'absolute', right:'11px', top:'50%', transform:'translateY(-50%)', background:'none', border:'none', cursor:'pointer', color:isDark?'rgba(255,255,255,0.26)':'#94a3b8', padding:0, display:'flex', transition:'color 0.12s' }}
@@ -433,17 +552,17 @@ export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess })
 
                 {/* Confirm password */}
                 <div style={{ marginBottom:'14px' }}>
-                  <label style={{ display:'block', fontSize:'12px', fontWeight:500, letterSpacing:'0.01em', color: isDark?'rgba(255,255,255,0.48)':'#64748b', marginBottom:'5px' }}>Confirm password</label>
+                  <label style={{ display:'block', fontSize:'12px', fontWeight:600, letterSpacing:'0.01em', color: isDark?'rgba(255,255,255,0.48)':'#475569', marginBottom:'5px' }}>Confirm password</label>
                   <div style={{ position:'relative' }}>
                     <input type={showConfirm?'text':'password'} autoComplete="new-password" value={form.confirm} required
                       onChange={e => { setField('confirm', e.target.value); setFieldErrors(fe => ({...fe, confirm:''})); }}
                       placeholder="••••••••"
                       style={{ width:'100%', boxSizing:'border-box', outline:'none', fontSize:'14px', transition:'all 0.18s ease',
-                        background: isDark?'rgba(255,255,255,0.044)':'rgba(0,0,0,0.024)',
-                        border: fieldErrors.confirm?'1px solid rgba(239,68,68,0.55)':isDark?'1px solid rgba(255,255,255,0.088)':'1px solid rgba(0,0,0,0.088)',
+                        background: isDark?'rgba(255,255,255,0.044)':'rgba(255,255,255,0.84)',
+                        border: fieldErrors.confirm?'1px solid rgba(239,68,68,0.55)':isDark?'1px solid rgba(255,255,255,0.088)':'1px solid rgba(148,163,184,0.42)',
                         borderRadius:'10px', padding:'10px 36px 10px 13px', color: isDark?'#f1f5f9':'#0f172a' }}
-                      onFocus={e => { e.target.style.borderColor='rgba(59,130,246,0.52)'; e.target.style.boxShadow='0 0 0 3px rgba(59,130,246,0.10)'; e.target.style.background=isDark?'rgba(255,255,255,0.06)':'#fff'; }}
-                      onBlur={e => { if(!fieldErrors.confirm){ e.target.style.borderColor=isDark?'rgba(255,255,255,0.088)':'rgba(0,0,0,0.088)'; e.target.style.boxShadow='none'; e.target.style.background=isDark?'rgba(255,255,255,0.044)':'rgba(0,0,0,0.024)'; }}}
+                      onFocus={e => { e.target.style.borderColor='rgba(59,130,246,0.56)'; e.target.style.boxShadow='0 0 0 3px rgba(59,130,246,0.14), 0 6px 18px rgba(59,130,246,0.10)'; e.target.style.background=isDark?'rgba(255,255,255,0.06)':'#ffffff'; }}
+                      onBlur={e => { if(!fieldErrors.confirm){ e.target.style.borderColor=isDark?'rgba(255,255,255,0.088)':'rgba(148,163,184,0.42)'; e.target.style.boxShadow='none'; e.target.style.background=isDark?'rgba(255,255,255,0.044)':'rgba(255,255,255,0.84)'; }}}
                     />
                     <button type="button" onClick={() => setShowConfirm(v=>!v)} tabIndex={-1}
                       style={{ position:'absolute', right:'11px', top:'50%', transform:'translateY(-50%)', background:'none', border:'none', cursor:'pointer', color:isDark?'rgba(255,255,255,0.26)':'#94a3b8', padding:0, display:'flex', transition:'color 0.12s' }}
@@ -490,13 +609,13 @@ export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess })
               </form>
 
               {/* Trust strip */}
-              <div style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:'14px', marginTop:'16px' }}>
-                <span style={{ fontSize:'11px', color: isDark?'rgba(255,255,255,0.17)':'#cbd5e1', display:'flex', alignItems:'center', gap:'4px' }}>
+              <div style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:'14px', marginTop:'16px', animation:'fadeUp 0.45s ease 0.28s both' }}>
+                <span style={{ fontSize:'11px', fontWeight:500, color: isDark?'rgba(255,255,255,0.24)':'#64748b', display:'flex', alignItems:'center', gap:'4px' }}>
                   <svg width="9" height="11" viewBox="0 0 9 11" fill="none" style={{ opacity:0.7 }}><path d="M4.5 0L0 2.25V5.25c0 2.32 1.93 4.22 4.5 5.25C7.07 9.47 9 7.57 9 5.25V2.25L4.5 0z" fill="currentColor"/></svg>
                   256-bit SSL
                 </span>
-                <span style={{ width:'1px', height:'10px', background: isDark?'rgba(255,255,255,0.08)':'rgba(0,0,0,0.06)' }} />
-                <span style={{ fontSize:'11px', color: isDark?'rgba(255,255,255,0.17)':'#cbd5e1' }}>Cancel anytime</span>
+                <span style={{ width:'1px', height:'10px', background: isDark?'rgba(255,255,255,0.10)':'rgba(100,116,139,0.28)' }} />
+                <span style={{ fontSize:'11px', fontWeight:500, color: isDark?'rgba(255,255,255,0.24)':'#64748b' }}>Cancel anytime</span>
               </div>
             </div>
 
@@ -512,6 +631,8 @@ export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess })
             </p>
           </>
         )}
+          </div>
+        </div>
       </div>
     </div>
   );

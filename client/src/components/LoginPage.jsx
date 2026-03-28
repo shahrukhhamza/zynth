@@ -125,7 +125,7 @@ export default function LoginPage({ onSwitchToSignup, onBack, onForgotPassword }
   }
 
   return (
-    <div style={{ minHeight:'100vh', background: isDark?'#020617':'#f8fafc', position:'relative', overflowX:'hidden', overflowY:'auto' }}>
+    <div style={{ minHeight:'100vh', background: isDark?'#020617':'#f5f8fd', position:'relative', overflowX:'hidden', overflowY:'auto' }}>
       <style>{`
         @keyframes blobDrift {
           0%,100% { transform: translate(0px,0px)   scale(1);     }
@@ -143,6 +143,26 @@ export default function LoginPage({ onSwitchToSignup, onBack, onForgotPassword }
           from { opacity:0; transform:translateY(20px) scale(0.988); }
           to   { opacity:1; transform:translateY(0)     scale(1);     }
         }
+        @keyframes fadeUp {
+          from { opacity:0; transform:translateY(10px); }
+          to   { opacity:1; transform:translateY(0); }
+        }
+        @keyframes panelFloat {
+          0%,100% { transform:translateY(0px); }
+          50%     { transform:translateY(-6px); }
+        }
+        @keyframes rowReveal {
+          from { opacity:0; transform:translateY(7px); }
+          to   { opacity:1; transform:translateY(0); }
+        }
+        @keyframes drawStroke {
+          from { stroke-dashoffset:620; }
+          to   { stroke-dashoffset:0; }
+        }
+        @keyframes liveBlink {
+          0%,100% { opacity:1; transform:scale(1); }
+          50%     { opacity:0.55; transform:scale(0.9); }
+        }
         @keyframes formShake {
           0%,100% { transform:translateX(0);   }
           20%     { transform:translateX(-7px); }
@@ -152,20 +172,12 @@ export default function LoginPage({ onSwitchToSignup, onBack, onForgotPassword }
         }
       `}</style>
 
-      {/* ── Grid texture ───────────────────────────────────────────────── */}
-      <div style={{ position:'fixed', inset:0, pointerEvents:'none', zIndex:0,
-        backgroundImage: isDark
-          ? 'linear-gradient(rgba(255,255,255,0.022) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.022) 1px, transparent 1px)'
-          : 'linear-gradient(rgba(0,0,0,0.034) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.034) 1px, transparent 1px)',
-        backgroundSize:'42px 42px',
-      }} />
-
       {/* ── Blob 1 – top-left drift ─────────────────────────────────────── */}
       <div style={{ position:'fixed', top:'-220px', left:'-180px', width:'720px', height:'720px',
         pointerEvents:'none', zIndex:0,
         background: isDark
           ? 'radial-gradient(circle, rgba(59,130,246,0.11) 0%, rgba(99,102,241,0.055) 35%, transparent 65%)'
-          : 'radial-gradient(circle, rgba(99,102,241,0.09) 0%, rgba(168,85,247,0.04) 35%, transparent 65%)',
+          : 'radial-gradient(circle, rgba(56,189,248,0.22) 0%, rgba(59,130,246,0.12) 35%, transparent 65%)',
         filter:'blur(82px)', animation:'blobDrift 18s ease-in-out infinite',
       }} />
 
@@ -174,7 +186,7 @@ export default function LoginPage({ onSwitchToSignup, onBack, onForgotPassword }
         pointerEvents:'none', zIndex:0,
         background: isDark
           ? 'radial-gradient(circle, rgba(99,102,241,0.09) 0%, rgba(59,130,246,0.04) 35%, transparent 65%)'
-          : 'radial-gradient(circle, rgba(59,130,246,0.07) 0%, rgba(99,102,241,0.03) 35%, transparent 65%)',
+          : 'radial-gradient(circle, rgba(14,165,233,0.18) 0%, rgba(99,102,241,0.1) 35%, transparent 65%)',
         filter:'blur(82px)', animation:'blobDrift2 22s ease-in-out infinite',
       }} />
 
@@ -182,24 +194,25 @@ export default function LoginPage({ onSwitchToSignup, onBack, onForgotPassword }
       <div style={{ position:'fixed', inset:0, pointerEvents:'none', zIndex:0,
         background: isDark
           ? 'radial-gradient(ellipse 100% 100% at 50% 50%, transparent 40%, rgba(2,6,23,0.62) 100%)'
-          : 'radial-gradient(ellipse 100% 100% at 50% 50%, transparent 40%, rgba(240,244,250,0.64) 100%)',
+          : 'radial-gradient(ellipse 100% 100% at 50% 50%, transparent 34%, rgba(223,232,245,0.78) 100%)',
       }} />
 
       {/* ── Nav bar ─────────────────────────────────────────────────────── */}
       <div style={{ position:'fixed', top:0, left:0, right:0, zIndex:20, height:'52px',
         display:'flex', alignItems:'center', justifyContent:'space-between', padding:'0 24px',
-        borderBottom: isDark?'1px solid rgba(255,255,255,0.045)':'1px solid rgba(0,0,0,0.045)',
-        background: isDark?'rgba(2,6,23,0.65)':'rgba(248,250,252,0.75)',
+        borderBottom: isDark?'1px solid rgba(255,255,255,0.045)':'1px solid rgba(148,163,184,0.28)',
+        background: isDark?'rgba(2,6,23,0.65)':'rgba(255,255,255,0.76)',
         backdropFilter:'blur(20px)', WebkitBackdropFilter:'blur(20px)',
+        boxShadow: isDark?'none':'0 2px 14px rgba(148,163,184,0.18)',
       }}>
         <div>
           {onBack && (
             <button onClick={onBack}
               style={{ display:'flex', alignItems:'center', gap:'5px', fontSize:'12.5px',
-                color: isDark?'rgba(255,255,255,0.36)':'#94a3b8', background:'none', border:'none',
+                color: isDark?'rgba(255,255,255,0.36)':'#64748b', background:'none', border:'none',
                 cursor:'pointer', padding:'4px 7px', borderRadius:'6px', transition:'all 0.12s' }}
               onMouseEnter={e => { e.currentTarget.style.color=isDark?'rgba(255,255,255,0.76)':'#475569'; e.currentTarget.style.background=isDark?'rgba(255,255,255,0.05)':'rgba(0,0,0,0.03)'; }}
-              onMouseLeave={e => { e.currentTarget.style.color=isDark?'rgba(255,255,255,0.36)':'#94a3b8'; e.currentTarget.style.background='transparent'; }}>
+              onMouseLeave={e => { e.currentTarget.style.color=isDark?'rgba(255,255,255,0.36)':'#64748b'; e.currentTarget.style.background='transparent'; }}>
               <ChevronLeft size={13} /> Back
             </button>
           )}
@@ -209,41 +222,160 @@ export default function LoginPage({ onSwitchToSignup, onBack, onForgotPassword }
           <span style={{ fontSize:'14px', fontWeight:700, letterSpacing:'-0.022em', color: isDark?'rgba(255,255,255,0.86)':'#0f172a' }}>Zynth</span>
         </div>
         <button onClick={onSwitchToSignup}
-          style={{ fontSize:'12.5px', fontWeight:500, color: isDark?'rgba(255,255,255,0.36)':'#94a3b8', background:'none', border:'none', cursor:'pointer', padding:'4px 2px', transition:'color 0.12s' }}
+          style={{ fontSize:'12.5px', fontWeight:500, color: isDark?'rgba(255,255,255,0.36)':'#64748b', background:'none', border:'none', cursor:'pointer', padding:'4px 2px', transition:'color 0.12s' }}
           onMouseEnter={e => e.currentTarget.style.color='#3b82f6'}
-          onMouseLeave={e => e.currentTarget.style.color=isDark?'rgba(255,255,255,0.36)':'#94a3b8'}>
+          onMouseLeave={e => e.currentTarget.style.color=isDark?'rgba(255,255,255,0.36)':'#64748b'}>
           Sign up →
         </button>
       </div>
 
       {/* ── Page body ───────────────────────────────────────────────────── */}
-      <div style={{ position:'relative', zIndex:1, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', minHeight:'100vh', padding:'64px 20px 48px', boxSizing:'border-box' }}>
+      <div style={{ position:'relative', zIndex:1, minHeight:'100vh', padding:'76px 24px 48px', boxSizing:'border-box' }}>
+        <div style={{ width:'100%', maxWidth:'1240px', margin:'0 auto', minHeight:'calc(100vh - 124px)', display:'grid', gridTemplateColumns:isMobile?'1fr':'1.05fr 0.95fr', alignItems:'center', gap:isMobile?'0':'52px' }}>
 
-        {/* Logotype above card */}
-        <div style={{ display:'flex', alignItems:'center', gap:'10px', marginBottom:'26px', animation:'cardIn 0.38s ease both' }}>
-          <BrandMark size={33} />
-          <span style={{ fontSize:'19px', fontWeight:800, letterSpacing:'-0.035em', color: isDark?'#fff':'#0f172a' }}>Zynth</span>
-        </div>
+          {!isMobile && (
+            <div style={{ paddingRight:'24px', animation:'fadeUp 0.52s ease both', display:'flex', flexDirection:'column', justifyContent:'center' }}>
+              <h1 style={{ fontSize:'clamp(36px,3.8vw,56px)', lineHeight:1.04, margin:'0 0 18px', letterSpacing:'-0.04em', fontWeight:800, color:isDark?'#f8fafc':'#0f172a', maxWidth:'560px' }}>
+                Trade with clarity,<br />not guesswork.
+              </h1>
+              <p style={{ margin:'0 0 44px', fontSize:'16px', lineHeight:1.68, maxWidth:'460px', color:isDark?'rgba(255,255,255,0.46)':'#5a6a82', fontWeight:400 }}>
+                Connect macro events, AI-assisted context, and your execution plan in one focused workspace.
+              </p>
+
+              {/* Product dashboard preview */}
+              <div style={{ width:'100%', maxWidth:'560px', borderRadius:'20px', overflow:'hidden', animation:'fadeUp 0.6s ease 0.14s both, panelFloat 8s ease-in-out 1.1s infinite',
+                background: isDark?'rgba(9,14,30,0.96)':'#ffffff',
+                border: isDark?'1px solid rgba(255,255,255,0.07)':'1px solid rgba(203,213,225,0.65)',
+                boxShadow: isDark?'0 28px 72px rgba(0,0,0,0.60), 0 0 0 0.5px rgba(255,255,255,0.05) inset':'0 20px 56px rgba(15,23,42,0.12), 0 1px 0 #fff inset',
+              }}>
+
+                {/* Window chrome */}
+                <div style={{ padding:'11px 16px', display:'flex', alignItems:'center', justifyContent:'space-between',
+                  background: isDark?'rgba(13,19,36,0.92)':'rgba(248,250,252,1)',
+                  borderBottom: isDark?'1px solid rgba(255,255,255,0.055)':'1px solid rgba(203,213,225,0.55)',
+                }}>
+                  <div style={{ display:'flex', alignItems:'center', gap:'12px' }}>
+                    <div style={{ display:'flex', gap:'5px' }}>
+                      <span style={{ width:'8px', height:'8px', borderRadius:'50%', background:'#f87171' }} />
+                      <span style={{ width:'8px', height:'8px', borderRadius:'50%', background:'#fbbf24' }} />
+                      <span style={{ width:'8px', height:'8px', borderRadius:'50%', background:'#4ade80' }} />
+                    </div>
+                    <span style={{ fontSize:'11.5px', fontWeight:600, letterSpacing:'0.01em', color:isDark?'rgba(255,255,255,0.36)':'#94a3b8' }}>Economic Dashboard</span>
+                  </div>
+                  <div style={{ display:'flex', alignItems:'center', gap:'5px', padding:'3px 9px', borderRadius:'99px',
+                    background:isDark?'rgba(34,197,94,0.10)':'rgba(34,197,94,0.07)',
+                    border:isDark?'1px solid rgba(34,197,94,0.24)':'1px solid rgba(34,197,94,0.22)',
+                  }}>
+                    <span style={{ width:'5px', height:'5px', borderRadius:'50%', background:'#22c55e', animation:'liveBlink 2s ease-in-out infinite' }} />
+                    <span style={{ fontSize:'10px', fontWeight:700, color:'#22c55e', letterSpacing:'0.05em' }}>LIVE</span>
+                  </div>
+                </div>
+
+                {/* Chart section */}
+                <div style={{ padding:'14px 16px 0', background:isDark?'rgba(9,14,30,1)':'#fff', position:'relative', overflow:'hidden' }}>
+                  <div style={{ position:'absolute', inset:0, pointerEvents:'none',
+                    background:isDark
+                      ? 'linear-gradient(120deg, transparent 30%, rgba(59,130,246,0.08) 48%, transparent 66%)'
+                      : 'linear-gradient(120deg, transparent 30%, rgba(59,130,246,0.06) 48%, transparent 66%)',
+                    transform:'translateX(-100%)', animation:'blobDrift2 11s ease-in-out infinite' }} />
+                  <div style={{ display:'flex', justifyContent:'space-between', alignItems:'baseline', marginBottom:'10px' }}>
+                    <div>
+                      <div style={{ fontSize:'11px', fontWeight:500, color:isDark?'rgba(255,255,255,0.28)':'#94a3b8', marginBottom:'3px' }}>DXY Index · 30 days</div>
+                      <div style={{ fontSize:'22px', fontWeight:700, letterSpacing:'-0.03em', color:isDark?'#f1f5f9':'#0f172a', lineHeight:1 }}>99.26</div>
+                    </div>
+                    <div style={{ textAlign:'right' }}>
+                      <div style={{ fontSize:'12.5px', fontWeight:700, color:'#10b981' }}>▲ +0.44%</div>
+                      <div style={{ fontSize:'11px', color:isDark?'rgba(255,255,255,0.22)':'#94a3b8', marginTop:'2px' }}>vs prior close</div>
+                    </div>
+                  </div>
+                  <svg width="100%" height="58" viewBox="0 0 520 58" preserveAspectRatio="none" style={{ display:'block', marginLeft:'-1px', marginRight:'-1px', width:'calc(100% + 2px)' }}>
+                    <defs>
+                      <linearGradient id="lgLogin" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor={isDark?'rgba(59,130,246,0.24)':'rgba(59,130,246,0.13)'} />
+                        <stop offset="100%" stopColor="transparent" />
+                      </linearGradient>
+                    </defs>
+                    <path d="M0,50 C30,48 55,42 100,34 C140,27 165,31 210,21 C248,13 268,17 308,9 C348,3 372,7 412,5 C450,3 478,7 520,2 L520,58 L0,58 Z"
+                      fill="url(#lgLogin)" />
+                    <path d="M0,50 C30,48 55,42 100,34 C140,27 165,31 210,21 C248,13 268,17 308,9 C348,3 372,7 412,5 C450,3 478,7 520,2"
+                      fill="none" stroke={isDark?'rgba(59,130,246,0.75)':'rgba(59,130,246,0.52)'} strokeWidth="1.8" strokeLinecap="round" style={{ strokeDasharray:'620', strokeDashoffset:'620', animation:'drawStroke 1.4s ease 0.28s forwards' }} />
+                  </svg>
+                </div>
+
+                {/* Data rows */}
+                {[
+                  { name:'CPI  (Core YoY)',    val:'3.2%',   tag:'↓ Beat',    tagUp:false, dot:'#ef4444', hi:true  },
+                  { name:'Non-Farm Payrolls', val:'272K',   tag:'↑ Strong',  tagUp:true,  dot:'#ef4444', hi:true  },
+                  { name:'Fed Funds Rate',    val:'5.25%',  tag:'Hold',      tagUp:null,  dot:'#f59e0b', hi:false },
+                ].map((row, i) => (
+                  <div key={i} style={{ display:'flex', alignItems:'center', padding:'9px 16px',
+                    borderTop: isDark?'1px solid rgba(255,255,255,0.038)':'1px solid rgba(203,213,225,0.44)',
+                    background: i===0?(isDark?'rgba(59,130,246,0.04)':'rgba(59,130,246,0.018)'):'transparent',
+                    opacity:0, animation:`rowReveal 0.48s ease ${0.18 + i * 0.08}s forwards`,
+                  }}>
+                    <span style={{ width:'6px', height:'6px', borderRadius:'50%', flexShrink:0, marginRight:'11px',
+                      background:row.dot, boxShadow:`0 0 6px ${row.dot}88`, animation:'liveBlink 2.6s ease-in-out infinite',
+                    }} />
+                    <span style={{ flex:1, fontSize:'12.5px', fontWeight:500, color:isDark?'rgba(255,255,255,0.68)':'#334155' }}>{row.name}</span>
+                    <span style={{ fontSize:'13px', fontWeight:700, color:isDark?'#f1f5f9':'#0f172a', marginRight:'12px' }}>{row.val}</span>
+                    <span style={{ fontSize:'11px', fontWeight:600, padding:'2.5px 8px', borderRadius:'7px', whiteSpace:'nowrap',
+                      color: row.tagUp===true?'#10b981':row.tagUp===false?'#f87171':'#94a3b8',
+                      background: row.tagUp===true?(isDark?'rgba(16,185,129,0.12)':'rgba(16,185,129,0.09)'):
+                                  row.tagUp===false?(isDark?'rgba(248,113,113,0.12)':'rgba(248,113,113,0.09)'):
+                                  (isDark?'rgba(148,163,184,0.10)':'rgba(148,163,184,0.09)'),
+                    }}>{row.tag}</span>
+                  </div>
+                ))}
+
+                {/* AI Briefing strip */}
+                <div style={{ margin:'10px 12px 12px', padding:'11px 14px', borderRadius:'13px',
+                  background: isDark?'linear-gradient(120deg,rgba(59,130,246,0.10),rgba(99,102,241,0.07))':'linear-gradient(120deg,rgba(59,130,246,0.055),rgba(99,102,241,0.03))',
+                  border: isDark?'1px solid rgba(59,130,246,0.17)':'1px solid rgba(59,130,246,0.11)',
+                  animation:'fadeUp 0.52s ease 0.46s both',
+                }}>
+                  <div style={{ fontSize:'10px', fontWeight:700, letterSpacing:'0.07em', textTransform:'uppercase', color:isDark?'rgba(147,197,253,0.68)':'#3b82f6', marginBottom:'5px' }}>AI Briefing</div>
+                  <div style={{ fontSize:'12.5px', lineHeight:1.58, color:isDark?'rgba(255,255,255,0.54)':'#475569' }}>
+                    Disinflation trend intact. Dollar momentum fading post-CPI.{' '}
+                    <span style={{ color:isDark?'rgba(147,197,253,0.82)':'#2563eb', fontWeight:600 }}>Risk-on bias favored near-term.</span>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          )}
+
+          <div style={{ display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', minHeight:isMobile?'auto':'calc(100vh - 160px)' }}>
+
+            {/* Logotype above card */}
+            <div style={{ display:'flex', alignItems:'center', gap:'10px', marginBottom:'26px', animation:'cardIn 0.38s ease both' }}>
+              <BrandMark size={33} />
+              <span style={{ fontSize:'19px', fontWeight:800, letterSpacing:'-0.035em', color: isDark?'#fff':'#0f172a' }}>Zynth</span>
+            </div>
 
         {/* ── Auth card ───────────────────────────────────────────────── */}
         <div ref={formRef} style={{
-          width:'100%', maxWidth:'392px',
-          background: isDark?'rgba(9,14,30,0.78)':'rgba(255,255,255,0.97)',
+          width:'100%', maxWidth:'400px',
+          background: isDark?'rgba(9,14,30,0.78)':'linear-gradient(168deg, rgba(255,255,255,0.97) 0%, rgba(246,250,255,0.95) 52%, rgba(241,247,255,0.93) 100%)',
           backdropFilter:'blur(32px)', WebkitBackdropFilter:'blur(32px)',
-          border: isDark?'1px solid rgba(255,255,255,0.077)':'1px solid rgba(0,0,0,0.060)',
+          border: isDark?'1px solid rgba(255,255,255,0.077)':'1px solid rgba(148,163,184,0.34)',
           borderRadius:'18px', padding:'30px 28px 26px',
+          overflow:'hidden', position:'relative',
           boxShadow: isDark
             ? '0 0 0 0.5px rgba(255,255,255,0.055) inset, 0 20px 60px rgba(0,0,0,0.84), 0 0 0 1px rgba(59,130,246,0.07)'
-            : '0 0 0 1px rgba(0,0,0,0.033), 0 6px 28px rgba(15,23,42,0.09), 0 1.5px 6px rgba(15,23,42,0.04)',
+            : '0 0 0 1px rgba(148,163,184,0.18), 0 24px 52px rgba(15,23,42,0.16), 0 10px 28px rgba(59,130,246,0.10), 0 1px 0 rgba(255,255,255,0.9) inset',
           animation:'cardIn 0.45s cubic-bezier(0.22,1,0.36,1) 0.06s both',
         }}>
 
+          <div style={{ position:'absolute', top:0, left:0, right:0, height:'1px',
+            background:isDark?'linear-gradient(90deg, transparent, rgba(148,197,255,0.6), transparent)':'linear-gradient(90deg, transparent, rgba(59,130,246,0.45), transparent)',
+            opacity:0.8 }} />
+
           {/* Heading */}
-          <div style={{ marginBottom:'22px' }}>
+          <div style={{ marginBottom:'22px', animation:'fadeUp 0.45s ease 0.11s both' }}>
             <h1 style={{ fontSize:'21px', fontWeight:700, letterSpacing:'-0.028em', margin:'0 0 5px', color: isDark?'#f1f5f9':'#0f172a', lineHeight:1.2 }}>
               Welcome back.
             </h1>
-            <p style={{ fontSize:'13.5px', color: isDark?'rgba(255,255,255,0.38)':'#94a3b8', margin:0, lineHeight:1.5 }}>
+            <p style={{ fontSize:'13.5px', color: isDark?'rgba(255,255,255,0.38)':'#64748b', margin:0, lineHeight:1.5 }}>
               Sign in to your trading dashboard.{' '}
               <button onClick={onSwitchToSignup}
                 style={{ color:'#3b82f6', background:'none', border:'none', cursor:'pointer', fontSize:'13.5px', padding:0, fontWeight:500, transition:'color 0.12s' }}
@@ -273,15 +405,16 @@ export default function LoginPage({ onSwitchToSignup, onBack, onForgotPassword }
           <button type="button" onClick={handleGoogleClick} disabled={loading||googleLoading||!GOOGLE_CLIENT_ID}
             style={{ width:'100%', padding:'10px 16px',
               background: isDark?'rgba(255,255,255,0.96)':'#ffffff',
-              border: isDark?'1px solid rgba(255,255,255,0.10)':'1px solid rgba(0,0,0,0.08)',
+              border: isDark?'1px solid rgba(255,255,255,0.10)':'1px solid rgba(148,163,184,0.34)',
               borderRadius:'11px', color:!GOOGLE_CLIENT_ID?'rgba(0,0,0,0.3)':'#1e293b',
               fontSize:'13.5px', fontWeight:500,
               display:'flex', alignItems:'center', justifyContent:'center', gap:'10px',
               cursor:loading||googleLoading||!GOOGLE_CLIENT_ID?'not-allowed':'pointer',
               transition:'all 0.18s ease', marginBottom:'14px',
-              boxShadow: isDark?'0 1px 0 rgba(255,255,255,0.10) inset, 0 2px 8px rgba(0,0,0,0.36)':'0 1px 3px rgba(15,23,42,0.09), 0 0 0 1px rgba(0,0,0,0.04)' }}
-            onMouseEnter={e => { if(!loading&&!googleLoading&&GOOGLE_CLIENT_ID){ e.currentTarget.style.transform='translateY(-1px)'; e.currentTarget.style.boxShadow=isDark?'0 1px 0 rgba(255,255,255,0.10) inset, 0 6px 20px rgba(0,0,0,0.46)':'0 4px 14px rgba(15,23,42,0.12)'; }}}
-            onMouseLeave={e => { e.currentTarget.style.transform=''; e.currentTarget.style.boxShadow=isDark?'0 1px 0 rgba(255,255,255,0.10) inset, 0 2px 8px rgba(0,0,0,0.36)':'0 1px 3px rgba(15,23,42,0.09), 0 0 0 1px rgba(0,0,0,0.04)'; }}>
+              boxShadow: isDark?'0 1px 0 rgba(255,255,255,0.10) inset, 0 2px 8px rgba(0,0,0,0.36)':'0 6px 16px rgba(15,23,42,0.08), 0 1px 0 rgba(255,255,255,0.8) inset',
+              animation:'fadeUp 0.45s ease 0.15s both' }}
+            onMouseEnter={e => { if(!loading&&!googleLoading&&GOOGLE_CLIENT_ID){ e.currentTarget.style.transform='translateY(-1px)'; e.currentTarget.style.boxShadow=isDark?'0 1px 0 rgba(255,255,255,0.10) inset, 0 6px 20px rgba(0,0,0,0.46)':'0 10px 24px rgba(15,23,42,0.12), 0 1px 0 rgba(255,255,255,0.85) inset'; }}}
+            onMouseLeave={e => { e.currentTarget.style.transform=''; e.currentTarget.style.boxShadow=isDark?'0 1px 0 rgba(255,255,255,0.10) inset, 0 2px 8px rgba(0,0,0,0.36)':'0 6px 16px rgba(15,23,42,0.08), 0 1px 0 rgba(255,255,255,0.8) inset'; }}>
             {googleLoading
               ? <Loader2 size={16} className="animate-spin" style={{ color:'rgba(0,0,0,0.40)', flexShrink:0 }} />
               : <svg width="16" height="16" viewBox="0 0 24 24" style={{ flexShrink:0 }}>
@@ -294,27 +427,27 @@ export default function LoginPage({ onSwitchToSignup, onBack, onForgotPassword }
           </button>
 
           {/* Divider */}
-          <div style={{ display:'flex', alignItems:'center', gap:'10px', marginBottom:'14px' }}>
-            <div style={{ flex:1, height:'1px', background: isDark?'rgba(255,255,255,0.07)':'rgba(0,0,0,0.07)' }} />
-            <span style={{ fontSize:'10.5px', fontWeight:500, color: isDark?'rgba(255,255,255,0.22)':'#cbd5e1', textTransform:'uppercase', letterSpacing:'0.09em' }}>or</span>
-            <div style={{ flex:1, height:'1px', background: isDark?'rgba(255,255,255,0.07)':'rgba(0,0,0,0.07)' }} />
+          <div style={{ display:'flex', alignItems:'center', gap:'10px', marginBottom:'14px', animation:'fadeUp 0.45s ease 0.19s both' }}>
+            <div style={{ flex:1, height:'1px', background: isDark?'rgba(255,255,255,0.07)':'rgba(148,163,184,0.32)' }} />
+            <span style={{ fontSize:'10.5px', fontWeight:600, color: isDark?'rgba(255,255,255,0.22)':'#94a3b8', textTransform:'uppercase', letterSpacing:'0.09em' }}>or</span>
+            <div style={{ flex:1, height:'1px', background: isDark?'rgba(255,255,255,0.07)':'rgba(148,163,184,0.32)' }} />
           </div>
 
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} style={{ animation:'fadeUp 0.45s ease 0.23s both' }}>
             {/* Email */}
             <div style={{ marginBottom:'13px' }}>
-              <label style={{ display:'block', fontSize:'12px', fontWeight:500, letterSpacing:'0.01em', color: isDark?'rgba(255,255,255,0.48)':'#64748b', marginBottom:'6px' }}>
+              <label style={{ display:'block', fontSize:'12px', fontWeight:600, letterSpacing:'0.01em', color: isDark?'rgba(255,255,255,0.48)':'#475569', marginBottom:'6px' }}>
                 Email
               </label>
               <input type="email" autoComplete="email" value={email} required
                 onChange={e => { setEmail(e.target.value); setFieldErrors(fe => ({...fe, email:''})); }}
                 placeholder="you@example.com"
                 style={{ width:'100%', boxSizing:'border-box', outline:'none', fontSize:'14px', transition:'all 0.18s ease',
-                  background: isDark?'rgba(255,255,255,0.044)':'rgba(0,0,0,0.024)',
-                  border: fieldErrors.email?'1px solid rgba(239,68,68,0.55)':isDark?'1px solid rgba(255,255,255,0.088)':'1px solid rgba(0,0,0,0.088)',
+                  background: isDark?'rgba(255,255,255,0.044)':'rgba(255,255,255,0.84)',
+                  border: fieldErrors.email?'1px solid rgba(239,68,68,0.55)':isDark?'1px solid rgba(255,255,255,0.088)':'1px solid rgba(148,163,184,0.42)',
                   borderRadius:'10px', padding:'10px 13px', color: isDark?'#f1f5f9':'#0f172a' }}
-                onFocus={e => { e.target.style.borderColor='rgba(59,130,246,0.52)'; e.target.style.boxShadow='0 0 0 3px rgba(59,130,246,0.10)'; e.target.style.background=isDark?'rgba(255,255,255,0.06)':'#fff'; }}
-                onBlur={e => { if(!fieldErrors.email){ e.target.style.borderColor=isDark?'rgba(255,255,255,0.088)':'rgba(0,0,0,0.088)'; e.target.style.boxShadow='none'; e.target.style.background=isDark?'rgba(255,255,255,0.044)':'rgba(0,0,0,0.024)'; }}}
+                onFocus={e => { e.target.style.borderColor='rgba(59,130,246,0.56)'; e.target.style.boxShadow='0 0 0 3px rgba(59,130,246,0.14), 0 6px 18px rgba(59,130,246,0.10)'; e.target.style.background=isDark?'rgba(255,255,255,0.06)':'#ffffff'; }}
+                onBlur={e => { if(!fieldErrors.email){ e.target.style.borderColor=isDark?'rgba(255,255,255,0.088)':'rgba(148,163,184,0.42)'; e.target.style.boxShadow='none'; e.target.style.background=isDark?'rgba(255,255,255,0.044)':'rgba(255,255,255,0.84)'; }}}
               />
               {fieldErrors.email?.trim() && <div style={{ display:'flex', alignItems:'center', gap:'4px', marginTop:'5px' }}><AlertCircle size={11} color="#ef4444"/><span style={{ fontSize:'11px', color:'#ef4444' }}>{fieldErrors.email}</span></div>}
             </div>
@@ -322,7 +455,7 @@ export default function LoginPage({ onSwitchToSignup, onBack, onForgotPassword }
             {/* Password */}
             <div style={{ marginBottom:'18px' }}>
               <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'6px' }}>
-                <label style={{ fontSize:'12px', fontWeight:500, letterSpacing:'0.01em', color: isDark?'rgba(255,255,255,0.48)':'#64748b' }}>Password</label>
+                <label style={{ fontSize:'12px', fontWeight:600, letterSpacing:'0.01em', color: isDark?'rgba(255,255,255,0.48)':'#475569' }}>Password</label>
                 <button type="button" onClick={onForgotPassword}
                   style={{ fontSize:'12px', color:'#3b82f6', background:'none', border:'none', cursor:'pointer', padding:0, transition:'color 0.12s' }}
                   onMouseEnter={e => e.currentTarget.style.color='#60a5fa'}
@@ -333,11 +466,11 @@ export default function LoginPage({ onSwitchToSignup, onBack, onForgotPassword }
                   onChange={e => { setPassword(e.target.value); setFieldErrors(fe => ({...fe, password:''})); }}
                   placeholder="••••••••"
                   style={{ width:'100%', boxSizing:'border-box', outline:'none', fontSize:'14px', transition:'all 0.18s ease',
-                    background: isDark?'rgba(255,255,255,0.044)':'rgba(0,0,0,0.024)',
-                    border: fieldErrors.password?'1px solid rgba(239,68,68,0.55)':isDark?'1px solid rgba(255,255,255,0.088)':'1px solid rgba(0,0,0,0.088)',
+                    background: isDark?'rgba(255,255,255,0.044)':'rgba(255,255,255,0.84)',
+                    border: fieldErrors.password?'1px solid rgba(239,68,68,0.55)':isDark?'1px solid rgba(255,255,255,0.088)':'1px solid rgba(148,163,184,0.42)',
                     borderRadius:'10px', padding:'10px 36px 10px 13px', color: isDark?'#f1f5f9':'#0f172a' }}
-                  onFocus={e => { e.target.style.borderColor='rgba(59,130,246,0.52)'; e.target.style.boxShadow='0 0 0 3px rgba(59,130,246,0.10)'; e.target.style.background=isDark?'rgba(255,255,255,0.06)':'#fff'; }}
-                  onBlur={e => { if(!fieldErrors.password){ e.target.style.borderColor=isDark?'rgba(255,255,255,0.088)':'rgba(0,0,0,0.088)'; e.target.style.boxShadow='none'; e.target.style.background=isDark?'rgba(255,255,255,0.044)':'rgba(0,0,0,0.024)'; }}}
+                  onFocus={e => { e.target.style.borderColor='rgba(59,130,246,0.56)'; e.target.style.boxShadow='0 0 0 3px rgba(59,130,246,0.14), 0 6px 18px rgba(59,130,246,0.10)'; e.target.style.background=isDark?'rgba(255,255,255,0.06)':'#ffffff'; }}
+                  onBlur={e => { if(!fieldErrors.password){ e.target.style.borderColor=isDark?'rgba(255,255,255,0.088)':'rgba(148,163,184,0.42)'; e.target.style.boxShadow='none'; e.target.style.background=isDark?'rgba(255,255,255,0.044)':'rgba(255,255,255,0.84)'; }}}
                 />
                 <button type="button" onClick={() => setShowPass(v=>!v)} tabIndex={-1}
                   style={{ position:'absolute', right:'11px', top:'50%', transform:'translateY(-50%)', background:'none', border:'none', cursor:'pointer', color:isDark?'rgba(255,255,255,0.26)':'#94a3b8', padding:0, display:'flex', transition:'color 0.12s' }}
@@ -367,18 +500,18 @@ export default function LoginPage({ onSwitchToSignup, onBack, onForgotPassword }
           </form>
 
           {/* Trust strip */}
-          <div style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:'14px', marginTop:'18px' }}>
-            <span style={{ fontSize:'11px', color: isDark?'rgba(255,255,255,0.17)':'#cbd5e1', display:'flex', alignItems:'center', gap:'4px' }}>
+          <div style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:'14px', marginTop:'18px', animation:'fadeUp 0.45s ease 0.28s both' }}>
+            <span style={{ fontSize:'11px', fontWeight:500, color: isDark?'rgba(255,255,255,0.24)':'#64748b', display:'flex', alignItems:'center', gap:'4px' }}>
               <svg width="9" height="11" viewBox="0 0 9 11" fill="none" style={{ opacity:0.7 }}><path d="M4.5 0L0 2.25V5.25c0 2.32 1.93 4.22 4.5 5.25C7.07 9.47 9 7.57 9 5.25V2.25L4.5 0z" fill="currentColor"/></svg>
               256-bit SSL
             </span>
-            <span style={{ width:'1px', height:'10px', background: isDark?'rgba(255,255,255,0.08)':'rgba(0,0,0,0.06)' }} />
-            <span style={{ fontSize:'11px', color: isDark?'rgba(255,255,255,0.17)':'#cbd5e1' }}>Bank-grade security</span>
+            <span style={{ width:'1px', height:'10px', background: isDark?'rgba(255,255,255,0.10)':'rgba(100,116,139,0.28)' }} />
+            <span style={{ fontSize:'11px', fontWeight:500, color: isDark?'rgba(255,255,255,0.24)':'#64748b' }}>Bank-grade security</span>
           </div>
         </div>
 
-        {/* Below-card link */}
-        <p style={{ marginTop:'20px', fontSize:'13px', color: isDark?'rgba(255,255,255,0.32)':'#94a3b8', animation:'cardIn 0.45s ease 0.1s both' }}>
+            {/* Below-card link */}
+            <p style={{ marginTop:'20px', fontSize:'13px', color: isDark?'rgba(255,255,255,0.32)':'#94a3b8', animation:'cardIn 0.45s ease 0.1s both' }}>
           Don't have an account?{' '}
           <button onClick={onSwitchToSignup}
             style={{ color:'#3b82f6', background:'none', border:'none', cursor:'pointer', fontSize:'13px', padding:0, fontWeight:500, transition:'color 0.12s' }}
@@ -386,7 +519,9 @@ export default function LoginPage({ onSwitchToSignup, onBack, onForgotPassword }
             onMouseLeave={e => e.currentTarget.style.color='#3b82f6'}>
             Create one free →
           </button>
-        </p>
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   );
