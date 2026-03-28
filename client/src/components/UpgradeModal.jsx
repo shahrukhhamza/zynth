@@ -35,12 +35,15 @@ const PAYMENT_OPTIONS_BY_REGION = {
   INTL: [
     {
       key: 'bank-wire-usd',
-      name: 'Bank Wire (USD)',
+      name: 'International Payment (USD Bank Transfer)',
       Icon: Landmark,
       details: [
-        { label: 'Bank Name', value: 'Citibank' },
-        { label: 'Beneficiary Name', value: 'Shahrukh Hamza' },
+        { label: 'Bank', value: 'Citibank' },
+        { label: 'Account Holder', value: 'Shahrukh Hamza' },
         { label: 'Account Number', value: '70584510002334445' },
+        { label: 'Routing Number (ABA)', value: '031100209' },
+        { label: 'SWIFT Code', value: 'CITIUS33' },
+        { label: 'Account Type', value: 'Checking' },
       ],
     },
   ],
@@ -505,6 +508,11 @@ export default function UpgradeModal({
                 {paymentRegion === 'PK' && (
                   <div className="mt-3 text-[11px] text-gray-500 dark:text-gray-400">
                     Only payments equal to {amountPkrLabel} will be approved.
+                  </div>
+                )}
+                {paymentRegion === 'INTL' && (
+                  <div className="mt-3 text-[11px] text-gray-500 dark:text-gray-400">
+                    For US transfers use Routing Number (ACH). For international wire use SWIFT code. Payments are verified within 1-2 hours.
                   </div>
                 )}
               </div>

@@ -25,19 +25,19 @@ const PAYMENT_METHODS = {
   international: {
     label:    '🌍 International',
     icon:     Globe,
-    subtitle: 'USD / GBP bank transfer',
+    subtitle: 'USD bank transfer',
     options: [
       {
-        name: 'Citibank Wire Transfer',
+        name: 'International Payment (USD Bank Transfer)',
         details: [
-          { label: 'Account Name',    value: 'Shahrukh Hamza' },
-          { label: 'Account Number',  value: '70584510002334445' },
-          { label: 'SWIFT / BIC',     value: 'CITIUS33' },
-          { label: 'Routing Number',  value: '031100209' },
           { label: 'Bank',            value: 'Citibank' },
-          { label: 'Currency',        value: 'USD' },
+          { label: 'Account Holder',  value: 'Shahrukh Hamza' },
+          { label: 'Account Number',  value: '70584510002334445' },
+          { label: 'Routing Number (ABA)', value: '031100209' },
+          { label: 'SWIFT / BIC',     value: 'CITIUS33' },
+          { label: 'Account Type',    value: 'Checking' },
         ],
-        note: 'Include your registered email in the payment reference/memo field.',
+        note: 'For US transfers use Routing Number (ACH). For international wire use SWIFT code. Payments are verified within 1-2 hours.',
       },
     ],
   },
