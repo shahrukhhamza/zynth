@@ -1,8 +1,8 @@
 ﻿import { useEffect, useMemo, useRef, useState } from 'react';
 import {
-  X, Check, Zap, ShieldCheck, Sparkles, Globe, Landmark,
-  Smartphone, Upload, Loader2, CheckCircle, ChevronDown,
-  ArrowLeft, Crown, Rocket,
+  X, Check, Sparkles, Landmark,
+  Smartphone, Upload, Loader2, CheckCircle,
+  Crown, Rocket,
 } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 import { useAuth } from '../contexts/AuthContext';
@@ -16,8 +16,8 @@ const PLANS = {
     id: 'pro',
     name: 'Pro',
     price: 9,
-    badge: 'Most Popular',
-    accent: '#22c55e',
+    badge: 'Recommended',
+    accent: '#2563eb',
     Icon: Rocket,
     features: [
       'Unlimited journal entries',
@@ -30,7 +30,7 @@ const PLANS = {
     id: 'elite',
     name: 'Elite',
     price: 19,
-    badge: 'Best Value',
+    badge: 'Power Users',
     accent: '#f59e0b',
     Icon: Crown,
     features: [
@@ -42,86 +42,44 @@ const PLANS = {
   },
 };
 
-const PAYMENT_METHODS = {
-  international: {
-    key: 'international',
-    label: 'International',
-    Icon: Globe,
-    methods: [
-      {
-        key: 'citibank',
-        name: 'Citibank Wire',
-        details: [
-          { label: 'Bank',           value: 'Citibank' },
-          { label: 'Account Name',   value: 'Shahrukh Hamza' },
-          { label: 'Account Number', value: '70584510002334445' },
-          { label: 'Routing Number', value: '031100209' },
-          { label: 'SWIFT / BIC',    value: 'CITIUS33' },
-          { label: 'Currency',       value: 'USD' },
-        ],
-      },
-      {
-        key: 'payoneer',
-        name: 'Payoneer',
-        details: [
-          { label: 'Payoneer Email', value: 'payments@zynth.app' },
-          { label: 'Account Name',  value: 'Zynth Technologies Ltd' },
-          { label: 'Currency',      value: 'USD' },
-        ],
-      },
-    ],
-  },
-  pakistan: {
-    key: 'pakistan',
-    label: 'Pakistan',
-    Icon: Smartphone,
-    methods: [
-      {
-        key: 'jazzcash',
-        name: 'JazzCash',
-        details: [
-          { label: 'Account Holder', value: 'SHAHRUKH HAMZA' },
-          { label: 'IBAN',           value: 'PK36JCMA0301923175516692' },
-        ],
-      },
-      {
-        key: 'nayapay',
-        name: 'NayaPay',
-        details: [
-          { label: 'Account Holder', value: 'SHAHRUKH HAMZA' },
-          { label: 'IBAN',           value: 'PK36JCMA0301923175516692' },
-        ],
-      },
-    ],
-  },
+const PKR_BY_PLAN = {
+  pro: 2500,
+  elite: 5300,
 };
 
-/* ─── Helpers ───────────────────────────────────────────────────────────────── */
-
-function TrustBadges({ theme }) {
-  const items = [
-    { text: 'Secure payment', Icon: ShieldCheck },
-    { text: 'Instant activation', Icon: Zap },
-    { text: 'No hidden fees', Icon: Sparkles },
-  ];
-  return (
-    <div className="flex flex-wrap items-center gap-2">
-      {items.map(({ text, Icon }) => (
-        <span
-          key={text}
-          className="inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-[11px] font-semibold"
-          style={{
-            borderColor: theme.isDark ? 'rgba(59,130,246,0.32)' : 'rgba(59,130,246,0.22)',
-            background:   theme.isDark ? 'rgba(59,130,246,0.12)' : 'rgba(59,130,246,0.08)',
-            color:        theme.isDark ? '#bfdbfe' : '#1d4ed8',
-          }}
-        >
-          <Icon size={12} />{text}
-        </span>
-      ))}
-    </div>
-  );
-}
+const PAYMENT_OPTIONS = [
+  {
+    key: 'bank',
+    name: 'Bank Transfer',
+    Icon: Landmark,
+    details: [
+      { label: 'Bank', value: 'Meezan Bank' },
+      { label: 'Account Name', value: 'Shahrukh Hamza' },
+      { label: 'Account Number', value: '0301923175516692' },
+      { label: 'IBAN', value: 'PK36MEZN000301923175516692' },
+    ],
+  },
+  {
+    key: 'easypaisa',
+    name: 'Easypaisa',
+    Icon: Smartphone,
+    details: [
+      { label: 'Account Title', value: 'Shahrukh Hamza' },
+      { label: 'Mobile Number', value: '03019231755' },
+      { label: 'CNIC', value: '35202-1234567-8' },
+    ],
+  },
+  {
+    key: 'jazzcash',
+    name: 'JazzCash',
+    Icon: Smartphone,
+    details: [
+      { label: 'Account Title', value: 'Shahrukh Hamza' },
+      { label: 'Mobile Number', value: '03019231755' },
+      { label: 'CNIC', value: '35202-1234567-8' },
+    ],
+  },
+];
 
 /* ─── Main component ────────────────────────────────────────────────────────── */
 
@@ -150,9 +108,9 @@ export default function UpgradeModal({
   const [visible,      setVisible]      = useState(Boolean(open));
   const [step,         setStep]         = useState(1);
   const [stepIn,       setStepIn]       = useState(true);
-  const [selectedPlan, setSelectedPlan] = useState(requiredPlan === 'elite' ? 'elite' : 'pro');
-  const [region,       setRegion]       = useState('international');
-  const [methodKey,    setMethodKey]    = useState(PAYMENT_METHODS.international.methods[0].key);
+  const [selectedPlan, setSelectedPlan] = useState('pro');
+  const [methodKey,    setMethodKey]    = useState(PAYMENT_OPTIONS[0].key);
+  const [requiredPkr,  setRequiredPkr]  = useState(PKR_BY_PLAN.pro);
   const [proof,        setProof]        = useState(null);
   const [note,         setNote]         = useState('');
   const [submitting,   setSubmitting]   = useState(false);
@@ -161,26 +119,28 @@ export default function UpgradeModal({
   const fileRef = useRef(null);
 
   useEffect(() => {
-    if (open) { setVisible(true); setStep(1); setStepIn(true); }
+    if (open) {
+      setVisible(true);
+      setStep(1);
+      setStepIn(true);
+      setSelectedPlan('pro');
+      setRequiredPkr(PKR_BY_PLAN.pro);
+      setMethodKey(PAYMENT_OPTIONS[0].key);
+    }
     else setVisible(false);
   }, [open]);
 
   useEffect(() => {
-    setSelectedPlan(requiredPlan === 'elite' ? 'elite' : 'pro');
-  }, [requiredPlan]);
+    setRequiredPkr(PKR_BY_PLAN[selectedPlan] || PKR_BY_PLAN.pro);
+  }, [selectedPlan]);
 
-  useEffect(() => {
-    const first = PAYMENT_METHODS[region].methods[0]?.key;
-    setMethodKey(first || '');
-  }, [region]);
-
-  const currentRegion = PAYMENT_METHODS[region];
   const currentMethod = useMemo(
-    () => currentRegion.methods.find(m => m.key === methodKey) || currentRegion.methods[0],
-    [currentRegion, methodKey],
+    () => PAYMENT_OPTIONS.find(option => option.key === methodKey) || PAYMENT_OPTIONS[0],
+    [methodKey],
   );
-  const selected    = PLANS[selectedPlan];
-  const amountLabel = `$${selected.price}/month`;
+  const selected    = selectedPlan ? PLANS[selectedPlan] : null;
+  const amountLabel = selected ? `$${selected.price}/month` : '';
+  const amountPkrLabel = `PKR ${requiredPkr.toLocaleString()}`;
 
   if (!visible) return null;
 
@@ -199,14 +159,17 @@ export default function UpgradeModal({
 
   async function submitPayment(e) {
     e.preventDefault();
+    if (!selectedPlan || !selected) { setError('Please select a plan first.'); return; }
     if (!proof) { setError('Please upload payment proof to continue.'); return; }
     setSubmitting(true);
     setError(null);
     try {
       const form = new FormData();
       form.append('plan',   selectedPlan);
-      form.append('method', `${currentRegion.label} — ${currentMethod.name}`);
-      form.append('amount', amountLabel);
+      form.append('method', currentMethod.name);
+      form.append('amount', amountPkrLabel);
+      form.append('amountUsd', amountLabel);
+      form.append('amountPkr', amountPkrLabel);
       form.append('note',   note.trim());
       form.append('proof',  proof);
 
@@ -267,17 +230,17 @@ export default function UpgradeModal({
             <CheckCircle size={30} color="#22c55e" />
           </div>
           <h3 className="text-2xl font-extrabold" style={{ color: headingText }}>
-            Payment Submitted 🎉
+            You&apos;re Almost Upgraded
           </h3>
           <p className="mt-2 text-sm" style={{ color: subtleText }}>
-            Your account will be upgraded shortly.
+            We received your payment proof. Your plan will be activated after quick verification.
           </p>
           <button
             onClick={handleClose}
             className="mt-6 w-full rounded-xl py-3 text-sm font-bold text-white"
             style={{ background: 'linear-gradient(135deg,#1d4ed8,#06b6d4)' }}
           >
-            Continue using Zynth
+            Back to Dashboard
           </button>
         </div>
       </Overlay>
@@ -295,7 +258,7 @@ export default function UpgradeModal({
     return (
       <Overlay>
         <div
-          className="relative w-[95%] max-w-md sm:max-w-xl rounded-2xl p-[1px]"
+          className="relative w-[95%] max-w-md sm:max-w-2xl rounded-2xl p-[1px]"
           style={{
             background:  'linear-gradient(140deg, rgba(59,130,246,0.65), rgba(6,182,212,0.55), rgba(245,158,11,0.5))',
             boxShadow:   '0 36px 110px rgba(0,0,0,0.82)',
@@ -316,8 +279,8 @@ export default function UpgradeModal({
               <X className="w-4 h-4" />
             </button>
 
-            <div className="px-6 pt-6 pb-7" style={transitionStyle}>
-              <div className="flex items-center gap-2 mb-5">
+            <div className="px-6 sm:px-7 pt-6 pb-8" style={transitionStyle}>
+              <div className="flex items-center gap-2 mb-6">
                 <div className="flex gap-1.5">
                   <span className="h-1.5 w-6 rounded-full" style={{ background: '#3b82f6' }} />
                   <span className="h-1.5 w-2 rounded-full" style={{ background: theme.isDark ? 'rgba(255,255,255,0.15)' : '#dbe3ee' }} />
@@ -325,110 +288,160 @@ export default function UpgradeModal({
                 <span className="text-xs font-medium" style={{ color: mutedText }}>Step 1 of 2</span>
               </div>
 
-              <TrustBadges theme={theme} />
-
-              <h2 className="mt-4 text-2xl font-extrabold leading-tight" style={{ color: headingText }}>
-                {headline || 'Unlock Full Zynth 🚀'}
+              <h2 className="text-2xl sm:text-[28px] font-extrabold leading-tight text-gray-900 dark:text-gray-100">
+                Unlock Full Zynth
               </h2>
-              <p className="mt-1.5 text-sm leading-relaxed" style={{ color: mutedText }}>
-                {message || "You've started building your edge. Don't stop now."}
+              <p className="mt-2 text-sm leading-relaxed text-gray-500 dark:text-gray-400 max-w-xl">
+                Choose your plan and unlock the full trading operating system.
               </p>
 
-              {reason && (
-                <div
-                  className="mt-4 rounded-xl border px-3 py-2.5 text-xs leading-relaxed"
-                  style={{
-                    borderColor: theme.isDark ? 'rgba(245,158,11,0.35)' : 'rgba(245,158,11,0.3)',
-                    background:  theme.isDark ? 'rgba(245,158,11,0.09)' : 'rgba(245,158,11,0.08)',
-                    color:       theme.isDark ? '#fcd34d' : '#b45309',
-                  }}
-                >
-                  {reason}
+              <div className="mt-4 flex flex-wrap items-center gap-2">
+                <div className="inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-[11px] font-semibold bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-700/40">
+                  <Sparkles size={12} /> 2,300+ traders upgraded this month
                 </div>
-              )}
+                <div className="inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-[11px] font-semibold bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-700/40">
+                  Pricing lock in effect for new members
+                </div>
+              </div>
 
-              <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="mt-6 mb-3">
+                <p className="text-[11px] uppercase tracking-[0.12em] font-semibold text-gray-500 dark:text-gray-400">
+                  Pick your plan
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
                 {Object.values(PLANS).map(plan => {
                   const active   = selectedPlan === plan.id;
                   const PlanIcon = plan.Icon;
+                  const isPro    = plan.id === 'pro';
+                  const isElite  = plan.id === 'elite';
                   return (
                     <button
                       key={plan.id}
                       type="button"
                       onClick={() => setSelectedPlan(plan.id)}
-                      className="rounded-2xl border text-left transition-all duration-150"
+                      className={`relative overflow-hidden rounded-2xl p-6 text-left transition-all duration-300 ease-out hover:scale-[1.02] ${isPro ? 'bg-blue-50 dark:bg-blue-900/10 border border-blue-500 ring-2 ring-blue-500/20 shadow-md' : 'bg-indigo-50 dark:bg-indigo-900/10 border border-gray-200 dark:border-gray-700 shadow-sm'} ${active ? 'border-blue-500 ring-2 ring-blue-500/30 scale-[1.02]' : ''}`}
                       style={{
-                        padding:      '20px',
-                        borderColor:  active ? plan.accent : (theme.isDark ? 'rgba(255,255,255,0.1)' : '#dbe3ee'),
-                        background:   active
-                          ? (theme.isDark ? `rgba(${plan.id === 'pro' ? '34,197,94' : '245,158,11'},0.07)` : '#f8fbff')
-                          : panelSurface,
-                        boxShadow:    active ? `0 0 0 1px ${plan.accent}55, 0 8px 32px ${plan.accent}18` : 'none',
-                        transform:    active ? 'translateY(-1px)' : 'none',
+                        transformOrigin: 'center',
                       }}
                     >
+                      {isPro && (
+                        <>
+                          <div
+                            aria-hidden
+                            className="pointer-events-none absolute -top-10 -right-12 h-24 w-28 rounded-full blur-2xl"
+                            style={{ background: 'rgba(59,130,246,0.22)' }}
+                          />
+                          <span className="absolute top-3 right-3 inline-flex items-center rounded-full border border-blue-300/70 dark:border-blue-500/50 bg-white/90 dark:bg-slate-900/80 px-2 py-0.5 text-[10px] font-bold tracking-wide text-blue-700 dark:text-blue-300">
+                            Most Chosen
+                          </span>
+                        </>
+                      )}
+                      {isElite && (
+                        <span className="absolute top-3 right-3 inline-flex items-center rounded-full border border-indigo-300/70 dark:border-indigo-500/50 bg-white/90 dark:bg-slate-900/80 px-2 py-0.5 text-[10px] font-bold tracking-wide text-indigo-700 dark:text-indigo-300">
+                          Used by advanced traders
+                        </span>
+                      )}
+
                       <div className="flex items-center justify-between mb-3">
                         <span
                           className="inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-[10px] font-bold tracking-wide"
                           style={{
-                            borderColor: `${plan.accent}55`,
-                            color:       plan.accent,
-                            background:  `${plan.accent}15`,
+                            borderColor: plan.id === 'pro' ? 'rgba(59,130,246,0.35)' : 'rgba(245,158,11,0.45)',
+                            color:       plan.id === 'pro' ? '#1d4ed8' : '#b45309',
+                            background:  plan.id === 'pro' ? 'rgba(59,130,246,0.10)' : 'rgba(245,158,11,0.12)',
                           }}
                         >
                           {plan.badge}
                         </span>
                         <div
                           className="flex h-7 w-7 items-center justify-center rounded-lg"
-                          style={{ background: active ? `${plan.accent}22` : (theme.isDark ? 'rgba(255,255,255,0.06)' : '#f1f5f9') }}
+                          style={{ background: active ? '#dbeafe' : (theme.isDark ? 'rgba(255,255,255,0.06)' : '#f1f5f9') }}
                         >
                           {active
-                            ? <Check size={14} color={plan.accent} strokeWidth={2.5} />
+                            ? <Check size={14} color="#2563eb" strokeWidth={2.5} />
                             : <PlanIcon size={14} color={subtleText} />
                           }
                         </div>
                       </div>
 
-                      <div className="mb-1 text-xl font-extrabold" style={{ color: headingText }}>
-                        {plan.name}
+                      <div className="mb-1 text-xl font-extrabold text-gray-900 dark:text-gray-100">
+                        {plan.name} Plan
                       </div>
-                      <div className="mb-4 tabular-nums font-semibold" style={{ color: plan.accent, fontSize: '15px' }}>
-                        ${plan.price}<span style={{ color: mutedText, fontSize: '12px', fontWeight: 400 }}>/month</span>
+                      <div className="mb-2 text-[11px] font-semibold text-gray-600 dark:text-gray-300">
+                        {isPro
+                          ? 'Best starting point for consistent trading growth'
+                          : 'For high-frequency and advanced traders'}
                       </div>
+                      <div className="mb-4 tabular-nums font-semibold text-blue-600 dark:text-blue-400" style={{ fontSize: '15px' }}>
+                        ${plan.price}/month
+                      </div>
+                      {isPro && (
+                        <>
+                          <div className="-mt-2 mb-1 text-sm text-gray-500 dark:text-gray-400">
+                            Most traders start here
+                          </div>
+                          <div className="mb-4 text-[11px] text-gray-400 dark:text-gray-500">
+                            No commitment — upgrade anytime
+                          </div>
+                        </>
+                      )}
+                      {isElite && (
+                        <>
+                          <div className="-mt-2 mb-1 text-sm text-gray-500 dark:text-gray-400">
+                            Only $10 more for unlimited AI
+                          </div>
+                          <div className="mb-4 text-[11px] text-gray-400 dark:text-gray-500">
+                            Save 20% yearly (coming soon)
+                          </div>
+                        </>
+                      )}
 
                       <ul className="space-y-2">
                         {plan.features.map(f => (
-                          <li key={f} className="flex items-start gap-2 text-xs leading-relaxed" style={{ color: subtleText }}>
-                            <Check size={12} color={plan.accent} style={{ flexShrink: 0, marginTop: '2px' }} />
-                            <span style={plan.id === 'elite' && f.includes('Unlimited AI') ? { color: headingText, fontWeight: 600 } : {}}>
-                              {f}
-                            </span>
+                          <li key={f} className="flex items-start gap-2 text-xs leading-relaxed text-gray-600 dark:text-gray-300">
+                            <Check size={12} color={plan.id === 'elite' ? '#f59e0b' : '#2563eb'} style={{ flexShrink: 0, marginTop: '2px' }} />
+                            <span className={isElite && f.includes('Unlimited AI insights') ? 'font-semibold text-gray-900 dark:text-gray-100' : ''}>{f}</span>
                           </li>
                         ))}
                       </ul>
+                      {isElite && (
+                        <div className="mt-3 text-[11px] font-medium text-gray-600 dark:text-gray-300">
+                          Remove all limits and unlock full power
+                        </div>
+                      )}
                     </button>
                   );
                 })}
               </div>
 
+              <div className="mt-3 text-center text-xs text-gray-500 dark:text-gray-400">
+                Need unlimited AI? Upgrade to Elite
+              </div>
+
               <button
                 type="button"
                 onClick={() => goToStep(2)}
-                className="mt-6 w-full rounded-xl py-3.5 text-sm font-bold text-white inline-flex items-center justify-center gap-2"
+                disabled={!selectedPlan}
+                className="mt-7 w-full rounded-xl py-3.5 text-sm font-bold text-white inline-flex items-center justify-center gap-2 transition-all duration-200 hover:shadow-lg hover:scale-[1.02] active:scale-95"
                 style={{
-                  background: selectedPlan === 'elite'
-                    ? 'linear-gradient(135deg, #b45309, #f59e0b)'
-                    : 'linear-gradient(135deg, #1d4ed8, #06b6d4)',
-                  boxShadow: selectedPlan === 'elite'
-                    ? '0 8px 24px rgba(245,158,11,0.28)'
-                    : '0 8px 24px rgba(14,165,233,0.28)',
+                  background: 'linear-gradient(135deg, #1d4ed8, #06b6d4)',
+                  boxShadow: '0 8px 24px rgba(14,165,233,0.28)',
+                  opacity: selectedPlan ? 1 : 0.55,
+                  cursor: selectedPlan ? 'pointer' : 'not-allowed',
                 }}
               >
-                Continue with {selected.name} — ${selected.price}/mo
+                {selectedPlan === 'elite' ? 'Continue with Elite →' : 'Continue with Pro →'}
               </button>
 
-              <p className="mt-2.5 text-center text-xs" style={{ color: mutedText }}>
-                You can switch plans anytime · No contracts
+              <p className="mt-2.5 text-center text-xs text-gray-500 dark:text-gray-400">
+                {selectedPlan === 'elite'
+                  ? 'You’re choosing Elite — unlock full trading power'
+                  : 'You’re choosing Pro — perfect for getting started'}
+              </p>
+              <p className="mt-1 text-center text-xs text-gray-400 dark:text-gray-500">
+                7-day refund guarantee • Cancel anytime
               </p>
             </div>
           </div>
@@ -442,7 +455,7 @@ export default function UpgradeModal({
   return (
     <Overlay>
       <div
-        className="relative w-[95%] max-w-md sm:max-w-lg rounded-2xl p-[1px]"
+        className="relative w-[95%] max-w-md sm:max-w-xl rounded-2xl p-[1px]"
         style={{
           background: 'linear-gradient(140deg, rgba(59,130,246,0.65), rgba(6,182,212,0.55), rgba(245,158,11,0.5))',
           boxShadow:  '0 36px 110px rgba(0,0,0,0.82)',
@@ -482,7 +495,7 @@ export default function UpgradeModal({
                   onMouseOver={e => { e.currentTarget.style.color = headingText; }}
                   onMouseOut={e => { e.currentTarget.style.color = subtleText; }}
                 >
-                  <ArrowLeft size={12} /> Change plan
+                  ← Change Plan
                 </button>
                 <div className="flex items-center gap-2">
                   <div className="flex gap-1.5">
@@ -494,103 +507,92 @@ export default function UpgradeModal({
               </div>
 
               <div
-                className="flex items-center gap-3 rounded-2xl border p-4 mb-5"
+                className="rounded-2xl border p-5 mb-5 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-slate-900 dark:to-slate-800"
                 style={{
-                  borderColor: `${selected.accent}55`,
-                  background:  theme.isDark ? `rgba(${selected.id === 'pro' ? '34,197,94' : '245,158,11'},0.07)` : '#f8fbff',
+                  borderColor: theme.isDark ? 'rgba(59,130,246,0.28)' : 'rgba(59,130,246,0.22)',
                 }}
               >
-                <div
-                  className="flex h-10 w-10 items-center justify-center rounded-xl flex-shrink-0"
-                  style={{ background: `${selected.accent}22` }}
-                >
-                  <selected.Icon size={18} color={selected.accent} />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="text-sm font-bold" style={{ color: headingText }}>
-                    {selected.name} Plan
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex items-center gap-3">
+                    <div
+                      className="flex h-10 w-10 items-center justify-center rounded-xl flex-shrink-0"
+                      style={{ background: `${selected.accent}22` }}
+                    >
+                      <selected.Icon size={18} color={selected.accent} />
+                    </div>
+                    <div>
+                      <div className="text-sm font-bold text-gray-900 dark:text-gray-100">
+                        You selected: {selected.name} Plan
+                      </div>
+                      <div className="text-xs text-gray-600 dark:text-gray-300 mt-0.5">
+                        {amountLabel} • ≈ {amountPkrLabel}
+                      </div>
+                    </div>
                   </div>
-                  <div className="text-xs" style={{ color: mutedText }}>
-                    {amountLabel} — billed monthly
+                  <span
+                    className="rounded-full border px-2.5 py-0.5 text-[10px] font-bold"
+                    style={{
+                      borderColor: `${selected.accent}55`,
+                      color:       selected.accent,
+                      background:  `${selected.accent}15`,
+                    }}
+                  >
+                    {selected.badge}
+                  </span>
+                </div>
+                <div className="mt-4 rounded-xl border border-amber-300/50 dark:border-amber-600/40 bg-amber-50 dark:bg-amber-900/20 p-3">
+                  <div className="text-sm font-bold text-amber-800 dark:text-amber-300">Amount to Pay: {amountPkrLabel}</div>
+                  <div className="mt-1 text-xs text-amber-700 dark:text-amber-300">
+                    ⚠️ Please send the exact amount. Payments below this will not be accepted.
+                  </div>
+                  <div className="mt-1 text-[11px] text-amber-700/80 dark:text-amber-200/80">
+                    Final conversion may vary slightly depending on exchange rate.
                   </div>
                 </div>
-                <span
-                  className="rounded-full border px-2.5 py-0.5 text-[10px] font-bold"
-                  style={{
-                    borderColor: `${selected.accent}55`,
-                    color:       selected.accent,
-                    background:  `${selected.accent}15`,
-                  }}
-                >
-                  {selected.badge}
-                </span>
               </div>
 
-              <h2 className="text-lg font-extrabold mb-1" style={{ color: headingText }}>
-                Complete your payment
-              </h2>
-              <p className="text-xs mb-4" style={{ color: mutedText }}>
-                Send {amountLabel} using any method below, then upload your receipt.
-              </p>
-
-              <div className="flex gap-2 overflow-x-auto pb-1 mb-3">
-                {Object.values(PAYMENT_METHODS).map(r => {
-                  const active = region === r.key;
-                  const Icon   = r.Icon;
+              <h3 className="text-xs uppercase tracking-[0.12em] font-semibold text-gray-500 dark:text-gray-400 mb-2">Choose Payment Method</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-5">
+                {PAYMENT_OPTIONS.map(option => {
+                  const active = option.key === methodKey;
+                  const Icon = option.Icon;
                   return (
                     <button
-                      key={r.key}
+                      key={option.key}
                       type="button"
-                      onClick={() => setRegion(r.key)}
-                      className="inline-flex items-center gap-2 rounded-lg border px-3 py-2 text-sm font-semibold flex-shrink-0 transition-colors"
-                      style={{
-                        borderColor: active ? '#3b82f6' : (theme.isDark ? 'rgba(255,255,255,0.1)' : '#dbe3ee'),
-                        background:  active ? (theme.isDark ? 'rgba(59,130,246,0.14)' : 'rgba(59,130,246,0.08)') : panelSurface,
-                        color:       active ? '#60a5fa' : subtleText,
-                      }}
+                      onClick={() => setMethodKey(option.key)}
+                      className={`rounded-2xl border p-4 text-left transition-all duration-200 hover:scale-[1.02] ${active ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 shadow-md' : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-slate-900 shadow-sm'}`}
                     >
-                      <Icon size={14} /> {r.label}
+                      <div className="flex items-center gap-2 mb-1">
+                        <Icon size={15} color={active ? '#2563eb' : subtleText} />
+                        <span className="text-sm font-semibold text-gray-900 dark:text-gray-100">{option.name}</span>
+                      </div>
+                      <div className="text-xs text-gray-500 dark:text-gray-400">Transfer and upload proof</div>
                     </button>
                   );
                 })}
               </div>
 
-              <div className="relative mb-3">
-                <select
-                  value={methodKey}
-                  onChange={e => setMethodKey(e.target.value)}
-                  className="w-full appearance-none rounded-lg border px-4 py-3 pr-9 text-sm font-medium"
-                  style={{
-                    borderColor:      theme.isDark ? 'rgba(255,255,255,0.12)' : '#dbe3ee',
-                    background:       panelSurface,
-                    color:            headingText,
-                    WebkitAppearance: 'none',
-                    MozAppearance:    'none',
-                  }}
-                >
-                  {currentRegion.methods.map(m => (
-                    <option key={m.key} value={m.key}>{m.name}</option>
-                  ))}
-                </select>
-                <ChevronDown size={15} color={mutedText} style={{ position: 'absolute', top: 12, right: 12, pointerEvents: 'none' }} />
-              </div>
+              <h3 className="text-xs uppercase tracking-[0.12em] font-semibold text-gray-500 dark:text-gray-400 mb-2">Send Payment</h3>
 
               <div
-                className="rounded-xl border p-4 mb-4"
+                className="rounded-2xl border p-5 mb-5 shadow-sm"
                 style={{
                   borderColor: theme.isDark ? 'rgba(59,130,246,0.24)' : 'rgba(59,130,246,0.2)',
                   background:  theme.isDark ? 'rgba(15,23,42,0.62)' : '#f8fbff',
                 }}
               >
-                <div className="mb-2.5 text-sm font-bold" style={{ color: headingText }}>
-                  {currentMethod.name}{' '}
-                  <span style={{ color: '#60a5fa' }}>· Send {amountLabel}</span>
+                <div className="mb-3 text-sm font-bold" style={{ color: headingText }}>
+                  {currentMethod.name}
                 </div>
-                <div className="space-y-1.5">
+                <div className="rounded-xl border border-blue-300/40 dark:border-blue-600/40 bg-blue-50 dark:bg-blue-900/20 px-3 py-2 mb-3 text-xs font-semibold text-blue-700 dark:text-blue-300">
+                  Send {amountPkrLabel} to the account below
+                </div>
+                <div className="space-y-2">
                   {currentMethod.details.map(d => (
                     <div
                       key={d.label}
-                      className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-2 text-xs"
+                      className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-2 text-xs rounded-xl border border-gray-200/70 dark:border-gray-700/70 px-3 py-2"
                     >
                       <span className="font-semibold" style={{ color: mutedText }}>{d.label}</span>
                       <span className="inline-flex items-center gap-2 flex-wrap justify-end" style={{ color: headingText }}>
@@ -598,8 +600,12 @@ export default function UpgradeModal({
                         <button
                           type="button"
                           onClick={() => copyText(d.value)}
-                          className="rounded border px-1.5 py-0.5 text-[10px]"
-                          style={{ borderColor: theme.isDark ? 'rgba(255,255,255,0.2)' : '#d1d5db', color: mutedText }}
+                          className="rounded-lg border px-2 py-1 text-[10px] font-semibold transition-colors"
+                          style={{
+                            borderColor: theme.isDark ? 'rgba(59,130,246,0.4)' : 'rgba(59,130,246,0.35)',
+                            color: '#2563eb',
+                            background: theme.isDark ? 'rgba(30,64,175,0.18)' : 'rgba(219,234,254,0.9)',
+                          }}
                         >
                           Copy
                         </button>
@@ -607,14 +613,18 @@ export default function UpgradeModal({
                     </div>
                   ))}
                 </div>
+                <div className="mt-3 text-[11px] text-gray-500 dark:text-gray-400">
+                  Only payments equal to {amountPkrLabel} will be approved.
+                </div>
               </div>
 
               <div
-                className="rounded-xl border p-3 mb-2"
+                className="rounded-2xl border p-4 mb-2"
                 style={{ borderColor: theme.isDark ? 'rgba(255,255,255,0.1)' : '#dbe3ee', background: panelSurface }}
               >
+                <h3 className="text-xs uppercase tracking-[0.12em] font-semibold text-gray-500 dark:text-gray-400 mb-2">Upload Proof</h3>
                 <div className="mb-2 text-xs font-semibold" style={{ color: headingText }}>
-                  Upload payment screenshot to activate your plan
+                  Upload payment proof
                 </div>
                 <div
                   onClick={() => fileRef.current?.click()}
@@ -636,7 +646,7 @@ export default function UpgradeModal({
                 <textarea
                   value={note}
                   onChange={e => setNote(e.target.value)}
-                  placeholder="Reference / transaction note (optional)"
+                  placeholder="Transaction reference (optional)"
                   rows={2}
                   className="mt-2 w-full rounded-lg border px-3 py-2 text-xs"
                   style={{
@@ -661,11 +671,17 @@ export default function UpgradeModal({
           >
             {error && <ErrorBar message={error} className="mb-3" />}
 
+            <div className="mb-3 text-xs text-gray-400 dark:text-gray-500 flex items-center justify-center gap-3">
+              <span>🔒 Secure checkout</span>
+              <span>💳 Powered by Paddle</span>
+              <span>🔁 7-day refund guarantee</span>
+            </div>
+
             <button
               type="button"
               onClick={submitPayment}
               disabled={submitting || !proof}
-              className="w-full rounded-xl py-3 text-sm font-bold text-white inline-flex items-center justify-center gap-2"
+              className="w-full rounded-xl py-3 text-sm font-bold text-white inline-flex items-center justify-center gap-2 transition-all duration-200 hover:shadow-lg hover:scale-[1.02] active:scale-95"
               style={{
                 background: 'linear-gradient(135deg,#1d4ed8,#06b6d4)',
                 boxShadow:  '0 8px 20px rgba(14,165,233,0.24)',
@@ -675,13 +691,12 @@ export default function UpgradeModal({
             >
               {submitting
                 ? <><Loader2 size={14} style={{ animation: 'spin 1s linear infinite' }} /> Submitting…</>
-                : 'Complete Payment'
+                : 'Confirm Payment →'
               }
             </button>
 
-            <div className="mt-2 text-center text-xs" style={{ color: mutedText }}>
-              <Landmark size={12} style={{ display: 'inline', marginRight: 4 }} />
-              Verification usually takes a few minutes.
+            <div className="mt-2 text-center text-xs text-gray-400 dark:text-gray-500">
+              Takes less than 1 minute
             </div>
           </div>
         </div>
