@@ -15,7 +15,6 @@ const PLANS = {
   pro: {
     id: 'pro',
     name: 'Pro',
-    price: 9,
     badge: 'Recommended',
     accent: '#2563eb',
     Icon: Rocket,
@@ -29,7 +28,6 @@ const PLANS = {
   elite: {
     id: 'elite',
     name: 'Elite',
-    price: 19,
     badge: 'Power Users',
     accent: '#f59e0b',
     Icon: Crown,
@@ -42,9 +40,14 @@ const PLANS = {
   },
 };
 
+const USD_PRICES = {
+  monthly: { pro: 9, elite: 19 },
+  annual: { pro: 90, elite: 190 },
+};
+
 const PKR_BY_PLAN = {
-  pro: 2500,
-  elite: 5300,
+  monthly: { pro: 2500, elite: 5300 },
+  annual: { pro: 25000, elite: 53000 },
 };
 
 const PAYMENT_OPTIONS = [
@@ -93,6 +96,7 @@ export default function UpgradeModal({
   open,
   onClose,
   requiredPlan = 'pro',
+  billingCycle = 'monthly',
   reason = null,
   headline = null,
   message = null,
@@ -103,10 +107,10 @@ export default function UpgradeModal({
   const [visible,      setVisible]      = useState(Boolean(open));
   const [step,         setStep]         = useState(1);
   const [stepIn,       setStepIn]       = useState(true);
-  const [selectedPlan, setSelectedPlan] = useState('pro');
+  const [selectedPlan, setSelectedPlan] = useState(requiredPlan === 'elite' ? 'elite' : 'pro');
   const [paymentRegion, setPaymentRegion] = useState('PK');
   const [methodKey,    setMethodKey]    = useState(PAYMENT_OPTIONS[0].key);
-  const [requiredPkr,  setRequiredPkr]  = useState(PKR_BY_PLAN.pro);
+  const [requiredPkr,  setRequiredPkr]  = useState(PKR_BY_PLAN[billingCycle]?.[requiredPlan === 'elite' ? 'elite' : 'pro'] ?? PKR_BY_PLAN.monthly.pro);
   const [proof,        setProof]        = useState(null);
   const [note,         setNote]         = useState('');
   const [submitting,   setSubmitting]   = useState(false);
@@ -119,17 +123,17 @@ export default function UpgradeModal({
       setVisible(true);
       setStep(1);
       setStepIn(true);
-      setSelectedPlan('pro');
+      setSelectedPlan(requiredPlan === 'elite' ? 'elite' : 'pro');
       setPaymentRegion('PK');
-      setRequiredPkr(PKR_BY_PLAN.pro);
+      setRequiredPkr(PKR_BY_PLAN[billingCycle]?.[requiredPlan === 'elite' ? 'elite' : 'pro'] ?? PKR_BY_PLAN.monthly.pro);
       setMethodKey(PAYMENT_OPTIONS[0].key);
     }
     else setVisible(false);
-  }, [open]);
+  }, [billingCycle, open, requiredPlan]);
 
   useEffect(() => {
-    setRequiredPkr(PKR_BY_PLAN[selectedPlan] || PKR_BY_PLAN.pro);
-  }, [selectedPlan]);
+    setRequiredPkr(PKR_BY_PLAN[billingCycle]?.[selectedPlan] || PKR_BY_PLAN.monthly.pro);
+  }, [billingCycle, selectedPlan]);
 
   useEffect(() => {
     const defaultMethod = PAYMENT_OPTIONS_BY_REGION[paymentRegion]?.[0]?.key || '';
@@ -142,9 +146,13 @@ export default function UpgradeModal({
     [currentRegionMethods, methodKey],
   );
   const selected    = selectedPlan ? PLANS[selectedPlan] : null;
-  const amountLabel = selected ? `$${selected.price}/month` : '';
+  const selectedUsdAmount = selectedPlan ? (USD_PRICES[billingCycle]?.[selectedPlan] ?? USD_PRICES.monthly.pro) : null;
+  const amountLabel = selected ? `$${selectedUsdAmount}/${billingCycle === 'annual' ? 'year' : 'month'}` : '';
   const amountPkrLabel = `PKR ${requiredPkr.toLocaleString()}`;
   const isPakistanPayment = paymentRegion === 'PK';
+  const annualHelper = selected && billingCycle === 'annual'
+    ? `Equivalent to $${(selectedUsdAmount / 12).toFixed(2)}/mo billed annually`
+    : null;
 
   if (!visible) return null;
 
@@ -170,6 +178,7 @@ export default function UpgradeModal({
     try {
       const form = new FormData();
       form.append('plan',   selectedPlan);
+      form.append('billingCycle', billingCycle);
       form.append('paymentRegion', paymentRegion);
       form.append('method', currentMethod.name);
       form.append('amount', isPakistanPayment ? amountPkrLabel : amountLabel);
@@ -380,11 +389,16 @@ export default function UpgradeModal({
                           : 'For high-frequency and advanced traders'}
                       </div>
                       <div className="mb-4 tabular-nums font-semibold text-blue-600 dark:text-blue-400" style={{ fontSize: '15px' }}>
-                        ${plan.price}/month
+                        ${USD_PRICES[billingCycle]?.[plan.id] ?? USD_PRICES.monthly[plan.id]}/{billingCycle === 'annual' ? 'year' : 'month'}
                       </div>
+                      {billingCycle === 'annual' && (
+                        <div className="-mt-2 mb-4 text-[11px] text-gray-400 dark:text-gray-500">
+                          Equivalent to ${((USD_PRICES.annual[plan.id] ?? 0) / 12).toFixed(2)}/mo billed annually
+                        </div>
+                      )}
                       {isPro && (
                         <>
-                          <div className="-mt-2 mb-1 text-sm text-gray-500 dark:text-gray-400">
+                          <div className={`${billingCycle === 'annual' ? 'mb-1' : '-mt-2 mb-1'} text-sm text-gray-500 dark:text-gray-400`}>
                             Most traders start here
                           </div>
                           <div className="mb-4 text-[11px] text-gray-400 dark:text-gray-500">
@@ -394,11 +408,11 @@ export default function UpgradeModal({
                       )}
                       {isElite && (
                         <>
-                          <div className="-mt-2 mb-1 text-sm text-gray-500 dark:text-gray-400">
-                            Only $10 more for unlimited AI
+                          <div className={`${billingCycle === 'annual' ? 'mb-1' : '-mt-2 mb-1'} text-sm text-gray-500 dark:text-gray-400`}>
+                            {billingCycle === 'annual' ? 'Best value when billed yearly' : 'Only $10 more for unlimited AI'}
                           </div>
                           <div className="mb-4 text-[11px] text-gray-400 dark:text-gray-500">
-                            Save 20% yearly (coming soon)
+                            {billingCycle === 'annual' ? 'Save 17% with annual billing' : 'Switch to yearly anytime'}
                           </div>
                         </>
                       )}
@@ -532,6 +546,11 @@ export default function UpgradeModal({
                       <div className="text-xs text-gray-600 dark:text-gray-300 mt-0.5">
                         {isPakistanPayment ? `${amountLabel} • ≈ ${amountPkrLabel}` : amountLabel}
                       </div>
+                      {annualHelper && (
+                        <div className="text-[11px] text-gray-500 dark:text-gray-400 mt-1">
+                          {annualHelper}
+                        </div>
+                      )}
                     </div>
                   </div>
                   <span
@@ -554,6 +573,11 @@ export default function UpgradeModal({
                     <div className="mt-1 text-[11px] text-amber-700/80 dark:text-amber-200/80">
                       Final conversion may vary slightly depending on exchange rate.
                     </div>
+                    {annualHelper && (
+                      <div className="mt-1 text-[11px] text-amber-700/80 dark:text-amber-200/80">
+                        {annualHelper}
+                      </div>
+                    )}
                   </div>
                 ) : (
                   <div className="mt-4 rounded-xl border border-blue-300/50 dark:border-blue-600/40 bg-blue-50 dark:bg-blue-900/20 p-3">
@@ -561,6 +585,11 @@ export default function UpgradeModal({
                     <div className="mt-1 text-xs text-blue-700 dark:text-blue-300">
                       Send {amountLabel} (USD) using bank transfer.
                     </div>
+                    {annualHelper && (
+                      <div className="mt-1 text-[11px] text-blue-700/80 dark:text-blue-200/80">
+                        {annualHelper}
+                      </div>
+                    )}
                   </div>
                 )}
               </div>

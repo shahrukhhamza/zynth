@@ -552,7 +552,12 @@ function AuthGate() {
     <>
       <LandingPage
         onSignIn={() => setView('login')}
-        onGetStarted={() => setShowPreSignupOnboarding(true)}
+        onGetStarted={(pricingSelection) => {
+          if (pricingSelection) {
+            sessionStorage.setItem('zynthPricingSelection', JSON.stringify(pricingSelection));
+          }
+          setShowPreSignupOnboarding(true);
+        }}
       />
       {showPreSignupOnboarding && (
         <PreSignupOnboarding

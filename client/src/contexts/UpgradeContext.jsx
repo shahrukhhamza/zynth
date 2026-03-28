@@ -11,10 +11,11 @@ export function UpgradeProvider({ children }) {
   const [modal, setModal] = useState(null);
 
   /**
-   * openUpgradeModal({ reason, feature, requiredPlan, headline, message })
+   * openUpgradeModal({ reason, feature, requiredPlan, billingCycle, headline, message })
    *   reason       — short sentence explaining why the gate fired
    *   feature      — optional feature key from planFeatures.js
    *   requiredPlan — 'pro' | 'elite'  (default: 'pro')
+   *   billingCycle — 'monthly' | 'annual' (default: 'monthly')
    *   headline     — optional: override modal headline copy
    *   message      — optional: override modal subtitle copy
    */
@@ -22,10 +23,11 @@ export function UpgradeProvider({ children }) {
     reason       = 'Upgrade your plan to access this feature.',
     feature      = null,
     requiredPlan = 'pro',
+    billingCycle = 'monthly',
     headline     = null,
     message      = null,
   } = {}) => {
-    setModal({ reason, feature, requiredPlan, headline, message });
+    setModal({ reason, feature, requiredPlan, billingCycle, headline, message });
   }, []);
 
   const closeUpgradeModal = useCallback(() => setModal(null), []);
@@ -38,6 +40,7 @@ export function UpgradeProvider({ children }) {
           open
           reason={modal.reason}
           requiredPlan={modal.requiredPlan}
+          billingCycle={modal.billingCycle}
           headline={modal.headline}
           message={modal.message}
           onClose={closeUpgradeModal}

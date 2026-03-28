@@ -47,7 +47,7 @@ const router = Router();
 // ── POST /api/payments/submit ─────────────────────────────────────────────────
 router.post('/submit', requireAuth, upload.single('proof'), async (req, res) => {
   try {
-    const { plan, method, amount, note } = req.body ?? {};
+    const { plan, billingCycle = 'monthly', method, amount, note } = req.body ?? {};
 
     if (!plan || !['pro', 'elite'].includes(String(plan).trim().toLowerCase())) {
       return res.status(400).json({ error: 'Invalid plan. Must be pro or elite.' });
@@ -55,12 +55,16 @@ router.post('/submit', requireAuth, upload.single('proof'), async (req, res) => 
     if (!method || typeof method !== 'string' || method.trim().length < 2) {
       return res.status(400).json({ error: 'Payment method is required.' });
     }
+    if (!['monthly', 'annual'].includes(String(billingCycle).trim().toLowerCase())) {
+      return res.status(400).json({ error: 'Invalid billing cycle. Must be monthly or annual.' });
+    }
 
     const proofUrl = req.file ? `/uploads/payments/${req.file.filename}` : null;
 
     const request = await Payments.createPaymentRequest({
       userId:   req.user.id,
       plan:     plan.trim().toLowerCase(),
+      billingCycle: String(billingCycle).trim().toLowerCase(),
       method:   method.trim().slice(0, 100),
       amount:   amount?.trim().slice(0, 30) ?? null,
       note:     note?.trim().slice(0, 500)  ?? null,
@@ -110,9 +114,13 @@ router.put('/:id/approve', requireAuth, requireAdmin, async (req, res) => {
 
     const updated = await Payments.updatePaymentStatus(id, 'approved', req.user.id);
 
-    // Upgrade the user's plan — set 1-year expiry from today
+    // Upgrade the user's plan according to the billing cycle attached to the request.
     const expiresAt = new Date();
-    expiresAt.setFullYear(expiresAt.getFullYear() + 1);
+    if (existing.billing_cycle === 'annual') {
+      expiresAt.setFullYear(expiresAt.getFullYear() + 1);
+    } else {
+      expiresAt.setMonth(expiresAt.getMonth() + 1);
+    }
     await Users.updateUserPlan(existing.user_id, existing.plan, expiresAt.toISOString());
 
     res.json({ ok: true, request: updated });

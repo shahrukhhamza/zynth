@@ -2,7 +2,7 @@
  * payments.js — PostgreSQL layer for manual payment requests.
  *
  * Table: payment_requests
- *   id, user_id, plan, method, amount, note, proof_url, status, reviewed_by, reviewed_at, created_at
+ *   id, user_id, plan, billing_cycle, method, amount, note, proof_url, status, reviewed_by, reviewed_at, created_at
  */
 import pg from 'pg';
 
@@ -23,6 +23,7 @@ export async function initPaymentsDb() {
       id           SERIAL PRIMARY KEY,
       user_id      INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
       plan         TEXT    NOT NULL DEFAULT 'pro',
+      billing_cycle TEXT   NOT NULL DEFAULT 'monthly',
       method       TEXT    NOT NULL,
       amount       TEXT,
       note         TEXT,
@@ -39,6 +40,7 @@ export async function initPaymentsDb() {
     `ALTER TABLE payment_requests ADD COLUMN IF NOT EXISTS reviewed_by INTEGER DEFAULT NULL`,
     `ALTER TABLE payment_requests ADD COLUMN IF NOT EXISTS reviewed_at TIMESTAMPTZ DEFAULT NULL`,
     `ALTER TABLE payment_requests ADD COLUMN IF NOT EXISTS amount TEXT`,
+    `ALTER TABLE payment_requests ADD COLUMN IF NOT EXISTS billing_cycle TEXT NOT NULL DEFAULT 'monthly'`,
   ];
   for (const sql of migrations) {
     try { await pool.query(sql); } catch { /* column already exists */ }
@@ -49,12 +51,12 @@ export async function initPaymentsDb() {
 
 // ── Write helpers ─────────────────────────────────────────────────────────────
 
-export async function createPaymentRequest({ userId, plan, method, amount, note, proofUrl }) {
+export async function createPaymentRequest({ userId, plan, billingCycle = 'monthly', method, amount, note, proofUrl }) {
   const { rows } = await pool.query(
-    `INSERT INTO payment_requests (user_id, plan, method, amount, note, proof_url, status)
-     VALUES ($1, $2, $3, $4, $5, $6, 'pending')
+    `INSERT INTO payment_requests (user_id, plan, billing_cycle, method, amount, note, proof_url, status)
+     VALUES ($1, $2, $3, $4, $5, $6, $7, 'pending')
      RETURNING *`,
-    [userId, plan, method, amount ?? null, note ?? null, proofUrl ?? null],
+    [userId, plan, billingCycle, method, amount ?? null, note ?? null, proofUrl ?? null],
   );
   return rows[0];
 }

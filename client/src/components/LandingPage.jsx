@@ -60,7 +60,9 @@ const INITIAL_MARKETS = [
 const PLANS = [
   {
     name: 'Free',
-    monthly: 0, yearly: 0,
+    monthly: 0,
+    yearly: 0,
+    yearlyMonthlyEquivalent: 0,
     desc: 'Start tracking. Discover your patterns.',
     features: [
       'Up to 10 journal entries',
@@ -73,7 +75,9 @@ const PLANS = [
   },
   {
     name: 'Pro',
-    monthly: 9, yearly: 9,
+    monthly: 9,
+    yearly: 90,
+    yearlyMonthlyEquivalent: 7.5,
     desc: 'For active traders serious about improving their edge.',
     badge: 'MOST POPULAR',
     features: [
@@ -87,7 +91,9 @@ const PLANS = [
   },
   {
     name: 'Elite',
-    monthly: 19, yearly: 19,
+    monthly: 19,
+    yearly: 190,
+    yearlyMonthlyEquivalent: 15.83,
     desc: 'For professional traders who want every possible edge.',
     badge: 'BEST VALUE',
     features: [
@@ -318,6 +324,22 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
   }, []);
 
   const activePlans = PLANS;
+
+  function getDisplayedPrice(plan) {
+    if (!annual || plan.name === 'Free') {
+      return {
+        amount: plan.monthly,
+        suffix: '/mo',
+        helper: null,
+      };
+    }
+
+    return {
+      amount: plan.yearly,
+      suffix: '/year',
+      helper: `Equivalent to $${plan.yearlyMonthlyEquivalent.toFixed(2)}/mo`,
+    };
+  }
 
   function dismissBanner() {
     setBannerDismissed(true);
@@ -1059,10 +1081,22 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
                   <p className={`text-[13px] mb-4 ${isDark ? 'text-gray-500' : 'text-gray-500'}`}>{plan.desc}</p>
 
                   <div className="mb-5">
-                    <span className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                      ${annual ? plan.yearly : plan.monthly}
-                    </span>
-                    <span className={`text-[13px] ml-1 ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>/mo</span>
+                    {(() => {
+                      const displayed = getDisplayedPrice(plan);
+                      return (
+                        <>
+                          <span className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                            ${displayed.amount}
+                          </span>
+                          <span className={`text-[13px] ml-1 ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>{displayed.suffix}</span>
+                          {displayed.helper && (
+                            <div className={`mt-1 text-[11px] ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>
+                              {displayed.helper}
+                            </div>
+                          )}
+                        </>
+                      );
+                    })()}
                   </div>
 
                   <div className="space-y-2.5 mb-6">
@@ -1077,7 +1111,10 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
                     ))}
                   </div>
 
-                  <button onClick={onGetStarted}
+                  <button onClick={() => onGetStarted?.({
+                            plan: plan.name.toLowerCase(),
+                            billingCycle: annual ? 'annual' : 'monthly',
+                          })}
                           className="w-full bg-blue-600 text-white rounded-lg py-2 transition-all hover:brightness-110"
                           style={{ border: 'none', fontSize: 14, fontWeight: 700 }}>
                     {plan.cta}
