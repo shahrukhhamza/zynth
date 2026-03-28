@@ -81,6 +81,22 @@ const PAYMENT_OPTIONS = [
   },
 ];
 
+const PAYMENT_OPTIONS_BY_REGION = {
+  PK: PAYMENT_OPTIONS,
+  INTL: [
+    {
+      key: 'bank-wire-usd',
+      name: 'Bank Wire (USD)',
+      Icon: Landmark,
+      details: [
+        { label: 'Account Name', value: 'Shahrukh Hamza' },
+        { label: 'IBAN (Payoneer)', value: 'GB29NWBK60161331926819' },
+        { label: 'SWIFT / BIC', value: 'PAYNGB2L' },
+      ],
+    },
+  ],
+};
+
 /* ─── Main component ────────────────────────────────────────────────────────── */
 
 /**
@@ -109,6 +125,7 @@ export default function UpgradeModal({
   const [step,         setStep]         = useState(1);
   const [stepIn,       setStepIn]       = useState(true);
   const [selectedPlan, setSelectedPlan] = useState('pro');
+  const [paymentRegion, setPaymentRegion] = useState('PK');
   const [methodKey,    setMethodKey]    = useState(PAYMENT_OPTIONS[0].key);
   const [requiredPkr,  setRequiredPkr]  = useState(PKR_BY_PLAN.pro);
   const [proof,        setProof]        = useState(null);
@@ -124,6 +141,7 @@ export default function UpgradeModal({
       setStep(1);
       setStepIn(true);
       setSelectedPlan('pro');
+      setPaymentRegion('PK');
       setRequiredPkr(PKR_BY_PLAN.pro);
       setMethodKey(PAYMENT_OPTIONS[0].key);
     }
@@ -134,13 +152,20 @@ export default function UpgradeModal({
     setRequiredPkr(PKR_BY_PLAN[selectedPlan] || PKR_BY_PLAN.pro);
   }, [selectedPlan]);
 
+  useEffect(() => {
+    const defaultMethod = PAYMENT_OPTIONS_BY_REGION[paymentRegion]?.[0]?.key || '';
+    setMethodKey(defaultMethod);
+  }, [paymentRegion]);
+
+  const currentRegionMethods = PAYMENT_OPTIONS_BY_REGION[paymentRegion] || PAYMENT_OPTIONS_BY_REGION.PK;
   const currentMethod = useMemo(
-    () => PAYMENT_OPTIONS.find(option => option.key === methodKey) || PAYMENT_OPTIONS[0],
-    [methodKey],
+    () => currentRegionMethods.find(option => option.key === methodKey) || currentRegionMethods[0],
+    [currentRegionMethods, methodKey],
   );
   const selected    = selectedPlan ? PLANS[selectedPlan] : null;
   const amountLabel = selected ? `$${selected.price}/month` : '';
   const amountPkrLabel = `PKR ${requiredPkr.toLocaleString()}`;
+  const isPakistanPayment = paymentRegion === 'PK';
 
   if (!visible) return null;
 
@@ -166,10 +191,11 @@ export default function UpgradeModal({
     try {
       const form = new FormData();
       form.append('plan',   selectedPlan);
+      form.append('paymentRegion', paymentRegion);
       form.append('method', currentMethod.name);
-      form.append('amount', amountPkrLabel);
+      form.append('amount', isPakistanPayment ? amountPkrLabel : amountLabel);
       form.append('amountUsd', amountLabel);
-      form.append('amountPkr', amountPkrLabel);
+      form.append('amountPkr', isPakistanPayment ? amountPkrLabel : 'N/A');
       form.append('note',   note.trim());
       form.append('proof',  proof);
 
@@ -525,7 +551,7 @@ export default function UpgradeModal({
                         You selected: {selected.name} Plan
                       </div>
                       <div className="text-xs text-gray-600 dark:text-gray-300 mt-0.5">
-                        {amountLabel} • ≈ {amountPkrLabel}
+                        {isPakistanPayment ? `${amountLabel} • ≈ ${amountPkrLabel}` : amountLabel}
                       </div>
                     </div>
                   </div>
@@ -540,20 +566,46 @@ export default function UpgradeModal({
                     {selected.badge}
                   </span>
                 </div>
-                <div className="mt-4 rounded-xl border border-amber-300/50 dark:border-amber-600/40 bg-amber-50 dark:bg-amber-900/20 p-3">
-                  <div className="text-sm font-bold text-amber-800 dark:text-amber-300">Amount to Pay: {amountPkrLabel}</div>
-                  <div className="mt-1 text-xs text-amber-700 dark:text-amber-300">
-                    ⚠️ Please send the exact amount. Payments below this will not be accepted.
+                {isPakistanPayment ? (
+                  <div className="mt-4 rounded-xl border border-amber-300/50 dark:border-amber-600/40 bg-amber-50 dark:bg-amber-900/20 p-3">
+                    <div className="text-sm font-bold text-amber-800 dark:text-amber-300">Amount to Pay: {amountPkrLabel}</div>
+                    <div className="mt-1 text-xs text-amber-700 dark:text-amber-300">
+                      ⚠️ Please send the exact amount. Payments below this will not be accepted.
+                    </div>
+                    <div className="mt-1 text-[11px] text-amber-700/80 dark:text-amber-200/80">
+                      Final conversion may vary slightly depending on exchange rate.
+                    </div>
                   </div>
-                  <div className="mt-1 text-[11px] text-amber-700/80 dark:text-amber-200/80">
-                    Final conversion may vary slightly depending on exchange rate.
+                ) : (
+                  <div className="mt-4 rounded-xl border border-blue-300/50 dark:border-blue-600/40 bg-blue-50 dark:bg-blue-900/20 p-3">
+                    <div className="text-sm font-bold text-blue-800 dark:text-blue-300">Amount to Pay: {amountLabel}</div>
+                    <div className="mt-1 text-xs text-blue-700 dark:text-blue-300">
+                      Send {amountLabel} (USD) using bank transfer.
+                    </div>
                   </div>
-                </div>
+                )}
+              </div>
+
+              <div className="mb-4 rounded-xl border border-gray-200 dark:border-gray-700 p-1 grid grid-cols-2 gap-1 bg-gray-50 dark:bg-slate-900">
+                <button
+                  type="button"
+                  onClick={() => setPaymentRegion('INTL')}
+                  className={`rounded-lg px-3 py-2 text-sm font-semibold transition-colors ${paymentRegion === 'INTL' ? 'bg-white dark:bg-slate-800 text-blue-600 dark:text-blue-300 shadow-sm' : 'text-gray-500 dark:text-gray-400'}`}
+                >
+                  International
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setPaymentRegion('PK')}
+                  className={`rounded-lg px-3 py-2 text-sm font-semibold transition-colors ${paymentRegion === 'PK' ? 'bg-white dark:bg-slate-800 text-blue-600 dark:text-blue-300 shadow-sm' : 'text-gray-500 dark:text-gray-400'}`}
+                >
+                  Pakistan
+                </button>
               </div>
 
               <h3 className="text-xs uppercase tracking-[0.12em] font-semibold text-gray-500 dark:text-gray-400 mb-2">Choose Payment Method</h3>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-5">
-                {PAYMENT_OPTIONS.map(option => {
+                {currentRegionMethods.map(option => {
                   const active = option.key === methodKey;
                   const Icon = option.Icon;
                   return (
@@ -567,13 +619,20 @@ export default function UpgradeModal({
                         <Icon size={15} color={active ? '#2563eb' : subtleText} />
                         <span className="text-sm font-semibold text-gray-900 dark:text-gray-100">{option.name}</span>
                       </div>
-                      <div className="text-xs text-gray-500 dark:text-gray-400">Transfer and upload proof</div>
+                      <div className="text-xs text-gray-500 dark:text-gray-400">
+                        {paymentRegion === 'INTL' ? 'USD transfer and upload proof' : 'Local transfer and upload proof'}
+                      </div>
                     </button>
                   );
                 })}
               </div>
 
               <h3 className="text-xs uppercase tracking-[0.12em] font-semibold text-gray-500 dark:text-gray-400 mb-2">Send Payment</h3>
+              <p className="text-xs mb-3" style={{ color: mutedText }}>
+                {paymentRegion === 'INTL'
+                  ? `Send ${amountLabel} (USD) using bank transfer`
+                  : `Send ${amountPkrLabel}`}
+              </p>
 
               <div
                 className="rounded-2xl border p-5 mb-5 shadow-sm"
@@ -586,7 +645,9 @@ export default function UpgradeModal({
                   {currentMethod.name}
                 </div>
                 <div className="rounded-xl border border-blue-300/40 dark:border-blue-600/40 bg-blue-50 dark:bg-blue-900/20 px-3 py-2 mb-3 text-xs font-semibold text-blue-700 dark:text-blue-300">
-                  Send {amountPkrLabel} to the account below
+                  {paymentRegion === 'INTL'
+                    ? `Send ${amountLabel} to the account below`
+                    : `Send ${amountPkrLabel} to the account below`}
                 </div>
                 <div className="space-y-2">
                   {currentMethod.details.map(d => (
@@ -613,9 +674,11 @@ export default function UpgradeModal({
                     </div>
                   ))}
                 </div>
-                <div className="mt-3 text-[11px] text-gray-500 dark:text-gray-400">
-                  Only payments equal to {amountPkrLabel} will be approved.
-                </div>
+                {paymentRegion === 'PK' && (
+                  <div className="mt-3 text-[11px] text-gray-500 dark:text-gray-400">
+                    Only payments equal to {amountPkrLabel} will be approved.
+                  </div>
+                )}
               </div>
 
               <div
