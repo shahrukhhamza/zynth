@@ -379,26 +379,85 @@ export default function EconomicIntelligence() {
 
   // ── Pro gate ─────────────────────────────────────────────────────────────
   if (!canAccess) return (
-    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: D.pageBg, padding: 40, textAlign: 'center', gap: 20 }}>
-      <div style={{ width: 64, height: 64, borderRadius: '50%', background: 'rgba(16,185,129,0.1)', border: '1px solid rgba(16,185,129,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <Lock style={{ width: 26, height: 26, color: '#10b981' }} />
+    <div className="flex flex-col items-center justify-center min-h-[520px] px-6 py-16 text-center relative
+      bg-gradient-to-br from-blue-50 to-indigo-50
+      dark:from-slate-900 dark:to-slate-800">
+
+      {/* Glow blob */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden>
+        <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-96 h-96 rounded-full opacity-20
+          bg-gradient-to-br from-blue-400 to-emerald-400 blur-3xl" />
       </div>
-      <div>
-        <h2 style={{ fontSize: 22, fontWeight: 700, color: D.text, margin: '0 0 10px' }}>Pro Feature</h2>
-        <p style={{ fontSize: 15, color: D.textSub, maxWidth: 360, margin: '0 auto', lineHeight: 1.7 }}>
-          Economic Intelligence and Macro Surprise Score require a Pro plan. Access 10 macro indicators and our proprietary scoring system.
+
+      <div className="relative z-10 flex flex-col items-center max-w-md">
+        {/* Icon */}
+        <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-600
+          flex items-center justify-center mb-6
+          shadow-[0_8px_32px_rgba(59,130,246,0.35)]">
+          <Brain className="w-9 h-9 text-white" />
+        </div>
+
+        {/* Plan chip */}
+        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold
+          uppercase tracking-widest mb-4
+          bg-blue-100 text-blue-700 border border-blue-200
+          dark:bg-blue-500/10 dark:text-blue-300 dark:border-blue-500/25">
+          <Lock className="w-2.5 h-2.5" /> Pro Plan
+        </span>
+
+        {/* Headline */}
+        <h2 className="text-[28px] font-extrabold tracking-tight mb-3
+          text-gray-900 dark:text-white">
+          Unlock AI-Powered Insights
+        </h2>
+
+        {/* Description */}
+        <p className="text-[15px] leading-relaxed mb-7
+          text-gray-500 dark:text-gray-400">
+          Access real-time macro indicators, proprietary surprise scoring, and see exactly how economic events impact your trading performance.
+        </p>
+
+        {/* Feature chips */}
+        <div className="flex flex-wrap gap-2 justify-center mb-8">
+          {[
+            { label: '10 Macro Indicators', icon: '📈' },
+            { label: 'Surprise Score',      icon: '⚡' },
+            { label: 'Fed Rate Tracker',    icon: '🏦' },
+            { label: 'GDP & Inflation',     icon: '💹' },
+            { label: 'Trade Correlation',   icon: '🔗' },
+          ].map(f => (
+            <span key={f.label}
+              className="flex items-center gap-1 px-3 py-1 rounded-full text-[12px] font-medium
+                bg-white border border-gray-200 text-gray-600
+                dark:bg-slate-800 dark:border-slate-700 dark:text-gray-300
+                shadow-sm">
+              <span>{f.icon}</span> {f.label}
+            </span>
+          ))}
+        </div>
+
+        {/* CTA */}
+        <button
+          onClick={() => openUpgradeModal({
+            requiredPlan: 'pro',
+            feature: 'Economic Intelligence',
+            headline: 'Unlock AI-Powered Insights',
+            reason: 'Economic Intelligence is available on Pro and Elite plans.',
+          })}
+          className="inline-flex items-center gap-2 px-8 py-3 rounded-lg text-[15px] font-semibold
+            text-white bg-gradient-to-r from-blue-600 to-indigo-600
+            shadow-[0_4px_18px_rgba(59,130,246,0.4)]
+            hover:from-blue-700 hover:to-indigo-700 hover:shadow-[0_6px_24px_rgba(59,130,246,0.5)]
+            active:scale-[0.98] transition-all duration-150
+            border-0 cursor-pointer">
+          <Loader2 className="w-4 h-4 hidden" />
+          Upgrade to Pro
+        </button>
+
+        <p className="mt-3 text-[12px] text-gray-400 dark:text-gray-500">
+          From $9/month · Cancel anytime
         </p>
       </div>
-      <button
-        onClick={() => openUpgradeModal({
-          requiredPlan: 'pro',
-          reason: 'Economic Intelligence is available on Pro and Elite plans.',
-        })}
-        style={{ background: '#3b82f6', color: '#fff', border: 'none', borderRadius: 10, padding: '13px 32px', fontSize: 14, fontWeight: 700, cursor: 'pointer', boxShadow: '0 4px 16px rgba(59,130,246,0.4)' }}
-      >
-        Upgrade to Pro
-      </button>
-      <p style={{ fontSize: 12, color: D.textSub, margin: 0 }}>From $9/month — Pro plan</p>
     </div>
   );
 

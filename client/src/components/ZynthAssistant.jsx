@@ -200,6 +200,32 @@ export default function ZynthAssistant() {
         .zynth-fab:hover { transform: scale(1.08); }
         .zynth-fab { transition: transform 0.15s ease; }
         .zynth-msg { white-space: pre-wrap; word-break: break-word; }
+        .zynth-msg-row { display: flex; flex-direction: column; gap: 4px; }
+        .zynth-msg-row.user { align-items: flex-end; }
+        .zynth-msg-row.bot { align-items: flex-start; }
+        .zynth-bubble {
+          max-width: 20rem;
+          padding: 8px 16px;
+          border-radius: 12px;
+          font-size: 13px;
+          line-height: 1.55;
+          box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+        }
+        .zynth-bubble.user {
+          background: linear-gradient(135deg, #1d4ed8, #3b82f6);
+          color: #ffffff;
+          border-top-right-radius: 6px;
+        }
+        .zynth-bubble.bot {
+          background: #f3f4f6;
+          color: inherit;
+          border: 1px solid rgba(0,0,0,0.06);
+          border-top-left-radius: 6px;
+        }
+        .dark .zynth-bubble.bot {
+          background: #1e293b;
+          border: 1px solid rgba(148,163,184,0.22);
+        }
       `}</style>
 
       {/* Backdrop — closes chat on click-outside */}
@@ -279,38 +305,25 @@ export default function ZynthAssistant() {
           <div style={{
             flex: 1,
             overflowY: 'auto',
-            padding: '12px 12px 4px',
+            padding: '14px 14px 8px',
             display: 'flex',
             flexDirection: 'column',
-            gap: 8,
+            gap: 12,
           }}>
             {messages.map((msg) => {
               const isUser = msg.role === 'user';
               return (
-                <div key={msg.id} style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: isUser ? 'flex-end' : 'flex-start',
-                }}>
+                <div key={msg.id} className={`zynth-msg-row ${isUser ? 'user' : 'bot'}`}>
                   <div
-                    className="zynth-msg"
+                    className={`zynth-msg zynth-bubble ${isUser ? 'user' : 'bot'}`}
                     style={{
-                      maxWidth: '80%',
-                      padding: '10px 14px',
-                      borderRadius: isUser ? '12px 12px 4px 12px' : '12px 12px 12px 4px',
-                      fontSize: 13,
-                      lineHeight: 1.5,
-                      background: isUser
-                        ? 'linear-gradient(135deg, #1d4ed8, #3b82f6)'
-                        : assistantBubbleBg,
                       color: isUser ? '#fff' : theme.text,
-                      border: isUser ? 'none' : assistantBubbleBorder,
                       opacity: msg.isError ? 0.75 : 1,
                     }}
                   >
                     {msg.content}
                   </div>
-                  <span style={{ fontSize: 10, color: theme.muted, marginTop: 3, paddingLeft: 4, paddingRight: 4 }}>
+                  <span style={{ fontSize: 10, color: theme.muted, paddingLeft: 4, paddingRight: 4 }}>
                     {formatTime(msg.timestamp)}
                   </span>
                 </div>
@@ -347,9 +360,9 @@ export default function ZynthAssistant() {
             {loading && (
               <div style={{ display: 'flex', alignItems: 'flex-start' }}>
                 <div style={{
-                  background: surface2,
-                  border: `1px solid ${borderColor}`,
-                  borderRadius: '12px 12px 12px 4px',
+                  background: theme.isDark ? '#1e293b' : '#f3f4f6',
+                  border: theme.isDark ? '1px solid rgba(148,163,184,0.22)' : '1px solid rgba(0,0,0,0.06)',
+                  borderRadius: '12px 12px 12px 6px',
                   minWidth: 60,
                 }}>
                   <TypingDots />
@@ -362,10 +375,10 @@ export default function ZynthAssistant() {
 
           {/* Input area */}
           <div style={{
-            padding: '10px 12px',
+            padding: '12px 14px',
             borderTop: `1px solid ${borderColor}`,
             display: 'flex',
-            gap: 8,
+            gap: 10,
             alignItems: 'flex-end',
             flexShrink: 0,
             background: theme.surface,
@@ -381,10 +394,10 @@ export default function ZynthAssistant() {
               style={{
                 flex: 1,
                 resize: 'none',
-                background: surface2,
+                background: theme.isDark ? '#0f172a' : '#ffffff',
                 border: `1px solid ${borderColor}`,
-                borderRadius: 10,
-                padding: '8px 12px',
+                borderRadius: 12,
+                padding: '10px 13px',
                 fontSize: 13,
                 color: theme.text,
                 outline: 'none',
@@ -393,7 +406,10 @@ export default function ZynthAssistant() {
                 overflowY: 'auto',
                 fontFamily: 'inherit',
                 opacity: loading ? 0.6 : 1,
+                boxShadow: theme.isDark ? 'inset 0 1px 2px rgba(0,0,0,0.25)' : 'inset 0 1px 2px rgba(15,23,42,0.05)',
               }}
+              onFocus={e => { e.target.style.borderColor = '#3b82f6'; e.target.style.boxShadow = '0 0 0 3px rgba(59,130,246,0.16)'; }}
+              onBlur={e => { e.target.style.borderColor = borderColor; e.target.style.boxShadow = theme.isDark ? 'inset 0 1px 2px rgba(0,0,0,0.25)' : 'inset 0 1px 2px rgba(15,23,42,0.05)'; }}
               onInput={e => {
                 e.target.style.height = 'auto';
                 e.target.style.height = Math.min(e.target.scrollHeight, 96) + 'px';
@@ -404,7 +420,7 @@ export default function ZynthAssistant() {
               onClick={() => sendMessage()}
               disabled={!input.trim() || loading}
               style={{
-                width: 36, height: 36, borderRadius: 10, border: 'none',
+                width: 38, height: 38, borderRadius: 12, border: 'none',
                 background: 'linear-gradient(135deg, #1d4ed8, #3b82f6)',
                 cursor: input.trim() && !loading ? 'pointer' : 'not-allowed',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',

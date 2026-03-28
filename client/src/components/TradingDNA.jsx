@@ -16,6 +16,7 @@ import {
 } from 'recharts';
 import { useAuth } from '../contexts/AuthContext';
 import { usePlanGate } from '../hooks/usePlanGate';
+import { useUpgrade } from '../contexts/UpgradeContext';
 import { API_URL } from '../config/api';
 import ErrorBar from './ErrorBar';
 
@@ -203,23 +204,87 @@ function downloadDnaCard(archetype, traits, stats) {
 
 // ── Plan gate ─────────────────────────────────────────────────────────────────
 function EliteGate() {
+  const { openUpgradeModal } = useUpgrade();
+
   return (
-    <div className="flex flex-col items-center justify-center py-20 px-6 text-center">
-      <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center mb-5 shadow-lg">
-        <Lock className="w-8 h-8 text-white" />
+    <div className="flex flex-col items-center justify-center min-h-[520px] px-6 py-16 text-center
+      bg-gradient-to-br from-blue-50 to-indigo-50
+      dark:from-slate-900 dark:to-slate-800">
+
+      {/* Decorative glow */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden>
+        <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-96 h-96 rounded-full opacity-20
+          bg-gradient-to-br from-indigo-400 to-blue-500 blur-3xl" />
       </div>
-      <h2 className="text-2xl font-bold text-white mb-2">Trading DNA</h2>
-      <p className="text-gray-400 max-w-md mb-6">
-        Unlock your complete trader personality profile — archetype, trait scores, AI coaching, and a personalised 30-day plan. Available on the <span className="text-amber-400 font-semibold">Elite plan</span>.
-      </p>
-      <div className="flex flex-wrap gap-3 justify-center mb-8">
-        {['Trader Archetype', '8-Trait DNA Score', 'AI Coach Letter', '30-Day Plan', 'Performance Fingerprint'].map(f => (
-          <span key={f} className="px-3 py-1 bg-amber-500/10 text-amber-400 rounded-full text-sm border border-amber-500/20">{f}</span>
-        ))}
+
+      <div className="relative z-10 flex flex-col items-center max-w-md">
+        {/* Icon */}
+        <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-600
+          flex items-center justify-center mb-6
+          shadow-[0_8px_32px_rgba(99,102,241,0.35)]">
+          <Fingerprint className="w-9 h-9 text-white" />
+        </div>
+
+        {/* Plan chip */}
+        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold
+          uppercase tracking-widest mb-4
+          bg-indigo-100 text-indigo-700 border border-indigo-200
+          dark:bg-indigo-500/10 dark:text-indigo-300 dark:border-indigo-500/25">
+          <Lock className="w-2.5 h-2.5" /> Elite Plan
+        </span>
+
+        {/* Headline */}
+        <h2 className="text-[28px] font-extrabold tracking-tight mb-3
+          text-gray-900 dark:text-white">
+          Unlock Your Trading DNA
+        </h2>
+
+        {/* Description */}
+        <p className="text-[15px] leading-relaxed mb-7
+          text-gray-500 dark:text-gray-400">
+          Discover your trader archetype, 8-trait personality score, and a personalised 30-day improvement plan — all powered by your journal data.
+        </p>
+
+        {/* Feature chips */}
+        <div className="flex flex-wrap gap-2 justify-center mb-8">
+          {[
+            { label: 'Trader Archetype',       icon: '🧬' },
+            { label: '8-Trait DNA Score',       icon: '📊' },
+            { label: 'AI Coach Letter',         icon: '🤖' },
+            { label: '30-Day Growth Plan',      icon: '📅' },
+            { label: 'Performance Fingerprint', icon: '🔍' },
+          ].map(f => (
+            <span key={f.label}
+              className="flex items-center gap-1 px-3 py-1 rounded-full text-[12px] font-medium
+                bg-white border border-gray-200 text-gray-600
+                dark:bg-slate-800 dark:border-slate-700 dark:text-gray-300
+                shadow-sm">
+              <span>{f.icon}</span> {f.label}
+            </span>
+          ))}
+        </div>
+
+        {/* CTA */}
+        <button
+          onClick={() => openUpgradeModal({
+            requiredPlan: 'elite',
+            feature: 'Trading DNA',
+            headline: 'Unlock Your Trading DNA',
+            reason: 'Get your full trader personality profile on the Elite plan.',
+          })}
+          className="inline-flex items-center gap-2 px-8 py-3 rounded-lg text-[15px] font-semibold
+            text-white bg-gradient-to-r from-blue-600 to-indigo-600
+            shadow-[0_4px_18px_rgba(99,102,241,0.4)]
+            hover:from-blue-700 hover:to-indigo-700 hover:shadow-[0_6px_24px_rgba(99,102,241,0.5)]
+            active:scale-[0.98] transition-all duration-150">
+          <Sparkles className="w-4 h-4" />
+          Upgrade to Elite
+        </button>
+
+        <p className="mt-3 text-[12px] text-gray-400 dark:text-gray-500">
+          Includes Trading DNA, AI insights, unlimited journaling &amp; more
+        </p>
       </div>
-      <button className="px-8 py-3 bg-gradient-to-r from-amber-500 to-orange-600 text-white font-semibold rounded-xl shadow-lg hover:from-amber-600 hover:to-orange-700 transition-all">
-        Upgrade to Elite
-      </button>
     </div>
   );
 }

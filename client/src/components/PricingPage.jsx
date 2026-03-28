@@ -4,176 +4,232 @@ import { BrandMark } from './BrandLogo';
 
 const PLANS = [
   {
-    name: 'Free', priceLabel: '0', price: 0,
-    desc: 'Start tracking. Discover your patterns.',
+    name: 'Free',
+    priceLabel: '0',
+    price: 0,
+    desc: 'Start tracking your trades with zero risk.',
     features: [
-      'Up to 5 journal entries',
-      '2 AI analyses (lifetime)',
-      'Limited economic calendar',
-      'Delayed market data',
-      'Basic analytics',
+      'Up to 10 journal entries',
+      'Basic analytics dashboard',
+      'Economic calendar access',
+      '3 AI analyses included',
     ],
-    cta: 'Start Free — No Card Needed',
+    cta: 'Start Free',
     highlight: false,
   },
   {
-    name: 'Pro', priceLabel: '9', price: 9,
-    badge: 'MOST POPULAR',
-    desc: 'For active traders serious about improving their edge.',
+    name: 'Pro',
+    priceLabel: '9',
+    price: 9,
+    badge: 'Most Popular',
+    desc: 'Built for active traders who want faster improvement.',
     features: [
       'Unlimited journal entries',
       '50 AI analyses per month',
-      'Real-time market data',
-      'Full economic calendar',
-      'Advanced analytics',
-      'Behavioral insights',
+      'Full economic intelligence',
+      'Macro surprise score',
     ],
     cta: 'Upgrade to Pro',
     highlight: true,
   },
   {
-    name: 'Elite', priceLabel: '19', price: 19,
-    badge: 'BEST VALUE',
-    desc: 'For professional traders who want every possible edge.',
+    name: 'Elite',
+    priceLabel: '19',
+    price: 19,
+    badge: 'Best Value',
+    desc: 'Everything you need for deep, professional analysis.',
     features: [
       'Everything in Pro',
       'Unlimited AI analyses',
-      'AI trading reports',
       'Trading DNA profile',
-      'Strategy optimization insights',
-      'Priority support (4-hr response)',
+      'Priority support',
     ],
     cta: 'Go Elite',
     highlight: false,
   },
 ];
 
+function PricingCard({ plan, isDark, border, muted, onCTA }) {
+  return (
+    <div
+      className="bg-white dark:bg-slate-900 border border-gray-200 dark:border-gray-700 rounded-2xl p-6 hover:shadow-lg transition-all duration-200 hover:scale-[1.02]"
+      style={{
+        borderColor: plan.highlight ? '#3b82f6' : border,
+        boxShadow: plan.highlight
+          ? (isDark ? '0 8px 30px rgba(59,130,246,0.24)' : '0 12px 32px rgba(59,130,246,0.16)')
+          : 'none',
+      }}
+    >
+      {plan.badge && (
+        <div style={{ marginBottom: 12 }}>
+          <span
+            style={{
+              display: 'inline-block',
+              padding: '4px 10px',
+              borderRadius: 999,
+              fontSize: 10,
+              fontWeight: 800,
+              letterSpacing: '0.06em',
+              textTransform: 'uppercase',
+              color: '#1d4ed8',
+              background: isDark ? 'rgba(59,130,246,0.16)' : 'rgba(59,130,246,0.12)',
+              border: `1px solid ${isDark ? 'rgba(59,130,246,0.35)' : 'rgba(59,130,246,0.25)'}`,
+            }}
+          >
+            {plan.badge}
+          </span>
+        </div>
+      )}
+
+      <h3 className="text-[20px] font-extrabold text-gray-900 dark:text-gray-100 mb-1.5">{plan.name}</h3>
+      <p className="text-[13px] text-gray-500 dark:text-gray-400 mb-4 leading-relaxed">{plan.desc}</p>
+
+      <div style={{ marginBottom: 18 }}>
+        <span className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+          ${plan.priceLabel}
+        </span>
+        <span className="text-[13px] text-gray-500 dark:text-gray-400 ml-1">/mo</span>
+      </div>
+
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 9, marginBottom: 22 }}>
+        {plan.features.slice(0, 4).map((feature) => (
+          <div key={feature} style={{ display: 'flex', alignItems: 'flex-start', gap: 9 }}>
+            <div
+              style={{
+                width: 18,
+                height: 18,
+                borderRadius: '50%',
+                flexShrink: 0,
+                marginTop: 1,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                background: isDark ? 'rgba(59,130,246,0.16)' : 'rgba(59,130,246,0.10)',
+              }}
+            >
+              <Check size={10} style={{ color: '#2563eb' }} />
+            </div>
+            <span className="text-[13px] leading-snug text-gray-700 dark:text-gray-300">{feature}</span>
+          </div>
+        ))}
+      </div>
+
+      <button
+        onClick={onCTA}
+        className="w-full bg-blue-600 text-white rounded-lg py-2 transition-all duration-200 hover:shadow-md hover:scale-[1.02] active:scale-95 hover:brightness-110"
+        style={{ border: 'none', fontSize: 14, fontWeight: 700, cursor: 'pointer' }}
+      >
+        {plan.cta}
+      </button>
+    </div>
+  );
+}
+
 export default function PricingPage({ onBack }) {
   const { isDark } = useTheme();
-  const bg     = isDark ? '#0a0a0a' : '#f4f6f9';
-  const navBg  = isDark ? 'rgba(10,10,10,0.92)' : 'rgba(244,246,249,0.92)';
+  const bg = isDark ? '#020617' : '#f4f6f9';
+  const navBg = isDark ? 'rgba(10,10,10,0.92)' : 'rgba(244,246,249,0.92)';
   const border = isDark ? 'rgba(255,255,255,0.06)' : '#e2e8f0';
-  const text   = isDark ? '#f1f5f9' : '#0f172a';
-  const muted  = isDark ? '#6b7280' : '#64748b';
+  const muted = isDark ? '#6b7280' : '#64748b';
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: bg, color: text }}>
-
-      {/* ── Sticky nav ── */}
-      <nav style={{
-        position: 'sticky', top: 0, zIndex: 50,
-        backgroundColor: navBg,
-        backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)',
-        borderBottom: `1px solid ${border}`,
-      }}>
-        <div style={{ maxWidth: 1080, margin: '0 auto', padding: '0 16px', height: 60, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+    <div className="min-h-screen text-gray-900 dark:text-gray-100" style={{ backgroundColor: bg }}>
+      <nav
+        style={{
+          position: 'sticky',
+          top: 0,
+          zIndex: 50,
+          backgroundColor: navBg,
+          backdropFilter: 'blur(14px)',
+          WebkitBackdropFilter: 'blur(14px)',
+          borderBottom: `1px solid ${border}`,
+        }}
+      >
+        <div
+          style={{
+            maxWidth: 1080,
+            margin: '0 auto',
+            padding: '0 16px',
+            height: 60,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}
+        >
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <BrandMark size={32} />
-            <span style={{ fontSize: 16, fontWeight: 800, color: text }}>Zynth</span>
+            <span className="text-[16px] font-extrabold text-gray-900 dark:text-gray-100">Zynth</span>
           </div>
           <button
-            onClick={() => { if (onBack) { onBack(); } else { window.history.back(); } }}
-            style={{ padding: '7px 16px', borderRadius: 10, border: `1px solid ${border}`, background: 'transparent', color: muted, fontSize: 13, fontWeight: 600, cursor: 'pointer' }}
-            onMouseEnter={e => (e.currentTarget.style.color = text)}
-            onMouseLeave={e => (e.currentTarget.style.color = muted)}
+            onClick={() => {
+              if (onBack) {
+                onBack();
+              } else {
+                window.history.back();
+              }
+            }}
+            style={{
+              padding: '7px 16px',
+              borderRadius: 10,
+              border: `1px solid ${border}`,
+              background: 'transparent',
+              color: muted,
+              fontSize: 13,
+              fontWeight: 600,
+              cursor: 'pointer',
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = isDark ? '#f1f5f9' : '#0f172a')}
+            onMouseLeave={(e) => (e.currentTarget.style.color = muted)}
           >
             ← Back
           </button>
         </div>
       </nav>
 
-      {/* ── Hero heading ── */}
       <div style={{ textAlign: 'center', padding: '52px 16px 40px' }}>
-        <h1 style={{ fontSize: 'clamp(30px, 8vw, 40px)', fontWeight: 900, letterSpacing: '-0.02em', color: text, marginBottom: 12 }}>
+        <h1 className="text-[clamp(30px,8vw,40px)] font-black tracking-tight text-gray-900 dark:text-gray-100 mb-3">
           Simple, transparent pricing
         </h1>
-        <p style={{ fontSize: 15, color: muted, maxWidth: 480, margin: '0 auto' }}>
-          Start free. Upgrade when you’re ready.
+        <p className="text-[15px] text-gray-500 dark:text-gray-400 max-w-[480px] mx-auto">
+          Choose the plan that fits your trading stage and upgrade anytime.
         </p>
       </div>
 
-      {/* ── Plan cards ── */}
       <div style={{ maxWidth: 1080, margin: '0 auto', padding: '0 16px' }}>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 20, alignItems: 'start' }}>
-          {PLANS.map(plan => {
-            const isH        = plan.highlight;
-            const cardBg     = isDark ? (isH ? '#111111' : '#141414') : '#ffffff';
-            const cardBorder = isH ? '#3b82f6' : (isDark ? 'rgba(255,255,255,0.06)' : '#e2e8f0');
-            const cardShadow = isH
-              ? (isDark ? '0 0 0 1px rgba(59,130,246,0.15), 0 24px 56px rgba(0,0,0,0.55), 0 0 40px rgba(59,130,246,0.10)' : '0 20px 60px rgba(59,130,246,0.14), 0 4px 20px rgba(0,0,0,0.07)')
-              : (isDark ? 'none' : '0 4px 16px rgba(0,0,0,0.04)');
-            return (
-              <div
-                key={plan.name}
-                style={{ position: 'relative', borderRadius: 20, overflow: 'hidden', border: `${isH ? 2 : 1}px solid ${cardBorder}`, background: cardBg, boxShadow: cardShadow, transform: isH ? 'scale(1.03)' : 'none', transition: 'transform 0.2s ease' }}
-                onMouseEnter={e => { if (!isH) e.currentTarget.style.transform = 'translateY(-4px)'; }}
-                onMouseLeave={e => { if (!isH) e.currentTarget.style.transform = 'none'; }}
-              >
-                {isH && <div style={{ height: 3, background: 'linear-gradient(90deg, #1d4ed8, #3b82f6, #06b6d4)' }} />}
-
-                {plan.badge && (
-                  <div style={{ position: 'absolute', top: isH ? 20 : 16, right: 16 }}>
-                    <span style={{ display: 'inline-block', padding: '4px 10px', borderRadius: 999, fontSize: 10, fontWeight: 800, color: '#fff', background: isH ? 'linear-gradient(90deg,#f59e0b,#ef4444)' : 'linear-gradient(90deg,#3b82f6,#6366f1)' }}>
-                      {plan.badge}
-                    </span>
-                  </div>
-                )}
-
-                <div style={{ padding: 28 }}>
-                  <h3 style={{ fontSize: 20, fontWeight: 800, marginBottom: 4, color: isH ? (isDark ? '#60a5fa' : '#2563eb') : text }}>
-                    {plan.name}
-                  </h3>
-                  <p style={{ fontSize: 13, color: muted, marginBottom: 24 }}>{plan.desc}</p>
-
-                  <div style={{ display: 'flex', alignItems: 'flex-end', gap: 2, marginBottom: 6 }}>
-                    <span style={{ fontSize: 15, fontWeight: 500, color: muted, marginBottom: 10 }}>$</span>
-                    <span style={{ fontSize: isH ? 58 : 44, fontWeight: 900, lineHeight: 1, color: text }}>{plan.priceLabel}</span>
-                    <span style={{ fontSize: 13, color: muted, marginBottom: 8 }}>/mo</span>
-                  </div>
-                  <p style={{ fontSize: 11, color: isDark ? '#374151' : '#94a3b8', marginBottom: 20 }}>
-                    {plan.price === 0 ? 'Free forever' : 'Billed monthly'}
-                  </p>
-
-                  <div style={{ borderTop: `1px solid ${isDark ? 'rgba(255,255,255,0.06)' : '#f1f5f9'}`, marginBottom: 20 }} />
-
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 28 }}>
-                    {plan.features.map(f => (
-                      <div key={f} style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
-                        <div style={{ width: 20, height: 20, borderRadius: '50%', flexShrink: 0, marginTop: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', background: isH ? (isDark ? 'rgba(59,130,246,0.15)' : 'rgba(59,130,246,0.09)') : (isDark ? 'rgba(255,255,255,0.06)' : '#f1f5f9') }}>
-                          <Check size={11} style={{ color: isH ? '#3b82f6' : (isDark ? '#6b7280' : '#64748b') }} />
-                        </div>
-                        <span style={{ fontSize: 13, lineHeight: 1.5, color: isDark ? '#d1d5db' : '#374151' }}>{f}</span>
-                      </div>
-                    ))}
-                  </div>
-
-                  <button
-                    onClick={() => { if (onBack) onBack(); else window.location.href = '/'; }}
-                    style={{ width: '100%', padding: '13px 0', borderRadius: 12, fontSize: 14, fontWeight: 700, cursor: 'pointer', transition: 'filter 0.15s', ...(isH ? { background: 'linear-gradient(135deg,#1d4ed8,#0284c7)', color: '#fff', border: 'none', boxShadow: '0 4px 20px rgba(59,130,246,0.35)' } : isDark ? { background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)', color: '#e2e8f0' } : { background: '#f8fafc', border: '1px solid #e2e8f0', color: '#1e293b' }) }}
-                    onMouseEnter={e => (e.currentTarget.style.filter = 'brightness(1.1)')}
-                    onMouseLeave={e => (e.currentTarget.style.filter = 'brightness(1)')}
-                  >
-                    {plan.cta}
-                  </button>
-                </div>
-              </div>
-            );
-          })}
+          {PLANS.map((plan) => (
+            <PricingCard
+              key={plan.name}
+              plan={plan}
+              isDark={isDark}
+              border={border}
+              muted={muted}
+              onCTA={() => {
+                if (onBack) onBack();
+                else window.location.href = '/';
+              }}
+            />
+          ))}
         </div>
 
-        {/* ── Footer notes ── */}
-        <div style={{ marginTop: 48, paddingBottom: 48, display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'center', justifyContent: 'space-between' }}>
+        <div
+          style={{
+            marginTop: 40,
+            paddingBottom: 48,
+            display: 'flex',
+            flexWrap: 'wrap',
+            gap: 12,
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}
+        >
           <p style={{ fontSize: 13, color: muted }}>Billed monthly. Cancel anytime.</p>
           <div style={{ display: 'flex', gap: 20 }}>
-            <a href="/terms"   style={{ fontSize: 12, color: muted, textDecoration: 'none' }}>Terms</a>
+            <a href="/terms" style={{ fontSize: 12, color: muted, textDecoration: 'none' }}>Terms</a>
             <a href="/privacy" style={{ fontSize: 12, color: muted, textDecoration: 'none' }}>Privacy</a>
-            <a href="/refund"  style={{ fontSize: 12, color: muted, textDecoration: 'none' }}>Refund Policy</a>
+            <a href="/refund" style={{ fontSize: 12, color: muted, textDecoration: 'none' }}>Refund Policy</a>
           </div>
         </div>
-
-        <p style={{ fontSize: 12, color: isDark ? '#374151' : '#94a3b8', textAlign: 'center', paddingBottom: 48 }}>
-          Zynth is an analytics tool and does not provide financial advice.
-        </p>
       </div>
     </div>
   );

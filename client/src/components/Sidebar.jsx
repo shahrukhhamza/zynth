@@ -27,119 +27,109 @@ const NAV_ITEMS = [
 ];
 
 function NavButton({ icon: Icon, label, badge, active, collapsed, onClick, core }) {
-  const [hov, setHov] = useState(false);
   const theme = useTheme();
 
-  const getBg = () => {
-    if (core) return active ? '#1d4ed8' : hov ? '#2563eb' : '#3b82f6cc';
-    if (active) return theme.isDark ? 'rgba(59,130,246,0.12)' : '#eff6ff';
-    if (hov) return theme.isDark ? 'rgba(255,255,255,0.05)' : '#f8fafc';
-    return 'transparent';
-  };
+  /* ── Trade Journal: distinctive gradient pill ─────────────────────────── */
+  if (core) {
+    return (
+      <button
+        onClick={onClick}
+        title={collapsed ? label : undefined}
+        className={[
+          'relative w-full flex items-center border-0 rounded-xl cursor-pointer select-none',
+          'text-white transition-all duration-200 flex-shrink-0 h-12',
+          'shadow-[0_2px_12px_rgba(59,130,246,0.28)] hover:shadow-[0_4px_22px_rgba(59,130,246,0.42)]',
+          'hover:brightness-110 active:scale-[0.98]',
+          collapsed ? 'justify-center px-0' : 'gap-3 px-4',
+        ].join(' ')}
+        style={{ background: 'linear-gradient(135deg, #1d4ed8, #2563eb)' }}
+      >
+        <Icon style={{ width: 18, height: 18, flexShrink: 0, fill: 'rgba(255,255,255,0.18)' }} />
 
-  const getColor = () => {
-    if (core) return '#ffffff';
-    if (active) return theme.isDark ? '#60a5fa' : '#1d4ed8';
-    if (hov) return theme.isDark ? theme.text : '#0f172a';
-    return theme.muted;
-  };
+        {!collapsed && (
+          <div className="flex-1 flex items-center justify-between min-w-0">
+            <span className="text-[13px] font-semibold leading-tight whitespace-nowrap overflow-hidden text-ellipsis">
+              {label}
+              <span className="block text-[9px] font-medium opacity-70 tracking-[0.04em] mt-0.5">
+                Your trading edge
+              </span>
+            </span>
+            {badge && (
+              <span
+                className="text-[9px] font-bold px-1.5 py-0.5 rounded-full tracking-[0.06em] ml-1 flex-shrink-0"
+                style={{ color: badge.color, background: `${badge.color}20`, border: `1px solid ${badge.color}40` }}
+              >
+                {badge.text}
+              </span>
+            )}
+          </div>
+        )}
 
+        {collapsed && badge && (
+          <span
+            className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full"
+            style={{ background: badge.color, boxShadow: `0 0 6px ${badge.color}` }}
+          />
+        )}
+      </button>
+    );
+  }
+
+  /* ── Standard nav item ────────────────────────────────────────────────── */
   return (
     <button
       onClick={onClick}
-      onMouseEnter={() => setHov(true)}
-      onMouseLeave={() => setHov(false)}
       title={collapsed ? label : undefined}
+      className={[
+        'relative w-full flex items-center h-10 border-0 rounded-lg',
+        'cursor-pointer select-none transition-all duration-150 flex-shrink-0',
+        collapsed ? 'justify-center' : 'gap-3',
+        active
+          ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 font-semibold'
+          : [
+              'text-gray-500 dark:text-gray-400 font-medium',
+              'hover:bg-gray-100 dark:hover:bg-slate-800',
+              'hover:text-gray-800 dark:hover:text-gray-200',
+            ].join(' '),
+      ].join(' ')}
       style={{
-        width: '100%',
-        display: 'flex',
-        alignItems: 'center',
-        textAlign: 'left',
-        borderRadius: core ? 10 : 8,
-        height: core ? 48 : 40,
-        justifyContent: collapsed ? 'center' : 'flex-start',
-        gap: collapsed ? 0 : 10,
-        padding: collapsed ? '0' : `0 10px 0 ${active && !core ? '9px' : '12px'}`,
-        backgroundColor: getBg(),
-        color: getColor(),
-        border: active && !core && !collapsed ? `1px solid ${theme.isDark ? 'rgba(59,130,246,0.2)' : 'rgba(37,99,235,0.15)'}` : '1px solid transparent',
-        borderLeft: !core && !collapsed ? `3px solid ${active ? '#3b82f6' : 'transparent'}` : (core ? 'none' : '1px solid transparent'),
-        boxShadow: core
-          ? hov
-            ? '0 4px 20px rgba(59,130,246,0.35)'
-            : '0 2px 12px rgba(59,130,246,0.25)'
-          : active && !theme.isDark ? '0 2px 8px rgba(37,99,235,0.10)' : 'none',
-        transition: 'all 0.18s ease',
-        cursor: 'pointer',
-        position: 'relative',
-        flexShrink: 0,
+        borderLeft: !collapsed ? `3px solid ${active ? '#3b82f6' : 'transparent'}` : 'none',
+        paddingLeft:  collapsed ? 0 : active ? 13 : 16,
+        paddingRight: collapsed ? 0 : 12,
       }}
     >
-      {/* Active indicator dot for non-core items */}
-      {!core && active && !collapsed && (
-        <span style={{
-          position: 'absolute',
-          left: -1,
-          top: '50%',
-          transform: 'translateY(-50%)',
-          width: 3,
-          height: 16,
-          borderRadius: 99,
-          background: '#3b82f6',
-          boxShadow: '0 0 8px rgba(59,130,246,0.6)',
-        }} />
-      )}
-
       {/* Icon */}
-      <Icon style={{
-        width: core ? 18 : 16,
-        height: core ? 18 : 16,
-        flexShrink: 0,
-        opacity: collapsed && !active && !hov ? 0.5 : 1,
-        fill: core ? 'rgba(255,255,255,0.2)' : 'none',
-      }} />
+      <Icon
+        style={{
+          width: 16, height: 16, flexShrink: 0,
+          opacity: collapsed && !active ? 0.55 : 1,
+          transition: 'opacity 0.15s',
+        }}
+      />
 
       {/* Label + badge */}
       {!collapsed && (
-        <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'space-between', minWidth: 0 }}>
-          <span style={{
-            fontSize: core ? 13 : 13,
-            fontWeight: core ? 600 : active ? 600 : 400,
-            letterSpacing: core ? '0.01em' : active ? '0' : '0',
-            whiteSpace: 'nowrap',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-          }}>
+        <div className="flex-1 flex items-center justify-between min-w-0">
+          <span className="text-[13px] whitespace-nowrap overflow-hidden text-ellipsis">
             {label}
-            {core && (
-              <span style={{ display: 'block', fontSize: 9, fontWeight: 500, opacity: 0.7, letterSpacing: '0.04em', marginTop: 1 }}>
-                Your trading edge
-              </span>
-            )}
           </span>
           {badge && (
-            <span style={{
-              fontSize: 9, fontWeight: 700,
-              padding: '2px 6px', borderRadius: 99,
-              letterSpacing: '0.06em',
-              color: badge.color,
-              background: `${badge.color}18`,
-              border: `1px solid ${badge.color}30`,
-            }}>
+            <span
+              className="text-[9px] font-bold px-1.5 py-0.5 rounded-full tracking-[0.06em] ml-1 flex-shrink-0"
+              style={{ color: badge.color, background: `${badge.color}18`, border: `1px solid ${badge.color}30` }}
+            >
               {badge.text}
             </span>
           )}
         </div>
       )}
 
-      {/* Collapsed tooltip badge */}
+      {/* Collapsed: dot badge */}
       {collapsed && badge && (
-        <span style={{
-          position: 'absolute', top: 6, right: 6,
-          width: 6, height: 6, borderRadius: '50%',
-          background: badge.color,
-          boxShadow: `0 0 6px ${badge.color}`,
-        }} />
+        <span
+          className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full"
+          style={{ background: badge.color, boxShadow: `0 0 6px ${badge.color}` }}
+        />
       )}
     </button>
   );
@@ -351,7 +341,7 @@ function SidebarInner({
         )}
 
         {/* Nav items */}
-        <nav style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+        <nav style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
           {NAV_ITEMS.map(item => (
             <NavButton
               key={item.key}
@@ -370,7 +360,7 @@ function SidebarInner({
         <div style={{ height: 1, background: SB_BORDER, margin: '8px 0' }} />
 
         {/* Settings + Admin */}
-        <nav style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+        <nav style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
           <NavButton
             icon={Settings}
             label="Settings"

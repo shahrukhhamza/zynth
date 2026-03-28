@@ -1200,13 +1200,12 @@ export default function HelpCenter() {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedArticle,  setSelectedArticle]  = useState(null);
   const [query, setQuery] = useState('');
-  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(() => window.innerWidth < 900);
 
   useEffect(() => {
     const mq = window.matchMedia('(max-width: 899px)');
     setIsMobile(mq.matches);
-    const handler = (e) => { setIsMobile(e.matches); if (!e.matches) setSidebarOpen(false); };
+    const handler = (e) => { setIsMobile(e.matches); };
     mq.addEventListener('change', handler);
     return () => mq.removeEventListener('change', handler);
   }, []);
@@ -1236,7 +1235,6 @@ export default function HelpCenter() {
     setSelectedArticle(articleId);
     if (catKey) setSelectedCategory(catKey);
     setQuery('');
-    setSidebarOpen(false);
   };
 
   const backToCategory = () => setSelectedArticle(null);
@@ -1250,147 +1248,8 @@ export default function HelpCenter() {
     { key: 'product', title: 'General Feedback',    description: "Tell us what's confusing or should improve.",  icon: MessageSquare, color: '#3b82f6', href: 'mailto:getzynth@gmail.com?subject=Product%20Feedback' },
   ];
 
-  // ── Sidebar geometry ──────────────────────────────────────────────────────
-  const sidebarW   = 260;
-  const sidebarBg  = isDark ? '#0d1117' : '#f8fafc';
-  const sideBorder = isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.08)';
-
-  // ── Sidebar JSX (shared between desktop and mobile drawer) ───────────────
-  const SidebarInner = () => (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden' }}>
-
-      {/* Logo row */}
-      <div style={{ padding: '18px 14px 14px', borderBottom: `1px solid ${sideBorder}`, flexShrink: 0 }}>
-        <button
-          onClick={backToHome}
-          style={{ display: 'flex', alignItems: 'center', gap: 10, background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
-        >
-          <div style={{ width: 30, height: 30, borderRadius: 9, background: 'linear-gradient(135deg, #2563eb, #06b6d4)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-            <LifeBuoy size={15} color="#fff" />
-          </div>
-          <span style={{ color: text0, fontWeight: 700, fontSize: 14, letterSpacing: '-0.01em' }}>Help Center</span>
-        </button>
-      </div>
-
-      {/* Search */}
-      <div style={{ padding: '10px 10px 6px', flexShrink: 0 }}>
-        <div style={{ position: 'relative' }}>
-          <Search size={13} style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', color: textMuted, pointerEvents: 'none' }} />
-          <input
-            type="text"
-            value={query}
-            onChange={e => setQuery(e.target.value)}
-            placeholder="Search articles..."
-            style={{ width: '100%', padding: '8px 28px 8px 28px', borderRadius: 8, border: `1px solid ${border}`, background: bg0, color: text0, fontSize: 13, outline: 'none', boxSizing: 'border-box' }}
-            onFocus={e => { e.target.style.borderColor = accent; e.target.style.boxShadow = '0 0 0 3px rgba(59,130,246,0.14)'; }}
-            onBlur={e => { e.target.style.borderColor = border; e.target.style.boxShadow = 'none'; }}
-          />
-          {query && (
-            <button onClick={() => setQuery('')} style={{ position: 'absolute', right: 8, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: textMuted, padding: 2, display: 'flex', alignItems: 'center' }}>
-              <X size={12} />
-            </button>
-          )}
-        </div>
-      </div>
-
-      {/* Nav */}
-      <nav style={{ flex: 1, overflowY: 'auto', padding: '4px 8px 12px' }}>
-        {/* All Topics */}
-        <button
-          onClick={backToHome}
-          style={{
-            width: '100%', display: 'flex', alignItems: 'center', gap: 9, padding: '8px 10px', borderRadius: 7, border: 'none', cursor: 'pointer', textAlign: 'left', fontSize: 13, fontWeight: 600, transition: 'background 0.15s, color 0.15s', marginBottom: 6,
-            background: (!selectedCategory && !selectedArticle && !query) ? (isDark ? 'rgba(59,130,246,0.12)' : 'rgba(59,130,246,0.08)') : 'transparent',
-            color: (!selectedCategory && !selectedArticle && !query) ? accent : textMuted,
-          }}
-          onMouseOver={e => { if (selectedCategory || selectedArticle || query) { e.currentTarget.style.background = isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)'; e.currentTarget.style.color = text0; } }}
-          onMouseOut={e => { if (selectedCategory || selectedArticle || query) { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = textMuted; } }}
-        >
-          <Home size={14} />
-          All Topics
-        </button>
-
-        <div style={{ color: textMuted, fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', padding: '4px 10px 4px', marginBottom: 2 }}>
-          Categories
-        </div>
-
-        {CATEGORIES.map(cat => {
-          const isActive = cat.key === selectedCategory;
-          return (
-            <button
-              key={cat.key}
-              onClick={() => { setSelectedCategory(cat.key); setSelectedArticle(null); setQuery(''); setSidebarOpen(false); }}
-              style={{
-                width: '100%', display: 'flex', alignItems: 'center', gap: 9, padding: '7px 10px', borderRadius: 7, border: 'none', cursor: 'pointer', textAlign: 'left', fontSize: 13, transition: 'background 0.15s, color 0.15s', marginBottom: 1,
-                background: isActive ? (isDark ? 'rgba(59,130,246,0.12)' : 'rgba(59,130,246,0.08)') : 'transparent',
-                fontWeight: isActive ? 600 : 500,
-                color: isActive ? accent : textMuted,
-              }}
-              onMouseOver={e => { if (!isActive) { e.currentTarget.style.background = isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)'; e.currentTarget.style.color = text0; } }}
-              onMouseOut={e => { if (!isActive) { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = textMuted; } }}
-            >
-              <cat.icon size={14} color={isActive ? accent : cat.color} style={{ flexShrink: 0 }} />
-              <span style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{cat.title}</span>
-              <span style={{ fontSize: 11, color: textMuted, fontWeight: 500, flexShrink: 0 }}>{cat.articles.length}</span>
-            </button>
-          );
-        })}
-      </nav>
-
-      {/* Support footer */}
-      <div style={{ padding: '10px 10px 14px', borderTop: `1px solid ${sideBorder}`, flexShrink: 0 }}>
-        <a
-          href="mailto:getzynth@gmail.com"
-          style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 12px', borderRadius: 8, background: isDark ? 'rgba(59,130,246,0.08)' : 'rgba(59,130,246,0.06)', border: '1px solid rgba(59,130,246,0.16)', textDecoration: 'none', transition: 'background 0.15s' }}
-          onMouseOver={e => { e.currentTarget.style.background = isDark ? 'rgba(59,130,246,0.14)' : 'rgba(59,130,246,0.1)'; }}
-          onMouseOut={e => { e.currentTarget.style.background = isDark ? 'rgba(59,130,246,0.08)' : 'rgba(59,130,246,0.06)'; }}
-        >
-          <Mail size={14} color={accent} style={{ flexShrink: 0 }} />
-          <div>
-            <div style={{ color: text0, fontSize: 12, fontWeight: 600 }}>Contact Support</div>
-            <div style={{ color: textMuted, fontSize: 11 }}>getzynth@gmail.com</div>
-          </div>
-        </a>
-      </div>
-    </div>
-  );
-
   return (
     <div style={{ display: 'flex', height: '100%', background: bg0, minHeight: 0 }}>
-
-      {/* Mobile backdrop */}
-      {isMobile && sidebarOpen && (
-        <div
-          onClick={() => setSidebarOpen(false)}
-          style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.48)', zIndex: 40, backdropFilter: 'blur(2px)' }}
-        />
-      )}
-
-      {/* ── Sidebar ── */}
-      <aside style={{
-        width: sidebarW,
-        flexShrink: 0,
-        background: sidebarBg,
-        borderRight: `1px solid ${sideBorder}`,
-        position: isMobile ? 'fixed' : 'sticky',
-        top: 0,
-        left: isMobile ? (sidebarOpen ? 0 : -sidebarW - 1) : 0,
-        height: '100%',
-        zIndex: isMobile ? 50 : 1,
-        transition: isMobile ? 'left 0.24s cubic-bezier(.4,0,.2,1)' : 'none',
-        overflow: 'hidden',
-      }}>
-        {/* Mobile close */}
-        {isMobile && (
-          <button
-            onClick={() => setSidebarOpen(false)}
-            style={{ position: 'absolute', top: 12, right: 12, background: 'none', border: 'none', cursor: 'pointer', color: textMuted, zIndex: 2, display: 'flex', alignItems: 'center', padding: 4 }}
-          >
-            <X size={17} />
-          </button>
-        )}
-        <SidebarInner />
-      </aside>
 
       {/* ── Main panel ── */}
       <main style={{ flex: 1, minWidth: 0, height: '100%', overflowY: 'auto', overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
@@ -1398,12 +1257,6 @@ export default function HelpCenter() {
         {/* Mobile top bar */}
         {isMobile && (
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px', borderBottom: `1px solid ${border}`, background: bg0, position: 'sticky', top: 0, zIndex: 10, flexShrink: 0 }}>
-            <button
-              onClick={() => setSidebarOpen(true)}
-              style={{ background: 'none', border: 'none', cursor: 'pointer', color: textMuted, padding: 4, display: 'flex', alignItems: 'center', flexShrink: 0 }}
-            >
-              <BookOpen size={20} />
-            </button>
             <div style={{ position: 'relative', flex: 1 }}>
               <Search size={14} style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', color: textMuted, pointerEvents: 'none' }} />
               <input

@@ -31,6 +31,66 @@ function getCurrentSessions() {
   return SESSIONS.filter(s => h >= s.open && h < s.close);
 }
 
+// ── Metric Stat Card ────────────────────────────────────────────────────────
+function MetricCard({ label, value, sub, accentColor, iconBg, iconColor, icon: Icon, badge, badgeColor }) {
+  return (
+    <div
+      className="group relative flex flex-col gap-0 cursor-default select-none overflow-hidden
+        rounded-2xl border bg-white dark:bg-slate-900
+        border-gray-200 dark:border-gray-700
+        shadow-[0_1px_3px_rgba(0,0,0,0.04),0_4px_20px_rgba(0,0,0,0.05)]
+        dark:shadow-[0_1px_3px_rgba(0,0,0,0.2),0_4px_20px_rgba(0,0,0,0.2)]
+        transition-all duration-200
+        hover:shadow-[0_4px_24px_rgba(0,0,0,0.10),0_1px_6px_rgba(0,0,0,0.06)]
+        dark:hover:shadow-[0_4px_24px_rgba(0,0,0,0.4)]
+        hover:-translate-y-px
+        p-5"
+      style={{ borderLeft: `3px solid ${accentColor}` }}
+    >
+      {/* Top row: label + badge + icon */}
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center gap-2 min-w-0">
+          <span className="text-[11px] font-bold uppercase tracking-[0.08em] text-gray-400 dark:text-gray-500 truncate">
+            {label}
+          </span>
+          {badge && (
+            <span
+              className="text-[9px] font-extrabold px-[6px] py-[2px] rounded-full tracking-[0.06em]"
+              style={{ color: badgeColor, background: `${badgeColor}18`, border: `1px solid ${badgeColor}30` }}
+            >
+              {badge}
+            </span>
+          )}
+        </div>
+        <div
+          className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0
+            ml-2 transition-transform duration-200 group-hover:scale-110"
+          style={{ background: iconBg }}
+        >
+          <Icon className="w-[15px] h-[15px]" style={{ color: iconColor }} />
+        </div>
+      </div>
+
+      {/* Value */}
+      <div
+        className="text-[28px] font-extrabold leading-none tracking-[-0.03em] mb-2"
+        style={{ color: accentColor }}
+      >
+        {value}
+      </div>
+
+      {/* Sub text */}
+      <p className="text-[12px] font-medium text-gray-400 dark:text-gray-500 m-0">{sub}</p>
+
+      {/* Decorative glow strip on hover */}
+      <div
+        className="absolute bottom-0 left-0 right-0 h-[2px] opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+        style={{ background: `linear-gradient(90deg, ${accentColor}00, ${accentColor}60, ${accentColor}00)` }}
+      />
+    </div>
+  );
+}
+
 // ── Monthly P&L Calendar ────────────────────────────────────────────────────
 function MonthlyCalendar({ trades, D }) {
   const now   = new Date();
@@ -90,8 +150,11 @@ function MonthlyCalendar({ trades, D }) {
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <span style={{ fontSize: 12, color: D.textSub }}>{monthName}</span>
           <span style={{
-            fontSize: 13, fontWeight: 700,
+            fontSize: 13, fontWeight: 800, letterSpacing: '-0.01em',
             color: monthTotal >= 0 ? D.accent : D.red,
+            background: monthTotal >= 0 ? `${D.accent}12` : `${D.red}10`,
+            padding: '2px 8px', borderRadius: 99,
+            border: `1px solid ${monthTotal >= 0 ? D.accent : D.red}25`,
           }}>
             {monthTotal >= 0 ? '+' : ''}${Math.abs(monthTotal).toFixed(0)}
           </span>
@@ -99,11 +162,11 @@ function MonthlyCalendar({ trades, D }) {
       </div>
 
       {/* Day headers */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr) 80px', gap: 3, marginBottom: 4 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr) 72px', gap: 4, marginBottom: 5 }}>
         {['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(d => (
-          <div key={d} style={{ fontSize: 9, fontWeight: 700, color: D.textMute, textAlign: 'center', letterSpacing: '0.06em', textTransform: 'uppercase', padding: '2px 0' }}>{d}</div>
+          <div key={d} style={{ fontSize: 9, fontWeight: 700, color: D.textSub, textAlign: 'center', letterSpacing: '0.06em', textTransform: 'uppercase', padding: '2px 0' }}>{d}</div>
         ))}
-        <div style={{ fontSize: 9, fontWeight: 700, color: D.textMute, textAlign: 'center', letterSpacing: '0.06em', textTransform: 'uppercase' }}>WEEK</div>
+        <div style={{ fontSize: 9, fontWeight: 700, color: D.textSub, textAlign: 'center', letterSpacing: '0.06em', textTransform: 'uppercase' }}>WEEK</div>
       </div>
 
       {/* Calendar rows */}
@@ -111,7 +174,7 @@ function MonthlyCalendar({ trades, D }) {
         const weekNum = wi + 1;
         const wPnl    = weeklyPnl[weekNum] ?? null;
         return (
-          <div key={wi} style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr) 80px', gap: 3, marginBottom: 3 }}>
+          <div key={wi} style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr) 72px', gap: 4, marginBottom: 4 }}>
             {week.map((day, di) => {
               if (!day) return <div key={di} />;
               const pnl      = dailyPnl[day];
@@ -121,53 +184,89 @@ function MonthlyCalendar({ trades, D }) {
               const isLoss   = hasData && pnl < 0;
               const isFuture = day > today;
 
+              // Intensity: saturate bg more for larger P&L
+              const maxAbs = Object.values(dailyPnl).reduce((m, v) => Math.max(m, Math.abs(v)), 1);
+              const intensity = hasData ? Math.min(0.85, 0.12 + (Math.abs(pnl) / maxAbs) * 0.35) : 0.08;
+
               return (
-                <div key={di} style={{
-                  borderRadius: 6,
-                  padding: '5px 4px',
-                  textAlign: 'center',
-                  background: isToday
-                    ? `${D.accent}20`
-                    : isWin
-                    ? `${D.accent}15`
-                    : isLoss
-                    ? `${D.red}12`
-                    : D.cardBg2,
-                  border: isToday
-                    ? `1px solid ${D.accent}50`
-                    : `1px solid ${D.border}`,
-                  opacity: isFuture ? 0.4 : 1,
-                  minHeight: 46,
-                  display: 'flex', flexDirection: 'column',
-                  alignItems: 'center', justifyContent: 'center', gap: 2,
-                }}>
-                  <span style={{ fontSize: 11, fontWeight: isToday ? 800 : 500, color: isToday ? D.accent : D.textSub }}>
+                <div key={di}
+                  className={`cal-cell${isFuture ? ' cal-future' : ''}`}
+                  style={{
+                    borderRadius: 8,
+                    padding: '6px 4px 5px',
+                    textAlign: 'center',
+                    background: isToday
+                      ? `${D.accent}22`
+                      : isWin
+                      ? `${D.accent}${Math.round(intensity * 255).toString(16).padStart(2, '0')}`
+                      : isLoss
+                      ? `${D.red}${Math.round(intensity * 0.85 * 255).toString(16).padStart(2, '0')}`
+                      : D.cardBg2,
+                    border: isToday
+                      ? `1.5px solid ${D.accent}60`
+                      : isWin
+                      ? `1px solid ${D.accent}30`
+                      : isLoss
+                      ? `1px solid ${D.red}25`
+                      : `1px solid ${D.border}`,
+                    opacity: isFuture ? 0.35 : 1,
+                    minHeight: 52,
+                    display: 'flex', flexDirection: 'column',
+                    alignItems: 'center', justifyContent: 'center', gap: 2,
+                    boxShadow: isToday ? `0 0 0 2px ${D.accent}20` : 'none',
+                  }}
+                >
+                  <span style={{
+                    fontSize: 11,
+                    fontWeight: isToday ? 800 : hasData ? 600 : 500,
+                    color: isToday ? D.accent : hasData ? D.text : D.textSub,
+                    lineHeight: 1,
+                  }}>
                     {day}
                   </span>
                   {hasData && (
-                    <span style={{ fontSize: 9, fontWeight: 700, color: isWin ? D.accent : D.red, lineHeight: 1 }}>
+                    <span style={{
+                      fontSize: 9, fontWeight: 700, lineHeight: 1,
+                      color: isWin ? D.accent : D.red,
+                    }}>
                       {isWin ? '+' : ''}${Math.abs(pnl) >= 1000 ? (Math.abs(pnl)/1000).toFixed(1)+'k' : Math.abs(pnl).toFixed(0)}
                     </span>
+                  )}
+                  {/* Win/loss bar */}
+                  {hasData && (
+                    <div style={{
+                      position: 'absolute', bottom: 3, left: '20%', right: '20%',
+                      height: 2, borderRadius: 99,
+                      background: isWin ? D.accent : D.red,
+                      opacity: 0.6,
+                    }} />
                   )}
                 </div>
               );
             })}
 
-            {/* Weekly P&L */}
-            <div style={{
-              borderRadius: 6, padding: '5px 6px',
-              background: wPnl != null ? (wPnl >= 0 ? `${D.accent}10` : `${D.red}08`) : D.cardBg2,
-              border: `1px solid ${D.border}`,
-              display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 2,
-              minHeight: 46,
+            {/* Weekly P&L summary cell */}
+            <div className="cal-cell" style={{
+              borderRadius: 8, padding: '6px 6px',
+              background: wPnl != null
+                ? (wPnl >= 0 ? `${D.accent}12` : `${D.red}10`)
+                : D.cardBg2,
+              border: wPnl != null
+                ? `1px solid ${wPnl >= 0 ? D.accent : D.red}25`
+                : `1px solid ${D.border}`,
+              display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 3,
+              minHeight: 52,
             }}>
-              <span style={{ fontSize: 9, fontWeight: 700, color: D.textMute, letterSpacing: '0.06em' }}>WEEK</span>
+              <span style={{ fontSize: 8, fontWeight: 700, color: D.textSub, letterSpacing: '0.06em', textTransform: 'uppercase' }}>WK</span>
               {wPnl != null ? (
-                <span style={{ fontSize: 11, fontWeight: 700, color: wPnl >= 0 ? D.accent : D.red }}>
-                  {wPnl >= 0 ? '+' : ''}${Math.abs(wPnl).toFixed(0)}
+                <span style={{
+                  fontSize: 11, fontWeight: 800, letterSpacing: '-0.01em',
+                  color: wPnl >= 0 ? D.accent : D.red,
+                }}>
+                  {wPnl >= 0 ? '+' : ''}${Math.abs(wPnl) >= 1000 ? (Math.abs(wPnl)/1000).toFixed(1)+'k' : Math.abs(wPnl).toFixed(0)}
                 </span>
               ) : (
-                <span style={{ fontSize: 10, color: D.textMute }}>—</span>
+                <span style={{ fontSize: 12, color: D.textMute, fontWeight: 500 }}>—</span>
               )}
             </div>
           </div>
@@ -175,13 +274,20 @@ function MonthlyCalendar({ trades, D }) {
       })}
 
       {/* Legend */}
-      <div style={{ display: 'flex', gap: 14, marginTop: 12, justifyContent: 'flex-end' }}>
-        {[{ color: D.accent, label: 'Profit' }, { color: D.red, label: 'Loss' }].map(l => (
+      <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginTop: 14, justifyContent: 'flex-end' }}>
+        {[
+          { color: D.accent, label: 'Profit day' },
+          { color: D.red,    label: 'Loss day' },
+        ].map(l => (
           <div key={l.label} style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-            <div style={{ width: 8, height: 8, borderRadius: 2, background: l.color }} />
+            <div style={{ width: 10, height: 10, borderRadius: 3, background: l.color, opacity: 0.7 }} />
             <span style={{ fontSize: 10, color: D.textSub }}>{l.label}</span>
           </div>
         ))}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+          <div style={{ width: 10, height: 10, borderRadius: 3, border: `1.5px solid ${D.accent}` }} />
+          <span style={{ fontSize: 10, color: D.textSub }}>Today</span>
+        </div>
       </div>
     </div>
   );
@@ -385,10 +491,12 @@ export default function EconomicDashboard({ onViewChange }) {
         .dc:hover { border-color: ${D.border2} !important; box-shadow: ${D.shadowHover} !important; }
         .trade-row { transition: background 0.12s ease; border-radius: 8px; }
         .trade-row:hover { background: ${D.cardBg2} !important; }
-        .stat-card { transition: border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease; }
-        .stat-card:hover { box-shadow: ${D.shadowHover} !important; transform: translateY(-1px); border-color: ${D.border2} !important; }
         .qcard:hover { border-color: var(--qhc) !important; background: var(--qhb) !important; }
         .new-entry-btn:hover { opacity: 0.92 !important; transform: translateY(-1px); box-shadow: 0 6px 24px rgba(16,185,129,0.35) !important; }
+        .cal-cell { transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease; cursor: default; position: relative; }
+        .cal-cell:not(.cal-future):hover { transform: scale(1.06); box-shadow: ${D.shadowHover}; border-color: ${D.border2} !important; z-index: 2; }
+        .qstat { transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease; cursor: default; }
+        .qstat:hover { transform: translateY(-2px); box-shadow: ${D.shadowHover}; border-color: ${D.border2} !important; }
       `}</style>
 
       <div style={{ maxWidth: 1200, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 20 }}>
@@ -433,85 +541,64 @@ export default function EconomicDashboard({ onViewChange }) {
         </div>
 
         {/* ══ ROW 2: STAT CARDS ══════════════════════════════════════════ */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 12 }}>
-          {[
-            {
-              label: 'Total P&L',
-              value: allTrades?.length
-                ? `${(allTrades.reduce((s, t) => s + (parseFloat(t.pnl) || 0), 0)) >= 0 ? '+' : ''}$${Math.abs(allTrades.reduce((s, t) => s + (parseFloat(t.pnl) || 0), 0)).toFixed(2)}`
-                : '+$0.00',
-              sub: allTrades?.length ? `${allTrades.length} total trades` : '0 trades',
-              color: (() => {
-                const t = allTrades?.reduce((s, t) => s + (parseFloat(t.pnl) || 0), 0) ?? 0;
-                return t >= 0 ? D.accent : D.red;
-              })(),
-              iconBg: '#10b98118',
-              iconColor: D.accent,
-              Icon: DollarSign,
-              badge: 'TOTAL',
-              badgeColor: D.blue,
-            },
-            {
-              label: 'Win Rate',
-              value: allTrades?.length ? `${Math.round((allTrades.filter(t => parseFloat(t.pnl ?? 0) > 0).length / allTrades.length) * 100)}%` : '0%',
-              sub: allTrades?.length ? `${allTrades.filter(t => parseFloat(t.pnl ?? 0) > 0).length}W · ${allTrades.filter(t => parseFloat(t.pnl ?? 0) < 0).length}L` : 'No trades yet',
-              color: (() => {
-                if (!allTrades?.length) return D.textSub;
-                const wr = Math.round((allTrades.filter(t => parseFloat(t.pnl ?? 0) > 0).length / allTrades.length) * 100);
-                return wr >= 50 ? D.accent : D.red;
-              })(),
-              iconBg: '#f59e0b18',
-              iconColor: D.gold,
-              Icon: Percent,
-              badge: null,
-            },
-            {
-              label: "This Week P&L",
-              value: weekStats?.total > 0 ? `${weekStats.pnl >= 0 ? '+' : ''}$${Math.abs(weekStats.pnl).toFixed(2)}` : '+$0.00',
-              sub: weekStats?.total > 0 ? `${weekStats.wins}W · ${weekStats.losses}L this week` : 'No trades this week',
-              color: weekStats?.total > 0 ? (weekStats.pnl >= 0 ? D.accent : D.red) : D.textSub,
-              iconBg: '#0ea5e918',
-              iconColor: D.blue,
-              Icon: weekStats?.pnl >= 0 ? TrendingUp : TrendingDown,
-              badge: null,
-            },
-            {
-              label: 'Profit Factor',
-              value: quickStats?.pf > 0 ? quickStats.pf.toFixed(2) : '0.00',
-              sub: quickStats ? `Avg win: $${quickStats.avgWin.toFixed(0)}` : 'No closed trades',
-              color: quickStats?.pf >= 1 ? D.accent : quickStats?.pf > 0 ? D.red : D.textSub,
-              iconBg: '#10b98118',
-              iconColor: D.accent,
-              Icon: Trophy,
-              badge: null,
-            },
-          ].map((s, i) => (
-            <div key={i} className="stat-card dc" style={{
-              ...CS({ padding: '20px 22px' }),
-              cursor: 'default',
-              borderLeft: `3px solid ${s.color === D.textSub ? D.border : s.color}`,
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <span style={{ fontSize: 11, fontWeight: 700, color: D.textSub, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
-                    {s.label}
-                  </span>
-                  {s.badge && (
-                    <span style={{ fontSize: 9, fontWeight: 800, color: s.badgeColor, background: `${s.badgeColor}18`, border: `1px solid ${s.badgeColor}30`, padding: '2px 6px', borderRadius: 99, letterSpacing: '0.06em' }}>
-                      {s.badge}
-                    </span>
-                  )}
-                </div>
-                <div style={{ width: 32, height: 32, borderRadius: 8, background: s.iconBg, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <s.Icon style={{ width: 15, height: 15, color: s.iconColor }} />
-                </div>
-              </div>
-              <div style={{ fontSize: 28, fontWeight: 800, color: s.color, lineHeight: 1, letterSpacing: '-0.03em', marginBottom: 7 }}>
-                {s.value}
-              </div>
-              <div style={{ fontSize: 12, color: D.textSub, fontWeight: 500 }}>{s.sub}</div>
-            </div>
-          ))}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 14 }}>
+          {/* Total P&L */}
+          {(() => {
+            const totalPnl = allTrades?.reduce((s, t) => s + (parseFloat(t.pnl) || 0), 0) ?? 0;
+            return (
+              <MetricCard
+                label="Total P&L"
+                value={allTrades?.length ? `${totalPnl >= 0 ? '+' : ''}$${Math.abs(totalPnl).toFixed(2)}` : '+$0.00'}
+                sub={allTrades?.length ? `${allTrades.length} total trades` : '0 trades'}
+                accentColor={totalPnl >= 0 ? D.accent : D.red}
+                iconBg="#10b98118"
+                iconColor={D.accent}
+                icon={DollarSign}
+                badge="TOTAL"
+                badgeColor={D.blue}
+              />
+            );
+          })()}
+
+          {/* Win Rate */}
+          {(() => {
+            const wins = allTrades?.filter(t => parseFloat(t.pnl ?? 0) > 0).length ?? 0;
+            const losses = allTrades?.filter(t => parseFloat(t.pnl ?? 0) < 0).length ?? 0;
+            const wr = allTrades?.length ? Math.round((wins / allTrades.length) * 100) : 0;
+            return (
+              <MetricCard
+                label="Win Rate"
+                value={allTrades?.length ? `${wr}%` : '0%'}
+                sub={allTrades?.length ? `${wins}W · ${losses}L` : 'No trades yet'}
+                accentColor={!allTrades?.length ? D.textSub : wr >= 50 ? D.accent : D.red}
+                iconBg="#f59e0b18"
+                iconColor={D.gold}
+                icon={Percent}
+              />
+            );
+          })()}
+
+          {/* This Week P&L */}
+          <MetricCard
+            label="This Week P&L"
+            value={weekStats?.total > 0 ? `${weekStats.pnl >= 0 ? '+' : ''}$${Math.abs(weekStats.pnl).toFixed(2)}` : '+$0.00'}
+            sub={weekStats?.total > 0 ? `${weekStats.wins}W · ${weekStats.losses}L this week` : 'No trades this week'}
+            accentColor={weekStats?.total > 0 ? (weekStats.pnl >= 0 ? D.accent : D.red) : D.textSub}
+            iconBg="#0ea5e918"
+            iconColor={D.blue}
+            icon={weekStats?.pnl >= 0 ? TrendingUp : TrendingDown}
+          />
+
+          {/* Profit Factor */}
+          <MetricCard
+            label="Profit Factor"
+            value={quickStats?.pf > 0 ? quickStats.pf.toFixed(2) : '0.00'}
+            sub={quickStats ? `Avg win: $${quickStats.avgWin.toFixed(0)}` : 'No closed trades'}
+            accentColor={quickStats?.pf >= 1 ? D.accent : quickStats?.pf > 0 ? D.red : D.textSub}
+            iconBg="#10b98118"
+            iconColor={D.accent}
+            icon={Trophy}
+          />
         </div>
 
         {/* ══ ROW 3: MONTHLY CALENDAR + QUICK STATS ══════════════════════ */}
@@ -541,18 +628,24 @@ export default function EconomicDashboard({ onViewChange }) {
               <div style={{ fontSize: 11, fontWeight: 700, color: D.textSub, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 14 }}>
                 Quick Stats
               </div>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(110px, 1fr))', gap: 8 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(110px, 1fr))', gap: 10 }}>
                 {[
-                  { label: 'Avg Win',    value: quickStats ? `+$${quickStats.avgWin.toFixed(0)}`    : '+$0.00', color: D.accent },
-                  { label: 'Avg Loss',   value: quickStats ? `-$${quickStats.avgLoss.toFixed(0)}`   : '+$0.00', color: quickStats ? D.red : D.textSub },
-                  { label: 'Best Trade', value: quickStats ? `+$${quickStats.best.toFixed(0)}`      : '+$0.00', color: D.accent },
-                  { label: 'Worst Trade',value: quickStats ? `$${quickStats.worst.toFixed(0)}`      : '+$0.00', color: quickStats?.worst < 0 ? D.red : D.textSub },
+                  { label: 'Avg Win',     value: quickStats ? `+$${quickStats.avgWin.toFixed(0)}`    : '—', color: D.accent, accent: D.accent },
+                  { label: 'Avg Loss',    value: quickStats ? `-$${quickStats.avgLoss.toFixed(0)}`   : '—', color: quickStats ? D.red : D.textSub, accent: D.red },
+                  { label: 'Best Trade',  value: quickStats ? `+$${quickStats.best.toFixed(0)}`      : '—', color: D.accent, accent: D.accent },
+                  { label: 'Worst Trade', value: quickStats ? `$${quickStats.worst.toFixed(0)}`      : '—', color: quickStats?.worst < 0 ? D.red : D.textSub, accent: D.red },
                 ].map(q => (
-                  <div key={q.label} style={{ background: D.cardBg2, border: `1px solid ${D.border}`, borderRadius: 8, padding: '10px 12px' }}>
-                    <div style={{ fontSize: 9, fontWeight: 700, color: D.textSub, letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 5 }}>
+                  <div key={q.label} className="qstat" style={{
+                    background: D.cardBg2,
+                    border: `1px solid ${D.border}`,
+                    borderLeft: `3px solid ${q.accent}30`,
+                    borderRadius: 8,
+                    padding: '12px 13px',
+                  }}>
+                    <div style={{ fontSize: 9, fontWeight: 700, color: D.textSub, letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 6 }}>
                       {q.label}
                     </div>
-                    <div style={{ fontSize: 16, fontWeight: 800, color: q.color, letterSpacing: '-0.02em' }}>
+                    <div style={{ fontSize: 17, fontWeight: 800, color: q.color, letterSpacing: '-0.02em', lineHeight: 1 }}>
                       {q.value}
                     </div>
                   </div>

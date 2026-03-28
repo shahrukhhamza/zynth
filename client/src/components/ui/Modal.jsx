@@ -61,7 +61,7 @@ export function Modal({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.18 }}
+          transition={{ duration: 0.22 }}
           className="fixed inset-0 flex items-center justify-center p-4"
           style={{
             zIndex,
@@ -73,10 +73,10 @@ export function Modal({
         >
           <motion.div
             key="modal-panel"
-            initial={{ opacity: 0, y: 18, scale: 0.97 }}
+            initial={{ opacity: 0, y: 18, scale: 0.96 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 10, scale: 0.97 }}
-            transition={{ duration: 0.26, ease: [0.22, 1, 0.36, 1] }}
+            exit={{ opacity: 0, y: 10, scale: 0.96 }}
+            transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
             className="relative w-[95%] sm:w-full overflow-hidden flex flex-col"
             style={{
               maxWidth: `min(${maxWidth}px, 95vw)`,
@@ -127,7 +127,7 @@ export function Modal({
                 {!hideClose && (
                   <button
                     onClick={onClose}
-                    className="w-8 h-8 rounded-xl flex items-center justify-center transition-colors shrink-0"
+                    className="w-8 h-8 rounded-xl flex items-center justify-center transition-all duration-200 hover:scale-[1.02] hover:shadow-md active:scale-95 shrink-0"
                     style={{
                       background: theme.isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.04)',
                       color: theme.textMuted,
