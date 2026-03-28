@@ -49,27 +49,6 @@ const PKR_BY_PLAN = {
 
 const PAYMENT_OPTIONS = [
   {
-    key: 'bank',
-    name: 'Bank Transfer',
-    Icon: Landmark,
-    details: [
-      { label: 'Bank', value: 'Meezan Bank' },
-      { label: 'Account Name', value: 'Shahrukh Hamza' },
-      { label: 'Account Number', value: '0301923175516692' },
-      { label: 'IBAN', value: 'PK36MEZN000301923175516692' },
-    ],
-  },
-  {
-    key: 'easypaisa',
-    name: 'Easypaisa',
-    Icon: Smartphone,
-    details: [
-      { label: 'Account Title', value: 'Shahrukh Hamza' },
-      { label: 'Mobile Number', value: '03019231755' },
-      { label: 'CNIC', value: '35202-1234567-8' },
-    ],
-  },
-  {
     key: 'jazzcash',
     name: 'JazzCash',
     Icon: Smartphone,

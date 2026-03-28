@@ -1,166 +1,250 @@
-import { Check } from 'lucide-react';
+import { ArrowRight, Check, Crown, Rocket, Sparkles } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 import { BrandMark } from './BrandLogo';
 
 const PLANS = [
   {
-    name: 'Free',
-    priceLabel: '0',
-    price: 0,
-    desc: 'Start tracking your trades with zero risk.',
-    features: [
-      'Up to 10 journal entries',
-      'Basic analytics dashboard',
-      'Economic calendar access',
-      '3 AI analyses included',
-    ],
-    cta: 'Start Free',
-    highlight: false,
-  },
-  {
+    id: 'pro',
     name: 'Pro',
-    priceLabel: '9',
     price: 9,
-    badge: 'Most Popular',
-    desc: 'Built for active traders who want faster improvement.',
+    badge: 'Smart Start',
+    eyebrow: 'Built for traders building consistency',
+    headline: 'Sharpen your execution with structured AI feedback.',
+    valueAnchor: 'Trusted by traders building their first real edge',
+    urgency: 'Start here, upgrade anytime',
+    cta: 'Start With Pro',
+    featured: false,
+    icon: Rocket,
     features: [
       'Unlimited journal entries',
-      '50 AI analyses per month',
-      'Full economic intelligence',
-      'Macro surprise score',
+      '50 AI insights every month',
+      'Advanced analytics dashboard',
+      'Economic intelligence and macro context',
     ],
-    cta: 'Upgrade to Pro',
-    highlight: true,
   },
   {
+    id: 'elite',
     name: 'Elite',
-    priceLabel: '19',
     price: 19,
-    badge: 'Best Value',
-    desc: 'Everything you need for deep, professional analysis.',
+    badge: 'Most Powerful',
+    eyebrow: 'For traders ready to operate without limits',
+    headline: 'Unlock Full AI Trading Intelligence',
+    valueAnchor: 'Used by top 5% of serious Zynth traders',
+    urgency: 'Limited-time pricing for early members',
+    cta: 'Unlock Full Power',
+    featured: true,
+    icon: Crown,
     features: [
       'Everything in Pro',
-      'Unlimited AI analyses',
-      'Trading DNA profile',
-      'Priority support',
+      'Unlimited AI insights — no cap',
+      'Premium strategy breakdowns and deeper reporting',
+      'Priority support and early feature access',
     ],
-    cta: 'Go Elite',
-    highlight: false,
   },
 ];
 
-function PricingCard({ plan, isDark, border, muted, onCTA }) {
+function EliteCard({ plan, onCTA }) {
+  const Icon = plan.icon;
+
   return (
-    <div
-      className="bg-white dark:bg-slate-900 border border-gray-200 dark:border-gray-700 rounded-2xl p-6 hover:shadow-lg transition-all duration-200 hover:scale-[1.02]"
-      style={{
-        borderColor: plan.highlight ? '#3b82f6' : border,
-        boxShadow: plan.highlight
-          ? (isDark ? '0 8px 30px rgba(59,130,246,0.24)' : '0 12px 32px rgba(59,130,246,0.16)')
-          : 'none',
-      }}
-    >
-      {plan.badge && (
-        <div style={{ marginBottom: 12 }}>
-          <span
-            style={{
-              display: 'inline-block',
-              padding: '4px 10px',
-              borderRadius: 999,
-              fontSize: 10,
-              fontWeight: 800,
-              letterSpacing: '0.06em',
-              textTransform: 'uppercase',
-              color: '#1d4ed8',
-              background: isDark ? 'rgba(59,130,246,0.16)' : 'rgba(59,130,246,0.12)',
-              border: `1px solid ${isDark ? 'rgba(59,130,246,0.35)' : 'rgba(59,130,246,0.25)'}`,
-            }}
-          >
-            {plan.badge}
+    <div className="relative pt-5 md:pt-0">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-6 top-10 h-40 rounded-full bg-gradient-to-r from-fuchsia-500/25 via-violet-500/25 to-cyan-400/25 blur-3xl"
+      />
+      <div className="relative rounded-[28px] bg-gradient-to-br from-fuchsia-500 via-violet-500 to-cyan-400 p-[1px] shadow-[0_30px_80px_rgba(76,29,149,0.28)] transition-all duration-300 md:scale-[1.04] md:hover:scale-[1.07]">
+        <div className="relative overflow-hidden rounded-[27px] bg-white px-7 py-7 dark:bg-slate-950 md:px-8 md:py-8">
+          <div
+            aria-hidden
+            className="pointer-events-none absolute -right-16 top-0 h-44 w-44 rounded-full bg-gradient-to-br from-fuchsia-500/18 to-cyan-400/14 blur-3xl"
+          />
+          <div className="relative flex min-h-[560px] flex-col">
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <span className="inline-flex items-center rounded-full border border-fuchsia-400/30 bg-fuchsia-500/10 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.16em] text-fuchsia-700 dark:border-fuchsia-400/25 dark:bg-fuchsia-500/12 dark:text-fuchsia-300">
+                  {plan.badge}
+                </span>
+                <p className="mt-4 text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-500 dark:text-slate-400">
+                  {plan.eyebrow}
+                </p>
+              </div>
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-fuchsia-500/15 to-cyan-400/15 text-violet-700 dark:text-cyan-300">
+                <Icon size={22} />
+              </div>
+            </div>
+
+            <div className="mt-6">
+              <h3 className="text-3xl font-black tracking-tight text-slate-950 dark:text-white">
+                {plan.name}
+              </h3>
+              <p className="mt-2 max-w-sm text-sm leading-6 text-slate-600 dark:text-slate-300">
+                {plan.headline}
+              </p>
+            </div>
+
+            <div className="mt-6 flex items-end gap-2">
+              <span className="text-5xl font-black tracking-tight text-slate-950 dark:text-white">
+                ${plan.price}
+              </span>
+              <span className="pb-1 text-sm font-medium text-slate-500 dark:text-slate-400">
+                /month
+              </span>
+            </div>
+
+            <div className="mt-4 rounded-2xl border border-violet-200 bg-gradient-to-r from-fuchsia-500/8 to-cyan-400/8 px-4 py-3 dark:border-violet-500/20 dark:from-fuchsia-500/10 dark:to-cyan-400/10">
+              <p className="text-xs font-bold uppercase tracking-[0.14em] text-violet-700 dark:text-cyan-300">
+                Trade Without Limits
+              </p>
+              <p className="mt-1 text-sm font-semibold text-slate-900 dark:text-slate-100">
+                Unlimited AI insights — no cap
+              </p>
+            </div>
+
+            <div className="mt-4 space-y-2">
+              <p className="text-sm font-semibold text-slate-700 dark:text-slate-200">
+                {plan.valueAnchor}
+              </p>
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-amber-600 dark:text-amber-300">
+                {plan.urgency}
+              </p>
+            </div>
+
+            <div className="mt-6 space-y-3">
+              {plan.features.map((feature) => {
+                const highlighted = feature.includes('Unlimited AI insights');
+                return (
+                  <div key={feature} className="flex items-start gap-3 rounded-2xl border border-slate-200/80 bg-white/80 px-3 py-3 dark:border-white/8 dark:bg-white/[0.03]">
+                    <div className="mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-fuchsia-500/15 to-cyan-400/15 text-violet-700 dark:text-cyan-300">
+                      <Check size={12} />
+                    </div>
+                    <span className={`text-sm leading-6 ${highlighted ? 'font-semibold text-slate-950 dark:text-white' : 'text-slate-700 dark:text-slate-300'}`}>
+                      {feature}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="mt-auto pt-7">
+              <button
+                onClick={onCTA}
+                className="group inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-fuchsia-600 via-violet-600 to-cyan-500 px-5 py-3.5 text-sm font-bold text-white shadow-[0_16px_40px_rgba(99,102,241,0.34)] transition-all duration-300 hover:scale-[1.03] hover:shadow-[0_22px_55px_rgba(59,130,246,0.38)] active:scale-[0.98]"
+                type="button"
+              >
+                {plan.cta}
+                <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+              </button>
+              <p className="mt-3 text-center text-xs text-slate-500 dark:text-slate-400">
+                Premium access. Cancel anytime.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ProCard({ plan, onCTA }) {
+  const Icon = plan.icon;
+
+  return (
+    <div className="relative rounded-[28px] border border-slate-200/90 bg-white/80 p-7 shadow-sm backdrop-blur transition-all duration-300 hover:-translate-y-1 hover:shadow-xl dark:border-white/8 dark:bg-slate-900/85 md:mt-6 md:scale-[0.97] md:hover:scale-[0.99]">
+      <div className="flex min-h-[540px] flex-col">
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <span className="inline-flex items-center rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.16em] text-blue-700 dark:border-blue-500/20 dark:bg-blue-500/10 dark:text-blue-300">
+              {plan.badge}
+            </span>
+            <p className="mt-4 text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-500 dark:text-slate-400">
+              {plan.eyebrow}
+            </p>
+          </div>
+          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-blue-50 text-blue-700 dark:bg-blue-500/10 dark:text-blue-300">
+            <Icon size={20} />
+          </div>
+        </div>
+
+        <div className="mt-6">
+          <h3 className="text-3xl font-black tracking-tight text-slate-950 dark:text-white">
+            {plan.name}
+          </h3>
+          <p className="mt-2 max-w-sm text-sm leading-6 text-slate-600 dark:text-slate-300">
+            {plan.headline}
+          </p>
+        </div>
+
+        <div className="mt-6 flex items-end gap-2">
+          <span className="text-5xl font-black tracking-tight text-slate-950 dark:text-white">
+            ${plan.price}
+          </span>
+          <span className="pb-1 text-sm font-medium text-slate-500 dark:text-slate-400">
+            /month
           </span>
         </div>
-      )}
 
-      <h3 className="text-[20px] font-extrabold text-gray-900 dark:text-gray-100 mb-1.5">{plan.name}</h3>
-      <p className="text-[13px] text-gray-500 dark:text-gray-400 mb-4 leading-relaxed">{plan.desc}</p>
+        <div className="mt-4 space-y-2">
+          <p className="text-sm font-semibold text-slate-700 dark:text-slate-200">
+            {plan.valueAnchor}
+          </p>
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-400 dark:text-slate-500">
+            {plan.urgency}
+          </p>
+        </div>
 
-      <div style={{ marginBottom: 18 }}>
-        <span className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-          ${plan.priceLabel}
-        </span>
-        <span className="text-[13px] text-gray-500 dark:text-gray-400 ml-1">/mo</span>
-      </div>
-
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 9, marginBottom: 22 }}>
-        {plan.features.slice(0, 4).map((feature) => (
-          <div key={feature} style={{ display: 'flex', alignItems: 'flex-start', gap: 9 }}>
-            <div
-              style={{
-                width: 18,
-                height: 18,
-                borderRadius: '50%',
-                flexShrink: 0,
-                marginTop: 1,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                background: isDark ? 'rgba(59,130,246,0.16)' : 'rgba(59,130,246,0.10)',
-              }}
-            >
-              <Check size={10} style={{ color: '#2563eb' }} />
+        <div className="mt-6 space-y-3">
+          {plan.features.map((feature) => (
+            <div key={feature} className="flex items-start gap-3 rounded-2xl border border-slate-200/80 bg-slate-50/90 px-3 py-3 dark:border-white/6 dark:bg-white/[0.02]">
+              <div className="mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-blue-50 text-blue-700 dark:bg-blue-500/10 dark:text-blue-300">
+                <Check size={12} />
+              </div>
+              <span className="text-sm leading-6 text-slate-700 dark:text-slate-300">
+                {feature}
+              </span>
             </div>
-            <span className="text-[13px] leading-snug text-gray-700 dark:text-gray-300">{feature}</span>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
 
-      <button
-        onClick={onCTA}
-        className="w-full bg-blue-600 text-white rounded-lg py-2 transition-all duration-200 hover:shadow-md hover:scale-[1.02] active:scale-95 hover:brightness-110"
-        style={{ border: 'none', fontSize: 14, fontWeight: 700, cursor: 'pointer' }}
-      >
-        {plan.cta}
-      </button>
+        <div className="mt-auto pt-7">
+          <button
+            onClick={onCTA}
+            className="group inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-slate-950 px-5 py-3.5 text-sm font-bold text-white transition-all duration-300 hover:scale-[1.02] hover:bg-blue-600 hover:shadow-lg active:scale-[0.98] dark:bg-white dark:text-slate-950"
+            type="button"
+          >
+            {plan.cta}
+            <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+          </button>
+          <p className="mt-3 text-center text-xs text-slate-500 dark:text-slate-400">
+            Flexible and low-risk.
+          </p>
+        </div>
+      </div>
     </div>
   );
 }
 
 export default function PricingPage({ onBack }) {
   const { isDark } = useTheme();
-  const bg = isDark ? '#020617' : '#f4f6f9';
-  const navBg = isDark ? 'rgba(10,10,10,0.92)' : 'rgba(244,246,249,0.92)';
-  const border = isDark ? 'rgba(255,255,255,0.06)' : '#e2e8f0';
-  const muted = isDark ? '#6b7280' : '#64748b';
+
+  const handleCTA = () => {
+    if (onBack) {
+      onBack();
+      return;
+    }
+    window.location.href = '/';
+  };
 
   return (
-    <div className="min-h-screen text-gray-900 dark:text-gray-100" style={{ backgroundColor: bg }}>
-      <nav
-        style={{
-          position: 'sticky',
-          top: 0,
-          zIndex: 50,
-          backgroundColor: navBg,
-          backdropFilter: 'blur(14px)',
-          WebkitBackdropFilter: 'blur(14px)',
-          borderBottom: `1px solid ${border}`,
-        }}
-      >
-        <div
-          style={{
-            maxWidth: 1080,
-            margin: '0 auto',
-            padding: '0 16px',
-            height: 60,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <BrandMark size={32} />
-            <span className="text-[16px] font-extrabold text-gray-900 dark:text-gray-100">Zynth</span>
+    <div className={`min-h-screen ${isDark ? 'bg-slate-950 text-white' : 'bg-[#f5f7fb] text-slate-950'}`}>
+      <nav className={`sticky top-0 z-50 border-b backdrop-blur-xl ${isDark ? 'border-white/8 bg-slate-950/88' : 'border-slate-200/80 bg-[#f5f7fb]/88'}`}>
+        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
+          <div className="flex items-center gap-3">
+            <BrandMark size={34} />
+            <span className="text-base font-black tracking-tight">Zynth</span>
           </div>
+
           <button
+            className={`rounded-xl border px-4 py-2 text-sm font-semibold transition-colors ${isDark ? 'border-white/10 text-slate-300 hover:text-white' : 'border-slate-200 text-slate-500 hover:text-slate-950'}`}
             onClick={() => {
               if (onBack) {
                 onBack();
@@ -168,69 +252,52 @@ export default function PricingPage({ onBack }) {
                 window.history.back();
               }
             }}
-            style={{
-              padding: '7px 16px',
-              borderRadius: 10,
-              border: `1px solid ${border}`,
-              background: 'transparent',
-              color: muted,
-              fontSize: 13,
-              fontWeight: 600,
-              cursor: 'pointer',
-            }}
-            onMouseEnter={(e) => (e.currentTarget.style.color = isDark ? '#f1f5f9' : '#0f172a')}
-            onMouseLeave={(e) => (e.currentTarget.style.color = muted)}
+            type="button"
           >
             ← Back
           </button>
         </div>
       </nav>
 
-      <div style={{ textAlign: 'center', padding: '52px 16px 40px' }}>
-        <h1 className="text-[clamp(30px,8vw,40px)] font-black tracking-tight text-gray-900 dark:text-gray-100 mb-3">
-          Simple, transparent pricing
-        </h1>
-        <p className="text-[15px] text-gray-500 dark:text-gray-400 max-w-[480px] mx-auto">
-          Choose the plan that fits your trading stage and upgrade anytime.
-        </p>
-      </div>
-
-      <div style={{ maxWidth: 1080, margin: '0 auto', padding: '0 16px' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 20, alignItems: 'start' }}>
-          {PLANS.map((plan) => (
-            <PricingCard
-              key={plan.name}
-              plan={plan}
-              isDark={isDark}
-              border={border}
-              muted={muted}
-              onCTA={() => {
-                if (onBack) onBack();
-                else window.location.href = '/';
-              }}
-            />
-          ))}
+      <main className="relative overflow-hidden px-4 pb-16 pt-14 sm:px-6 sm:pt-20">
+        <div className="pointer-events-none absolute inset-0">
+          <div className="absolute left-1/2 top-0 h-[360px] w-[720px] -translate-x-1/2 rounded-full bg-gradient-to-r from-blue-500/12 via-fuchsia-500/12 to-cyan-400/12 blur-3xl" />
         </div>
 
-        <div
-          style={{
-            marginTop: 40,
-            paddingBottom: 48,
-            display: 'flex',
-            flexWrap: 'wrap',
-            gap: 12,
-            alignItems: 'center',
-            justifyContent: 'space-between',
-          }}
-        >
-          <p style={{ fontSize: 13, color: muted }}>Billed monthly. Cancel anytime.</p>
-          <div style={{ display: 'flex', gap: 20 }}>
-            <a href="/terms" style={{ fontSize: 12, color: muted, textDecoration: 'none' }}>Terms</a>
-            <a href="/privacy" style={{ fontSize: 12, color: muted, textDecoration: 'none' }}>Privacy</a>
-            <a href="/refund" style={{ fontSize: 12, color: muted, textDecoration: 'none' }}>Refund Policy</a>
+        <div className="relative mx-auto max-w-6xl">
+          <div className="mx-auto max-w-3xl text-center">
+            <span className={`inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-[11px] font-bold uppercase tracking-[0.18em] ${isDark ? 'border-cyan-400/20 bg-cyan-400/10 text-cyan-300' : 'border-blue-200 bg-blue-50 text-blue-700'}`}>
+              <Sparkles className="h-3.5 w-3.5" />
+              Pricing
+            </span>
+            <h1 className="mt-6 text-[clamp(36px,8vw,64px)] font-black tracking-[-0.04em]">
+              Choose your edge. <span className="bg-gradient-to-r from-fuchsia-500 via-violet-500 to-cyan-400 bg-clip-text text-transparent">Trade at full power.</span>
+            </h1>
+            <p className={`mx-auto mt-5 max-w-2xl text-base leading-7 ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
+              Pro gets you structured improvement. Elite removes every ceiling, unlocks unlimited AI intelligence, and gives serious traders the full Zynth operating system.
+            </p>
+          </div>
+
+          <div className="mt-14 grid grid-cols-1 gap-6 lg:grid-cols-[0.92fr_1.08fr] lg:items-center">
+            {PLANS.map((plan) => (
+              plan.featured
+                ? <EliteCard key={plan.id} plan={plan} onCTA={handleCTA} />
+                : <ProCard key={plan.id} plan={plan} onCTA={handleCTA} />
+            ))}
+          </div>
+
+          <div className="mt-10 flex flex-col items-center justify-between gap-4 border-t border-slate-200/80 pt-6 text-sm dark:border-white/8 md:flex-row">
+            <p className={isDark ? 'text-slate-400' : 'text-slate-500'}>
+              Monthly billing. 7-day refund guarantee. Upgrade or cancel anytime.
+            </p>
+            <div className={`flex items-center gap-5 text-xs uppercase tracking-[0.14em] ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>
+              <span>Secure checkout</span>
+              <span>Priority support</span>
+              <span>Fast activation</span>
+            </div>
           </div>
         </div>
-      </div>
+      </main>
     </div>
   );
 }
