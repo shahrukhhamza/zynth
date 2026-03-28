@@ -1,25 +1,13 @@
-﻿import { useState } from 'react';
+import { useState } from 'react';
 import axios from 'axios';
 import { API_URL } from '../config/api';
-import { TrendingUp, TrendingDown, AlertCircle, CheckCircle2, Loader2, Mail, ArrowLeft, Shield, BarChart2, Activity } from 'lucide-react';
+import { AlertCircle, CheckCircle2, Loader2, Mail, ChevronLeft } from 'lucide-react';
 import { BrandMark } from './BrandLogo';
 import ErrorBar from './ErrorBar';
-
-const TICKERS = [
-  { sym: 'GOLD', val: '$5,168', chg: '+0.82%', up: true,  top: '5%',  left: '4%',  delay: '0s',   dur: '4.2s' },
-  { sym: 'BTC',  val: '$70,855',chg: '+1.28%', up: true,  top: '11%', left: '54%', delay: '0.9s', dur: '5.1s' },
-  { sym: 'OIL',  val: '$88.07', chg: '+5.54%', up: true,  top: '18%', left: '20%', delay: '2.1s', dur: '4.0s' },
-  { sym: 'DXY',  val: '99.26',  chg: '+0.44%', up: true,  top: '24%', left: '56%', delay: '0.4s', dur: '4.7s' },
-  { sym: 'SPY',  val: '$675.31',chg: '-0.28%', up: false, top: '28%', left: '4%',  delay: '1.6s', dur: '3.9s' },
-];
-
-const FEATURES = [
-  { Icon: Shield,   title: 'Bank-grade security', desc: 'End-to-end encrypted'        },
-  { Icon: Activity, title: 'Real-time data',       desc: 'Live feeds from 10+ sources'  },
-  { Icon: BarChart2,title: 'AI-powered insights',  desc: 'Smart trade analysis'         },
-];
+import { useTheme } from '../contexts/ThemeContext';
 
 export default function ForgotPasswordPage({ onBack }) {
+  const { isDark } = useTheme();
   const [email, setEmail]     = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError]     = useState('');
@@ -40,215 +28,131 @@ export default function ForgotPasswordPage({ onBack }) {
   }
 
   return (
-    <div className="h-screen overflow-hidden flex flex-col bg-[#0a0a0a]">
+    <div style={{ minHeight: '100vh', background: isDark ? '#020617' : '#F8FAFC', position: 'relative', overflowX: 'hidden', overflowY: 'auto' }}>
       <style>{`
-        @keyframes floatCard {
-          0%,100% { transform: translateY(0px);   }
-          50%      { transform: translateY(-10px); }
-        }
-        @keyframes chartDraw {
-          from { stroke-dashoffset: 800; }
-          to   { stroke-dashoffset: 0;   }
-        }
-        @keyframes tickerIn {
-          from { opacity: 0; transform: translateY(14px); }
-          to   { opacity: 1; transform: translateY(0);    }
-        }
-        @keyframes liveBlip {
-          0%,100% { transform: scale(1);   opacity: 1;   }
-          50%      { transform: scale(1.7); opacity: 0.3; }
-        }
-        .fp-ticker-float {
-          animation:
-            floatCard var(--dur, 4s) ease-in-out var(--delay, 0s) infinite,
-            tickerIn  0.7s ease both var(--delay, 0s);
-        }
+        @keyframes authBlobFloat { 0%,100%{transform:scale(1) translateY(0px)} 50%{transform:scale(1.05) translateY(-16px)} }
+        @keyframes authCardIn { from{opacity:0;transform:translateY(22px)} to{opacity:1;transform:translateY(0)} }
       `}</style>
 
-      {/* ── Top nav ─────────────────────────────────────────────────────── */}
-      <div className="shrink-0 flex items-center justify-between px-8 h-[52px] border-b border-white/[0.06]"
-           style={{background:'rgba(10,10,10,0.98)'}}>
-        <button onClick={onBack}
-                className="group flex items-center gap-2 text-[13px] font-medium text-gray-400 hover:text-white transition-all duration-200 px-3 py-1.5 rounded-lg hover:bg-white/[0.05]">
-          <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-0.5" />
-          Back to login
+      <div style={{ position:'fixed', inset:0, pointerEvents:'none', zIndex:0,
+        backgroundImage: isDark
+          ? 'radial-gradient(ellipse 90% 55% at 50% -5%, rgba(59,130,246,0.14) 0%, transparent 60%), radial-gradient(ellipse 55% 45% at 85% 90%, rgba(99,102,241,0.09) 0%, transparent 60%)'
+          : 'radial-gradient(ellipse 90% 55% at 50% -5%, rgba(99,102,241,0.09) 0%, transparent 60%), radial-gradient(ellipse 55% 45% at 85% 90%, rgba(168,85,247,0.06) 0%, transparent 60%)',
+      }} />
+      <div style={{ position:'fixed', top:'-120px', left:'-120px', width:'520px', height:'520px', pointerEvents:'none', zIndex:0,
+        background: isDark ? 'radial-gradient(circle, rgba(59,130,246,0.10) 0%, transparent 70%)' : 'radial-gradient(circle, rgba(59,130,246,0.06) 0%, transparent 70%)',
+        filter:'blur(70px)', animation:'authBlobFloat 9s ease-in-out infinite',
+      }} />
+      <div style={{ position:'fixed', bottom:'-80px', right:'-80px', width:'420px', height:'420px', pointerEvents:'none', zIndex:0,
+        background: isDark ? 'radial-gradient(circle, rgba(99,102,241,0.08) 0%, transparent 70%)' : 'radial-gradient(circle, rgba(168,85,247,0.05) 0%, transparent 70%)',
+        filter:'blur(60px)', animation:'authBlobFloat 11s ease-in-out infinite 2s',
+      }} />
+
+      {/* Top nav */}
+      <div style={{ position:'fixed', top:0, left:0, right:0, zIndex:20, height:'60px',
+        display:'flex', alignItems:'center', justifyContent:'space-between', padding:'0 24px',
+        background: isDark ? 'rgba(2,6,23,0.75)' : 'rgba(248,250,252,0.85)',
+        backdropFilter:'blur(14px)', WebkitBackdropFilter:'blur(14px)',
+        borderBottom: isDark ? '1px solid rgba(255,255,255,0.06)' : '1px solid rgba(0,0,0,0.06)',
+      }}>
+        <button onClick={onBack} style={{ display:'flex', alignItems:'center', gap:'6px',
+          background: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.04)',
+          border: isDark ? '1px solid rgba(255,255,255,0.08)' : '1px solid rgba(0,0,0,0.08)',
+          borderRadius:'8px', padding:'6px 12px', fontSize:'13px',
+          color: isDark ? 'rgba(255,255,255,0.55)' : '#64748b', cursor:'pointer', transition:'all 0.15s ease' }}
+          onMouseEnter={e => { e.currentTarget.style.color=isDark?'#fff':'#0f172a'; e.currentTarget.style.background=isDark?'rgba(255,255,255,0.09)':'rgba(0,0,0,0.07)'; }}
+          onMouseLeave={e => { e.currentTarget.style.color=isDark?'rgba(255,255,255,0.55)':'#64748b'; e.currentTarget.style.background=isDark?'rgba(255,255,255,0.05)':'rgba(0,0,0,0.04)'; }}>
+          <ChevronLeft size={14} /> Back to login
         </button>
-        <div className="flex items-center gap-2 select-none">
+        <div style={{ position:'absolute', left:'50%', transform:'translateX(-50%)', display:'flex', alignItems:'center', gap:'8px' }}>
           <BrandMark size={28} />
-          <span className="text-[15px] font-bold text-white tracking-tight">Zynth</span>
+          <span style={{ fontSize:'17px', fontWeight:700, color: isDark?'#fff':'#0f172a', letterSpacing:'-0.01em' }}>Zynth</span>
         </div>
+        <div style={{ width:'100px' }} />
       </div>
 
-      {/* ── Panels ──────────────────────────────────────────────────────── */}
-      <div className="flex flex-1 overflow-hidden">
-
-        {/* ── LEFT: Decorative animated panel ─────────────────────────── */}
-        <div className="hidden lg:flex flex-col flex-1 relative overflow-hidden"
-             style={{background:'linear-gradient(150deg,#090909 0%,#090909 55%,#0a0a0a 100%)'}}>
-
-          <div className="absolute inset-0 pointer-events-none"
-               style={{backgroundImage:'linear-gradient(rgba(16,185,129,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(16,185,129,0.04) 1px,transparent 1px)',backgroundSize:'60px 60px'}} />
-          <div className="absolute pointer-events-none"
-               style={{top:'-10%',left:'15%',width:'500px',height:'400px',background:'radial-gradient(ellipse,rgba(16,185,129,0.12) 0%,transparent 65%)'}} />
-          <div className="absolute pointer-events-none"
-               style={{bottom:'5%',right:'5%',width:'380px',height:'320px',background:'radial-gradient(ellipse,rgba(59,130,246,0.08) 0%,transparent 65%)'}} />
-
-          <div className="absolute inset-x-0 pointer-events-none" style={{top:'18%',opacity:0.18}}>
-            <svg viewBox="0 0 620 200" className="w-full" style={{height:'220px'}} preserveAspectRatio="none">
-              <defs>
-                <linearGradient id="fp-cg1" x1="0" y1="0" x2="1" y2="0">
-                  <stop offset="0%"   stopColor="#059669" stopOpacity="0" />
-                  <stop offset="35%"  stopColor="#059669" stopOpacity="1" />
-                  <stop offset="100%" stopColor="#0d9488" stopOpacity="0.7" />
-                </linearGradient>
-                <linearGradient id="fp-fg1" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%"   stopColor="#059669" stopOpacity="0.28" />
-                  <stop offset="100%" stopColor="#059669" stopOpacity="0"    />
-                </linearGradient>
-              </defs>
-              <path d="M0,170 L50,148 L90,162 L130,118 L170,132 L210,96 L250,112 L290,74 L330,92 L370,58 L410,74 L450,42 L490,58 L530,26 L570,42 L620,16 L620,200 L0,200 Z"
-                    fill="url(#fp-fg1)" />
-              <path d="M0,170 L50,148 L90,162 L130,118 L170,132 L210,96 L250,112 L290,74 L330,92 L370,58 L410,74 L450,42 L490,58 L530,26 L570,42 L620,16"
-                    fill="none" stroke="url(#fp-cg1)" strokeWidth="2.5"
-                    strokeDasharray="800" strokeDashoffset="800"
-                    style={{animation:'chartDraw 2.8s ease forwards 0.4s'}} />
-            </svg>
-          </div>
-
-          {TICKERS.map(t => (
-            <div key={t.sym} className="fp-ticker-float absolute"
-                 style={{top:t.top,left:t.left,'--dur':t.dur,'--delay':t.delay}}>
-              <div className="flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl"
-                   style={{background:'rgba(10,10,10,0.88)',border:'1px solid rgba(255,255,255,0.07)',backdropFilter:'blur(12px)',boxShadow:'0 8px 32px rgba(0,0,0,0.45)'}}>
-                <div className="flex flex-col leading-none">
-                  <span className="text-[9px] font-bold tracking-[0.18em] text-gray-500 mb-0.5">{t.sym}</span>
-                  <span className="text-[14px] font-bold text-white">{t.val}</span>
-                </div>
-                <div className={`flex items-center gap-1 text-[11px] font-semibold px-1.5 py-0.5 rounded-lg ${t.up ? 'text-emerald-400 bg-emerald-500/10' : 'text-red-400 bg-red-500/10'}`}>
-                  {t.up ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
-                  {t.chg}
-                </div>
+      <div style={{ position:'relative', zIndex:1, display:'flex', alignItems:'center', justifyContent:'center', minHeight:'100vh', padding:'80px 20px 40px', boxSizing:'border-box' }}>
+        <div style={{
+          width:'100%', maxWidth:'420px',
+          background: isDark ? 'rgba(11,18,32,0.82)' : 'rgba(255,255,255,0.93)',
+          backdropFilter:'blur(24px)', WebkitBackdropFilter:'blur(24px)',
+          border: isDark ? '1px solid rgba(255,255,255,0.09)' : '1px solid rgba(0,0,0,0.07)',
+          borderRadius:'24px', padding:'36px 32px 32px',
+          boxShadow: isDark
+            ? '0 0 0 1px rgba(59,130,246,0.07), 0 32px 80px rgba(0,0,0,0.75), 0 0 60px rgba(59,130,246,0.08)'
+            : '0 0 0 1px rgba(0,0,0,0.04), 0 24px 64px rgba(15,23,42,0.14), 0 8px 24px rgba(15,23,42,0.06)',
+          animation:'authCardIn 0.4s cubic-bezier(0.22,1,0.36,1) both',
+        }}>
+          {success ? (
+            <div style={{ textAlign:'center', padding:'8px 0' }}>
+              <div style={{ width:'64px', height:'64px', borderRadius:'50%', background:'linear-gradient(135deg, #1d4ed8, #0284c7)',
+                display:'flex', alignItems:'center', justifyContent:'center', margin:'0 auto 20px',
+                boxShadow:'0 0 36px rgba(59,130,246,0.35)' }}>
+                <CheckCircle2 size={30} color="#fff" />
               </div>
+              <h2 style={{ fontSize:'24px', fontWeight:800, color: isDark?'#fff':'#0f172a', marginBottom:'8px' }}>Check your email</h2>
+              <p style={{ fontSize:'14px', color: isDark?'rgba(255,255,255,0.50)':'#64748b', lineHeight:1.6, marginBottom:'6px' }}>
+                If an account exists for
+              </p>
+              <p style={{ fontSize:'14px', fontWeight:600, color: isDark?'rgba(255,255,255,0.80)':'#0f172a', marginBottom:'12px' }}>{email}</p>
+              <p style={{ fontSize:'14px', color: isDark?'rgba(255,255,255,0.50)':'#64748b', lineHeight:1.6, marginBottom:'20px' }}>
+                you'll receive a password reset link shortly. Check your spam folder too.
+              </p>
+              <button onClick={onBack} style={{ fontSize:'13px', fontWeight:500, color:'#3b82f6', background:'none', border:'none', cursor:'pointer', padding:0 }}
+                onMouseEnter={e => e.currentTarget.style.textDecoration='underline'}
+                onMouseLeave={e => e.currentTarget.style.textDecoration='none'}>
+                ← Back to login
+              </button>
             </div>
-          ))}
+          ) : (
+            <>
+              <div style={{ marginBottom:'22px' }}>
+                <h2 style={{ fontSize:'26px', fontWeight:800, letterSpacing:'-0.025em', color: isDark?'#fff':'#0f172a', margin:'0 0 5px' }}>Reset password.</h2>
+                <p style={{ fontSize:'14px', color: isDark?'rgba(255,255,255,0.45)':'#64748b', margin:0 }}>
+                  Enter your email and we'll send a reset link.
+                </p>
+              </div>
 
-          <div className="absolute bottom-0 left-0 right-0 h-60 pointer-events-none z-[5]"
-               style={{background:'linear-gradient(to bottom, transparent 0%, rgba(10,10,10,0.85) 60%, #090909 100%)'}} />
+              {error && <ErrorBar message={error} className="mb-4" />}
 
-          <div className="absolute bottom-0 left-0 right-0 p-10 z-10">
-            <div className="flex items-center gap-2 mb-5">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 shrink-0"
-                    style={{animation:'liveBlip 1.5s ease-in-out infinite'}} />
-              <span className="text-[10px] font-bold tracking-[0.22em] text-emerald-500">LIVE MARKETS</span>
-            </div>
-            <h2 className="text-[30px] font-bold text-white leading-tight mb-2">
-              Trade smarter with<br />
-              <span style={{background:'linear-gradient(90deg,#34d399,#2dd4bf)',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent',backgroundClip:'text'}}>
-                AI-powered analytics
-              </span>
-            </h2>
-            <p className="text-gray-500 text-[13px] mb-7 max-w-[280px] leading-relaxed">
-              Real-time market intelligence, trade journaling, and smart insights — all in one place.
-            </p>
-            <div className="space-y-3">
-              {FEATURES.map(({ Icon, title, desc }) => (
-                <div key={title} className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
-                       style={{background:'rgba(16,185,129,0.1)',border:'1px solid rgba(16,185,129,0.15)'}}>
-                    <Icon className="w-[14px] h-[14px] text-emerald-400" />
-                  </div>
-                  <div>
-                    <p className="text-[12px] font-semibold text-white">{title}</p>
-                    <p className="text-[11px] text-gray-600">{desc}</p>
+              <form onSubmit={handleSubmit}>
+                <div style={{ marginBottom:'18px' }}>
+                  <div style={{ position:'relative' }}>
+                    <Mail size={15} color={isDark?'rgba(255,255,255,0.25)':'rgba(0,0,0,0.3)'} style={{ position:'absolute', left:'13px', top:'50%', transform:'translateY(-50%)', pointerEvents:'none' }} />
+                    <input type="email" value={email} required autoComplete="email"
+                      onChange={e => setEmail(e.target.value)}
+                      placeholder="Email address"
+                      style={{ width:'100%', boxSizing:'border-box',
+                        background: isDark?'rgba(255,255,255,0.05)':'rgba(0,0,0,0.03)',
+                        border: isDark?'1px solid rgba(255,255,255,0.1)':'1px solid rgba(0,0,0,0.1)',
+                        borderRadius:'12px', padding:'12px 14px 12px 40px',
+                        color: isDark?'#fff':'#0f172a', fontSize:'14px', outline:'none', transition:'all 0.2s ease' }}
+                      onFocus={e => { e.target.style.borderColor='rgba(59,130,246,0.6)'; e.target.style.boxShadow='0 0 0 3px rgba(59,130,246,0.12)'; e.target.style.background=isDark?'rgba(255,255,255,0.07)':'rgba(59,130,246,0.02)'; }}
+                      onBlur={e => { e.target.style.borderColor=isDark?'rgba(255,255,255,0.1)':'rgba(0,0,0,0.1)'; e.target.style.boxShadow='none'; e.target.style.background=isDark?'rgba(255,255,255,0.05)':'rgba(0,0,0,0.03)'; }}
+                    />
                   </div>
                 </div>
-              ))}
-            </div>
-          </div>
-        </div>
 
-        {/* ── RIGHT: Form panel ────────────────────────────────────────── */}
-        <div className="w-full lg:w-[460px] shrink-0 flex flex-col h-full items-center justify-center relative overflow-hidden"
-             style={{borderLeft:'1px solid rgba(255,255,255,0.04)',background:'linear-gradient(180deg,#0a0a0a 0%,#0a0a0a 100%)'}}>
+                <button type="submit" disabled={loading}
+                  style={{ width:'100%', padding:'13px',
+                    background: loading?'rgba(59,130,246,0.5)':'linear-gradient(135deg, #1d4ed8 0%, #0284c7 100%)',
+                    border:'none', borderRadius:'12px', color:'#fff', fontSize:'14px', fontWeight:700,
+                    cursor: loading?'not-allowed':'pointer', transition:'all 0.2s ease',
+                    display:'flex', alignItems:'center', justifyContent:'center', gap:'8px',
+                    boxShadow: loading?'none':'0 4px 20px rgba(29,78,216,0.4)', letterSpacing:'0.01em' }}
+                  onMouseEnter={e => { if(!loading){ e.currentTarget.style.transform='translateY(-2px)'; e.currentTarget.style.boxShadow='0 10px 32px rgba(29,78,216,0.52)'; }}}
+                  onMouseLeave={e => { e.currentTarget.style.transform=''; e.currentTarget.style.boxShadow=loading?'none':'0 4px 20px rgba(29,78,216,0.4)'; }}
+                  onMouseDown={e => { if(!loading) e.currentTarget.style.transform='scale(0.99)'; }}
+                  onMouseUp={e => { if(!loading) e.currentTarget.style.transform='translateY(-2px)'; }}>
+                  {loading ? <><Loader2 size={15} className="animate-spin"/><span>Sending...</span></> : <>Send reset link</>}
+                </button>
+              </form>
 
-          <div className="pointer-events-none absolute -top-16 left-1/2 -translate-x-1/2 w-64 h-36"
-               style={{background:'radial-gradient(ellipse,rgba(16,185,129,0.13) 0%,transparent 70%)'}} />
-
-          <div className="w-full max-w-[340px] px-4">
-
-            {/* Card */}
-            <div className="rounded-2xl p-px"
-                 style={{background:'linear-gradient(135deg,rgba(16,185,129,0.18) 0%,rgba(255,255,255,0.04) 50%,rgba(59,130,246,0.09) 100%)',boxShadow:'0 24px 60px rgba(0,0,0,0.55)'}}>
-              <div className="relative rounded-2xl px-5 py-5 bg-[#111111]">
-                <div className="absolute top-0 left-[12%] right-[12%] h-px"
-                     style={{background:'linear-gradient(90deg,transparent,rgba(16,185,129,0.35),transparent)'}} />
-
-                {success ? (
-                  /* ── Success state ───────────────────────────────────── */
-                  <div className="flex flex-col items-center text-center py-4">
-                    <div className="w-12 h-12 rounded-full flex items-center justify-center mb-4"
-                         style={{background:'rgba(16,185,129,0.1)',border:'1px solid rgba(16,185,129,0.2)'}}>
-                      <CheckCircle2 className="w-6 h-6 text-emerald-400" />
-                    </div>
-                    <h2 className="text-[16px] font-semibold text-white mb-1">Check your email!</h2>
-                    <p className="text-gray-500 text-[12px] leading-relaxed mb-5 max-w-[240px]">
-                      If an account exists for <span className="text-gray-300 font-medium">{email}</span>, you'll receive a password reset link shortly.
-                    </p>
-                    <p className="text-[11px] text-gray-600 mb-4">Didn't get it? Check your spam folder.</p>
-                    <button onClick={onBack}
-                            className="text-[12px] text-emerald-400 hover:text-emerald-300 font-semibold transition-colors">
-                      ← Back to login
-                    </button>
-                  </div>
-                ) : (
-                  /* ── Form state ──────────────────────────────────────── */
-                  <>
-                    <h2 className="text-[16px] font-semibold text-white">Forgot password?</h2>
-                    <p className="text-gray-500 text-[11px] mt-0.5 mb-4">Enter your email and we'll send you a reset link</p>
-
-                    {error && (
-                      <ErrorBar message={error} className="mb-4" />
-                    )}
-
-                    <form onSubmit={handleSubmit} className="space-y-3">
-                      <div className="space-y-1">
-                        <label className="block text-[10px] font-bold text-gray-600 uppercase tracking-widest">Email address</label>
-                        <div className="relative">
-                          <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-[13px] h-[13px] text-gray-600 pointer-events-none" />
-                          <input
-                            type="email" autoComplete="email" value={email}
-                            onChange={e => setEmail(e.target.value)} required placeholder="you@example.com"
-                            className="w-full pl-8 pr-4 py-[8px] rounded-xl text-[13px] text-white placeholder-gray-700 bg-[#131313] border border-white/[0.06] focus:outline-none focus:border-emerald-500/40 focus:ring-2 focus:ring-emerald-500/[0.09] transition-all duration-200"
-                          />
-                        </div>
-                      </div>
-
-                      <button
-                        type="submit" disabled={loading}
-                        className="group w-full flex items-center justify-center gap-2 text-white font-semibold text-[13px] rounded-xl py-[10px] transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed hover:brightness-110 hover:shadow-[0_6px_24px_rgba(16,185,129,0.38)]"
-                        style={{background:'linear-gradient(135deg,#059669 0%,#0d9488 100%)',boxShadow:'0 4px 16px rgba(16,185,129,0.22),0 1px 0 rgba(255,255,255,0.07) inset'}}
-                      >
-                        {loading
-                          ? <><Loader2 className="w-3.5 h-3.5 animate-spin" /><span>Sending…</span></>
-                          : <span>Send reset link</span>}
-                      </button>
-                    </form>
-
-                    <p className="text-center text-[12px] text-gray-600 mt-4">
-                      Remember your password?{' '}
-                      <button onClick={onBack} className="text-emerald-400 hover:text-emerald-300 font-semibold transition-colors">
-                        Back to login
-                      </button>
-                    </p>
-                  </>
-                )}
-              </div>
-            </div>
-
-            <p className="text-center text-[10px] text-gray-800 mt-2 tracking-wide">
-              © 2026 Zynth. All rights reserved.
-            </p>
-          </div>
+              <p style={{ marginTop:'20px', textAlign:'center', fontSize:'12px', color: isDark?'rgba(255,255,255,0.25)':'#94a3b8' }}>
+                🔒 Secure · We never share your email
+              </p>
+            </>
+          )}
         </div>
       </div>
     </div>

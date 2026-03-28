@@ -155,534 +155,281 @@ export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess })
   }
 
   return (
-    <div style={{display:'flex',height:'100vh',width:'100%',overflow:'hidden',background: isDark ? '#020617' : '#F8FAFC',position:'relative'}}>
-
+    <div style={{ minHeight: '100vh', background: isDark ? '#020617' : '#F8FAFC', position: 'relative', overflowX: 'hidden', overflowY: 'auto' }}>
       <style>{`
-        @keyframes formAppear {
-          from { opacity: 0; transform: translateY(18px); }
-          to   { opacity: 1; transform: translateY(0);    }
-        }
-        @keyframes slideInRight {
-          from { opacity: 0; transform: translateX(16px); }
-          to   { opacity: 1; transform: translateX(0);    }
-        }
-        @keyframes shake {
-          0%,100% { transform: translateX(0);    }
-          20%      { transform: translateX(-6px); }
-          40%      { transform: translateX(6px);  }
-          60%      { transform: translateX(-4px); }
-          80%      { transform: translateX(4px);  }
-        }
-        @keyframes formShake {
-          0%, 100% { transform: translateX(0); }
-          20% { transform: translateX(-8px); }
-          40% { transform: translateX(8px); }
-          60% { transform: translateX(-5px); }
-          80% { transform: translateX(5px); }
-        }
-        @keyframes checkIn {
-          from { transform: scale(0); opacity: 0; }
-          to { transform: scale(1); opacity: 1; }
-        }
+        @keyframes authBlobFloat { 0%,100%{transform:scale(1) translateY(0px)} 50%{transform:scale(1.05) translateY(-16px)} }
+        @keyframes authCardIn { from{opacity:0;transform:translateY(22px)} to{opacity:1;transform:translateY(0)} }
+        @keyframes formShake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-8px)} 40%{transform:translateX(8px)} 60%{transform:translateX(-5px)} 80%{transform:translateX(5px)} }
+        @keyframes checkIn { from{transform:scale(0);opacity:0} to{transform:scale(1);opacity:1} }
         .sp-checkbox {
-          appearance: none; -webkit-appearance: none;
-          width: 18px; height: 18px; min-width: 18px;
-          border-radius: 5px;
-          background: rgba(255,255,255,0.04);
-          border: 1px solid rgba(255,255,255,0.15);
-          cursor: pointer; position: relative; margin-top: 1px;
-          transition: background 0.15s, border-color 0.15s;
+          appearance:none; -webkit-appearance:none; width:18px; height:18px; min-width:18px;
+          border-radius:5px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.15);
+          cursor:pointer; position:relative; margin-top:1px; transition:background 0.15s,border-color 0.15s;
         }
-        .sp-checkbox:checked {
-          background: #3b82f6;
-          border-color: #3b82f6;
-        }
+        .sp-checkbox:checked { background:#3b82f6; border-color:#3b82f6; }
         .sp-checkbox:checked::after {
-          content: '';
-          position: absolute;
-          left: 4px; top: 1px;
-          width: 5px; height: 9px;
-          border: 2px solid #fff;
-          border-top: none; border-left: none;
-          transform: rotate(45deg);
-        }
-        @keyframes orbPulse {
-          0%, 100% { transform: scale(1);    opacity: 0.6; }
-          50%       { transform: scale(1.15); opacity: 1;   }
-        }
-        @keyframes panelFadeIn {
-          from { opacity: 0; }
-          to   { opacity: 1; }
+          content:''; position:absolute; left:3px; top:1px; width:10px; height:6px;
+          border-left:2px solid #fff; border-bottom:2px solid #fff; transform:rotate(-45deg);
+          animation:checkIn 0.18s ease;
         }
       `}</style>
 
-      {/* â”€â”€ Top nav â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
-      {/* placeholder - nav bar removed */}
+      {/* Background radial gradients */}
+      <div style={{ position:'fixed', inset:0, pointerEvents:'none', zIndex:0,
+        backgroundImage: isDark
+          ? 'radial-gradient(ellipse 90% 55% at 50% -5%, rgba(59,130,246,0.14) 0%, transparent 60%), radial-gradient(ellipse 55% 45% at 85% 90%, rgba(99,102,241,0.09) 0%, transparent 60%)'
+          : 'radial-gradient(ellipse 90% 55% at 50% -5%, rgba(99,102,241,0.09) 0%, transparent 60%), radial-gradient(ellipse 55% 45% at 85% 90%, rgba(168,85,247,0.06) 0%, transparent 60%)',
+      }} />
+      <div style={{ position:'fixed', top:'-120px', left:'-120px', width:'520px', height:'520px', pointerEvents:'none', zIndex:0,
+        background: isDark ? 'radial-gradient(circle, rgba(59,130,246,0.10) 0%, transparent 70%)' : 'radial-gradient(circle, rgba(59,130,246,0.06) 0%, transparent 70%)',
+        filter:'blur(70px)', animation:'authBlobFloat 9s ease-in-out infinite',
+      }} />
+      <div style={{ position:'fixed', bottom:'-80px', right:'-80px', width:'420px', height:'420px', pointerEvents:'none', zIndex:0,
+        background: isDark ? 'radial-gradient(circle, rgba(99,102,241,0.08) 0%, transparent 70%)' : 'radial-gradient(circle, rgba(168,85,247,0.05) 0%, transparent 70%)',
+        filter:'blur(60px)', animation:'authBlobFloat 11s ease-in-out infinite 2s',
+      }} />
 
-      {/* â”€â”€ Panels â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
-
-        {/* â”€â”€ LEFT: Brand panel â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
-        <div style={{display: isMobile ? 'none' : 'flex', flex:1, flexDirection:'column', position:'relative', overflow:'hidden', minHeight:'100vh', background: isDark ? '#030303' : '#ebf0f7', animation:'panelFadeIn 0.6s ease'}}>
-
-          {/* Orb 1 – bottom left */}
-          <div className="pointer-events-none" style={{
-            position:'absolute', width:'500px', height:'500px',
-            background:'radial-gradient(circle, rgba(59,130,246,0.12) 0%, transparent 70%)',
-            bottom:'-150px', left:'-150px',
-            filter:'blur(60px)',
-            animation:'orbPulse 4s ease infinite',
-          }} />
-          {/* Orb 2 – top right */}
-          <div className="pointer-events-none" style={{
-            position:'absolute', width:'350px', height:'350px',
-            background:'radial-gradient(circle, rgba(59,130,246,0.07) 0%, transparent 70%)',
-            top:'-100px', right:'-50px',
-            filter:'blur(50px)',
-            animation:'orbPulse 4s ease infinite 2s',
-          }} />
-
-          {/* Top-left branding */}
-          <div className="relative z-10 flex items-center" style={{padding:'32px 48px 0', gap:'16px'}}>
-            {onBack && (
-              <button
-                onClick={onBack}
-                style={{
-                background: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.04)',
-                border: isDark ? '1px solid rgba(255,255,255,0.1)' : '1px solid rgba(0,0,0,0.1)',
-                borderRadius:'8px',
-                padding:'7px 14px',
-                fontSize:'13px',
-                color: isDark ? 'rgba(255,255,255,0.5)' : '#64748b',
-                display:'flex', alignItems:'center', gap:'6px',
-                cursor:'pointer',
-                transition:'all 0.2s ease',
-                flexShrink:0,
-              }}
-              onMouseEnter={e => { e.currentTarget.style.background= isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.07)'; e.currentTarget.style.color= isDark ? 'rgba(255,255,255,0.75)' : '#334155'; e.currentTarget.style.borderColor= isDark ? 'rgba(255,255,255,0.18)' : 'rgba(0,0,0,0.18)'; }}
-              onMouseLeave={e => { e.currentTarget.style.background= isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.04)'; e.currentTarget.style.color= isDark ? 'rgba(255,255,255,0.5)' : '#64748b'; e.currentTarget.style.borderColor= isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'; }}
-              >
-                <ChevronLeft size={14} />
-                Back
-              </button>
-            )}
-            <div style={{display:'flex', alignItems:'center', gap:'10px'}}>
-              <BrandMark size={30} />
-              <div>
-                <p style={{color: isDark ? '#fff' : '#0f172a',fontSize:'18px',fontWeight:700,lineHeight:1}}>Zynth</p>
-                <p style={{color: isDark ? 'rgba(255,255,255,0.4)' : '#64748b',fontSize:'12px',letterSpacing:'0.05em',marginTop:'3px'}}>
-                  Intelligence Behind Every Trade
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Center content */}
-          <div className="relative z-10 flex-1 flex flex-col justify-center" style={{padding:'0 48px 96px'}}>
-            <h1 style={{fontSize:'52px',fontWeight:800,letterSpacing:'-0.03em',lineHeight:1.1,marginBottom:'16px'}}>
-              <span style={{color: isDark ? '#ffffff' : '#0f172a'}}>Start Trading<br /></span>
-              <span style={{
-                background: isDark ? 'linear-gradient(135deg, #ffffff 30%, #3b82f6 100%)' : 'linear-gradient(135deg, #0f172a 30%, #2563eb 100%)',
-                WebkitBackgroundClip:'text',
-                WebkitTextFillColor:'transparent',
-                backgroundClip:'text',
-              }}>Smarter.</span>
-            </h1>
-            <p style={{fontSize:'16px',color: isDark ? 'rgba(255,255,255,0.45)' : '#475569',lineHeight:1.7,marginBottom:'36px',maxWidth:'340px'}}>
-              Join traders who use data to improve their edge, not guesswork.
-            </p>
-            <div>
-              {[
-                { Icon: BookOpen,   title: 'Smart Trade Journal',  desc: 'Log trades in seconds with AI coaching' },
-                { Icon: Brain,      title: 'AI Pattern Detection', desc: 'Find why you win and lose with data'    },
-                { Icon: TrendingUp, title: 'Macro Intelligence',   desc: 'Trade with economic data on your side'  },
-              ].map(({ Icon, title, desc }) => (
-                <div key={title} style={{display:'flex',gap:'14px',marginBottom:'22px'}}>
-                  <div style={{
-                    width:'40px',height:'40px',minWidth:'40px',
-                    background:'rgba(59,130,246,0.1)',
-                  border:'1px solid rgba(59,130,246,0.22)',
-                  borderRadius:'10px',
-                  display:'flex',alignItems:'center',justifyContent:'center',
-                  boxShadow:'0 0 20px rgba(59,130,246,0.14)',
-                  }}>
-                    <Icon size={18} color="#3b82f6" />
-                  </div>
-                  <div>
-                    <p style={{color: isDark ? '#fff' : '#0f172a',fontSize:'14px',fontWeight:600,marginBottom:'2px'}}>{title}</p>
-                    <p style={{color: isDark ? 'rgba(255,255,255,0.4)' : '#64748b',fontSize:'13px',lineHeight:1.5}}>{desc}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Bottom trust badges */}
-          <div className="relative z-10" style={{position:'absolute',bottom:'32px',left:'48px',right:'48px'}}>
-            <div style={{display:'flex',gap:'8px',flexWrap:'wrap'}}>
-              {[
-                {Icon: Shield, label: '256-bit SSL'},
-                {Icon: Zap,    label: 'Live Data'},
-                {Icon: Bot,    label: 'AI'},
-              ].map(({Icon, label}) => (
-                <span key={label} style={{
-                  background: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)',
-                  border: isDark ? '1px solid rgba(255,255,255,0.08)' : '1px solid rgba(0,0,0,0.08)',
-                  borderRadius:'20px',
-                  padding:'5px 12px',
-                  fontSize:'11px',
-                  color: isDark ? 'rgba(255,255,255,0.4)' : '#64748b',
-                  display:'flex',gap:'5px',alignItems:'center',
-                }}>
-                  <Icon size={11} />{label}
-                </span>
-              ))}
-            </div>
-          </div>
+      {/* Top nav */}
+      <div style={{ position:'fixed', top:0, left:0, right:0, zIndex:20, height:'60px',
+        display:'flex', alignItems:'center', justifyContent:'space-between', padding:'0 24px',
+        background: isDark ? 'rgba(2,6,23,0.75)' : 'rgba(248,250,252,0.85)',
+        backdropFilter:'blur(14px)', WebkitBackdropFilter:'blur(14px)',
+        borderBottom: isDark ? '1px solid rgba(255,255,255,0.06)' : '1px solid rgba(0,0,0,0.06)',
+      }}>
+        <div>
+          {onBack && (
+            <button onClick={onBack} style={{ display:'flex', alignItems:'center', gap:'6px',
+              background: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.04)',
+              border: isDark ? '1px solid rgba(255,255,255,0.08)' : '1px solid rgba(0,0,0,0.08)',
+              borderRadius:'8px', padding:'6px 12px', fontSize:'13px',
+              color: isDark ? 'rgba(255,255,255,0.55)' : '#64748b', cursor:'pointer', transition:'all 0.15s ease' }}
+              onMouseEnter={e => { e.currentTarget.style.color=isDark?'#fff':'#0f172a'; e.currentTarget.style.background=isDark?'rgba(255,255,255,0.09)':'rgba(0,0,0,0.07)'; }}
+              onMouseLeave={e => { e.currentTarget.style.color=isDark?'rgba(255,255,255,0.55)':'#64748b'; e.currentTarget.style.background=isDark?'rgba(255,255,255,0.05)':'rgba(0,0,0,0.04)'; }}>
+              <ChevronLeft size={14} /> Back
+            </button>
+          )}
         </div>
+        <div style={{ position:'absolute', left:'50%', transform:'translateX(-50%)', display:'flex', alignItems:'center', gap:'8px' }}>
+          <BrandMark size={28} />
+          <span style={{ fontSize:'17px', fontWeight:700, color: isDark?'#fff':'#0f172a', letterSpacing:'-0.01em' }}>Zynth</span>
+        </div>
+        <button onClick={onSwitchToLogin} style={{ fontSize:'13px', fontWeight:500, background:'none', border:'none', cursor:'pointer',
+          color: isDark?'rgba(255,255,255,0.55)':'#64748b', padding:'6px 2px', transition:'color 0.15s' }}
+          onMouseEnter={e => { e.currentTarget.style.color='#3b82f6'; }}
+          onMouseLeave={e => { e.currentTarget.style.color=isDark?'rgba(255,255,255,0.55)':'#64748b'; }}>
+          Sign in →
+        </button>
+      </div>
 
-        {/* â”€â”€ RIGHT: Signup form â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
-        <div style={{
-               width: isMobile ? '100%' : '460px',
-               minWidth: isMobile ? 'unset' : '460px',
-               flexShrink: 0,
-               display:'flex', flexDirection:'column',
-               alignItems:'center',
-               overflowY:'auto',
-               background: isMobile ? (isDark ? '#020617' : '#F8FAFC') : (isDark ? 'rgba(11,18,32,0.97)' : 'rgba(255,255,255,0.98)'),
-               backdropFilter: isMobile ? 'none' : 'blur(12px)',
-               borderLeft: isMobile ? 'none' : isDark ? '1px solid rgba(255,255,255,0.07)' : '1px solid rgba(0,0,0,0.07)',
-               boxShadow: isMobile ? 'none' : isDark ? '-1px 0 40px rgba(0,0,0,0.4)' : '-1px 0 24px rgba(0,0,0,0.06)',
-               padding: isMobile ? '24px 20px' : '24px 44px',
-               minHeight:'100vh',
-               boxSizing:'border-box',
-             }}>
+      {/* Centered card */}
+      <div style={{ position:'relative', zIndex:1, display:'flex', alignItems:'center', justifyContent:'center', minHeight:'100vh', padding:'80px 20px 40px', boxSizing:'border-box' }}>
+        {success ? (
+          <div style={{ textAlign:'center', animation:'authCardIn 0.4s ease both' }}>
+            <div style={{ width:'72px', height:'72px', borderRadius:'50%', background:'linear-gradient(135deg, #1d4ed8, #0284c7)',
+              display:'flex', alignItems:'center', justifyContent:'center', margin:'0 auto 20px',
+              boxShadow:'0 0 40px rgba(59,130,246,0.4)' }}>
+              <CheckCircle size={34} color="#fff" />
+            </div>
+            <h2 style={{ fontSize:'24px', fontWeight:800, color: isDark?'#fff':'#0f172a', marginBottom:'8px' }}>Account created!</h2>
+            <p style={{ fontSize:'15px', color: isDark?'rgba(255,255,255,0.55)':'#64748b' }}>Redirecting you to your dashboard…</p>
+            <div style={{ width:'40px', height:'3px', background:'linear-gradient(90deg,#3b82f6,#0284c7)', borderRadius:'2px', margin:'16px auto 0', animation:'authBlobFloat 1.5s ease-in-out infinite' }} />
+          </div>
+        ) : (
+          <div ref={formRef} style={{
+            width:'100%', maxWidth:'440px',
+            background: isDark ? 'rgba(11,18,32,0.82)' : 'rgba(255,255,255,0.93)',
+            backdropFilter:'blur(24px)', WebkitBackdropFilter:'blur(24px)',
+            border: isDark ? '1px solid rgba(255,255,255,0.09)' : '1px solid rgba(0,0,0,0.07)',
+            borderRadius:'24px', padding:'36px 32px 32px',
+            boxShadow: isDark
+              ? '0 0 0 1px rgba(59,130,246,0.07), 0 32px 80px rgba(0,0,0,0.75), 0 0 60px rgba(59,130,246,0.08)'
+              : '0 0 0 1px rgba(0,0,0,0.04), 0 24px 64px rgba(15,23,42,0.14), 0 8px 24px rgba(15,23,42,0.06)',
+            animation:'authCardIn 0.4s cubic-bezier(0.22,1,0.36,1) both',
+          }}>
+            <div style={{ marginBottom:'22px' }}>
+              <h2 style={{ fontSize:'26px', fontWeight:800, letterSpacing:'-0.025em', color: isDark?'#fff':'#0f172a', margin:'0 0 5px' }}>Create your account.</h2>
+              <p style={{ fontSize:'14px', color: isDark?'rgba(255,255,255,0.45)':'#64748b', margin:0 }}>
+                {spotsLeft != null && <><span style={{ color:'#f59e0b', fontWeight:600 }}>{spotsLeft} spots</span> remaining.{' '}</>}
+                Already on Zynth?{' '}
+                <button onClick={onSwitchToLogin} style={{ color:'#3b82f6', background:'none', border:'none', cursor:'pointer', fontSize:'14px', padding:0, fontWeight:500 }}
+                  onMouseEnter={e => e.currentTarget.style.textDecoration='underline'}
+                  onMouseLeave={e => e.currentTarget.style.textDecoration='none'}>Sign in</button>
+              </p>
+            </div>
 
-          <div style={{width:'100%', maxWidth:'380px', animation:'slideInRight 0.4s ease both', marginTop:'auto', marginBottom:'auto'}}>
+            {error && <ErrorBar message={error} className="mb-4" />}
 
-            {success ? (
-              <div style={{display:'flex',flexDirection:'column',alignItems:'center',textAlign:'center',gap:'16px',padding:'48px 0'}}>
-                <div style={{
-                  width:'64px', height:'64px',
-                  background:'rgba(59,130,246,0.1)',
-                  border:'2px solid #3b82f6',
-                  borderRadius:'50%',
-                  display:'flex', alignItems:'center', justifyContent:'center',
-                  animation:'checkIn 0.4s cubic-bezier(0.34,1.56,0.64,1) both',
-                }}>
-                  <CheckCircle size={32} color="#3b82f6" />
-                </div>
-                <div>
-                  <p style={{color: isDark ? '#fff' : '#0f172a',fontWeight:700,fontSize:'20px',margin:0}}>Account created!</p>
-                  <p style={{color: isDark ? 'rgba(255,255,255,0.5)' : '#64748b',fontSize:'14px',margin:'6px 0 0'}}>Setting up your workspace...</p>
-                </div>
-                <Loader2 size={20} color={isDark ? "rgba(255,255,255,0.3)" : "rgba(0,0,0,0.3)"} className="animate-spin" />
-              </div>
-            ) : (
-              <>
-            {/* Mobile back + logo */}
-            {isMobile && onBack && (
-              <button
-                onClick={onBack}
-                style={{
-                  background: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.04)',
-                  border: isDark ? '1px solid rgba(255,255,255,0.1)' : '1px solid rgba(0,0,0,0.1)',
-                  borderRadius:'8px',
-                  padding:'7px 14px',
-                  fontSize:'13px',
-                  color: isDark ? 'rgba(255,255,255,0.5)' : '#64748b',
-                  display:'flex', alignItems:'center', gap:'6px',
-                  cursor:'pointer',
-                  transition:'all 0.2s ease',
-                  marginBottom:'20px',
-                  alignSelf:'flex-start',
-                }}
-                onMouseEnter={e => { e.currentTarget.style.background= isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.07)'; e.currentTarget.style.color= isDark ? 'rgba(255,255,255,0.75)' : '#334155'; }}
-                onMouseLeave={e => { e.currentTarget.style.background= isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.04)'; e.currentTarget.style.color= isDark ? 'rgba(255,255,255,0.5)' : '#64748b'; }}
-              >
-                <ChevronLeft size={14} />
-                Back
-              </button>
-            )}
-            {isMobile && (
-              <div style={{display:'flex',alignItems:'center',justifyContent:'center',gap:'8px',marginBottom:'28px'}}>
-                <div style={{width:'28px',height:'28px',background:'#3b82f6',borderRadius:'7px',display:'flex',alignItems:'center',justifyContent:'center'}}>
-                  <span style={{color:'#fff',fontWeight:'bold',fontSize:'14px'}}>Z</span>
-                </div>
-                <span style={{color: isDark ? '#fff' : '#0f172a',fontWeight:'bold',fontSize:'17px'}}>Zynth</span>
-              </div>
-            )}
-
-            {/* Pro plan callout */}
-            {false && (
-              <div style={{
-                background:'linear-gradient(135deg, rgba(59,130,246,0.08), rgba(59,130,246,0.04))',
-                border:'1px solid rgba(59,130,246,0.2)',
-                borderRadius:'8px',
-                padding:'10px 14px',
-                marginBottom:'14px',
-                fontSize:'13px',
-                color:'#3b82f6',
-                textAlign:'center',
-              }}>
-                <Flame size={12} style={{display:'inline-block',verticalAlign:'middle',marginRight:'4px'}} />{spotsLeft} founding spots · $1.99/mo
-              </div>
-            )}
-
-            {/* Header */}
-            <h2 style={{fontSize: isMobile ? '22px' : '26px',fontWeight:800,color: isDark ? '#fff' : '#0f172a',letterSpacing:'-0.025em',margin:0,lineHeight:1.15}}>Start trading with clarity,</h2>
-            <p style={{fontSize:'14px',fontWeight:500,color: isDark ? 'rgba(255,255,255,0.45)' : '#64748b',marginTop:'5px',marginBottom:'16px'}}>not guesswork.</p>
-            <p style={{fontSize:'13px',marginBottom:'14px',color: isDark ? 'rgba(255,255,255,0.4)' : '#64748b'}}>
-              Already have one?{' '}
-              <button onClick={onSwitchToLogin}
-                      style={{color:'#3b82f6',background:'none',border:'none',cursor:'pointer',fontSize:'13px',padding:0}}
-                      onMouseEnter={e => e.currentTarget.style.textDecoration='underline'}
-                      onMouseLeave={e => e.currentTarget.style.textDecoration='none'}>
-                Sign in
-              </button>
-            </p>
-
-            {/* Error */}
-            {error && (
-              <ErrorBar message={error} className="mb-3" />
-            )}
-
-            {/* ── Google button (top CTA) */}
-            <button
-              type="button"
-              onClick={handleGoogleClick}
-              disabled={loading || googleLoading || !GOOGLE_CLIENT_ID}
-              style={{
-                width:'100%', padding:'11px 16px',
-                background: googleLoading ? '#e8eaed' : '#ffffff',
-                border:'1px solid rgba(0,0,0,0.10)',
-                borderRadius:'10px',
-                color: !GOOGLE_CLIENT_ID ? 'rgba(0,0,0,0.25)' : '#1f2937',
-                fontSize:'14px', fontWeight:500,
+            {/* Google button */}
+            <button type="button" onClick={handleGoogleClick} disabled={loading||googleLoading||!GOOGLE_CLIENT_ID}
+              style={{ width:'100%', padding:'11px 16px', background:googleLoading?'#e8eaed':'#ffffff',
+                border:'1px solid rgba(0,0,0,0.10)', borderRadius:'12px',
+                color:!GOOGLE_CLIENT_ID?'rgba(0,0,0,0.25)':'#1f2937', fontSize:'14px', fontWeight:500,
                 display:'flex', alignItems:'center', justifyContent:'center', gap:'10px',
-                cursor: loading || googleLoading || !GOOGLE_CLIENT_ID ? 'not-allowed' : 'pointer',
-                transition:'all 0.2s ease',
-                letterSpacing:'0.01em',
-                marginBottom:'14px',
-                boxShadow:'0 1px 4px rgba(0,0,0,0.22), 0 0 0 1px rgba(0,0,0,0.06)',
-              }}
-              onMouseEnter={e => {
-                if (!loading && !googleLoading && GOOGLE_CLIENT_ID) {
-                  e.currentTarget.style.background = '#f8fafc';
-                  e.currentTarget.style.borderColor = 'rgba(0,0,0,0.16)';
-                  e.currentTarget.style.transform = 'translateY(-1px)';
-                  e.currentTarget.style.boxShadow = '0 4px 16px rgba(0,0,0,0.20), 0 0 0 1px rgba(0,0,0,0.08)';
-                }
-              }}
-              onMouseLeave={e => {
-                e.currentTarget.style.background = googleLoading ? '#e8eaed' : '#ffffff';
-                e.currentTarget.style.borderColor = 'rgba(0,0,0,0.10)';
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = '0 1px 4px rgba(0,0,0,0.22), 0 0 0 1px rgba(0,0,0,0.06)';
-              }}
-              onMouseDown={e => { if (!loading && !googleLoading) e.currentTarget.style.transform = 'scale(0.99)'; }}
-              onMouseUp={e => { e.currentTarget.style.transform = 'translateY(-1px)'; }}
-            >
-              {googleLoading ? (
-                <Loader2 size={17} className="animate-spin" style={{color: isDark ? 'rgba(255,255,255,0.55)' : 'rgba(0,0,0,0.45)',flexShrink:0}} />
-              ) : (
-                <svg width="17" height="17" viewBox="0 0 24 24" style={{flexShrink:0}}>
+                cursor:loading||googleLoading||!GOOGLE_CLIENT_ID?'not-allowed':'pointer',
+                transition:'all 0.2s ease', marginBottom:'16px',
+                boxShadow:'0 1px 4px rgba(0,0,0,0.18), 0 0 0 1px rgba(0,0,0,0.05)' }}
+              onMouseEnter={e => { if(!loading&&!googleLoading&&GOOGLE_CLIENT_ID){ e.currentTarget.style.background='#f8fafc'; e.currentTarget.style.transform='translateY(-1px)'; e.currentTarget.style.boxShadow='0 4px 16px rgba(0,0,0,0.15)'; }}}
+              onMouseLeave={e => { e.currentTarget.style.background=googleLoading?'#e8eaed':'#ffffff'; e.currentTarget.style.transform=''; e.currentTarget.style.boxShadow='0 1px 4px rgba(0,0,0,0.18), 0 0 0 1px rgba(0,0,0,0.05)'; }}>
+              {googleLoading ? <Loader2 size={17} className="animate-spin" style={{ color:'rgba(0,0,0,0.45)', flexShrink:0 }} /> : (
+                <svg width="17" height="17" viewBox="0 0 24 24" style={{ flexShrink:0 }}>
                   <path fill="#EA4335" d="M5.266 9.765A7.077 7.077 0 0 1 12 4.909c1.69 0 3.218.6 4.418 1.582L19.91 3C17.782 1.145 15.055 0 12 0 7.27 0 3.198 2.698 1.24 6.65l4.026 3.115z"/>
                   <path fill="#34A853" d="M16.04 18.013c-1.09.703-2.474 1.078-4.04 1.078a7.077 7.077 0 0 1-6.723-4.823l-4.04 3.067A11.965 11.965 0 0 0 12 24c2.933 0 5.735-1.043 7.834-3l-3.793-2.987z"/>
                   <path fill="#4A90E2" d="M19.834 21c2.195-2.048 3.62-5.096 3.62-9 0-.71-.109-1.473-.272-2.182H12v4.637h6.436c-.317 1.559-1.17 2.766-2.395 3.558L19.834 21z"/>
                   <path fill="#FBBC05" d="M5.277 14.268A7.12 7.12 0 0 1 4.909 12c0-.782.125-1.533.357-2.235L1.24 6.65A11.934 11.934 0 0 0 0 12c0 1.92.445 3.73 1.237 5.335l4.04-3.067z"/>
                 </svg>
               )}
-              <span>{googleLoading ? 'Signing in...' : 'Continue with Google'}</span>
+              <span>{googleLoading ? 'Signing up...' : 'Continue with Google'}</span>
             </button>
 
-            {/* OR divider */}
-            <div style={{display:'flex',alignItems:'center',gap:'10px',marginBottom:'14px'}}>
-              <div style={{flex:1,height:'1px',background: isDark ? 'linear-gradient(to right, transparent, rgba(255,255,255,0.1))' : 'linear-gradient(to right, transparent, rgba(0,0,0,0.1))'}} />
-              <span style={{fontSize:'11px',fontWeight:500,color: isDark ? 'rgba(255,255,255,0.25)' : '#94a3b8',letterSpacing:'0.08em',textTransform:'uppercase'}}>or with email</span>
-              <div style={{flex:1,height:'1px',background: isDark ? 'linear-gradient(to left, transparent, rgba(255,255,255,0.1))' : 'linear-gradient(to left, transparent, rgba(0,0,0,0.1))'}} />
+            {/* Divider */}
+            <div style={{ display:'flex', alignItems:'center', gap:'10px', marginBottom:'16px' }}>
+              <div style={{ flex:1, height:'1px', background: isDark?'rgba(255,255,255,0.08)':'rgba(0,0,0,0.08)' }} />
+              <span style={{ fontSize:'11px', fontWeight:500, color: isDark?'rgba(255,255,255,0.30)':'#94a3b8', textTransform:'uppercase', letterSpacing:'0.08em' }}>or with email</span>
+              <div style={{ flex:1, height:'1px', background: isDark?'rgba(255,255,255,0.08)':'rgba(0,0,0,0.08)' }} />
             </div>
 
-                        <form onSubmit={handleSubmit} ref={formRef}>
-
-              {/* Full Name */}
-              <div style={{marginBottom:'10px'}}>
-                <div style={{position:'relative'}}>
-                  <User size={15} color={isDark ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.25)'} style={{position:'absolute',left:'13px',top:'50%',transform:'translateY(-50%)',pointerEvents:'none'}} />
-                  <input type="text" autoComplete="name" required
-                         value={form.name} onChange={e => { setField('name', e.target.value); setFieldErrors(fe => ({...fe, name:''})); }}
-                         placeholder="Full name"
-                         style={{...inputStyle, padding:'11px 14px 11px 38px', ...(fieldErrors.name ? {border:'1px solid rgba(239,68,68,0.5)',boxShadow:'0 0 0 3px rgba(239,68,68,0.07)'} : {})}}
-                         onFocus={focusIn} onBlur={focusOut} />
+            <form onSubmit={handleSubmit}>
+              {/* Name */}
+              <div style={{ marginBottom:'12px' }}>
+                <div style={{ position:'relative' }}>
+                  <User size={15} color={isDark?'rgba(255,255,255,0.25)':'rgba(0,0,0,0.3)'} style={{ position:'absolute', left:'13px', top:'50%', transform:'translateY(-50%)', pointerEvents:'none' }} />
+                  <input type="text" autoComplete="name" value={form.name} required
+                    onChange={e => { setField('name', e.target.value); setFieldErrors(fe => ({...fe, name:''})); }}
+                    placeholder="Full name"
+                    style={{ width:'100%', boxSizing:'border-box', background: isDark?'rgba(255,255,255,0.05)':'rgba(0,0,0,0.03)',
+                      border: fieldErrors.name?'1.5px solid rgba(239,68,68,0.6)':isDark?'1px solid rgba(255,255,255,0.1)':'1px solid rgba(0,0,0,0.1)',
+                      borderRadius:'12px', padding:'12px 14px 12px 40px',
+                      color: isDark?'#fff':'#0f172a', fontSize:'14px', outline:'none', transition:'all 0.2s ease' }}
+                    onFocus={focusIn} onBlur={focusOut}
+                  />
                 </div>
-                {fieldErrors.name && (
-                  <div style={{display:'flex',alignItems:'center',gap:'4px',marginTop:'4px'}}>
-                    <AlertCircle size={11} color="#ef4444" />
-                    <span style={{fontSize:'11px',color:'#ef4444'}}>{fieldErrors.name}</span>
-                  </div>
-                )}
+                {fieldErrors.name && <div style={{ display:'flex', alignItems:'center', gap:'4px', marginTop:'4px' }}><AlertCircle size={11} color="#ef4444"/><span style={{ fontSize:'11px', color:'#ef4444' }}>{fieldErrors.name}</span></div>}
               </div>
 
               {/* Email */}
-              <div style={{marginBottom:'10px'}}>
-                <div style={{position:'relative'}}>
-                  <Mail size={15} color={isDark ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.25)'} style={{position:'absolute',left:'13px',top:'50%',transform:'translateY(-50%)',pointerEvents:'none'}} />
-                  <input type="email" autoComplete="email" required
-                         value={form.email} onChange={e => { setField('email', e.target.value); setFieldErrors(fe => ({...fe, email:''})); }}
-                         placeholder="Email address"
-                         style={{...inputStyle, padding:'11px 14px 11px 38px', ...(fieldErrors.email ? {border:'1px solid rgba(239,68,68,0.5)',boxShadow:'0 0 0 3px rgba(239,68,68,0.07)'} : {})}}
-                         onFocus={focusIn} onBlur={focusOut} />
+              <div style={{ marginBottom:'12px' }}>
+                <div style={{ position:'relative' }}>
+                  <Mail size={15} color={isDark?'rgba(255,255,255,0.25)':'rgba(0,0,0,0.3)'} style={{ position:'absolute', left:'13px', top:'50%', transform:'translateY(-50%)', pointerEvents:'none' }} />
+                  <input type="email" autoComplete="email" value={form.email} required
+                    onChange={e => { setField('email', e.target.value); setFieldErrors(fe => ({...fe, email:''})); }}
+                    placeholder="Email address"
+                    style={{ width:'100%', boxSizing:'border-box', background: isDark?'rgba(255,255,255,0.05)':'rgba(0,0,0,0.03)',
+                      border: fieldErrors.email?'1.5px solid rgba(239,68,68,0.6)':isDark?'1px solid rgba(255,255,255,0.1)':'1px solid rgba(0,0,0,0.1)',
+                      borderRadius:'12px', padding:'12px 14px 12px 40px',
+                      color: isDark?'#fff':'#0f172a', fontSize:'14px', outline:'none', transition:'all 0.2s ease' }}
+                    onFocus={focusIn} onBlur={focusOut}
+                  />
                 </div>
-                {fieldErrors.email && (
-                  <div style={{display:'flex',alignItems:'center',gap:'4px',marginTop:'4px'}}>
-                    <AlertCircle size={11} color="#ef4444" />
-                    <span style={{fontSize:'11px',color:'#ef4444'}}>{fieldErrors.email}</span>
-                  </div>
-                )}
+                {fieldErrors.email && <div style={{ display:'flex', alignItems:'center', gap:'4px', marginTop:'4px' }}><AlertCircle size={11} color="#ef4444"/><span style={{ fontSize:'11px', color:'#ef4444' }}>{fieldErrors.email}</span></div>}
               </div>
 
               {/* Password */}
-              <div style={{marginBottom:'10px'}}>
-                <div style={{position:'relative'}}>
-                  <Lock size={15} color={isDark ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.25)'} style={{position:'absolute',left:'13px',top:'50%',transform:'translateY(-50%)',pointerEvents:'none'}} />
-                  <input type={showPass ? 'text' : 'password'} autoComplete="new-password" required
-                         value={form.password} onChange={e => { setField('password', e.target.value); setFieldErrors(fe => ({...fe, password:''})); }}
-                         placeholder="Password (min. 8 characters)"
-                         style={{...inputStyle, padding:'11px 40px 11px 38px', ...(fieldErrors.password ? {border:'1px solid rgba(239,68,68,0.5)',boxShadow:'0 0 0 3px rgba(239,68,68,0.07)'} : {})}}
-                         onFocus={focusIn} onBlur={focusOut} />
-                  <button type="button" tabIndex={-1} onClick={() => setShowPass(v => !v)}
-                          style={{position:'absolute',right:'12px',top:'50%',transform:'translateY(-50%)',background:'none',border:'none',cursor:'pointer',color: isDark ? 'rgba(255,255,255,0.3)' : 'rgba(0,0,0,0.35)',padding:0,display:'flex'}}>
-                    {showPass ? <EyeOff size={15} /> : <Eye size={15} />}
+              <div style={{ marginBottom:'6px' }}>
+                <div style={{ position:'relative' }}>
+                  <Lock size={15} color={isDark?'rgba(255,255,255,0.25)':'rgba(0,0,0,0.3)'} style={{ position:'absolute', left:'13px', top:'50%', transform:'translateY(-50%)', pointerEvents:'none' }} />
+                  <input type={showPass?'text':'password'} autoComplete="new-password" value={form.password} required
+                    onChange={e => { setField('password', e.target.value); setFieldErrors(fe => ({...fe, password:''})); }}
+                    placeholder="Password"
+                    style={{ width:'100%', boxSizing:'border-box', background: isDark?'rgba(255,255,255,0.05)':'rgba(0,0,0,0.03)',
+                      border: fieldErrors.password?'1.5px solid rgba(239,68,68,0.6)':isDark?'1px solid rgba(255,255,255,0.1)':'1px solid rgba(0,0,0,0.1)',
+                      borderRadius:'12px', padding:'12px 40px 12px 40px',
+                      color: isDark?'#fff':'#0f172a', fontSize:'14px', outline:'none', transition:'all 0.2s ease' }}
+                    onFocus={focusIn} onBlur={focusOut}
+                  />
+                  <button type="button" onClick={() => setShowPass(v => !v)} tabIndex={-1}
+                    style={{ position:'absolute', right:'12px', top:'50%', transform:'translateY(-50%)', background:'none', border:'none', cursor:'pointer', color:isDark?'rgba(255,255,255,0.3)':'rgba(0,0,0,0.35)', padding:0, display:'flex' }}>
+                    {showPass ? <EyeOff size={15}/> : <Eye size={15}/>}
                   </button>
                 </div>
-                {/* Strength meter */}
-                {form.password && (
-                  <div style={{marginTop:'7px'}}>
-                    <div style={{display:'flex',gap:'3px',marginBottom:'4px'}}>
-                      {[1,2,3,4].map(i => (
-                        <div key={i} style={{
-                          height:'2px', flex:1, borderRadius:'2px',
-                          transition:'all 0.3s ease',
-                          background: i <= strength
-                            ? (strength===1?'#ef4444':strength===2?'#f97316':strength===3?'#f59e0b':'#3b82f6')
-                            : isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.1)',
-                        }} />
-                      ))}
-                    </div>
-                    <div style={{display:'flex',alignItems:'center',justifyContent:'space-between'}}>
-                      <span style={{fontSize:'11px',fontWeight:500,color:strength===1?'#f87171':strength===2?'#fb923c':strength===3?'#fbbf24':'#34d399'}}>
-                        {STRENGTH_META[strength].label} password
-                      </span>
-                      <div style={{display:'flex',gap:'8px'}}>
-                        {[{ok:has8,label:'8+'},{ok:hasNum,label:'123'},{ok:hasCaps,label:'Aa'},{ok:hasSpec,label:'!@'}].map(({ok,label})=>(
-                          <span key={label} style={{fontSize:'10px',color:ok?'#3b82f6': isDark ?'rgba(255,255,255,0.2)':'rgba(0,0,0,0.25)',fontWeight:500,transition:'color 0.2s'}}>{label}</span>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                )}
-                {fieldErrors.password && (
-                  <div style={{display:'flex',alignItems:'center',gap:'4px',marginTop:'4px'}}>
-                    <AlertCircle size={11} color="#ef4444" />
-                    <span style={{fontSize:'11px',color:'#ef4444'}}>{fieldErrors.password}</span>
-                  </div>
-                )}
+                {fieldErrors.password && <div style={{ display:'flex', alignItems:'center', gap:'4px', marginTop:'4px' }}><AlertCircle size={11} color="#ef4444"/><span style={{ fontSize:'11px', color:'#ef4444' }}>{fieldErrors.password}</span></div>}
               </div>
 
-              {/* Confirm Password */}
-              <div style={{marginBottom:'12px'}}>
-                <div style={{position:'relative'}}>
-                  <Lock size={15} color={isDark ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.25)'} style={{position:'absolute',left:'13px',top:'50%',transform:'translateY(-50%)',pointerEvents:'none'}} />
-                  <input type={showConfirm ? 'text' : 'password'} autoComplete="new-password" required
-                         value={form.confirm} onChange={e => { setField('confirm', e.target.value); setFieldErrors(fe => ({...fe, confirm:''})); }}
-                         placeholder="Confirm password"
-                         style={{...inputStyle, padding:'11px 60px 11px 38px', ...(fieldErrors.confirm ? {border:'1px solid rgba(239,68,68,0.5)',boxShadow:'0 0 0 3px rgba(239,68,68,0.07)'} : {})}}
-                         onFocus={focusIn} onBlur={focusOut} />
-                  <div style={{position:'absolute',right:'12px',top:'50%',transform:'translateY(-50%)',display:'flex',alignItems:'center',gap:'5px'}}>
-                    {form.confirm && (
-                      form.password === form.confirm
-                        ? <CheckCircle2 size={14} color="#34d399" />
-                        : <AlertCircle  size={14} color="#f87171" />
-                    )}
-                    <button type="button" tabIndex={-1} onClick={() => setShowConfirm(v => !v)}
-                            style={{background:'none',border:'none',cursor:'pointer',color: isDark ? 'rgba(255,255,255,0.3)' : 'rgba(0,0,0,0.35)',padding:0,display:'flex'}}>
-                      {showConfirm ? <EyeOff size={15} /> : <Eye size={15} />}
-                    </button>
+              {/* Strength meter */}
+              {form.password.length > 0 && (
+                <div style={{ marginBottom:'12px' }}>
+                  <div style={{ display:'flex', gap:'4px', marginBottom:'4px' }}>
+                    {[1,2,3,4].map(n => (
+                      <div key={n} style={{ flex:1, height:'3px', borderRadius:'2px', transition:'background 0.3s',
+                        background: strength>=n
+                          ? (strength===1?'#ef4444':strength===2?'#f97316':strength===3?'#f59e0b':'#10b981')
+                          : isDark?'rgba(255,255,255,0.08)':'rgba(0,0,0,0.08)',
+                      }} />
+                    ))}
                   </div>
+                  <span style={{ fontSize:'11px', color: strength===1?'#ef4444':strength===2?'#f97316':strength===3?'#f59e0b':'#10b981', fontWeight:500 }}>
+                    {STRENGTH_META[strength]?.label || ''}
+                  </span>
                 </div>
-                {fieldErrors.confirm && (
-                  <div style={{display:'flex',alignItems:'center',gap:'4px',marginTop:'4px'}}>
-                    <AlertCircle size={11} color="#ef4444" />
-                    <span style={{fontSize:'11px',color:'#ef4444'}}>{fieldErrors.confirm}</span>
-                  </div>
-                )}
+              )}
+
+              {/* Confirm password */}
+              <div style={{ marginBottom:'14px' }}>
+                <div style={{ position:'relative' }}>
+                  <Lock size={15} color={isDark?'rgba(255,255,255,0.25)':'rgba(0,0,0,0.3)'} style={{ position:'absolute', left:'13px', top:'50%', transform:'translateY(-50%)', pointerEvents:'none' }} />
+                  <input type={showConfirm?'text':'password'} autoComplete="new-password" value={form.confirm} required
+                    onChange={e => { setField('confirm', e.target.value); setFieldErrors(fe => ({...fe, confirm:''})); }}
+                    placeholder="Confirm password"
+                    style={{ width:'100%', boxSizing:'border-box', background: isDark?'rgba(255,255,255,0.05)':'rgba(0,0,0,0.03)',
+                      border: fieldErrors.confirm?'1.5px solid rgba(239,68,68,0.6)':isDark?'1px solid rgba(255,255,255,0.1)':'1px solid rgba(0,0,0,0.1)',
+                      borderRadius:'12px', padding:'12px 40px 12px 40px',
+                      color: isDark?'#fff':'#0f172a', fontSize:'14px', outline:'none', transition:'all 0.2s ease' }}
+                    onFocus={focusIn} onBlur={focusOut}
+                  />
+                  <button type="button" onClick={() => setShowConfirm(v => !v)} tabIndex={-1}
+                    style={{ position:'absolute', right:'12px', top:'50%', transform:'translateY(-50%)', background:'none', border:'none', cursor:'pointer', color:isDark?'rgba(255,255,255,0.3)':'rgba(0,0,0,0.35)', padding:0, display:'flex' }}>
+                    {showConfirm ? <EyeOff size={15}/> : <Eye size={15}/>}
+                  </button>
+                </div>
+                {fieldErrors.confirm && <div style={{ display:'flex', alignItems:'center', gap:'4px', marginTop:'4px' }}><AlertCircle size={11} color="#ef4444"/><span style={{ fontSize:'11px', color:'#ef4444' }}>{fieldErrors.confirm}</span></div>}
               </div>
 
               {/* Consent checkboxes */}
-              <div style={{marginBottom:'14px',display:'flex',flexDirection:'column',gap:'7px',padding:'10px 12px',background: isDark ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.02)',border: isDark ? '1px solid rgba(255,255,255,0.07)' : '1px solid rgba(0,0,0,0.07)',borderRadius:'9px'}}>
-                <label style={{display:'flex',alignItems:'flex-start',gap:'10px',cursor:'pointer',userSelect:'none'}}>
-                  <input type="checkbox" className="sp-checkbox"
-                         checked={consent.terms}
-                         onChange={e => setConsent(c => ({ ...c, terms: e.target.checked }))} />
-                  <span style={{fontSize:'12px',color: isDark ? 'rgba(255,255,255,0.5)' : '#64748b',lineHeight:1.5}}>
-                    I agree to the{' '}
-                    <a href="/terms" target="_blank" rel="noopener noreferrer"
-                     style={{color:'#3b82f6',textDecoration:'none'}}
-                       onMouseEnter={e => e.currentTarget.style.textDecoration='underline'}
-                       onMouseLeave={e => e.currentTarget.style.textDecoration='none'}
-                       onClick={e => e.stopPropagation()}>
-                      Terms of Service
-                    </a>
-                    {' '}— Zynth is a tool, not a financial advisor.
+              <div style={{ marginBottom:'16px', display:'flex', flexDirection:'column', gap:'10px' }}>
+                <label style={{ display:'flex', alignItems:'flex-start', gap:'10px', cursor:'pointer' }}>
+                  <input type="checkbox" className="sp-checkbox" checked={consent.terms}
+                    onChange={e => setConsent(c => ({...c, terms: e.target.checked}))} />
+                  <span style={{ fontSize:'12px', color: isDark?'rgba(255,255,255,0.45)':'#64748b', lineHeight:1.5 }}>
+                    I agree to the <a href="/terms" target="_blank" style={{ color:'#3b82f6', textDecoration:'none' }}>Terms of Service</a>
                   </span>
                 </label>
-                <div style={{height:'1px',background: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)'}} />
-                <label style={{display:'flex',alignItems:'flex-start',gap:'10px',cursor:'pointer',userSelect:'none'}}>
-                  <input type="checkbox" className="sp-checkbox"
-                         checked={consent.risk}
-                         onChange={e => setConsent(c => ({ ...c, risk: e.target.checked }))} />
-                  <span style={{fontSize:'12px',color: isDark ? 'rgba(255,255,255,0.5)' : '#64748b',lineHeight:1.5}}>
-                    AI analysis may contain errors. I trade at my own risk.
+                <label style={{ display:'flex', alignItems:'flex-start', gap:'10px', cursor:'pointer' }}>
+                  <input type="checkbox" className="sp-checkbox" checked={consent.risk}
+                    onChange={e => setConsent(c => ({...c, risk: e.target.checked}))} />
+                  <span style={{ fontSize:'12px', color: isDark?'rgba(255,255,255,0.45)':'#64748b', lineHeight:1.5 }}>
+                    I understand trading involves risk and I accept sole responsibility for my trades
                   </span>
                 </label>
               </div>
 
-              {/* Submit */}
-              <button
-                type="submit" disabled={loading}
-                style={{
-                  width:'100%',
-                  padding:'12px',
-                  background: loading ? 'rgba(59,130,246,0.5)' : 'linear-gradient(135deg, #1d4ed8 0%, #0284c7 100%)',
-                  border:'none', borderRadius:'10px',
-                  color:'#fff', fontSize:'14px', fontWeight:600,
-                  cursor: loading ? 'not-allowed' : 'pointer',
-                  transition:'all 0.2s ease',
-                  letterSpacing:'0.01em',
+              <button type="submit" disabled={loading}
+                style={{ width:'100%', padding:'13px',
+                  background: loading?'rgba(59,130,246,0.5)':'linear-gradient(135deg, #1d4ed8 0%, #0284c7 100%)',
+                  border:'none', borderRadius:'12px', color:'#fff', fontSize:'14px', fontWeight:700,
+                  cursor: loading?'not-allowed':'pointer', transition:'all 0.2s ease',
                   display:'flex', alignItems:'center', justifyContent:'center', gap:'8px',
-                  boxShadow: loading ? 'none' : '0 4px 15px rgba(59,130,246,0.25)',
-                }}
-                onMouseEnter={e => { if (!loading) { e.currentTarget.style.transform='translateY(-1px)'; e.currentTarget.style.boxShadow='0 8px 25px rgba(59,130,246,0.4)'; } }}
-                onMouseLeave={e => { e.currentTarget.style.transform='translateY(0)'; e.currentTarget.style.boxShadow=loading?'none':'0 4px 15px rgba(59,130,246,0.25)'; }}
-                onMouseDown={e => { e.currentTarget.style.transform='translateY(0) scale(0.99)'; }}
-                onMouseUp={e => { e.currentTarget.style.transform='translateY(-1px) scale(1)'; }}
-              >
-                {loading
-                  ? <><Loader2 size={15} className="animate-spin" /><span>Creating account...</span></>
-                  : 'Create account →'}
+                  boxShadow: loading?'none':'0 4px 20px rgba(29,78,216,0.4)', letterSpacing:'0.01em' }}
+                onMouseEnter={e => { if(!loading){ e.currentTarget.style.transform='translateY(-2px)'; e.currentTarget.style.boxShadow='0 10px 32px rgba(29,78,216,0.52)'; }}}
+                onMouseLeave={e => { e.currentTarget.style.transform=''; e.currentTarget.style.boxShadow=loading?'none':'0 4px 20px rgba(29,78,216,0.4)'; }}
+                onMouseDown={e => { if(!loading) e.currentTarget.style.transform='scale(0.99)'; }}
+                onMouseUp={e => { if(!loading) e.currentTarget.style.transform='translateY(-2px)'; }}>
+                {loading ? <><Loader2 size={15} className="animate-spin"/><span>Creating account...</span></> : <>Create Account <ArrowRight size={16}/></>}
               </button>
             </form>
 
-            {/* Trust signals */}
-            <div style={{marginTop:'12px',textAlign:'center',lineHeight:1.8}}>
-              <span style={{fontSize:'11px',color: isDark ? 'rgba(255,255,255,0.28)' : '#94a3b8',letterSpacing:'0.01em'}}>🔒 Secure signup · 256-bit encryption</span>
-              <br />
-              <span style={{fontSize:'11px',color: isDark ? 'rgba(255,255,255,0.2)' : '#94a3b8',letterSpacing:'0.01em'}}>Built for serious traders</span>
-            </div>
-
-              </>
-            )}
+            <p style={{ marginTop:'20px', textAlign:'center', fontSize:'12px', color: isDark?'rgba(255,255,255,0.25)':'#94a3b8' }}>
+              🔒 256-bit SSL · Bank-grade encryption · Cancel anytime
+            </p>
+            <p style={{ marginTop:'10px', textAlign:'center', fontSize:'13px', color: isDark?'rgba(255,255,255,0.4)':'#64748b' }}>
+              Already have an account?{' '}
+              <button onClick={onSwitchToLogin} style={{ color:'#3b82f6', background:'none', border:'none', cursor:'pointer', fontSize:'13px', padding:0, fontWeight:500 }}
+                onMouseEnter={e => e.currentTarget.style.textDecoration='underline'}
+                onMouseLeave={e => e.currentTarget.style.textDecoration='none'}>
+                Sign in →
+              </button>
+            </p>
           </div>
-        </div>
+        )}
+      </div>
     </div>
   );
 }
