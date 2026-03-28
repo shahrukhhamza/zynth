@@ -1084,7 +1084,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
                     className={`text-[13px] px-4 py-2 rounded-lg transition-colors ${isDark ? 'text-gray-300 hover:text-white' : 'text-gray-600 hover:text-gray-900'}`}>
               Sign In
             </button>
-            <button onClick={onGetStarted}
+            <button onClick={() => onGetStarted()}
                     className="text-[13px] font-semibold text-white px-5 py-2.5 rounded-xl transition-all hover:brightness-110 hover:scale-[1.03]"
                     style={{background:'linear-gradient(135deg,#1d4ed8,#0284c7)', boxShadow:'0 4px 16px rgba(59,130,246,0.3)'}}>
               Analyze My Trades
@@ -1246,14 +1246,14 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
                   <span className={`text-[14px] ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>{b}</span>
                 </div>
               ))}
-              <button onClick={onGetStarted}
+              <button onClick={() => onGetStarted()}
                       className="mt-4 flex items-center gap-2 text-[14px] font-semibold text-blue-500 hover:text-blue-400 transition-colors">
                 Learn More <ArrowRight className="w-4 h-4" />
               </button>
             </div>
           </Reveal>
 
-          {/* Feature row 2 — Live Markets (reversed) */}
+          {/* Feature row 2 — Live Markets (reversed) */}}
           <Reveal delay={0.1} className="flex flex-col lg:flex-row-reverse items-center gap-12">
             {/* Mockup */}
             <div className="flex-1 w-full">
@@ -1320,7 +1320,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
                   <span className={`text-[14px] ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>{b}</span>
                 </div>
               ))}
-              <button onClick={onGetStarted}
+              <button onClick={() => onGetStarted()}
                       className="mt-4 flex items-center gap-2 text-[14px] font-semibold text-blue-400 hover:text-blue-300 transition-colors">
                 Learn More <ArrowRight className="w-4 h-4" />
               </button>
@@ -1577,7 +1577,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
               <p className={`text-[16px] mb-8 max-w-[420px] lg:max-w-none leading-relaxed ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
                 Join traders who use data instead of guessing. Start free, upgrade when you see the results.
               </p>
-              <button onClick={onGetStarted}
+              <button onClick={() => onGetStarted()}
                       className="group relative overflow-hidden inline-flex items-center gap-2 text-[16px] font-semibold text-white px-9 py-4 rounded-2xl hover:scale-[1.03] hover:shadow-[0_8px_32px_rgba(59,130,246,0.45)]"
                       style={{background:'linear-gradient(135deg,#1d4ed8 0%,#0284c7 100%)', boxShadow:'0 4px 20px rgba(59,130,246,0.28)'}}>
                 <span className="relative z-10 flex items-center gap-2">

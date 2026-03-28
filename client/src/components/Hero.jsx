@@ -126,7 +126,7 @@ export default function Hero({ badgeText, spotsLeft, onGetStarted, onSignIn }) {
             <motion.div 
               animate={{ x: [0, 50, 0], y: [0, -30, 0] }}
               transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-              className="absolute top-[-10%] left-[-10%] w-[600px] h-[600px] bg-blue-600/10 rounded-full blur-[120px]" 
+              className="absolute top-[5%] left-[-10%] w-[600px] h-[600px] bg-blue-600/10 rounded-full blur-[120px]" 
             />
             <motion.div 
               animate={{ x: [0, -50, 0], y: [0, 30, 0] }}
@@ -185,7 +185,7 @@ export default function Hero({ badgeText, spotsLeft, onGetStarted, onSignIn }) {
         {/* CTA Buttons */}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-5 mb-14">
           <button 
-            onClick={onGetStarted}
+            onClick={() => onGetStarted()}
             className="group relative px-8 py-5 bg-blue-600 text-white font-black rounded-2xl transition-all hover:scale-105 hover:shadow-[0_0_40px_rgba(59,130,246,0.4)] flex items-center gap-3 overflow-hidden"
           >
             <span className="relative z-10 flex items-center gap-2 text-lg">

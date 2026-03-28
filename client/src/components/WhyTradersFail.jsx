@@ -185,7 +185,7 @@ export default function WhyTradersFail({ onGetStarted }) {
         {/* CTA row */}
         <Reveal delay={0.42} className="mt-14 text-center">
           <button
-            onClick={onGetStarted}
+            onClick={() => onGetStarted()}
             className="group relative overflow-hidden inline-flex items-center gap-2.5 text-[15px] font-semibold text-white px-9 py-4 rounded-2xl hover:scale-[1.03] transition-all"
             style={{
               background: 'linear-gradient(135deg,#1d4ed8 0%,#0284c7 100%)',

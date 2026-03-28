@@ -383,7 +383,7 @@ export default function PreSignupOnboarding({ onContinueToSignup, onClose }) {
                       desc={m.desc}
                       icon={m.icon}
                       selected={market === m.id}
-                      onClick={() => setMarket(m.id)}
+                      onClick={() => { setMarket(m.id); setTimeout(advance, 320); }}
                       theme={theme}
                     />
                   ))}
@@ -428,7 +428,7 @@ export default function PreSignupOnboarding({ onContinueToSignup, onClose }) {
                       desc={p.desc}
                       icon={p.icon}
                       selected={problem === p.id}
-                      onClick={() => setProblem(p.id)}
+                      onClick={() => { setProblem(p.id); setTimeout(advance, 320); }}
                       theme={theme}
                     />
                   ))}

@@ -235,7 +235,7 @@ export default function AIInsightsSection({ onGetStarted }) {
             These insights are generated automatically the moment you start logging trades.
           </p>
           <button
-            onClick={onGetStarted}
+            onClick={() => onGetStarted()}
             className="group inline-flex items-center gap-2 px-7 py-3.5 rounded-xl text-[14px] font-bold text-white transition-all hover:scale-[1.03]"
             style={{
               background: 'linear-gradient(135deg,#1d4ed8,#0284c7)',

@@ -150,7 +150,7 @@ export default function HowItWorks({ onGetStarted }) {
         {/* CTA row */}
         <Reveal delay={0.4} className="flex justify-center mt-12">
           <button
-            onClick={onGetStarted}
+            onClick={() => onGetStarted()}
             className="group inline-flex items-center gap-2 text-[14px] font-semibold text-blue-400 hover:text-blue-300 transition-colors"
           >
             Start Improving My Trades
