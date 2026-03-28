@@ -152,8 +152,8 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
   const [spotsLeft, setSpotsLeft] = useState(null);
   const [scrolled, setScrolled] = useState(false);
   const [countdown, setCountdown] = useState({ d: 30, h: 0, m: 0, s: 0 });
-  const [badgeIdx, setBadgeIdx] = useState(0);
-  const [badgeFade, setBadgeFade] = useState(true);
+  // const [badgeIdx, setBadgeIdx] = useState(0);
+  // const [badgeFade, setBadgeFade] = useState(true);
   const [journalStep, setJournalStep] = useState(0);
   const [liveMarkets, setLiveMarkets] = useState(INITIAL_MARKETS);
   const [flashMap, setFlashMap] = useState({});
@@ -256,16 +256,17 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
     return () => clearInterval(id);
   }, []);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setBadgeFade(false);
-      setTimeout(() => {
-        setBadgeIdx(i => (i + 1) % BADGE_TEXTS.length);
-        setBadgeFade(true);
-      }, 320);
-    }, 2200);
-    return () => clearInterval(interval);
-  }, []);
+  // Badge rotation — temporarily disabled
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     setBadgeFade(false);
+  //     setTimeout(() => {
+  //       setBadgeIdx(i => (i + 1) % BADGE_TEXTS.length);
+  //       setBadgeFade(true);
+  //     }, 320);
+  //   }, 2200);
+  //   return () => clearInterval(interval);
+  // }, []);
 
   // Journal card stagger animation
   useEffect(() => {
@@ -573,8 +574,6 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
 
       {/* ═══════════════════════════ HERO ═══════════════════════════ */}
       <Hero
-        badgeText={BADGE_TEXTS[badgeIdx]}
-        badgeFade={badgeFade}
         spotsLeft={spotsLeft}
         onGetStarted={onGetStarted}
         onSignIn={onSignIn}

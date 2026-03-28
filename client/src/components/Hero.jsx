@@ -138,17 +138,7 @@ export default function Hero({ badgeText, spotsLeft, onGetStarted, onSignIn }) {
       </div>
 
       <div className="relative z-10 max-w-5xl mx-auto">
-        {/* Badge */}
-        <motion.div 
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-12 border border-blue-500/30 bg-blue-500/5 backdrop-blur-md"
-        >
-          <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-ping" />
-          <span className="text-[11px] font-bold tracking-[0.2em] uppercase text-blue-400">
-            {badgeText || "Live Intelligence"}
-          </span>
-        </motion.div>
+        {/* Badge — temporarily disabled */}
 
         {/* Headline */}
         <motion.h1 
