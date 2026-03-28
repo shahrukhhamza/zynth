@@ -15,10 +15,12 @@
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  X, Zap, Check, Lock, ArrowRight, Flame, Brain, TrendingUp, Shuffle, HelpCircle,
+  X, Brain, TrendingUp, Shuffle, Lock,
 } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 import { useAuth } from '../contexts/AuthContext';
+import PricingPlanSelector from './pricing/PricingPlanSelector';
+import { DEFAULT_BILLING_CYCLE, DEFAULT_SELECTED_PLAN } from '../config/pricingPlans';
 
 // ── Feature-specific copy ─────────────────────────────────────────────────────
 
@@ -53,22 +55,14 @@ const PROBLEM_SNIPPETS = {
   unknown:   '"Your best performing pair has a 71% win rate — but only on Tuesdays."',
 };
 
-// Pro feature list
-const PRO_FEATURES = [
-  'Unlimited journal entries',
-  'AI Trade Analysis: 50 analyses/month',
-  'Macro Surprise Score (live)',
-  'Live market feeds',
-  'Advanced behavioral analytics',
-  'Priority support',
-];
-
 // ── Component ─────────────────────────────────────────────────────────────────
 
 export default function PaywallModal({ open, onClose, onUpgrade, feature, problem: propProblem }) {
   const theme = useTheme();
   const { user } = useAuth();
   const [show, setShow] = useState(false);
+  const [selectedPlan, setSelectedPlan] = useState(DEFAULT_SELECTED_PLAN);
+  const [billingCycle, setBillingCycle] = useState(DEFAULT_BILLING_CYCLE);
 
   // Read problem from prop or sessionStorage
   const problem = propProblem || sessionStorage.getItem('zynth_pre_problem') || '';
@@ -95,7 +89,7 @@ export default function PaywallModal({ open, onClose, onUpgrade, feature, proble
 
   function handleUpgrade() {
     handleClose();
-    setTimeout(() => onUpgrade?.(), 240);
+    setTimeout(() => onUpgrade?.({ plan: selectedPlan, billingCycle }), 240);
   }
 
   const headingColor = theme.isDark ? '#ffffff' : '#0f172a';
@@ -198,64 +192,18 @@ export default function PaywallModal({ open, onClose, onUpgrade, feature, proble
                 </motion.div>
               )}
 
-              {/* Feature list */}
-              <div
-                className="rounded-xl border p-4 mb-6"
-                style={{
-                  background: theme.isDark ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.02)',
-                  borderColor: theme.border,
-                }}
-              >
-                <div className="flex items-center justify-between mb-3">
-                  <p
-                    className="text-[11px] font-bold tracking-[0.15em] uppercase"
-                    style={{ color: mutedColor }}
-                  >
-                    Pro Plan — $9/month
-                  </p>
-                  <span
-                    className="text-[11px] font-semibold"
-                    style={{ color: mutedColor }}
-                  >
-                    Billed monthly
-                  </span>
-                </div>
-                <div className="space-y-2">
-                  {PRO_FEATURES.map(f => (
-                    <div key={f} className="flex items-center gap-2.5">
-                      <div
-                        className="w-4 h-4 rounded-full flex items-center justify-center shrink-0"
-                        style={{ background: 'rgba(59,130,246,0.12)' }}
-                      >
-                        <Check size={9} style={{ color: '#3b82f6' }} />
-                      </div>
-                      <span className="text-[12px]" style={{ color: theme.text }}>{f}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Primary CTA */}
-              <button
-                onClick={handleUpgrade}
-                className="w-full relative overflow-hidden flex items-center justify-center gap-2 py-4 rounded-xl text-[15px] font-bold text-white mb-3 transition-all hover:scale-[1.02]"
-                style={{
-                  background: 'linear-gradient(135deg,#1d4ed8 0%,#0284c7 100%)',
-                  boxShadow: '0 6px 24px rgba(59,130,246,0.40)',
-                }}
-              >
-                <Zap size={16} />
-                Upgrade to Pro
-                <ArrowRight size={16} className="ml-1" />
-                <span
-                  className="absolute inset-0 pointer-events-none"
-                  style={{
-                    background: 'linear-gradient(90deg,transparent 0%,rgba(255,255,255,0.12) 50%,transparent 100%)',
-                    backgroundSize: '200% 100%',
-                    animation: 'shimmerBtn 3s linear infinite',
-                  }}
+              <div className="mb-3">
+                <PricingPlanSelector
+                  context="ai"
+                  mode="compact"
+                  selectedPlan={selectedPlan}
+                  onSelectPlan={setSelectedPlan}
+                  billingCycle={billingCycle}
+                  onBillingCycleChange={setBillingCycle}
+                  onContinue={handleUpgrade}
+                  primaryActionLabel="Unlock Premium"
                 />
-              </button>
+              </div>
 
               {/* Secondary CTA */}
               <button

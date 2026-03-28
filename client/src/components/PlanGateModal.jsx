@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
-import { Zap, X, Check, ArrowRight } from 'lucide-react';
+import { Zap, X } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
-import { PLANS_CONFIG, FEATURE_LABELS } from '../config/planFeatures';
+import { FEATURE_LABELS } from '../config/planFeatures';
+import PricingPlanSelector from './pricing/PricingPlanSelector';
+import { DEFAULT_BILLING_CYCLE, DEFAULT_SELECTED_PLAN } from '../config/pricingPlans';
 import { track } from '../services/track';
 import { useUpgradeIntelligence } from '../hooks/useUpgradeIntelligence';
 import PaymentOptionsModal from './PaymentOptionsModal';
@@ -20,6 +22,8 @@ export default function PlanGateModal({ reason, feature, requiredPlan = 'pro', o
   const { isDark, text, muted } = useTheme();
   const { upgradeMetadata } = useUpgradeIntelligence();
   const [paymentPlan, setPaymentPlan] = useState(null);
+  const [selectedPlan, setSelectedPlan] = useState(DEFAULT_SELECTED_PLAN);
+  const [billingCycle, setBillingCycle] = useState(DEFAULT_BILLING_CYCLE);
 
   useEffect(() => {
     const handler = (e) => { if (e.key === 'Escape') onClose(); };
@@ -39,38 +43,20 @@ export default function PlanGateModal({ reason, feature, requiredPlan = 'pro', o
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const targetPlan = PLANS_CONFIG[requiredPlan] ?? PLANS_CONFIG.pro;
-  const higherPlan = requiredPlan === 'pro' ? PLANS_CONFIG.elite : null;
-
-  const highlightFeatures = {
-    pro: [
-      'Unlimited trade journaling',
-      'AI-powered insights (up to 50/month)',
-      'Advanced performance analytics',
-      'Behavioral insights to fix mistakes',
-      'Real-time market data',
-      'Full economic calendar',
-    ],
-    elite: [
-      'Everything in Pro, plus:',
-      'Unlimited AI analyses',
-      'AI trading reports',
-      'Trading DNA profile',
-      'Strategy optimization insights',
-      'Priority support (4-hr response)',
-    ],
-  };
-
   const featureLabel = feature ? FEATURE_LABELS[feature] : null;
+  const pricingContext = /ai|analysis|insight/i.test(feature || '')
+    ? 'ai'
+    : /journal/i.test(feature || '')
+      ? 'journal'
+      : 'upgrade';
   const card = isDark ? '#141414' : '#ffffff';
-  const blue = '#3b82f6';
 
   // Open payment modal in-place without navigation.
   function openPayment(plan) {
     const source = feature
       ? (/ai/i.test(feature) ? 'ai_limit' : feature)
       : (reason?.toLowerCase().includes('journal') ? 'journal_limit' : 'ai_limit');
-    track('upgrade_clicked', { requiredPlan, feature: feature ?? 'unknown', source, plan, ...upgradeMetadata });
+    track('upgrade_clicked', { requiredPlan, feature: feature ?? 'unknown', source, plan, billingCycle, ...upgradeMetadata });
     setPaymentPlan(plan);
   }
 
@@ -79,6 +65,7 @@ export default function PlanGateModal({ reason, feature, requiredPlan = 'pro', o
     {paymentPlan && (
       <PaymentOptionsModal
         plan={paymentPlan}
+        billingCycle={billingCycle}
         onClose={() => {
           setPaymentPlan(null);
           onClose();
@@ -144,69 +131,31 @@ export default function PlanGateModal({ reason, feature, requiredPlan = 'pro', o
           <p style={{ color: isDark ? '#fca5a5' : '#dc2626', fontSize: 14, fontWeight: 600, margin: 0 }}>{reason}</p>
           {featureLabel && (
             <p style={{ color: muted, fontSize: 13, margin: '4px 0 0' }}>
-              <strong style={{ color: text }}>{featureLabel}</strong> requires the {targetPlan.name} plan.
+              <strong style={{ color: text }}>{featureLabel}</strong> requires at least the {requiredPlan === 'elite' ? 'Elite' : 'Pro'} plan.
             </p>
           )}
         </div>
 
-        {/* Feature checklist */}
         <div style={{ padding: '16px 22px' }}>
-          <p style={{ color: muted, fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', margin: '0 0 10px' }}>
-            Included in {targetPlan.name}
-          </p>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
-            {(highlightFeatures[requiredPlan] || []).map((f) => (
-              <div key={f} style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
-                <div style={{ width: 18, height: 18, borderRadius: '50%', flexShrink: 0, background: 'rgba(59,130,246,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <Check size={10} color={blue} />
-                </div>
-                <span style={{ color: text, fontSize: 13 }}>{f}</span>
-              </div>
-            ))}
-          </div>
+          <PricingPlanSelector
+            context={pricingContext}
+            mode="compact"
+            title="Unlock the plan that removes this limit"
+            subtitle="The same Elite-first pricing system is used here, so your upgrade choice matches the rest of the app."
+            selectedPlan={selectedPlan}
+            onSelectPlan={setSelectedPlan}
+            billingCycle={billingCycle}
+            onBillingCycleChange={setBillingCycle}
+            onPrimaryAction={(plan) => openPayment(plan)}
+            experimentVariant="plan-gate-v1"
+            onTrack={(event, payload) => track('pricing_selector_event', {
+              event,
+              ...payload,
+              source: 'plan_gate_modal',
+              requiredPlan,
+            })}
+          />
         </div>
-
-        {/* CTA + price */}
-        <div style={{ margin: '0 22px 16px', padding: '14px 16px', borderRadius: 12, background: isDark ? 'rgba(59,130,246,0.06)' : 'rgba(59,130,246,0.04)', border: '1px solid rgba(59,130,246,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8 }}>
-          <div>
-            <span style={{ color: text, fontWeight: 800, fontSize: 24 }}>${targetPlan.price}</span>
-            <span style={{ color: muted, fontSize: 13 }}>/month</span>
-          </div>
-          <button
-            type="button"
-            onClick={() => openPayment(requiredPlan)}
-            style={{
-              display: 'inline-flex', alignItems: 'center', gap: 6,
-              padding: '10px 18px', borderRadius: 9,
-              background: 'linear-gradient(135deg, #1d4ed8, #0284c7)',
-              color: '#fff', fontSize: 14, fontWeight: 700, textDecoration: 'none',
-              boxShadow: '0 4px 14px rgba(59,130,246,0.32)',
-              border: 'none', cursor: 'pointer',
-              transition: 'filter 0.15s',
-            }}
-            onMouseOver={(e) => { e.currentTarget.style.filter = 'brightness(1.1)'; }}
-            onMouseOut={(e) => { e.currentTarget.style.filter = 'brightness(1)'; }}
-          >
-            Unlock {targetPlan.name} <ArrowRight size={13} />
-          </button>
-        </div>
-
-        {/* Elite upsell row (only when targeting Pro) */}
-        {higherPlan && (
-          <div style={{ margin: '0 22px 16px', padding: '9px 14px', borderRadius: 10, background: isDark ? 'rgba(255,255,255,0.03)' : '#f8fafc', border: `1px solid ${isDark ? 'rgba(255,255,255,0.06)' : '#e2e8f0'}`, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
-            <span style={{ color: muted, fontSize: 13 }}>
-              Need unlimited AI?&nbsp;
-              <strong style={{ color: text }}>Elite is ${higherPlan.price}/mo</strong>
-            </span>
-            <button
-              type="button"
-              onClick={() => openPayment('elite')}
-              style={{ color: blue, fontSize: 13, fontWeight: 700, background: 'transparent', border: 'none', padding: 0, display: 'flex', alignItems: 'center', gap: 3, whiteSpace: 'nowrap', cursor: 'pointer' }}
-            >
-              See Elite <ArrowRight size={12} />
-            </button>
-          </div>
-        )}
 
         {/* Footer */}
         <div style={{ padding: '0 22px 18px', textAlign: 'center' }}>

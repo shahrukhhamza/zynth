@@ -4,7 +4,7 @@ import { motion, AnimatePresence, useInView } from 'framer-motion';
 import {
   BarChart2, BookOpen, Shield, Zap, Brain, Users,
   AlertCircle, FileSpreadsheet,
-  Calendar, ChevronDown, ChevronUp, Check, ArrowRight, Menu, X,
+  Calendar, ChevronDown, ChevronUp, ChevronLeft, ChevronRight, Check, ArrowRight, Menu, X,
   RefreshCw, Bot, Trophy, Activity, Bell, Star, Info,
   Sun, Moon,
 } from 'lucide-react';
@@ -14,8 +14,205 @@ import Hero from './Hero';
 import AIInsightsSection from './AIInsightsSection';
 import HowItWorks from './HowItWorks';
 import WhyTradersFail from './WhyTradersFail';
+import PricingPlanSelector from './pricing/PricingPlanSelector';
 import { BrandMark } from './BrandLogo';
 import { useTheme } from '../contexts/ThemeContext';
+import { DEFAULT_BILLING_CYCLE, DEFAULT_SELECTED_PLAN, BILLING_PRICES, ANCHORED_PRICES } from '../config/pricingPlans';
+import SocialProofToast from './SocialProofToast';
+
+// ─── Testimonial data ────────────────────────────────────────────────────────
+const TESTIMONIALS = [
+  {
+    quote: "I kept blaming news events for my losses. After logging about 30 trades, the AI pointed out I was entering before confirmation, not waiting for structure to form. That one observation changed how I build setups.",
+    timeRef: 'After 3 weeks of journaling',
+    name: 'Daniel O.',
+    role: 'GBP/USD intraday trader',
+    avatarColor: 'linear-gradient(135deg,#1d4ed8,#0ea5e9)',
+  },
+  {
+    quote: "I swing trade gold and some weeks just felt completely off. The macro context scores helped me realise I was positioning against the broader bias without knowing it. I have been far more selective since.",
+    timeRef: 'Within the first month',
+    name: 'Priya R.',
+    role: 'XAU/USD swing trader, Asian session',
+    avatarColor: 'linear-gradient(135deg,#7c3aed,#a855f7)',
+  },
+  {
+    quote: "Honestly didn't expect much from another trading app. But having the journal, AI feedback, and economic calendar in one place meant I actually started reviewing my trades instead of just moving on.",
+    timeRef: 'First 10 trades logged',
+    name: 'James F.',
+    role: 'Crypto and indices, part-time trader',
+    avatarColor: 'linear-gradient(135deg,#0f766e,#06b6d4)',
+  },
+  {
+    quote: "I used to think I had a strategy. Turns out I had a collection of habits, some good and some not. The pattern analysis made that very clear within the first two weeks. Uncomfortable but genuinely useful.",
+    timeRef: 'Two weeks in',
+    name: 'Tom B.',
+    role: 'NAS100 scalper, London open',
+    avatarColor: 'linear-gradient(135deg,#b45309,#f59e0b)',
+  },
+  {
+    quote: "The economic calendar integration is what sold me. I used to miss high-impact events and wonder why my trades went sideways. Now I can see the context before I size up.",
+    timeRef: 'After first month',
+    name: 'Leila M.',
+    role: 'EUR/USD and USD/JPY, news trader',
+    avatarColor: 'linear-gradient(135deg,#be185d,#ec4899)',
+  },
+  {
+    quote: "I was journaling in a spreadsheet before. This is a different experience. The AI feedback doesn't just describe what happened, it asks the kind of questions I should be asking myself.",
+    timeRef: 'Within the first two weeks',
+    name: 'Chris A.',
+    role: 'Forex swing trader, multiple pairs',
+    avatarColor: 'linear-gradient(135deg,#166534,#22c55e)',
+  },
+];
+
+const T_N     = TESTIMONIALS.length;
+const T_DUPED = [...TESTIMONIALS, ...TESTIMONIALS, ...TESTIMONIALS];
+const T_TOTAL = T_DUPED.length;
+
+function TestimonialCarousel({ isDark }) {
+  const [visibleCount, setVisibleCount] = useState(3);
+  const [index, setIndex]   = useState(T_N);
+  const [animated, setAnimated] = useState(true);
+  const [paused, setPaused] = useState(false);
+
+  useEffect(() => {
+    const update = () => {
+      const w = window.innerWidth;
+      const next = w < 640 ? 1 : w < 1024 ? 2 : 3;
+      setVisibleCount(next);
+      setAnimated(false);
+      setIndex(T_N);
+      requestAnimationFrame(() => requestAnimationFrame(() => setAnimated(true)));
+    };
+    update();
+    window.addEventListener('resize', update);
+    return () => window.removeEventListener('resize', update);
+  }, []);
+
+  useEffect(() => {
+    if (paused) return;
+    const id = setInterval(() => setIndex(i => i + 1), 4000);
+    return () => clearInterval(id);
+  }, [paused]);
+
+  // Seamless loop: jump silently to middle copy after transition
+  useEffect(() => {
+    if (index < T_N || index >= T_N * 2) {
+      const target = index >= T_N * 2 ? T_N : T_N * 2 - 1;
+      const t = setTimeout(() => {
+        setAnimated(false);
+        setIndex(target);
+        requestAnimationFrame(() => requestAnimationFrame(() => setAnimated(true)));
+      }, 560);
+      return () => clearTimeout(t);
+    }
+  }, [index]);
+
+  const trackPct    = (T_TOTAL / visibleCount) * 100;
+  const translateX  = -((index / T_TOTAL) * 100);
+  const activeDot   = ((index - T_N) % T_N + T_N) % T_N;
+
+  const arrowCls  = 'flex items-center justify-center w-8 h-8 rounded-full border transition-all duration-200 hover:scale-105';
+  const arrowStyle = {
+    borderColor: isDark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.12)',
+    background:  isDark ? 'rgba(255,255,255,0.04)' : '#fff',
+    color:       isDark ? '#9ca3af' : '#6b7280',
+  };
+
+  return (
+    <div>
+      {/* Header */}
+      <div className="text-center mb-12">
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-5 border"
+             style={{background:'rgba(245,158,11,0.07)', borderColor:'rgba(245,158,11,0.22)'}}>
+          <Star className="w-3.5 h-3.5 text-amber-400" />
+          <span className="text-[11px] font-bold tracking-[0.18em] text-amber-400">TESTIMONIALS</span>
+        </div>
+        <h2 className={`text-[42px] font-extrabold tracking-tight ${isDark ? 'text-white' : 'text-gray-900'}`}>
+          <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#1d4ed8] to-[#06b6d4]">What traders are saying</span>
+        </h2>
+        <p className={`mt-3 text-[14px] ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>
+          Trusted by traders improving their edge every day
+        </p>
+      </div>
+
+      {/* Slider track */}
+      <div
+        className="overflow-hidden -mx-3 px-3"
+        onMouseEnter={() => setPaused(true)}
+        onMouseLeave={() => setPaused(false)}
+      >
+        <div
+          style={{
+            display: 'flex',
+            width: `${trackPct}%`,
+            transform: `translateX(${translateX}%)`,
+            transition: animated ? 'transform 0.55s cubic-bezier(0.4,0,0.2,1)' : 'none',
+            willChange: 'transform',
+          }}
+        >
+          {T_DUPED.map(({ quote, timeRef, name, role, avatarColor }, i) => (
+            <div key={i} style={{ width: `${100 / T_TOTAL}%`, padding: '0 12px', boxSizing: 'border-box' }}>
+              <div
+                className="flex flex-col rounded-2xl p-6 border h-full"
+                style={{
+                  background:  isDark ? '#0f172a' : '#ffffff',
+                  borderColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.07)',
+                  boxShadow:   isDark ? '0 2px 20px rgba(0,0,0,0.5)' : '0 1px 3px rgba(0,0,0,0.04), 0 4px 20px rgba(0,0,0,0.07)',
+                }}
+              >
+                <div className="flex gap-0.5 mb-4">
+                  {[...Array(5)].map((_, s) => <span key={s} className="text-[13px]" style={{color:'#f59e0b',opacity:0.85}}>★</span>)}
+                </div>
+                <p className={`text-[13.5px] leading-relaxed flex-1 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>"{quote}"</p>
+                <div className="mt-4 mb-4">
+                  <span className={`inline-block text-[10.5px] font-semibold px-2.5 py-1 rounded-full border tracking-wide ${
+                    isDark ? 'border-white/10 bg-white/5 text-gray-400' : 'border-gray-200 bg-gray-50 text-gray-500'
+                  }`}>{timeRef}</span>
+                </div>
+                <div className={`border-t mb-4 ${isDark ? 'border-white/[0.06]' : 'border-gray-100'}`} />
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-full flex items-center justify-center text-[13px] font-bold text-white shrink-0"
+                       style={{background: avatarColor}}>{name[0]}</div>
+                  <div>
+                    <p className={`text-[13px] font-semibold leading-tight ${isDark ? 'text-white' : 'text-gray-900'}`}>{name}</p>
+                    <p className={`text-[11px] mt-0.5 ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>{role}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Navigation */}
+      <div className="flex items-center justify-center gap-3 mt-8">
+        <button aria-label="Previous" className={arrowCls} style={arrowStyle}
+          onClick={() => { setAnimated(true); setIndex(i => i - 1); }}>
+          <ChevronLeft size={14} />
+        </button>
+        {TESTIMONIALS.map((_, d) => (
+          <button key={d} aria-label={`Slide ${d + 1}`}
+            className="rounded-full transition-all duration-300"
+            style={{
+              width:      activeDot === d ? 20 : 8,
+              height:     8,
+              background: activeDot === d
+                ? (isDark ? '#60a5fa' : '#1d4ed8')
+                : (isDark ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.15)'),
+            }}
+            onClick={() => { setAnimated(true); setIndex(T_N + d); }}
+          />
+        ))}
+        <button aria-label="Next" className={arrowCls} style={arrowStyle}
+          onClick={() => { setAnimated(true); setIndex(i => i + 1); }}>
+          <ChevronRight size={14} />
+        </button>
+      </div>
+    </div>
+  );
+}
 
 // Scroll-reveal wrapper — fades + slides up when entering viewport
 function Reveal({ children, delay = 0, className = '' }) {
@@ -57,56 +254,6 @@ const INITIAL_MARKETS = [
   { sym: 'WTI OIL', val: 88.07,   fmt: '$88.07',    chg: '+1.54%', up: true,  step: 0.06 },
 ];
 
-const PLANS = [
-  {
-    name: 'Free',
-    monthly: 0,
-    yearly: 0,
-    yearlyMonthlyEquivalent: 0,
-    desc: 'Start tracking. Discover your patterns.',
-    features: [
-      'Up to 10 journal entries',
-      'Basic analytics dashboard',
-      'Economic calendar access',
-      '3 free AI analyses',
-    ],
-    cta: 'Start Free — No Card Needed',
-    highlight: false,
-  },
-  {
-    name: 'Pro',
-    monthly: 9,
-    yearly: 90,
-    yearlyMonthlyEquivalent: 7.5,
-    desc: 'For active traders serious about improving their edge.',
-    badge: 'MOST POPULAR',
-    features: [
-      'Unlimited journal entries',
-      'AI Trade Analysis: 50 analyses/month',
-      'Full Economic Intelligence',
-      'Macro Surprise Score',
-    ],
-    cta: 'Start Improving My Trades',
-    highlight: true,
-  },
-  {
-    name: 'Elite',
-    monthly: 19,
-    yearly: 190,
-    yearlyMonthlyEquivalent: 15.83,
-    desc: 'For professional traders who want every possible edge.',
-    badge: 'BEST VALUE',
-    features: [
-      'Everything in Pro',
-      'Unlimited AI Trade Analysis',
-      'Custom AI reports',
-      'Trading DNA profile',
-    ],
-    cta: 'Analyze My Trades Now',
-    highlight: false,
-  },
-];
-
 const FAQS = [
   { q: 'What is Zynth?', a: 'Zynth is a professional trading intelligence platform built for serious traders. It combines live market data, AI-powered trade analysis, economic intelligence, and a rich trade journal — all in one dashboard.' },
   { q: 'Is my data safe?', a: 'Yes. All data is encrypted in transit (TLS 1.3) and stored securely. We never share or sell your trading data to anyone.' },
@@ -139,10 +286,419 @@ const FEATURE_CARDS = [
 ];
 
 
+function LandingPricing({ isDark, onGetStarted }) {
+  const [cycle, setCycle] = useState('annual');
+  const isAnnual = cycle === 'annual';
+
+  const elite = {
+    price:    BILLING_PRICES[cycle].elite,
+    anchored: ANCHORED_PRICES[cycle].elite,
+    savings:  isAnnual ? `Save $${(BILLING_PRICES.monthly.elite * 12) - BILLING_PRICES.annual.elite}/year` : null,
+    daily:    isAnnual ? (BILLING_PRICES.annual.elite / 365).toFixed(2) : null,
+  };
+  const pro = {
+    price:    BILLING_PRICES[cycle].pro,
+    anchored: ANCHORED_PRICES[cycle].pro,
+    savings:  isAnnual ? `Save $${(BILLING_PRICES.monthly.pro * 12) - BILLING_PRICES.annual.pro}/year` : null,
+    daily:    isAnnual ? (BILLING_PRICES.annual.pro / 365).toFixed(2) : null,
+  };
+
+  const eliteFeatures = [
+    'Unlimited AI insights — no daily limits',
+    'Premium strategy breakdowns and deeper reporting',
+    'Advanced analytics dashboard',
+    'Economic intelligence and macro context',
+    'Unlimited journal entries',
+    'Priority support and early feature access',
+  ];
+  const proFeatures = [
+    '50 AI insights per month',
+    'Advanced analytics dashboard',
+    'Economic intelligence and macro context',
+    'Unlimited journal entries',
+    'Full access to all core trading tools',
+  ];
+
+  return (
+    <section id="pricing" className="relative py-28 px-6 overflow-hidden">
+
+      {/* ── Ambient glows ─────────────────────────────────────────── */}
+      <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
+        {isDark ? (
+          <>
+            <div style={{ position:'absolute', top:'5%', left:'-5%', width:760, height:760, background:'radial-gradient(ellipse, rgba(124,58,237,0.16) 0%, transparent 65%)', borderRadius:'50%' }} />
+            <div style={{ position:'absolute', top:'15%', right:'-5%', width:560, height:560, background:'radial-gradient(ellipse, rgba(59,130,246,0.11) 0%, transparent 65%)', borderRadius:'50%' }} />
+            <div style={{ position:'absolute', top:'-5%', left:'50%', width:900, height:450, transform:'translateX(-50%)', background:'radial-gradient(ellipse, rgba(139,92,246,0.07) 0%, transparent 60%)' }} />
+            <div style={{ position:'absolute', bottom:0, left:0, right:0, height:160, background:'linear-gradient(to bottom, transparent, rgba(2,6,23,0.6))' }} />
+          </>
+        ) : (
+          <>
+            <div style={{ position:'absolute', top:'0%', left:'-8%', width:700, height:700, background:'radial-gradient(ellipse, rgba(139,92,246,0.08) 0%, transparent 65%)', borderRadius:'50%' }} />
+            <div style={{ position:'absolute', top:'10%', right:'-8%', width:520, height:520, background:'radial-gradient(ellipse, rgba(59,130,246,0.07) 0%, transparent 65%)', borderRadius:'50%' }} />
+          </>
+        )}
+      </div>
+
+      <div className="relative z-10 max-w-5xl mx-auto">
+
+        {/* ── Header ───────────────────────────────────────────────── */}
+        <Reveal className="text-center mb-14">
+          {/* Social proof */}
+          <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full mb-5 text-[12px] font-medium ${
+            isDark ? 'bg-white/[0.05] border border-white/[0.08] text-slate-400' : 'bg-white border border-slate-200 text-slate-500 shadow-sm'
+          }`}>
+            <span className="text-yellow-400 tracking-tight text-[13px]">★★★★★</span>
+            <span className={isDark ? 'text-slate-600' : 'text-slate-300'}>|</span>
+            Trusted by <span className={`font-semibold ${isDark ? 'text-slate-200' : 'text-slate-700'}`}>2,400+ traders</span>
+          </div>
+
+          {/* Section label */}
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full mb-5 border block"
+               style={{
+                 background: isDark ? 'rgba(124,58,237,0.08)' : 'rgba(124,58,237,0.05)',
+                 borderColor: isDark ? 'rgba(124,58,237,0.28)' : 'rgba(124,58,237,0.18)',
+               }}>
+            <span className="text-[11px] font-bold tracking-[0.18em] text-violet-400">PRICING</span>
+          </div>
+
+          <h2 className="text-[46px] md:text-[54px] font-black tracking-tight leading-[1.06] mb-4">
+            {isDark ? (
+              <span className="bg-clip-text text-transparent bg-gradient-to-br from-white via-slate-100 to-violet-300">
+                Simple pricing,<br />serious results
+              </span>
+            ) : (
+              <span className="bg-clip-text text-transparent bg-gradient-to-br from-gray-900 via-slate-800 to-violet-700">
+                Simple pricing,<br />serious results
+              </span>
+            )}
+          </h2>
+          <p className={`text-[16px] max-w-sm mx-auto leading-relaxed ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+            No surprises. No lock-in. Cancel anytime.
+          </p>
+        </Reveal>
+
+        {/* ── Billing toggle ───────────────────────────────────────── */}
+        <Reveal className="flex items-center justify-center gap-4 mb-12">
+          <div className="inline-flex rounded-full p-1"
+               style={{
+                 background: isDark ? 'rgba(255,255,255,0.05)' : '#f1f5f9',
+                 border: isDark ? '1px solid rgba(255,255,255,0.09)' : '1px solid rgba(0,0,0,0.07)',
+               }}>
+            {['monthly', 'annual'].map((c) => (
+              <button
+                key={c}
+                onClick={() => setCycle(c)}
+                className="relative px-5 py-2 rounded-full text-[13px] font-semibold transition-all duration-200"
+                style={cycle === c
+                  ? isDark
+                    ? { background: 'rgba(255,255,255,0.12)', color: '#ffffff', boxShadow: '0 1px 4px rgba(0,0,0,0.3)' }
+                    : { background: '#ffffff', color: '#0f172a', boxShadow: '0 1px 4px rgba(0,0,0,0.1), 0 0 0 1px rgba(0,0,0,0.04)' }
+                  : { color: isDark ? '#64748b' : '#94a3b8' }
+                }
+              >
+                {c === 'annual' ? 'Annual' : 'Monthly'}
+              </button>
+            ))}
+          </div>
+          {isAnnual && (
+            <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-bold border
+              ${isDark
+                ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'
+                : 'bg-emerald-50 border-emerald-200 text-emerald-700'
+              }`}>
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block" />
+              2 months free
+            </span>
+          )}
+        </Reveal>
+
+        {/* ── Cards ────────────────────────────────────────────────── */}
+        <div className="grid md:grid-cols-2 gap-5 items-stretch">
+
+          {/* ── Elite ── */}
+          <Reveal>
+            <div
+              className="rounded-[28px] relative overflow-hidden flex flex-col h-full transition-all duration-300 hover:-translate-y-1.5"
+              style={isDark ? {
+                background: 'linear-gradient(150deg, #1c0d40 0%, #13092f 40%, #0f1429 100%)',
+                border: '1px solid rgba(168,85,247,0.3)',
+                boxShadow: '0 0 0 1px rgba(168,85,247,0.07), 0 32px 80px rgba(0,0,0,0.7), 0 0 100px rgba(124,58,237,0.14)',
+              } : {
+                background: 'linear-gradient(155deg, #faf5ff 0%, #f3e8ff 25%, #ede9fe 55%, #ffffff 80%)',
+                border: '1.5px solid rgba(139,92,246,0.28)',
+                boxShadow: '0 0 0 4px rgba(139,92,246,0.06), 0 20px 60px rgba(124,58,237,0.12), 0 4px 16px rgba(0,0,0,0.04)',
+              }}
+            >
+              {/* Top shine */}
+              <div className="absolute inset-0 pointer-events-none"
+                   style={{ background: isDark
+                     ? 'radial-gradient(ellipse 80% 40% at 50% -5%, rgba(168,85,247,0.22) 0%, transparent 60%)'
+                     : 'radial-gradient(ellipse 80% 40% at 50% -5%, rgba(167,139,250,0.22) 0%, transparent 60%)' }} />
+
+              <div className="relative p-8 md:p-9 flex flex-col flex-1">
+
+                {/* Plan header */}
+                <div className="flex items-start justify-between mb-5">
+                  <div>
+                    <span className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[10px] font-extrabold uppercase tracking-[0.14em] mb-3"
+                          style={isDark ? {
+                            background: 'rgba(168,85,247,0.18)', border: '1px solid rgba(168,85,247,0.35)', color: '#c084fc',
+                          } : {
+                            background: 'linear-gradient(135deg, rgba(124,58,237,0.1) 0%, rgba(167,139,250,0.08) 100%)',
+                            border: '1px solid rgba(139,92,246,0.3)', color: '#6d28d9',
+                            boxShadow: '0 1px 4px rgba(139,92,246,0.1)',
+                          }}>
+                      🔥 Most Popular
+                    </span>
+                    <h3 className={`text-[22px] font-extrabold tracking-tight leading-none ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                      Elite
+                    </h3>
+                    <p className={`text-[13.5px] mt-1.5 leading-snug ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+                      For traders who operate without limits
+                    </p>
+                  </div>
+                  {isAnnual && elite.savings && (
+                    <span className={`shrink-0 text-[11px] font-bold px-2.5 py-1 rounded-lg mt-1 ${
+                      isDark ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/15' : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                    }`}>{elite.savings}</span>
+                  )}
+                </div>
+
+                {/* Price block */}
+                <div className="mb-7 pb-6"
+                     style={{ borderBottom: isDark ? '1px solid rgba(255,255,255,0.06)' : '1px solid rgba(139,92,246,0.12)' }}>
+                  <div className="flex items-end gap-2 mb-1">
+                    {elite.anchored > elite.price && (
+                      <span className={`pb-2.5 text-[14px] font-medium line-through ${isDark ? 'text-slate-600' : 'text-slate-400'}`}>
+                        ${elite.anchored}
+                      </span>
+                    )}
+                    <span className={`text-[60px] font-black leading-none tracking-tight ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                      ${elite.price}
+                    </span>
+                    <div className="pb-2.5">
+                      <div className={`text-[13px] font-medium ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+                        /{isAnnual ? 'year' : 'month'}
+                      </div>
+                      {elite.daily && (
+                        <div className={`text-[11px] ${isDark ? 'text-slate-600' : 'text-slate-400'}`}>
+                          ${elite.daily}/day
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* CTA */}
+                <button
+                  onClick={() => onGetStarted?.({ plan: 'elite', billingCycle: cycle })}
+                  className="w-full rounded-xl py-[14px] text-[14px] font-bold text-white mb-7 transition-all duration-200 active:scale-[0.98] tracking-wide"
+                  style={{ background: 'linear-gradient(135deg, #6d28d9 0%, #7c3aed 50%, #8b5cf6 100%)', boxShadow: isDark ? '0 4px 24px rgba(124,58,237,0.4), 0 1px 4px rgba(0,0,0,0.3)' : '0 6px 24px rgba(109,40,217,0.32), 0 2px 6px rgba(109,40,217,0.18)' }}
+                  onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 10px 36px rgba(124,58,237,0.55), 0 2px 8px rgba(0,0,0,0.2)'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.boxShadow = isDark ? '0 4px 24px rgba(124,58,237,0.4), 0 1px 4px rgba(0,0,0,0.3)' : '0 6px 24px rgba(109,40,217,0.32), 0 2px 6px rgba(109,40,217,0.18)'; e.currentTarget.style.transform = ''; }}
+                >
+                  Get Elite Access →
+                </button>
+
+                {/* Features */}
+                <p className={`text-[10.5px] font-extrabold uppercase tracking-[0.14em] mb-4 ${isDark ? 'text-slate-600' : 'text-slate-400'}`}>
+                  Everything in Pro, plus:
+                </p>
+                <ul className="space-y-3 flex-1">
+                  {eliteFeatures.map((f) => (
+                    <li key={f} className="flex items-start gap-3">
+                      <span className="shrink-0 mt-[1px] w-[18px] h-[18px] rounded-full flex items-center justify-center"
+                            style={isDark
+                              ? { background: 'rgba(167,139,250,0.15)', boxShadow: '0 0 0 2px rgba(167,139,250,0.08)' }
+                              : { background: 'rgba(139,92,246,0.12)', boxShadow: '0 0 0 3px rgba(139,92,246,0.06)' }}>
+                        <Check className="w-[9px] h-[9px]" style={{ color: isDark ? '#c084fc' : '#7c3aed' }} />
+                      </span>
+                      <span className={`text-[13px] leading-snug ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>{f}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </Reveal>
+
+          {/* ── Pro ── */}
+          <Reveal delay={0.1}>
+            <div
+              className="rounded-[28px] relative overflow-hidden flex flex-col h-full transition-all duration-300 hover:-translate-y-1.5"
+              style={isDark ? {
+                background: 'linear-gradient(150deg, #060f22 0%, #091528 50%, #0a1628 100%)',
+                border: '1px solid rgba(59,130,246,0.15)',
+                boxShadow: '0 24px 64px rgba(0,0,0,0.6), 0 0 0 1px rgba(59,130,246,0.04)',
+              } : {
+                background: 'linear-gradient(155deg, #eff6ff 0%, #dbeafe 25%, #e0f2fe 50%, #ffffff 80%)',
+                border: '1.5px solid rgba(59,130,246,0.2)',
+                boxShadow: '0 0 0 4px rgba(59,130,246,0.04), 0 16px 48px rgba(37,99,235,0.09), 0 4px 12px rgba(0,0,0,0.04)',
+              }}
+            >
+              {/* Top shine */}
+              <div className="absolute inset-0 pointer-events-none"
+                   style={{ background: isDark
+                     ? 'radial-gradient(ellipse 80% 40% at 50% -5%, rgba(59,130,246,0.14) 0%, transparent 60%)'
+                     : 'radial-gradient(ellipse 80% 40% at 50% -5%, rgba(147,197,253,0.25) 0%, transparent 60%)' }} />
+
+              <div className="relative p-8 md:p-9 flex flex-col flex-1">
+
+                {/* Plan header */}
+                <div className="flex items-start justify-between mb-5">
+                  <div>
+                    <span className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[10px] font-extrabold uppercase tracking-[0.14em] mb-3"
+                          style={isDark ? {
+                            background: 'rgba(59,130,246,0.15)', border: '1px solid rgba(59,130,246,0.25)', color: '#93c5fd',
+                          } : {
+                            background: 'rgba(219,234,254,0.8)', border: '1px solid rgba(147,197,253,0.5)', color: '#1d4ed8',
+                          }}>
+                      ⚡ Great Value
+                    </span>
+                    <h3 className={`text-[22px] font-extrabold tracking-tight leading-none ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                      Pro
+                    </h3>
+                    <p className={`text-[13.5px] mt-1.5 leading-snug ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+                      AI-powered feedback to build consistency
+                    </p>
+                  </div>
+                  {isAnnual && pro.savings && (
+                    <span className={`shrink-0 text-[11px] font-bold px-2.5 py-1 rounded-lg mt-1 ${
+                      isDark ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/15' : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                    }`}>{pro.savings}</span>
+                  )}
+                </div>
+
+                {/* Price block */}
+                <div className="mb-7 pb-6"
+                     style={{ borderBottom: isDark ? '1px solid rgba(255,255,255,0.04)' : '1px solid rgba(59,130,246,0.1)' }}>
+                  <div className="flex items-end gap-2 mb-1">
+                    {pro.anchored > pro.price && (
+                      <span className={`pb-2.5 text-[14px] font-medium line-through ${isDark ? 'text-slate-600' : 'text-slate-400'}`}>
+                        ${pro.anchored}
+                      </span>
+                    )}
+                    <span className={`text-[60px] font-black leading-none tracking-tight ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                      ${pro.price}
+                    </span>
+                    <div className="pb-2.5">
+                      <div className={`text-[13px] font-medium ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+                        /{isAnnual ? 'year' : 'month'}
+                      </div>
+                      {pro.daily && (
+                        <div className={`text-[11px] ${isDark ? 'text-slate-600' : 'text-slate-400'}`}>
+                          ${pro.daily}/day
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* CTA */}
+                <button
+                  onClick={() => onGetStarted?.({ plan: 'pro', billingCycle: cycle })}
+                  className="w-full rounded-xl py-[14px] text-[14px] font-bold mb-7 transition-all duration-200 active:scale-[0.98] tracking-wide"
+                  style={isDark ? {
+                    background: 'rgba(59,130,246,0.12)',
+                    border: '1px solid rgba(59,130,246,0.25)',
+                    color: '#93c5fd',
+                    boxShadow: '0 1px 4px rgba(0,0,0,0.3)',
+                  } : {
+                    background: 'linear-gradient(135deg, #1d4ed8 0%, #2563eb 55%, #3b82f6 100%)',
+                    color: '#ffffff',
+                    boxShadow: '0 5px 20px rgba(37,99,235,0.3), 0 2px 6px rgba(37,99,235,0.15)',
+                  }}
+                  onMouseEnter={e => {
+                    if (isDark) {
+                      e.currentTarget.style.background = 'rgba(59,130,246,0.2)';
+                      e.currentTarget.style.borderColor = 'rgba(59,130,246,0.4)';
+                      e.currentTarget.style.color = '#ffffff';
+                    } else {
+                      e.currentTarget.style.boxShadow = '0 10px 32px rgba(37,99,235,0.4), 0 2px 8px rgba(37,99,235,0.2)';
+                      e.currentTarget.style.transform = 'translateY(-1px)';
+                    }
+                  }}
+                  onMouseLeave={e => {
+                    if (isDark) {
+                      e.currentTarget.style.background = 'rgba(59,130,246,0.12)';
+                      e.currentTarget.style.borderColor = 'rgba(59,130,246,0.25)';
+                      e.currentTarget.style.color = '#93c5fd';
+                    } else {
+                      e.currentTarget.style.boxShadow = '0 5px 20px rgba(37,99,235,0.3), 0 2px 6px rgba(37,99,235,0.15)';
+                      e.currentTarget.style.transform = '';
+                    }
+                  }}
+                >
+                  Start with Pro →
+                </button>
+
+                {/* Features */}
+                <p className={`text-[10.5px] font-extrabold uppercase tracking-[0.14em] mb-4 ${isDark ? 'text-slate-600' : 'text-slate-400'}`}>
+                  What's included:
+                </p>
+                <ul className="space-y-3 flex-1">
+                  {proFeatures.map((f) => (
+                    <li key={f} className="flex items-start gap-3">
+                      <span className="shrink-0 mt-[1px] w-[18px] h-[18px] rounded-full flex items-center justify-center"
+                            style={isDark
+                              ? { background: 'rgba(96,165,250,0.13)', boxShadow: '0 0 0 2px rgba(96,165,250,0.07)' }
+                              : { background: 'rgba(59,130,246,0.1)', boxShadow: '0 0 0 3px rgba(59,130,246,0.05)' }}>
+                        <Check className="w-[9px] h-[9px]" style={{ color: isDark ? '#60a5fa' : '#2563eb' }} />
+                      </span>
+                      <span className={`text-[13px] leading-snug ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>{f}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </Reveal>
+        </div>
+
+        {/* ── Trust signals ────────────────────────────────────────── */}
+        <Reveal className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
+          {[
+            { label: 'Cancel anytime', icon: '✓' },
+            { label: 'No hidden fees', icon: '✓' },
+            { label: 'Secure checkout', icon: '🔒' },
+            { label: 'Instant access', icon: '⚡' },
+          ].map((t) => (
+            <span key={t.label} className={`flex items-center gap-1.5 text-[12px] font-medium ${isDark ? 'text-slate-600' : 'text-slate-400'}`}>
+              <span className={`text-emerald-500 text-[11px]`}>{t.icon}</span>
+              {t.label}
+            </span>
+          ))}
+        </Reveal>
+
+        {/* ── Free plan ────────────────────────────────────────────── */}
+        <Reveal className="mt-6 text-center">
+          <div className={`inline-flex items-center gap-3 px-5 py-2.5 rounded-2xl ${
+            isDark
+              ? 'bg-white/[0.03] border border-white/[0.06]'
+              : 'bg-white border border-slate-200/80 shadow-sm'
+          }`}>
+            <span className={`text-[13px] ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>
+              Not ready to commit?
+            </span>
+            <div className={`w-px h-3.5 ${isDark ? 'bg-white/10' : 'bg-slate-200'}`} />
+            <button
+              onClick={() => onGetStarted?.({ plan: 'free', billingCycle: 'monthly' })}
+              className={`text-[13px] font-semibold transition-all hover:opacity-80
+                ${isDark ? 'text-violet-400' : 'text-violet-600'}`}
+            >
+              Start free — no card needed →
+            </button>
+          </div>
+        </Reveal>
+
+      </div>
+    </section>
+  );
+}
+
 export default function LandingPage({ onSignIn, onGetStarted }) {
   const { isDark, toggleTheme } = useTheme();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [annual, setAnnual] = useState(true);
+  const [landingBillingCycle, setLandingBillingCycle] = useState(DEFAULT_BILLING_CYCLE);
+  const [selectedPlan, setSelectedPlan] = useState(DEFAULT_SELECTED_PLAN);
   const [openFaq, setOpenFaq] = useState(null);
   const [bannerDismissed, setBannerDismissed] = useState(
     () => sessionStorage.getItem('bannerDismissed') === '1'
@@ -323,24 +879,6 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
     return () => clearInterval(id);
   }, []);
 
-  const activePlans = PLANS;
-
-  function getDisplayedPrice(plan) {
-    if (!annual || plan.name === 'Free') {
-      return {
-        amount: plan.monthly,
-        suffix: '/mo',
-        helper: null,
-      };
-    }
-
-    return {
-      amount: plan.yearly,
-      suffix: '/year',
-      helper: `Equivalent to $${plan.yearlyMonthlyEquivalent.toFixed(2)}/mo`,
-    };
-  }
-
   function dismissBanner() {
     setBannerDismissed(true);
     sessionStorage.setItem('bannerDismissed', '1');
@@ -376,7 +914,14 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
       {/* Google Search Console Verification */}
       <meta name="google-site-verification" content="ar5DP4kEm7pNSlXYxO2CBLT0yc1Arr-whW3ymDjeflY" />
     </Helmet>
-    <div className={`min-h-screen overflow-x-hidden transition-colors duration-300 ${isDark ? 'bg-[#0a0a0a] text-white' : 'bg-[#f4f6f9] text-[#0a0e1a]'}`}>
+    <div
+      className={`min-h-screen overflow-x-hidden transition-colors duration-300 ${isDark ? 'bg-[#020617] text-white' : 'bg-[#f8fafc] text-[#0a0e1a]'}`}
+      style={{
+        backgroundImage: isDark
+          ? 'radial-gradient(ellipse 120% 50% at 50% 0%, rgba(99,102,241,0.08) 0%, transparent 55%), radial-gradient(ellipse 120% 50% at 50% 100%, rgba(59,130,246,0.07) 0%, transparent 55%)'
+          : 'radial-gradient(ellipse 110% 65% at 50% -10%, rgba(99,102,241,0.07) 0%, transparent 55%), radial-gradient(ellipse 70% 55% at 95% 105%, rgba(168,85,247,0.05) 0%, transparent 55%), radial-gradient(ellipse 140% 28% at 50% 52%, rgba(99,102,241,0.04) 0%, transparent 65%)',
+      }}
+    >
 
       {/* ── Custom cursor layers ────────────────────────────────────────── */}
       {/* Full-page ambient glow that follows mouse */}
@@ -485,12 +1030,16 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
       <header
         className="sticky top-0 z-50 border-b"
         style={{
-          background: isDark ? 'rgba(7,9,15,0.88)' : 'rgba(244,246,249,0.92)',
-          backdropFilter: 'blur(14px)',
-          WebkitBackdropFilter: 'blur(14px)',
-          borderBottomColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.07)',
+          background: scrolled
+            ? (isDark ? 'rgba(2,6,23,0.92)' : 'rgba(248,250,252,0.94)')
+            : 'transparent',
+          backdropFilter: scrolled ? 'blur(16px)' : 'none',
+          WebkitBackdropFilter: scrolled ? 'blur(16px)' : 'none',
+          borderBottomColor: scrolled
+            ? (isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.07)')
+            : 'transparent',
           boxShadow: scrolled ? (isDark ? '0 4px 24px rgba(0,0,0,0.35)' : '0 4px 24px rgba(0,0,0,0.08)') : 'none',
-          transition: 'box-shadow 0.3s ease',
+          transition: 'background 0.3s ease, backdrop-filter 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease',
         }}
       >
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
@@ -552,7 +1101,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
         {mobileOpen && (
           <div className="md:hidden border-t px-6 py-4 space-y-2"
                style={{
-                 background: isDark ? 'rgba(7,9,15,0.98)' : 'rgba(244,246,249,0.98)',
+                 background: isDark ? 'rgba(2,6,23,0.98)' : 'rgba(244,246,249,0.98)',
                  borderColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.07)',
                }}>
             {NAV_LINKS.map(l => (
@@ -603,7 +1152,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
       <WhyTradersFail onGetStarted={onGetStarted} />
 
       {/* ═══════════════════════════ FEATURES ═══════════════════════════ */}
-      <section id="features" className={`pt-16 pb-24 px-6 transition-colors duration-300 ${isDark ? '' : 'bg-[#f4f6f9]'}`}>
+      <section id="features" className="pt-16 pb-24 px-6 transition-colors duration-300">
         <div className="max-w-7xl mx-auto">
 
           {/* Section label */}
@@ -627,12 +1176,12 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
             <div className="flex-1 w-full">
               <div className="rounded-2xl border overflow-hidden"
                    style={{
-                     background: isDark ? '#141414' : '#ffffff',
+                     background: isDark ? '#0f172a' : '#ffffff',
                      borderColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.07)',
-                     boxShadow: isDark ? '0 20px 60px rgba(0,0,0,0.5)' : '0 20px 60px rgba(0,0,0,0.08)',
+                     boxShadow: isDark ? '0 24px 64px rgba(0,0,0,0.55)' : '0 4px 6px rgba(0,0,0,0.04), 0 12px 40px rgba(0,0,0,0.08)',
                    }}>
                 <div className="px-4 py-3 border-b flex items-center gap-2"
-                     style={{background: isDark ? '#111111' : '#f9fafb', borderColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.06)'}}>
+                     style={{background: isDark ? '#0c1420' : '#f8fafc', borderColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.06)'}}>
                   <div className="flex gap-1.5">
                     <div className="w-2.5 h-2.5 rounded-full bg-red-500/60" />
                     <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/60" />
@@ -710,12 +1259,12 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
             <div className="flex-1 w-full">
               <div className="rounded-2xl border overflow-hidden"
                    style={{
-                     background: isDark ? '#141414' : '#ffffff',
+                     background: isDark ? '#0f172a' : '#ffffff',
                      borderColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.07)',
-                     boxShadow: isDark ? '0 20px 60px rgba(0,0,0,0.5)' : '0 20px 60px rgba(0,0,0,0.08)',
+                     boxShadow: isDark ? '0 24px 64px rgba(0,0,0,0.55)' : '0 4px 6px rgba(0,0,0,0.04), 0 12px 40px rgba(0,0,0,0.08)',
                    }}>
                 <div className="px-4 py-3 border-b flex items-center gap-2"
-                     style={{background: isDark ? '#111111' : '#f9fafb', borderColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.06)'}}>
+                     style={{background: isDark ? '#0c1420' : '#f8fafc', borderColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.06)'}}>
                   <div className="flex gap-1.5">
                     <div className="w-2.5 h-2.5 rounded-full bg-red-500/60" />
                     <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/60" />
@@ -781,7 +1330,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
       </section>
 
       {/* ═══════════════════════════ FEATURE CARDS ═══════════════════════════ */}
-      <section className={`py-16 px-6 transition-colors duration-300`} style={{background: isDark ? '#0a0a0a' : '#eef1f7'}}>
+      <section className="py-16 px-6 transition-colors duration-300">
         <div className="max-w-7xl mx-auto">
           <div className="grid md:grid-cols-3 gap-6">
             {FEATURE_CARDS.map(({ Icon, title, desc, bullets }, i) => (
@@ -789,9 +1338,9 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
                 <div
                    className="rounded-2xl p-7 border h-full hover:-translate-y-1 transition-all duration-300"
                    style={{
-                     background: isDark ? '#141414' : '#ffffff',
-                     borderColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.07)',
-                     boxShadow: isDark ? 'none' : '0 4px 20px rgba(0,0,0,0.05)',
+                     background: isDark ? '#0f172a' : '#ffffff',
+                     borderColor: isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.07)',
+                     boxShadow: isDark ? '0 4px 32px rgba(0,0,0,0.5)' : '0 1px 3px rgba(0,0,0,0.04), 0 4px 20px rgba(0,0,0,0.07)',
                    }}>
                   <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-5"
                        style={{background:'linear-gradient(135deg,rgba(59,130,246,0.15),rgba(59,130,246,0.04))', border:'1px solid rgba(59,130,246,0.15)'}}>
@@ -813,10 +1362,12 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
       </section>
 
       {/* ═══════════════════════ MACRO SCORE SHOWCASE ══════════════════════ */}
-      <section className="py-24 px-6 relative overflow-hidden transition-colors duration-300" style={{background: isDark ? '#0a0a0a' : '#f4f6f9'}}>
+      <section className="py-24 px-6 relative overflow-hidden transition-colors duration-300">
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[500px]"
-               style={{background: isDark ? 'radial-gradient(ellipse,rgba(16,185,129,0.08) 0%,transparent 65%)' : 'radial-gradient(ellipse,rgba(59,130,246,0.07) 0%,transparent 65%)'}} />
+          {!isDark && (
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[500px]"
+                 style={{background: 'radial-gradient(ellipse,rgba(99,102,241,0.10) 0%,transparent 60%)'}} />
+          )}
         </div>
         <div className="relative z-10 max-w-4xl mx-auto text-center">
           {/* Pro badge */}
@@ -881,7 +1432,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
                 }}>
                   <line x1="100" y1="100" x2="100" y2="20"
                         stroke={isDark ? 'white' : '#0a0e1a'} strokeWidth="2.5" strokeLinecap="round" />
-                  <circle cx="100" cy="100" r="5.5" fill={isDark ? '#0a0a0a' : '#f4f6f9'} stroke={isDark ? 'white' : '#0a0e1a'} strokeWidth="2" />
+                  <circle cx="100" cy="100" r="5.5" fill={isDark ? '#020617' : '#f8fafc'} stroke={isDark ? 'white' : '#0a0e1a'} strokeWidth="2" />
                 </g>
               </svg>
               {/* Score number */}
@@ -918,7 +1469,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
       </section>
 
       {/* ═══════════════════════ STATS + TESTIMONIALS ═══════════════════════ */}
-      <section className="py-20 px-6 transition-colors duration-300" style={{background: isDark ? '#0a0a0a' : '#f4f6f9'}}>
+      <section className="py-20 px-6 transition-colors duration-300">
         <div className="max-w-7xl mx-auto">
 
           {/* ── Stats cards ── */}
@@ -941,9 +1492,9 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
               <Reveal key={stat} delay={i * 0.12}>
                 <div className="rounded-2xl p-7 text-center border"
                      style={{
-                       background: isDark ? '#141414' : '#ffffff',
-                       borderColor: isDark ? 'rgba(59,130,246,0.15)' : 'rgba(59,130,246,0.12)',
-                       boxShadow: isDark ? 'none' : '0 4px 20px rgba(0,0,0,0.05)',
+                       background: isDark ? '#0f172a' : '#ffffff',
+                       borderColor: isDark ? 'rgba(59,130,246,0.18)' : 'rgba(59,130,246,0.14)',
+                       boxShadow: isDark ? '0 4px 32px rgba(0,0,0,0.5)' : '0 1px 3px rgba(0,0,0,0.04), 0 4px 20px rgba(0,0,0,0.07)',
                      }}>
                   <p className="text-[52px] font-extrabold leading-none mb-3 bg-clip-text text-transparent bg-gradient-to-r from-[#1d4ed8] to-[#0284c7]">
                     {stat}
@@ -957,183 +1508,16 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
             *Based on external trading psychology research, not Zynth-specific data
           </p>
 
-          {/* ── Testimonial cards ── */}
-          <Reveal className="text-center mb-12">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-5 border"
-                 style={{background:'rgba(245,158,11,0.07)', borderColor:'rgba(245,158,11,0.22)'}}>
-              <Star className="w-3.5 h-3.5 text-amber-400" />
-              <span className="text-[11px] font-bold tracking-[0.18em] text-amber-400">TESTIMONIALS</span>
-            </div>
-            <h2 className={`text-[42px] font-extrabold tracking-tight ${isDark ? 'text-white' : 'text-gray-900'}`}>
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#1d4ed8] to-[#06b6d4]">What traders are saying</span>
-            </h2>
-          </Reveal>
-          <div className="grid md:grid-cols-3 gap-6">
-            {[
-              { quote: 'Game changer for my gold trading. The Macro Surprise Score alone is worth it.', name: 'Ahmed K.', pair: 'XAU/USD Trader',  floatDelay: '0s'   },
-              { quote: 'Finally a platform that combines journal + AI + market data. I found patterns I never knew existed.', name: 'Sarah M.',  pair: 'EUR/USD Trader',  floatDelay: '1s'   },
-              { quote: 'The AI analysis identified I was overtrading on Mondays. Saved me hundreds.',                        name: 'Marcus T.', pair: 'Multi-pair Trader', floatDelay: '2s'   },
-            ].map(({ quote, name, pair, floatDelay }, i) => (
-              <Reveal key={name} delay={i * 0.14}>
-                <div className="rounded-2xl p-7 border"
-                     style={{
-                       background: isDark ? '#141414' : '#ffffff',
-                       borderColor: isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.08)',
-                       boxShadow: isDark ? 'none' : '0 2px 12px rgba(0,0,0,0.06)',
-                     }}>
-                  <div className="flex gap-0.5 mb-4">
-                    {[...Array(5)].map((_, i) => (
-                      <span key={i} className="text-[17px]" style={{color:'#f59e0b'}}>★</span>
-                    ))}
-                  </div>
-                  <p className={`text-[14px] leading-relaxed mb-5 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>"{quote}"</p>
-                  <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-full flex items-center justify-center text-[13px] font-bold text-white shrink-0"
-                         style={{background:'linear-gradient(135deg,#1d4ed8,#0284c7)'}}>
-                      {name[0]}
-                    </div>
-                    <div>
-                      <p className={`text-[13px] font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>{name}</p>
-                      <p className="text-[11px] text-blue-500/70">{pair}</p>
-                    </div>
-                  </div>
-                </div>
-              </Reveal>
-            ))}
-          </div>
+          {/* ── Testimonial carousel ── */}
+          <TestimonialCarousel isDark={isDark} />
         </div>
       </section>
 
       {/* ═══════════════════════════ PRICING ═══════════════════════════ */}
-      <section id="pricing" className="py-24 px-6 transition-colors duration-300" style={{background: isDark ? '#0a0a0a' : '#eef1f7'}}>
-        <div className="max-w-6xl mx-auto">
-
-          {/* Header */}
-          <Reveal className="text-center mb-12">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-5 border"
-                 style={{background:'rgba(59,130,246,0.07)', borderColor:'rgba(59,130,246,0.22)'}}>
-              <span className="text-[11px] font-bold tracking-[0.18em] text-blue-400">PRICING</span>
-            </div>
-            <h2 className={`text-[42px] font-extrabold tracking-tight mb-3 ${isDark ? 'text-white' : 'text-gray-900'}`}>
-              Simple Pricing, Serious Results
-            </h2>
-            <p className={`text-[16px] mb-8 ${isDark ? 'text-gray-500' : 'text-gray-500'}`}>
-              Start free. Upgrade when you want a real edge.
-            </p>
-            {/* Billing toggle */}
-            <div className="inline-flex items-center p-1 rounded-xl border"
-                 style={{
-                   background: isDark ? 'rgba(255,255,255,0.03)' : '#ffffff',
-                   borderColor: isDark ? 'rgba(255,255,255,0.08)' : '#e2e8f0',
-                   boxShadow: isDark ? 'none' : '0 1px 4px rgba(0,0,0,0.06)',
-                 }}>
-              <button onClick={() => setAnnual(false)}
-                      className="px-5 py-2 rounded-lg text-[13px] font-semibold transition-all"
-                      style={!annual
-                        ? {background: isDark ? 'rgba(255,255,255,0.10)' : '#f1f5f9', color: isDark ? '#fff' : '#0f172a'}
-                        : {color: isDark ? '#6b7280' : '#94a3b8'}}>
-                Monthly
-              </button>
-              <button onClick={() => setAnnual(true)}
-                      className="flex items-center gap-2 px-5 py-2 rounded-lg text-[13px] font-semibold transition-all"
-                      style={annual
-                        ? {background: isDark ? 'rgba(255,255,255,0.10)' : '#f1f5f9', color: isDark ? '#fff' : '#0f172a'}
-                        : {color: isDark ? '#6b7280' : '#94a3b8'}}>
-                Yearly
-                <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full"
-                      style={{background: isDark ? 'rgba(59,130,246,0.18)' : 'rgba(59,130,246,0.10)', color:'#3b82f6'}}>
-                  Save 17%
-                </span>
-              </button>
-            </div>
-          </Reveal>
-
-          {/* Plan cards */}
-          <div className="grid md:grid-cols-3 gap-5 items-start">
-            {activePlans.map((plan, i) => (
-              <Reveal key={plan.name} delay={i * 0.10}>
-                <div
-                   className="border rounded-2xl p-6 hover:shadow-lg transition-all"
-                   style={{
-                     background: isDark ? '#141414' : '#ffffff',
-                     borderColor: plan.highlight ? '#3b82f6' : (isDark ? 'rgba(255,255,255,0.08)' : '#e2e8f0'),
-                     boxShadow: plan.highlight
-                       ? (isDark ? '0 6px 26px rgba(59,130,246,0.22)' : '0 10px 28px rgba(59,130,246,0.16)')
-                       : 'none',
-                   }}>
-
-                  {plan.badge && (
-                    <div className="mb-3">
-                      <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide"
-                            style={{
-                              color: '#1d4ed8',
-                              background: isDark ? 'rgba(59,130,246,0.16)' : 'rgba(59,130,246,0.11)',
-                              border: `1px solid ${isDark ? 'rgba(59,130,246,0.35)' : 'rgba(59,130,246,0.25)'}`,
-                            }}>
-                        {plan.badge === 'MOST POPULAR' ? 'Most Popular' : 'Best Value'}
-                      </span>
-                    </div>
-                  )}
-
-                  <h3 className={`text-[20px] font-bold mb-1 ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                    {plan.name}
-                  </h3>
-                  <p className={`text-[13px] mb-4 ${isDark ? 'text-gray-500' : 'text-gray-500'}`}>{plan.desc}</p>
-
-                  <div className="mb-5">
-                    {(() => {
-                      const displayed = getDisplayedPrice(plan);
-                      return (
-                        <>
-                          <span className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                            ${displayed.amount}
-                          </span>
-                          <span className={`text-[13px] ml-1 ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>{displayed.suffix}</span>
-                          {displayed.helper && (
-                            <div className={`mt-1 text-[11px] ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>
-                              {displayed.helper}
-                            </div>
-                          )}
-                        </>
-                      );
-                    })()}
-                  </div>
-
-                  <div className="space-y-2.5 mb-6">
-                    {plan.features.slice(0, 4).map(f => (
-                      <div key={f} className="flex items-start gap-2.5">
-                        <div className="w-4.5 h-4.5 rounded-full flex items-center justify-center shrink-0 mt-px"
-                             style={{ background: isDark ? 'rgba(59,130,246,0.16)' : 'rgba(59,130,246,0.10)' }}>
-                          <Check className="w-2.5 h-2.5" style={{ color: '#2563eb' }} />
-                        </div>
-                        <span className={`text-[13px] leading-snug ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>{f}</span>
-                      </div>
-                    ))}
-                  </div>
-
-                  <button onClick={() => onGetStarted?.({
-                            plan: plan.name.toLowerCase(),
-                            billingCycle: annual ? 'annual' : 'monthly',
-                          })}
-                          className="w-full bg-blue-600 text-white rounded-lg py-2 transition-all hover:brightness-110"
-                          style={{ border: 'none', fontSize: 14, fontWeight: 700 }}>
-                    {plan.cta}
-                  </button>
-                </div>
-              </Reveal>
-            ))}
-          </div>
-
-          {annual && (
-            <p className={`text-center mt-8 flex items-center justify-center gap-1.5 text-[12px] ${isDark ? 'text-gray-600' : 'text-gray-400'}`}>
-              <Info className="w-3.5 h-3.5 shrink-0" /> Yearly plan billed as one payment. Cancel anytime within 7 days for a full refund.
-            </p>
-          )}
-        </div>
-      </section>
+      <LandingPricing isDark={isDark} onGetStarted={onGetStarted} />
 
       {/* ═══════════════════════════ FAQ ═══════════════════════════ */}
-      <section id="faq" className="py-24 px-6 transition-colors duration-300" style={{background: isDark ? '#0a0a0a' : '#f4f6f9'}}>
+      <section id="faq" className="py-24 px-6 transition-colors duration-300">
         <div className="max-w-5xl mx-auto">
           <Reveal className="text-center mb-14">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-5 border"
@@ -1148,9 +1532,9 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
               <Reveal key={i} delay={i * 0.05}>
                 <div className="rounded-2xl border overflow-hidden"
                      style={{
-                       background: isDark ? '#141414' : '#ffffff',
-                       borderColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.07)',
-                       boxShadow: isDark ? 'none' : '0 2px 12px rgba(0,0,0,0.04)',
+                       background: isDark ? '#0f172a' : '#ffffff',
+                       borderColor: isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.07)',
+                       boxShadow: isDark ? '0 2px 24px rgba(0,0,0,0.45)' : '0 1px 3px rgba(0,0,0,0.04), 0 4px 20px rgba(0,0,0,0.07)',
                      }}>
                   <button className="w-full flex items-center justify-between px-6 py-4 text-left gap-4"
                           onClick={() => setOpenFaq(openFaq === i ? null : i)}>
@@ -1172,10 +1556,12 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
       </section>
 
       {/* ═══════════════════════════ BOTTOM CTA ═══════════════════════════ */}
-      <section className="py-24 px-6 relative overflow-hidden transition-colors duration-300" style={{background: isDark ? '#0a0a0a' : '#eef1f7'}}>
+      <section className="py-24 px-6 relative overflow-hidden transition-colors duration-300">
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[500px]"
-               style={{background: isDark ? 'radial-gradient(ellipse,rgba(16,185,129,0.07) 0%,transparent 65%)' : 'radial-gradient(ellipse,rgba(59,130,246,0.07) 0%,transparent 65%)'}} />
+          {!isDark && (
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[500px]"
+                 style={{background: 'radial-gradient(ellipse,rgba(99,102,241,0.09) 0%,transparent 60%)'}} />
+          )}
         </div>
         <Reveal className="relative z-10 max-w-6xl mx-auto">
           <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
@@ -1208,9 +1594,9 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
             <div className="flex-[2] w-full max-w-sm lg:max-w-none">
               <div className="rounded-2xl p-6 border"
                    style={{
-                     background: isDark ? '#141414' : '#ffffff',
+                     background: isDark ? '#0f172a' : '#ffffff',
                      borderColor: isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.07)',
-                     boxShadow: isDark ? 'none' : '0 4px 20px rgba(0,0,0,0.06)',
+                     boxShadow: isDark ? '0 4px 28px rgba(0,0,0,0.5)' : '0 1px 3px rgba(0,0,0,0.04), 0 4px 24px rgba(0,0,0,0.07)',
                      minHeight:'180px', display:'flex', flexDirection:'column', justifyContent:'center',
                    }}>
                 <p className={`text-[11px] font-bold tracking-[0.16em] mb-5 uppercase ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>AI Insights Panel</p>
@@ -1254,7 +1640,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
       {/* ═══════════════════════════ FOOTER ═══════════════════════════ */}
       <footer className={`border-t pt-16 pb-10 px-6 transition-colors duration-300`}
               style={{
-                background: isDark ? '#0a0a0a' : '#f4f6f9',
+                background: 'transparent',
                 borderColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.07)',
               }}>
         <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-10 md:gap-8 mb-12">
@@ -1329,6 +1715,9 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
           </div>
         </div>
       </footer>
+
+      {/* Social proof live activity toast */}
+      <SocialProofToast />
 
     </div>
     </>

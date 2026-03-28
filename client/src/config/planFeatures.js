@@ -4,6 +4,8 @@
  * Used by usePlan() hook, UpgradeModal, and PricingPage.
  */
 
+import { BILLING_PRICES } from './pricingPlans';
+
 export const PLANS_CONFIG = {
   free: {
     name: 'Free',
@@ -24,7 +26,7 @@ export const PLANS_CONFIG = {
   },
   pro: {
     name: 'Pro',
-    price: 9,
+    price: BILLING_PRICES.monthly.pro,
     maxJournalEntries: Infinity,
     aiAnalysesLifetime: null,       // no lifetime cap
     aiAnalysesMonthly: 50,          // resets each calendar month
@@ -39,7 +41,7 @@ export const PLANS_CONFIG = {
   },
   elite: {
     name: 'Elite',
-    price: 19,
+    price: BILLING_PRICES.monthly.elite,
     maxJournalEntries: Infinity,
     aiAnalysesLifetime: null,
     aiAnalysesMonthly: Infinity,    // unlimited

@@ -15,6 +15,8 @@ import {
 import { useTheme } from '../contexts/ThemeContext';
 import { useAuth } from '../contexts/AuthContext';
 import { API_URL } from '../config/api';
+import PricingPlanSelector from './pricing/PricingPlanSelector';
+import { DEFAULT_BILLING_CYCLE, DEFAULT_SELECTED_PLAN, getPlanDisplay } from '../config/pricingPlans';
 import ErrorBar from './ErrorBar';
 
 // ── Payment detail configurations ────────────────────────────────────────────
@@ -66,9 +68,6 @@ const PAYMENT_METHODS = {
   },
 };
 
-const PLAN_PRICES = { pro: '$9', elite: '$19' };
-const PLAN_LABELS = { pro: 'Pro', elite: 'Elite' };
-
 // ── Detail row ────────────────────────────────────────────────────────────────
 function DetailRow({ label, value, theme }) {
   const [copied, setCopied] = useState(false);
@@ -105,13 +104,14 @@ function DetailRow({ label, value, theme }) {
 }
 
 // ── Main component ────────────────────────────────────────────────────────────
-export default function PaymentOptionsModal({ plan: initialPlan = 'pro', onClose }) {
+export default function PaymentOptionsModal({ plan: initialPlan = DEFAULT_SELECTED_PLAN, billingCycle: initialBillingCycle = DEFAULT_BILLING_CYCLE, onClose }) {
   const theme       = useTheme();
   const { token, user } = useAuth();
 
   const [region,      setRegion]      = useState('international');  // 'international' | 'pakistan'
   const [optionIdx,   setOptionIdx]   = useState(0);               // which sub-option
   const [selectedPlan, setPlan]       = useState(initialPlan);
+  const [billingCycle, setBillingCycle] = useState(initialBillingCycle);
   const [file,        setFile]        = useState(null);
   const [note,        setNote]        = useState('');
   const [submitting,  setSubmitting]  = useState(false);
@@ -131,7 +131,8 @@ export default function PaymentOptionsModal({ plan: initialPlan = 'pro', onClose
 
   const currentRegion = PAYMENT_METHODS[region];
   const currentOption = currentRegion.options[optionIdx];
-  const price         = PLAN_PRICES[selectedPlan] ?? PLAN_PRICES.pro;
+  const displayPrice  = getPlanDisplay(selectedPlan, billingCycle);
+  const price         = `$${displayPrice.amount}${displayPrice.suffix}`;
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -146,8 +147,9 @@ export default function PaymentOptionsModal({ plan: initialPlan = 'pro', onClose
       const form = new FormData();
       form.append('userId', String(user?.id ?? '')); // extra metadata for traceability
       form.append('plan',   selectedPlan);
+      form.append('billingCycle', billingCycle);
       form.append('method', `${currentRegion.label} — ${currentOption.name}`);
-      form.append('amount', price + '/month');
+      form.append('amount', price);
       form.append('proofFileName', file.name);
       if (note.trim()) form.append('note', note.trim());
       form.append('proof', file);
@@ -260,30 +262,17 @@ export default function PaymentOptionsModal({ plan: initialPlan = 'pro', onClose
             ))}
           </div>
 
-          {/* Plan selector */}
-          <div>
-            <label style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 0.5, color: theme.muted, display: 'block', marginBottom: 7 }}>
-              Select Plan
-            </label>
-            <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-              {['pro', 'elite'].map(p => (
-                <button
-                  key={p}
-                  type="button"
-                  onClick={() => setPlan(p)}
-                  style={{
-                    flex: 1, padding: '10px 12px', borderRadius: 10, cursor: 'pointer',
-                    border: `2px solid ${selectedPlan === p ? '#3b82f6' : theme.border}`,
-                    background: selectedPlan === p ? 'rgba(59,130,246,0.08)' : surface,
-                    transition: 'all 0.15s',
-                  }}
-                >
-                  <div style={{ fontSize: 13, fontWeight: 700, color: selectedPlan === p ? '#3b82f6' : theme.text }}>{PLAN_LABELS[p]}</div>
-                  <div style={{ fontSize: 18, fontWeight: 800, color: selectedPlan === p ? '#3b82f6' : theme.text, lineHeight: 1.2 }}>{PLAN_PRICES[p]}<span style={{ fontSize: 11, fontWeight: 400, color: theme.muted }}>/mo</span></div>
-                </button>
-              ))}
-            </div>
-          </div>
+          <PricingPlanSelector
+            context="upgrade"
+            mode="compact"
+            title="Pick your paid plan"
+            subtitle="The same Elite-first pricing system is used here too, so your selection and billing stay consistent through checkout."
+            selectedPlan={selectedPlan}
+            onSelectPlan={setPlan}
+            billingCycle={billingCycle}
+            onBillingCycleChange={setBillingCycle}
+            showPrimaryAction={false}
+          />
 
           {/* Region selector */}
           <div>
@@ -345,8 +334,8 @@ export default function PaymentOptionsModal({ plan: initialPlan = 'pro', onClose
 
           {/* Payment details */}
           <div style={{ borderRadius: 12, background: surface, border: `1px solid ${theme.border}`, padding: '14px 16px' }}>
-            <div style={{ fontSize: 12, fontWeight: 700, color: theme.text, marginBottom: 10 }}>
-              {currentOption.name} — Send <span style={{ color: '#3b82f6' }}>{price}/month</span>
+              <div style={{ fontSize: 12, fontWeight: 700, color: theme.text, marginBottom: 10 }}>
+              {currentOption.name} — Send <span style={{ color: '#3b82f6' }}>{price}</span>
             </div>
             {currentOption.details.map(d => (
               <DetailRow key={d.label} label={d.label} value={d.value} theme={theme} />

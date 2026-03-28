@@ -113,7 +113,7 @@ function HeroDashboardMockup({ isDark }) {
 export default function Hero({ badgeText, spotsLeft, onGetStarted, onSignIn }) {
   const { isDark } = useTheme();
   return (
-    <section className={`relative flex flex-col items-center justify-center text-center px-6 pt-28 pb-10 overflow-hidden transition-colors duration-300 ${isDark ? 'bg-[#030303]' : 'bg-[#f4f6f9]'}`}>
+    <section className={`relative flex flex-col items-center justify-center text-center px-6 pt-28 pb-10 overflow-hidden transition-colors duration-300 ${isDark ? '' : 'bg-[#f8fafc]'}`}>
       
       {/* --- Institutional Background Layers --- */}
       <div className="absolute inset-0 pointer-events-none">

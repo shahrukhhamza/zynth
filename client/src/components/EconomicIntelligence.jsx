@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react';
 import {
-  TrendingUp, TrendingDown, Activity, Loader2, AlertCircle,
-  RefreshCcw, Brain, Lock, ChevronDown, ChevronUp, Minus,
+  TrendingUp, TrendingDown, Activity, AlertCircle,
+  RefreshCcw, Brain, ChevronDown, ChevronUp, Minus,
 } from 'lucide-react';
 import { API_URL } from '../config/api';
 import { useTheme } from '../contexts/ThemeContext';
 import { useUpgrade } from '../contexts/UpgradeContext';
 import { usePlanGate } from '../hooks/usePlanGate';
+import PricingPlanSelector from './pricing/PricingPlanSelector';
+import { DEFAULT_BILLING_CYCLE, DEFAULT_SELECTED_PLAN } from '../config/pricingPlans';
 import { Line } from 'react-chartjs-2';
 import {
   Chart as ChartJS, CategoryScale, LinearScale,
@@ -304,6 +306,49 @@ function MacroScoreWidget({ macroScore, D }) {
   );
 }
 
+function PaywallPricingBlock({ onUpgrade }) {
+  const [selectedPlan, setSelectedPlan] = useState(DEFAULT_SELECTED_PLAN);
+  const [billingCycle, setBillingCycle] = useState(DEFAULT_BILLING_CYCLE);
+  const handleUpgrade = () => {
+    onUpgrade({
+      requiredPlan: selectedPlan,
+      feature: 'Economic Intelligence',
+      headline: 'Unlock AI-Powered Insights',
+      reason: 'Economic Intelligence is available on Pro and Elite plans.',
+      billingCycle,
+    });
+  };
+
+  return (
+    <div className="relative z-10 flex w-full max-w-6xl flex-col items-center gap-8">
+      <div className="max-w-2xl text-center">
+        <span className="inline-flex items-center gap-2 rounded-full border border-blue-200 bg-white/80 px-4 py-1.5 text-[11px] font-bold uppercase tracking-[0.24em] text-blue-700 shadow-sm backdrop-blur dark:border-blue-500/25 dark:bg-slate-900/70 dark:text-blue-300">
+          <Brain className="h-3.5 w-3.5" />
+          Economic Intelligence
+        </span>
+        <h2 className="mt-5 text-3xl font-black tracking-tight text-slate-900 dark:text-white sm:text-4xl">
+          Unlock AI-powered macro intelligence for every trade.
+        </h2>
+        <p className="mt-3 text-sm leading-7 text-slate-600 dark:text-slate-300 sm:text-[15px]">
+          Get surprise scoring, macro trend shifts, and event-to-trade correlation in one system instead of piecing it together manually.
+        </p>
+      </div>
+
+      <PricingPlanSelector
+        context="ai"
+        mode="compact"
+        selectedPlan={selectedPlan}
+        onSelectPlan={setSelectedPlan}
+        billingCycle={billingCycle}
+        onBillingCycleChange={setBillingCycle}
+        onContinue={handleUpgrade}
+        primaryActionLabel="Unlock Economic Intelligence"
+        className="w-full"
+      />
+    </div>
+  );
+}
+
 // ── Main ──────────────────────────────────────────────────────────────────────
 export default function EconomicIntelligence() {
   const theme = useTheme();
@@ -389,75 +434,7 @@ export default function EconomicIntelligence() {
           bg-gradient-to-br from-blue-400 to-emerald-400 blur-3xl" />
       </div>
 
-      <div className="relative z-10 flex flex-col items-center max-w-md">
-        {/* Icon */}
-        <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-600
-          flex items-center justify-center mb-6
-          shadow-[0_8px_32px_rgba(59,130,246,0.35)]">
-          <Brain className="w-9 h-9 text-white" />
-        </div>
-
-        {/* Plan chip */}
-        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold
-          uppercase tracking-widest mb-4
-          bg-blue-100 text-blue-700 border border-blue-200
-          dark:bg-blue-500/10 dark:text-blue-300 dark:border-blue-500/25">
-          <Lock className="w-2.5 h-2.5" /> Pro Plan
-        </span>
-
-        {/* Headline */}
-        <h2 className="text-[28px] font-extrabold tracking-tight mb-3
-          text-gray-900 dark:text-white">
-          Unlock AI-Powered Insights
-        </h2>
-
-        {/* Description */}
-        <p className="text-[15px] leading-relaxed mb-7
-          text-gray-500 dark:text-gray-400">
-          Access real-time macro indicators, proprietary surprise scoring, and see exactly how economic events impact your trading performance.
-        </p>
-
-        {/* Feature chips */}
-        <div className="flex flex-wrap gap-2 justify-center mb-8">
-          {[
-            { label: '10 Macro Indicators', icon: '📈' },
-            { label: 'Surprise Score',      icon: '⚡' },
-            { label: 'Fed Rate Tracker',    icon: '🏦' },
-            { label: 'GDP & Inflation',     icon: '💹' },
-            { label: 'Trade Correlation',   icon: '🔗' },
-          ].map(f => (
-            <span key={f.label}
-              className="flex items-center gap-1 px-3 py-1 rounded-full text-[12px] font-medium
-                bg-white border border-gray-200 text-gray-600
-                dark:bg-slate-800 dark:border-slate-700 dark:text-gray-300
-                shadow-sm">
-              <span>{f.icon}</span> {f.label}
-            </span>
-          ))}
-        </div>
-
-        {/* CTA */}
-        <button
-          onClick={() => openUpgradeModal({
-            requiredPlan: 'pro',
-            feature: 'Economic Intelligence',
-            headline: 'Unlock AI-Powered Insights',
-            reason: 'Economic Intelligence is available on Pro and Elite plans.',
-          })}
-          className="inline-flex items-center gap-2 px-8 py-3 rounded-lg text-[15px] font-semibold
-            text-white bg-gradient-to-r from-blue-600 to-indigo-600
-            shadow-[0_4px_18px_rgba(59,130,246,0.4)]
-            hover:from-blue-700 hover:to-indigo-700 hover:shadow-[0_6px_24px_rgba(59,130,246,0.5)]
-            active:scale-[0.98] transition-all duration-150
-            border-0 cursor-pointer">
-          <Loader2 className="w-4 h-4 hidden" />
-          Upgrade to Pro
-        </button>
-
-        <p className="mt-3 text-[12px] text-gray-400 dark:text-gray-500">
-          From $9/month · Cancel anytime
-        </p>
-      </div>
+      <PaywallPricingBlock onUpgrade={openUpgradeModal} />
     </div>
   );
 

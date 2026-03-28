@@ -170,14 +170,11 @@ export default function AIInsightsSection({ onGetStarted }) {
   return (
     <section
       className="relative px-6 py-24 overflow-hidden"
-      style={{ background: isDark ? '#030303' : '#f0f4f8' }}
+      style={{ background: isDark ? 'transparent' : '#f8fafc' }}
     >
-      {/* Background decorative blobs */}
-      {isDark && (
-        <>
-          <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-500/5 rounded-full blur-[120px] pointer-events-none" />
-          <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-violet-500/5 rounded-full blur-[120px] pointer-events-none" />
-        </>
+      {/* Background decorative blobs — light mode only */}
+      {!isDark && (
+        <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 90% 70% at 50% 50%, rgba(59,130,246,0.04) 0%, transparent 70%)' }} />
       )}
 
       <div className="relative max-w-7xl mx-auto">

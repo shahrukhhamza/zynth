@@ -6,7 +6,9 @@ import { usePlanGate } from '../hooks/usePlanGate';
 import PlanBadge from './PlanBadge';
 import ImageCropModal from './ImageCropModal';
 import PaymentOptionsModal from './PaymentOptionsModal';
+import PricingPlanSelector from './pricing/PricingPlanSelector';
 import { API_URL } from '../config/api';
+import { DEFAULT_BILLING_CYCLE, DEFAULT_SELECTED_PLAN } from '../config/pricingPlans';
 import { resolveMediaUrl } from '../utils/mediaUrl';
 
 const AVATAR_COLOR_MAP = {
@@ -23,47 +25,6 @@ function readFileAsBase64(file) {
   });
 }
 
-const UPGRADE_PLANS = [
-  {
-    id: 'pro',
-    name: 'Pro',
-    price: '$9',
-    priceNote: '/month',
-    badge: 'Most Popular',
-    badgeStyle: { background: 'rgba(59,130,246,0.15)', color: '#34d399', border: '1px solid rgba(59,130,246,0.3)' },
-    features: [
-      'Unlimited journal entries',
-      'AI Trade Analysis: 50/month',
-      'Screenshot OCR: 35/month',
-      'Full Economic Intelligence',
-      'Macro Surprise Score',
-      'Live market feeds',
-      'Priority support',
-    ],
-    color: '#059669',
-    glowColor: 'rgba(5,150,105,0.25)',
-  },
-  {
-    id: 'elite',
-    name: 'Elite',
-    price: '$19',
-    priceNote: '/month',
-    badge: 'Best Value',
-    badgeStyle: { background: 'rgba(245,158,11,0.15)', color: '#fbbf24', border: '1px solid rgba(245,158,11,0.3)' },
-    features: [
-      'Everything in Pro',
-      'Unlimited AI Trade Analysis',
-      'Unlimited Screenshot OCR',
-      'Custom AI reports',
-      'Beta access to new features',
-      'Direct founder support on WhatsApp',
-      'API access (coming soon)',
-    ],
-    color: '#f59e0b',
-    glowColor: 'rgba(245,158,11,0.2)',
-  },
-];
-
 const PLAN_INFO = {
   free:  { label: 'Basic Plan', sub: 'Free forever',                     color: '#9ca3af' },
   pro:   { label: 'Pro Plan',   sub: '$9/month',           color: '#34d399' },
@@ -79,7 +40,8 @@ export default function ProfileModal({ onClose, onForgotPassword }) {
   const [journalCount, setJournalCount]     = useState('--');
   const [tradingStats, setTradingStats]     = useState(null);
   const [upgradeOpen, setUpgradeOpen]       = useState(false);
-  const [selectedPlan, setSelectedPlan]     = useState(null);
+  const [selectedPlan, setSelectedPlan]     = useState(DEFAULT_SELECTED_PLAN);
+  const [billingCycle, setBillingCycle]     = useState(DEFAULT_BILLING_CYCLE);
   const [paymentPlan, setPaymentPlan]       = useState(null);
   const [pwdStatus, setPwdStatus]           = useState(null);
   const [avatarUploading, setAvatarUploading] = useState(false);
@@ -249,10 +211,12 @@ export default function ProfileModal({ onClose, onForgotPassword }) {
     {paymentPlan && (
       <PaymentOptionsModal
         plan={paymentPlan}
+        billingCycle={billingCycle}
         onClose={() => {
           setPaymentPlan(null);
           setUpgradeOpen(false);
-          setSelectedPlan(null);
+          setSelectedPlan(DEFAULT_SELECTED_PLAN);
+          setBillingCycle(DEFAULT_BILLING_CYCLE);
         }}
       />
     )}
@@ -415,7 +379,11 @@ export default function ProfileModal({ onClose, onForgotPassword }) {
           {isFree && (
             <div className="mb-1">
               <button
-                onClick={() => { setUpgradeOpen(o => !o); setSelectedPlan(null); }}
+                onClick={() => {
+                  setUpgradeOpen(o => !o);
+                  setSelectedPlan(DEFAULT_SELECTED_PLAN);
+                  setBillingCycle(DEFAULT_BILLING_CYCLE);
+                }}
                 className="w-full py-3 rounded-xl text-[14px] font-semibold text-white flex items-center justify-center gap-2 transition-all hover:brightness-110"
                 style={{ background: 'linear-gradient(135deg,#059669,#0d9488)', boxShadow: '0 4px 16px rgba(5,150,105,0.3)' }}>
                 <Zap className="w-4 h-4" />
@@ -434,7 +402,11 @@ export default function ProfileModal({ onClose, onForgotPassword }) {
                   {/* Dismiss */}
                   <div className="flex items-center justify-between mb-3">
                     <p className="text-[12px] font-semibold" style={{ color: theme.muted }}>Choose your plan:</p>
-                    <button onClick={() => { setUpgradeOpen(false); setSelectedPlan(null); }}
+                    <button onClick={() => {
+                      setUpgradeOpen(false);
+                      setSelectedPlan(DEFAULT_SELECTED_PLAN);
+                      setBillingCycle(DEFAULT_BILLING_CYCLE);
+                    }}
                             className="text-[11px] flex items-center gap-1 transition-colors"
                             style={{ color: theme.muted }}
                             onMouseOver={e => e.currentTarget.style.color = theme.text}
@@ -443,68 +415,16 @@ export default function ProfileModal({ onClose, onForgotPassword }) {
                     </button>
                   </div>
 
-                  {/* Plan cards */}
-                  <div className="grid grid-cols-2 gap-3 mb-3">
-                    {UPGRADE_PLANS.map(plan => (
-                      <div key={plan.id}
-                           className="rounded-xl p-4 flex flex-col"
-                           style={{
-                             background: theme.isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)',
-                             border: selectedPlan === plan.id
-                               ? `1.5px solid ${plan.color}`
-                               : `1px solid ${theme.border}`,
-                             boxShadow: selectedPlan === plan.id ? `0 0 20px ${plan.glowColor}` : 'none',
-                             transition: 'all 0.2s',
-                           }}>
-                        <span className="inline-block text-[10px] font-bold px-2 py-0.5 rounded-full mb-2 self-start"
-                              style={plan.badgeStyle}>
-                          {plan.badge}
-                        </span>
-                        <p className="text-[15px] font-extrabold mb-0.5" style={{ color: theme.text }}>
-                          {plan.name}
-                        </p>
-                        <p className="text-[12px] mb-3" style={{ color: plan.color }}>
-                          {plan.price}<span className="text-[10px] ml-0.5" style={{ color: theme.muted }}>{plan.priceNote}</span>
-                        </p>
-                        <ul className="space-y-1 mb-4 flex-1">
-                          {plan.features.map(f => (
-                            <li key={f} className="flex items-start gap-1.5 text-[11px]" style={{ color: theme.text }}>
-                              <Check className="w-3 h-3 shrink-0 mt-0.5" style={{ color: plan.color }} />
-                              {f}
-                            </li>
-                          ))}
-                        </ul>
-                        <button
-                          onClick={() => setSelectedPlan(selectedPlan === plan.id ? null : plan.id)}
-                          className="w-full py-2 rounded-lg text-[12px] font-semibold text-white transition-all hover:brightness-110"
-                          style={{ background: `linear-gradient(135deg,${plan.color},${plan.id === 'pro' ? '#0d9488' : '#d97706'})` }}>
-                          {selectedPlan === plan.id ? 'Selected' : 'Select'}
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* Inline info box after plan selected */}
-                  {selectedPlan && (() => {
-                    const p = UPGRADE_PLANS.find(x => x.id === selectedPlan);
-                    return (
-                      <div className="rounded-xl p-4"
-                           style={{ background: theme.isDark ? 'rgba(5,150,105,0.08)' : 'rgba(5,150,105,0.05)', border: '1px solid rgba(5,150,105,0.25)' }}>
-                        <p className="text-[13px] font-bold text-emerald-400 mb-2">Great choice!</p>
-                        <p className="text-[12px] leading-relaxed mb-3" style={{ color: theme.text }}>
-                          Continue to secure payment to complete your {p.name} upgrade.
-                          Instant activation after verification (usually within minutes).
-                        </p>
-                        <button
-                          onClick={() => setPaymentPlan(selectedPlan)}
-                          className="w-full py-2 rounded-lg text-[12px] font-semibold text-white transition-all hover:brightness-110"
-                          style={{ background: 'linear-gradient(135deg,#059669,#0d9488)' }}
-                        >
-                          Continue to Payment
-                        </button>
-                      </div>
-                    );
-                  })()}
+                  <PricingPlanSelector
+                    context="upgrade"
+                    mode="compact"
+                    selectedPlan={selectedPlan}
+                    onSelectPlan={setSelectedPlan}
+                    billingCycle={billingCycle}
+                    onBillingCycleChange={setBillingCycle}
+                    onContinue={() => setPaymentPlan(selectedPlan)}
+                    ctaLabel="Continue to Payment"
+                  />
                 </div>
               </div>
             </div>

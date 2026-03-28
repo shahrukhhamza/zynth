@@ -1,49 +1,17 @@
 ﻿import { useEffect, useMemo, useRef, useState } from 'react';
 import {
-  X, Check, Sparkles, Landmark,
+  X, Landmark,
   Smartphone, Upload, Loader2, CheckCircle,
   Crown, Rocket,
 } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 import { useAuth } from '../contexts/AuthContext';
 import { API_URL } from '../config/api';
+import PricingPlanSelector from './pricing/PricingPlanSelector';
+import { DEFAULT_BILLING_CYCLE, DEFAULT_SELECTED_PLAN, getPaidPlan, getPlanDisplay } from '../config/pricingPlans';
 import ErrorBar from './ErrorBar';
 
 /* ─── Data ─────────────────────────────────────────────────────────────────── */
-
-const PLANS = {
-  pro: {
-    id: 'pro',
-    name: 'Pro',
-    badge: 'Recommended',
-    accent: '#2563eb',
-    Icon: Rocket,
-    features: [
-      'Unlimited journal entries',
-      'AI insights up to 50 / month',
-      'Advanced analytics dashboard',
-      'Live economic intelligence',
-    ],
-  },
-  elite: {
-    id: 'elite',
-    name: 'Elite',
-    badge: 'Power Users',
-    accent: '#f59e0b',
-    Icon: Crown,
-    features: [
-      'Everything in Pro',
-      'Unlimited AI insights — no cap',
-      'Premium strategy breakdowns',
-      'Priority support & early access',
-    ],
-  },
-};
-
-const USD_PRICES = {
-  monthly: { pro: 9, elite: 19 },
-  annual: { pro: 90, elite: 190 },
-};
 
 const PKR_BY_PLAN = {
   monthly: { pro: 2500, elite: 5300 },
@@ -79,6 +47,11 @@ const PAYMENT_OPTIONS_BY_REGION = {
   ],
 };
 
+const PLAN_SUMMARY_ICONS = {
+  pro: Rocket,
+  elite: Crown,
+};
+
 /* ─── Main component ────────────────────────────────────────────────────────── */
 
 /**
@@ -96,7 +69,7 @@ export default function UpgradeModal({
   open,
   onClose,
   requiredPlan = 'pro',
-  billingCycle = 'monthly',
+  billingCycle = DEFAULT_BILLING_CYCLE,
   reason = null,
   headline = null,
   message = null,
@@ -107,7 +80,7 @@ export default function UpgradeModal({
   const [visible,      setVisible]      = useState(Boolean(open));
   const [step,         setStep]         = useState(1);
   const [stepIn,       setStepIn]       = useState(true);
-  const [selectedPlan, setSelectedPlan] = useState(requiredPlan === 'elite' ? 'elite' : 'pro');
+  const [selectedPlan, setSelectedPlan] = useState(DEFAULT_SELECTED_PLAN);
   const [paymentRegion, setPaymentRegion] = useState('PK');
   const [methodKey,    setMethodKey]    = useState(PAYMENT_OPTIONS[0].key);
   const [requiredPkr,  setRequiredPkr]  = useState(PKR_BY_PLAN[billingCycle]?.[requiredPlan === 'elite' ? 'elite' : 'pro'] ?? PKR_BY_PLAN.monthly.pro);
@@ -123,9 +96,9 @@ export default function UpgradeModal({
       setVisible(true);
       setStep(1);
       setStepIn(true);
-      setSelectedPlan(requiredPlan === 'elite' ? 'elite' : 'pro');
+      setSelectedPlan(DEFAULT_SELECTED_PLAN);
       setPaymentRegion('PK');
-      setRequiredPkr(PKR_BY_PLAN[billingCycle]?.[requiredPlan === 'elite' ? 'elite' : 'pro'] ?? PKR_BY_PLAN.monthly.pro);
+      setRequiredPkr(PKR_BY_PLAN[billingCycle]?.[DEFAULT_SELECTED_PLAN] ?? PKR_BY_PLAN.monthly.pro);
       setMethodKey(PAYMENT_OPTIONS[0].key);
     }
     else setVisible(false);
@@ -145,14 +118,13 @@ export default function UpgradeModal({
     () => currentRegionMethods.find(option => option.key === methodKey) || currentRegionMethods[0],
     [currentRegionMethods, methodKey],
   );
-  const selected    = selectedPlan ? PLANS[selectedPlan] : null;
-  const selectedUsdAmount = selectedPlan ? (USD_PRICES[billingCycle]?.[selectedPlan] ?? USD_PRICES.monthly.pro) : null;
-  const amountLabel = selected ? `$${selectedUsdAmount}/${billingCycle === 'annual' ? 'year' : 'month'}` : '';
+  const selected = selectedPlan ? getPaidPlan(selectedPlan) : null;
+  const SelectedPlanIcon = selected ? (PLAN_SUMMARY_ICONS[selected.id] ?? Rocket) : Rocket;
+  const selectedDisplay = selectedPlan ? getPlanDisplay(selectedPlan, billingCycle) : null;
+  const amountLabel = selected && selectedDisplay ? `$${selectedDisplay.amount}${selectedDisplay.suffix}` : '';
   const amountPkrLabel = `PKR ${requiredPkr.toLocaleString()}`;
   const isPakistanPayment = paymentRegion === 'PK';
-  const annualHelper = selected && billingCycle === 'annual'
-    ? `Equivalent to $${(selectedUsdAmount / 12).toFixed(2)}/mo billed annually`
-    : null;
+  const annualHelper = selectedDisplay?.helperText ?? null;
 
   if (!visible) return null;
 
@@ -301,167 +273,16 @@ export default function UpgradeModal({
                 </div>
                 <span className="text-xs font-medium" style={{ color: mutedText }}>Step 1 of 2</span>
               </div>
-
-              <h2 className="text-2xl sm:text-[28px] font-extrabold leading-tight text-gray-900 dark:text-gray-100">
-                Unlock Full Zynth
-              </h2>
-              <p className="mt-2 text-sm leading-relaxed text-gray-500 dark:text-gray-400 max-w-xl">
-                Choose your plan and unlock the full trading operating system.
-              </p>
-
-              <div className="mt-4 flex flex-wrap items-center gap-2">
-                <div className="inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-[11px] font-semibold bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-700/40">
-                  <Sparkles size={12} /> 2,300+ traders upgraded this month
-                </div>
-                <div className="inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-[11px] font-semibold bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-700/40">
-                  Pricing lock in effect for new members
-                </div>
-              </div>
-
-              <div className="mt-6 mb-3">
-                <p className="text-[11px] uppercase tracking-[0.12em] font-semibold text-gray-500 dark:text-gray-400">
-                  Pick your plan
-                </p>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
-                {Object.values(PLANS).map(plan => {
-                  const active   = selectedPlan === plan.id;
-                  const PlanIcon = plan.Icon;
-                  const isPro    = plan.id === 'pro';
-                  const isElite  = plan.id === 'elite';
-                  return (
-                    <button
-                      key={plan.id}
-                      type="button"
-                      onClick={() => setSelectedPlan(plan.id)}
-                      className={`relative overflow-hidden rounded-2xl p-6 text-left transition-all duration-300 ease-out hover:scale-[1.02] ${isPro ? 'bg-blue-50 dark:bg-blue-900/10 border border-blue-500 ring-2 ring-blue-500/20 shadow-md' : 'bg-indigo-50 dark:bg-indigo-900/10 border border-gray-200 dark:border-gray-700 shadow-sm'} ${active ? 'border-blue-500 ring-2 ring-blue-500/30 scale-[1.02]' : ''}`}
-                      style={{
-                        transformOrigin: 'center',
-                      }}
-                    >
-                      {isPro && (
-                        <>
-                          <div
-                            aria-hidden
-                            className="pointer-events-none absolute -top-10 -right-12 h-24 w-28 rounded-full blur-2xl"
-                            style={{ background: 'rgba(59,130,246,0.22)' }}
-                          />
-                          <span className="absolute top-3 right-3 inline-flex items-center rounded-full border border-blue-300/70 dark:border-blue-500/50 bg-white/90 dark:bg-slate-900/80 px-2 py-0.5 text-[10px] font-bold tracking-wide text-blue-700 dark:text-blue-300">
-                            Most Chosen
-                          </span>
-                        </>
-                      )}
-                      {isElite && (
-                        <span className="absolute top-3 right-3 inline-flex items-center rounded-full border border-indigo-300/70 dark:border-indigo-500/50 bg-white/90 dark:bg-slate-900/80 px-2 py-0.5 text-[10px] font-bold tracking-wide text-indigo-700 dark:text-indigo-300">
-                          Used by advanced traders
-                        </span>
-                      )}
-
-                      <div className="flex items-center justify-between mb-3">
-                        <span
-                          className="inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-[10px] font-bold tracking-wide"
-                          style={{
-                            borderColor: plan.id === 'pro' ? 'rgba(59,130,246,0.35)' : 'rgba(245,158,11,0.45)',
-                            color:       plan.id === 'pro' ? '#1d4ed8' : '#b45309',
-                            background:  plan.id === 'pro' ? 'rgba(59,130,246,0.10)' : 'rgba(245,158,11,0.12)',
-                          }}
-                        >
-                          {plan.badge}
-                        </span>
-                        <div
-                          className="flex h-7 w-7 items-center justify-center rounded-lg"
-                          style={{ background: active ? '#dbeafe' : (theme.isDark ? 'rgba(255,255,255,0.06)' : '#f1f5f9') }}
-                        >
-                          {active
-                            ? <Check size={14} color="#2563eb" strokeWidth={2.5} />
-                            : <PlanIcon size={14} color={subtleText} />
-                          }
-                        </div>
-                      </div>
-
-                      <div className="mb-1 text-xl font-extrabold text-gray-900 dark:text-gray-100">
-                        {plan.name} Plan
-                      </div>
-                      <div className="mb-2 text-[11px] font-semibold text-gray-600 dark:text-gray-300">
-                        {isPro
-                          ? 'Best starting point for consistent trading growth'
-                          : 'For high-frequency and advanced traders'}
-                      </div>
-                      <div className="mb-4 tabular-nums font-semibold text-blue-600 dark:text-blue-400" style={{ fontSize: '15px' }}>
-                        ${USD_PRICES[billingCycle]?.[plan.id] ?? USD_PRICES.monthly[plan.id]}/{billingCycle === 'annual' ? 'year' : 'month'}
-                      </div>
-                      {billingCycle === 'annual' && (
-                        <div className="-mt-2 mb-4 text-[11px] text-gray-400 dark:text-gray-500">
-                          Equivalent to ${((USD_PRICES.annual[plan.id] ?? 0) / 12).toFixed(2)}/mo billed annually
-                        </div>
-                      )}
-                      {isPro && (
-                        <>
-                          <div className={`${billingCycle === 'annual' ? 'mb-1' : '-mt-2 mb-1'} text-sm text-gray-500 dark:text-gray-400`}>
-                            Most traders start here
-                          </div>
-                          <div className="mb-4 text-[11px] text-gray-400 dark:text-gray-500">
-                            No commitment — upgrade anytime
-                          </div>
-                        </>
-                      )}
-                      {isElite && (
-                        <>
-                          <div className={`${billingCycle === 'annual' ? 'mb-1' : '-mt-2 mb-1'} text-sm text-gray-500 dark:text-gray-400`}>
-                            {billingCycle === 'annual' ? 'Best value when billed yearly' : 'Only $10 more for unlimited AI'}
-                          </div>
-                          <div className="mb-4 text-[11px] text-gray-400 dark:text-gray-500">
-                            {billingCycle === 'annual' ? 'Save 17% with annual billing' : 'Switch to yearly anytime'}
-                          </div>
-                        </>
-                      )}
-
-                      <ul className="space-y-2">
-                        {plan.features.map(f => (
-                          <li key={f} className="flex items-start gap-2 text-xs leading-relaxed text-gray-600 dark:text-gray-300">
-                            <Check size={12} color={plan.id === 'elite' ? '#f59e0b' : '#2563eb'} style={{ flexShrink: 0, marginTop: '2px' }} />
-                            <span className={isElite && f.includes('Unlimited AI insights') ? 'font-semibold text-gray-900 dark:text-gray-100' : ''}>{f}</span>
-                          </li>
-                        ))}
-                      </ul>
-                      {isElite && (
-                        <div className="mt-3 text-[11px] font-medium text-gray-600 dark:text-gray-300">
-                          Remove all limits and unlock full power
-                        </div>
-                      )}
-                    </button>
-                  );
-                })}
-              </div>
-
-              <div className="mt-3 text-center text-xs text-gray-500 dark:text-gray-400">
-                Need unlimited AI? Upgrade to Elite
-              </div>
-
-              <button
-                type="button"
-                onClick={() => goToStep(2)}
-                disabled={!selectedPlan}
-                className="mt-7 w-full rounded-xl py-3.5 text-sm font-bold text-white inline-flex items-center justify-center gap-2 transition-all duration-200 hover:shadow-lg hover:scale-[1.02] active:scale-95"
-                style={{
-                  background: 'linear-gradient(135deg, #1d4ed8, #06b6d4)',
-                  boxShadow: '0 8px 24px rgba(14,165,233,0.28)',
-                  opacity: selectedPlan ? 1 : 0.55,
-                  cursor: selectedPlan ? 'pointer' : 'not-allowed',
-                }}
-              >
-                {selectedPlan === 'elite' ? 'Continue with Elite →' : 'Continue with Pro →'}
-              </button>
-
-              <p className="mt-2.5 text-center text-xs text-gray-500 dark:text-gray-400">
-                {selectedPlan === 'elite'
-                  ? 'You’re choosing Elite — unlock full trading power'
-                  : 'You’re choosing Pro — perfect for getting started'}
-              </p>
-              <p className="mt-1 text-center text-xs text-gray-400 dark:text-gray-500">
-                7-day refund guarantee • Cancel anytime
-              </p>
+              <PricingPlanSelector
+                context="upgrade"
+                mode="compact"
+                title={headline || 'Unlock Full Zynth'}
+                subtitle={message || 'Choose the paid plan that matches your ambition. Elite stays selected by default to frame the full-power upgrade clearly.'}
+                selectedPlan={selectedPlan}
+                onSelectPlan={setSelectedPlan}
+                billingCycle={billingCycle}
+                onPrimaryAction={() => goToStep(2)}
+              />
             </div>
           </div>
         </div>
@@ -537,7 +358,7 @@ export default function UpgradeModal({
                       className="flex h-10 w-10 items-center justify-center rounded-xl flex-shrink-0"
                       style={{ background: `${selected.accent}22` }}
                     >
-                      <selected.Icon size={18} color={selected.accent} />
+                      <SelectedPlanIcon size={18} color={selected.accent} />
                     </div>
                     <div>
                       <div className="text-sm font-bold text-gray-900 dark:text-gray-100">

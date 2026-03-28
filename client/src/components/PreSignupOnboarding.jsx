@@ -65,55 +65,87 @@ function OptionCard({ label, desc, icon: Icon, selected, onClick, theme }) {
   return (
     <button
       onClick={onClick}
-      className="w-full text-left px-4 py-3.5 rounded-xl border transition-all duration-200 group relative overflow-hidden"
+      className="w-full text-left rounded-2xl border transition-all duration-200 group relative overflow-hidden"
       style={{
+        padding: '12px 16px',
         background: selected
           ? theme.isDark
-            ? 'linear-gradient(135deg,rgba(29,78,216,0.22),rgba(6,182,212,0.10))'
-            : 'linear-gradient(135deg,rgba(29,78,216,0.10),rgba(6,182,212,0.06))'
-          : theme.isDark ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.02)',
-        borderColor: selected ? '#3b82f6' : theme.border,
+            ? 'linear-gradient(135deg, rgba(29,78,216,0.25) 0%, rgba(6,182,212,0.12) 100%)'
+            : 'linear-gradient(135deg, rgba(37,99,235,0.07) 0%, rgba(14,165,233,0.04) 100%)'
+          : theme.isDark ? 'rgba(255,255,255,0.025)' : '#ffffff',
+        borderColor: selected
+          ? theme.isDark ? 'rgba(59,130,246,0.6)' : 'rgba(37,99,235,0.55)'
+          : theme.isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.08)',
         boxShadow: selected
-          ? '0 0 0 1px rgba(59,130,246,0.5), 0 0 20px rgba(59,130,246,0.12), inset 0 1px 0 rgba(255,255,255,0.05)'
-          : theme.isDark ? 'inset 0 1px 0 rgba(255,255,255,0.03)' : 'none',
-        transform: selected ? 'scale(1.02)' : 'scale(1)',
+          ? theme.isDark
+            ? '0 0 0 1px rgba(59,130,246,0.25), 0 4px 20px rgba(59,130,246,0.15), inset 0 1px 0 rgba(255,255,255,0.06)'
+            : '0 0 0 3px rgba(37,99,235,0.12), 0 4px 16px rgba(37,99,235,0.1)'
+          : theme.isDark ? 'none' : '0 1px 3px rgba(0,0,0,0.04)',
       }}
       onMouseEnter={e => {
         if (!selected) {
-          e.currentTarget.style.borderColor = 'rgba(59,130,246,0.45)';
-          e.currentTarget.style.boxShadow = '0 0 0 1px rgba(59,130,246,0.2), 0 0 16px rgba(59,130,246,0.08), inset 0 1px 0 rgba(255,255,255,0.04)';
-          e.currentTarget.style.background = theme.isDark ? 'rgba(59,130,246,0.06)' : 'rgba(59,130,246,0.03)';
+          e.currentTarget.style.borderColor = theme.isDark ? 'rgba(59,130,246,0.35)' : 'rgba(37,99,235,0.3)';
+          e.currentTarget.style.boxShadow = theme.isDark
+            ? '0 2px 12px rgba(59,130,246,0.1)'
+            : '0 2px 12px rgba(37,99,235,0.08), 0 1px 3px rgba(0,0,0,0.05)';
+          e.currentTarget.style.background = theme.isDark ? 'rgba(59,130,246,0.07)' : 'rgba(59,130,246,0.025)';
         }
       }}
       onMouseLeave={e => {
         if (!selected) {
-          e.currentTarget.style.borderColor = theme.border;
-          e.currentTarget.style.boxShadow = theme.isDark ? 'inset 0 1px 0 rgba(255,255,255,0.03)' : 'none';
-          e.currentTarget.style.background = theme.isDark ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.02)';
+          e.currentTarget.style.borderColor = theme.isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.08)';
+          e.currentTarget.style.boxShadow = theme.isDark ? 'none' : '0 1px 3px rgba(0,0,0,0.04)';
+          e.currentTarget.style.background = theme.isDark ? 'rgba(255,255,255,0.025)' : '#ffffff';
         }
       }}
     >
-      <div className="flex items-center gap-3">
-        <IconContainer icon={Icon} variant="blue" size="sm" selected={selected} />
+      <div className="flex items-center gap-3.5">
+        {/* Icon container */}
+        <div
+          className="w-10 h-10 rounded-xl flex-shrink-0 flex items-center justify-center transition-all duration-200"
+          style={{
+            background: selected
+              ? theme.isDark
+                ? 'linear-gradient(135deg, rgba(29,78,216,0.5), rgba(6,182,212,0.3))'
+                : 'linear-gradient(135deg, rgba(37,99,235,0.15), rgba(14,165,233,0.1))'
+              : theme.isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)',
+            border: selected
+              ? `1px solid ${theme.isDark ? 'rgba(59,130,246,0.4)' : 'rgba(37,99,235,0.3)'}`
+              : `1px solid ${theme.isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)'}`,
+            boxShadow: selected ? '0 0 12px rgba(59,130,246,0.2)' : 'none',
+          }}
+        >
+          <Icon
+            size={18}
+            style={{ color: selected ? (theme.isDark ? '#93c5fd' : '#1d4ed8') : theme.muted }}
+          />
+        </div>
+
         <div className="flex-1 min-w-0">
           <p
-            className="text-[14px] font-semibold transition-colors duration-150"
+            className="text-[14px] font-semibold leading-tight transition-colors duration-150"
             style={{ color: selected ? (theme.isDark ? '#f1f5f9' : '#0f172a') : theme.text }}
           >
             {label}
           </p>
           {desc && (
-            <p className="text-[12px] mt-0.5" style={{ color: theme.muted }}>
+            <p className="text-[12px] mt-0.5 leading-snug" style={{ color: theme.muted }}>
               {desc}
             </p>
           )}
         </div>
+
+        {/* Radio indicator */}
         <div
           className="w-5 h-5 rounded-full border-2 flex-shrink-0 flex items-center justify-center transition-all duration-200"
           style={{
-            borderColor: selected ? '#3b82f6' : theme.border,
-            background: selected ? 'linear-gradient(135deg,#1d4ed8,#06b6d4)' : 'transparent',
-            boxShadow: selected ? '0 0 8px rgba(59,130,246,0.4)' : 'none',
+            borderColor: selected
+              ? theme.isDark ? '#3b82f6' : '#2563eb'
+              : theme.isDark ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.18)',
+            background: selected
+              ? 'linear-gradient(135deg, #1d4ed8, #0284c7)'
+              : 'transparent',
+            boxShadow: selected ? '0 0 8px rgba(59,130,246,0.45)' : 'none',
           }}
         >
           {selected && <Check size={10} color="#fff" strokeWidth={3} />}
@@ -166,9 +198,9 @@ export default function PreSignupOnboarding({ onContinueToSignup, onClose }) {
     <div
       className="fixed inset-0 z-[9990] flex items-center justify-center p-4"
       style={{
-        background: 'rgba(0,0,0,0.78)',
-        backdropFilter: 'blur(8px)',
-        WebkitBackdropFilter: 'blur(8px)',
+        background: theme.isDark ? 'rgba(0,0,0,0.82)' : 'rgba(15,23,42,0.5)',
+        backdropFilter: 'blur(12px)',
+        WebkitBackdropFilter: 'blur(12px)',
       }}
       onClick={e => { if (e.target === e.currentTarget) onClose?.(); }}
     >
@@ -186,28 +218,56 @@ export default function PreSignupOnboarding({ onContinueToSignup, onClose }) {
         className="relative w-full flex flex-col overflow-hidden"
         style={{
           maxWidth: 500,
-          borderRadius: 20,
-          background: theme.surface,
-          border: `1px solid ${theme.border}`,
+          borderRadius: 24,
+          background: theme.isDark
+            ? 'linear-gradient(160deg, #0d1629 0%, #0b1220 50%, #080f1c 100%)'
+            : '#ffffff',
+          border: theme.isDark
+            ? '1px solid rgba(255,255,255,0.09)'
+            : '1px solid rgba(0,0,0,0.07)',
           boxShadow: theme.isDark
-            ? '0 32px 80px rgba(0,0,0,0.75), 0 0 0 1px rgba(255,255,255,0.04), 0 0 60px rgba(59,130,246,0.06)'
-            : '0 32px 80px rgba(0,0,0,0.18)',
+            ? '0 0 0 1px rgba(59,130,246,0.07), 0 32px 80px rgba(0,0,0,0.8), 0 0 60px rgba(59,130,246,0.08)'
+            : '0 0 0 1px rgba(0,0,0,0.04), 0 32px 80px rgba(15,23,42,0.2), 0 8px 32px rgba(15,23,42,0.08)',
         }}
       >
+        {/* Top ambient glow strip */}
+        <div
+          className="absolute top-0 left-0 right-0 pointer-events-none"
+          style={{
+            height: 1,
+            background: theme.isDark
+              ? 'linear-gradient(90deg, transparent 0%, rgba(59,130,246,0.6) 40%, rgba(6,182,212,0.5) 60%, transparent 100%)'
+              : 'linear-gradient(90deg, transparent 0%, rgba(37,99,235,0.35) 40%, rgba(14,165,233,0.3) 60%, transparent 100%)',
+          }}
+        />
+        <div
+          className="absolute top-0 left-0 right-0 pointer-events-none"
+          style={{
+            height: 80,
+            background: theme.isDark
+              ? 'radial-gradient(ellipse 70% 100% at 50% 0%, rgba(59,130,246,0.08) 0%, transparent 100%)'
+              : 'radial-gradient(ellipse 70% 100% at 50% 0%, rgba(37,99,235,0.05) 0%, transparent 100%)',
+          }}
+        />
+
         {/* ── Header ── */}
-        <div className="flex items-center justify-between px-6 pt-5 pb-3">
-          <div className="flex items-center gap-2">
+        <div className="relative flex items-center justify-between px-6 pt-5 pb-3">
+          <div className="flex items-center gap-2.5">
             <BrandMark size={26} />
-            <span className="text-[13px] font-bold" style={{ color: theme.accent }}>Zynth</span>
+            <span className="text-[13px] font-extrabold tracking-tight" style={{ color: theme.accent }}>Zynth</span>
           </div>
 
           {/* AI init label */}
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full"
+               style={{
+                 background: theme.isDark ? 'rgba(59,130,246,0.08)' : 'rgba(37,99,235,0.06)',
+                 border: `1px solid ${theme.isDark ? 'rgba(59,130,246,0.18)' : 'rgba(37,99,235,0.15)'}`,
+               }}>
             <Bot size={11} style={{ color: theme.accent }} />
-            <span className="text-[10px] font-medium" style={{ color: theme.muted }}>
-              Initializing your trading profile
+            <span className="text-[10px] font-semibold" style={{ color: theme.isDark ? '#93c5fd' : '#1d4ed8' }}>
+              Initializing trading profile
             </span>
-            <span className="flex gap-[3px] items-center ml-0.5">
+            <span className="flex gap-[3px] items-center">
               {[0, 1, 2].map(i => (
                 <span
                   key={i}
@@ -223,21 +283,22 @@ export default function PreSignupOnboarding({ onContinueToSignup, onClose }) {
 
           <button
             onClick={onClose}
-            className="w-7 h-7 rounded-lg flex items-center justify-center transition-colors"
+            className="w-8 h-8 rounded-xl flex items-center justify-center transition-all duration-150"
             style={{
               background: theme.isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.04)',
+              border: `1px solid ${theme.isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)'}`,
               color: theme.muted,
             }}
-            onMouseEnter={e => (e.currentTarget.style.color = theme.text)}
-            onMouseLeave={e => (e.currentTarget.style.color = theme.muted)}
+            onMouseEnter={e => { e.currentTarget.style.color = theme.text; e.currentTarget.style.background = theme.isDark ? 'rgba(255,255,255,0.09)' : 'rgba(0,0,0,0.08)'; }}
+            onMouseLeave={e => { e.currentTarget.style.color = theme.muted; e.currentTarget.style.background = theme.isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.04)'; }}
           >
             <X size={14} />
           </button>
         </div>
 
         {/* Progress bar + step label */}
-        <div className="px-6 pb-3">
-          <div className="flex items-center justify-between mb-1.5">
+        <div className="px-6 pb-4">
+          <div className="flex items-center justify-between mb-2.5">
             {/* Step pips */}
             <div className="flex items-center gap-1.5">
               {[1, 2, 3].map(n => (
@@ -245,23 +306,24 @@ export default function PreSignupOnboarding({ onContinueToSignup, onClose }) {
                   key={n}
                   className="rounded-full transition-all duration-300"
                   style={{
-                    width: step === n ? 20 : 6,
+                    width: step === n ? 22 : 6,
                     height: 6,
                     background: n <= step
-                      ? 'linear-gradient(90deg,#1d4ed8,#06b6d4)'
+                      ? 'linear-gradient(90deg, #1d4ed8, #0284c7)'
                       : theme.isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)',
-                    boxShadow: n === step ? '0 0 8px rgba(59,130,246,0.5)' : 'none',
+                    boxShadow: n === step ? '0 0 8px rgba(59,130,246,0.55)' : 'none',
                   }}
                 />
               ))}
             </div>
-            <span className="text-[10px] font-medium" style={{ color: theme.muted }}>
+            <span className="text-[10px] font-semibold" style={{ color: theme.muted }}>
               Step {step} of 3
               {step === 1 && ' — Setting up your trading profile'}
               {step === 2 && ' — Identifying your challenge'}
               {step === 3 && ' — Generating your analysis'}
             </span>
           </div>
+          {/* Track */}
           <div
             style={{
               height: 2,
@@ -274,7 +336,7 @@ export default function PreSignupOnboarding({ onContinueToSignup, onClose }) {
               className="h-full transition-all duration-500"
               style={{
                 width: `${(step / 3) * 100}%`,
-                background: 'linear-gradient(90deg,#1d4ed8,#06b6d4)',
+                background: 'linear-gradient(90deg, #1d4ed8, #0284c7)',
                 boxShadow: '0 0 8px rgba(59,130,246,0.4)',
               }}
             />
@@ -293,27 +355,27 @@ export default function PreSignupOnboarding({ onContinueToSignup, onClose }) {
                 animate="center"
                 exit="exit"
                 transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-                className="px-6 py-6"
+                className="px-6 py-5"
               >
-                <p
-                  className="text-[11px] font-bold tracking-[0.18em] uppercase mb-2"
-                  style={{ color: theme.accent }}
-                >
-                  Market Selection
-                </p>
+                <div className="flex items-center gap-2 mb-3">
+                  <span
+                    className="text-[10.5px] font-extrabold tracking-[0.16em] uppercase"
+                    style={{ color: theme.accent }}
+                  >
+                    Market Selection
+                  </span>
+                  <div className="flex-1 h-px" style={{ background: theme.isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)' }} />
+                </div>
                 <h2
-                  className="text-[22px] font-extrabold mb-1 leading-snug"
+                  className="text-[22px] font-extrabold mb-1.5 leading-snug"
                   style={{ color: theme.text }}
                 >
                   What do you trade?
                 </h2>
-                <p className="text-[12px] mb-1" style={{ color: theme.muted }}>
+                <p className="text-[13px] mb-5" style={{ color: theme.muted }}>
                   We'll personalise your experience around your market.
                 </p>
-                <p className="text-[11px] mb-5" style={{ color: theme.isDark ? 'rgba(99,130,190,0.7)' : 'rgba(100,116,139,0.7)' }}>
-                  This helps Zynth detect patterns specific to your market.
-                </p>
-                <div className="space-y-2.5">
+                <div className="space-y-2">
                   {MARKETS.map(m => (
                     <OptionCard
                       key={m.id}
@@ -338,27 +400,27 @@ export default function PreSignupOnboarding({ onContinueToSignup, onClose }) {
                 animate="center"
                 exit="exit"
                 transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-                className="px-6 py-6"
+                className="px-6 py-5"
               >
-                <p
-                  className="text-[11px] font-bold tracking-[0.18em] uppercase mb-2"
-                  style={{ color: theme.accent }}
-                >
-                  Pattern Detection
-                </p>
+                <div className="flex items-center gap-2 mb-3">
+                  <span
+                    className="text-[10.5px] font-extrabold tracking-[0.16em] uppercase"
+                    style={{ color: theme.accent }}
+                  >
+                    Pattern Detection
+                  </span>
+                  <div className="flex-1 h-px" style={{ background: theme.isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)' }} />
+                </div>
                 <h2
-                  className="text-[22px] font-extrabold mb-1 leading-snug"
+                  className="text-[22px] font-extrabold mb-1.5 leading-snug"
                   style={{ color: theme.text }}
                 >
-                  What's your biggest problem?
+                  What's your biggest challenge?
                 </h2>
-                <p className="text-[12px] mb-1" style={{ color: theme.muted }}>
-                  Be honest — this is what Zynth is built to fix.
+                <p className="text-[13px] mb-5" style={{ color: theme.muted }}>
+                  Be honest — this is exactly what Zynth is built to fix.
                 </p>
-                <p className="text-[11px] mb-5" style={{ color: theme.isDark ? 'rgba(99,130,190,0.7)' : 'rgba(100,116,139,0.7)' }}>
-                  This helps Zynth detect patterns specific to your market.
-                </p>
-                <div className="space-y-2.5">
+                <div className="space-y-2">
                   {PROBLEMS.map(p => (
                     <OptionCard
                       key={p.id}
@@ -383,62 +445,78 @@ export default function PreSignupOnboarding({ onContinueToSignup, onClose }) {
                 animate="center"
                 exit="exit"
                 transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-                className="px-6 py-8 text-center"
+                className="px-6 py-6"
               >
-                <div
-                  className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-5"
-                  style={{
-                    background: 'linear-gradient(135deg,rgba(59,130,246,0.2),rgba(6,182,212,0.12))',
-                    border: '1px solid rgba(59,130,246,0.25)',
-                  }}
-                >
-                  <Sparkles size={26} style={{ color: theme.accent }} />
+                {/* Icon + badge */}
+                <div className="flex items-center gap-3 mb-5">
+                  <div
+                    className="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0"
+                    style={{
+                      background: theme.isDark
+                        ? 'linear-gradient(135deg, rgba(29,78,216,0.35), rgba(2,132,199,0.2))'
+                        : 'linear-gradient(135deg, rgba(37,99,235,0.12), rgba(14,165,233,0.08))',
+                      border: `1px solid ${theme.isDark ? 'rgba(59,130,246,0.3)' : 'rgba(37,99,235,0.2)'}`,
+                      boxShadow: theme.isDark ? '0 0 20px rgba(59,130,246,0.15)' : 'none',
+                    }}
+                  >
+                    <Sparkles size={22} style={{ color: theme.accent }} />
+                  </div>
+                  <div>
+                    <p className="text-[10.5px] font-extrabold tracking-[0.16em] uppercase mb-0.5" style={{ color: theme.accent }}>
+                      Your personalised analysis
+                    </p>
+                    <p className="text-[12px]" style={{ color: theme.muted }}>Ready based on your answers</p>
+                  </div>
                 </div>
 
-                <p
-                  className="text-[11px] font-bold tracking-[0.18em] uppercase mb-3"
-                  style={{ color: theme.accent }}
-                >
-                  Your personalised analysis
-                </p>
-
-                <h2
-                  className="text-[21px] font-extrabold leading-snug mb-4"
-                  style={{ color: theme.text }}
-                >
-                  {hook.title}
-                </h2>
-
-                <p
-                  className="text-[14px] leading-relaxed mb-8 max-w-sm mx-auto"
-                  style={{ color: theme.muted }}
-                >
-                  {hook.body}
-                </p>
-
-                {/* Inline stats teaser */}
+                {/* Hook content card */}
                 <div
-                  className="flex items-center justify-center gap-6 py-4 px-5 rounded-2xl border mb-8 text-center"
+                  className="rounded-2xl p-5 mb-4"
                   style={{
-                    background: theme.isDark ? 'rgba(59,130,246,0.05)' : 'rgba(59,130,246,0.04)',
-                    borderColor: 'rgba(59,130,246,0.15)',
+                    background: theme.isDark
+                      ? 'rgba(255,255,255,0.025)'
+                      : 'rgba(0,0,0,0.02)',
+                    border: `1px solid ${theme.isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.06)'}`,
                   }}
+                >
+                  <h2
+                    className="text-[18px] font-extrabold leading-snug mb-3"
+                    style={{ color: theme.text }}
+                  >
+                    {hook.title}
+                  </h2>
+                  <p
+                    className="text-[13.5px] leading-relaxed"
+                    style={{ color: theme.muted }}
+                  >
+                    {hook.body}
+                  </p>
+                </div>
+
+                {/* Stats row */}
+                <div
+                  className="grid grid-cols-3 gap-3"
                 >
                   {[
                     { val: '68%', label: 'losses are emotional' },
                     { val: '3×', label: 'more profitable w/ journal' },
                     { val: '23%', label: 'avg win-rate boost' },
                   ].map(({ val, label }) => (
-                    <div key={label}>
+                    <div
+                      key={label}
+                      className="text-center rounded-xl py-3 px-2"
+                      style={{
+                        background: theme.isDark ? 'rgba(59,130,246,0.07)' : 'rgba(37,99,235,0.05)',
+                        border: `1px solid ${theme.isDark ? 'rgba(59,130,246,0.15)' : 'rgba(37,99,235,0.12)'}`,
+                      }}
+                    >
                       <div
-                        className="text-[20px] font-extrabold leading-none mb-1 bg-clip-text text-transparent"
-                        style={{
-                          backgroundImage: 'linear-gradient(135deg,#3b82f6,#06b6d4)',
-                        }}
+                        className="text-[20px] font-extrabold leading-none mb-1"
+                        style={{ background: 'linear-gradient(135deg, #3b82f6, #0284c7)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}
                       >
                         {val}
                       </div>
-                      <div className="text-[11px]" style={{ color: theme.muted }}>{label}</div>
+                      <div className="text-[10px] leading-snug" style={{ color: theme.muted }}>{label}</div>
                     </div>
                   ))}
                 </div>
@@ -447,80 +525,86 @@ export default function PreSignupOnboarding({ onContinueToSignup, onClose }) {
           </AnimatePresence>
         </div>
 
-        {/* ── Footer buttons ── */}
+        {/* ── Footer ── */}
         <div
-          className="flex items-center gap-3 px-6 py-5 border-t"
-          style={{ borderColor: theme.border }}
+          className="px-6 py-4"
+          style={{
+            borderTop: `1px solid ${theme.isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.06)'}`,
+            background: theme.isDark ? 'rgba(255,255,255,0.015)' : 'rgba(0,0,0,0.015)',
+          }}
         >
-          {step > 1 && (
-            <button
-              onClick={back}
-              className="flex items-center gap-1 text-[13px] font-medium px-3 py-2.5 rounded-xl transition-colors"
-              style={{ color: theme.muted }}
-              onMouseEnter={e => (e.currentTarget.style.color = theme.text)}
-              onMouseLeave={e => (e.currentTarget.style.color = theme.muted)}
-            >
-              <ChevronLeft size={15} /> Back
-            </button>
-          )}
+          <div className="flex items-center gap-3">
+            {step > 1 && (
+              <button
+                onClick={back}
+                className="flex items-center gap-1.5 text-[13px] font-semibold px-3.5 py-2.5 rounded-xl border transition-all duration-150"
+                style={{
+                  borderColor: theme.isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)',
+                  color: theme.muted,
+                  background: 'transparent',
+                }}
+                onMouseEnter={e => { e.currentTarget.style.color = theme.text; e.currentTarget.style.borderColor = theme.isDark ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.18)'; }}
+                onMouseLeave={e => { e.currentTarget.style.color = theme.muted; e.currentTarget.style.borderColor = theme.isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'; }}
+              >
+                <ChevronLeft size={15} /> Back
+              </button>
+            )}
 
-          <div className="flex-1" />
+            <div className="flex-1" />
 
-          {step === 1 && (
-            <button
-              onClick={advance}
-              disabled={!canAdvanceStep1}
-              className="flex items-center gap-2 px-6 py-3 rounded-xl text-[14px] font-semibold text-white transition-all"
-              style={{
-                background: canAdvanceStep1
-                  ? 'linear-gradient(135deg,#1d4ed8,#0284c7)'
-                  : theme.isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.07)',
-                color: canAdvanceStep1 ? '#fff' : theme.muted,
-                boxShadow: canAdvanceStep1 ? '0 4px 16px rgba(59,130,246,0.35)' : 'none',
-                transform: canAdvanceStep1 ? 'scale(1)' : 'scale(0.98)',
-                cursor: canAdvanceStep1 ? 'pointer' : 'not-allowed',
-              }}
-              onMouseEnter={e => { if (canAdvanceStep1) { e.currentTarget.style.boxShadow = '0 8px 28px rgba(59,130,246,0.5)'; e.currentTarget.style.transform = 'scale(1.03) translateY(-1px)'; } }}
-              onMouseLeave={e => { if (canAdvanceStep1) { e.currentTarget.style.boxShadow = '0 4px 16px rgba(59,130,246,0.35)'; e.currentTarget.style.transform = 'scale(1)'; } }}
-            >
-              Continue Analysis <ArrowRight size={16} />
-            </button>
-          )}
+            {(step === 1 || step === 2) && (
+              <button
+                onClick={advance}
+                disabled={step === 1 ? !canAdvanceStep1 : !canAdvanceStep2}
+                className="flex items-center gap-2 px-6 py-2.5 rounded-xl text-[14px] font-bold transition-all duration-200"
+                style={{
+                  background: (step === 1 ? canAdvanceStep1 : canAdvanceStep2)
+                    ? 'linear-gradient(135deg, #1d4ed8 0%, #0284c7 100%)'
+                    : theme.isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.05)',
+                  color: (step === 1 ? canAdvanceStep1 : canAdvanceStep2) ? '#ffffff' : theme.muted,
+                  boxShadow: (step === 1 ? canAdvanceStep1 : canAdvanceStep2)
+                    ? '0 4px 18px rgba(29,78,216,0.38), 0 1px 4px rgba(0,0,0,0.15)'
+                    : 'none',
+                  cursor: (step === 1 ? canAdvanceStep1 : canAdvanceStep2) ? 'pointer' : 'not-allowed',
+                  opacity: (step === 1 ? canAdvanceStep1 : canAdvanceStep2) ? 1 : 0.55,
+                }}
+                onMouseEnter={e => {
+                  if (step === 1 ? canAdvanceStep1 : canAdvanceStep2) {
+                    e.currentTarget.style.boxShadow = '0 8px 28px rgba(29,78,216,0.52), 0 2px 6px rgba(0,0,0,0.18)';
+                    e.currentTarget.style.transform = 'translateY(-1px)';
+                  }
+                }}
+                onMouseLeave={e => {
+                  if (step === 1 ? canAdvanceStep1 : canAdvanceStep2) {
+                    e.currentTarget.style.boxShadow = '0 4px 18px rgba(29,78,216,0.38), 0 1px 4px rgba(0,0,0,0.15)';
+                    e.currentTarget.style.transform = '';
+                  }
+                }}
+              >
+                Continue Analysis <ArrowRight size={16} />
+              </button>
+            )}
 
-          {step === 2 && (
-            <button
-              onClick={advance}
-              disabled={!canAdvanceStep2}
-              className="flex items-center gap-2 px-6 py-3 rounded-xl text-[14px] font-semibold transition-all"
-              style={{
-                background: canAdvanceStep2
-                  ? 'linear-gradient(135deg,#1d4ed8,#0284c7)'
-                  : theme.isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.07)',
-                color: canAdvanceStep2 ? '#fff' : theme.muted,
-                boxShadow: canAdvanceStep2 ? '0 4px 16px rgba(59,130,246,0.35)' : 'none',
-                transform: canAdvanceStep2 ? 'scale(1)' : 'scale(0.98)',
-                cursor: canAdvanceStep2 ? 'pointer' : 'not-allowed',
-              }}
-              onMouseEnter={e => { if (canAdvanceStep2) { e.currentTarget.style.boxShadow = '0 8px 28px rgba(59,130,246,0.5)'; e.currentTarget.style.transform = 'scale(1.03) translateY(-1px)'; } }}
-              onMouseLeave={e => { if (canAdvanceStep2) { e.currentTarget.style.boxShadow = '0 4px 16px rgba(59,130,246,0.35)'; e.currentTarget.style.transform = 'scale(1)'; } }}
-            >
-              Continue Analysis <ArrowRight size={16} />
-            </button>
-          )}
-
-          {step === 3 && (
-            <button
-              onClick={handleSignupCTA}
-              className="flex items-center gap-2 px-7 py-3 rounded-xl text-[14px] font-bold text-white transition-all"
-              style={{
-                background: 'linear-gradient(135deg,#1d4ed8,#0284c7)',
-                boxShadow: '0 4px 20px rgba(59,130,246,0.40)',
-              }}
-              onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 10px 32px rgba(59,130,246,0.55)'; e.currentTarget.style.transform = 'scale(1.03) translateY(-1px)'; }}
-              onMouseLeave={e => { e.currentTarget.style.boxShadow = '0 4px 20px rgba(59,130,246,0.40)'; e.currentTarget.style.transform = 'scale(1)'; }}
-            >
-              Create Free Account <ArrowRight size={16} />
-            </button>
+            {step === 3 && (
+              <button
+                onClick={handleSignupCTA}
+                className="flex items-center gap-2 px-6 py-2.5 rounded-xl text-[14px] font-bold text-white transition-all duration-200"
+                style={{
+                  background: 'linear-gradient(135deg, #1d4ed8 0%, #0284c7 100%)',
+                  boxShadow: '0 4px 20px rgba(29,78,216,0.42), 0 1px 4px rgba(0,0,0,0.15)',
+                }}
+                onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 10px 32px rgba(29,78,216,0.56), 0 2px 8px rgba(0,0,0,0.18)'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
+                onMouseLeave={e => { e.currentTarget.style.boxShadow = '0 4px 20px rgba(29,78,216,0.42), 0 1px 4px rgba(0,0,0,0.15)'; e.currentTarget.style.transform = ''; }}
+              >
+                Create Free Account <ArrowRight size={16} />
+              </button>
+            )}
+          </div>
+          {/* Step skip hint */}
+          {step < 3 && (
+            <p className="text-center mt-3 text-[11px]" style={{ color: theme.isDark ? 'rgba(148,163,184,0.5)' : 'rgba(100,116,139,0.6)' }}>
+              You can always update this later in your profile
+            </p>
           )}
         </div>
       </motion.div>

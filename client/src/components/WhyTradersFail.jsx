@@ -69,17 +69,15 @@ export default function WhyTradersFail({ onGetStarted }) {
   return (
     <section
       className="py-24 px-6 relative overflow-hidden transition-colors duration-300"
-      style={{ background: isDark ? '#070709' : '#eef1f7' }}
+      style={{ background: isDark ? 'transparent' : '#f8fafc' }}
     >
       {/* Ambient glow */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background: isDark
-            ? 'radial-gradient(ellipse 60% 50% at 50% 100%, rgba(239,68,68,0.05) 0%, transparent 70%)'
-            : 'radial-gradient(ellipse 60% 50% at 50% 100%, rgba(239,68,68,0.04) 0%, transparent 70%)',
-        }}
-      />
+      {!isDark && (
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{ background: 'radial-gradient(ellipse 100% 160% at 50% 50%, rgba(239,68,68,0.04) 0%, rgba(239,68,68,0.01) 62%, transparent 82%)' }}
+        />
+      )}
 
       <div className="relative z-10 max-w-6xl mx-auto">
         {/* Section label */}
@@ -116,9 +114,9 @@ export default function WhyTradersFail({ onGetStarted }) {
                 <div
                   className="rounded-2xl border overflow-hidden transition-all duration-300 hover:-translate-y-1"
                   style={{
-                    background: isDark ? '#141414' : '#ffffff',
+                    background: isDark ? '#0f172a' : '#ffffff',
                     borderColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.07)',
-                    boxShadow: isDark ? 'none' : '0 4px 20px rgba(0,0,0,0.05)',
+                    boxShadow: isDark ? '0 4px 24px rgba(0,0,0,0.5)' : '0 1px 3px rgba(0,0,0,0.04), 0 4px 20px rgba(0,0,0,0.07)',
                   }}
                 >
                   {/* Pain block */}

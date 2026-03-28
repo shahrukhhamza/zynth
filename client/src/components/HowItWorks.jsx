@@ -59,17 +59,15 @@ export default function HowItWorks({ onGetStarted }) {
   return (
     <section
       className="py-24 px-6 relative overflow-hidden transition-colors duration-300"
-      style={{ background: isDark ? '#0a0a0a' : '#f4f6f9' }}
+      style={{ background: isDark ? 'transparent' : '#f8fafc' }}
     >
       {/* Subtle background glow */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background: isDark
-            ? 'radial-gradient(ellipse 80% 50% at 50% 0%, rgba(59,130,246,0.06) 0%, transparent 70%)'
-            : 'radial-gradient(ellipse 80% 50% at 50% 0%, rgba(59,130,246,0.05) 0%, transparent 70%)',
-        }}
-      />
+      {!isDark && (
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{ background: 'radial-gradient(ellipse 100% 160% at 50% 50%, rgba(59,130,246,0.05) 0%, rgba(59,130,246,0.01) 62%, transparent 82%)' }}
+        />
+      )}
 
       <div className="relative z-10 max-w-6xl mx-auto">
         {/* Section label */}
@@ -115,9 +113,9 @@ export default function HowItWorks({ onGetStarted }) {
                 <div
                   className="relative rounded-2xl p-7 border h-full transition-all duration-300 hover:-translate-y-1"
                   style={{
-                    background: isDark ? '#141414' : '#ffffff',
+                    background: isDark ? '#0f172a' : '#ffffff',
                     borderColor: step.border,
-                    boxShadow: isDark ? 'none' : '0 4px 20px rgba(0,0,0,0.05)',
+                    boxShadow: isDark ? '0 4px 24px rgba(0,0,0,0.5)' : '0 1px 3px rgba(0,0,0,0.04), 0 4px 20px rgba(0,0,0,0.07)',
                   }}
                 >
                   {/* Step number watermark */}
