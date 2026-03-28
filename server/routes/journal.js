@@ -84,7 +84,14 @@ router.post('/trades', checkJournalLimit, upload.single('screenshot'), async (re
       tp:            body.tp            ? parseFloat(body.tp)            : null,
       sl:            body.sl            ? parseFloat(body.sl)            : null,
       outcome:       body.outcome       || null,
-      profit_loss:   body.profit_loss   ? parseFloat(body.profit_loss)   : null,
+      profit_loss:   (() => {
+        const raw = body.profit_loss ? parseFloat(body.profit_loss) : null;
+        if (raw == null) return null;
+        const outcome = (body.outcome || '').toLowerCase();
+        if (outcome === 'loss')      return -Math.abs(raw);
+        if (outcome === 'win')       return  Math.abs(raw);
+        return raw; // breakeven or unset — keep as-is
+      })(),
       session:       body.session       || null,
       screenshot_path: screenshotPath,
     };
@@ -238,6 +245,15 @@ router.put('/trades/:id', upload.single('screenshot'), async (req, res) => {
     const tradeFields = ['pair','direction','position_size','entry_price','exit_price','tp','sl','outcome','profit_loss','session'];
     const tradeUpdate = {};
     tradeFields.forEach(k => { if (body[k] !== undefined) tradeUpdate[k] = body[k]; });
+    // Enforce P&L sign based on outcome
+    if (tradeUpdate.profit_loss !== undefined) {
+      const raw     = parseFloat(tradeUpdate.profit_loss);
+      const outcome = (tradeUpdate.outcome || body.outcome || '').toLowerCase();
+      if (!isNaN(raw)) {
+        if (outcome === 'loss') tradeUpdate.profit_loss = -Math.abs(raw);
+        else if (outcome === 'win') tradeUpdate.profit_loss = Math.abs(raw);
+      }
+    }
     if (req.file) {
       tradeUpdate.screenshot_path = await saveJournalScreenshot(getUserId(req), req.file);
     }

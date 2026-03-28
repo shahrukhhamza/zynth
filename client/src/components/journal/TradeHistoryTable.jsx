@@ -161,7 +161,12 @@ export default function TradeHistoryTable({ trades, total, page, limit, onPageCh
               const rawDate  = t.created_at
                 ? (t.created_at.includes('T') ? t.created_at.split('T')[0] : t.created_at.slice(0, 10))
                 : null;
-              const pnl      = parseFloat(t.profit_loss);
+              const rawPnl   = parseFloat(t.profit_loss);
+              // Normalize sign from outcome for existing entries saved without sign enforcement
+              const pnl      = isNaN(rawPnl) ? NaN
+                : t.outcome === 'loss' ? -Math.abs(rawPnl)
+                : t.outcome === 'win'  ?  Math.abs(rawPnl)
+                : rawPnl;
               const pnlColor = isNaN(pnl) ? theme.muted : pnl >= 0 ? '#10b981' : '#ef4444';
               const isLast   = i === trades.length - 1;
               const noBorder = isLast ? { borderBottom: 'none' } : {};
@@ -224,7 +229,7 @@ export default function TradeHistoryTable({ trades, total, page, limit, onPageCh
 
                   {/* P&L */}
                   <td style={{ ...tdBase, ...noBorder, ...MONO, fontWeight: 600, fontSize: '0.88rem', color: pnlColor }}>
-                    {isNaN(pnl) ? '—' : `${pnl >= 0 ? '+' : ''}${pnl.toFixed(2)}`}
+                    {isNaN(pnl) ? '—' : `${pnl >= 0 ? '+' : ''}${Math.abs(pnl).toFixed(2)}`}
                   </td>
 
                   {/* Strategy */}
