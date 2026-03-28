@@ -192,7 +192,8 @@ function cardStyle(D, extra = {}) {
   return {
     background: D.cardBg,
     border: `1px solid ${D.border}`,
-    borderRadius: 12,
+    borderRadius: 14,
+    boxShadow: D.shadow || 'none',
     ...extra,
   };
 }
@@ -231,12 +232,21 @@ export default function EconomicDashboard({ onViewChange }) {
       fetch(`${API_URL}/api/economic/dashboard`, { headers }).then(r => r.ok ? r.json() : null),
     ]).then(([allResult, eco]) => {
       // Normalize DB field names so all downstream code (t.pnl, t.date, t.emotion_before) works
-      const normalize = (t) => ({
-        ...t,
-        pnl:            t.profit_loss,
-        date:           t.created_at,
-        emotion_before: t.emotional_state,
-      });
+      // Also correct P&L sign for old trades stored with wrong sign (outcome takes precedence)
+      const normalize = (t) => {
+        const rawPnl = parseFloat(t.profit_loss) || 0;
+        const pnl = t.outcome === 'loss'
+          ? -Math.abs(rawPnl)
+          : t.outcome === 'win'
+          ? Math.abs(rawPnl)
+          : rawPnl;
+        return {
+          ...t,
+          pnl,
+          date:           t.created_at,
+          emotion_before: t.emotional_state,
+        };
+      };
       const calc = (data) => {
         if (!Array.isArray(data) || !data.length) return null;
         const wins = data.filter(t => parseFloat(t.pnl ?? 0) > 0).length;
@@ -325,31 +335,35 @@ export default function EconomicDashboard({ onViewChange }) {
 
   // ── Design tokens ────────────────────────────────────────────────────────
   const D = theme.isDark ? {
-    pageBg:   theme.bg,
-    cardBg:   theme.surface,
-    cardBg2:  theme.surface2,
-    border:   theme.border,
-    border2:  'rgba(255,255,255,0.10)',
-    text:     theme.text,
-    textSub:  '#8892a4',
-    textMute: 'rgba(255,255,255,0.08)',
-    accent:   '#10b981',
-    gold:     '#f59e0b',
-    red:      '#ef4444',
-    blue:     '#0ea5e9',
+    pageBg:      theme.bg,
+    cardBg:      theme.surface,
+    cardBg2:     theme.surface2,
+    border:      theme.border,
+    border2:     'rgba(255,255,255,0.10)',
+    text:        theme.text,
+    textSub:     '#8892a4',
+    textMute:    'rgba(255,255,255,0.08)',
+    accent:      '#10b981',
+    gold:        '#f59e0b',
+    red:         '#ef4444',
+    blue:        '#0ea5e9',
+    shadow:      'none',
+    shadowHover: '0 4px 24px rgba(0,0,0,0.35)',
   } : {
-    pageBg:   '#f1f3f6',
-    cardBg:   '#ffffff',
-    cardBg2:  '#f7f8fa',
-    border:   '#e5e8ed',
-    border2:  '#d0d5de',
-    text:     '#0d1117',
-    textSub:  '#5a6472',
-    textMute: '#8b97a8',
-    accent:   '#10b981',
-    gold:     '#d97706',
-    red:      '#dc2626',
-    blue:     '#2563eb',
+    pageBg:      '#f1f5f9',
+    cardBg:      '#ffffff',
+    cardBg2:     '#f8fafc',
+    border:      'rgba(0,0,0,0.07)',
+    border2:     'rgba(0,0,0,0.12)',
+    text:        '#0f172a',
+    textSub:     '#475569',
+    textMute:    '#94a3b8',
+    accent:      '#10b981',
+    gold:        '#d97706',
+    red:         '#dc2626',
+    blue:        '#2563eb',
+    shadow:      '0 1px 3px rgba(0,0,0,0.04), 0 4px 20px rgba(0,0,0,0.05)',
+    shadowHover: '0 4px 16px rgba(0,0,0,0.08), 0 12px 40px rgba(0,0,0,0.08)',
   };
 
   if (loading) return (
@@ -368,13 +382,13 @@ export default function EconomicDashboard({ onViewChange }) {
     <div style={{ flex: 1, overflowY: 'auto', background: D.pageBg, padding: '24px 24px 56px' }}>
       <style>{`
         @keyframes spin { to { transform: rotate(360deg); } }
-        .dc:hover { border-color: ${D.border2} !important; }
+        .dc:hover { border-color: ${D.border2} !important; box-shadow: ${D.shadowHover} !important; }
         .trade-row { transition: background 0.12s ease; border-radius: 8px; }
         .trade-row:hover { background: ${D.cardBg2} !important; }
-        .stat-card { transition: border-color 0.15s ease, box-shadow 0.15s ease; }
-        .stat-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+        .stat-card { transition: border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease; }
+        .stat-card:hover { box-shadow: ${D.shadowHover} !important; transform: translateY(-1px); border-color: ${D.border2} !important; }
         .qcard:hover { border-color: var(--qhc) !important; background: var(--qhb) !important; }
-        .new-entry-btn:hover { opacity: 0.88 !important; transform: translateY(-1px); }
+        .new-entry-btn:hover { opacity: 0.92 !important; transform: translateY(-1px); box-shadow: 0 6px 24px rgba(16,185,129,0.35) !important; }
       `}</style>
 
       <div style={{ maxWidth: 1200, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 20 }}>
@@ -473,7 +487,7 @@ export default function EconomicDashboard({ onViewChange }) {
             },
           ].map((s, i) => (
             <div key={i} className="stat-card dc" style={{
-              ...CS({ padding: '18px 20px' }),
+              ...CS({ padding: '20px 22px' }),
               cursor: 'default',
               borderLeft: `3px solid ${s.color === D.textSub ? D.border : s.color}`,
             }}>
@@ -492,10 +506,10 @@ export default function EconomicDashboard({ onViewChange }) {
                   <s.Icon style={{ width: 15, height: 15, color: s.iconColor }} />
                 </div>
               </div>
-              <div style={{ fontSize: 26, fontWeight: 800, color: s.color, lineHeight: 1, letterSpacing: '-0.03em', marginBottom: 6 }}>
+              <div style={{ fontSize: 28, fontWeight: 800, color: s.color, lineHeight: 1, letterSpacing: '-0.03em', marginBottom: 7 }}>
                 {s.value}
               </div>
-              <div style={{ fontSize: 12, color: D.textSub }}>{s.sub}</div>
+              <div style={{ fontSize: 12, color: D.textSub, fontWeight: 500 }}>{s.sub}</div>
             </div>
           ))}
         </div>

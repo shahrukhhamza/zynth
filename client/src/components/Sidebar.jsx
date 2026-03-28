@@ -32,15 +32,15 @@ function NavButton({ icon: Icon, label, badge, active, collapsed, onClick, core 
 
   const getBg = () => {
     if (core) return active ? '#1d4ed8' : hov ? '#2563eb' : '#3b82f6cc';
-    if (active) return 'rgba(59,130,246,0.12)';
-    if (hov) return theme.isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)';
+    if (active) return theme.isDark ? 'rgba(59,130,246,0.12)' : '#eff6ff';
+    if (hov) return theme.isDark ? 'rgba(255,255,255,0.05)' : '#f8fafc';
     return 'transparent';
   };
 
   const getColor = () => {
     if (core) return '#ffffff';
-    if (active) return '#3b82f6';
-    if (hov) return theme.text;
+    if (active) return theme.isDark ? '#60a5fa' : '#1d4ed8';
+    if (hov) return theme.isDark ? theme.text : '#0f172a';
     return theme.muted;
   };
 
@@ -55,20 +55,20 @@ function NavButton({ icon: Icon, label, badge, active, collapsed, onClick, core 
         display: 'flex',
         alignItems: 'center',
         textAlign: 'left',
-        borderRadius: 8,
+        borderRadius: core ? 10 : 8,
         height: core ? 48 : 40,
         justifyContent: collapsed ? 'center' : 'flex-start',
         gap: collapsed ? 0 : 10,
         padding: collapsed ? '0' : `0 10px 0 ${active && !core ? '9px' : '12px'}`,
         backgroundColor: getBg(),
         color: getColor(),
-        border: 'none',
-        borderLeft: !core && !collapsed ? `2px solid ${active ? '#3b82f6' : 'transparent'}` : 'none',
+        border: active && !core && !collapsed ? `1px solid ${theme.isDark ? 'rgba(59,130,246,0.2)' : 'rgba(37,99,235,0.15)'}` : '1px solid transparent',
+        borderLeft: !core && !collapsed ? `3px solid ${active ? '#3b82f6' : 'transparent'}` : (core ? 'none' : '1px solid transparent'),
         boxShadow: core
           ? hov
-            ? '0 4px 20px rgba(59,130,246,0.3)'
-            : '0 2px 12px rgba(59,130,246,0.2)'
-          : 'none',
+            ? '0 4px 20px rgba(59,130,246,0.35)'
+            : '0 2px 12px rgba(59,130,246,0.25)'
+          : active && !theme.isDark ? '0 2px 8px rgba(37,99,235,0.10)' : 'none',
         transition: 'all 0.18s ease',
         cursor: 'pointer',
         position: 'relative',
@@ -104,8 +104,8 @@ function NavButton({ icon: Icon, label, badge, active, collapsed, onClick, core 
         <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'space-between', minWidth: 0 }}>
           <span style={{
             fontSize: core ? 13 : 13,
-            fontWeight: core ? 600 : active ? 500 : 400,
-            letterSpacing: core ? '0.01em' : 0,
+            fontWeight: core ? 600 : active ? 600 : 400,
+            letterSpacing: core ? '0.01em' : active ? '0' : '0',
             whiteSpace: 'nowrap',
             overflow: 'hidden',
             textOverflow: 'ellipsis',
@@ -165,13 +165,14 @@ function SidebarInner({
     if (isMobile && onMobileClose) onMobileClose();
   };
 
-  const SB_BG     = theme.bg;
+  const SB_BG     = theme.isDark ? theme.bg : '#ffffff';
   const SB_BORDER = theme.border;
 
   return (
     <div style={{
       display: 'flex', flexDirection: 'column', height: '100%',
       backgroundColor: SB_BG,
+      boxShadow: theme.isDark ? 'none' : '1px 0 0 rgba(0,0,0,0.06)',
       overflow: 'hidden',
     }}>
 

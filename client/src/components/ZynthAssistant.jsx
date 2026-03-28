@@ -172,10 +172,10 @@ export default function ZynthAssistant() {
   const surface2 = theme.surface2;
   const borderColor = theme.border || (theme.isDark ? '#2e2e2e' : '#e5e7eb');
   const headerTitleColor = theme.isDark ? '#f8fbff' : '#0f172a';
-  const headerSubtitleColor = theme.isDark ? 'rgba(239,246,255,0.82)' : '#34517a';
-  const headerCloseColor = theme.isDark ? 'rgba(239,246,255,0.78)' : '#5b6f8b';
-  const assistantBubbleBg = theme.isDark ? 'rgba(15,23,42,0.72)' : surface2;
-  const assistantBubbleBorder = theme.isDark ? '1px solid rgba(59,130,246,0.14)' : `1px solid ${borderColor}`;
+  const headerSubtitleColor = theme.isDark ? 'rgba(239,246,255,0.82)' : '#475569';
+  const headerCloseColor = theme.isDark ? 'rgba(239,246,255,0.78)' : '#64748b';
+  const assistantBubbleBg = theme.isDark ? 'rgba(15,23,42,0.72)' : '#f1f5f9';
+  const assistantBubbleBorder = theme.isDark ? '1px solid rgba(59,130,246,0.14)' : `1px solid rgba(0,0,0,0.06)`;
 
   // ── Render ────────────────────────────────────────────────────────────────
   return createPortal(
@@ -241,7 +241,7 @@ export default function ZynthAssistant() {
             gap: 10,
             background: theme.isDark
               ? 'linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 100%)'
-              : 'linear-gradient(135deg, #ecf3ff 0%, #f9fafb 100%)',
+              : 'linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%)',
             flexShrink: 0,
           }}>
             {/* Logo icon */}
@@ -254,10 +254,10 @@ export default function ZynthAssistant() {
               <MessageCircle size={16} color="#fff" />
             </div>
             <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontSize: 14, fontWeight: 700, color: headerTitleColor, lineHeight: 1.2 }}>
+              <div style={{ fontSize: 14, fontWeight: 700, color: '#ffffff', lineHeight: 1.2 }}>
                 Zynth Assistant
               </div>
-              <div style={{ fontSize: 11, color: headerSubtitleColor, marginTop: 2, fontWeight: 500, letterSpacing: '0.01em' }}>
+              <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.75)', marginTop: 2, fontWeight: 500, letterSpacing: '0.01em' }}>
                 Product Support and Guidance
               </div>
             </div>
@@ -266,9 +266,9 @@ export default function ZynthAssistant() {
               onClick={() => setOpen(false)}
               style={{
                 width: 28, height: 28, borderRadius: 8, border: 'none',
-                background: 'transparent', cursor: 'pointer',
+                background: 'rgba(255,255,255,0.12)', cursor: 'pointer',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                color: headerCloseColor, flexShrink: 0,
+                color: 'rgba(255,255,255,0.85)', flexShrink: 0,
               }}
             >
               <X size={16} />

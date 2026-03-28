@@ -151,14 +151,14 @@ aside {
 }
 
 html:not(.dark) .sidebar-tooltip {
-  background: #2a2a2a;
-  color: #f8fafc;
-  border-color: #3a3a3a;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  background: #1e293b;
+  color: #f1f5f9;
+  border-color: #334155;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
 }
 
 html:not(.dark) .sidebar-tooltip::before {
-  border-right-color: #2a2a2a;
+  border-right-color: #1e293b;
 }
 
 /* ── Nav active glow ─────────────────────────────────────────────────────── */
@@ -223,6 +223,41 @@ button:not(:disabled):active {
 .card-hover:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 24px rgba(0, 0, 0, 0.28);
+}
+
+/* ── Light mode premium card defaults ───────────────────────────────────── */
+html:not(.dark) .card-hover:hover {
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.10);
+}
+
+/* ── Premium light mode surfaces ────────────────────────────────────────── */
+html:not(.dark) {
+  /* Base app background — slate-100 */
+  background-color: #f1f5f9;
+}
+
+html:not(.dark) [data-surface="card"] {
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.07);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 20px rgba(0, 0, 0, 0.05);
+  border-radius: 14px;
+}
+
+/* ── Focus ring — consistent blue glow ───────────────────────────────────── */
+html:not(.dark) input:focus,
+html:not(.dark) textarea:focus,
+html:not(.dark) select:focus {
+  outline: none;
+  border-color: #3b82f6 !important;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12) !important;
+}
+
+html.dark input:focus,
+html.dark textarea:focus,
+html.dark select:focus {
+  outline: none;
+  border-color: #3b82f6 !important;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.18) !important;
 }
 
 /* ── Smooth page transitions ─────────────────────────────────────────────── */

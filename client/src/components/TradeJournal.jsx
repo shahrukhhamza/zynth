@@ -338,21 +338,39 @@ export default function TradeJournal() {
   };
 
   const tabBar = (
-    <div className="flex gap-1 mb-6 overflow-x-auto" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+    <div
+      className="overflow-x-auto"
+      style={{
+        display: 'flex',
+        borderBottom: `2px solid ${theme.border}`,
+        marginBottom: 24,
+        scrollbarWidth: 'none',
+        msOverflowStyle: 'none',
+        gap: 0,
+      }}
+    >
       {TABS.map(({ key, label, icon: Icon }) => {
         const active = tab === key;
         return (
           <button key={key} onClick={() => setTab(key)}
             className="flex items-center gap-2 transition-all whitespace-nowrap flex-shrink-0"
             style={{
-              padding: '7px 14px',
-              borderRadius: 7,
+              padding: '10px 16px',
+              borderRadius: 0,
               fontSize: '13px',
-              backgroundColor: active ? theme.surface2 : 'transparent',
-              color: active ? theme.text : theme.muted,
-              fontWeight: active ? 500 : 400,
+              backgroundColor: 'transparent',
+              color: active
+                ? (theme.isDark ? '#60a5fa' : '#1d4ed8')
+                : theme.muted,
+              fontWeight: active ? 600 : 400,
               border: 'none',
               outline: 'none',
+              borderBottom: active
+                ? `2px solid ${theme.isDark ? '#3b82f6' : '#2563eb'}`
+                : '2px solid transparent',
+              marginBottom: -2,
+              cursor: 'pointer',
+              transition: 'color 0.15s ease, border-color 0.15s ease',
             }}>
             <Icon className="w-3.5 h-3.5" />
             {label}
@@ -398,21 +416,32 @@ export default function TradeJournal() {
     <div className="p-4 md:p-6">
       {/* Header + tabs — constrained width */}
       <div className="max-w-6xl mx-auto">
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h1 className="text-xl font-bold flex items-center gap-2" style={{ color: theme.text }}>
-              <Brain className="w-5 h-5" style={{ color: theme.accent }} />
-              AI Trading Journal
-            </h1>
-            <p className="text-xs mt-0.5" style={{ color: theme.muted }}>
-              {total} trade{total !== 1 ? 's' : ''} logged
-              {metrics?.winRate != null ? ` · ${metrics.winRate}% win rate` : ''}
-              {metrics?.netPnl != null ? ` · Net P&L: ${metrics.netPnl >= 0 ? '+' : ''}${metrics.netPnl}` : ''}
-            </p>
+        <div
+          style={{
+            background: theme.surface,
+            border: `1px solid ${theme.border}`,
+            borderRadius: 16,
+            padding: '20px 24px 0',
+            marginBottom: 24,
+            boxShadow: theme.isDark ? 'none' : '0 1px 3px rgba(0,0,0,0.04), 0 4px 20px rgba(0,0,0,0.05)',
+          }}
+        >
+          <div className="flex items-center justify-between mb-5">
+            <div>
+              <h1 className="text-xl font-bold flex items-center gap-2" style={{ color: theme.text }}>
+                <Brain className="w-5 h-5" style={{ color: theme.accent }} />
+                AI Trading Journal
+              </h1>
+              <p className="text-xs mt-0.5" style={{ color: theme.muted }}>
+                {total} trade{total !== 1 ? 's' : ''} logged
+                {metrics?.winRate != null ? ` · ${metrics.winRate}% win rate` : ''}
+                {metrics?.netPnl != null ? ` · Net P&L: ${metrics.netPnl >= 0 ? '+' : ''}${metrics.netPnl}` : ''}
+              </p>
+            </div>
           </div>
-        </div>
 
-        {tabBar}
+          {tabBar}
+        </div>
       </div>
 
       {tab === 'log' && (

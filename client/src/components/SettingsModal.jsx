@@ -58,9 +58,9 @@ export default function SettingsModal({ onClose, autoRefresh, onToggleAutoRefres
   const SectionLabel = ({ title }) => (
     <p style={{
       fontSize: 11,
-      fontWeight: 600,
-      letterSpacing: '0.1em',
-      color: theme.isDark ? 'rgba(255,255,255,0.3)' : 'rgba(0,0,0,0.35)',
+      fontWeight: 700,
+      letterSpacing: '0.10em',
+      color: theme.muted,
       padding: '16px 0 8px',
       margin: 0,
       textTransform: 'uppercase',
@@ -75,7 +75,8 @@ export default function SettingsModal({ onClose, autoRefresh, onToggleAutoRefres
       alignItems: 'center',
       gap: 16,
       padding: 16,
-      backgroundColor: theme.isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)',
+      backgroundColor: theme.isDark ? 'rgba(255,255,255,0.03)' : '#f8fafc',
+      border: `1px solid ${theme.border}`,
       borderRadius: 12,
       marginBottom: 8,
       minHeight: 72,
@@ -96,7 +97,7 @@ export default function SettingsModal({ onClose, autoRefresh, onToggleAutoRefres
         }}>{label}</p>
         {description && (
           <p style={{
-            color: theme.isDark ? 'rgba(255,255,255,0.4)' : 'rgba(0,0,0,0.45)',
+            color: theme.muted,
             fontSize: 13, marginTop: 2,
             whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', marginBottom: 0,
           }}>{description}</p>
@@ -108,7 +109,8 @@ export default function SettingsModal({ onClose, autoRefresh, onToggleAutoRefres
 
   const TimezoneBlock = ({ bg }) => (
     <div style={{
-      backgroundColor: theme.isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)',
+      backgroundColor: theme.isDark ? 'rgba(255,255,255,0.03)' : '#f8fafc',
+      border: `1px solid ${theme.border}`,
       borderRadius: 12, padding: 16, marginBottom: 8,
     }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
@@ -121,7 +123,7 @@ export default function SettingsModal({ onClose, autoRefresh, onToggleAutoRefres
         </div>
         <div>
           <p style={{ color: theme.text, fontWeight: 600, fontSize: 15, margin: 0 }}>Market Timezone</p>
-          <p style={{ color: theme.isDark ? 'rgba(255,255,255,0.4)' : theme.muted, fontSize: 13, marginTop: 2, marginBottom: 0 }}>
+          <p style={{ color: theme.muted, fontSize: 13, marginTop: 2, marginBottom: 0 }}>
             Used across all charts and calendar
           </p>
         </div>
@@ -132,8 +134,8 @@ export default function SettingsModal({ onClose, autoRefresh, onToggleAutoRefres
           onChange={e => changeTimezone(e.target.value)}
           style={{
             width: '100%',
-            backgroundColor: theme.isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)',
-            border: `1px solid ${theme.isDark ? 'rgba(255,255,255,0.1)' : theme.border}`,
+            backgroundColor: theme.isDark ? 'rgba(255,255,255,0.05)' : theme.surface,
+            border: `1px solid ${theme.border}`,
             borderRadius: 10,
             padding: '13px 40px 13px 16px',
             color: theme.text,
@@ -153,7 +155,7 @@ export default function SettingsModal({ onClose, autoRefresh, onToggleAutoRefres
         <ChevronDown style={{
           position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)',
           width: 16, height: 16,
-          color: theme.isDark ? 'rgba(255,255,255,0.4)' : theme.muted,
+          color: theme.muted,
           pointerEvents: 'none',
         }} />
       </div>
@@ -189,7 +191,7 @@ export default function SettingsModal({ onClose, autoRefresh, onToggleAutoRefres
         }}>
           {/* Drag handle */}
           <div style={{ display: 'flex', justifyContent: 'center', paddingTop: 6, paddingBottom: 2, flexShrink: 0 }}>
-            <div style={{ width: 40, height: 4, backgroundColor: 'rgba(255,255,255,0.2)', borderRadius: 2 }} />
+            <div style={{ width: 40, height: 4, backgroundColor: theme.border, borderRadius: 2 }} />
           </div>
 
           {/* Sticky header */}
@@ -198,7 +200,7 @@ export default function SettingsModal({ onClose, autoRefresh, onToggleAutoRefres
             backgroundColor: sheetBg,
             zIndex: 10,
             padding: '8px 20px 10px',
-            borderBottom: '1px solid rgba(255,255,255,0.06)',
+            borderBottom: `1px solid ${theme.border}`,
             display: 'flex', alignItems: 'center', justifyContent: 'space-between',
             flexShrink: 0,
           }}>
@@ -212,18 +214,18 @@ export default function SettingsModal({ onClose, autoRefresh, onToggleAutoRefres
               </div>
               <div>
                 <h2 style={{ color: theme.text, fontWeight: 700, fontSize: 16, margin: 0 }}>Settings</h2>
-                <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: 12, margin: 0 }}>Preferences &amp; display options</p>
+                <p style={{ color: theme.muted, fontSize: 12, margin: 0 }}>Preferences &amp; display options</p>
               </div>
             </div>
             <button
               onClick={onClose}
               style={{
                 width: 32, height: 32,
-                backgroundColor: 'rgba(255,255,255,0.06)',
+                backgroundColor: theme.isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)',
                 borderRadius: '50%',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 border: 'none', cursor: 'pointer',
-                color: 'rgba(255,255,255,0.5)',
+                color: theme.muted,
               }}
             >
               <X style={{ width: 16, height: 16 }} />
