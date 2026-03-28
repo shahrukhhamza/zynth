@@ -12,6 +12,7 @@ import { useTheme }  from '../contexts/ThemeContext';
 import { useAuth }   from '../contexts/AuthContext';
 import { useToast }  from '../contexts/ToastContext';
 import { API_URL }   from '../config/api';
+import ErrorBar from './ErrorBar';
 
 // ── Status badge ──────────────────────────────────────────────────────────────
 const STATUS_STYLES = {
@@ -207,11 +208,7 @@ export default function PaymentRequests() {
           </div>
 
           {/* ── Error ── */}
-          {error && (
-            <div className="mx-5 my-4 px-4 py-3 rounded-xl text-[13px]" style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', color: '#f87171' }}>
-              {error}
-            </div>
-          )}
+          {error && <ErrorBar message={error} className="mx-5 my-4" />}
 
           {/* ── Table ── */}
           <div className="overflow-x-auto">

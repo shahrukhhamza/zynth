@@ -13,6 +13,7 @@ import {
 import { useTheme } from '../contexts/ThemeContext';
 import { useAuth } from '../contexts/AuthContext';
 import { API_URL } from '../config/api';
+import ErrorBar from './ErrorBar';
 
 // ── Event display config ──────────────────────────────────────────────────────
 
@@ -175,11 +176,7 @@ export default function UserActivityTimeline({ userId, onClose }) {
             </div>
           )}
 
-          {error && (
-            <div style={{ color: '#F43F5E', fontSize: 13, textAlign: 'center', padding: 24 }}>
-              {error}
-            </div>
-          )}
+          {error && <ErrorBar message={error} className="my-4" />}
 
           {!loading && !error && events.length === 0 && (
             <div style={{ color: theme.muted, fontSize: 13, textAlign: 'center', padding: 32 }}>

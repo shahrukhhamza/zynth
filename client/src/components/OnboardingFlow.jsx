@@ -5,6 +5,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { API_URL } from '../config/api';
 import ImageCropModal from './ImageCropModal';
 import { BrandMark } from './BrandLogo';
+import ErrorBar from './ErrorBar';
 
 const EXPERIENCE_OPTIONS = [
   { value: 'beginner',      label: 'Just Starting Out',   desc: 'New to trading, learning the basics' },
@@ -484,9 +485,7 @@ export default function OnboardingFlow({ onComplete, onSkip }) {
 
             {/* Footer */}
             <div className="px-6 py-4 border-t" style={{ borderColor: theme.border }}>
-              {error && (
-                <p className="text-xs mb-3" style={{ color: theme.danger }}>{error}</p>
-              )}
+              {error && <ErrorBar message={error} className="mb-3" />}
               <div className="flex items-center gap-3">
                 {step > 1 && (
                   <button

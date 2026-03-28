@@ -11,6 +11,7 @@ import { usePlanGate } from '../hooks/usePlanGate';
 import PlanGateBanner from './PlanGateBanner';
 import UpgradeModal from './UpgradeModal';
 import { API_URL } from '../config/api';
+import ErrorBar from './ErrorBar';
 
 // ── Tiny helpers ──────────────────────────────────────────────────────────────
 function scoreColor(score) {
@@ -776,12 +777,7 @@ export default function MacroCorrelation() {
       <style>{`@keyframes spin { from { transform: rotate(0deg) } to { transform: rotate(360deg) } }`}</style>
 
       {/* Error */}
-      {error && !loading && (
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '12px 16px', borderRadius: 10, backgroundColor: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.25)', color: '#ef4444', fontSize: 13 }}>
-          <AlertCircle style={{ width: 15, height: 15, flexShrink: 0 }} />
-          {error}
-        </div>
-      )}
+      {error && !loading && <ErrorBar message={error} />}
 
       {/* Not yet generated */}
       {!data && !loading && !error && (

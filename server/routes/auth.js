@@ -33,6 +33,7 @@ function buildUser(row) {
     goals:               row.goals ?? null,
     avatar_color:        row.avatar_color ?? 'emerald',
     onboarding_done:     row.onboarding_done ?? 0,
+    journal_count:       row.journal_count ?? 0,
   };
 }
 

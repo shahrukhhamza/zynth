@@ -17,6 +17,7 @@ import {
 import { useAuth } from '../contexts/AuthContext';
 import { usePlanGate } from '../hooks/usePlanGate';
 import { API_URL } from '../config/api';
+import ErrorBar from './ErrorBar';
 
 // ── Archetype config ──────────────────────────────────────────────────────────
 const ARCHETYPES = {
@@ -602,11 +603,7 @@ export default function TradingDNA() {
   if (!report) {
     return (
       <div>
-        {error && (
-          <div className="mx-auto max-w-xl mb-4 px-4 py-3 bg-red-900/30 border border-red-700/40 rounded-xl text-red-400 text-sm">
-            {error}
-          </div>
-        )}
+        {error && <ErrorBar message={error} className="mb-4 max-w-xl mx-auto" />}
         <EmptyState
           tradeCount={tradeCount}
           closedCount={closedCount}
@@ -656,11 +653,7 @@ export default function TradingDNA() {
         </div>
       </div>
 
-      {error && (
-        <div className="px-4 py-3 bg-red-900/30 border border-red-700/40 rounded-xl text-red-400 text-sm">
-          {error}
-        </div>
-      )}
+      {error && <ErrorBar message={error} />}
 
       {/* Section 1: Archetype */}
       <ArchetypeCard archetype={archetype} tagline={tagline} archetypeDescription={archetypeDesc} />

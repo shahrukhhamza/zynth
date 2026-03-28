@@ -248,8 +248,8 @@ export default function ResetPasswordPage({ onBack }) {
                     <p className="text-gray-500 text-[11px] mt-0.5 mb-4">Choose a strong password for your account</p>
 
                     {error && (
-                      <div className="flex items-start gap-2 rounded-xl px-3 py-2.5 mb-4"
-                           style={{background:'rgba(239,68,68,0.07)',border:'1px solid rgba(239,68,68,0.18)'}}>
+                      <div className="flex items-start gap-2.5 rounded-xl px-3.5 py-3 mb-4"
+                           style={{background:'rgba(239,68,68,0.07)',border:'1px solid rgba(239,68,68,0.18)',borderLeft:'3px solid #f87171'}}>
                         <AlertCircle className="w-[13px] h-[13px] text-red-400 mt-0.5 shrink-0" />
                         <div>
                           <p className="text-red-400 text-[12px]">{error}</p>

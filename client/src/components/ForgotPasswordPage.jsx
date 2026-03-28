@@ -3,6 +3,7 @@ import axios from 'axios';
 import { API_URL } from '../config/api';
 import { TrendingUp, TrendingDown, AlertCircle, CheckCircle2, Loader2, Mail, ArrowLeft, Shield, BarChart2, Activity } from 'lucide-react';
 import { BrandMark } from './BrandLogo';
+import ErrorBar from './ErrorBar';
 
 const TICKERS = [
   { sym: 'GOLD', val: '$5,168', chg: '+0.82%', up: true,  top: '5%',  left: '4%',  delay: '0s',   dur: '4.2s' },
@@ -206,11 +207,7 @@ export default function ForgotPasswordPage({ onBack }) {
                     <p className="text-gray-500 text-[11px] mt-0.5 mb-4">Enter your email and we'll send you a reset link</p>
 
                     {error && (
-                      <div className="flex items-start gap-2 rounded-xl px-3 py-2.5 mb-4"
-                           style={{background:'rgba(239,68,68,0.07)',border:'1px solid rgba(239,68,68,0.18)'}}>
-                        <AlertCircle className="w-[13px] h-[13px] text-red-400 mt-0.5 shrink-0" />
-                        <p className="text-red-400 text-[12px]">{error}</p>
-                      </div>
+                      <ErrorBar message={error} className="mb-4" />
                     )}
 
                     <form onSubmit={handleSubmit} className="space-y-3">

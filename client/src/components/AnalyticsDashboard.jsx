@@ -17,6 +17,7 @@ import {
 import { useTheme } from '../contexts/ThemeContext';
 import { useAuth } from '../contexts/AuthContext';
 import { API_URL } from '../config/api';
+import ErrorBar from './ErrorBar';
 
 // ── Skeleton ──────────────────────────────────────────────────────────────────
 
@@ -253,11 +254,7 @@ export default function AnalyticsDashboard() {
         </button>
       </div>
 
-      {error && (
-        <div style={{ color: '#F43F5E', fontSize: 13, padding: '8px 12px', borderRadius: 8, background: 'rgba(244,63,94,0.08)', border: '1px solid rgba(244,63,94,0.18)' }}>
-          {error}
-        </div>
-      )}
+      {error && <ErrorBar message={error} />}
 
       {/* ── 1. KPI cards ── */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: 10 }}>

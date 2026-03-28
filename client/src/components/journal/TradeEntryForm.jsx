@@ -1,5 +1,7 @@
 import { useState, useRef } from 'react';
 import PreTradeChecklist from '../PreTradeChecklist';
+import JournalUpgradePrompt from './JournalUpgradePrompt';
+import ErrorBar from '../ErrorBar';
 import { Upload, X, TrendingUp, TrendingDown, Save, Target, Mic, MicOff, Zap } from 'lucide-react';
 import { useTheme } from '../../contexts/ThemeContext';
 import { createTrade, updateTrade } from '../../services/journalApi';
@@ -37,6 +39,7 @@ export default function TradeEntryForm({ onSaved, editTrade = null }) {
   const fileRef = useRef();
   const [saving, setSaving] = useState(false);
   const [error,  setError]  = useState(null);
+  const [limitReached, setLimitReached] = useState(false);
   const [preview, setPreview] = useState(editTrade?.screenshot_path ? resolveMediaUrl(editTrade.screenshot_path) : null);
   const [screenshotFile, setScreenshotFile] = useState(null);
   const [dragging, setDragging] = useState(false);
@@ -117,7 +120,7 @@ export default function TradeEntryForm({ onSaved, editTrade = null }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setSaving(true); setError(null);
+    setSaving(true); setError(null); setLimitReached(false);
     try {
       const fd = new FormData();
       Object.entries(form).forEach(([k, v]) => { if (v !== '' && v != null) fd.append(k, v); });
@@ -141,7 +144,12 @@ export default function TradeEntryForm({ onSaved, editTrade = null }) {
         setScreenshotFile(null);
       }
     } catch (err) {
-      setError(err.response?.data?.error || err.message);
+      const errCode = err.response?.data?.error;
+      if (errCode === 'journal_limit_reached') {
+        setLimitReached(true);
+      } else {
+        setError(errCode || err.message);
+      }
     } finally {
       setSaving(false);
     }
@@ -215,7 +223,14 @@ export default function TradeEntryForm({ onSaved, editTrade = null }) {
     <>
       <div className="grid grid-cols-3 gap-2 mb-3">
         {['win','loss','breakeven'].map(o => (
-          <button key={o} type="button" onClick={() => set('outcome', o)}
+          <button key={o} type="button" onClick={() => {
+            set('outcome', o);
+            // Auto-sign the P&L: loss → negative, win/breakeven → positive
+            const raw = Math.abs(Number.parseFloat(form.profit_loss) || 0);
+            if (raw > 0) {
+              set('profit_loss', o === 'loss' ? String(-raw) : String(raw));
+            }
+          }}
             className="py-2 rounded-lg text-sm font-bold transition-colors"
             style={{
               backgroundColor: form.outcome===o
@@ -273,6 +288,10 @@ export default function TradeEntryForm({ onSaved, editTrade = null }) {
     </div>
   );
 
+  if (limitReached) {
+    return <JournalUpgradePrompt />;
+  }
+
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
 
@@ -304,11 +323,7 @@ export default function TradeEntryForm({ onSaved, editTrade = null }) {
       )}
 
       {/* Error */}
-      {error && (
-        <div className="p-3 rounded-lg text-sm" style={{ backgroundColor: '#ef444422', color: '#ef4444', border: '1px solid #ef444444' }}>
-          {error}
-        </div>
-      )}
+      {error && <ErrorBar message={error} />}
 
        {/* ══════════════════════════════════════════════
           QUICK LOG MODE
@@ -319,6 +334,13 @@ export default function TradeEntryForm({ onSaved, editTrade = null }) {
           <div style={card}>
             <p style={cardTitle}>Trade Setup</p>
             {PairDirectionBlock}
+            <div className="mt-3">
+              <label style={label}>Position Size (lots)</label>
+              <input type="number" step="0.01" value={form.position_size} onChange={e => set('position_size', e.target.value)}
+                placeholder="e.g. 0.01"
+                style={input}
+                onFocus={e => e.target.style.borderColor='#3b82f6'} onBlur={resetBorder} />
+            </div>
           </div>
 
           <div style={card}>

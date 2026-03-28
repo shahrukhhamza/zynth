@@ -18,6 +18,7 @@ import {
 import { useTheme } from '../../contexts/ThemeContext';
 import { useAuth } from '../../contexts/AuthContext';
 import { API_URL } from '../../config/api';
+import ErrorBar from '../ErrorBar';
 
 // ─── Alignment config ──────────────────────────────────────────────────────────
 const ALIGNMENT_CONFIG = {
@@ -298,12 +299,7 @@ export default function TradeContextReport({ tradeId, tradeDate, cacheBusted = f
         )}
 
         {/* Error */}
-        {error && !loading && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '14px 0', color: '#ef4444' }}>
-            <AlertCircle style={{ width: 15, height: 15 }} />
-            <span style={{ fontSize: 13 }}>{error}</span>
-          </div>
-        )}
+        {error && !loading && <ErrorBar message={error} />}
 
         {/* Content */}
         {data && !loading && (

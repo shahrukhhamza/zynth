@@ -11,6 +11,9 @@ import AiInsightsPanel from './journal/AiInsightsPanel';
 import MacroCorrelation from './MacroCorrelation';
 import TradingDNA from './TradingDNA';
 import TradeDetailPage from './journal/TradeDetailPage';
+import JournalUpgradePrompt from './journal/JournalUpgradePrompt';
+import UsageBanner from './journal/UsageBanner';
+import { usePlan } from '../hooks/usePlan';
 
 const TABS = [
   { key: 'log',         label: 'Log Trade',          icon: BookOpen  },
@@ -267,9 +270,11 @@ function TradeDetailModal({ trade, onClose }) {
 
 export default function TradeJournal() {
   const theme = useTheme();
+  const { isFree, maxJournal } = usePlan();
   const [tab, setTab] = useState('log');
   const [trades, setTrades] = useState([]);
   const [total, setTotal] = useState(0);
+  const journalLimitReached = isFree && maxJournal !== Infinity && maxJournal > 0 && total >= maxJournal;
   const [page, setPage] = useState(0);
   const [metrics, setMetrics] = useState(null);
   const [loadingTrades, setLoadingTrades] = useState(false);
@@ -412,7 +417,14 @@ export default function TradeJournal() {
 
       {tab === 'log' && (
         <div className="max-w-xl mx-auto mt-0">
-          <TradeEntryForm onSaved={handleSaved} />
+          {isFree && journalLimitReached ? (
+            <JournalUpgradePrompt total={total} />
+          ) : (
+            <>
+              <UsageBanner count={total} />
+              <TradeEntryForm onSaved={handleSaved} />
+            </>
+          )}
         </div>
       )}
 

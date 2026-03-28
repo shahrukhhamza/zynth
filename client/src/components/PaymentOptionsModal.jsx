@@ -15,6 +15,7 @@ import {
 import { useTheme } from '../contexts/ThemeContext';
 import { useAuth } from '../contexts/AuthContext';
 import { API_URL } from '../config/api';
+import ErrorBar from './ErrorBar';
 
 // ── Payment detail configurations ────────────────────────────────────────────
 // Edit these constants to match your actual account details.
@@ -441,11 +442,7 @@ export default function PaymentOptionsModal({ plan: initialPlan = 'pro', onClose
             )}
 
             {/* Error */}
-            {error && (
-              <div style={{ padding: '8px 12px', borderRadius: 8, background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', color: '#f87171', fontSize: 13 }}>
-                {error}
-              </div>
-            )}
+            {error && <ErrorBar message={error} />}
 
             <button
               type="submit"

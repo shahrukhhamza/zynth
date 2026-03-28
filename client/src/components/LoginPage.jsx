@@ -4,6 +4,7 @@ import { API_URL } from '../config/api';
 import { getPublicStats } from '../utils/publicStats';
 import { Eye, EyeOff, TrendingUp, TrendingDown, AlertCircle, Loader2, Mail, Lock, ArrowRight, ArrowLeft, ChevronLeft, Shield, Zap, BarChart2, Activity, BookOpen, Brain, Bot, Flame } from 'lucide-react';
 import { BrandMark } from './BrandLogo';
+import ErrorBar from './ErrorBar';
 import { useTheme } from '../contexts/ThemeContext';
 
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || '';
@@ -386,10 +387,7 @@ export default function LoginPage({ onSwitchToSignup, onBack, onForgotPassword }
                 <p style={{fontSize:'13px',color:'#93bbfc',margin:0,lineHeight:1.5}}>{error}</p>
               </div>
             ) : (
-              <div style={{display:'flex',alignItems:'flex-start',gap:'10px',background:'rgba(239,68,68,0.07)',border:'1px solid rgba(239,68,68,0.2)',borderRadius:'10px',padding:'10px 14px',marginBottom:'14px',animation:'shake 0.35s ease'}}>
-                <AlertCircle size={15} color="#f87171" style={{flexShrink:0,marginTop:'1px'}} />
-                <p style={{fontSize:'13px',color:'#f87171',margin:0,lineHeight:1.5}}>{error}</p>
-              </div>
+              <ErrorBar message={error} className="mb-3" />
             )
           )}
 

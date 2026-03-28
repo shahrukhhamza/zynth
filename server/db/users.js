@@ -93,7 +93,8 @@ export async function findById(id) {
     `SELECT id, name, email, avatar, created_at, plan, plan_expires_at,
             ai_analysis_tries, screenshot_tries, is_admin, trading_experience,
             markets_traded, goals, avatar_color, onboarding_done, avatar_url,
-            terms_accepted, terms_accepted_at, ai_monthly_count, ai_month_reset
+            terms_accepted, terms_accepted_at, ai_monthly_count, ai_month_reset,
+            (SELECT COUNT(*)::int FROM trades WHERE user_id = users.id) AS journal_count
      FROM users WHERE id = $1`,
     [id]
   );
