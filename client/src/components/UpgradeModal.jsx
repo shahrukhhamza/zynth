@@ -25,8 +25,7 @@ const PAYMENT_OPTIONS = [
     Icon: Smartphone,
     details: [
       { label: 'Account Title', value: 'Shahrukh Hamza' },
-      { label: 'Mobile Number', value: '03019231755' },
-      { label: 'CNIC', value: '35202-1234567-8' },
+      { label: 'IBAN', value: 'PK36JCMA0301923175516692' },
     ],
   },
 ];
@@ -39,9 +38,9 @@ const PAYMENT_OPTIONS_BY_REGION = {
       name: 'Bank Wire (USD)',
       Icon: Landmark,
       details: [
-        { label: 'Account Name', value: 'Shahrukh Hamza' },
-        { label: 'IBAN (Payoneer)', value: 'GB29NWBK60161331926819' },
-        { label: 'SWIFT / BIC', value: 'PAYNGB2L' },
+        { label: 'Bank Name', value: 'Citibank' },
+        { label: 'Beneficiary Name', value: 'Shahrukh Hamza' },
+        { label: 'Account Number', value: '70584510002334445' },
       ],
     },
   ],

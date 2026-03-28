@@ -52,7 +52,7 @@ const PAYMENT_METHODS = {
           { label: 'Account Holder', value: 'SHAHRUKH HAMZA' },
           { label: 'IBAN',           value: 'PK36JCMA0301923175516692' },
         ],
-        note: 'Send via JazzCash app → Send Money → JazzCash Number. Screenshot required.',
+        note: 'Send via JazzCash app/bank transfer using the IBAN above. Screenshot required.',
       },
       {
         name: 'Local Bank Transfer',
