@@ -2,6 +2,291 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ═══════════════════════════════════════════════════════════════════════════
+   ZYNTH DESIGN SYSTEM — Component layer
+   Usage: apply these classes directly in JSX className strings.
+   All classes respond to .dark mode via Tailwind's darkMode: 'class'.
+   ═══════════════════════════════════════════════════════════════════════════ */
+@layer components {
+
+  /* ── Layout / Page ──────────────────────────────────────────────────────── */
+
+  /* Full-page scroll container with themed background */
+  .z-page {
+    @apply flex-1 overflow-y-auto bg-gray-50 dark:bg-slate-950 min-h-0;
+  }
+
+  /* Max-width content constraint with horizontal padding */
+  .z-content {
+    @apply max-w-screen-xl mx-auto px-4 sm:px-6 py-6;
+  }
+
+  /* ── Cards ──────────────────────────────────────────────────────────────── */
+
+  /* Base card — white in light, slate-900 in dark */
+  .z-card {
+    @apply bg-white dark:bg-slate-900
+           border border-gray-200 dark:border-gray-700
+           rounded-2xl
+           shadow-z-sm
+           transition-all duration-200;
+  }
+
+  /* Card with lift on hover */
+  .z-card-hover {
+    @apply z-card hover:shadow-z-hover hover:-translate-y-px cursor-pointer;
+  }
+
+  /* Inset / secondary surface (table rows, code blocks, inner panels) */
+  .z-surface {
+    @apply bg-gray-50 dark:bg-gray-900
+           border border-gray-200 dark:border-gray-700
+           rounded-xl;
+  }
+
+  /* Stat / metric card — prominently bordered left accent */
+  .z-stat-card {
+    @apply z-card p-5
+           hover:shadow-z-hover hover:-translate-y-px
+           cursor-default;
+  }
+
+  /* ── Typography ─────────────────────────────────────────────────────────── */
+
+  /* Page / modal title */
+  .z-title {
+    @apply text-xl font-semibold text-gray-900 dark:text-gray-100 tracking-tight;
+  }
+
+  /* Section header (card headings) */
+  .z-heading {
+    @apply text-lg font-medium text-gray-900 dark:text-gray-100;
+  }
+
+  /* Section sub-header / label above a group */
+  .z-section-label {
+    @apply text-xs font-bold uppercase tracking-widest
+           text-gray-400 dark:text-gray-500;
+  }
+
+  /* Large metric / number */
+  .z-value {
+    @apply text-2xl font-bold tracking-tight text-gray-900 dark:text-gray-100;
+  }
+
+  /* Extra-large stat number */
+  .z-stat {
+    @apply text-[28px] font-extrabold leading-none tracking-tight
+           text-gray-900 dark:text-gray-100;
+  }
+
+  /* Regular body text */
+  .z-body {
+    @apply text-sm text-gray-700 dark:text-gray-300 leading-relaxed;
+  }
+
+  /* Muted label / caption */
+  .z-label {
+    @apply text-sm text-gray-500 dark:text-gray-400;
+  }
+
+  /* Smallest descriptive text */
+  .z-micro {
+    @apply text-xs text-gray-400 dark:text-gray-500;
+  }
+
+  /* Green P&L */
+  .z-pnl-win {
+    @apply text-emerald-600 dark:text-emerald-400 font-bold;
+  }
+
+  /* Red P&L */
+  .z-pnl-loss {
+    @apply text-red-500 dark:text-red-400 font-bold;
+  }
+
+  /* ── Buttons ─────────────────────────────────────────────────────────────── */
+
+  /* Primary CTA */
+  .z-btn-primary {
+    @apply inline-flex items-center justify-center gap-2
+           px-5 py-2.5 rounded-btn
+           bg-blue-600 hover:bg-blue-700
+           text-white text-sm font-semibold
+           shadow-z-btn-primary hover:shadow-z-btn-primary-hover
+           transition-all duration-200
+           hover:-translate-y-px active:translate-y-0 active:scale-[0.98]
+           disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none;
+  }
+
+  /* Secondary / ghost button */
+  .z-btn-secondary {
+    @apply inline-flex items-center justify-center gap-2
+           px-5 py-2.5 rounded-btn
+           bg-gray-100 dark:bg-gray-800
+           text-gray-700 dark:text-gray-300
+           border border-gray-200 dark:border-gray-700
+           text-sm font-medium
+           transition-all duration-200
+           hover:bg-gray-200 dark:hover:bg-gray-700
+           hover:-translate-y-px active:translate-y-0 active:scale-[0.98]
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  /* Danger button */
+  .z-btn-danger {
+    @apply inline-flex items-center justify-center gap-2
+           px-5 py-2.5 rounded-btn
+           bg-red-500 hover:bg-red-600
+           text-white text-sm font-semibold
+           transition-all duration-200
+           hover:-translate-y-px active:scale-[0.98];
+  }
+
+  /* Icon-only square button */
+  .z-btn-icon {
+    @apply inline-flex items-center justify-center
+           w-9 h-9 rounded-xl
+           bg-gray-100 dark:bg-gray-800
+           border border-gray-200 dark:border-gray-700
+           text-gray-500 dark:text-gray-400
+           transition-all duration-150
+           hover:bg-gray-200 dark:hover:bg-gray-700
+           hover:text-gray-700 dark:hover:text-gray-200;
+  }
+
+  /* ── Badges / Pills ──────────────────────────────────────────────────────── */
+
+  /* Base chip */
+  .z-badge {
+    @apply inline-flex items-center gap-1
+           px-2.5 py-0.5 rounded-chip
+           text-xs font-semibold;
+  }
+
+  .z-badge-blue   { @apply z-badge bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 border border-blue-200 dark:border-blue-700/50; }
+  .z-badge-green  { @apply z-badge bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-700/50; }
+  .z-badge-red    { @apply z-badge bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-700/50; }
+  .z-badge-amber  { @apply z-badge bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-700/50; }
+  .z-badge-gray   { @apply z-badge bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700; }
+
+  /* ── Inputs ─────────────────────────────────────────────────────────────── */
+
+  .z-input {
+    @apply w-full px-3.5 py-2.5
+           bg-white dark:bg-gray-900
+           border border-gray-200 dark:border-gray-700
+           rounded-xl text-sm text-gray-900 dark:text-gray-100
+           placeholder-gray-400 dark:placeholder-gray-500
+           transition-all duration-150
+           focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/15
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .z-select {
+    @apply z-input appearance-none cursor-pointer pr-9;
+  }
+
+  .z-textarea {
+    @apply z-input resize-none leading-relaxed;
+  }
+
+  /* ── Divider ─────────────────────────────────────────────────────────────── */
+
+  .z-divider {
+    @apply border-t border-gray-200 dark:border-gray-700 my-4;
+  }
+
+  /* ── Avatar ──────────────────────────────────────────────────────────────── */
+
+  .z-avatar {
+    @apply rounded-xl object-cover flex-shrink-0;
+  }
+
+  /* ── Table ───────────────────────────────────────────────────────────────── */
+
+  .z-table {
+    @apply w-full text-sm text-left;
+  }
+
+  .z-th {
+    @apply text-xs font-bold uppercase tracking-wider
+           text-gray-400 dark:text-gray-500
+           px-4 py-3
+           border-b border-gray-200 dark:border-gray-700
+           bg-gray-50 dark:bg-gray-900/60;
+  }
+
+  .z-td {
+    @apply px-4 py-3.5
+           text-gray-700 dark:text-gray-300
+           border-b border-gray-100 dark:border-gray-800;
+  }
+
+  .z-tr {
+    @apply transition-colors duration-100
+           hover:bg-gray-50 dark:hover:bg-gray-800/60;
+  }
+
+  /* ── Modal overlay ───────────────────────────────────────────────────────── */
+
+  .z-overlay {
+    @apply fixed inset-0 z-50
+           bg-black/60 dark:bg-black/75
+           backdrop-blur-sm;
+  }
+
+  .z-modal {
+    @apply bg-white dark:bg-slate-900
+           border border-gray-200 dark:border-gray-700
+           rounded-3xl shadow-z-modal
+           w-full;
+  }
+
+  /* ── Toggle switch ───────────────────────────────────────────────────────── */
+
+  .z-toggle {
+    @apply relative inline-flex items-center rounded-full
+           w-12 h-6.5 min-w-[48px] flex-shrink-0
+           transition-colors duration-200 cursor-pointer border-none;
+  }
+
+  .z-toggle-thumb {
+    @apply inline-block w-5 h-5 rounded-full bg-white
+           shadow-sm transition-transform duration-200;
+  }
+
+  /* ── Loading / Skeleton ──────────────────────────────────────────────────── */
+
+  .z-skeleton {
+    @apply rounded-xl bg-gray-200 dark:bg-gray-800 animate-pulse;
+  }
+
+  /* ── Section / Panel headers ─────────────────────────────────────────────── */
+
+  .z-panel-header {
+    @apply flex items-center justify-between
+           pb-3 mb-4
+           border-b border-gray-200 dark:border-gray-700;
+  }
+
+  /* ── Gradient accent bar (left side of stat cards) ───────────────────────── */
+
+  .z-accent-bar-green  { @apply border-l-4 border-l-emerald-500; }
+  .z-accent-bar-blue   { @apply border-l-4 border-l-blue-500; }
+  .z-accent-bar-red    { @apply border-l-4 border-l-red-500; }
+  .z-accent-bar-amber  { @apply border-l-4 border-l-amber-500; }
+
+  /* ── Scrollable area ─────────────────────────────────────────────────────── */
+
+  .z-scroll {
+    @apply overflow-y-auto;
+    scrollbar-width: thin;
+  }
+
+}
+/* ─────────────────────────────────────────────────────────────────────────── */
+
 body {
   margin: 0;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
