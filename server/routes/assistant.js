@@ -12,11 +12,10 @@
 
 import { Router } from 'express';
 import { requireAuth } from '../middleware/authMiddleware.js';
-import { getPlanMonthlyLabel } from '../../client/src/config/pricing.js';
 
 const router = Router();
-const PRO_MONTHLY_PRICE = getPlanMonthlyLabel('pro');
-const ELITE_MONTHLY_PRICE = getPlanMonthlyLabel('elite');
+const PRO_MONTHLY_PRICE = '$8.90/month';
+const ELITE_MONTHLY_PRICE = '$17.90/month';
 
 // Rate limit store { userId: [timestamp, ...] }
 const rateLimitStore = new Map();
