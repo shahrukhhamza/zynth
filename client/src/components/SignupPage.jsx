@@ -129,8 +129,8 @@ export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess })
       setFieldErrors(fe => ({ ...fe, confirm: 'Passwords do not match.' }));
       shakeForm(); return;
     }
-    if (form.password.length < 6) {
-      setFieldErrors(fe => ({ ...fe, password: 'Password must be at least 6 characters.' }));
+    if (form.password.length < 8) {
+      setFieldErrors(fe => ({ ...fe, password: 'Password must be at least 8 characters.' }));
       shakeForm(); return;
     }
     if (!consent.terms || !consent.risk) {

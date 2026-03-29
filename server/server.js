@@ -190,13 +190,27 @@ const _isAllowedVercelPreview = (origin) => {
   }
 };
 
+const _isAllowedZynthDomain = (origin) => {
+  try {
+    const { protocol, hostname } = new URL(origin);
+    if (protocol !== 'https:') return false;
+    return hostname === 'zynth.codes' || hostname.endsWith('.zynth.codes');
+  } catch {
+    return false;
+  }
+};
+
 const corsOptions = {
   origin: (origin, callback) => {
     // Allow non-browser clients and server-to-server requests.
     if (!origin) return callback(null, true);
 
     const normalized = _normalizeOrigin(origin);
-    if (normalized && (_ALLOWED_ORIGINS.has(normalized) || _isAllowedVercelPreview(normalized))) {
+    if (normalized && (
+      _ALLOWED_ORIGINS.has(normalized)
+      || _isAllowedVercelPreview(normalized)
+      || _isAllowedZynthDomain(normalized)
+    )) {
       return callback(null, true);
     }
 
@@ -205,7 +219,7 @@ const corsOptions = {
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'Origin', 'X-Requested-With'],
   preflightContinue: false,
   optionsSuccessStatus: 204,
 };
