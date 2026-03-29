@@ -17,10 +17,10 @@ const CATEGORIES = [
         excerpt: 'Learn what Zynth is, what tools you get, and how to make the most of the platform.',
         content: `Zynth is a trading intelligence platform that combines four powerful tools:
 
-1. Smart Trade Journal � log every trade with context, screenshots and emotion tracking
-2. AI Coaching � get personalized feedback on your trading psychology and patterns
-3. Economic Intelligence � track macro data and understand market conditions
-4. Live Market Data � real-time prices and charts for major instruments
+1. Smart Trade Journal - log every trade with context, screenshots and emotion tracking
+2. AI Coaching - get personalized feedback on your trading psychology and patterns
+3. Economic Intelligence - track macro data and understand market conditions
+4. Live Market Data - real-time prices and charts for major instruments
 
 ::tip Getting the most out of Zynth
 - Start by logging your first 10 trades
@@ -70,7 +70,7 @@ The more detail you add, the better your AI analysis will be!
 
 ## Daily Brief (top)
 
-A personalized morning card showing your Macro Score, best trading session, day-of-week performance stats and top market news. Appears once per day � dismiss with the X button.
+A personalized morning card showing your Macro Score, best trading session, day-of-week performance stats and top market news. Appears once per day - dismiss with the X button.
 
 ## Market Data Terminal (middle)
 
@@ -112,7 +112,7 @@ You can skip onboarding and complete it later from your Profile.
     description: 'Learn how to log trades, read analytics, and use AI coaching.',
     articles: [
       {
-        id: 'logging-trades', title: 'Logging Trades � Complete Guide',
+        id: 'logging-trades', title: 'Logging Trades - Complete Guide',
         excerpt: 'Every field explained: instrument, direction, entry/exit, P&L, emotions and more.',
         content: `## All Fields Explained
 
@@ -120,11 +120,11 @@ You can skip onboarding and complete it later from your Profile.
 Choose from 14 preset pairs including \`XAU/USD\` (Gold), \`EUR/USD\`, \`GBP/USD\`, \`USD/JPY\`, \`BTC/USD\`, \`ETH/USD\` and more. Or type any custom instrument.
 
 **DIRECTION**
-- BUY (Long) � green button
-- SELL (Short) � red button
+- BUY (Long) - green button
+- SELL (Short) - red button
 
 **ENTRY PRICE**
-The price at which you entered the trade. For gold: typically a 4�5 digit number (e.g. \`2650.50\`)
+The price at which you entered the trade. For gold: typically a 4-5 digit number (e.g. \`2650.50\`)
 
 **EXIT PRICE**
 The price at which you closed the trade. Leave blank if trade is still open (select OPEN as outcome).
@@ -140,10 +140,10 @@ Enter lot size (e.g. \`0.01\`, \`0.1\`, \`1.0\`). Use the Position Size Calculat
 
 **SESSION**
 When did you trade?
-- Asian: 00:00�09:00 UTC
-- London: 07:00�16:00 UTC
-- New York: 13:00�22:00 UTC
-- London-NY Overlap: 13:00�16:00 UTC
+- Asian: 00:00-09:00 UTC
+- London: 07:00-16:00 UTC
+- New York: 13:00-22:00 UTC
+- London-NY Overlap: 13:00-16:00 UTC
 
 **OUTCOME**
 - WIN: trade was profitable
@@ -179,27 +179,27 @@ Attach a chart screenshot of your trade. Shows in your trade history and AI anal
 | Total Trades | Number of logged trades |
 | Win Rate | % of winning trades |
 | Net P&L | Total profit/loss in dollars |
-| Profit Factor | Gross profit � gross loss (above 1.5 is good) |
+| Profit Factor | Gross profit / gross loss (above 1.5 is good) |
 | Average Win | Average size of winning trades |
 | Average Loss | Average size of losing trades |
-| Risk:Reward | Avg win � avg loss ratio |
+| Risk:Reward | Avg win / avg loss ratio |
 | Expectancy | Average P&L per trade |
 
 ## Charts
 
-- **Equity Curve** � your running account value
-- **Outcome Pie** � WIN/LOSS/BE distribution
-- **P&L by Pair** � which instruments are most/least profitable
-- **Strategy Win Rate** � performance per strategy
-- **Emotion Frequency** � how often each emotional state appears
+- **Equity Curve** - your running account value
+- **Outcome Pie** - WIN/LOSS/BE distribution
+- **P&L by Pair** - which instruments are most/least profitable
+- **Strategy Win Rate** - performance per strategy
+- **Emotion Frequency** - how often each emotional state appears
 
 ## Behavioral Flags
 
 Auto-detected patterns:
-- **Revenge Trading** � trading immediately after a loss
-- **FOMO** � entering late in a move
-- **Overtrading** � too many trades in one day
-- **Tilt** � deteriorating performance after losses`,
+- **Revenge Trading** - trading immediately after a loss
+- **FOMO** - entering late in a move
+- **Overtrading** - too many trades in one day
+- **Tilt** - deteriorating performance after losses`,
       },
       {
         id: 'ai-analysis', title: 'AI Trade Analysis Explained',
@@ -208,7 +208,7 @@ Auto-detected patterns:
 
 Click the brain icon on any trade in Trade History to get:
 
-**Psychology Score (1�10)**
+**Psychology Score (1-10)**
 How psychologically sound was this trade? 10 = perfect, 1 = very problematic.
 
 **Discipline Rating**
@@ -231,7 +231,7 @@ AI analysis uses Google Gemini and may not always be 100% accurate. Use it as a 
 
 | Plan | Monthly Analyses |
 |---|---|
-| Free | 3 lifetime |
+| Free | 2 lifetime |
 | Pro | 50/month |
 | Elite | Unlimited |`,
       },
@@ -240,10 +240,10 @@ AI analysis uses Google Gemini and may not always be 100% accurate. Use it as a 
         excerpt: 'Generate weekly or monthly AI reports with grades, highlights, and action items.',
         content: `## How to Generate a Report
 
-1. Go to **Trade Journal ? AI Insights** tab
+1. Go to **Trade Journal -> AI Insights** tab
 2. Click **Generate AI Report**
 3. Choose: Weekly, Monthly or Custom range
-4. Wait 10�20 seconds for Gemini to analyze
+4. Wait 10-20 seconds for Gemini to analyze
 5. Report appears with:
    - Overall Grade (A to F)
    - Performance Summary
@@ -266,24 +266,24 @@ Generate a monthly report at the start of each new month to review the previous 
 
 The heatmap in the Performance tab shows when you trade and how you perform at different times.
 
-- **Rows** � days of the week (Mon�Sun)
-- **Columns** � hours of the day (00�23)
-- **Green cells** � profitable trading time
-- **Red cells** � losing trading time
-- **Cell number** � your P&L in that time slot
-- **Empty cells** � no trades at that time
+- **Rows** - days of the week (Mon-Sun)
+- **Columns** - hours of the day (00-23)
+- **Green cells** - profitable trading time
+- **Red cells** - losing trading time
+- **Cell number** - your P&L in that time slot
+- **Empty cells** - no trades at that time
 
 ## Session Color Bars
 
 The color bar above the chart shows trading sessions:
-- **Blue** � Asian session (00�07h)
-- **Indigo** � London session (08�12h)
-- **Amber** � New York session (13�17h)
-- **Gray** � Off-hours (18�23h)
+- **Blue** - Asian session (00-07h)
+- **Indigo** - London session (08-12h)
+- **Amber** - New York session (13-17h)
+- **Gray** - Off-hours (18-23h)
 
 ## Date Range Filter
 
-Use the period buttons (This Week / This Month / Last 3 Months / All Time) and the ? ? arrows to navigate to different periods.
+Use the period buttons (This Week / This Month / Last 3 Months / All Time) and the left/right arrows to navigate to different periods.
 
 ::tip
 Use this to find your best and worst trading times and focus on your most profitable windows.
@@ -302,15 +302,15 @@ Use this to find your best and worst trading times and focus on your most profit
    - Does this match your strategy?
    - Are you in your best session?
    - Have you had 2+ losses already today?
-3. Score is calculated 0�100
+3. Score is calculated 0-100
 
 ## Score Interpretation
 
 | Score | Meaning | Action |
 |---|---|---|
-| 80�100 | Green | Trade with confidence |
-| 50�79 | Amber | Reduce position size |
-| 0�49 | Red | Consider skipping |
+| 80-100 | Green | Trade with confidence |
+| 50-79 | Amber | Reduce position size |
+| 0-49 | Red | Consider skipping |
 
 Your checklist history is analyzed over time to show if you follow your own rules.`,
       },
@@ -352,7 +352,7 @@ The Macro Surprise Score is Zynth's proprietary indicator (Pro feature). It anal
 
 ## How Surprise is Calculated
 
-\`Surprise = ((Actual - Forecast) / Forecast) � 100\`
+\`Surprise = ((Actual - Forecast) / Forecast) * 100\`
 
 Each indicator is weighted by its historical impact on gold prices.
 
@@ -363,16 +363,16 @@ Each indicator is weighted by its historical impact on gold prices.
         excerpt: 'Your personalized morning card showing Macro Score, best session, and news.',
         content: `## What the Daily Brief Shows
 
-1. **Macro Climate** � current Macro Score with bullish/bearish label
-2. **Your Best Session** � which session you perform best in based on your history
-3. **Day Edge** � your win rate for today's day of week based on past trades
-4. **Top News** � latest high-impact market news
+1. **Macro Climate** - current Macro Score with bullish/bearish label
+2. **Your Best Session** - which session you perform best in based on your history
+3. **Day Edge** - your win rate for today's day of week based on past trades
+4. **Top News** - latest high-impact market news
 
 ## Daily Tip
 
 A rotating trading wisdom tip changes each day to keep you focused.
 
-The brief appears once per day. Dismiss with X � it will reappear fresh the next day.
+The brief appears once per day. Dismiss with X - it will reappear fresh the next day.
 
 ::tip
 Best Session and Day Edge show "Not enough data" until you have logged enough trades for that day/session.
@@ -383,13 +383,13 @@ Best Session and Day Edge show "Not enough data" until you have logged enough tr
         excerpt: 'Your unique trader personality profile with archetypes, trait scores, and improvement plans.',
         content: `## What You Get
 
-- **Trader Archetype** � which type of trader you are (Sniper, Momentum Rider, etc.)
-- **8 Trait Scores** � Patience, Discipline, Risk Management, Emotional Control, Consistency, Strategy Adherence, Macro Awareness, Learning Rate
-- **Strengths** � your top 3 trading strengths with data evidence
-- **Weaknesses** � top 3 areas to improve
-- **Performance Fingerprint** � radar chart showing your unique trading profile
-- **30-Day Improvement Plan** � personalized week-by-week action plan
-- **Coach Message** � personal letter from AI coach based on your actual data
+- **Trader Archetype** - which type of trader you are (Sniper, Momentum Rider, etc.)
+- **8 Trait Scores** - Patience, Discipline, Risk Management, Emotional Control, Consistency, Strategy Adherence, Macro Awareness, Learning Rate
+- **Strengths** - your top 3 trading strengths with data evidence
+- **Weaknesses** - top 3 areas to improve
+- **Performance Fingerprint** - radar chart showing your unique trading profile
+- **30-Day Improvement Plan** - personalized week-by-week action plan
+- **Coach Message** - personal letter from AI coach based on your actual data
 
 ## Requirements
 
@@ -397,7 +397,7 @@ Best Session and Day Edge show "Not enough data" until you have logged enough tr
 - **Elite plan only**
 - Generated once per month
 
-**Find it in:** AI Insights ? Trading DNA tab
+**Find it in:** AI Insights -> Trading DNA tab
 
 ::warning
 This feature requires an Elite subscription. Open the upgrade modal to continue.
@@ -417,9 +417,9 @@ This feature requires an Elite subscription. Open the upgrade modal to continue.
 
 > "You win 71% of trades when Macro Score is above +3"
 
-> "You lose 67% of trades on Fed Rate decision days � consider avoiding these"
+> "You lose 67% of trades on Fed Rate decision days - consider avoiding these"
 
-**Find it in:** AI Insights ? Macro Correlation tab
+**Find it in:** AI Insights -> Macro Correlation tab
 
 **Available on:** Pro and Elite plans only`,
       },
@@ -434,13 +434,13 @@ This feature requires an Elite subscription. Open the upgrade modal to continue.
         excerpt: 'Understand the three data tiers and what is real-time vs delayed.',
         content: `## Data Tiers
 
-**Tier 1 � Real-time WebSocket (instant):**
+**Tier 1 - Real-time WebSocket (instant):**
 \`XAU/USD\`, \`EUR/USD\`, \`BTC/USD\`, \`ETH/USD\`, \`XRP/USD\`, \`BNB/USD\`, \`SOL/USD\`
 
-**Tier 2 � Updated every 15 minutes:**
+**Tier 2 - Updated every 15 minutes:**
 \`GBP/USD\`, \`USD/JPY\`, GLD ETF, TLT, SPY
 
-**Tier 3 � Updated every 60 minutes:**
+**Tier 3 - Updated every 60 minutes:**
 AAPL, TSLA, MSFT, AMZN, NVDA, GOOGL
 
 ## Data Sources
@@ -453,9 +453,9 @@ AAPL, TSLA, MSFT, AMZN, NVDA, GOOGL
 
 | Badge | Meaning |
 |---|---|
-| ?? Live | WebSocket connected |
-| ?? Connecting | Reconnecting |
-| ?? Disconnected | Check your internet |
+| Live | WebSocket connected |
+| Connecting | Reconnecting |
+| Disconnected | Check your internet |
 
 ::warning
 Free plan receives 15-minute delayed prices. Pro/Elite get real-time streaming.
@@ -490,18 +490,18 @@ The chart is powered by TradingView. A free TradingView account unlocks some adv
         content: `## Session Times (UTC)
 
 **Asian Session**
-Opens: 00:00 UTC � Closes: 09:00 UTC
+Opens: 00:00 UTC - Closes: 09:00 UTC
 Lower volatility. JPY pairs most active. Gold often ranges.
 
 **London Session**
-Opens: 07:00 UTC � Closes: 16:00 UTC
+Opens: 07:00 UTC - Closes: 16:00 UTC
 High volatility starts. EUR/GBP pairs most active. Gold moves.
 
 **New York Session**
-Opens: 13:00 UTC � Closes: 22:00 UTC
+Opens: 13:00 UTC - Closes: 22:00 UTC
 Highest volume. USD pairs most active. Major news releases.
 
-## London-NY Overlap (13:00�16:00 UTC)
+## London-NY Overlap (13:00-16:00 UTC)
 
 This is the highest volume and volatility period of the entire trading day. Most professional traders focus on this window.
 
@@ -514,9 +514,9 @@ The Market Session Bar in the sidebar shows real-time status of each session con
         excerpt: 'How to read the Surprise column, impact badges, and use Print/Export.',
         content: `## Impact Levels
 
-- **HIGH (red)** � Major market moving events: NFP, CPI, Fed Rate, GDP
-- **MEDIUM (amber)** � Significant but smaller impact: Retail Sales, ISM, Consumer Confidence
-- **LOW (gray)** � Minor market impact
+- **HIGH (red)** - Major market moving events: NFP, CPI, Fed Rate, GDP
+- **MEDIUM (amber)** - Significant but smaller impact: Retail Sales, ISM, Consumer Confidence
+- **LOW (gray)** - Minor market impact
 
 ## Reading the Table Columns
 
@@ -532,14 +532,14 @@ The Market Session Bar in the sidebar shows real-time status of each session con
 
 ## Color Coding
 
-- **Green actual** � beat forecast (positive surprise)
-- **Red actual** � missed forecast (negative surprise)
-- **Gray** � in line with forecast
+- **Green actual** - beat forecast (positive surprise)
+- **Red actual** - missed forecast (negative surprise)
+- **Gray** - in line with forecast
 
 ## Plan Access
 
-- **Free** � Today's US events, High and Medium impact only
-- **Pro/Elite** � All countries, all dates, all impacts
+- **Free** - Today's US events, High and Medium impact only
+- **Pro/Elite** - All countries, all dates, all impacts
 
 ## Print/Download
 
@@ -571,34 +571,34 @@ Click any row to expand it and see:
 ## Surprise Column
 
 The **Surprise** pill shows how much the actual reading beat or missed consensus:
-- \`+X% Beat\` � green pill (positive for USD)
-- \`-X% Miss\` � red pill (negative for USD)
-- \`In Line\` � gray pill`,
+- \`+X% Beat\` - green pill (positive for USD)
+- \`-X% Miss\` - red pill (negative for USD)
+- \`In Line\` - gray pill`,
       },
       {
         id: 'macro-indicators', title: 'The 17 Tracked Indicators',
         excerpt: "What each of Zynth's 17 US macro indicators measures and why it matters.",
         content: `Zynth tracks 17 key US macro indicators and their impact on gold and forex markets.
 
-## Tier 1 � High Impact
+## Tier 1 - High Impact
 
-1. **NFP** (Non-Farm Payrolls) � Monthly job additions. Biggest gold mover.
-2. **CPI** (Consumer Price Index) � Inflation measure. Drives Fed policy.
-3. **Core PCE** � Fed's preferred inflation gauge.
-4. **Fed Rate Decision** � Interest rate announcement.
-5. **GDP Growth Rate** � Economy size change quarter-over-quarter.
+1. **NFP** (Non-Farm Payrolls) - Monthly job additions. Biggest gold mover.
+2. **CPI** (Consumer Price Index) - Inflation measure. Drives Fed policy.
+3. **Core PCE** - Fed's preferred inflation gauge.
+4. **Fed Rate Decision** - Interest rate announcement.
+5. **GDP Growth Rate** - Economy size change quarter-over-quarter.
 
-## Tier 2 � Medium Impact
+## Tier 2 - Medium Impact
 
-6. **Unemployment Rate** � % of people actively seeking work.
-7. **Retail Sales** � Consumer spending indicator.
-8. **ISM Manufacturing PMI** � Factory activity index.
-9. **Consumer Confidence** � How optimistic consumers feel.
-10. **Jobless Claims** � Weekly unemployment benefit applications.
+6. **Unemployment Rate** - % of people actively seeking work.
+7. **Retail Sales** - Consumer spending indicator.
+8. **ISM Manufacturing PMI** - Factory activity index.
+9. **Consumer Confidence** - How optimistic consumers feel.
+10. **Jobless Claims** - Weekly unemployment benefit applications.
 
-## Tier 3 � Supporting
+## Tier 3 - Supporting
 
-11�17: Core Retail Sales, PPI, Trade Balance, Housing Starts, Durable Goods, ISM Services, Building Permits`,
+11-17: Core Retail Sales, PPI, Trade Balance, Housing Starts, Durable Goods, ISM Services, Building Permits`,
       },
       {
         id: 'print-export', title: 'Print & Export the Calendar',
@@ -631,7 +631,7 @@ Click **Select All** in the modal to include all indicators at once.
         excerpt: 'Calculate the dollar value of 1 pip for any instrument and lot size.',
         content: `## How to Use
 
-1. Go to **Trading Desk ? Pip Calculator**
+1. Go to **Trading Desk -> Pip Calculator**
 2. Select your instrument (e.g. \`XAU/USD\`)
 3. Enter lot size (e.g. \`0.1\`)
 4. Select your account currency (USD)
@@ -655,7 +655,7 @@ Click **Select All** in the modal to include all indicators at once.
         excerpt: 'Calculate exact lot sizes to risk a fixed % of account per trade.',
         content: `## How to Use
 
-1. Go to **Trading Desk ? Position Size Calculator**
+1. Go to **Trading Desk -> Position Size Calculator**
 2. Enter Account Size (e.g. \`$5,000\`)
 3. Enter Risk % (e.g. \`1%\` = risk $50)
 4. Enter Stop Loss in pips (e.g. \`20 pips\`)
@@ -669,11 +669,11 @@ Account:       $10,000
 Risk:          1% = $100
 Stop Loss:     50 pips on EUR/USD
 Pip value:     $10/pip (1 lot)
-Position Size: $100 � (50 � $10) = 0.2 lots
+Position Size: $100 / (50 * $10) = 0.2 lots
 \`\`\`
 
 ::warning
-Never risk more than 1�2% per trade. This ensures you survive losing streaks.
+Never risk more than 1-2% per trade. This ensures you survive losing streaks.
 ::`,
       },
       {
@@ -697,8 +697,8 @@ Never risk more than 1�2% per trade. This ensures you survive losing streaks.
 
 ## Overlap Windows
 
-- **London-Tokyo overlap:** 07:00�09:00 UTC
-- **London-NY overlap:** 13:00�16:00 UTC (highest volume)
+- **London-Tokyo overlap:** 07:00-09:00 UTC
+- **London-NY overlap:** 13:00-16:00 UTC (highest volume)
 
 ::tip
 The London-NY overlap (shown in amber) is the highest volume period of the day. Most professional traders focus on this window.
@@ -717,8 +717,8 @@ The London-NY overlap (shown in amber) is the highest volume period of the day. 
 
 | Feature | Limit |
 |---|---|
-| Journal entries | 10 lifetime |
-| AI Analysis | 3 lifetime |
+| Journal entries | 5 lifetime |
+| AI Analysis | 2 lifetime |
 | Economic Calendar | Today's US events only (High + Medium) |
 | Live Markets | 15-minute delayed |
 | Market News | 5 articles/day |
@@ -733,9 +733,9 @@ The London-NY overlap (shown in amber) is the highest volume period of the day. 
 | Economic Calendar | All countries, all dates |
 | Live Markets | Real-time streaming |
 | Market News | Unlimited |
-| Macro Surprise Score | ? Full access |
-| Economic Intelligence | ? Full access |
-| Macro-Journal Correlation | ? Full access |
+| Macro Surprise Score | Full access |
+| Economic Intelligence | Full access |
+| Macro-Journal Correlation | Full access |
 
 ## ELITE PLAN (${ELITE_MONTHLY_PRICE})
 
@@ -754,16 +754,16 @@ Everything in Pro, plus:
         content: `## Steps to Upgrade
 
 1. Click your avatar/name in the top right
-      2. Click **Upgrade Plan**
-      3. Choose **Pro** (${PRO_MONTHLY_PRICE}) or **Elite** (${ELITE_MONTHLY_PRICE})
-      4. Complete payment inside the secure in-app modal
-      5. Upload your payment proof screenshot
-      6. Instant activation after verification (usually within minutes)
+2. Click **Upgrade Plan**
+3. Choose **Pro** (${PRO_MONTHLY_PRICE}) or **Elite** (${ELITE_MONTHLY_PRICE})
+4. Complete payment inside the secure in-app modal
+5. Upload your payment proof screenshot
+6. Instant activation after verification (usually within minutes)
 
 ## Payment Methods
 
-      - 🌍 International: Payoneer / USD Bank Transfer
-      - 🇵🇰 Pakistan: Easypaisa / JazzCash / Local Bank Transfer
+- International: USD Bank Transfer
+- Pakistan: JazzCash
 
 ::tip
 Pro is ${PRO_MONTHLY_PRICE} and Elite is ${ELITE_MONTHLY_PRICE}. Cancel anytime.
@@ -801,7 +801,7 @@ Contact **getzynth@gmail.com** with:
 - Subject: \`Refund Request\`
 - Include your registered email and reason (optional)
 
-Processing time: 3�5 business days
+Processing time: 3-5 business days
 
 ## After 7 Days
 
@@ -810,13 +810,13 @@ Refunds are not available after the 7-day period. However you can cancel your su
       {
         id: 'free-limits', title: 'Free Plan Limits Explained',
         excerpt: 'Understand exactly what happens when you hit each Free plan limit.',
-        content: `## Journal: 10 Trades Maximum
+        content: `## Journal: 5 Trades Maximum
 
-When you reach 10 trades you will see a limit message when trying to add more. Upgrade to Pro for unlimited entries.
+When you reach 5 trades you will see a limit message when trying to add more. Upgrade to Pro for unlimited entries.
 
-## AI Analysis: 3 Lifetime Tries
+## AI Analysis: 2 Lifetime Tries
 
-Each time you click the AI analysis button on a trade it uses 1 try. Free users get 3 tries total (not monthly). Upgrade to Pro for 50/month.
+Each time you click the AI analysis button on a trade it uses 1 try. Free users get 2 tries total (not monthly). Upgrade to Pro for 50/month.
 
 ## Economic Calendar: Today Only
 
@@ -826,7 +826,7 @@ Free users see today's US High and Medium impact events only. No access to past 
 
 Free users see prices delayed by 15 minutes. Pro/Elite users get real-time streaming.
 
-**To upgrade:** Profile ? Upgrade Plan`,
+**To upgrade:** Profile -> Upgrade Plan`,
       },
     ],
   },
@@ -892,11 +892,11 @@ Your timezone preference is saved automatically across sessions.`,
         excerpt: 'Set your display name, upload an avatar photo, or choose an avatar color.',
         content: `## Display Name
 
-Set during onboarding or change via Profile ? display name field. Shown in the header and greetings.
+Set during onboarding or change via Profile -> display name field. Shown in the header and greetings.
 
 ## Avatar Photo
 
-Click the camera icon on your avatar ? upload image from device (max 2MB). Supported formats: JPG, PNG, GIF. Square images work best.
+Click the camera icon on your avatar -> upload image from device (max 2MB). Supported formats: JPG, PNG, GIF. Square images work best.
 
 ## Avatar Color
 
@@ -921,9 +921,9 @@ Dark mode is the default and recommended for trading (easier on the eyes during 
 
 ## Sidebar
 
-The sidebar can be collapsed to give you more screen space. Click the \`�\` arrow at the bottom of the sidebar to collapse it. Click again to expand.
+The sidebar can be collapsed to give you more screen space. Click the collapse/expand arrow in the sidebar header to collapse it. Click again to expand.
 
-When collapsed, only icons are shown � hover to see labels.`,
+When collapsed, only icons are shown - hover to see labels.`,
       },
     ],
   },
@@ -1255,7 +1255,7 @@ export default function HelpCenter() {
   return (
     <div style={{ display: 'flex', height: '100%', background: bg0, minHeight: 0 }}>
 
-      {/* ── Main panel ── */}
+      {/* -- Main panel -- */}
       <main style={{ flex: 1, minWidth: 0, height: '100%', overflowY: 'auto', overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
 
         {/* Mobile top bar */}
@@ -1276,9 +1276,9 @@ export default function HelpCenter() {
           </div>
         )}
 
-        {/* ═══════════════════════════════════════════
+        {/* -------------------------------------------
             ARTICLE VIEW
-        ═══════════════════════════════════════════ */}
+        ------------------------------------------- */}
         {currentArticle && (
           <div style={{ maxWidth: 780, margin: '0 auto', padding: isMobile ? '24px 16px 80px' : '44px 52px 96px', width: '100%' }}>
 
@@ -1352,9 +1352,9 @@ export default function HelpCenter() {
           </div>
         )}
 
-        {/* ═══════════════════════════════════════════
+        {/* -------------------------------------------
             CATEGORY VIEW
-        ═══════════════════════════════════════════ */}
+        ------------------------------------------- */}
         {!currentArticle && currentCategory && (
           <div style={{ maxWidth: 860, margin: '0 auto', padding: isMobile ? '24px 16px 80px' : '44px 52px 96px', width: '100%' }}>
 
@@ -1401,9 +1401,9 @@ export default function HelpCenter() {
           </div>
         )}
 
-        {/* ═══════════════════════════════════════════
+        {/* -------------------------------------------
             SEARCH RESULTS
-        ═══════════════════════════════════════════ */}
+        ------------------------------------------- */}
         {!currentArticle && !currentCategory && query.trim() !== '' && (
           <div style={{ maxWidth: 860, margin: '0 auto', padding: isMobile ? '24px 16px 80px' : '44px 52px 96px', width: '100%' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, marginBottom: 28, flexWrap: 'wrap' }}>
@@ -1453,9 +1453,9 @@ export default function HelpCenter() {
           </div>
         )}
 
-        {/* ═══════════════════════════════════════════
+        {/* -------------------------------------------
             HOME VIEW
-        ═══════════════════════════════════════════ */}
+        ------------------------------------------- */}
         {!currentArticle && !currentCategory && query.trim() === '' && (
           <div style={{ maxWidth: 920, margin: '0 auto', padding: isMobile ? '24px 16px 80px' : '44px 48px 96px', width: '100%' }}>
 
@@ -1566,7 +1566,7 @@ export default function HelpCenter() {
                     </div>
                     <div style={{ color: text0, fontWeight: 700, fontSize: 13, marginBottom: 5 }}>{cat.title}</div>
                     <div style={{ color: textMuted, fontSize: 11, lineHeight: 1.55, marginBottom: 8 }}>{cat.description}</div>
-                    <div style={{ color: cat.color, fontSize: 11, fontWeight: 700 }}>{cat.articles.length} articles →</div>
+                    <div style={{ color: cat.color, fontSize: 11, fontWeight: 700 }}>{cat.articles.length} articles ?</div>
                   </button>
                 ))}
               </div>
@@ -1650,3 +1650,4 @@ export default function HelpCenter() {
     </div>
   );
 }
+

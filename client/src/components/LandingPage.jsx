@@ -258,7 +258,7 @@ const FAQS = [
   { q: 'What is Zynth?', a: 'Zynth is an AI trading journal that helps you identify why your trades fail, and what to do about it. You log your trades, Zynth finds the patterns you keep repeating.' },
   { q: 'Is my data safe?', a: 'Yes. All data is encrypted in transit (TLS 1.3) and stored securely. We never share or sell your trading data to anyone.' },
   { q: 'What is the Macro Surprise Score?', a: 'The Macro Surprise Score is our proprietary indicator that analyzes 10 major economic releases and calculates a single score (-10 to +10) showing whether macro conditions are bullish or bearish for gold (XAUUSD).' },
-  { q: 'Is there a free plan?', a: 'Absolutely. The Free plan gives you access to core features including live markets, economic calendar, and even 3 free AI analysis tries, no credit card required.' },
+  { q: 'Is there a free plan?', a: 'Absolutely. The Free plan includes core features with no credit card required: 5 lifetime journal entries, 2 lifetime AI analyses, delayed live markets, and today\'s US high/medium-impact economic events.' },
   { q: 'What does the AI analysis include?', a: 'Our AI reads your trade history and journal entries to surface patterns, identify mistakes, and give you personalized improvement suggestions.' },
   { q: 'What markets does Zynth cover?', a: 'Zynth covers Forex (XAU/USD, EUR/USD, GBP/USD, USD/JPY), major crypto (BTC, ETH, XRP, SOL, BNB), US stocks (AAPL, TSLA, NVDA, MSFT, AMZN, GOOGL), and ETFs (SPY, GLD, TLT).' },
   { q: 'What are the subscription prices?', a: `Pro is ${getPlanMonthlyLabel('pro')} and Elite is ${getPlanMonthlyLabel('elite')}. Both are billed monthly and you can cancel anytime. Free plan is available with no credit card required.` },

@@ -83,9 +83,9 @@ export default function ServicePolicy({ onBack }) {
             </p>
             <p>The platform includes the following services depending on your subscription plan:</p>
             <ul style={{ paddingLeft: 20, display: 'flex', flexDirection: 'column', gap: 6 }}>
-              <li><strong style={{ color: '#e2e8f0' }}>Free Plan:</strong> Trade journal (10 entries), live market overview, economic calendar, basic analytics, 3 AI analysis tries, 2 screenshot analyses</li>
-              <li><strong style={{ color: '#e2e8f0' }}>Pro Plan ({proMonthlyPrice}):</strong> Unlimited journal entries, 50 AI analyses/month, 35 screenshot OCR analyses/month, full economic intelligence, macro surprise score, live market feeds</li>
-              <li><strong style={{ color: '#e2e8f0' }}>Elite Plan ({eliteMonthlyPrice}):</strong> All Pro features plus unlimited AI analyses, unlimited screenshot OCR, custom AI reports, dedicated email support, and priority access to new features</li>
+              <li><strong style={{ color: '#e2e8f0' }}>Free Plan:</strong> Trade journal (5 lifetime entries), economic calendar (today's US high/medium events), delayed market data, and 2 lifetime AI analyses</li>
+              <li><strong style={{ color: '#e2e8f0' }}>Pro Plan ({proMonthlyPrice}):</strong> Unlimited journal entries, 50 AI analyses/month, real-time market data, full economic calendar, macro intelligence features, and advanced analytics</li>
+              <li><strong style={{ color: '#e2e8f0' }}>Elite Plan ({eliteMonthlyPrice}):</strong> All Pro features plus unlimited AI analyses, monthly Trading DNA report, beta access, and priority support</li>
             </ul>
           </Section>
 
@@ -111,7 +111,7 @@ export default function ServicePolicy({ onBack }) {
           </Section>
 
           <Section id="ai-services" title="4. AI Services Delivery">
-            <p>AI-powered features (AI Trade Analysis, Screenshot OCR, Zynth Assistant, Macro Intelligence Briefs) are delivered on-demand:</p>
+            <p>AI-powered features (AI Trade Analysis, Zynth Assistant, Macro Intelligence Briefs, and Trading DNA for Elite users) are delivered on-demand:</p>
             <ul style={{ paddingLeft: 20, display: 'flex', flexDirection: 'column', gap: 6 }}>
               <li>AI analysis results are typically generated within 5–30 seconds of a request</li>
               <li>During periods of high traffic or AI provider throttling, response times may be longer</li>
