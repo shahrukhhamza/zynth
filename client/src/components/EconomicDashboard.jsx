@@ -50,7 +50,7 @@ function MetricCard({ label, value, sub, accentColor, iconBg, iconColor, icon: I
       {/* Top row: label + badge + icon */}
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2 min-w-0">
-          <span className="text-[11px] font-bold uppercase tracking-[0.08em] text-gray-400 dark:text-gray-500 truncate">
+          <span className="text-[11px] font-bold uppercase tracking-[0.08em] text-gray-400 dark:text-gray-300 truncate">
             {label}
           </span>
           {badge && (
@@ -80,7 +80,7 @@ function MetricCard({ label, value, sub, accentColor, iconBg, iconColor, icon: I
       </div>
 
       {/* Sub text */}
-      <p className="text-[12px] font-medium text-gray-400 dark:text-gray-500 m-0">{sub}</p>
+      <p className="text-[12px] font-medium text-gray-400 dark:text-gray-300 m-0">{sub}</p>
 
       {/* Decorative glow strip on hover */}
       <div

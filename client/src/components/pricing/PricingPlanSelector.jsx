@@ -94,11 +94,11 @@ function CompactPlanCard({ plan, selected, billingCycle, onSelect, context, pric
       {/* Header: badge + price */}
       <div className="flex items-start justify-between gap-1">
         {isElite ? (
-          <span className="inline-flex items-center gap-1 rounded-full border border-violet-300/40 bg-violet-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.12em] text-violet-700 dark:border-violet-500/30 dark:bg-violet-500/15 dark:text-violet-300">
+          <span className="inline-flex items-center gap-1 rounded-full border border-violet-300/40 bg-violet-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.12em] text-violet-700 dark:border-violet-400/40 dark:bg-violet-500/25 dark:text-violet-100">
             🔥 Most Popular
           </span>
         ) : (
-          <span className="inline-flex items-center rounded-full border border-slate-200 bg-slate-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.12em] text-slate-500 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-400">
+          <span className="inline-flex items-center rounded-full border border-slate-200 bg-slate-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.12em] text-slate-500 dark:border-slate-500/70 dark:bg-slate-700/80 dark:text-slate-200">
             {plan.badge}
           </span>
         )}
@@ -107,7 +107,7 @@ function CompactPlanCard({ plan, selected, billingCycle, onSelect, context, pric
       {/* Price */}
       <div className="mt-2 flex items-end gap-1">
         {display.anchoredAmount && display.anchoredAmount > display.amount && (
-          <span className="text-[11px] font-semibold text-slate-400 line-through dark:text-slate-500">
+          <span className="text-[11px] font-semibold text-slate-400 line-through dark:text-slate-400">
             ${display.anchoredAmount}
           </span>
         )}
@@ -122,20 +122,20 @@ function CompactPlanCard({ plan, selected, billingCycle, onSelect, context, pric
 
       {/* Psychological hook */}
       {isElite ? (
-        <div className="mt-2 rounded-lg border border-violet-200/70 bg-violet-50/70 px-2.5 py-1.5 dark:border-violet-500/25 dark:bg-violet-500/12">
-          <p className="text-[11px] font-semibold leading-4 text-violet-800 dark:text-violet-300">
+        <div className="mt-2 rounded-lg border border-violet-200/70 bg-violet-50/70 px-2.5 py-1.5 dark:border-violet-400/35 dark:bg-violet-950/55">
+          <p className="text-[11px] font-semibold leading-4 text-violet-800 dark:text-violet-100">
             {eliteHook.freedom}
           </p>
-          <p className="mt-0.5 text-[10px] text-violet-600/70 dark:text-violet-400/70">
+          <p className="mt-0.5 text-[10px] text-violet-600/70 dark:text-violet-200/90">
             {eliteHook.identity}
           </p>
         </div>
       ) : (
-        <div className="mt-2 rounded-lg border border-slate-200/80 bg-slate-50/80 px-2.5 py-1.5 dark:border-slate-600/40 dark:bg-slate-700/30">
-          <p className="text-[11px] font-semibold leading-4 text-slate-700 dark:text-slate-300">
+        <div className="mt-2 rounded-lg border border-slate-200/80 bg-slate-50/80 px-2.5 py-1.5 dark:border-slate-500/45 dark:bg-slate-800/80">
+          <p className="text-[11px] font-semibold leading-4 text-slate-700 dark:text-slate-100">
             {proHook.value}
           </p>
-          <p className="mt-0.5 text-[10px] text-slate-500 dark:text-slate-400">
+          <p className="mt-0.5 text-[10px] text-slate-500 dark:text-slate-300">
             {proHook.identity}
           </p>
         </div>
@@ -150,7 +150,7 @@ function CompactPlanCard({ plan, selected, billingCycle, onSelect, context, pric
 
       {/* Selected indicator */}
       {selected && (
-        <div className={`mt-auto pt-2 flex items-center gap-1 text-[10px] font-bold ${isElite ? 'text-violet-600 dark:text-violet-400' : 'text-slate-500 dark:text-slate-400'}`}>
+        <div className={`mt-auto pt-2 flex items-center gap-1 text-[10px] font-bold ${isElite ? 'text-violet-600 dark:text-violet-300' : 'text-slate-500 dark:text-slate-300'}`}>
           <Check size={10} />
           Selected
         </div>
@@ -194,7 +194,7 @@ function PlanCard({ plan, billingCycle, selected, onSelect, context, priceOverri
               </div>
             </div>
 
-            <p className="mt-3 text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-400 dark:text-slate-500">
+            <p className="mt-3 text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-400 dark:text-slate-300">
               {plan.eyebrow}
             </p>
 
@@ -224,7 +224,7 @@ function PlanCard({ plan, billingCycle, selected, onSelect, context, priceOverri
                 <p className="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">{display.savingsText}</p>
               )}
               {isYearly && display.dailyEquivalent && (
-                <p className="text-[11px] text-slate-400 dark:text-slate-500">${display.dailyEquivalent.toFixed(2)}/day</p>
+                <p className="text-[11px] text-slate-400 dark:text-slate-300">${display.dailyEquivalent.toFixed(2)}/day</p>
               )}
             </div>
 
@@ -567,7 +567,7 @@ export default function PricingPlanSelector({
               <p className="text-[11px] font-semibold text-slate-700 dark:text-slate-300">
                 Upgrade once. Remove all limits.
               </p>
-              <p className="text-[10px] text-slate-400 dark:text-slate-500">
+              <p className="text-[10px] text-slate-400 dark:text-slate-300">
                 7-day risk-free · Cancel anytime
               </p>
             </div>

@@ -281,7 +281,7 @@ function EliteGate() {
           Upgrade to Elite
         </button>
 
-        <p className="mt-3 text-[12px] text-gray-400 dark:text-gray-500">
+        <p className="mt-3 text-[12px] text-gray-400 dark:text-gray-300">
           Includes Trading DNA, AI insights, unlimited journaling &amp; more
         </p>
       </div>

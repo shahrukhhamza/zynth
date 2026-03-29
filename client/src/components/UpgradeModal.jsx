@@ -570,7 +570,7 @@ export default function UpgradeModal({
           >
             {error && <ErrorBar message={error} className="mb-3" />}
 
-            <div className="mb-3 text-xs text-gray-400 dark:text-gray-500 flex items-center justify-center gap-3">
+            <div className="mb-3 text-xs text-gray-400 dark:text-gray-300 flex items-center justify-center gap-3">
               <span>🔒 Secure checkout</span>
               <span>💳 Powered by Paddle</span>
               <span>🔁 7-day refund guarantee</span>
@@ -594,7 +594,7 @@ export default function UpgradeModal({
               }
             </button>
 
-            <div className="mt-2 text-center text-xs text-gray-400 dark:text-gray-500">
+            <div className="mt-2 text-center text-xs text-gray-400 dark:text-gray-300">
               Takes less than 1 minute
             </div>
           </div>
