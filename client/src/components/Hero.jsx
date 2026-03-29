@@ -117,6 +117,26 @@ export default function Hero({ badgeText, spotsLeft, onGetStarted, onSignIn }) {
       
       {/* --- Institutional Background Layers --- */}
       <div className="absolute inset-0 pointer-events-none">
+        {/* soft radial glow behind headline */}
+        <div
+          className="absolute inset-0"
+          style={{
+            background: isDark
+              ? 'radial-gradient(70% 55% at 50% 0%, rgba(56,189,248,0.22) 0%, rgba(56,189,248,0.08) 35%, transparent 72%)'
+              : 'radial-gradient(70% 55% at 50% 0%, rgba(59,130,246,0.16) 0%, rgba(59,130,246,0.06) 35%, transparent 72%)',
+          }}
+        />
+
+        {/* very faint texture for depth */}
+        <div
+          className="absolute inset-0"
+          style={{
+            opacity: isDark ? 0.08 : 0.05,
+            backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(148,163,184,0.8) 1px, transparent 0)',
+            backgroundSize: '22px 22px',
+          }}
+        />
+
         {/* Animated Grid */}
         <div className={`absolute inset-0 grid-bg ${isDark ? 'opacity-40' : 'opacity-10'}`} />
         
@@ -147,10 +167,10 @@ export default function Hero({ badgeText, spotsLeft, onGetStarted, onSignIn }) {
           transition={{ delay: 0.2 }}
           className="text-5xl md:text-[82px] font-black leading-[1.05] tracking-tighter mb-10"
         >
-          <span className={isDark ? 'text-white' : 'text-gray-900'}>Stop Losing Trades</span>
+          <span className={isDark ? 'text-white' : 'text-gray-900'}>You&apos;re Not Losing.</span>
           <br />
           <span className="inline-block pb-2 bg-clip-text text-transparent bg-gradient-to-r from-[#1d4ed8] via-[#3b82f6] to-[#06b6d4]">
-            You Could Have Won.
+            You&apos;re Repeating Mistakes.
           </span>
         </motion.h1>
 
@@ -162,10 +182,7 @@ export default function Hero({ badgeText, spotsLeft, onGetStarted, onSignIn }) {
           className="mb-8"
         >
           <p className={`text-[16px] md:text-[18px] font-semibold leading-snug ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
-            You&apos;re not losing because of strategy.
-          </p>
-          <p className={`text-[16px] md:text-[18px] font-semibold leading-snug ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>
-            You&apos;re losing because you repeat mistakes you don&apos;t see.
+            Zynth analyzes your trades and shows you exactly what&apos;s going wrong, and how to fix it.
           </p>
         </motion.div>
 
@@ -176,7 +193,7 @@ export default function Hero({ badgeText, spotsLeft, onGetStarted, onSignIn }) {
           transition={{ delay: 0.4 }}
           className={`text-[17px] md:text-[19px] font-semibold mb-14 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}
         >
-          See exactly why your trades fail — and fix it.
+          See your mistakes. Fix them faster.
         </motion.p>
 
         {/* Urgency Badge */}
@@ -198,35 +215,26 @@ export default function Hero({ badgeText, spotsLeft, onGetStarted, onSignIn }) {
             onClick={onSignIn}
             className={`px-8 py-5 font-bold rounded-2xl transition-all ${isDark ? 'bg-white/5 border border-white/10 text-white hover:bg-white/10 hover:border-white/20' : 'bg-black/[0.06] border border-black/10 text-gray-900 hover:bg-black/10 hover:border-black/20'}`}
           >
-            Access Terminal
+            Sign In
           </button>
         </div>
 
         {/* Micro trust signals under CTA */}
-        <motion.div
+        <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.7 }}
-          className="flex flex-wrap items-center justify-center gap-x-5 gap-y-1.5 mb-8"
+          className={`text-[12px] font-medium mb-8 ${isDark ? 'text-gray-500' : 'text-gray-500'}`}
         >
-          {[
-            'No credit card required',
-            'Takes less than 30 seconds',
-            'Built for serious forex &amp; gold traders',
-          ].map((t, i) => (
-            <span key={i} className={`flex items-center gap-1.5 text-[12px] font-medium ${isDark ? 'text-gray-500' : 'text-gray-500'}`}>
-              <span className="w-1 h-1 rounded-full bg-blue-500/60 shrink-0" />
-              <span dangerouslySetInnerHTML={{ __html: t }} />
-            </span>
-          ))}
-        </motion.div>
+          Free to start, no card required • 60-second setup • Built for traders
+        </motion.p>
 
         {/* Floating Trust Icons */}
         <div className="flex justify-center gap-3 flex-wrap">
           {[
             {Icon: Shield, label: 'Encrypted'},
-            {Icon: Zap, label: 'Real-time'},
-            {Icon: Bot, label: 'Gemini AI'},
+            {Icon: Zap, label: 'Journal-powered'},
+            {Icon: Bot, label: 'AI by Gemini'},
           ].map(({Icon, label}) => (
             <div key={label} className={`flex items-center gap-2 px-4 py-1.5 rounded-full border text-[11px] font-bold uppercase tracking-widest ${
               isDark

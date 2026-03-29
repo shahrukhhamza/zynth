@@ -24,8 +24,8 @@ const INSIGHTS = [
     badge: 'HIGH RISK',
     badgeColor: '#ef4444',
     badgeBg: 'rgba(239,68,68,0.1)',
-    headline: 'Position sizing increases after losses',
-    detail: 'After 2 consecutive losing trades, your average position size increased by 40%. This pattern was detected on 8 separate occasions this month.',
+    headline: 'You trade bigger when you\'re losing',
+    detail: 'After 2 consecutive losses, your average position size jumped 40%. That\'s revenge trading, and it\'s costing you money.',
     stat: '+40% avg size',
     statLabel: 'after drawdown',
   },
@@ -40,8 +40,8 @@ const INSIGHTS = [
     badge: 'PATTERN',
     badgeColor: '#f59e0b',
     badgeBg: 'rgba(245,158,11,0.1)',
-    headline: 'Win rate drops in New York session',
-    detail: 'Your New York session win rate is 34% vs 71% during London. You are consistently over-trading during high-volatility US open hours.',
+    headline: 'You\'re overtrading the wrong hours',
+    detail: 'Your NY session win rate is 34% vs 71% in London. You\'re forcing trades in volatile conditions you haven\'t learned to read.',
     stat: '34% NY vs 71% LN',
     statLabel: 'session win rate',
   },
@@ -56,8 +56,8 @@ const INSIGHTS = [
     badge: 'REVIEW',
     badgeColor: '#a78bfa',
     badgeBg: 'rgba(139,92,246,0.1)',
-    headline: 'Exiting winning trades too early',
-    detail: "Your average reward-to-risk on winners is 1.2R — your targets are set at 2R. You're capturing only 60% of your planned upside on profitable trades.",
+    headline: 'You\'re cutting winners short, consistently',
+    detail: 'You\'re closing trades at 1.2R when your target is 2R. You\'re leaving 40% of your profit on the table every single time.',
     stat: 'Avg 1.2R captured',
     statLabel: 'target was 2.0R',
   },
@@ -72,8 +72,8 @@ const INSIGHTS = [
     badge: 'STRENGTH',
     badgeColor: '#10b981',
     badgeBg: 'rgba(16,185,129,0.1)',
-    headline: 'London session is your edge',
-    detail: 'You have a consistent +18% P&L improvement during the London session (07:00–12:00 GMT). This is your optimal trading window — protect it.',
+    headline: 'You have a real edge. You\'re not using it enough.',
+    detail: 'Your London session P&L improves by +18%. This is where you win. Zynth helps you protect your best hours.',
     stat: '+18% P&L',
     statLabel: 'London session',
   },
@@ -192,16 +192,16 @@ export default function AIInsightsSection({ onGetStarted }) {
             style={{ background: 'rgba(59,130,246,0.07)', borderColor: 'rgba(59,130,246,0.2)' }}
           >
             <Bot size={13} style={{ color: '#3b82f6' }} />
-            <span className="text-[11px] font-bold tracking-[0.18em] text-blue-400 uppercase">AI Analysis</span>
+            <span className="text-[11px] font-bold tracking-[0.18em] text-blue-400 uppercase">What Zynth Finds In Your Trades</span>
           </div>
 
           <h2
             className="text-[36px] md:text-[44px] font-extrabold tracking-tight mb-4 leading-tight"
             style={{ color: isDark ? '#ffffff' : '#0f172a' }}
           >
-            See what Zynth finds{' '}
+            This is what your trading{' '}
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-cyan-400">
-              in your trades
+              actually looks like.
             </span>
           </h2>
 
@@ -209,7 +209,7 @@ export default function AIInsightsSection({ onGetStarted }) {
             className="text-[16px] max-w-[520px] mx-auto leading-relaxed"
             style={{ color: isDark ? '#6b7280' : '#64748b' }}
           >
-            Real insights from real data — specific, actionable, and generated automatically from your trade history.
+            Zynth doesn&apos;t guess. It shows you patterns from your real trades instantly.
           </p>
         </motion.div>
 
@@ -232,7 +232,7 @@ export default function AIInsightsSection({ onGetStarted }) {
             style={{ color: isDark ? '#4b5563' : '#9ca3af' }}
           >
             <Sparkles size={13} className="inline-block mr-1 text-amber-400" />
-            These insights are generated automatically the moment you start logging trades.
+            These are the kinds of patterns Zynth surfaces in your first week. The more you log, the sharper it gets.
           </p>
           <button
             onClick={() => onGetStarted()}
@@ -242,7 +242,7 @@ export default function AIInsightsSection({ onGetStarted }) {
               boxShadow: '0 6px 24px rgba(59,130,246,0.35)',
             }}
           >
-            Find My Mistakes
+            Analyze My Trades
             <span className="ml-1 group-hover:translate-x-1 transition-transform inline-block">→</span>
           </button>
         </motion.div>

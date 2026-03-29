@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion, useInView } from 'framer-motion';
 import { useRef } from 'react';
-import { AlertTriangle, Flame, TrendingDown, BarChart2, Check, ArrowRight } from 'lucide-react';
+import { AlertTriangle, Flame, TrendingDown, Check, ArrowRight } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 
 function Reveal({ children, delay = 0, className = '' }) {
@@ -24,8 +24,8 @@ const PAIN_POINTS = [
   {
     icon: TrendingDown,
     pain: "Not tracking mistakes",
-    painDesc: "Without a journal, the same losing patterns repeat — costing you money every single month.",
-    solution: "Zynth logs every trade with context, emotion, and outcome — so patterns become impossible to ignore.",
+    painDesc: "Without a journal, the same losing patterns repeat and drain your account.",
+    solution: "Zynth logs every trade so your patterns are clear and fixable.",
     solutionLabel: "Smart Journal",
     accentColor: '#ef4444',
     accentBg: 'rgba(239,68,68,0.08)',
@@ -34,32 +34,12 @@ const PAIN_POINTS = [
   {
     icon: Flame,
     pain: "Emotional trading (FOMO & revenge)",
-    painDesc: "68% of trading losses are caused by emotional decisions — revenge trades, FOMO entries, and overtrading.",
-    solution: "Zynth's behavioral AI detects and flags emotional trading loops before they drain your account.",
+    painDesc: "FOMO and revenge entries push you into low-quality trades.",
+    solution: "Zynth flags emotional patterns early so you can stop repeating them.",
     solutionLabel: "Behavioral AI",
     accentColor: '#f59e0b',
     accentBg: 'rgba(245,158,11,0.08)',
     accentBorder: 'rgba(245,158,11,0.20)',
-  },
-  {
-    icon: BarChart2,
-    pain: "Ignoring macro conditions",
-    painDesc: "Trading gold on the day of a major CPI release without knowing it? That's not a strategy — it's a gamble.",
-    solution: "Zynth's Macro Surprise Score tracks 10 high-impact US indicators and flags unfavorable market environments.",
-    solutionLabel: "Macro Intelligence",
-    accentColor: '#3b82f6',
-    accentBg: 'rgba(59,130,246,0.08)',
-    accentBorder: 'rgba(59,130,246,0.20)',
-  },
-  {
-    icon: AlertTriangle,
-    pain: "No idea why you're losing",
-    painDesc: "You feel like your strategy should work — but the numbers say otherwise. You don't know what to fix.",
-    solution: "Zynth's AI generates a personalized breakdown: what's working, what's not, and exactly what to change.",
-    solutionLabel: "AI Trade Reports",
-    accentColor: '#8b5cf6',
-    accentBg: 'rgba(139,92,246,0.08)',
-    accentBorder: 'rgba(139,92,246,0.20)',
   },
 ];
 
@@ -94,14 +74,14 @@ export default function WhyTradersFail({ onGetStarted }) {
               isDark ? 'text-white' : 'text-gray-900'
             }`}
           >
-            The Four Mistakes Costing
+            Your strategy isn&apos;t the problem.
             <br />
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-red-400 to-orange-400">
-              You Real Money
+              Your habits are.
             </span>
           </h2>
           <p className={`text-[16px] max-w-xl mx-auto ${isDark ? 'text-gray-500' : 'text-gray-600'}`}>
-            Most retail traders lose for the same controllable reasons. Here's what they are — and how Zynth fixes each one.
+            Most losses come from repeated behavior, not a broken strategy.
           </p>
         </Reveal>
 
@@ -193,7 +173,7 @@ export default function WhyTradersFail({ onGetStarted }) {
             }}
           >
             <span className="relative z-10 flex items-center gap-2">
-              Fix My Trading Mistakes Now
+              Analyze My Trades
               <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
             </span>
             <span

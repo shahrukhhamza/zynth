@@ -255,10 +255,10 @@ const INITIAL_MARKETS = [
 ];
 
 const FAQS = [
-  { q: 'What is Zynth?', a: 'Zynth is a professional trading intelligence platform built for serious traders. It combines live market data, AI-powered trade analysis, economic intelligence, and a rich trade journal — all in one dashboard.' },
+  { q: 'What is Zynth?', a: 'Zynth is an AI trading journal that helps you identify why your trades fail, and what to do about it. You log your trades, Zynth finds the patterns you keep repeating.' },
   { q: 'Is my data safe?', a: 'Yes. All data is encrypted in transit (TLS 1.3) and stored securely. We never share or sell your trading data to anyone.' },
   { q: 'What is the Macro Surprise Score?', a: 'The Macro Surprise Score is our proprietary indicator that analyzes 10 major economic releases and calculates a single score (-10 to +10) showing whether macro conditions are bullish or bearish for gold (XAUUSD).' },
-  { q: 'Is there a free plan?', a: 'Absolutely. The Free plan gives you access to core features including live markets, economic calendar, and even 3 free AI analysis tries — no credit card required.' },
+  { q: 'Is there a free plan?', a: 'Absolutely. The Free plan gives you access to core features including live markets, economic calendar, and even 3 free AI analysis tries, no credit card required.' },
   { q: 'What does the AI analysis include?', a: 'Our AI reads your trade history and journal entries to surface patterns, identify mistakes, and give you personalized improvement suggestions.' },
   { q: 'What markets does Zynth cover?', a: 'Zynth covers Forex (XAU/USD, EUR/USD, GBP/USD, USD/JPY), major crypto (BTC, ETH, XRP, SOL, BNB), US stocks (AAPL, TSLA, NVDA, MSFT, AMZN, GOOGL), and ETFs (SPY, GLD, TLT).' },
   { q: 'What are the subscription prices?', a: 'Pro is $9/month and Elite is $19/month. Both are billed monthly and you can cancel anytime. Free plan is available with no credit card required.' },
@@ -274,7 +274,7 @@ const FEATURE_CARDS = [
   {
     Icon: Bot,
     title: 'AI-Powered Reports',
-    desc: "Our AI reads through your trades and gives you a full breakdown — what's working, what's not, and what to focus on next.",
+    desc: "Our AI reads through your trades and gives you a full breakdown of what's working, what's not, and what to focus on next.",
     bullets: ['Personalized performance analysis', 'Blind spot & pattern detection', 'Actionable improvement plan'],
   },
   {
@@ -304,7 +304,7 @@ function LandingPricing({ isDark, onGetStarted }) {
   };
 
   const eliteFeatures = [
-    'Unlimited AI insights — no daily limits',
+    'Unlimited AI insights, no daily limits',
     'Premium strategy breakdowns and deeper reporting',
     'Advanced analytics dashboard',
     'Economic intelligence and macro context',
@@ -497,7 +497,7 @@ function LandingPricing({ isDark, onGetStarted }) {
                   onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 10px 36px rgba(124,58,237,0.55), 0 2px 8px rgba(0,0,0,0.2)'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
                   onMouseLeave={e => { e.currentTarget.style.boxShadow = isDark ? '0 4px 24px rgba(124,58,237,0.4), 0 1px 4px rgba(0,0,0,0.3)' : '0 6px 24px rgba(109,40,217,0.32), 0 2px 6px rgba(109,40,217,0.18)'; e.currentTarget.style.transform = ''; }}
                 >
-                  Get Elite Access →
+                  Analyze My Trades
                 </button>
 
                 {/* Features */}
@@ -628,7 +628,7 @@ function LandingPricing({ isDark, onGetStarted }) {
                     }
                   }}
                 >
-                  Start with Pro →
+                  Analyze My Trades
                 </button>
 
                 {/* Features */}
@@ -684,7 +684,7 @@ function LandingPricing({ isDark, onGetStarted }) {
               className={`text-[13px] font-semibold transition-all hover:opacity-80
                 ${isDark ? 'text-violet-400' : 'text-violet-600'}`}
             >
-              Start free — no card needed →
+              Analyze My Trades
             </button>
           </div>
         </Reveal>
@@ -884,8 +884,8 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
     sessionStorage.setItem('bannerDismissed', '1');
   }
 
-  const SEO_TITLE       = 'Zynth — AI-Powered Trading Intelligence Platform';
-  const SEO_DESCRIPTION = 'Institutional-grade macro analysis, AI trade journaling, and real-time market data for gold, forex and commodity traders.';
+  const SEO_TITLE       = 'Zynth: AI Trading Journal That Shows You Why Your Trades Fail';
+  const SEO_DESCRIPTION = 'Log your trades, find your patterns, fix your mistakes. Zynth is an AI-powered trading journal for forex, gold and crypto traders.';
   const SEO_URL         = 'https://zynth.codes';
   const SEO_IMAGE       = 'https://zynth.codes/og-image.png';
 
@@ -1031,14 +1031,14 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
         className="sticky top-0 z-50 border-b"
         style={{
           background: scrolled
-            ? (isDark ? 'rgba(2,6,23,0.92)' : 'rgba(248,250,252,0.94)')
-            : 'transparent',
-          backdropFilter: scrolled ? 'blur(16px)' : 'none',
-          WebkitBackdropFilter: scrolled ? 'blur(16px)' : 'none',
-          borderBottomColor: scrolled
-            ? (isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.07)')
-            : 'transparent',
-          boxShadow: scrolled ? (isDark ? '0 4px 24px rgba(0,0,0,0.35)' : '0 4px 24px rgba(0,0,0,0.08)') : 'none',
+            ? (isDark ? 'rgba(2,6,23,0.82)' : 'rgba(248,250,252,0.78)')
+            : (isDark ? 'rgba(2,6,23,0.62)' : 'rgba(248,250,252,0.62)'),
+          backdropFilter: 'blur(18px) saturate(130%)',
+          WebkitBackdropFilter: 'blur(18px) saturate(130%)',
+          borderBottomColor: isDark ? 'rgba(255,255,255,0.10)' : 'rgba(15,23,42,0.08)',
+          boxShadow: scrolled
+            ? (isDark ? '0 6px 24px rgba(0,0,0,0.34)' : '0 6px 22px rgba(15,23,42,0.08)')
+            : (isDark ? '0 2px 12px rgba(0,0,0,0.22)' : '0 2px 10px rgba(15,23,42,0.05)'),
           transition: 'background 0.3s ease, backdrop-filter 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease',
         }}
       >
@@ -1135,6 +1135,16 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
         )}
       </header>
 
+      {/* subtle depth divider between navbar and hero */}
+      <div
+        className="h-px w-full pointer-events-none"
+        style={{
+          background: isDark
+            ? 'linear-gradient(90deg, transparent 0%, rgba(125,211,252,0.22) 50%, transparent 100%)'
+            : 'linear-gradient(90deg, transparent 0%, rgba(59,130,246,0.18) 50%, transparent 100%)',
+        }}
+      />
+
       {/* ═══════════════════════════ HERO ═══════════════════════════ */}
       <Hero
         spotsLeft={spotsLeft}
@@ -1164,96 +1174,13 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
             </div>
             <h2 className="text-[42px] font-extrabold tracking-tight mb-4">
               <span className={`bg-clip-text text-transparent bg-gradient-to-r ${isDark ? 'from-white to-blue-400' : 'from-[#0a0e1a] to-blue-600'}`}>
-                Everything a serious trader needs
+                Everything here is built to fix your trading mistakes.
               </span>
             </h2>
-            <p className={`text-[16px] max-w-[480px] mx-auto ${isDark ? 'text-gray-500' : 'text-gray-600'}`}>One platform to replace five tabs, three spreadsheets, and two notebooks.</p>
+            <p className={`text-[16px] max-w-[480px] mx-auto ${isDark ? 'text-gray-500' : 'text-gray-600'}`}>Every feature in Zynth exists to help you understand your trades better, and make fewer mistakes.</p>
           </Reveal>
 
-          {/* Feature row 1 — Trade Journal */}
-          <Reveal delay={0.1} className="flex flex-col lg:flex-row items-center gap-12 mb-28">
-            {/* Mockup */}
-            <div className="flex-1 w-full">
-              <div className="rounded-2xl border overflow-hidden"
-                   style={{
-                     background: isDark ? '#0f172a' : '#ffffff',
-                     borderColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.07)',
-                     boxShadow: isDark ? '0 24px 64px rgba(0,0,0,0.55)' : '0 4px 6px rgba(0,0,0,0.04), 0 12px 40px rgba(0,0,0,0.08)',
-                   }}>
-                <div className="px-4 py-3 border-b flex items-center gap-2"
-                     style={{background: isDark ? '#0c1420' : '#f8fafc', borderColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.06)'}}>
-                  <div className="flex gap-1.5">
-                    <div className="w-2.5 h-2.5 rounded-full bg-red-500/60" />
-                    <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/60" />
-                    <div className="w-2.5 h-2.5 rounded-full bg-emerald-500/60" />
-                  </div>
-                  <span className={`text-[11px] mx-auto ${isDark ? 'text-gray-600' : 'text-gray-400'}`}>Trade Journal</span>
-                </div>
-                <div className="p-5 grid grid-cols-2 gap-3">
-                  {[
-                    { sym:'XAU/USD', status:'WIN',  date:'Jan 27', pnl:'+$320' },
-                    { sym:'BTC/USD', status:'WIN',  date:'Jan 25', pnl:'+$145' },
-                    { sym:'GBP/JPY', status:'LOSS', date:'Jan 24', pnl:'-$48'  },
-                    { sym:'EUR/USD', status:'WIN',  date:'Jan 23', pnl:'+$220' },
-                  ].map((t, i) => (
-                    <div key={t.sym+t.date}
-                         className="rounded-xl p-3.5 border"
-                         style={{
-                           background: isDark ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.02)',
-                           borderColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)',
-                           opacity: journalStep > i ? 1 : 0.06,
-                           transform: journalStep > i ? 'translateY(0)' : 'translateY(8px)',
-                           transition: 'opacity 0.4s ease, transform 0.4s ease',
-                         }}>
-                      <div className="flex items-center justify-between mb-2">
-                        <span className={`text-[12px] font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>{t.sym}</span>
-                        <span
-                          className={`text-[9px] font-bold px-1.5 py-0.5 rounded ${t.status==='WIN' ? 'text-emerald-400 bg-emerald-500/10' : 'text-red-400 bg-red-500/10'}`}
-                          style={journalStep === i + 1 ? {animation:'winPop 0.45s cubic-bezier(0.34,1.56,0.64,1)'} : {}}>
-                          {t.status}
-                        </span>
-                      </div>
-                      <div className={`text-[10px] ${isDark ? 'text-gray-600' : 'text-gray-400'}`}>{t.date}</div>
-                      <div className={`text-[15px] font-bold mt-1 ${t.pnl.startsWith('+') ? 'text-emerald-400' : 'text-red-400'}`}>{t.pnl}</div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* Text */}
-            <div className="flex-1 lg:pl-8">
-              <div className="w-14 h-14 rounded-2xl flex items-center justify-center mb-5"
-                   style={{background:'linear-gradient(135deg,rgba(59,130,246,0.15),rgba(59,130,246,0.04))', border:'1px solid rgba(59,130,246,0.2)'}}>
-                <BookOpen className="w-7 h-7 text-blue-400" />
-              </div>
-              <h3 className="text-[32px] font-extrabold mb-4">
-                <span className={isDark ? 'text-white' : 'text-gray-900'}>Rich </span>
-                <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#1d4ed8] to-[#06b6d4]">
-                  Trade Journaling
-                </span>
-              </h3>
-              <p className={`text-[15px] leading-relaxed mb-6 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-                Every trade tells a story. Add notes about your setup, tag your strategy, attach screenshots, and track how you felt. When you review your journal later, the patterns become obvious.
-              </p>
-              {[
-                'Notes, tags & screenshot attachments',
-                'Emotional tracking & trade ratings',
-                'Pre-trade checklists & templates',
-              ].map(b => (
-                <div key={b} className="flex items-center gap-3 mb-3">
-                  <Check className="w-4 h-4 text-blue-400 shrink-0" />
-                  <span className={`text-[14px] ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>{b}</span>
-                </div>
-              ))}
-              <button onClick={() => onGetStarted()}
-                      className="mt-4 flex items-center gap-2 text-[14px] font-semibold text-blue-500 hover:text-blue-400 transition-colors">
-                Learn More <ArrowRight className="w-4 h-4" />
-              </button>
-            </div>
-          </Reveal>
-
-          {/* Feature row 2 — Live Markets (reversed) */}}
+          {/* Feature row — Live Markets (reversed) */}
           <Reveal delay={0.1} className="flex flex-col lg:flex-row-reverse items-center gap-12">
             {/* Mockup */}
             <div className="flex-1 w-full">
@@ -1302,212 +1229,25 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
                 <BarChart2 className="w-7 h-7 text-blue-400" />
               </div>
               <h3 className="text-[32px] font-extrabold mb-4">
-                <span className={isDark ? 'text-white' : 'text-gray-900'}>Live </span>
+                <span className={isDark ? 'text-white' : 'text-gray-900'}>Trade with </span>
                 <span className="bg-clip-text text-transparent bg-gradient-to-r from-sky-400 to-violet-400">
-                  Market Intelligence
+                  context, not guesswork
                 </span>
               </h3>
               <p className={`text-[15px] leading-relaxed mb-6 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-                Monitor every major asset class in real time. Forex, indices, commodities, crypto — all ticking live on one screen, with economic events overlaid for full context.
+                See economic events and market conditions alongside your trades.
               </p>
-              {[
-                'Real-time Forex, indices, crypto & commodities',
-                'Economic calendar events overlaid on charts',
-                'Custom watchlists & price alerts',
-              ].map(b => (
-                <div key={b} className="flex items-center gap-3 mb-3">
-                  <Check className="w-4 h-4 text-blue-400 shrink-0" />
-                  <span className={`text-[14px] ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>{b}</span>
-                </div>
-              ))}
               <button onClick={() => onGetStarted()}
                       className="mt-4 flex items-center gap-2 text-[14px] font-semibold text-blue-400 hover:text-blue-300 transition-colors">
-                Learn More <ArrowRight className="w-4 h-4" />
+                Analyze My Trades <ArrowRight className="w-4 h-4" />
               </button>
             </div>
           </Reveal>
         </div>
       </section>
-
-      {/* ═══════════════════════════ FEATURE CARDS ═══════════════════════════ */}
-      <section className="py-16 px-6 transition-colors duration-300">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid md:grid-cols-3 gap-6">
-            {FEATURE_CARDS.map(({ Icon, title, desc, bullets }, i) => (
-              <Reveal key={title} delay={i * 0.12}>
-                <div
-                   className="rounded-2xl p-7 border h-full hover:-translate-y-1 transition-all duration-300"
-                   style={{
-                     background: isDark ? '#0f172a' : '#ffffff',
-                     borderColor: isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.07)',
-                     boxShadow: isDark ? '0 4px 32px rgba(0,0,0,0.5)' : '0 1px 3px rgba(0,0,0,0.04), 0 4px 20px rgba(0,0,0,0.07)',
-                   }}>
-                  <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-5"
-                       style={{background:'linear-gradient(135deg,rgba(59,130,246,0.15),rgba(59,130,246,0.04))', border:'1px solid rgba(59,130,246,0.15)'}}>
-                    <Icon className="w-6 h-6 text-blue-400" />
-                  </div>
-                  <h3 className={`text-[20px] font-bold mb-3 ${isDark ? 'text-white' : 'text-gray-900'}`}>{title}</h3>
-                  <p className={`text-[13px] leading-relaxed mb-5 ${isDark ? 'text-gray-500' : 'text-gray-600'}`}>{desc}</p>
-                  {bullets.map(b => (
-                    <div key={b} className="flex items-center gap-2 mb-2.5">
-                      <Check className="w-3.5 h-3.5 text-blue-400 shrink-0" />
-                      <span className={`text-[12px] ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>{b}</span>
-                    </div>
-                  ))}
-                </div>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ═══════════════════════ MACRO SCORE SHOWCASE ══════════════════════ */}
-      <section className="py-24 px-6 relative overflow-hidden transition-colors duration-300">
-        <div className="absolute inset-0 pointer-events-none">
-          {!isDark && (
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[500px]"
-                 style={{background: 'radial-gradient(ellipse,rgba(99,102,241,0.10) 0%,transparent 60%)'}} />
-          )}
-        </div>
-        <div className="relative z-10 max-w-4xl mx-auto text-center">
-          {/* Pro badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-6 border"
-               style={{background:'rgba(59,130,246,0.08)', borderColor:'rgba(59,130,246,0.32)'}}>
-            <span className="w-2 h-2 rounded-full bg-blue-400 animate-pulse shrink-0" />
-            <span className="text-[10px] font-bold tracking-[0.2em] text-blue-400">PRO FEATURE</span>
-          </div>
-          <Reveal>
-            <h2 className={`text-[36px] md:text-[48px] font-extrabold tracking-tight mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>
-              See the Macro Score{' '}
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#1d4ed8] to-[#06b6d4]">
-                in Action
-              </span>
-            </h2>
-          </Reveal>
-          <Reveal delay={0.1}>
-            <p className={`text-[16px] mb-14 max-w-md mx-auto ${isDark ? 'text-gray-500' : 'text-gray-600'}`}>
-              Our proprietary indicator — exclusive to Zynth
-            </p>
-          </Reveal>
-
-          {/* Gauge */}
-          <Reveal delay={0.2} className="inline-flex flex-col items-center gap-5">
-            <div className="relative">
-              <svg viewBox="0 0 200 110" className="w-64 md:w-[340px]" aria-hidden="true">
-                <defs>
-                  <linearGradient id="gaugeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%"   stopColor="#ef4444" />
-                    <stop offset="42%"  stopColor="#f59e0b" />
-                    <stop offset="68%"  stopColor="#22c55e" />
-                    <stop offset="100%" stopColor="#10b981" />
-                  </linearGradient>
-                </defs>
-                {/* Track */}
-                <path d="M 10,100 A 90,90 0 0,1 190,100"
-                      fill="none" stroke={isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.07)'} strokeWidth="13" strokeLinecap="round" />
-                {/* Colored arc */}
-                <path d="M 10,100 A 90,90 0 0,1 190,100"
-                      fill="none" stroke="url(#gaugeGrad)" strokeWidth="13" strokeLinecap="round" />
-                {/* Labels */}
-                <text x="4"  y="110" fill="#ef4444" fontSize="8" fontWeight="700" fontFamily="monospace">-10</text>
-                <text x="93" y="12"  fill="#94a3b8" fontSize="8" fontWeight="700" fontFamily="monospace">0</text>
-                <text x="181" y="110" fill="#10b981" fontSize="8" fontWeight="700" fontFamily="monospace">+10</text>
-                {/* Needle glow */}
-                <g style={{
-                  transformBox: 'view-box',
-                  transformOrigin: '100px 100px',
-                  transform: `rotate(${needleAngle}deg)`,
-                  transition: 'transform 1.6s cubic-bezier(0.34,1.2,0.64,1)',
-                }}>
-                  <line x1="100" y1="100" x2="100" y2="20"
-                        stroke={isDark ? 'rgba(52,211,153,0.55)' : 'rgba(59,130,246,0.55)'} strokeWidth="9" strokeLinecap="round"
-                        style={{filter:'blur(4px)', animation:'needleGlow 2.2s ease-in-out infinite'}} />
-                </g>
-                {/* Needle main */}
-                <g style={{
-                  transformBox: 'view-box',
-                  transformOrigin: '100px 100px',
-                  transform: `rotate(${needleAngle}deg)`,
-                  transition: 'transform 1.6s cubic-bezier(0.34,1.2,0.64,1)',
-                }}>
-                  <line x1="100" y1="100" x2="100" y2="20"
-                        stroke={isDark ? 'white' : '#0a0e1a'} strokeWidth="2.5" strokeLinecap="round" />
-                  <circle cx="100" cy="100" r="5.5" fill={isDark ? '#020617' : '#f8fafc'} stroke={isDark ? 'white' : '#0a0e1a'} strokeWidth="2" />
-                </g>
-              </svg>
-              {/* Score number */}
-              <div className="text-center mt-3">
-                <div className="inline-flex items-center gap-2 mb-2">
-                  <span className="text-[10px] font-bold tracking-[0.15em] px-2 py-0.5 rounded-md"
-                        style={{background:'rgba(245,158,11,0.12)', color:'#fbbf24', border:'1px solid rgba(245,158,11,0.25)'}}>
-                    SAMPLE DATA
-                  </span>
-                </div>
-                <p className="text-[52px] md:text-[60px] font-extrabold leading-none bg-clip-text text-transparent bg-gradient-to-r from-[#1d4ed8] to-[#06b6d4]">
-                  +4.5
-                </p>
-                <p className={`text-[14px] mt-2 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Example output — score updates live from real economic data <span style={{display:'inline-block',width:8,height:8,borderRadius:'50%',backgroundColor:'#22c55e',verticalAlign:'middle',marginLeft:2}}/></p>
-              </div>
-            </div>
-
-            {/* Indicator pills */}
-            <div className="flex flex-wrap justify-center gap-3 mt-4">
-              {[
-                { label:'NFP', status:'Beat',    Icon: Check,      delay:'0s',   bg:'rgba(16,185,129,0.12)', border:'rgba(16,185,129,0.35)', color:'#34d399' },
-                { label:'CPI', status:'In Line', Icon: ArrowRight,  delay:'0.2s', bg:'rgba(245,158,11,0.1)',  border:'rgba(245,158,11,0.35)', color:'#fbbf24' },
-                { label:'GDP', status:'Miss',    Icon: X,           delay:'0.4s', bg:'rgba(239,68,68,0.1)',   border:'rgba(239,68,68,0.3)',   color:'#f87171' },
-              ].map(({ label, status, Icon, delay, bg, border, color }) => (
-                <div key={label}
-                     className="px-5 py-2.5 rounded-full text-[13px] font-bold border"
-                     style={{ background: bg, borderColor: border, color, transitionDelay: delay }}>
-                  {label}: {status} <Icon size={12} style={{display:'inline-block',verticalAlign:'middle'}}/>
-                </div>
-              ))}
-            </div>
-          </Reveal>
-        </div>
-      </section>
-
-      {/* ═══════════════════════ STATS + TESTIMONIALS ═══════════════════════ */}
+      {/* ═══════════════════════ TESTIMONIALS ═══════════════════════ */}
       <section className="py-20 px-6 transition-colors duration-300">
         <div className="max-w-7xl mx-auto">
-
-          {/* ── Stats cards ── */}
-          <Reveal className="text-center mb-12">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-5 border"
-                 style={{background:'rgba(59,130,246,0.07)', borderColor:'rgba(59,130,246,0.22)'}}>
-              <Activity className="w-3.5 h-3.5 text-blue-400" />
-              <span className="text-[11px] font-bold tracking-[0.18em] text-blue-400">RESEARCH</span>
-            </div>
-            <h2 className={`text-[36px] md:text-[42px] font-extrabold tracking-tight mb-3 ${isDark ? 'text-white' : 'text-gray-900'}`}>
-              <span className={`bg-clip-text text-transparent bg-gradient-to-r ${isDark ? 'from-sky-400 to-violet-400' : 'from-[#1d4ed8] to-[#0284c7]'}`}>The Data Behind Better Trading</span>
-            </h2>
-          </Reveal>
-          <div className="grid md:grid-cols-3 gap-6 mb-6">
-            {[
-              { stat: '23%', desc: 'average win rate improvement for traders who journal consistently' },
-              { stat: '68%', desc: 'of trading losses are linked to emotional decision making' },
-              { stat: '3×',  desc: 'more likely to be profitable when reviewing trades weekly' },
-            ].map(({ stat, desc }, i) => (
-              <Reveal key={stat} delay={i * 0.12}>
-                <div className="rounded-2xl p-7 text-center border"
-                     style={{
-                       background: isDark ? '#0f172a' : '#ffffff',
-                       borderColor: isDark ? 'rgba(59,130,246,0.18)' : 'rgba(59,130,246,0.14)',
-                       boxShadow: isDark ? '0 4px 32px rgba(0,0,0,0.5)' : '0 1px 3px rgba(0,0,0,0.04), 0 4px 20px rgba(0,0,0,0.07)',
-                     }}>
-                  <p className="text-[52px] font-extrabold leading-none mb-3 bg-clip-text text-transparent bg-gradient-to-r from-[#1d4ed8] to-[#0284c7]">
-                    {stat}
-                  </p>
-                  <p className={`text-[13px] leading-relaxed ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>{desc}*</p>
-                </div>
-              </Reveal>
-            ))}
-          </div>
-          <p className={`text-center text-[11px] mb-16 italic ${isDark ? 'text-gray-600' : 'text-gray-400'}`}>
-            *Based on external trading psychology research, not Zynth-specific data
-          </p>
-
           {/* ── Testimonial carousel ── */}
           <TestimonialCarousel isDark={isDark} />
         </div>
@@ -1569,19 +1309,19 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
             {/* Left 60% */}
             <div className="flex-[3] text-center lg:text-left">
               <h2 className={`text-[38px] md:text-[50px] font-extrabold tracking-tight leading-[1.08] mb-5 ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                Your Next Trade Could Be<br />
+                Your next trade shouldn&apos;t<br />
                 <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#1d4ed8] to-[#06b6d4]">
-                  Your Best Trade.
+                  repeat your last mistake.
                 </span>
               </h2>
               <p className={`text-[16px] mb-8 max-w-[420px] lg:max-w-none leading-relaxed ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
-                Join traders who use data instead of guessing. Start free, upgrade when you see the results.
+                Start using data instead of guesswork.
               </p>
               <button onClick={() => onGetStarted()}
                       className="group relative overflow-hidden inline-flex items-center gap-2 text-[16px] font-semibold text-white px-9 py-4 rounded-2xl hover:scale-[1.03] hover:shadow-[0_8px_32px_rgba(59,130,246,0.45)]"
                       style={{background:'linear-gradient(135deg,#1d4ed8 0%,#0284c7 100%)', boxShadow:'0 4px 20px rgba(59,130,246,0.28)'}}>
                 <span className="relative z-10 flex items-center gap-2">
-                  Start Improving My Trades
+                  Analyze My Trades
                   <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
                 </span>
                 <span className="absolute inset-0 pointer-events-none"

@@ -24,8 +24,8 @@ const STEPS = [
   {
     number: '01',
     icon: BookOpen,
-    title: 'Log Your Trades',
-    desc: 'Record every trade with entry, exit, pair, strategy, emotion, and notes. Takes 60 seconds. Upload screenshots too.',
+    title: 'Log your trades',
+    desc: 'Log every trade in seconds.',
     accent: 'from-blue-500/20 to-blue-500/5',
     border: 'rgba(59,130,246,0.20)',
     iconColor: 'text-blue-400',
@@ -34,8 +34,8 @@ const STEPS = [
   {
     number: '02',
     icon: Brain,
-    title: 'Zynth Analyzes Everything',
-    desc: 'Our AI cross-references your trades with macro data, session timing, and your psychology to surface hidden patterns.',
+    title: 'Zynth analyzes your behavior',
+    desc: 'It spots the patterns hurting your results.',
     accent: 'from-violet-500/20 to-violet-500/5',
     border: 'rgba(139,92,246,0.20)',
     iconColor: 'text-violet-400',
@@ -44,8 +44,8 @@ const STEPS = [
   {
     number: '03',
     icon: TrendingUp,
-    title: 'Get Actionable Insights',
-    desc: 'Receive a clear report: what to stop doing, what to do more of, and which macro conditions suit your strategy best.',
+    title: 'Fix your mistakes and improve',
+    desc: 'Follow clear insights and trade with more consistency.',
     accent: 'from-emerald-500/20 to-emerald-500/5',
     border: 'rgba(16,185,129,0.20)',
     iconColor: 'text-emerald-400',
@@ -153,7 +153,7 @@ export default function HowItWorks({ onGetStarted }) {
             onClick={() => onGetStarted()}
             className="group inline-flex items-center gap-2 text-[14px] font-semibold text-blue-400 hover:text-blue-300 transition-colors"
           >
-            Start Improving My Trades
+            Analyze My Trades
             <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
           </button>
         </Reveal>
