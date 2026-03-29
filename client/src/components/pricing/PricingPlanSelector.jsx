@@ -76,6 +76,7 @@ function CompactPlanCard({ plan, selected, billingCycle, onSelect, context, pric
   const ctx = context ?? 'general';
   const eliteHook = COMPACT_HOOKS.elite[ctx] ?? COMPACT_HOOKS.elite.general;
   const proHook   = COMPACT_HOOKS.pro[ctx]   ?? COMPACT_HOOKS.pro.general;
+  const featurePreview = Array.isArray(plan.features) ? plan.features.slice(0, 2) : [];
 
   return (
     <button
@@ -138,6 +139,25 @@ function CompactPlanCard({ plan, selected, billingCycle, onSelect, context, pric
           <p className="mt-0.5 text-[10px] text-slate-500 dark:text-slate-300">
             {proHook.identity}
           </p>
+        </div>
+      )}
+
+      {/* Compact feature explanation */}
+      {featurePreview.length > 0 && (
+        <div className={`mt-2 rounded-lg border px-2.5 py-2 ${isElite ? 'border-violet-400/30 bg-violet-950/40' : 'border-slate-500/45 bg-slate-800/70'}`}>
+          <p className={`text-[10px] font-bold uppercase tracking-[0.12em] ${isElite ? 'text-violet-200' : 'text-slate-200'}`}>
+            What you get
+          </p>
+          <div className="mt-1.5 space-y-1">
+            {featurePreview.map((feature) => (
+              <div key={feature} className="flex items-start gap-1.5">
+                <Check size={11} className={`${isElite ? 'text-violet-300' : 'text-slate-300'} mt-[1px] shrink-0`} />
+                <span className={`${isElite ? 'text-violet-100/95' : 'text-slate-100'} text-[11px] leading-4`}>
+                  {feature}
+                </span>
+              </div>
+            ))}
+          </div>
         </div>
       )}
 
@@ -435,7 +455,7 @@ export default function PricingPlanSelector({
         </div>
 
         {showBillingToggle && (
-          <div className={`inline-flex items-center rounded-2xl border border-slate-200/80 bg-slate-50 p-1 dark:border-white/10 dark:bg-white/[0.03] ${compactMode ? 'self-start' : ''}`}>
+          <div className={`inline-flex items-center rounded-2xl border border-slate-200/90 bg-slate-50 p-1 shadow-sm dark:border-slate-500/70 dark:bg-slate-800/90 dark:shadow-[0_0_0_1px_rgba(148,163,184,0.08)] ${compactMode ? 'self-start' : ''}`}>
             {['monthly', 'annual'].map((cycle) => {
               const active = selectedBilling === cycle;
               return (
@@ -451,13 +471,13 @@ export default function PricingPlanSelector({
                       experimentVariant,
                     });
                   }}
-                  className={`rounded-xl ${compactMode ? 'px-3 py-1.5 text-xs' : 'px-4 py-2 text-sm'} font-semibold transition-all ${active ? 'bg-white text-slate-950 shadow-sm dark:bg-slate-900 dark:text-white' : 'text-slate-500 dark:text-slate-400'}`}
+                  className={`rounded-xl border ${compactMode ? 'px-3 py-1.5 text-xs' : 'px-4 py-2 text-sm'} font-semibold transition-all ${active ? 'border-slate-200 bg-white text-slate-950 shadow-sm dark:border-indigo-400/45 dark:bg-indigo-500/20 dark:text-indigo-100' : 'border-transparent text-slate-600 hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-700/70'}`}
                 >
                   {cycle === 'monthly' ? 'Monthly' : 'Yearly'}
                 </button>
               );
             })}
-            <span className={`ml-1 rounded-full border border-emerald-400/35 bg-emerald-500/10 ${compactMode ? 'px-2 py-0.5 text-[9px]' : 'px-2.5 py-1 text-[10px]'} font-bold uppercase tracking-[0.14em] text-emerald-600 dark:text-emerald-300`}>
+            <span className={`ml-1 rounded-full border border-emerald-400/40 bg-emerald-500/12 ${compactMode ? 'px-2 py-0.5 text-[9px]' : 'px-2.5 py-1 text-[10px]'} font-bold uppercase tracking-[0.14em] text-emerald-700 dark:border-emerald-300/45 dark:bg-emerald-500/18 dark:text-emerald-200`}>
               {selectedBilling === 'annual' && selectedDisplay.savings > 0
                 ? `Save $${selectedDisplay.savings}/year`
                 : 'Yearly Best Value'}
