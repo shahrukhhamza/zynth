@@ -1,26 +1,37 @@
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { API_URL } from '../config/api';
+import {
+  clearAuthSession,
+  getAuthToken,
+  getAuthUser,
+  migrateLegacyAuthStorage,
+  setAuthSession,
+} from '../utils/authStorage';
 
 const AuthContext = createContext(null);
-
-const TOKEN_KEY = 'auth_token';
-const USER_KEY  = 'auth_user';
 
 const api = axios.create({ baseURL: `${API_URL}/api` });
 
 export function AuthProvider({ children }) {
-  const [user, setUser]       = useState(() => {
-    try { return JSON.parse(localStorage.getItem(USER_KEY)); } catch { return null; }
-  });
-  const [token, setToken]     = useState(() => localStorage.getItem(TOKEN_KEY) || null);
+  const [user, setUser]       = useState(() => getAuthUser());
+  const [token, setToken]     = useState(() => getAuthToken());
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    migrateLegacyAuthStorage();
+    setUser(getAuthUser());
+    setToken(getAuthToken());
+  }, []);
 
   // Validate stored token on mount
   useEffect(() => {
     if (!token) { setLoading(false); return; }
     api.get('/auth/me', { headers: { Authorization: `Bearer ${token}` } })
-      .then(r => { setUser(r.data.user); localStorage.setItem(USER_KEY, JSON.stringify(r.data.user)); })
+      .then(r => {
+        setUser(r.data.user);
+        setAuthSession(r.data.user, token);
+      })
       .catch(() => { clearSession(); })
       .finally(() => setLoading(false));
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
@@ -28,15 +39,13 @@ export function AuthProvider({ children }) {
   function saveSession(userData, jwtToken) {
     setUser(userData);
     setToken(jwtToken);
-    localStorage.setItem(TOKEN_KEY, jwtToken);
-    localStorage.setItem(USER_KEY, JSON.stringify(userData));
+    setAuthSession(userData, jwtToken);
   }
 
   function clearSession() {
     setUser(null);
     setToken(null);
-    localStorage.removeItem(TOKEN_KEY);
-    localStorage.removeItem(USER_KEY);
+    clearAuthSession();
   }
 
   const register = useCallback(async ({ name, email, password, terms_accepted }) => {
@@ -67,7 +76,7 @@ export function AuthProvider({ children }) {
     try {
       const { data } = await api.get('/auth/me', { headers: { Authorization: `Bearer ${token}` } });
       setUser(data.user);
-      localStorage.setItem(USER_KEY, JSON.stringify(data.user));
+      setAuthSession(data.user, token);
     } catch { /* silent */ }
   }, [token]);
 

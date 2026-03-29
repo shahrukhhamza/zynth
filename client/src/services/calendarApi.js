@@ -1,12 +1,13 @@
 import axios from 'axios';
 import { API_URL } from '../config/api';
+import { getAuthToken } from '../utils/authStorage';
 
 const API_BASE_URL = `${API_URL}/api`;
 
 // Shared axios instance with automatic JWT attachment
 const calendarAxios = axios.create({ baseURL: API_BASE_URL });
 calendarAxios.interceptors.request.use((config) => {
-  const token = localStorage.getItem('auth_token');
+  const token = getAuthToken();
   if (token) config.headers['Authorization'] = `Bearer ${token}`;
   return config;
 });

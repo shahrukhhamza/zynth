@@ -12,13 +12,14 @@
  *   track('subscription_started', { plan: 'pro' });
  */
 import { API_URL } from '../config/api';
+import { getAuthToken } from '../utils/authStorage';
 
 /**
  * @param {string} event    – must be in the server-side ALLOWED_CLIENT_EVENTS list
  * @param {object} metadata – optional flat object with string/number/boolean values
  */
 export function track(event, metadata = {}) {
-  const token = localStorage.getItem('token');
+  const token = getAuthToken();
   if (!token || !event) return;
 
   fetch(`${API_URL}/api/events/track`, {

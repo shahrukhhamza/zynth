@@ -1,26 +1,33 @@
-export const DEFAULT_SELECTED_PLAN = 'elite';
-export const DEFAULT_BILLING_CYCLE = 'annual';
+import {
+  ANCHORED_PRICES,
+  BILLING_PRICES,
+  DEFAULT_BILLING_CYCLE,
+  DEFAULT_SELECTED_PLAN,
+  PKR_PRICES,
+  PRICING,
+  formatUsd,
+  getPlanDisplay,
+  getPlanMonthlyEquivalent,
+  getPlanMonthlyLabel,
+  getPlanPrice,
+  getPlanPriceLabel,
+  getPlanSavings,
+} from './pricing';
 
-export const BILLING_PRICES = {
-  monthly: {
-    pro: 9,
-    elite: 19,
-  },
-  annual: {
-    pro: 90,
-    elite: 190,
-  },
-};
-
-export const ANCHORED_PRICES = {
-  monthly: {
-    pro: 29,
-    elite: 49,
-  },
-  annual: {
-    pro: 299,
-    elite: 588,
-  },
+export {
+  ANCHORED_PRICES,
+  BILLING_PRICES,
+  DEFAULT_BILLING_CYCLE,
+  DEFAULT_SELECTED_PLAN,
+  PKR_PRICES,
+  PRICING,
+  formatUsd,
+  getPlanDisplay,
+  getPlanMonthlyEquivalent,
+  getPlanMonthlyLabel,
+  getPlanPrice,
+  getPlanPriceLabel,
+  getPlanSavings,
 };
 
 export const PAID_PLAN_ORDER = ['elite', 'pro'];
@@ -80,46 +87,6 @@ export function getPaidPlansInDisplayOrder() {
   return PAID_PLAN_ORDER.map((planId) => getPaidPlan(planId));
 }
 
-export function getPlanPrice(planId, billingCycle = DEFAULT_BILLING_CYCLE) {
-  return BILLING_PRICES[billingCycle]?.[planId] ?? BILLING_PRICES.monthly[planId] ?? 0;
-}
-
-export function getPlanSavings(planId) {
-  const monthly = BILLING_PRICES.monthly[planId] ?? 0;
-  const annual = BILLING_PRICES.annual[planId] ?? 0;
-  return Math.max((monthly * 12) - annual, 0);
-}
-
-export function getPlanMonthlyEquivalent(planId) {
-  const annual = BILLING_PRICES.annual[planId] ?? 0;
-  return annual / 12;
-}
-
 export function getPlanCta(planId) {
   return getPaidPlan(planId).cta;
-}
-
-export function getPlanDisplay(planId, billingCycle = DEFAULT_BILLING_CYCLE, options = {}) {
-  const overrideAmount = options?.priceOverrides?.[billingCycle]?.[planId];
-  const overrideAnchoredAmount = options?.anchoredPriceOverrides?.[billingCycle]?.[planId];
-  const amount = overrideAmount ?? getPlanPrice(planId, billingCycle);
-  const savings = getPlanSavings(planId);
-  const monthlyEquivalent = getPlanMonthlyEquivalent(planId);
-  const anchoredAmount = overrideAnchoredAmount ?? ANCHORED_PRICES[billingCycle]?.[planId] ?? ANCHORED_PRICES.monthly[planId] ?? null;
-  const dailyEquivalent = billingCycle === 'annual' ? amount / 365 : amount / 30;
-
-  return {
-    amount,
-    anchoredAmount,
-    suffix: billingCycle === 'annual' ? '/year' : '/month',
-    monthlyEquivalent,
-    dailyEquivalent,
-    savings,
-    helperText: billingCycle === 'annual'
-      ? `Equivalent to $${monthlyEquivalent.toFixed(2)}/mo billed yearly`
-      : null,
-    savingsText: billingCycle === 'annual' && savings > 0
-      ? `Save $${savings}/year`
-      : null,
-  };
 }

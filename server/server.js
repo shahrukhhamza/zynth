@@ -20,6 +20,12 @@ const __dirname = dirname(__filename);
 // Load environment variables FIRST before importing other modules
 dotenv.config({ path: join(__dirname, '..', '.env') });
 
+const REQUIRED_SECURITY_ENV = ['JWT_SECRET'];
+const missingSecurityEnv = REQUIRED_SECURITY_ENV.filter((key) => !process.env[key]);
+if (missingSecurityEnv.length > 0) {
+  throw new Error(`Missing required security environment variables: ${missingSecurityEnv.join(', ')}`);
+}
+
 // Gemini call counter
 import { getGeminiCount } from './utils/geminiCounter.js';
 
@@ -44,7 +50,7 @@ import chartsRouter from './routes/charts.js';
 import levelsRouter from './routes/levels.js';
 import eventsRouter from './routes/events.js';
 import paymentsRouter from './routes/payments.js';
-import { requireAuth } from './middleware/authMiddleware.js';
+import { requireAuth, requireAdmin } from './middleware/authMiddleware.js';
 import * as Users from './db/users.js';
 import { initDb } from './db/users.js';
 import { initEventsDb } from './db/events.js';
@@ -55,6 +61,8 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 const HOST = process.env.HOST || '0.0.0.0';
 const isPreflightRequest = (req) => req.method === 'OPTIONS';
+
+app.disable('x-powered-by');
 
 const getForwardedIp = (req) => {
   const forwardedFor = req.headers['x-forwarded-for'];
@@ -107,6 +115,10 @@ const globalLimiter = rateLimit({
   message: { error: 'Too many requests, please try again later.' },
   keyGenerator: getRateLimitKey,
   skip: skipGlobalRateLimit,
+  handler: (req, res) => {
+    console.warn('[security] global rate limit hit', { path: req.path, method: req.method, ip: getForwardedIp(req) });
+    res.status(429).json({ error: 'Too many requests, please try again later.' });
+  },
 });
 
 const authLimiter = rateLimit({
@@ -117,6 +129,10 @@ const authLimiter = rateLimit({
   message: { error: 'Too many authentication attempts, please try again later.' },
   keyGenerator: getRateLimitKey,
   skip: skipAuthAttemptRateLimit,
+  handler: (req, res) => {
+    console.warn('[security] auth rate limit hit', { path: req.path, method: req.method, ip: getForwardedIp(req) });
+    res.status(429).json({ error: 'Too many authentication attempts, please try again later.' });
+  },
 });
 
 const authSessionLimiter = rateLimit({
@@ -195,8 +211,23 @@ const corsOptions = {
 };
 
 app.use(helmet({
-  contentSecurityPolicy: false,
+  contentSecurityPolicy: {
+    useDefaults: true,
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'"],
+      styleSrc: ["'self'", "'unsafe-inline'"],
+      imgSrc: ["'self'", 'data:', 'https:'],
+      connectSrc: ["'self'", 'https:', 'wss:'],
+      fontSrc: ["'self'", 'https:', 'data:'],
+      objectSrc: ["'none'"],
+      baseUri: ["'self'"],
+      frameAncestors: ["'none'"],
+      upgradeInsecureRequests: [],
+    },
+  },
   crossOriginEmbedderPolicy: false,
+  referrerPolicy: { policy: 'no-referrer' },
 }));
 
 app.use(cors(corsOptions));
@@ -205,16 +236,16 @@ app.options('*', cors(corsOptions));
 app.use('/api', globalLimiter);
 app.use('/api/auth/me', authSessionLimiter);
 
-app.use(express.json({ limit: '10mb', strict: false }));
+app.use(express.json({ limit: '10mb', strict: true }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(mongoSanitize());
 
 // ── Routes ────────────────────────────────────────────────────────────────────
-app.get('/api/health', (req, res) => {
+app.get('/api/health', requireAuth, (req, res) => {
   res.json({ status: 'ok', message: 'Server is running', geminiCallsToday: getGeminiCount() });
 });
 
-app.get('/api/public-stats', async (req, res) => {
+app.get('/api/public-stats', requireAuth, async (req, res) => {
   try {
     const all = await Users.findAll();
     res.json({ totalUsers: all.length });
@@ -223,26 +254,22 @@ app.get('/api/public-stats', async (req, res) => {
   }
 });
 
-app.get('/api/key-stats', (req, res) => {
+app.get('/api/key-stats', requireAuth, requireAdmin, (req, res) => {
   try {
     const keyManager = getApiKeyManager();
     const stats = keyManager.getStats();
     res.json({ totalKeys: stats.length, stats, timestamp: new Date().toISOString() });
-  } catch (error) {
+  } catch {
     res.status(500).json({ error: 'Failed to fetch key stats' });
   }
 });
 
 app.use('/api/news', newsRouter);
-app.use('/api/data', dataRouter);
+app.use('/api/data', requireAuth, dataRouter);
 app.use('/api/calendar', calendarRouter);
 app.use('/api/economic', economicRouter);
 
-app.post('/api/economic/trigger-update', async (req, res) => {
-  const secret = req.headers['x-admin-secret'];
-  if (!process.env.ADMIN_SECRET || secret !== process.env.ADMIN_SECRET) {
-    return res.status(401).json({ error: 'Unauthorized' });
-  }
+app.post('/api/economic/trigger-update', requireAuth, requireAdmin, async (req, res) => {
   const { indicatorId } = req.body;
   if (!indicatorId || typeof indicatorId !== 'string') {
     return res.status(400).json({ error: 'indicatorId is required' });
@@ -272,7 +299,12 @@ app.use('/api/levels', requireAuth, levelsRouter);
 
 // Serve uploaded files from configured persistent path
 ensureUploadDirs();
-app.use('/uploads', express.static(UPLOADS_DIR));
+app.use('/uploads', requireAuth, (req, res, next) => {
+  if (req.path.startsWith('/payments/') && req.user?.is_admin !== 1) {
+    return res.status(403).json({ error: 'Forbidden' });
+  }
+  next();
+}, express.static(UPLOADS_DIR));
 
 // Serve React frontend static build (production)
 const clientBuildPath = join(__dirname, '..', 'client', 'dist');

@@ -1,8 +1,11 @@
 export function errorHandler(err, req, res, next) {
-  console.error('Error:', err);
+  console.error('Error:', err?.message || 'unknown');
 
   const statusCode = err.statusCode || 500;
-  const message = err.message || 'Internal Server Error';
+  const isSafeClientError = statusCode >= 400 && statusCode < 500;
+  const message = isSafeClientError
+    ? (err.message || 'Request failed')
+    : 'Internal Server Error';
 
   res.status(statusCode).json({
     success: false,

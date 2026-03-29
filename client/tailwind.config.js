@@ -143,27 +143,27 @@ export default {
 
       // ── Shadows — light and dark variants ───────────────────────────────
       boxShadow: {
-        // Light mode
-        'z-xs':  '0 1px 2px rgba(0,0,0,0.04)',
-        'z-sm':  '0 1px 3px rgba(0,0,0,0.04), 0 4px 20px rgba(0,0,0,0.05)',
-        'z-md':  '0 4px 16px rgba(0,0,0,0.07), 0 12px 40px rgba(0,0,0,0.07)',
-        'z-lg':  '0 8px 32px rgba(0,0,0,0.10), 0 24px 60px rgba(0,0,0,0.10)',
-        'z-xl':  '0 16px 48px rgba(0,0,0,0.13)',
+        // Light mode — visible depth for premium SaaS feel
+        'z-xs':  '0 1px 2px rgba(15,23,42,0.08)',
+        'z-sm':  '0 1px 3px rgba(15,23,42,0.08), 0 4px 16px rgba(15,23,42,0.07)',
+        'z-md':  '0 4px 12px rgba(15,23,42,0.10), 0 12px 36px rgba(15,23,42,0.08)',
+        'z-lg':  '0 8px 24px rgba(15,23,42,0.12), 0 24px 56px rgba(15,23,42,0.10)',
+        'z-xl':  '0 16px 48px rgba(15,23,42,0.15)',
         // Dark mode
         'z-dark-xs':  '0 1px 2px rgba(0,0,0,0.4)',
         'z-dark-sm':  '0 4px 30px rgba(0,0,0,0.6)',
         'z-dark-md':  '0 12px 40px rgba(0,0,0,0.7)',
         'z-dark-lg':  '0 32px 80px rgba(0,0,0,0.75)',
         // Interactive elevation
-        'z-card':  '0 1px 3px rgba(0,0,0,0.04), 0 4px 20px rgba(0,0,0,0.05)',
-        'z-hover': '0 6px 24px rgba(0,0,0,0.09), 0 16px 48px rgba(0,0,0,0.08)',
-        'z-modal': '0 24px 80px rgba(0,0,0,0.16)',
+        'z-card':  '0 1px 3px rgba(15,23,42,0.08), 0 4px 16px rgba(15,23,42,0.07)',
+        'z-hover': '0 6px 20px rgba(15,23,42,0.12), 0 16px 44px rgba(15,23,42,0.09)',
+        'z-modal': '0 24px 80px rgba(15,23,42,0.18)',
         // Focus
         'z-focus': '0 0 0 3px rgba(59,130,246,0.15)',
         'z-focus-dark': '0 0 0 3px rgba(59,130,246,0.22)',
         // Primary button
-        'z-btn-primary': '0 2px 12px rgba(37,99,235,0.25)',
-        'z-btn-primary-hover': '0 4px 20px rgba(37,99,235,0.38)',
+        'z-btn-primary': '0 2px 12px rgba(37,99,235,0.30)',
+        'z-btn-primary-hover': '0 4px 20px rgba(37,99,235,0.42)',
       },
 
       // ── Transitions ──────────────────────────────────────────────────────

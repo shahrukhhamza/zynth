@@ -127,7 +127,7 @@ export default function PrivacyPolicy({ onBack }) {
           <Section id="cookies" title="6. Cookies and Local Storage">
             <p>Zynth does not use third-party advertising cookies. We use:</p>
             <ul style={{ paddingLeft: 20, display: 'flex', flexDirection: 'column', gap: 6 }}>
-              <li><strong style={{ color: '#e2e8f0' }}>Authentication tokens (localStorage):</strong> To keep you logged in securely</li>
+              <li><strong style={{ color: '#e2e8f0' }}>Authentication tokens (sessionStorage):</strong> To keep you logged in securely for the active browser session</li>
               <li><strong style={{ color: '#e2e8f0' }}>Preference storage (localStorage):</strong> Dark/light mode, sidebar state, onboarding status</li>
               <li><strong style={{ color: '#e2e8f0' }}>Session data (sessionStorage):</strong> Temporary UI state during your session</li>
             </ul>

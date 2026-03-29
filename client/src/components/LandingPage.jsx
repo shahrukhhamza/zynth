@@ -17,7 +17,7 @@ import WhyTradersFail from './WhyTradersFail';
 import PricingPlanSelector from './pricing/PricingPlanSelector';
 import { BrandMark } from './BrandLogo';
 import { useTheme } from '../contexts/ThemeContext';
-import { DEFAULT_BILLING_CYCLE, DEFAULT_SELECTED_PLAN, BILLING_PRICES, ANCHORED_PRICES } from '../config/pricingPlans';
+import { DEFAULT_BILLING_CYCLE, DEFAULT_SELECTED_PLAN, getPlanDisplay, getPlanMonthlyLabel } from '../config/pricingPlans';
 import SocialProofToast from './SocialProofToast';
 
 // ─── Testimonial data ────────────────────────────────────────────────────────
@@ -261,7 +261,7 @@ const FAQS = [
   { q: 'Is there a free plan?', a: 'Absolutely. The Free plan gives you access to core features including live markets, economic calendar, and even 3 free AI analysis tries, no credit card required.' },
   { q: 'What does the AI analysis include?', a: 'Our AI reads your trade history and journal entries to surface patterns, identify mistakes, and give you personalized improvement suggestions.' },
   { q: 'What markets does Zynth cover?', a: 'Zynth covers Forex (XAU/USD, EUR/USD, GBP/USD, USD/JPY), major crypto (BTC, ETH, XRP, SOL, BNB), US stocks (AAPL, TSLA, NVDA, MSFT, AMZN, GOOGL), and ETFs (SPY, GLD, TLT).' },
-  { q: 'What are the subscription prices?', a: 'Pro is $9/month and Elite is $19/month. Both are billed monthly and you can cancel anytime. Free plan is available with no credit card required.' },
+  { q: 'What are the subscription prices?', a: `Pro is ${getPlanMonthlyLabel('pro')} and Elite is ${getPlanMonthlyLabel('elite')}. Both are billed monthly and you can cancel anytime. Free plan is available with no credit card required.` },
 ];
 
 const FEATURE_CARDS = [
@@ -287,21 +287,11 @@ const FEATURE_CARDS = [
 
 
 function LandingPricing({ isDark, onGetStarted }) {
-  const [cycle, setCycle] = useState('annual');
+  const [cycle, setCycle] = useState(DEFAULT_BILLING_CYCLE);
   const isAnnual = cycle === 'annual';
 
-  const elite = {
-    price:    BILLING_PRICES[cycle].elite,
-    anchored: ANCHORED_PRICES[cycle].elite,
-    savings:  isAnnual ? `Save $${(BILLING_PRICES.monthly.elite * 12) - BILLING_PRICES.annual.elite}/year` : null,
-    daily:    isAnnual ? (BILLING_PRICES.annual.elite / 365).toFixed(2) : null,
-  };
-  const pro = {
-    price:    BILLING_PRICES[cycle].pro,
-    anchored: ANCHORED_PRICES[cycle].pro,
-    savings:  isAnnual ? `Save $${(BILLING_PRICES.monthly.pro * 12) - BILLING_PRICES.annual.pro}/year` : null,
-    daily:    isAnnual ? (BILLING_PRICES.annual.pro / 365).toFixed(2) : null,
-  };
+  const elite = getPlanDisplay('elite', cycle);
+  const pro = getPlanDisplay('pro', cycle);
 
   const eliteFeatures = [
     'Unlimited AI insights, no daily limits',
@@ -457,10 +447,10 @@ function LandingPricing({ isDark, onGetStarted }) {
                       For traders who operate without limits
                     </p>
                   </div>
-                  {isAnnual && elite.savings && (
+                  {isAnnual && elite.savingsText && (
                     <span className={`shrink-0 text-[11px] font-bold px-2.5 py-1 rounded-lg mt-1 ${
                       isDark ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/15' : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                    }`}>{elite.savings}</span>
+                    }`}>{elite.savingsText}</span>
                   )}
                 </div>
 
@@ -468,21 +458,21 @@ function LandingPricing({ isDark, onGetStarted }) {
                 <div className="mb-7 pb-6"
                      style={{ borderBottom: isDark ? '1px solid rgba(255,255,255,0.06)' : '1px solid rgba(139,92,246,0.12)' }}>
                   <div className="flex items-end gap-2 mb-1">
-                    {elite.anchored > elite.price && (
+                    {elite.anchoredAmount && elite.anchoredAmount > elite.amount && (
                       <span className={`pb-2.5 text-[14px] font-medium line-through ${isDark ? 'text-slate-600' : 'text-slate-400'}`}>
-                        ${elite.anchored}
+                        {elite.anchoredAmountDisplay}
                       </span>
                     )}
                     <span className={`text-[60px] font-black leading-none tracking-tight ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                      ${elite.price}
+                      {elite.amountDisplay}
                     </span>
                     <div className="pb-2.5">
                       <div className={`text-[13px] font-medium ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
                         /{isAnnual ? 'year' : 'month'}
                       </div>
-                      {elite.daily && (
+                      {isAnnual && elite.dailyEquivalent && (
                         <div className={`text-[11px] ${isDark ? 'text-slate-600' : 'text-slate-400'}`}>
-                          ${elite.daily}/day
+                          {elite.dailyEquivalentDisplay}/day
                         </div>
                       )}
                     </div>
@@ -561,10 +551,10 @@ function LandingPricing({ isDark, onGetStarted }) {
                       AI-powered feedback to build consistency
                     </p>
                   </div>
-                  {isAnnual && pro.savings && (
+                  {isAnnual && pro.savingsText && (
                     <span className={`shrink-0 text-[11px] font-bold px-2.5 py-1 rounded-lg mt-1 ${
                       isDark ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/15' : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                    }`}>{pro.savings}</span>
+                    }`}>{pro.savingsText}</span>
                   )}
                 </div>
 
@@ -572,21 +562,21 @@ function LandingPricing({ isDark, onGetStarted }) {
                 <div className="mb-7 pb-6"
                      style={{ borderBottom: isDark ? '1px solid rgba(255,255,255,0.04)' : '1px solid rgba(59,130,246,0.1)' }}>
                   <div className="flex items-end gap-2 mb-1">
-                    {pro.anchored > pro.price && (
+                    {pro.anchoredAmount && pro.anchoredAmount > pro.amount && (
                       <span className={`pb-2.5 text-[14px] font-medium line-through ${isDark ? 'text-slate-600' : 'text-slate-400'}`}>
-                        ${pro.anchored}
+                        {pro.anchoredAmountDisplay}
                       </span>
                     )}
                     <span className={`text-[60px] font-black leading-none tracking-tight ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                      ${pro.price}
+                      {pro.amountDisplay}
                     </span>
                     <div className="pb-2.5">
                       <div className={`text-[13px] font-medium ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
                         /{isAnnual ? 'year' : 'month'}
                       </div>
-                      {pro.daily && (
+                      {isAnnual && pro.dailyEquivalent && (
                         <div className={`text-[11px] ${isDark ? 'text-slate-600' : 'text-slate-400'}`}>
-                          ${pro.daily}/day
+                          {pro.dailyEquivalentDisplay}/day
                         </div>
                       )}
                     </div>

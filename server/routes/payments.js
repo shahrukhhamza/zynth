@@ -15,6 +15,7 @@ import { randomUUID }     from 'crypto';
 import { requireAuth, requireAdmin } from '../middleware/authMiddleware.js';
 import * as Payments      from '../db/payments.js';
 import * as Users         from '../db/users.js';
+import { trackEvent }     from '../db/events.js';
 import { UPLOADS_DIR }    from '../config/storagePaths.js';
 
 // ── Multer — disk storage under uploads/payments/ ────────────────────────────
@@ -59,6 +60,14 @@ router.post('/submit', requireAuth, upload.single('proof'), async (req, res) => 
       return res.status(400).json({ error: 'Invalid billing cycle. Must be monthly or annual.' });
     }
 
+    if (!req.file) {
+      return res.status(400).json({ error: 'Payment proof is required.' });
+    }
+
+    if (amount && !/^[A-Za-z0-9$.,\s/+~-]{1,30}$/.test(String(amount).trim())) {
+      return res.status(400).json({ error: 'Invalid amount format.' });
+    }
+
     const proofUrl = req.file ? `/uploads/payments/${req.file.filename}` : null;
 
     const request = await Payments.createPaymentRequest({
@@ -69,6 +78,13 @@ router.post('/submit', requireAuth, upload.single('proof'), async (req, res) => 
       amount:   amount?.trim().slice(0, 30) ?? null,
       note:     note?.trim().slice(0, 500)  ?? null,
       proofUrl,
+    });
+
+    trackEvent(req.user.id, 'payment_submitted', {
+      requestId: request.id,
+      plan: request.plan,
+      billingCycle: request.billing_cycle,
+      status: request.status,
     });
 
     res.status(201).json({ ok: true, request });
@@ -123,6 +139,13 @@ router.put('/:id/approve', requireAuth, requireAdmin, async (req, res) => {
     }
     await Users.updateUserPlan(existing.user_id, existing.plan, expiresAt.toISOString());
 
+    trackEvent(req.user.id, 'payment_approved', {
+      requestId: existing.id,
+      userId: existing.user_id,
+      plan: existing.plan,
+      billingCycle: existing.billing_cycle,
+    });
+
     res.json({ ok: true, request: updated });
   } catch (err) {
     console.error('payments/approve error:', err);
@@ -143,6 +166,12 @@ router.put('/:id/reject', requireAuth, requireAdmin, async (req, res) => {
     if (existing.status === 'rejected')     return res.status(409).json({ error: 'Already rejected.' });
 
     const updated = await Payments.updatePaymentStatus(id, 'rejected', req.user.id);
+    trackEvent(req.user.id, 'payment_rejected', {
+      requestId: existing.id,
+      userId: existing.user_id,
+      plan: existing.plan,
+      billingCycle: existing.billing_cycle,
+    });
     res.json({ ok: true, request: updated });
   } catch (err) {
     console.error('payments/reject error:', err);

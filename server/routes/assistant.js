@@ -12,8 +12,11 @@
 
 import { Router } from 'express';
 import { requireAuth } from '../middleware/authMiddleware.js';
+import { getPlanMonthlyLabel } from '../../client/src/config/pricing.js';
 
 const router = Router();
+const PRO_MONTHLY_PRICE = getPlanMonthlyLabel('pro');
+const ELITE_MONTHLY_PRICE = getPlanMonthlyLabel('elite');
 
 // Rate limit store { userId: [timestamp, ...] }
 const rateLimitStore = new Map();
@@ -184,22 +187,22 @@ const QA = [
 
   // PLANS & BILLING
   { q: ['upgrade', 'upgrade plan', 'get pro', 'get elite', 'subscribe', 'buy plan', 'purchase', 'how to upgrade', 'upgrade my plan', 'upgrading plan'],
-    a: 'To upgrade: click your avatar top right -> Profile -> click Upgrade Plan button -> choose Pro ($1.99/month) or Elite ($4.99/month) -> email us at getzynth@gmail.com with your chosen plan. We activate within 24 hours.' },
+    a: `To upgrade: click your avatar top right -> Profile -> click Upgrade Plan button -> choose Pro (${PRO_MONTHLY_PRICE}) or Elite (${ELITE_MONTHLY_PRICE}) -> email us at getzynth@gmail.com with your chosen plan. We activate within 24 hours.` },
 
   { q: ['how much', 'price', 'cost', 'pricing', 'how much does it cost', 'subscription cost'],
-    a: 'Zynth pricing: Free ($0 forever), Pro ($1.99/month founding price, regular $9), Elite ($4.99/month founding price, regular $25). The founding price is locked in forever for the first 100 users.' },
+    a: `Zynth pricing: Free ($0 forever), Pro (${PRO_MONTHLY_PRICE}), Elite (${ELITE_MONTHLY_PRICE}).` },
 
   { q: ['free plan', 'what is free', 'free features', 'free limits', 'free tier'],
     a: "Free plan: 10 journal entries lifetime, 3 AI analyses lifetime, live market overview, today's US economic events only, and market news. No credit card needed." },
 
   { q: ['pro plan', 'what is pro', 'pro features', 'pro benefits'],
-    a: 'Pro plan ($1.99/month): unlimited journal entries, 50 AI analyses per month, full Economic Calendar (all countries), Macro Surprise Score, Economic Intelligence, real-time market streaming, advanced analytics.' },
+    a: `Pro plan (${PRO_MONTHLY_PRICE}): unlimited journal entries, 50 AI analyses per month, full Economic Calendar (all countries), Macro Surprise Score, Economic Intelligence, real-time market streaming, advanced analytics.` },
 
   { q: ['elite plan', 'what is elite', 'elite features', 'elite benefits'],
-    a: 'Elite plan ($4.99/month): everything in Pro plus unlimited AI analyses, unlimited OCR, Trading DNA Report, beta access to new features before anyone else, dedicated support with 4-hour response time.' },
+    a: `Elite plan (${ELITE_MONTHLY_PRICE}): everything in Pro plus unlimited AI analyses, unlimited OCR, Trading DNA Report, beta access to new features before anyone else, dedicated support with 4-hour response time.` },
 
   { q: ['founding member', 'founding price', 'launch price', 'early bird', 'discount', 'offer', 'spots left'],
-    a: 'Founding Member offer: first 100 users get Pro at $1.99/month (regular $9) and Elite at $4.99/month (regular $25). This price is locked in FOREVER even when we raise prices. Check the landing page to see how many spots are left.' },
+    a: `Current pricing: Pro is ${PRO_MONTHLY_PRICE} and Elite is ${ELITE_MONTHLY_PRICE}. Check the pricing section in-app for the latest billing options.` },
 
   { q: ['payment', 'how to pay', 'pay for pro', 'billing', 'invoice'],
     a: 'To pay: email getzynth@gmail.com with subject "Pro Upgrade" or "Elite Upgrade" and your registered email. We will process your upgrade within 24 hours at the founding member price.' },
@@ -276,8 +279,8 @@ Contact: getzynth@gmail.com | Website: getzynth.com
 
 ## PLANS & PRICING
 - Free ($0 forever): 10 journal entries lifetime, 3 AI analyses lifetime, today's US economic events, live market overview, market news.
-- Pro ($1.99/month founding price, regular $9/month): unlimited journal entries, 50 AI analyses/month, full Economic Calendar (all countries), Macro Surprise Score, Economic Intelligence page, real-time streaming, advanced analytics.
-- Elite ($4.99/month founding price, regular $25/month): everything in Pro + unlimited AI analyses, unlimited OCR, Trading DNA Report, beta feature access, 4-hour dedicated support.
+- Pro (${PRO_MONTHLY_PRICE}): unlimited journal entries, 50 AI analyses/month, full Economic Calendar (all countries), Macro Surprise Score, Economic Intelligence page, real-time streaming, advanced analytics.
+- Elite (${ELITE_MONTHLY_PRICE}): everything in Pro + unlimited AI analyses, unlimited OCR, Trading DNA Report, beta feature access, 4-hour dedicated support.
 - Founding Member offer: first 100 users lock in the founding price FOREVER.
 - To upgrade: click avatar (top right) → Profile → Upgrade Plan → email getzynth@gmail.com with your chosen plan. Activation within 24 hours.
 - Payment is manual via email (getzynth@gmail.com). 7-day money-back guarantee, no questions asked.

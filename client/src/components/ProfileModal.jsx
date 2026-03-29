@@ -8,8 +8,9 @@ import ImageCropModal from './ImageCropModal';
 import PaymentOptionsModal from './PaymentOptionsModal';
 import PricingPlanSelector from './pricing/PricingPlanSelector';
 import { API_URL } from '../config/api';
-import { DEFAULT_BILLING_CYCLE, DEFAULT_SELECTED_PLAN } from '../config/pricingPlans';
+import { DEFAULT_BILLING_CYCLE, DEFAULT_SELECTED_PLAN, getPlanMonthlyLabel } from '../config/pricingPlans';
 import { resolveMediaUrl } from '../utils/mediaUrl';
+import { setAuthSession } from '../utils/authStorage';
 
 const AVATAR_COLOR_MAP = {
   emerald: '#3b82f6', blue: '#3b82f6', purple: '#0ea5e9', orange: '#f97316',
@@ -27,8 +28,8 @@ function readFileAsBase64(file) {
 
 const PLAN_INFO = {
   free:  { label: 'Basic Plan', sub: 'Free forever',                     color: '#9ca3af' },
-  pro:   { label: 'Pro Plan',   sub: '$9/month',           color: '#34d399' },
-  elite: { label: 'Elite Plan', sub: '$19/month',          color: '#fbbf24' },
+  pro:   { label: 'Pro Plan',   sub: getPlanMonthlyLabel('pro'),         color: '#34d399' },
+  elite: { label: 'Elite Plan', sub: getPlanMonthlyLabel('elite'),       color: '#fbbf24' },
   admin: { label: 'Admin',      sub: 'Full Access',                       color: '#0ea5e9' },
 };
 
@@ -167,8 +168,7 @@ export default function ProfileModal({ onClose, onForgotPassword }) {
       });
       if (!res.ok) throw new Error('Upload failed');
       const { user: updatedUser, token: newToken } = await res.json();
-      localStorage.setItem('auth_token', newToken);
-      localStorage.setItem('auth_user', JSON.stringify(updatedUser));
+      setAuthSession(updatedUser, newToken);
       await refreshUser();
       setPendingAvatar(null);
       setAvatarUploadDone(true);

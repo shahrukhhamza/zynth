@@ -41,20 +41,28 @@ function buildUser(row) {
 router.post('/register', async (req, res) => {
   try {
     const { name, email, password, terms_accepted } = req.body;
+    const safeName = String(name || '').trim();
+    const safeEmail = String(email || '').trim().toLowerCase();
 
-    if (!name?.trim() || !email?.trim() || !password)
+    if (!safeName || !safeEmail || !password)
       return res.status(400).json({ error: 'Name, email and password are required.' });
 
     if (!terms_accepted)
       return res.status(400).json({ error: 'You must accept the Terms of Service to create an account.' });
 
-    if (password.length < 6)
-      return res.status(400).json({ error: 'Password must be at least 6 characters.' });
+    if (password.length < 8)
+      return res.status(400).json({ error: 'Password must be at least 8 characters.' });
 
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
+    if (safeName.length > 80)
+      return res.status(400).json({ error: 'Name is too long.' });
+
+    if (safeEmail.length > 254)
+      return res.status(400).json({ error: 'Email is too long.' });
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(safeEmail))
       return res.status(400).json({ error: 'Please enter a valid email address.' });
 
-    const existing = await Users.findByEmail(email);
+    const existing = await Users.findByEmail(safeEmail);
     if (existing) {
       if (!existing.password_hash) {
         return res.status(409).json({
@@ -67,8 +75,8 @@ router.post('/register', async (req, res) => {
 
     const password_hash = await bcrypt.hash(password, 12);
     const result = await Users.createUser({
-      name: name.trim(),
-      email,
+      name: safeName,
+      email: safeEmail,
       password_hash,
       terms_accepted: 1,
       terms_accepted_at: new Date().toISOString(),
@@ -77,11 +85,11 @@ router.post('/register', async (req, res) => {
     const user = buildUser(row);
     const token = signToken(user);
 
-    trackEvent(result.id, 'user_signup', { name: name.trim(), email });
+    trackEvent(result.id, 'user_signup', { name: safeName, email: safeEmail });
 
     res.status(201).json({ user, token });
   } catch (err) {
-    console.error('Register error:', err);
+    console.error('Register error:', err?.message || 'unknown');
     res.status(500).json({ error: 'Registration failed. Please try again.' });
   }
 });
@@ -90,11 +98,12 @@ router.post('/register', async (req, res) => {
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
+    const safeEmail = String(email || '').trim().toLowerCase();
 
-    if (!email?.trim() || !password)
+    if (!safeEmail || !password)
       return res.status(400).json({ error: 'Email and password are required.' });
 
-    const row = await Users.findByEmail(email);
+    const row = await Users.findByEmail(safeEmail);
     if (!row) {
       return res.status(401).json({ error: 'Invalid email or password.' });
     }
@@ -114,27 +123,18 @@ router.post('/login', async (req, res) => {
     const token = signToken(user);
     res.json({ user, token });
   } catch (err) {
-    console.error('Login error:', err);
+    console.error('Login error:', err?.message || 'unknown');
     res.status(500).json({ error: 'Login failed. Please try again.' });
   }
 });
 
 // ── POST /api/auth/google ──────────────────────────────────────────────────
-console.log('[Google OAuth] config check:', {
-  GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID ? `set (${process.env.GOOGLE_CLIENT_ID.slice(0, 12)}...)` : 'MISSING',
-  CLIENT_URL: process.env.CLIENT_URL || 'MISSING',
-});
-
 router.post('/google', async (req, res) => {
   try {
     const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || '';
 
-    console.log('[Google OAuth] POST /api/auth/google received');
-    console.log('[Google OAuth] GOOGLE_CLIENT_ID set:', !!GOOGLE_CLIENT_ID);
-    console.log('[Google OAuth] credential present:', !!req.body?.credential);
-
     if (!GOOGLE_CLIENT_ID) {
-      console.error('[Google OAuth] FATAL: GOOGLE_CLIENT_ID is not set');
+      console.error('[Google OAuth] GOOGLE_CLIENT_ID is not set');
       return res.status(503).json({ error: 'Google sign-in is not configured on the server. Contact support.' });
     }
 
@@ -147,16 +147,12 @@ router.post('/google', async (req, res) => {
     try {
       ticket = await client.verifyIdToken({ idToken: credential, audience: GOOGLE_CLIENT_ID });
     } catch (verifyErr) {
-      console.error('[Google OAuth] verifyIdToken failed:', verifyErr.message);
-      return res.status(401).json({
-        error: 'Google credential verification failed. Please try again.',
-        detail: verifyErr.message,
-      });
+      console.error('[Google OAuth] verifyIdToken failed');
+      return res.status(401).json({ error: 'Google credential verification failed. Please try again.' });
     }
 
     const payload = ticket.getPayload();
     const { sub: googleId, email, name, picture } = payload;
-    console.log('[Google OAuth] verified OK — email:', email);
 
     let row = await Users.findByGoogleId(googleId);
     if (!row) {
@@ -172,10 +168,9 @@ router.post('/google', async (req, res) => {
     const freshRow = await Users.findById(row.id);
     const user = buildUser({ ...freshRow, avatar: picture || freshRow.avatar });
     const token = signToken(user);
-    console.log('[Google OAuth] login success — userId:', user.id);
     res.json({ user, token });
   } catch (err) {
-    console.error('[Google OAuth] unexpected error:', err);
+    console.error('[Google OAuth] unexpected error:', err?.message || 'unknown');
     res.status(500).json({ error: 'Google sign-in failed due to a server error. Please try again.' });
   }
 });

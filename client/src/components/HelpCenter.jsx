@@ -1,6 +1,10 @@
 ﻿import { useState, useMemo, useEffect } from 'react';
 import { BookOpen, Search, ChevronRight, ArrowLeft, Rocket, BookMarked, Bot, BarChart2, Calendar, Camera, Calculator, CreditCard, Settings, Shield, Star, X, Home, Mail, LifeBuoy, Clock3, ArrowUpRight, Bug, Lightbulb, MessageSquare } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
+import { getPlanMonthlyLabel } from '../config/pricingPlans';
+
+const PRO_MONTHLY_PRICE = getPlanMonthlyLabel('pro');
+const ELITE_MONTHLY_PRICE = getPlanMonthlyLabel('elite');
 
 // -- Article database ---------------------------------------------------------
 const CATEGORIES = [
@@ -720,7 +724,7 @@ The London-NY overlap (shown in amber) is the highest volume period of the day. 
 | Market News | 5 articles/day |
 | Trading Desk | Full access |
 
-## PRO PLAN ($9/month)
+## PRO PLAN (${PRO_MONTHLY_PRICE})
 
 | Feature | Limit |
 |---|---|
@@ -733,7 +737,7 @@ The London-NY overlap (shown in amber) is the highest volume period of the day. 
 | Economic Intelligence | ? Full access |
 | Macro-Journal Correlation | ? Full access |
 
-## ELITE PLAN ($19/month)
+## ELITE PLAN (${ELITE_MONTHLY_PRICE})
 
 Everything in Pro, plus:
 
@@ -751,7 +755,7 @@ Everything in Pro, plus:
 
 1. Click your avatar/name in the top right
       2. Click **Upgrade Plan**
-      3. Choose **Pro** ($9/month) or **Elite** ($19/month)
+      3. Choose **Pro** (${PRO_MONTHLY_PRICE}) or **Elite** (${ELITE_MONTHLY_PRICE})
       4. Complete payment inside the secure in-app modal
       5. Upload your payment proof screenshot
       6. Instant activation after verification (usually within minutes)
@@ -762,7 +766,7 @@ Everything in Pro, plus:
       - 🇵🇰 Pakistan: Easypaisa / JazzCash / Local Bank Transfer
 
 ::tip
-Pro is $9/month and Elite is $19/month. Cancel anytime.
+Pro is ${PRO_MONTHLY_PRICE} and Elite is ${ELITE_MONTHLY_PRICE}. Cancel anytime.
 ::`,
       },
       {
@@ -770,15 +774,15 @@ Pro is $9/month and Elite is $19/month. Cancel anytime.
         excerpt: 'Current pricing for Pro and Elite plans.',
         content: `## Current Pricing
 
-- **Pro plan**: $9/month
-- **Elite plan**: $19/month
+- **Pro plan**: ${PRO_MONTHLY_PRICE}
+- **Elite plan**: ${ELITE_MONTHLY_PRICE}
 - Billed monthly. Cancel anytime.
 
 ## What's Included
 
-**Pro ($9/month):** Unlimited journal entries, 50 AI analyses/month, real-time markets, full economic calendar, macro intelligence tools.
+**Pro (${PRO_MONTHLY_PRICE}):** Unlimited journal entries, 50 AI analyses/month, real-time markets, full economic calendar, macro intelligence tools.
 
-**Elite ($19/month):** Everything in Pro, plus unlimited AI analyses, monthly Trading DNA Report, beta feature early access, and priority support.
+**Elite (${ELITE_MONTHLY_PRICE}):** Everything in Pro, plus unlimited AI analyses, monthly Trading DNA Report, beta feature early access, and priority support.
 
 ## How to Upgrade
 

@@ -10,6 +10,23 @@ function getSecret() {
   return secret;
 }
 
+function getClientIp(req) {
+  const forwardedFor = req.headers['x-forwarded-for'];
+  if (typeof forwardedFor === 'string' && forwardedFor.trim()) {
+    return forwardedFor.split(',')[0].trim();
+  }
+  return req.ip || req.socket?.remoteAddress || 'unknown';
+}
+
+function logAuthFailure(req, reason) {
+  console.warn('[security] auth denied', {
+    reason,
+    path: req.originalUrl || req.url,
+    method: req.method,
+    ip: getClientIp(req),
+  });
+}
+
 function normalizePlan(plan) {
   return String(plan || 'free').trim().toLowerCase();
 }
@@ -21,11 +38,16 @@ export function signToken(payload) {
 export async function requireAuth(req, res, next) {
   const auth = req.headers.authorization;
   if (!auth || !auth.startsWith('Bearer ')) {
+    logAuthFailure(req, 'missing_or_invalid_authorization_header');
     return res.status(401).json({ error: 'Unauthorized' });
   }
   try {
     const decoded = jwt.verify(auth.slice(7), getSecret());
     const currentUser = decoded?.id ? await Users.findById(decoded.id) : null;
+    if (!currentUser) {
+      logAuthFailure(req, 'user_not_found_for_token');
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
 
     req.user = {
       ...decoded,
@@ -39,6 +61,7 @@ export async function requireAuth(req, res, next) {
     };
     next();
   } catch {
+    logAuthFailure(req, 'invalid_or_expired_token');
     return res.status(401).json({ error: 'Invalid or expired token' });
   }
 }

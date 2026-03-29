@@ -1,15 +1,12 @@
 import { useState } from 'react';
 import { Lock, Rocket, Sparkles } from 'lucide-react';
 import { useTheme } from '../../contexts/ThemeContext';
-import { usePlan } from '../../hooks/usePlan';
 import { useUpgrade } from '../../contexts/UpgradeContext';
 import PricingPlanSelector from '../pricing/PricingPlanSelector';
 import { DEFAULT_BILLING_CYCLE, DEFAULT_SELECTED_PLAN } from '../../config/pricingPlans';
 
-export default function JournalUpgradePrompt({ total }) {
+export default function JournalUpgradePrompt() {
   const theme = useTheme();
-  const { journalCount: hookCount } = usePlan();
-  const journalCount = total ?? hookCount;
   const { openUpgradeModal } = useUpgrade();
   const [selectedPlan, setSelectedPlan] = useState(DEFAULT_SELECTED_PLAN);
   const [billingCycle, setBillingCycle] = useState(DEFAULT_BILLING_CYCLE);
@@ -64,10 +61,10 @@ export default function JournalUpgradePrompt({ total }) {
           </div>
           <div>
             <h3 className="text-[18px] font-extrabold leading-tight" style={{ color: theme.text }}>
-              You&apos;ve reached your free journal limit
+              You&apos;re hitting your trading ceiling.
             </h3>
             <p className="mt-1 text-sm leading-snug" style={{ color: theme.muted }}>
-              You&apos;ve logged {journalCount} trade{journalCount !== 1 ? 's' : ''}. Keep the momentum and unlock the same premium plan system used everywhere else in the app.
+              Your patterns are just getting clear — don&apos;t stop now.
             </p>
           </div>
         </div>

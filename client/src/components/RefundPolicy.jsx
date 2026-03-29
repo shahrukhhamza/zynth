@@ -1,4 +1,5 @@
 import { ArrowLeft, RefreshCw, CreditCard, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { getPlanMonthlyLabel } from '../config/pricingPlans';
 
 function Section({ id, title, children }) {
   return (
@@ -14,6 +15,9 @@ function Section({ id, title, children }) {
 }
 
 export default function RefundPolicy({ onBack }) {
+  const proMonthlyPrice = getPlanMonthlyLabel('pro');
+  const eliteMonthlyPrice = getPlanMonthlyLabel('elite');
+
   const handleBack = () => {
     if (onBack) { onBack(); } else { window.history.back(); }
   };
@@ -142,7 +146,7 @@ export default function RefundPolicy({ onBack }) {
 
           <Section id="current-pricing" title="7. Current Pricing">
             <p>
-              All subscriptions are billed at the current published rates: Pro at $9/month and Elite at $19/month. Prices are subject to change with prior notice to active subscribers.
+              All subscriptions are billed at the current published rates: Pro at {proMonthlyPrice} and Elite at {eliteMonthlyPrice}. Prices are subject to change with prior notice to active subscribers.
             </p>
           </Section>
 

@@ -77,6 +77,9 @@ export default function PricingPage({ onBack }) {
 
           <div className="mt-8 rounded-2xl border border-slate-200/80 bg-white/70 p-5 text-center text-sm text-slate-600 shadow-sm backdrop-blur dark:border-white/8 dark:bg-slate-900/70 dark:text-slate-300">
             Free plan is still available with journaling basics, market discovery, and starter AI access. Upgrade when you want deeper insight and full intelligence.
+            <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
+              Alternative payment options available via email getzynth@gmail.com
+            </p>
           </div>
         </div>
       </main>

@@ -1,4 +1,5 @@
 ﻿import { ArrowLeft, Zap, Clock, CheckCircle2, Server } from 'lucide-react';
+import { getPlanMonthlyLabel } from '../config/pricingPlans';
 
 function Section({ id, title, children }) {
   return (
@@ -14,6 +15,9 @@ function Section({ id, title, children }) {
 }
 
 export default function ServicePolicy({ onBack }) {
+  const proMonthlyPrice = getPlanMonthlyLabel('pro');
+  const eliteMonthlyPrice = getPlanMonthlyLabel('elite');
+
   const handleBack = () => {
     if (onBack) { onBack(); } else { window.history.back(); }
   };
@@ -80,8 +84,8 @@ export default function ServicePolicy({ onBack }) {
             <p>The platform includes the following services depending on your subscription plan:</p>
             <ul style={{ paddingLeft: 20, display: 'flex', flexDirection: 'column', gap: 6 }}>
               <li><strong style={{ color: '#e2e8f0' }}>Free Plan:</strong> Trade journal (10 entries), live market overview, economic calendar, basic analytics, 3 AI analysis tries, 2 screenshot analyses</li>
-              <li><strong style={{ color: '#e2e8f0' }}>Pro Plan ($9/month):</strong> Unlimited journal entries, 50 AI analyses/month, 35 screenshot OCR analyses/month, full economic intelligence, macro surprise score, live market feeds</li>
-              <li><strong style={{ color: '#e2e8f0' }}>Elite Plan ($19/month):</strong> All Pro features plus unlimited AI analyses, unlimited screenshot OCR, custom AI reports, dedicated email support, and priority access to new features</li>
+              <li><strong style={{ color: '#e2e8f0' }}>Pro Plan ({proMonthlyPrice}):</strong> Unlimited journal entries, 50 AI analyses/month, 35 screenshot OCR analyses/month, full economic intelligence, macro surprise score, live market feeds</li>
+              <li><strong style={{ color: '#e2e8f0' }}>Elite Plan ({eliteMonthlyPrice}):</strong> All Pro features plus unlimited AI analyses, unlimited screenshot OCR, custom AI reports, dedicated email support, and priority access to new features</li>
             </ul>
           </Section>
 

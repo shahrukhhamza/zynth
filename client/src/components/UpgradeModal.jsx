@@ -8,15 +8,8 @@ import { useTheme } from '../contexts/ThemeContext';
 import { useAuth } from '../contexts/AuthContext';
 import { API_URL } from '../config/api';
 import PricingPlanSelector from './pricing/PricingPlanSelector';
-import { DEFAULT_BILLING_CYCLE, DEFAULT_SELECTED_PLAN, getPaidPlan, getPlanDisplay } from '../config/pricingPlans';
+import { DEFAULT_BILLING_CYCLE, DEFAULT_SELECTED_PLAN, PKR_PRICES, getPaidPlan, getPlanDisplay } from '../config/pricingPlans';
 import ErrorBar from './ErrorBar';
-
-/* ─── Data ─────────────────────────────────────────────────────────────────── */
-
-const PKR_BY_PLAN = {
-  monthly: { pro: 2500, elite: 5300 },
-  annual: { pro: 25000, elite: 53000 },
-};
 
 const PAYMENT_OPTIONS = [
   {
@@ -83,9 +76,10 @@ export default function UpgradeModal({
   const [step,         setStep]         = useState(1);
   const [stepIn,       setStepIn]       = useState(true);
   const [selectedPlan, setSelectedPlan] = useState(DEFAULT_SELECTED_PLAN);
+  const [activeBillingCycle, setActiveBillingCycle] = useState(billingCycle ?? DEFAULT_BILLING_CYCLE);
   const [paymentRegion, setPaymentRegion] = useState('PK');
   const [methodKey,    setMethodKey]    = useState(PAYMENT_OPTIONS[0].key);
-  const [requiredPkr,  setRequiredPkr]  = useState(PKR_BY_PLAN[billingCycle]?.[requiredPlan === 'elite' ? 'elite' : 'pro'] ?? PKR_BY_PLAN.monthly.pro);
+  const [requiredPkr,  setRequiredPkr]  = useState(PKR_PRICES[billingCycle]?.[requiredPlan === 'elite' ? 'elite' : 'pro'] ?? PKR_PRICES.monthly.pro);
   const [proof,        setProof]        = useState(null);
   const [note,         setNote]         = useState('');
   const [submitting,   setSubmitting]   = useState(false);
@@ -99,16 +93,17 @@ export default function UpgradeModal({
       setStep(1);
       setStepIn(true);
       setSelectedPlan(DEFAULT_SELECTED_PLAN);
+      setActiveBillingCycle(billingCycle ?? DEFAULT_BILLING_CYCLE);
       setPaymentRegion('PK');
-      setRequiredPkr(PKR_BY_PLAN[billingCycle]?.[DEFAULT_SELECTED_PLAN] ?? PKR_BY_PLAN.monthly.pro);
+      setRequiredPkr(PKR_PRICES[billingCycle ?? DEFAULT_BILLING_CYCLE]?.[DEFAULT_SELECTED_PLAN] ?? PKR_PRICES.monthly.pro);
       setMethodKey(PAYMENT_OPTIONS[0].key);
     }
     else setVisible(false);
   }, [billingCycle, open, requiredPlan]);
 
   useEffect(() => {
-    setRequiredPkr(PKR_BY_PLAN[billingCycle]?.[selectedPlan] || PKR_BY_PLAN.monthly.pro);
-  }, [billingCycle, selectedPlan]);
+    setRequiredPkr(PKR_PRICES[activeBillingCycle]?.[selectedPlan] || PKR_PRICES.monthly.pro);
+  }, [activeBillingCycle, selectedPlan]);
 
   useEffect(() => {
     const defaultMethod = PAYMENT_OPTIONS_BY_REGION[paymentRegion]?.[0]?.key || '';
@@ -122,8 +117,8 @@ export default function UpgradeModal({
   );
   const selected = selectedPlan ? getPaidPlan(selectedPlan) : null;
   const SelectedPlanIcon = selected ? (PLAN_SUMMARY_ICONS[selected.id] ?? Rocket) : Rocket;
-  const selectedDisplay = selectedPlan ? getPlanDisplay(selectedPlan, billingCycle) : null;
-  const amountLabel = selected && selectedDisplay ? `$${selectedDisplay.amount}${selectedDisplay.suffix}` : '';
+  const selectedDisplay = selectedPlan ? getPlanDisplay(selectedPlan, activeBillingCycle) : null;
+  const amountLabel = selectedDisplay?.label ?? '';
   const amountPkrLabel = `PKR ${requiredPkr.toLocaleString()}`;
   const isPakistanPayment = paymentRegion === 'PK';
   const annualHelper = selectedDisplay?.helperText ?? null;
@@ -152,7 +147,7 @@ export default function UpgradeModal({
     try {
       const form = new FormData();
       form.append('plan',   selectedPlan);
-      form.append('billingCycle', billingCycle);
+      form.append('billingCycle', activeBillingCycle);
       form.append('paymentRegion', paymentRegion);
       form.append('method', currentMethod.name);
       form.append('amount', isPakistanPayment ? amountPkrLabel : amountLabel);
@@ -282,7 +277,8 @@ export default function UpgradeModal({
                 subtitle={message || 'Choose the paid plan that matches your ambition. Elite stays selected by default to frame the full-power upgrade clearly.'}
                 selectedPlan={selectedPlan}
                 onSelectPlan={setSelectedPlan}
-                billingCycle={billingCycle}
+                billingCycle={activeBillingCycle}
+                onBillingCycleChange={setActiveBillingCycle}
                 onPrimaryAction={() => goToStep(2)}
               />
             </div>
@@ -458,6 +454,10 @@ export default function UpgradeModal({
                 })}
               </div>
 
+              <p className="text-sm text-center text-gray-500 dark:text-gray-400 mb-4">
+                Having trouble with payment? Reach out at getzynth@gmail.com — we&apos;ll help you get access quickly.
+              </p>
+
               <h3 className="text-xs uppercase tracking-[0.12em] font-semibold text-gray-500 dark:text-gray-400 mb-2">Send Payment</h3>
               <p className="text-xs mb-3" style={{ color: mutedText }}>
                 {paymentRegion === 'INTL'
@@ -597,6 +597,9 @@ export default function UpgradeModal({
             <div className="mt-2 text-center text-xs text-gray-400 dark:text-gray-300">
               Takes less than 1 minute
             </div>
+            <p className="mt-2 text-sm text-center text-gray-500 dark:text-gray-400">
+              Payment not working? Email us at getzynth@gmail.com and we&apos;ll assist you.
+            </p>
           </div>
         </div>
       </div>

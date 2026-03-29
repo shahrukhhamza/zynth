@@ -75,16 +75,16 @@ export const ThemeProvider = ({ children }) => {
     surfaceSecondary:isDark ? '#111827' : '#F1F5F9',   // canonical alias
 
     // ── Borders & shadows ─────────────────────────────────────────────────────
-    border:  isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)',
+    border:  isDark ? 'rgba(255,255,255,0.08)' : 'rgba(15,23,42,0.10)',
     shadow:  isDark
       ? '0 4px 30px rgba(0,0,0,0.6)'
-      : '0 4px 20px rgba(0,0,0,0.04)',
+      : '0 1px 3px rgba(15,23,42,0.08), 0 4px 16px rgba(15,23,42,0.07)',
     shadowMd: isDark
       ? '0 12px 40px rgba(0,0,0,0.7)'
-      : '0 8px 30px rgba(0,0,0,0.07)',
+      : '0 4px 12px rgba(15,23,42,0.10), 0 12px 36px rgba(15,23,42,0.08)',
     shadowLg: isDark
       ? '0 32px 80px rgba(0,0,0,0.75)'
-      : '0 24px 60px rgba(0,0,0,0.10)',
+      : '0 8px 24px rgba(15,23,42,0.12), 0 24px 56px rgba(15,23,42,0.10)',
 
     // ── Text ──────────────────────────────────────────────────────────────────
     text:          isDark ? '#E2E8F0' : '#0F172A',   // legacy alias → textPrimary

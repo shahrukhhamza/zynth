@@ -7,6 +7,7 @@ import { API_URL } from '../config/api';
 import { useTheme } from '../contexts/ThemeContext';
 import { useUpgrade } from '../contexts/UpgradeContext';
 import { usePlanGate } from '../hooks/usePlanGate';
+import { getAuthToken } from '../utils/authStorage';
 import PricingPlanSelector from './pricing/PricingPlanSelector';
 import { DEFAULT_BILLING_CYCLE, DEFAULT_SELECTED_PLAN } from '../config/pricingPlans';
 import { Line } from 'react-chartjs-2';
@@ -383,7 +384,7 @@ export default function EconomicIntelligence() {
     if (!canAccess) return;
     try {
       setError(null);
-      const token = localStorage.getItem('auth_token');
+      const token = getAuthToken();
       if (!token) { setError('Please log in'); setLoading(false); return; }
       const headers = { Authorization: `Bearer ${token}` };
       const [dashRes, scoreRes] = await Promise.all([
@@ -403,7 +404,7 @@ export default function EconomicIntelligence() {
   const handleRefresh = async () => {
     try {
       setRefreshing(true);
-      const token = localStorage.getItem('auth_token');
+      const token = getAuthToken();
       await fetch(`${API_URL}/api/economic/refresh`, {
         method: 'POST',
         headers: token ? { Authorization: `Bearer ${token}` } : {},

@@ -27,22 +27,22 @@ const CONTEXT_COPY = {
     subtitle: 'Turn raw executions into repeatable systems with premium journaling intelligence.',
     compactSubtitle: 'Remove journal limits and unlock structured AI review.',
     ctaByPlan: {
-      elite: 'Remove All Limits 🚀',
+      elite: 'Unlock My Full Analysis 🚀',
       pro: 'Start Journaling',
     },
   },
   upgrade: {
     title: 'Unlock Full Zynth',
-    subtitle: 'Elite yearly is the highest-value path for serious traders who want zero limits.',
+    subtitle: 'Choose the plan that matches your ambition. Yearly billing lowers your effective daily cost.',
     compactSubtitle: 'Pick a plan and continue in under 10 seconds.',
     ctaByPlan: {
-      elite: 'Remove All Limits 🚀',
+      elite: 'Unlock My Full Analysis 🚀',
       pro: 'Unlock Full Power',
     },
   },
   general: {
     title: 'Choose the plan that accelerates your edge',
-    subtitle: 'Elite yearly is pre-selected because it delivers full capability with the best annual value.',
+    subtitle: 'Choose monthly or yearly billing based on how you want to grow with Zynth.',
     compactSubtitle: 'Serious traders choose Elite. Pick your plan.',
     ctaByPlan: {
       elite: 'Unlock Full AI Power 🚀',
@@ -109,11 +109,11 @@ function CompactPlanCard({ plan, selected, billingCycle, onSelect, context, pric
       <div className="mt-2 flex items-end gap-1">
         {display.anchoredAmount && display.anchoredAmount > display.amount && (
           <span className="text-[11px] font-semibold text-slate-400 line-through dark:text-slate-400">
-            ${display.anchoredAmount}
+            {display.anchoredAmountDisplay}
           </span>
         )}
         <span className={`text-xl font-black tracking-tight ${isElite ? 'text-slate-900 dark:text-white' : 'text-slate-700 dark:text-slate-200'}`}>
-          ${display.amount}
+          {display.amountDisplay}
         </span>
         <span className="pb-0.5 text-[11px] font-medium text-slate-500 dark:text-slate-400">{display.suffix}</span>
       </div>
@@ -144,15 +144,15 @@ function CompactPlanCard({ plan, selected, billingCycle, onSelect, context, pric
 
       {/* Compact feature explanation */}
       {featurePreview.length > 0 && (
-        <div className={`mt-2 rounded-lg border px-2.5 py-2 ${isElite ? 'border-violet-400/30 bg-violet-950/40' : 'border-slate-500/45 bg-slate-800/70'}`}>
-          <p className={`text-[10px] font-bold uppercase tracking-[0.12em] ${isElite ? 'text-violet-200' : 'text-slate-200'}`}>
+        <div className={`mt-2 rounded-lg border px-2.5 py-2 ${isElite ? 'border-violet-200 bg-violet-50/80 dark:border-violet-400/30 dark:bg-violet-950/40' : 'border-slate-200 bg-slate-50/80 dark:border-slate-500/45 dark:bg-slate-800/70'}`}>
+          <p className={`text-[10px] font-bold uppercase tracking-[0.12em] ${isElite ? 'text-violet-700 dark:text-violet-200' : 'text-slate-600 dark:text-slate-200'}`}>
             What you get
           </p>
           <div className="mt-1.5 space-y-1">
             {featurePreview.map((feature) => (
               <div key={feature} className="flex items-start gap-1.5">
-                <Check size={11} className={`${isElite ? 'text-violet-300' : 'text-slate-300'} mt-[1px] shrink-0`} />
-                <span className={`${isElite ? 'text-violet-100/95' : 'text-slate-100'} text-[11px] leading-4`}>
+                <Check size={11} className={`${isElite ? 'text-violet-500 dark:text-violet-300' : 'text-slate-500 dark:text-slate-300'} mt-[1px] shrink-0`} />
+                <span className={`${isElite ? 'text-violet-900 dark:text-violet-100/95' : 'text-slate-700 dark:text-slate-100'} text-[11px] leading-4`}>
                   {feature}
                 </span>
               </div>
@@ -233,10 +233,10 @@ function PlanCard({ plan, billingCycle, selected, onSelect, context, priceOverri
             <div className="mt-3 flex items-end gap-1.5">
               {display.anchoredAmount && display.anchoredAmount > display.amount && (
                 <span className="pb-0.5 text-xs font-semibold text-slate-400 line-through dark:text-slate-500">
-                  ${display.anchoredAmount}
+                  {display.anchoredAmountDisplay}
                 </span>
               )}
-              <span className="text-3xl font-black tracking-tight text-slate-900 dark:text-white">${display.amount}</span>
+              <span className="text-3xl font-black tracking-tight text-slate-900 dark:text-white">{display.amountDisplay}</span>
               <span className="pb-0.5 text-xs font-medium text-slate-500 dark:text-slate-400">{display.suffix}</span>
             </div>
             <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-0.5">
@@ -244,7 +244,7 @@ function PlanCard({ plan, billingCycle, selected, onSelect, context, priceOverri
                 <p className="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">{display.savingsText}</p>
               )}
               {isYearly && display.dailyEquivalent && (
-                <p className="text-[11px] text-slate-400 dark:text-slate-300">${display.dailyEquivalent.toFixed(2)}/day</p>
+                <p className="text-[11px] text-slate-400 dark:text-slate-300">{display.dailyEquivalentDisplay}/day</p>
               )}
             </div>
 
@@ -325,10 +325,10 @@ function PlanCard({ plan, billingCycle, selected, onSelect, context, priceOverri
         <div className="mt-3 flex items-end gap-1.5">
           {display.anchoredAmount && display.anchoredAmount > display.amount && (
             <span className="pb-0.5 text-xs font-semibold text-slate-400 line-through dark:text-slate-500">
-              ${display.anchoredAmount}
+              {display.anchoredAmountDisplay}
             </span>
           )}
-          <span className="text-3xl font-black tracking-tight text-slate-900 dark:text-white">${display.amount}</span>
+          <span className="text-3xl font-black tracking-tight text-slate-900 dark:text-white">{display.amountDisplay}</span>
           <span className="pb-0.5 text-xs font-medium text-slate-500 dark:text-slate-400">{display.suffix}</span>
         </div>
         <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-0.5">
@@ -336,7 +336,7 @@ function PlanCard({ plan, billingCycle, selected, onSelect, context, priceOverri
             <p className="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">{display.savingsText}</p>
           )}
           {isYearly && display.dailyEquivalent && (
-            <p className="text-[11px] text-slate-500 dark:text-slate-400">${display.dailyEquivalent.toFixed(2)}/day</p>
+            <p className="text-[11px] text-slate-500 dark:text-slate-400">{display.dailyEquivalentDisplay}/day</p>
           )}
         </div>
 
@@ -443,9 +443,6 @@ export default function PricingPlanSelector({
     <div className={`rounded-2xl border border-slate-200/80 bg-white/80 backdrop-blur dark:border-slate-700/50 dark:bg-slate-900/80 ${compactMode ? 'p-3.5 shadow-[0_8px_24px_rgba(15,23,42,0.10)]' : 'p-5 shadow-[0_12px_40px_rgba(15,23,42,0.08)]'} ${className}`}>
       <div className={`flex ${compactMode ? 'flex-col gap-2.5' : 'flex-col gap-4 md:flex-row md:items-end md:justify-between'}`}>
         <div>
-          <p className={`${compactMode ? 'text-[10px]' : 'text-[11px]'} font-bold uppercase tracking-[0.16em] text-slate-500 dark:text-slate-400`}>
-            Pricing Plans
-          </p>
           <h2 className={`${compactMode ? 'mt-1 text-[17px] md:text-[18px]' : 'mt-1.5 text-xl md:text-2xl'} font-black tracking-tight text-slate-950 dark:text-white`}>
             {title ?? copy.title}
           </h2>
@@ -552,8 +549,9 @@ export default function PricingPlanSelector({
       {/* Social proof — compact only */}
       {compactMode && (
         <p className="mt-2 text-center text-[11px] text-slate-500 dark:text-slate-400">
-          Most traders hit their limit within{' '}
-          <span className="font-semibold text-slate-700 dark:text-slate-300">3–5 days</span>
+          Most traders upgrade after{' '}
+          <span className="font-semibold text-slate-700 dark:text-slate-300">5–10 trades</span>
+          {' '}— this is where real insights start.
         </p>
       )}
 
@@ -590,11 +588,19 @@ export default function PricingPlanSelector({
               <p className="text-[10px] text-slate-400 dark:text-slate-300">
                 7-day risk-free · Cancel anytime
               </p>
+              <p className="text-sm text-slate-500 dark:text-slate-400">
+                Payment not working? Email us at getzynth@gmail.com and we&apos;ll assist you.
+              </p>
             </div>
           ) : (
-            <p className="mt-3 text-center text-xs text-slate-500 dark:text-slate-400">
-              7-day risk-free • Cancel anytime
-            </p>
+            <div className="mt-3 space-y-1 text-center">
+              <p className="text-xs text-slate-500 dark:text-slate-400">
+                7-day risk-free • Cancel anytime
+              </p>
+              <p className="text-sm text-slate-500 dark:text-slate-400">
+                Payment not working? Email us at getzynth@gmail.com and we&apos;ll assist you.
+              </p>
+            </div>
           )}
         </div>
       )}

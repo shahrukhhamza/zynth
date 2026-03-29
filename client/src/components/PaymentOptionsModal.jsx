@@ -132,7 +132,7 @@ export default function PaymentOptionsModal({ plan: initialPlan = DEFAULT_SELECT
   const currentRegion = PAYMENT_METHODS[region];
   const currentOption = currentRegion.options[optionIdx];
   const displayPrice  = getPlanDisplay(selectedPlan, billingCycle);
-  const price         = `$${displayPrice.amount}${displayPrice.suffix}`;
+  const price         = displayPrice.label;
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -346,6 +346,10 @@ export default function PaymentOptionsModal({ plan: initialPlan = DEFAULT_SELECT
               </div>
             )}
           </div>
+
+          <p style={{ fontSize: 14, color: theme.muted, textAlign: 'center', marginTop: -4 }}>
+            Having trouble with payment? Reach out at getzynth@gmail.com — we&apos;ll help you get access quickly.
+          </p>
 
           {/* Note field */}
           <div>

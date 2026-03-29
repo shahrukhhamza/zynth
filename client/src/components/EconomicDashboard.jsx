@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 import { useAuth } from '../contexts/AuthContext';
+import { getAuthToken } from '../utils/authStorage';
 import { API_URL } from '../config/api';
 
 const QUOTES = [
@@ -322,7 +323,7 @@ export default function EconomicDashboard({ onViewChange }) {
   };
 
   useEffect(() => {
-    const token = localStorage.getItem('auth_token');
+    const token = getAuthToken();
     if (!token) { setLoading(false); return; }
 
     const now        = new Date();

@@ -1,4 +1,5 @@
 import { API_URL } from '../config/api';
+import { getAuthToken } from './authStorage';
 
 const CACHE_KEY = 'public_stats_cache_v1';
 const CACHE_TTL_MS = 60 * 1000;
@@ -8,6 +9,11 @@ let _inflight = null;
 
 export async function getPublicStats() {
   const now = Date.now();
+  const token = getAuthToken();
+
+  if (!token) {
+    return { totalUsers: 0 };
+  }
 
   try {
     const cachedRaw = sessionStorage.getItem(CACHE_KEY);
@@ -23,7 +29,9 @@ export async function getPublicStats() {
 
   if (_inflight) return _inflight;
 
-  _inflight = fetch(`${API_URL}/api/public-stats`)
+  _inflight = fetch(`${API_URL}/api/public-stats`, {
+    headers: { Authorization: `Bearer ${token}` },
+  })
     .then(res => {
       if (!res.ok) throw new Error('Failed to fetch public stats');
       return res.json();

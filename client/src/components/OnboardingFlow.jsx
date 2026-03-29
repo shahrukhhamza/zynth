@@ -6,6 +6,7 @@ import { API_URL } from '../config/api';
 import ImageCropModal from './ImageCropModal';
 import { BrandMark } from './BrandLogo';
 import ErrorBar from './ErrorBar';
+import { setAuthSession } from '../utils/authStorage';
 
 const EXPERIENCE_OPTIONS = [
   { value: 'beginner',      label: 'Just Starting Out',   desc: 'New to trading, learning the basics' },
@@ -193,8 +194,7 @@ export default function OnboardingFlow({ onComplete, onSkip }) {
         throw new Error(d.error || 'Update failed');
       }
       const { user: updatedUser, token: newToken } = await res.json();
-      localStorage.setItem('auth_token', newToken);
-      localStorage.setItem('auth_user', JSON.stringify(updatedUser));
+      setAuthSession(updatedUser, newToken);
       localStorage.setItem('zynth_onboarding_done', 'true');
       localStorage.removeItem('zynth_onboarding_skipped');
       await refreshUser();

@@ -162,7 +162,7 @@ function SidebarInner({
     <div style={{
       display: 'flex', flexDirection: 'column', height: '100%',
       backgroundColor: SB_BG,
-      boxShadow: theme.isDark ? 'none' : '1px 0 0 rgba(0,0,0,0.06)',
+      boxShadow: theme.isDark ? 'none' : '1px 0 0 rgba(15,23,42,0.10), 2px 0 16px rgba(15,23,42,0.06)',
       overflow: 'hidden',
     }}>
 
@@ -254,15 +254,15 @@ function SidebarInner({
             padding: '10px 12px',
             borderRadius: 10,
             border: `1px solid ${SB_BORDER}`,
-            background: theme.isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)',
+            background: theme.isDark ? 'rgba(255,255,255,0.03)' : 'rgba(15,23,42,0.03)',
             display: 'flex', alignItems: 'center', gap: 10,
             cursor: 'pointer',
             textAlign: 'left',
             transition: 'all 0.15s ease',
             flexShrink: 0,
           }}
-          onMouseEnter={e => { e.currentTarget.style.background = theme.isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)'; e.currentTarget.style.borderColor = SB_BORDER; }}
-          onMouseLeave={e => { e.currentTarget.style.background = theme.isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)'; e.currentTarget.style.borderColor = SB_BORDER; }}
+          onMouseEnter={e => { e.currentTarget.style.background = theme.isDark ? 'rgba(255,255,255,0.06)' : 'rgba(15,23,42,0.06)'; e.currentTarget.style.borderColor = SB_BORDER; }}
+          onMouseLeave={e => { e.currentTarget.style.background = theme.isDark ? 'rgba(255,255,255,0.03)' : 'rgba(15,23,42,0.03)'; e.currentTarget.style.borderColor = SB_BORDER; }}
         >
           {/* Avatar */}
           {avatarSrc && !avatarError ? (
