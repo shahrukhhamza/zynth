@@ -24,8 +24,8 @@ const STEPS = [
   {
     number: '01',
     icon: BookOpen,
-    title: 'Log your trades',
-    desc: 'Log every trade in seconds.',
+    title: 'Log your activities',
+    desc: 'Log every decision and activity in seconds. The more you capture, the sharper your insights become.',
     accent: 'from-blue-500/20 to-blue-500/5',
     border: 'rgba(59,130,246,0.20)',
     iconColor: 'text-blue-400',
@@ -34,8 +34,8 @@ const STEPS = [
   {
     number: '02',
     icon: Brain,
-    title: 'Zynth analyzes your behavior',
-    desc: 'It spots the patterns hurting your results.',
+    title: 'AI analyzes your patterns',
+    desc: 'Our AI identifies behavioral tendencies, recurring cycles, and the hidden patterns influencing your outcomes.',
     accent: 'from-violet-500/20 to-violet-500/5',
     border: 'rgba(139,92,246,0.20)',
     iconColor: 'text-violet-400',
@@ -44,8 +44,8 @@ const STEPS = [
   {
     number: '03',
     icon: TrendingUp,
-    title: 'Fix your mistakes and improve',
-    desc: 'Follow clear insights and trade with more consistency.',
+    title: 'Get actionable insights',
+    desc: 'Follow clear, personalized recommendations and build lasting consistency across everything you do.',
     accent: 'from-emerald-500/20 to-emerald-500/5',
     border: 'rgba(16,185,129,0.20)',
     iconColor: 'text-emerald-400',
@@ -84,13 +84,13 @@ export default function HowItWorks({ onGetStarted }) {
               isDark ? 'text-white' : 'text-gray-900'
             }`}
           >
-            From Trade Log to{' '}
+            From Activity Log to{' '}
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#1d4ed8] to-[#06b6d4]">
               Real Improvement
             </span>
           </h2>
           <p className={`text-[16px] max-w-xl mx-auto ${isDark ? 'text-gray-500' : 'text-gray-600'}`}>
-            Three simple steps that turn your trading history into a performance edge.
+            Three simple steps that turn your activity data into a performance edge.
           </p>
         </Reveal>
 
@@ -153,7 +153,7 @@ export default function HowItWorks({ onGetStarted }) {
             onClick={() => onGetStarted()}
             className="group inline-flex items-center gap-2 text-[14px] font-semibold text-blue-400 hover:text-blue-300 transition-colors"
           >
-            Analyze My Trades
+            Get My Insights
             <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
           </button>
         </Reveal>

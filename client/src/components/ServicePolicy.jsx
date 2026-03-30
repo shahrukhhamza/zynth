@@ -1,10 +1,11 @@
 ﻿import { ArrowLeft, Zap, Clock, CheckCircle2, Server } from 'lucide-react';
 import { getPlanMonthlyLabel } from '../config/pricingPlans';
+import { BrandMark } from './BrandLogo';
 
 function Section({ id, title, children }) {
   return (
     <section id={id} style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-      <h2 style={{ fontSize: 17, fontWeight: 700, color: '#f1f5f9', marginBottom: 4, borderBottom: '1px solid rgba(16,185,129,0.12)', paddingBottom: 10 }}>
+      <h2 style={{ fontSize: 17, fontWeight: 700, color: '#f1f5f9', marginBottom: 4, borderBottom: '1px solid rgba(59,130,246,0.12)', paddingBottom: 10 }}>
         {title}
       </h2>
       <div style={{ fontSize: 13, color: '#9ca3af', lineHeight: 1.8, display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -29,7 +30,7 @@ export default function ServicePolicy({ onBack }) {
         position: 'sticky', top: 0, zIndex: 50,
         backgroundColor: 'rgba(10,10,10,0.95)',
         backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)',
-        borderBottom: '1px solid rgba(16,185,129,0.15)',
+        borderBottom: '1px solid rgba(59,130,246,0.15)',
       }}>
         <div style={{ maxWidth: 860, margin: '0 auto', padding: '12px 24px', display: 'flex', alignItems: 'center', gap: 12 }}>
           <button onClick={handleBack} style={{ display: 'flex', alignItems: 'center', gap: 6, color: '#6b7280', fontSize: 13, cursor: 'pointer', background: 'none', border: 'none', padding: '4px 8px', borderRadius: 6 }}
@@ -42,9 +43,9 @@ export default function ServicePolicy({ onBack }) {
             <Zap size={16} style={{ color: '#3b82f6' }} />
             <span style={{ fontSize: 14, fontWeight: 600, color: '#e2e8f0' }}>Service &amp; Delivery Policy</span>
           </div>
-          <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 6 }}>
-            <div style={{ width: 28, height: 28, borderRadius: 7, background: 'linear-gradient(135deg, #059669, #0d9488)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: 13, color: '#fff' }}>Z</div>
-            <span style={{ fontSize: 13, fontWeight: 700, color: '#e2e8f0' }}>ZYNTH</span>
+          <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 8 }}>
+            <BrandMark size={30} />
+            <span style={{ fontSize: 13, fontWeight: 700, color: '#e2e8f0', letterSpacing: '0.04em' }}>Zynth</span>
           </div>
         </div>
       </div>
@@ -58,7 +59,7 @@ export default function ServicePolicy({ onBack }) {
 
         {/* Key stat boxes */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 14, marginBottom: 36 }}>
-          <div style={{ padding: '16px 18px', borderRadius: 10, backgroundColor: 'rgba(16,185,129,0.07)', border: '1px solid rgba(16,185,129,0.2)' }}>
+          <div style={{ padding: '16px 18px', borderRadius: 10, backgroundColor: 'rgba(59,130,246,0.07)', border: '1px solid rgba(59,130,246,0.2)' }}>
             <Zap size={18} style={{ color: '#3b82f6', marginBottom: 8 }} />
             <p style={{ fontSize: 13, fontWeight: 700, color: '#3b82f6', marginBottom: 4 }}>Instant Access</p>
             <p style={{ fontSize: 12, color: '#6b7280', lineHeight: 1.6 }}>Service access is granted immediately upon successful payment — no waiting period.</p>
@@ -79,13 +80,13 @@ export default function ServicePolicy({ onBack }) {
 
           <Section id="service-description" title="1. Service Description">
             <p>
-              Zynth is a <strong style={{ color: '#e2e8f0' }}>web-based trading intelligence platform</strong> delivered as a Software-as-a-Service (SaaS). All services are provided exclusively through the Zynth web application accessible at <a href="https://app.zynth.io" style={{ color: '#3b82f6', textDecoration: 'none' }}>app.zynth.io</a>.
+              Zynth is an <strong style={{ color: '#e2e8f0' }}>AI-powered performance analytics platform</strong> delivered as a Software-as-a-Service (SaaS). Zynth is not a financial advisory service and does not provide investment, trading, or financial advice of any kind. All services are provided exclusively through the Zynth web application accessible at <a href="https://app.zynth.io" style={{ color: '#3b82f6', textDecoration: 'none' }}>app.zynth.io</a>.
             </p>
             <p>The platform includes the following services depending on your subscription plan:</p>
             <ul style={{ paddingLeft: 20, display: 'flex', flexDirection: 'column', gap: 6 }}>
-              <li><strong style={{ color: '#e2e8f0' }}>Free Plan:</strong> Trade journal (5 lifetime entries), economic calendar (today's US high/medium events), delayed market data, and 2 lifetime AI analyses</li>
-              <li><strong style={{ color: '#e2e8f0' }}>Pro Plan ({proMonthlyPrice}):</strong> Unlimited journal entries, 50 AI analyses/month, real-time market data, full economic calendar, macro intelligence features, and advanced analytics</li>
-              <li><strong style={{ color: '#e2e8f0' }}>Elite Plan ({eliteMonthlyPrice}):</strong> All Pro features plus unlimited AI analyses, monthly Trading DNA report, beta access, and priority support</li>
+              <li><strong style={{ color: '#e2e8f0' }}>Free Plan:</strong> Activity log (5 lifetime entries), economic event tracker (today's US high/medium events), contextual data dashboard, and 2 lifetime AI analyses</li>
+              <li><strong style={{ color: '#e2e8f0' }}>Pro Plan ({proMonthlyPrice}):</strong> Unlimited activity log entries, 50 AI analyses/month, real-time contextual data, full economic event calendar, context awareness features, and advanced analytics</li>
+              <li><strong style={{ color: '#e2e8f0' }}>Elite Plan ({eliteMonthlyPrice}):</strong> All Pro features plus unlimited AI analyses, monthly Behavioral Performance Report, beta access, and priority support</li>
             </ul>
           </Section>
 
@@ -111,7 +112,7 @@ export default function ServicePolicy({ onBack }) {
           </Section>
 
           <Section id="ai-services" title="4. AI Services Delivery">
-            <p>AI-powered features (AI Trade Analysis, Zynth Assistant, Macro Intelligence Briefs, and Trading DNA for Elite users) are delivered on-demand:</p>
+            <p>AI-powered features (AI Performance Reports, Zynth Assistant, Context Intelligence Briefs, and Behavioral Performance Report for Elite users) are delivered on-demand:</p>
             <ul style={{ paddingLeft: 20, display: 'flex', flexDirection: 'column', gap: 6 }}>
               <li>AI analysis results are typically generated within 5–30 seconds of a request</li>
               <li>During periods of high traffic or AI provider throttling, response times may be longer</li>
@@ -121,8 +122,8 @@ export default function ServicePolicy({ onBack }) {
             <p>AI-generated content is produced using Google Gemini and may occasionally produce inaccurate or incomplete results. See our <a href="/terms" style={{ color: '#3b82f6', textDecoration: 'none' }}>Terms of Service</a> AI disclaimer for full details.</p>
           </Section>
 
-          <Section id="data-services" title="5. Economic and Market Data Services">
-            <p>Economic calendar, FRED data, and live market prices are sourced from licensed and public third-party providers:</p>
+          <Section id="data-services" title="5. Contextual and Market Data Services">
+            <p>Economic event calendar, FRED data, and live contextual data feeds are sourced from licensed and public third-party providers:</p>
             <ul style={{ paddingLeft: 20, display: 'flex', flexDirection: 'column', gap: 6 }}>
               <li><strong style={{ color: '#e2e8f0' }}>Economic calendar:</strong> Updated in real-time from Financial Modeling Prep / Finnhub</li>
               <li><strong style={{ color: '#e2e8f0' }}>FRED economic data:</strong> Updated daily from the St. Louis Federal Reserve</li>
@@ -154,7 +155,7 @@ export default function ServicePolicy({ onBack }) {
 
           <Section id="contact-service" title="8. Contact">
             <p>For service-related enquiries or technical support:</p>
-            <div style={{ backgroundColor: 'rgba(16,185,129,0.06)', border: '1px solid rgba(16,185,129,0.15)', borderRadius: 8, padding: '16px 20px', marginTop: 6, display: 'flex', flexDirection: 'column', gap: 6 }}>
+            <div style={{ backgroundColor: 'rgba(59,130,246,0.06)', border: '1px solid rgba(59,130,246,0.15)', borderRadius: 8, padding: '16px 20px', marginTop: 6, display: 'flex', flexDirection: 'column', gap: 6 }}>
               <p style={{ fontSize: 14, color: '#3b82f6', fontWeight: 700 }}>Zynth Support</p>
               <p style={{ fontSize: 13, color: '#9ca3af' }}>Email: <a href="mailto:getzynth@gmail.com" style={{ color: '#3b82f6', textDecoration: 'none' }}>getzynth@gmail.com</a></p>
               <p style={{ fontSize: 13, color: '#9ca3af' }}>Address: Zynth, Azeem Town, Sihala Street 2, Islamabad, Pakistan</p>
@@ -165,7 +166,7 @@ export default function ServicePolicy({ onBack }) {
         </div>
 
         {/* Footer */}
-        <div style={{ marginTop: 48, borderTop: '1px solid rgba(16,185,129,0.1)', paddingTop: 24, display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
+        <div style={{ marginTop: 48, borderTop: '1px solid rgba(59,130,246,0.1)', paddingTop: 24, display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
           <p style={{ fontSize: 12, color: '#4b5563' }}>© 2026 Zynth. All rights reserved.</p>
           <div style={{ display: 'flex', gap: 16 }}>
             <a href="/terms" style={{ fontSize: 12, color: '#6b7280', textDecoration: 'none' }} onMouseEnter={e => (e.currentTarget.style.color = '#3b82f6')} onMouseLeave={e => (e.currentTarget.style.color = '#6b7280')}>Terms of Service</a>

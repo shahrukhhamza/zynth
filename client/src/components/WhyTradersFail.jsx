@@ -23,19 +23,19 @@ function Reveal({ children, delay = 0, className = '' }) {
 const PAIN_POINTS = [
   {
     icon: TrendingDown,
-    pain: "Not tracking mistakes",
-    painDesc: "Without a journal, the same losing patterns repeat and drain your account.",
-    solution: "Zynth logs every trade so your patterns are clear and fixable.",
-    solutionLabel: "Smart Journal",
+    pain: "Not tracking your patterns",
+    painDesc: "Without a structured activity log, the same behavioral patterns repeat — silently limiting your progress and consistency.",
+    solution: "Zynth logs every activity so your patterns become visible, measurable, and actionable.",
+    solutionLabel: "Structured Activity Log",
     accentColor: '#ef4444',
     accentBg: 'rgba(239,68,68,0.08)',
     accentBorder: 'rgba(239,68,68,0.20)',
   },
   {
     icon: Flame,
-    pain: "Emotional trading (FOMO & revenge)",
-    painDesc: "FOMO and revenge entries push you into low-quality trades.",
-    solution: "Zynth flags emotional patterns early so you can stop repeating them.",
+    pain: "Reactive decisions under pressure",
+    painDesc: "Decisions made under stress or emotional pressure consistently produce your worst outcomes — yet they're the hardest to spot yourself.",
+    solution: "Zynth flags reactive behavioral cycles early so you can recognize, interrupt, and improve them before they repeat.",
     solutionLabel: "Behavioral AI",
     accentColor: '#f59e0b',
     accentBg: 'rgba(245,158,11,0.08)',
@@ -67,21 +67,21 @@ export default function WhyTradersFail({ onGetStarted }) {
             style={{ background: 'rgba(239,68,68,0.07)', borderColor: 'rgba(239,68,68,0.22)' }}
           >
             <AlertTriangle className="w-3.5 h-3.5 text-red-400" />
-            <span className="text-[11px] font-bold tracking-[0.18em] text-red-400">WHY TRADERS FAIL</span>
+            <span className="text-[11px] font-bold tracking-[0.18em] text-red-400">WHY DECISIONS FALL SHORT</span>
           </div>
           <h2
             className={`text-[38px] md:text-[48px] font-extrabold tracking-tight mb-4 ${
               isDark ? 'text-white' : 'text-gray-900'
             }`}
           >
-            Your strategy isn&apos;t the problem.
+            Your approach isn&apos;t the problem.
             <br />
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-red-400 to-orange-400">
-              Your habits are.
+              Your patterns are.
             </span>
           </h2>
           <p className={`text-[16px] max-w-xl mx-auto ${isDark ? 'text-gray-500' : 'text-gray-600'}`}>
-            Most losses come from repeated behavior, not a broken strategy.
+            Most setbacks come from repeated behavioral patterns, not a flawed approach.
           </p>
         </Reveal>
 
@@ -173,7 +173,7 @@ export default function WhyTradersFail({ onGetStarted }) {
             }}
           >
             <span className="relative z-10 flex items-center gap-2">
-              Analyze My Trades
+              Get My Insights
               <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
             </span>
             <span

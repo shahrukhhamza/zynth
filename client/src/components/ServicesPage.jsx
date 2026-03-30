@@ -1,4 +1,5 @@
 ﻿import { ArrowLeft, BarChart2, BookOpen, Brain, Calendar, TrendingUp, Bot, Activity, ClipboardCheck, Layers } from 'lucide-react';
+import { BrandMark } from './BrandLogo';
 
 const SERVICES = [
   {
@@ -188,9 +189,9 @@ export default function ServicesPage({ onBack }) {
             <Layers size={16} style={{ color: '#3b82f6' }} />
             <span style={{ fontSize: 14, fontWeight: 600, color: '#e2e8f0' }}>Services</span>
           </div>
-          <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 6 }}>
-            <div style={{ width: 28, height: 28, borderRadius: 7, background: 'linear-gradient(135deg, #059669, #0d9488)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: 13, color: '#fff' }}>Z</div>
-            <span style={{ fontSize: 13, fontWeight: 700, color: '#e2e8f0' }}>ZYNTH</span>
+          <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 8 }}>
+            <BrandMark size={30} />
+            <span style={{ fontSize: 13, fontWeight: 700, color: '#e2e8f0', letterSpacing: '0.04em' }}>Zynth</span>
           </div>
         </div>
       </div>
@@ -198,15 +199,15 @@ export default function ServicesPage({ onBack }) {
       {/* Hero */}
       <div style={{ maxWidth: 1000, margin: '0 auto', padding: '56px 24px 0' }}>
         <div style={{ textAlign: 'center', marginBottom: 56 }}>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '6px 14px', borderRadius: 20, backgroundColor: 'rgba(16,185,129,0.1)', border: '1px solid rgba(16,185,129,0.2)', marginBottom: 20 }}>
-            <span style={{ fontSize: 12, fontWeight: 700, color: '#3b82f6', letterSpacing: '0.08em' }}>TRADING INTELLIGENCE PLATFORM</span>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '6px 14px', borderRadius: 20, backgroundColor: 'rgba(59,130,246,0.1)', border: '1px solid rgba(59,130,246,0.2)', marginBottom: 20 }}>
+            <span style={{ fontSize: 12, fontWeight: 700, color: '#3b82f6', letterSpacing: '0.08em' }}>AI PERFORMANCE ANALYTICS PLATFORM</span>
           </div>
           <h1 style={{ fontSize: 36, fontWeight: 800, color: '#f1f5f9', marginBottom: 14, lineHeight: 1.2 }}>
-            Everything You Need to Trade<br />
-            <span style={{ color: '#3b82f6' }}>Smarter</span>
+            Everything You Need to<br />
+            <span style={{ color: '#3b82f6' }}>Understand Your Performance</span>
           </h1>
           <p style={{ fontSize: 15, color: '#6b7280', maxWidth: 560, margin: '0 auto', lineHeight: 1.7 }}>
-            Zynth combines AI-powered analysis, live market data, and economic intelligence into a single platform built for serious traders.
+            Zynth combines AI-powered behavioral analytics, real-time contextual data, and activity logging into a single platform built for performance-focused professionals.
           </p>
         </div>
 
@@ -269,13 +270,13 @@ export default function ServicesPage({ onBack }) {
         </div>
 
         {/* CTA */}
-        <div style={{ textAlign: 'center', padding: '40px 0 80px', borderTop: '1px solid rgba(16,185,129,0.1)' }}>
-          <p style={{ fontSize: 15, color: '#9ca3af', marginBottom: 20 }}>Ready to trade with intelligence?</p>
+        <div style={{ textAlign: 'center', padding: '40px 0 80px', borderTop: '1px solid rgba(59,130,246,0.1)' }}>
+          <p style={{ fontSize: 15, color: '#9ca3af', marginBottom: 20 }}>Ready to improve with AI-powered analytics?</p>
           <a href="/"
             style={{
               display: 'inline-flex', alignItems: 'center', gap: 8,
               padding: '12px 28px', borderRadius: 10,
-              background: 'linear-gradient(135deg, #059669, #0d9488)',
+              background: 'linear-gradient(135deg, #1d4ed8, #0284c7)',
               color: '#fff', fontWeight: 700, fontSize: 14,
               textDecoration: 'none', letterSpacing: '0.02em',
             }}
@@ -288,7 +289,7 @@ export default function ServicesPage({ onBack }) {
       </div>
 
       {/* Footer */}
-      <div style={{ borderTop: '1px solid rgba(16,185,129,0.08)', padding: '24px', textAlign: 'center' }}>
+      <div style={{ borderTop: '1px solid rgba(59,130,246,0.08)', padding: '24px', textAlign: 'center' }}>
         <div style={{ display: 'flex', justifyContent: 'center', gap: 20, flexWrap: 'wrap', marginBottom: 10 }}>
           {[['Terms of Service', '/terms'], ['Privacy Policy', '/privacy'], ['Refund Policy', '/refund'], ['Service Policy', '/service-policy']].map(([label, href]) => (
             <a key={label} href={href} style={{ fontSize: 12, color: '#6b7280', textDecoration: 'none' }}
@@ -296,7 +297,7 @@ export default function ServicesPage({ onBack }) {
               onMouseLeave={e => (e.currentTarget.style.color = '#6b7280')}>{label}</a>
           ))}
         </div>
-        <p style={{ fontSize: 11, color: '#374151' }}>© 2026 Zynth. All rights reserved. Trading involves risk.</p>
+        <p style={{ fontSize: 11, color: '#374151' }}>© 2026 Zynth. All rights reserved. Zynth is not a financial advisory service.</p>
       </div>
     </div>
   );

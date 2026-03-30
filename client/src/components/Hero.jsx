@@ -3,16 +3,16 @@ import { motion } from 'framer-motion';
 import { Flame, ArrowRight, Shield, Zap, Bot, Globe } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 
-// Upgraded Mockup with real-looking metrics and behavioral insights
+// Upgraded Mockup with real-looking behavioral performance data
 function HeroDashboardMockup({ isDark }) {
   const BEHAVIORAL_INSIGHTS = [
-    { icon: '⚠', color: '#ef4444', bg: 'rgba(239,68,68,0.1)', label: 'Overtrading after losses', value: '6 trades flagged' },
-    { icon: '✓', color: '#10b981', bg: 'rgba(16,185,129,0.1)', label: 'Best session: London', value: '+71% win rate' },
-    { icon: '↑', color: '#f59e0b', bg: 'rgba(245,158,11,0.1)', label: 'Risk increases post-drawdown', value: 'Position +40%' },
+    { icon: '\u26a0', color: '#ef4444', bg: 'rgba(239,68,68,0.1)', label: 'Impulsive activity under pressure', value: '6 sessions flagged' },
+    { icon: '\u2713', color: '#10b981', bg: 'rgba(16,185,129,0.1)', label: 'Best window: Morning session', value: '+31% consistency' },
+    { icon: '\u2191', color: '#f59e0b', bg: 'rgba(245,158,11,0.1)', label: 'Activity spikes after setbacks', value: 'Frequency +38%' },
   ];
   const STATS = [
-    { l: 'Win Rate', v: '↑ +12%', sub: 'vs last month', color: '#10b981' },
-    { l: 'Profit Factor', v: '1.2 → 1.8', sub: 'improving', color: '#3b82f6' },
+    { l: 'Consistency', v: '\u2191 +14pts', sub: 'vs last month', color: '#10b981' },
+    { l: 'Focus Score', v: '62 \u2192 81', sub: 'improving', color: '#3b82f6' },
   ];
 
   return (
@@ -53,10 +53,10 @@ function HeroDashboardMockup({ isDark }) {
               borderColor: 'rgba(59,130,246,0.18)',
             }}
           >
-            <div className="text-[9px] text-blue-400 uppercase tracking-widest font-bold">P&amp;L · Last 30 days</div>
-            <div className="text-[22px] font-black font-mono text-white">+$4,280</div>
+            <div className="text-[9px] text-blue-400 uppercase tracking-widest font-bold">Performance Score · Last 30 days</div>
+            <div className="text-[22px] font-black font-mono text-white">84 / 100</div>
             <div className="flex items-center gap-1 text-[10px] text-emerald-400 font-semibold">
-              <span>↑ 18.4% vs prior month</span>
+              <span>\u2191 +14pts vs prior period</span>
             </div>
           </div>
           <div className="grid grid-cols-2 gap-2">
@@ -165,12 +165,12 @@ export default function Hero({ badgeText, spotsLeft, onGetStarted, onSignIn }) {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="text-5xl md:text-[82px] font-black leading-[1.05] tracking-tighter mb-10"
+          className="text-5xl md:text-[78px] font-black leading-[1.05] tracking-tighter mb-10"
         >
-          <span className={isDark ? 'text-white' : 'text-gray-900'}>You&apos;re Not Losing.</span>
+          <span className={isDark ? 'text-white' : 'text-gray-900'}>Understand Your Decisions.</span>
           <br />
           <span className="inline-block pb-2 bg-clip-text text-transparent bg-gradient-to-r from-[#1d4ed8] via-[#3b82f6] to-[#06b6d4]">
-            You&apos;re Repeating Mistakes.
+            Improve Your Outcomes.
           </span>
         </motion.h1>
 
@@ -182,7 +182,7 @@ export default function Hero({ badgeText, spotsLeft, onGetStarted, onSignIn }) {
           className="mb-8"
         >
           <p className={`text-[16px] md:text-[18px] font-semibold leading-snug ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
-            Zynth analyzes your trades and shows you exactly what&apos;s going wrong, and how to fix it.
+            Zynth analyzes your activity patterns and shows you exactly what drives your behavior — and how to improve it.
           </p>
         </motion.div>
 
@@ -193,7 +193,7 @@ export default function Hero({ badgeText, spotsLeft, onGetStarted, onSignIn }) {
           transition={{ delay: 0.4 }}
           className={`text-[17px] md:text-[19px] font-semibold mb-14 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}
         >
-          See your mistakes. Fix them faster.
+          See your patterns. Improve faster.
         </motion.p>
 
         {/* Urgency Badge */}
@@ -206,7 +206,7 @@ export default function Hero({ badgeText, spotsLeft, onGetStarted, onSignIn }) {
             className="group relative px-8 py-5 bg-blue-600 text-white font-black rounded-2xl transition-all hover:scale-105 hover:shadow-[0_0_40px_rgba(59,130,246,0.4)] flex items-center gap-3 overflow-hidden"
           >
             <span className="relative z-10 flex items-center gap-2 text-lg">
-              Analyze My Trades <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
+              Get My Insights <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
             </span>
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
           </button>
@@ -226,14 +226,14 @@ export default function Hero({ badgeText, spotsLeft, onGetStarted, onSignIn }) {
           transition={{ delay: 0.7 }}
           className={`text-[12px] font-medium mb-8 ${isDark ? 'text-gray-500' : 'text-gray-500'}`}
         >
-          Free to start, no card required • 60-second setup • Built for traders
+          Free to start, no card required • 60-second setup • Trusted by 2,000+ users
         </motion.p>
 
         {/* Floating Trust Icons */}
         <div className="flex justify-center gap-3 flex-wrap">
           {[
             {Icon: Shield, label: 'Encrypted'},
-            {Icon: Zap, label: 'Journal-powered'},
+            {Icon: Zap, label: 'Activity-powered'},
             {Icon: Bot, label: 'AI by Gemini'},
           ].map(({Icon, label}) => (
             <div key={label} className={`flex items-center gap-2 px-4 py-1.5 rounded-full border text-[11px] font-bold uppercase tracking-widest ${

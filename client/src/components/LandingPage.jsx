@@ -23,45 +23,45 @@ import SocialProofToast from './SocialProofToast';
 // ─── Testimonial data ────────────────────────────────────────────────────────
 const TESTIMONIALS = [
   {
-    quote: "I kept blaming news events for my losses. After logging about 30 trades, the AI pointed out I was entering before confirmation, not waiting for structure to form. That one observation changed how I build setups.",
-    timeRef: 'After 3 weeks of journaling',
+    quote: "I kept attributing poor outcomes to external factors. After logging about a month of activity, the AI flagged that I was acting impulsively during high-pressure periods — not waiting for conditions to settle. That one insight changed how I approach decisions entirely.",
+    timeRef: 'After 4 weeks of logging',
     name: 'Daniel O.',
-    role: 'GBP/USD intraday trader',
+    role: 'Independent analyst, strategy consultant',
     avatarColor: 'linear-gradient(135deg,#1d4ed8,#0ea5e9)',
   },
   {
-    quote: "I swing trade gold and some weeks just felt completely off. The macro context scores helped me realise I was positioning against the broader bias without knowing it. I have been far more selective since.",
+    quote: "Some periods just felt completely off. The context awareness scoring helped me realize I was making decisions against the broader data trend without recognizing it. I've been far more deliberate and selective since using Zynth.",
     timeRef: 'Within the first month',
     name: 'Priya R.',
-    role: 'XAU/USD swing trader, Asian session',
+    role: 'Business operations lead, performance coach',
     avatarColor: 'linear-gradient(135deg,#7c3aed,#a855f7)',
   },
   {
-    quote: "Honestly didn't expect much from another trading app. But having the journal, AI feedback, and economic calendar in one place meant I actually started reviewing my trades instead of just moving on.",
-    timeRef: 'First 10 trades logged',
+    quote: "Honestly didn't expect much from another analytics tool. But having the activity log, AI feedback, and data dashboard in one place meant I actually started reviewing my decisions instead of just moving on to the next thing.",
+    timeRef: 'First 10 sessions logged',
     name: 'James F.',
-    role: 'Crypto and indices, part-time trader',
+    role: 'Entrepreneur, part-time advisor',
     avatarColor: 'linear-gradient(135deg,#0f766e,#06b6d4)',
   },
   {
-    quote: "I used to think I had a strategy. Turns out I had a collection of habits, some good and some not. The pattern analysis made that very clear within the first two weeks. Uncomfortable but genuinely useful.",
+    quote: "I used to think I had a clear approach. Turns out I had a collection of habits — some good and some not. The pattern analysis made that unmistakably clear within the first two weeks. Uncomfortable but genuinely useful.",
     timeRef: 'Two weeks in',
     name: 'Tom B.',
-    role: 'NAS100 scalper, London open',
+    role: 'Operations manager, decision-maker',
     avatarColor: 'linear-gradient(135deg,#b45309,#f59e0b)',
   },
   {
-    quote: "The economic calendar integration is what sold me. I used to miss high-impact events and wonder why my trades went sideways. Now I can see the context before I size up.",
+    quote: "The contextual data integration is what sold me. I used to miss important signals and wonder why outcomes varied so much. Now I can see the full picture before committing to a decision. It's changed how I prepare.",
     timeRef: 'After first month',
     name: 'Leila M.',
-    role: 'EUR/USD and USD/JPY, news trader',
+    role: 'Research analyst, data-driven professional',
     avatarColor: 'linear-gradient(135deg,#be185d,#ec4899)',
   },
   {
-    quote: "I was journaling in a spreadsheet before. This is a different experience. The AI feedback doesn't just describe what happened, it asks the kind of questions I should be asking myself.",
+    quote: "I was tracking everything in a spreadsheet before. This is a completely different experience. The AI feedback doesn't just describe what happened — it asks the kind of questions I should be asking myself.",
     timeRef: 'Within the first two weeks',
     name: 'Chris A.',
-    role: 'Forex swing trader, multiple pairs',
+    role: 'Strategic planner, productivity enthusiast',
     avatarColor: 'linear-gradient(135deg,#166534,#22c55e)',
   },
 ];
@@ -130,10 +130,10 @@ function TestimonialCarousel({ isDark }) {
           <span className="text-[11px] font-bold tracking-[0.18em] text-amber-400">TESTIMONIALS</span>
         </div>
         <h2 className={`text-[42px] font-extrabold tracking-tight ${isDark ? 'text-white' : 'text-gray-900'}`}>
-          <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#1d4ed8] to-[#06b6d4]">What traders are saying</span>
+          <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#1d4ed8] to-[#06b6d4]">What our users are saying</span>
         </h2>
         <p className={`mt-3 text-[14px] ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>
-          Trusted by traders improving their edge every day
+          Trusted by users improving their performance every day
         </p>
       </div>
 
@@ -235,7 +235,7 @@ const TOTAL_FOUNDING = 100;
 const OFFER_END_DATE = new Date('2026-04-12T23:59:59');
 
 const NAV_LINKS = ['Features', 'Pricing', 'FAQ'];
-const BADGE_TEXTS = ['For Gold Traders', 'For Forex Traders', 'For Serious Traders'];
+const BADGE_TEXTS = ['For Analysts', 'For Professionals', 'For Serious Performers'];
 
 function fmtPrice(sym, val) {
   if (sym === 'XAU/USD') return '$' + val.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
@@ -255,33 +255,33 @@ const INITIAL_MARKETS = [
 ];
 
 const FAQS = [
-  { q: 'What is Zynth?', a: 'Zynth is an AI trading journal that helps you identify why your trades fail, and what to do about it. You log your trades, Zynth finds the patterns you keep repeating.' },
-  { q: 'Is my data safe?', a: 'Yes. All data is encrypted in transit (TLS 1.3) and stored securely. We never share or sell your trading data to anyone.' },
-  { q: 'What is the Macro Surprise Score?', a: 'The Macro Surprise Score is our proprietary indicator that analyzes 10 major economic releases and calculates a single score (-10 to +10) showing whether macro conditions are bullish or bearish for gold (XAUUSD).' },
-  { q: 'Is there a free plan?', a: 'Absolutely. The Free plan includes core features with no credit card required: 5 lifetime journal entries, 2 lifetime AI analyses, delayed live markets, and today\'s US high/medium-impact economic events.' },
-  { q: 'What does the AI analysis include?', a: 'Our AI reads your trade history and journal entries to surface patterns, identify mistakes, and give you personalized improvement suggestions.' },
-  { q: 'What markets does Zynth cover?', a: 'Zynth covers Forex (XAU/USD, EUR/USD, GBP/USD, USD/JPY), major crypto (BTC, ETH, XRP, SOL, BNB), US stocks (AAPL, TSLA, NVDA, MSFT, AMZN, GOOGL), and ETFs (SPY, GLD, TLT).' },
-  { q: 'What are the subscription prices?', a: `Pro is ${getPlanMonthlyLabel('pro')} and Elite is ${getPlanMonthlyLabel('elite')}. Both are billed monthly and you can cancel anytime. Free plan is available with no credit card required.` },
+  { q: 'What is Zynth?', a: 'Zynth is an AI-powered performance analytics platform that helps you understand your behavioral patterns, track activities, and improve your outcomes over time. Zynth is not a financial advisory tool and does not provide investment or trading advice of any kind.' },
+  { q: 'Is my data safe?', a: 'Yes. All data is encrypted in transit (TLS 1.3) and stored securely. We never share or sell your personal data to third parties.' },
+  { q: 'What is the Context Awareness Score?', a: 'The Context Awareness Score analyzes key data inputs and summarizes external conditions relevant to your logged activities. It helps you understand how surrounding context may have influenced your decisions — without providing financial advice.' },
+  { q: 'Is there a free plan?', a: 'Absolutely. The Free plan includes core features with no credit card required: 5 lifetime activity logs, 2 lifetime AI analyses, and access to the core analytics dashboard.' },
+  { q: 'What does the AI analysis include?', a: 'Our AI reads your activity logs and identifies behavioral patterns, recurring tendencies, and areas of inconsistency — then delivers personalized improvement suggestions to help you make more deliberate decisions.' },
+  { q: 'What data does Zynth work with?', a: 'Zynth works with user-logged activity data and contextual signals. You log what you do, and Zynth surfaces patterns across time, context, and outcome to help you understand what drives your performance.' },
+  { q: 'What are the subscription prices?', a: `Pro is ${getPlanMonthlyLabel('pro')} and Elite is ${getPlanMonthlyLabel('elite')}. Both are billed monthly and you can cancel anytime. A free plan is available with no credit card required.` },
 ];
 
 const FEATURE_CARDS = [
   {
     Icon: BarChart2,
-    title: 'Macro Surprise Score',
-    desc: 'A proprietary -10 to +10 score showing real-time macro conditions for gold, updated automatically from official sources.',
-    bullets: ['Tracks 10 major economic releases', 'Single score for instant context', 'Automatically updated from official data'],
+    title: 'Context Awareness Engine',
+    desc: 'A real-time score that summarizes external conditions and contextual signals at the time of your logged activities — so you always understand what was influencing your decisions.',
+    bullets: ['Tracks key contextual data inputs automatically', 'Single score for immediate clarity', 'Updated from verified data sources'],
   },
   {
     Icon: Bot,
-    title: 'AI-Powered Reports',
-    desc: "Our AI reads through your trades and gives you a full breakdown of what's working, what's not, and what to focus on next.",
-    bullets: ['Personalized performance analysis', 'Blind spot & pattern detection', 'Actionable improvement plan'],
+    title: 'AI Performance Reports',
+    desc: 'Our AI reads through your full activity history and delivers a comprehensive breakdown of behavioral patterns, consistency trends, and your next improvement priorities.',
+    bullets: ['Personalized behavioral analysis', 'Blind spot and pattern detection', 'Actionable improvement roadmap'],
   },
   {
     Icon: Brain,
-    title: 'AI Trade Coaching',
-    desc: 'Upload your trades or journal entries and get personalized AI feedback on your patterns, mistakes, and improvement areas.',
-    bullets: ['Advanced AI analysis', 'Personalized to your trading style'],
+    title: 'AI Behavioral Insights',
+    desc: 'Log your activities and receive tailored AI feedback on your behavioral tendencies, decision patterns, and specific improvement areas that will have the most impact.',
+    bullets: ['Advanced AI pattern recognition', 'Personalized to your activity profile'],
   },
 ];
 
@@ -295,18 +295,18 @@ function LandingPricing({ isDark, onGetStarted }) {
 
   const eliteFeatures = [
     'Unlimited AI insights, no daily limits',
-    'Premium strategy breakdowns and deeper reporting',
+    'Premium behavioral breakdowns and in-depth reporting',
     'Advanced analytics dashboard',
-    'Economic intelligence and macro context',
-    'Unlimited journal entries',
+    'Context intelligence and awareness scoring',
+    'Unlimited activity logs',
     'Priority support and early feature access',
   ];
   const proFeatures = [
     '50 AI insights per month',
     'Advanced analytics dashboard',
-    'Economic intelligence and macro context',
-    'Unlimited journal entries',
-    'Full access to all core trading tools',
+    'Context awareness scoring',
+    'Unlimited activity logs',
+    'Full access to all core analytics tools',
   ];
 
   return (
@@ -339,7 +339,7 @@ function LandingPricing({ isDark, onGetStarted }) {
           }`}>
             <span className="text-yellow-400 tracking-tight text-[13px]">★★★★★</span>
             <span className={isDark ? 'text-slate-600' : 'text-slate-300'}>|</span>
-            Trusted by <span className={`font-semibold ${isDark ? 'text-slate-200' : 'text-slate-700'}`}>2,400+ traders</span>
+            Trusted by <span className={`font-semibold ${isDark ? 'text-slate-200' : 'text-slate-700'}`}>2,400+ users</span>
           </div>
 
           {/* Section label */}
@@ -444,7 +444,7 @@ function LandingPricing({ isDark, onGetStarted }) {
                       Elite
                     </h3>
                     <p className={`text-[13.5px] mt-1.5 leading-snug ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
-                      For traders who operate without limits
+                      For professionals who demand the deepest insights
                     </p>
                   </div>
                   {isAnnual && elite.savingsText && (
@@ -487,7 +487,7 @@ function LandingPricing({ isDark, onGetStarted }) {
                   onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 10px 36px rgba(124,58,237,0.55), 0 2px 8px rgba(0,0,0,0.2)'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
                   onMouseLeave={e => { e.currentTarget.style.boxShadow = isDark ? '0 4px 24px rgba(124,58,237,0.4), 0 1px 4px rgba(0,0,0,0.3)' : '0 6px 24px rgba(109,40,217,0.32), 0 2px 6px rgba(109,40,217,0.18)'; e.currentTarget.style.transform = ''; }}
                 >
-                  Analyze My Trades
+                  Get My Insights
                 </button>
 
                 {/* Features */}
@@ -548,7 +548,7 @@ function LandingPricing({ isDark, onGetStarted }) {
                       Pro
                     </h3>
                     <p className={`text-[13.5px] mt-1.5 leading-snug ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
-                      AI-powered feedback to build consistency
+                      AI-powered feedback to build lasting consistency
                     </p>
                   </div>
                   {isAnnual && pro.savingsText && (
@@ -618,7 +618,7 @@ function LandingPricing({ isDark, onGetStarted }) {
                     }
                   }}
                 >
-                  Analyze My Trades
+                  Get My Insights
                 </button>
 
                 {/* Features */}
@@ -674,7 +674,7 @@ function LandingPricing({ isDark, onGetStarted }) {
               className={`text-[13px] font-semibold transition-all hover:opacity-80
                 ${isDark ? 'text-violet-400' : 'text-violet-600'}`}
             >
-              Analyze My Trades
+              Start Free
             </button>
           </div>
         </Reveal>
@@ -854,9 +854,9 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
 
   // CTA insight card cycle
   const CTA_INSIGHTS = [
-    { color: 'amber',   text: '\u26a0 Revenge trading detected on 6 trades this month' },
-    { color: 'emerald', text: '\u2705 Best session: London (71% win rate)' },
-    { color: 'emerald', text: '\ud83d\udcc8 Win rate improving: +12% vs last month' },
+    { color: 'amber',   text: '\u26a0 Impulsive activity detected in 6 high-pressure sessions' },
+    { color: 'emerald', text: '\u2705 Best performance: Morning session (+31% consistency)' },
+    { color: 'emerald', text: '\ud83d\udcc8 Decision quality improving: +18% vs last month' },
   ];
   useEffect(() => {
     const id = setInterval(() => {
@@ -874,8 +874,8 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
     sessionStorage.setItem('bannerDismissed', '1');
   }
 
-  const SEO_TITLE       = 'Zynth: AI Trading Journal That Shows You Why Your Trades Fail';
-  const SEO_DESCRIPTION = 'Log your trades, find your patterns, fix your mistakes. Zynth is an AI-powered trading journal for forex, gold and crypto traders.';
+  const SEO_TITLE       = 'Zynth: AI-Powered Performance Analytics & Behavioral Insights';
+  const SEO_DESCRIPTION = 'Understand your behavioral patterns, track your activities, and improve your decision-making with AI-powered analytics. Zynth is a professional SaaS analytics platform.';
   const SEO_URL         = 'https://zynth.codes';
   const SEO_IMAGE       = 'https://zynth.codes/og-image.png';
 
@@ -1077,7 +1077,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
             <button onClick={() => onGetStarted()}
                     className="text-[13px] font-semibold text-white px-5 py-2.5 rounded-xl transition-all hover:brightness-110 hover:scale-[1.03]"
                     style={{background:'linear-gradient(135deg,#1d4ed8,#0284c7)', boxShadow:'0 4px 16px rgba(59,130,246,0.3)'}}>
-              Analyze My Trades
+              Get My Insights
             </button>
           </div>
 
@@ -1118,7 +1118,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
               <button onClick={() => { setMobileOpen(false); onGetStarted(); }}
                       className="flex-1 text-[13px] font-semibold text-white rounded-xl py-2.5"
                       style={{background:'linear-gradient(135deg,#1d4ed8,#0284c7)'}}>
-                Analyze My Trades
+                Get My Insights
               </button>
             </div>
           </div>
@@ -1148,7 +1148,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
       {/* ═══════════════════════ HOW IT WORKS ════════════════════════ */}
       <HowItWorks onGetStarted={onGetStarted} />
 
-      {/* ════════════════════ WHY TRADERS FAIL ══════════════════════ */}
+      {/* ════════════════════ WHY DECISIONS FALL SHORT ═══════════════ */}
       <WhyTradersFail onGetStarted={onGetStarted} />
 
       {/* ═══════════════════════════ FEATURES ═══════════════════════════ */}
@@ -1164,13 +1164,13 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
             </div>
             <h2 className="text-[42px] font-extrabold tracking-tight mb-4">
               <span className={`bg-clip-text text-transparent bg-gradient-to-r ${isDark ? 'from-white to-blue-400' : 'from-[#0a0e1a] to-blue-600'}`}>
-                Everything here is built to fix your trading mistakes.
+                Everything built to help you understand your patterns.
               </span>
             </h2>
-            <p className={`text-[16px] max-w-[480px] mx-auto ${isDark ? 'text-gray-500' : 'text-gray-600'}`}>Every feature in Zynth exists to help you understand your trades better, and make fewer mistakes.</p>
+            <p className={`text-[16px] max-w-[480px] mx-auto ${isDark ? 'text-gray-500' : 'text-gray-600'}`}>Every feature in Zynth exists to help you understand your decisions better, surface your behavioral patterns, and build lasting consistency.</p>
           </Reveal>
 
-          {/* Feature row — Live Markets (reversed) */}
+          {/* Feature row — Real-Time Context Data (reversed) */}
           <Reveal delay={0.1} className="flex flex-col lg:flex-row-reverse items-center gap-12">
             {/* Mockup */}
             <div className="flex-1 w-full">
@@ -1187,7 +1187,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
                     <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/60" />
                     <div className="w-2.5 h-2.5 rounded-full bg-emerald-500/60" />
                   </div>
-                  <span className={`text-[11px] mx-auto ${isDark ? 'text-gray-600' : 'text-gray-400'}`}>Live Markets</span>
+                  <span className={`text-[11px] mx-auto ${isDark ? 'text-gray-600' : 'text-gray-400'}`}>Real-Time Context Data</span>
                 </div>
                 <div className="p-5">
                   <div className="grid grid-cols-2 gap-2.5">
@@ -1219,17 +1219,17 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
                 <BarChart2 className="w-7 h-7 text-blue-400" />
               </div>
               <h3 className="text-[32px] font-extrabold mb-4">
-                <span className={isDark ? 'text-white' : 'text-gray-900'}>Trade with </span>
+                <span className={isDark ? 'text-white' : 'text-gray-900'}>Decide with </span>
                 <span className="bg-clip-text text-transparent bg-gradient-to-r from-sky-400 to-violet-400">
                   context, not guesswork
                 </span>
               </h3>
               <p className={`text-[15px] leading-relaxed mb-6 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-                See economic events and market conditions alongside your trades.
+                See real-time contextual data signals alongside your activity logs, so every decision is informed.
               </p>
               <button onClick={() => onGetStarted()}
                       className="mt-4 flex items-center gap-2 text-[14px] font-semibold text-blue-400 hover:text-blue-300 transition-colors">
-                Analyze My Trades <ArrowRight className="w-4 h-4" />
+                Get My Insights <ArrowRight className="w-4 h-4" />
               </button>
             </div>
           </Reveal>
@@ -1299,25 +1299,25 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
             {/* Left 60% */}
             <div className="flex-[3] text-center lg:text-left">
               <h2 className={`text-[38px] md:text-[50px] font-extrabold tracking-tight leading-[1.08] mb-5 ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                Your next trade shouldn&apos;t<br />
+                Your decisions deserve<br />
                 <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#1d4ed8] to-[#06b6d4]">
-                  repeat your last mistake.
+                  better data behind them.
                 </span>
               </h2>
               <p className={`text-[16px] mb-8 max-w-[420px] lg:max-w-none leading-relaxed ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
-                Start using data instead of guesswork.
+                Stop guessing. Start improving with AI-powered behavioral analytics.
               </p>
               <button onClick={() => onGetStarted()}
                       className="group relative overflow-hidden inline-flex items-center gap-2 text-[16px] font-semibold text-white px-9 py-4 rounded-2xl hover:scale-[1.03] hover:shadow-[0_8px_32px_rgba(59,130,246,0.45)]"
                       style={{background:'linear-gradient(135deg,#1d4ed8 0%,#0284c7 100%)', boxShadow:'0 4px 20px rgba(59,130,246,0.28)'}}>
                 <span className="relative z-10 flex items-center gap-2">
-                  Analyze My Trades
+                  Get My Insights
                   <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
                 </span>
                 <span className="absolute inset-0 pointer-events-none"
                       style={{background:'linear-gradient(90deg,transparent 0%,rgba(255,255,255,0.14) 50%,transparent 100%)',backgroundSize:'200% 100%',animation:'shimmerBtn 3s linear infinite'}} />
               </button>
-              <p className={`text-[12px] mt-4 ${isDark ? 'text-gray-600' : 'text-gray-500'}`}>No credit card required · Cancel anytime</p>
+              <p className={`text-[12px] mt-4 ${isDark ? 'text-gray-600' : 'text-gray-500'}`}>No credit card required · Cancel anytime · Not financial advice</p>
             </div>
 
             {/* Right 40% — cycling insight cards */}
@@ -1367,6 +1367,32 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
         </Reveal>
       </section>
 
+      {/* ══════════════════ DISCLAIMER / COMPLIANCE ══════════════════ */}
+      <section className="py-12 px-6 transition-colors duration-300">
+        <div className="max-w-4xl mx-auto">
+          <div
+            className="rounded-2xl border p-6 md:p-8"
+            style={{
+              background: isDark ? 'rgba(15,23,42,0.6)' : 'rgba(248,250,252,0.9)',
+              borderColor: isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.08)',
+            }}
+          >
+            <div className="flex items-start gap-3 mb-3">
+              <Info className={`w-4 h-4 shrink-0 mt-0.5 ${isDark ? 'text-slate-500' : 'text-slate-400'}`} />
+              <p className={`text-[11px] font-bold tracking-[0.15em] uppercase ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>
+                Important Disclaimer
+              </p>
+            </div>
+            <p className={`text-[12.5px] leading-relaxed ${isDark ? 'text-gray-500' : 'text-gray-500'}`}>
+              <strong className={isDark ? 'text-gray-400' : 'text-gray-600'}>Zynth is not a trading platform and does not provide financial, investment, or trading advice of any kind.</strong>{' '}
+              Zynth is a data analysis and behavioral analytics SaaS tool designed solely to help users evaluate their own logged activities, discover behavioral patterns, and track personal performance over time.
+              Any data displayed within the platform is for informational and self-analysis purposes only. Users are solely responsible for their own decisions.
+              Past performance data shown within the platform does not guarantee future results. By using Zynth, you acknowledge that it is a personal analytics tool and not a financial service.
+            </p>
+          </div>
+        </div>
+      </section>
+
       {/* ═══════════════════════════ FOOTER ═══════════════════════════ */}
       <footer className={`border-t pt-16 pb-10 px-6 transition-colors duration-300`}
               style={{
@@ -1381,7 +1407,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
               <BrandMark size={36} />
               <span className={`text-[16px] font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>Zynth</span>
             </div>
-            <p className="text-[12px] leading-relaxed mb-4" style={{color: isDark ? 'rgba(52,211,153,0.5)' : '#6b7280'}}>Intelligence Behind Every Trade</p>
+            <p className="text-[12px] leading-relaxed mb-4" style={{color: isDark ? 'rgba(52,211,153,0.5)' : '#6b7280'}}>Intelligence Behind Every Decision</p>
             <p className={`text-[11px] ${isDark ? 'text-gray-700' : 'text-gray-500'}`}>© 2026 Zynth. All rights reserved.</p>
           </div>
 
@@ -1420,7 +1446,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
             </ul>
             <div className="mt-6 flex items-center gap-2">
               <span className="w-2 h-2 rounded-full flex-shrink-0" style={{background: isDark ? '#34d399' : '#3b82f6', boxShadow: isDark ? '0 0 6px rgba(52,211,153,0.7)' : '0 0 6px rgba(59,130,246,0.7)'}} />
-              <span className={`text-[11px] ${isDark ? 'text-gray-600' : 'text-gray-500'}`}>Built for active traders</span>
+              <span className={`text-[11px] ${isDark ? 'text-gray-600' : 'text-gray-500'}`}>Built for performance-focused professionals</span>
             </div>
           </div>
 
