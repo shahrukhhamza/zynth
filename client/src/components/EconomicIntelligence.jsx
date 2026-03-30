@@ -8,8 +8,7 @@ import { useTheme } from '../contexts/ThemeContext';
 import { useUpgrade } from '../contexts/UpgradeContext';
 import { usePlanGate } from '../hooks/usePlanGate';
 import { getAuthToken } from '../utils/authStorage';
-import PricingPlanSelector from './pricing/PricingPlanSelector';
-import { DEFAULT_BILLING_CYCLE, DEFAULT_SELECTED_PLAN } from '../config/pricingPlans';
+
 import { Line } from 'react-chartjs-2';
 import {
   Chart as ChartJS, CategoryScale, LinearScale,
@@ -308,44 +307,69 @@ function MacroScoreWidget({ macroScore, D }) {
 }
 
 function PaywallPricingBlock({ onUpgrade }) {
-  const [selectedPlan, setSelectedPlan] = useState(DEFAULT_SELECTED_PLAN);
-  const [billingCycle, setBillingCycle] = useState(DEFAULT_BILLING_CYCLE);
   const handleUpgrade = () => {
     onUpgrade({
-      requiredPlan: selectedPlan,
+      requiredPlan: 'pro',
       feature: 'Economic Intelligence',
       headline: 'Unlock AI-Powered Insights',
       reason: 'Economic Intelligence is available on Pro and Elite plans.',
-      billingCycle,
     });
   };
 
   return (
-    <div className="relative z-10 flex w-full max-w-6xl flex-col items-center gap-8">
-      <div className="max-w-2xl text-center">
-        <span className="inline-flex items-center gap-2 rounded-full border border-blue-200 bg-white/80 px-4 py-1.5 text-[11px] font-bold uppercase tracking-[0.24em] text-blue-700 shadow-sm backdrop-blur dark:border-blue-500/25 dark:bg-slate-900/70 dark:text-blue-300">
-          <Brain className="h-3.5 w-3.5" />
-          Economic Intelligence
-        </span>
-        <h2 className="mt-5 text-3xl font-black tracking-tight text-slate-900 dark:text-white sm:text-4xl">
-          Unlock AI-powered macro intelligence for every trade.
-        </h2>
-        <p className="mt-3 text-sm leading-7 text-slate-600 dark:text-slate-300 sm:text-[15px]">
-          Get surprise scoring, macro trend shifts, and event-to-trade correlation in one system instead of piecing it together manually.
-        </p>
+    <div style={{
+      display: 'flex', flexDirection: 'column', alignItems: 'center',
+      textAlign: 'center', maxWidth: 420, margin: '0 auto',
+    }}>
+
+      {/* Icon */}
+      <div style={{
+        display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+        width: 48, height: 48, borderRadius: 14, marginBottom: 20,
+        background: 'rgba(59,130,246,0.14)',
+        border: '1px solid rgba(59,130,246,0.3)',
+      }}>
+        <Brain size={20} color="#60a5fa" />
       </div>
 
-      <PricingPlanSelector
-        context="ai"
-        mode="compact"
-        selectedPlan={selectedPlan}
-        onSelectPlan={setSelectedPlan}
-        billingCycle={billingCycle}
-        onBillingCycleChange={setBillingCycle}
-        onContinue={handleUpgrade}
-        primaryActionLabel="Unlock Economic Intelligence"
-        className="w-full"
-      />
+      {/* Headline */}
+      <h2 style={{
+        fontSize: 22, fontWeight: 800, lineHeight: 1.3,
+        color: 'var(--z-text)', margin: '0 0 10px',
+      }}>
+        AI Insights is a Pro feature
+      </h2>
+
+      {/* Benefit */}
+      <p style={{
+        fontSize: 14, lineHeight: 1.65, color: 'var(--z-muted)',
+        margin: '0 0 28px', maxWidth: 340,
+      }}>
+        Get macro surprise scores, trend shifts, and event-to-trade correlation — all in one view.
+      </p>
+
+      {/* CTA */}
+      <button
+        onClick={handleUpgrade}
+        style={{
+          display: 'inline-flex', alignItems: 'center', gap: 6,
+          padding: '12px 32px', borderRadius: 11, border: 'none', cursor: 'pointer',
+          fontSize: 15, fontWeight: 700, color: '#fff',
+          background: 'linear-gradient(135deg, #3b82f6, #6366f1)',
+          boxShadow: '0 4px 18px rgba(59,130,246,0.35)',
+          transition: 'opacity 0.15s',
+        }}
+        onMouseOver={e => { e.currentTarget.style.opacity = '0.88'; }}
+        onMouseOut={e => { e.currentTarget.style.opacity = '1'; }}
+      >
+        Unlock full access &rarr;
+      </button>
+
+      {/* Pricing hint + social proof */}
+      <p style={{ fontSize: 12, color: 'var(--z-muted)', margin: '14px 0 0' }}>
+        From $9/mo &middot; Most users upgrade here
+      </p>
+
     </div>
   );
 }

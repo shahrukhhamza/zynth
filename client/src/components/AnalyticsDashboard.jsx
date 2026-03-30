@@ -26,7 +26,7 @@ function Skeleton({ h = 32, r = 8 }) {
   return (
     <div style={{
       height: h, borderRadius: r,
-      background: theme.isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)',
+      background: theme.isDark ? 'rgba(255,255,255,0.06)' : '#e2e8f0',
       animation: 'pulse 1.5s ease-in-out infinite',
     }} />
   );
@@ -39,11 +39,14 @@ function KpiCard({ label, value, color, Icon, loading, sub }) {
   return (
     <div style={{
       borderRadius: 12, padding: '12px 14px',
-      background: theme.surface, border: `1px solid ${theme.border}`,
+      background: theme.isDark ? theme.surface : '#ffffff',
+      border: `1px solid ${theme.isDark ? 'rgba(255,255,255,0.05)' : '#e2e8f0'}`,
+      boxShadow: theme.isDark ? 'none' : '0 1px 3px rgba(15,23,42,0.06), 0 4px 12px rgba(15,23,42,0.05)',
       display: 'flex', flexDirection: 'column', gap: 8, minWidth: 0,
+      transition: 'box-shadow 0.2s ease',
     }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <span style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 0.6, color: theme.muted }}>
+        <span style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 0.6, color: theme.isDark ? theme.muted : '#64748b' }}>
           {label}
         </span>
         <div style={{ width: 26, height: 26, borderRadius: 7, background: `${color}18`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -74,7 +77,7 @@ function FunnelStep({ label, count, pct, color, relativeWidth, isFirst, loading,
         <span style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 0.5, color: theme.muted }}>{label}</span>
         {loading ? <Skeleton h={24} /> : <span style={{ fontSize: 20, fontWeight: 800, color }}>{count.toLocaleString()}</span>}
       </div>
-      <div style={{ height: 6, borderRadius: 3, background: theme.isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)', overflow: 'hidden' }}>
+      <div style={{ height: 6, borderRadius: 3, background: theme.isDark ? 'rgba(255,255,255,0.06)' : '#e2e8f0', overflow: 'hidden' }}>
         <div ref={barRef} style={{ height: '100%', borderRadius: 3, background: color, transition: 'width 0.65s cubic-bezier(0.4,0,0.2,1)', width: '0%' }} />
       </div>
       {!isFirst && (
@@ -111,7 +114,7 @@ function DropoffCard({ stage, count, label, hint, color, loading, theme }) {
 
 // ── Trigger bar ───────────────────────────────────────────────────────────────
 
-const TRIGGER_COLORS = ['#6366F1', '#3B82F6', '#0EA5E9', '#14B8A6', '#10B981'];
+const TRIGGER_COLORS = ['#2563eb', '#059669', '#3b82f6', '#10b981', '#1d4ed8'];
 const TRIGGER_LABELS = {
   ai_limit: 'AI limit hit', journal_limit: 'Journal limit hit',
   advancedAnalytics: 'Advanced analytics gate', behavioralInsights: 'Behavioral insights gate',
@@ -136,7 +139,7 @@ function TriggerBar({ source, count, total, index, theme }) {
         <span style={{ fontSize: 12, fontWeight: 600, color: theme.text }}>{TRIGGER_LABELS[source] ?? source}</span>
         <span style={{ fontSize: 11, color: theme.muted, flexShrink: 0, marginLeft: 8 }}>{count.toLocaleString()} ({Math.round(pct)}%)</span>
       </div>
-      <div style={{ height: 6, borderRadius: 3, background: theme.isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)', overflow: 'hidden' }}>
+      <div style={{ height: 6, borderRadius: 3, background: theme.isDark ? 'rgba(255,255,255,0.06)' : '#e2e8f0', overflow: 'hidden' }}>
         <div ref={barRef} style={{ height: '100%', borderRadius: 3, background: color, transition: `width 0.65s cubic-bezier(0.4,0,0.2,1) ${index * 60}ms`, width: '0%' }} />
       </div>
     </div>
@@ -147,7 +150,13 @@ function TriggerBar({ source, count, total, index, theme }) {
 
 function Section({ title, children, theme, extra }) {
   return (
-    <div style={{ borderRadius: 14, padding: '16px 18px', background: theme.surface, border: `1px solid ${theme.border}`, display: 'flex', flexDirection: 'column', gap: 14 }}>
+    <div style={{
+      borderRadius: 14, padding: '16px 18px',
+      background: theme.isDark ? theme.surface : '#ffffff',
+      border: `1px solid ${theme.isDark ? 'rgba(255,255,255,0.05)' : '#e2e8f0'}`,
+      boxShadow: theme.isDark ? 'none' : '0 1px 3px rgba(15,23,42,0.06), 0 4px 16px rgba(15,23,42,0.06)',
+      display: 'flex', flexDirection: 'column', gap: 14,
+    }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <span style={{ fontSize: 13, fontWeight: 700, color: theme.text }}>{title}</span>
         {extra}
@@ -208,24 +217,24 @@ export default function AnalyticsDashboard() {
   const relWidths    = funnelCounts.map(c => Math.max(4, Math.round((c / maxCount) * 100)));
 
   const FUNNEL_STEPS = [
-    { label: 'AI Analyses',     color: '#8B5CF6', pct: 100,                          count: aiUsed,      relativeWidth: relWidths[0] },
-    { label: 'Limit Hit',       color: '#F59E0B', pct: funnel.aiToLimit      ?? 0,   count: totalLimits, relativeWidth: relWidths[1] },
-    { label: 'Modal Opened',    color: '#0EA5E9', pct: funnel.limitToModal    ?? 0,   count: modalOpens,  relativeWidth: relWidths[2] },
-    { label: 'Clicked Upgrade', color: '#6366F1', pct: funnel.modalToClick    ?? 0,   count: clicks,      relativeWidth: relWidths[3] },
-    { label: 'Subscribed',      color: '#10B981', pct: funnel.clickToSubscribe ?? 0,  count: subs,        relativeWidth: relWidths[4] },
+    { label: 'AI Analyses',     color: '#3B82F6', pct: 100,                          count: aiUsed,      relativeWidth: relWidths[0] },
+    { label: 'Limit Hit',       color: '#DC2626', pct: funnel.aiToLimit      ?? 0,   count: totalLimits, relativeWidth: relWidths[1] },
+    { label: 'Modal Opened',    color: '#2563EB', pct: funnel.limitToModal    ?? 0,   count: modalOpens,  relativeWidth: relWidths[2] },
+    { label: 'Clicked Upgrade', color: '#1D4ED8', pct: funnel.modalToClick    ?? 0,   count: clicks,      relativeWidth: relWidths[3] },
+    { label: 'Subscribed',      color: '#059669', pct: funnel.clickToSubscribe ?? 0,  count: subs,        relativeWidth: relWidths[4] },
   ];
 
   const KPI_CARDS = [
-    { label: 'Signups',         value: tot.signups         ?? data?.signups,         color: '#10B981', Icon: UserPlus },
-    { label: 'Trades Logged',   value: tot.tradesAdded     ?? data?.trades_added,    color: '#3B82F6', Icon: BookOpen },
-    { label: 'AI Analyses',     value: aiUsed,                                       color: '#8B5CF6', Icon: Zap },
-    { label: 'Limit Hits',      value: totalLimits,                                  color: '#F59E0B', Icon: AlertTriangle,
+    { label: 'Signups',         value: tot.signups         ?? data?.signups,         color: '#059669', Icon: UserPlus },
+    { label: 'Trades Logged',   value: tot.tradesAdded     ?? data?.trades_added,    color: '#2563EB', Icon: BookOpen },
+    { label: 'AI Analyses',     value: aiUsed,                                       color: '#3B82F6', Icon: Zap },
+    { label: 'Limit Hits',      value: totalLimits,                                  color: '#DC2626', Icon: AlertTriangle,
       sub: `AI ${tot.aiLimitHits ?? data?.ai_limit_hits ?? 0}  ·  Journal ${tot.journalLimitHits ?? data?.journal_limit_hits ?? 0}` },
-    { label: 'Modal Opens',     value: modalOpens,                                   color: '#0EA5E9', Icon: Eye },
-    { label: 'Upgrade Clicks',  value: clicks,                                       color: '#6366F1', Icon: MousePointerClick },
-    { label: 'Subscriptions',   value: subs,                                         color: '#F59E0B', Icon: ShoppingCart,
+    { label: 'Modal Opens',     value: modalOpens,                                   color: '#2563EB', Icon: Eye },
+    { label: 'Upgrade Clicks',  value: clicks,                                       color: '#1D4ED8', Icon: MousePointerClick },
+    { label: 'Subscriptions',   value: subs,                                         color: '#059669', Icon: ShoppingCart,
       sub: `${funnel.signupToConvert ?? data?.conversionRate ?? 0}% of signups` },
-    { label: 'Click → Sub',     value: `${funnel.clickToSubscribe ?? 0}%`,           color: '#10B981', Icon: TrendingUp,
+    { label: 'Click → Sub',     value: `${funnel.clickToSubscribe ?? 0}%`,           color: '#059669', Icon: TrendingUp,
       sub: 'of clickers complete payment' },
   ];
 
@@ -280,10 +289,10 @@ export default function AnalyticsDashboard() {
         {!loading && data && (
           <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', paddingTop: 10, borderTop: `1px solid ${theme.border}` }}>
             {[
-              { label: 'AI → Limit',    value: `${funnel.aiToLimit ?? 0}%`,        color: '#F59E0B' },
-              { label: 'Limit → Modal', value: `${funnel.limitToModal ?? 0}%`,      color: '#0EA5E9' },
-              { label: 'Modal → Click', value: `${funnel.modalToClick ?? 0}%`,      color: '#6366F1' },
-              { label: 'Click → Sub',   value: `${funnel.clickToSubscribe ?? 0}%`,  color: '#10B981' },
+              { label: 'AI → Limit',    value: `${funnel.aiToLimit ?? 0}%`,        color: '#DC2626' },
+              { label: 'Limit → Modal', value: `${funnel.limitToModal ?? 0}%`,      color: '#2563EB' },
+              { label: 'Modal → Click', value: `${funnel.modalToClick ?? 0}%`,      color: '#1D4ED8' },
+              { label: 'Click → Sub',   value: `${funnel.clickToSubscribe ?? 0}%`,  color: '#059669' },
               { label: 'Signup → Paid', value: `${funnel.signupToConvert ?? 0}%`,   color: '#3B82F6' },
             ].map(({ label, value, color }) => (
               <div key={label} style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
@@ -300,13 +309,13 @@ export default function AnalyticsDashboard() {
         extra={<span style={{ fontSize: 11, color: theme.muted }}>Users lost at each stage</span>}
       >
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: 10 }}>
-          <DropoffCard stage="After AI Usage"      count={drops.afterAI    ?? (aiUsed - totalLimits)} color="#8B5CF6"
+          <DropoffCard stage="After AI Usage"      count={drops.afterAI    ?? (aiUsed - totalLimits)} color="#3B82F6"
             label="Used AI but never hit a limit"  hint={aiUsed > 0 ? `${100 - (funnel.aiToLimit ?? 0)}% didn't trigger` : undefined} loading={loading} theme={theme} />
-          <DropoffCard stage="After Limit Hit"     count={drops.afterLimit  ?? (totalLimits - modalOpens)} color="#F59E0B"
+          <DropoffCard stage="After Limit Hit"     count={drops.afterLimit  ?? (totalLimits - modalOpens)} color="#DC2626"
             label="Hit limit but never saw modal"  hint="Optimize: surface modal faster" loading={loading} theme={theme} />
-          <DropoffCard stage="After Modal Opened"  count={drops.afterModal  ?? (modalOpens - clicks)} color="#0EA5E9"
+          <DropoffCard stage="After Modal Opened"  count={drops.afterModal  ?? (modalOpens - clicks)} color="#2563EB"
             label="Saw modal but didn't click"     hint="Optimize: modal copy / CTA" loading={loading} theme={theme} />
-          <DropoffCard stage="After Clicking"      count={drops.afterClick  ?? (clicks - subs)} color="#6366F1"
+          <DropoffCard stage="After Clicking"      count={drops.afterClick  ?? (clicks - subs)} color="#1D4ED8"
             label="Clicked but didn't subscribe"   hint="Optimize: reduce checkout friction" loading={loading} theme={theme} />
         </div>
       </Section>

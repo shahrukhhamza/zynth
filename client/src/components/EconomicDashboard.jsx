@@ -1,9 +1,9 @@
-﻿import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import {
-  Plus, Target, Award, Brain, Calendar, BarChart2,
-  Clock, ChevronRight, Flame, Activity, BookOpen,
+  Plus, Award, Brain, Calendar,
+  Clock, ChevronRight, Activity, BookOpen,
   TrendingUp, TrendingDown, ArrowUpRight, Zap,
-  DollarSign, Percent, Trophy, Layers
+  DollarSign, Percent, Trophy,
 } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 import { useAuth } from '../contexts/AuthContext';
@@ -32,89 +32,139 @@ function getCurrentSessions() {
   return SESSIONS.filter(s => h >= s.open && h < s.close);
 }
 
-// ── Metric Stat Card ────────────────────────────────────────────────────────
-function MetricCard({ label, value, sub, accentColor, iconBg, iconColor, icon: Icon, badge, badgeColor }) {
+// ── Design tokens ─────────────────────────────────────────────────────────────
+const LIGHT = {
+  page:        '#f8fafc',
+  card:        '#ffffff',
+  cardInner:   '#f8fafc',
+  text:        '#111827',
+  textSub:     '#6b7280',
+  textMute:    '#9ca3af',
+  green:       '#059669',
+  red:         '#dc2626',
+  blue:        '#2563eb',
+};
+const DARK = {
+  page:        '#0b1220',
+  card:        '#111827',
+  cardInner:   '#1a2236',
+  text:        '#f9fafb',
+  textSub:     '#9ca3af',
+  textMute:    '#4b5563',
+  green:       '#10b981',
+  red:         '#ef4444',
+  blue:        '#60a5fa',
+};
+
+// ── Shared shadows ─────────────────────────────────────────────────────────────
+const SHADOW_SM  = '0 1px 4px rgba(0,0,0,0.06), 0 4px 24px rgba(0,0,0,0.07)';
+const SHADOW_HOV = '0 8px 28px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06)';
+
+// ── Reusable Card ─────────────────────────────────────────────────────────────
+function Card({ children, className = '', style = {}, onClick }) {
+  const Tag = onClick ? 'button' : 'div';
   return (
-    <div
-      className="group relative flex flex-col gap-0 cursor-default select-none overflow-hidden
-        rounded-2xl border bg-white dark:bg-slate-900
-        border-gray-200 dark:border-gray-700
-        shadow-[0_1px_3px_rgba(0,0,0,0.04),0_4px_20px_rgba(0,0,0,0.05)]
-        dark:shadow-[0_1px_3px_rgba(0,0,0,0.2),0_4px_20px_rgba(0,0,0,0.2)]
-        transition-all duration-200
-        hover:shadow-[0_4px_24px_rgba(0,0,0,0.10),0_1px_6px_rgba(0,0,0,0.06)]
-        dark:hover:shadow-[0_4px_24px_rgba(0,0,0,0.4)]
-        hover:-translate-y-px
-        p-5"
-      style={{ borderLeft: `3px solid ${accentColor}` }}
+    <Tag
+      onClick={onClick}
+      className={`rounded-2xl bg-white dark:bg-[#111827] transition-all duration-200 hover:-translate-y-[2px] ${className}`}
+      style={{
+        boxShadow: SHADOW_SM,
+        border: 'none',
+        cursor: onClick ? 'pointer' : 'default',
+        textAlign: 'left',
+        width: '100%',
+        ...style,
+      }}
+      onMouseEnter={e => { e.currentTarget.style.boxShadow = SHADOW_HOV; }}
+      onMouseLeave={e => { e.currentTarget.style.boxShadow = SHADOW_SM; }}
     >
-      {/* Top row: label + badge + icon */}
-      <div className="flex items-center justify-between mb-3">
-        <div className="flex items-center gap-2 min-w-0">
-          <span className="text-[11px] font-bold uppercase tracking-[0.08em] text-gray-400 dark:text-gray-300 truncate">
+      {children}
+    </Tag>
+  );
+}
+
+// ── Primary KPI Card (Total P&L) ──────────────────────────────────────────────
+function PrimaryKPICard({ label, value, sub, color, icon: Icon, badge, badgeColor }) {
+  return (
+    <Card style={{ padding: '32px 32px 28px' }}>
+      <div className="flex items-start justify-between mb-6">
+        <div>
+          <span className="text-sm font-semibold uppercase tracking-widest text-gray-500 dark:text-gray-400">
             {label}
           </span>
           {badge && (
             <span
-              className="text-[9px] font-extrabold px-[6px] py-[2px] rounded-full tracking-[0.06em]"
-              style={{ color: badgeColor, background: `${badgeColor}18`, border: `1px solid ${badgeColor}30` }}
+              className="ml-2 text-[10px] font-bold px-2 py-0.5 rounded-full"
+              style={{ color: badgeColor, background: `${badgeColor}18` }}
             >
               {badge}
             </span>
           )}
         </div>
         <div
-          className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0
-            ml-2 transition-transform duration-200 group-hover:scale-110"
-          style={{ background: iconBg }}
+          className="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0"
+          style={{ background: `${color}12` }}
         >
-          <Icon className="w-[15px] h-[15px]" style={{ color: iconColor }} />
+          <Icon size={22} style={{ color }} />
         </div>
       </div>
-
-      {/* Value */}
       <div
-        className="text-[28px] font-extrabold leading-none tracking-[-0.03em] mb-2"
-        style={{ color: accentColor }}
+        className="text-5xl font-bold tracking-tight leading-none mb-3"
+        style={{ color, letterSpacing: '-0.03em' }}
       >
         {value}
       </div>
-
-      {/* Sub text */}
-      <p className="text-[12px] font-medium text-gray-400 dark:text-gray-300 m-0">{sub}</p>
-
-      {/* Decorative glow strip on hover */}
-      <div
-        className="absolute bottom-0 left-0 right-0 h-[2px] opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-        style={{ background: `linear-gradient(90deg, ${accentColor}00, ${accentColor}60, ${accentColor}00)` }}
-      />
-    </div>
+      <p className="text-sm text-gray-500 dark:text-gray-400 font-medium m-0">{sub}</p>
+    </Card>
   );
 }
 
-// ── Monthly P&L Calendar ────────────────────────────────────────────────────
+// ── Secondary KPI Card ────────────────────────────────────────────────────────
+function SecondaryKPICard({ label, value, sub, color, icon: Icon }) {
+  return (
+    <Card style={{ padding: '24px 20px 20px' }}>
+      <div className="flex items-start justify-between mb-4">
+        <span className="text-xs font-semibold uppercase tracking-widest text-gray-500 dark:text-gray-400">
+          {label}
+        </span>
+        <div
+          className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
+          style={{ background: `${color}12` }}
+        >
+          <Icon size={14} style={{ color }} />
+        </div>
+      </div>
+      <div
+        className="text-3xl font-bold tracking-tight leading-none mb-2"
+        style={{ color, letterSpacing: '-0.02em' }}
+      >
+        {value}
+      </div>
+      <p className="text-xs text-gray-500 dark:text-gray-400 font-medium m-0">{sub}</p>
+    </Card>
+  );
+}
+
+// ── Monthly P&L Calendar ──────────────────────────────────────────────────────
 function MonthlyCalendar({ trades, D }) {
   const now   = new Date();
   const year  = now.getFullYear();
   const month = now.getMonth();
-
   const monthName = now.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
 
-  // Build daily P&L map
   const dailyPnl = useMemo(() => {
     const map = {};
     if (!trades) return map;
     trades.forEach(t => {
       if (!t.date) return;
-      const d   = new Date(t.date);
+      const d = new Date(t.date);
       if (d.getFullYear() !== year || d.getMonth() !== month) return;
       const key = d.getDate();
-      map[key]  = (map[key] ?? 0) + (parseFloat(t.pnl) || 0);
+      map[key] = (map[key] ?? 0) + (parseFloat(t.pnl) || 0);
     });
     return map;
   }, [trades, year, month]);
 
-  // Build weekly P&L
   const weeklyPnl = useMemo(() => {
     const weeks = {};
     Object.entries(dailyPnl).forEach(([day, pnl]) => {
@@ -125,57 +175,49 @@ function MonthlyCalendar({ trades, D }) {
     return weeks;
   }, [dailyPnl]);
 
-  const firstDay = new Date(year, month, 1).getDay(); // 0=Sun
+  const firstDay    = new Date(year, month, 1).getDay();
   const daysInMonth = new Date(year, month + 1, 0).getDate();
-  const today = now.getDate();
+  const today       = now.getDate();
 
-  // Build calendar grid
   const cells = [];
   for (let i = 0; i < firstDay; i++) cells.push(null);
   for (let d = 1; d <= daysInMonth; d++) cells.push(d);
-
   const weeks = [];
-  for (let i = 0; i < cells.length; i += 7) {
-    weeks.push(cells.slice(i, i + 7));
-  }
+  for (let i = 0; i < cells.length; i += 7) weeks.push(cells.slice(i, i + 7));
 
   const monthTotal = Object.values(dailyPnl).reduce((s, v) => s + v, 0);
 
   return (
-    <div style={{ ...cardStyle(D), padding: '20px 22px' }}>
-      {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
-        <h2 style={{ fontSize: 11, fontWeight: 700, color: D.textSub, letterSpacing: '0.12em', textTransform: 'uppercase', margin: 0 }}>
-          Monthly P&L
-        </h2>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <span style={{ fontSize: 12, color: D.textSub }}>{monthName}</span>
-          <span style={{
-            fontSize: 13, fontWeight: 800, letterSpacing: '-0.01em',
-            color: monthTotal >= 0 ? D.accent : D.red,
-            background: monthTotal >= 0 ? `${D.accent}12` : `${D.red}10`,
-            padding: '2px 8px', borderRadius: 99,
-            border: `1px solid ${monthTotal >= 0 ? D.accent : D.red}25`,
-          }}>
+    <Card style={{ padding: '24px' }}>
+      <div className="flex items-center justify-between mb-5">
+        <h3 className="text-sm font-semibold uppercase tracking-widest text-gray-500 dark:text-gray-400 m-0">
+          Monthly P&amp;L
+        </h3>
+        <div className="flex items-center gap-3">
+          <span className="text-sm text-gray-500 dark:text-gray-400">{monthName}</span>
+          <span
+            className="text-sm font-bold px-3 py-1 rounded-full"
+            style={{
+              color:      monthTotal >= 0 ? D.green : D.red,
+              background: monthTotal >= 0 ? `${D.green}12` : `${D.red}10`,
+            }}
+          >
             {monthTotal >= 0 ? '+' : ''}${Math.abs(monthTotal).toFixed(0)}
           </span>
         </div>
       </div>
 
-      {/* Day headers */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr) 72px', gap: 4, marginBottom: 5 }}>
-        {['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(d => (
-          <div key={d} style={{ fontSize: 9, fontWeight: 700, color: D.textSub, textAlign: 'center', letterSpacing: '0.06em', textTransform: 'uppercase', padding: '2px 0' }}>{d}</div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr) 64px', gap: 3, marginBottom: 4 }}>
+        {['Su','Mo','Tu','We','Th','Fr','Sa'].map(d => (
+          <div key={d} className="text-center text-[10px] font-semibold text-gray-400 dark:text-gray-500 py-1 uppercase tracking-wider">{d}</div>
         ))}
-        <div style={{ fontSize: 9, fontWeight: 700, color: D.textSub, textAlign: 'center', letterSpacing: '0.06em', textTransform: 'uppercase' }}>WEEK</div>
+        <div className="text-center text-[10px] font-semibold text-gray-400 dark:text-gray-500 py-1 uppercase tracking-wider">Wk</div>
       </div>
 
-      {/* Calendar rows */}
       {weeks.map((week, wi) => {
-        const weekNum = wi + 1;
-        const wPnl    = weeklyPnl[weekNum] ?? null;
+        const wPnl = weeklyPnl[wi + 1] ?? null;
         return (
-          <div key={wi} style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr) 72px', gap: 4, marginBottom: 4 }}>
+          <div key={wi} style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr) 64px', gap: 3, marginBottom: 3 }}>
             {week.map((day, di) => {
               if (!day) return <div key={di} />;
               const pnl      = dailyPnl[day];
@@ -184,128 +226,82 @@ function MonthlyCalendar({ trades, D }) {
               const isWin    = hasData && pnl > 0;
               const isLoss   = hasData && pnl < 0;
               const isFuture = day > today;
-
-              // Intensity: saturate bg more for larger P&L
-              const maxAbs = Object.values(dailyPnl).reduce((m, v) => Math.max(m, Math.abs(v)), 1);
-              const intensity = hasData ? Math.min(0.85, 0.12 + (Math.abs(pnl) / maxAbs) * 0.35) : 0.08;
-
+              const maxAbs   = Object.values(dailyPnl).reduce((m, v) => Math.max(m, Math.abs(v)), 1);
+              const intensity = hasData ? Math.min(0.8, 0.10 + (Math.abs(pnl) / maxAbs) * 0.32) : 0;
               return (
-                <div key={di}
-                  className={`cal-cell${isFuture ? ' cal-future' : ''}`}
-                  style={{
-                    borderRadius: 8,
-                    padding: '6px 4px 5px',
-                    textAlign: 'center',
-                    background: isToday
-                      ? `${D.accent}22`
-                      : isWin
-                      ? `${D.accent}${Math.round(intensity * 255).toString(16).padStart(2, '0')}`
-                      : isLoss
-                      ? `${D.red}${Math.round(intensity * 0.85 * 255).toString(16).padStart(2, '0')}`
-                      : D.cardBg2,
-                    border: isToday
-                      ? `1.5px solid ${D.accent}60`
-                      : isWin
-                      ? `1px solid ${D.accent}30`
-                      : isLoss
-                      ? `1px solid ${D.red}25`
-                      : `1px solid ${D.border}`,
-                    opacity: isFuture ? 0.35 : 1,
-                    minHeight: 52,
-                    display: 'flex', flexDirection: 'column',
-                    alignItems: 'center', justifyContent: 'center', gap: 2,
-                    boxShadow: isToday ? `0 0 0 2px ${D.accent}20` : 'none',
-                  }}
-                >
+                <div key={di} style={{
+                  borderRadius: 8, padding: '6px 3px 5px',
+                  textAlign: 'center',
+                  background: isToday
+                    ? `${D.green}20`
+                    : isWin  ? `${D.green}${Math.round(intensity * 255).toString(16).padStart(2, '0')}`
+                    : isLoss ? `${D.red}${Math.round(intensity * 0.85 * 255).toString(16).padStart(2, '0')}`
+                    : D.cardInner,
+                  boxShadow: isToday ? `0 0 0 1.5px ${D.green}50` : 'none',
+                  opacity: isFuture ? 0.3 : 1,
+                  minHeight: 48,
+                  display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 2,
+                  transition: 'transform 0.12s ease',
+                }}>
                   <span style={{
                     fontSize: 11,
-                    fontWeight: isToday ? 800 : hasData ? 600 : 500,
-                    color: isToday ? D.accent : hasData ? D.text : D.textSub,
+                    fontWeight: isToday ? 700 : hasData ? 600 : 400,
+                    color: isToday ? D.green : hasData ? D.text : D.textSub,
                     lineHeight: 1,
-                  }}>
-                    {day}
-                  </span>
+                  }}>{day}</span>
                   {hasData && (
-                    <span style={{
-                      fontSize: 9, fontWeight: 700, lineHeight: 1,
-                      color: isWin ? D.accent : D.red,
-                    }}>
+                    <span style={{ fontSize: 9, fontWeight: 700, lineHeight: 1, color: isWin ? D.green : D.red }}>
                       {isWin ? '+' : ''}${Math.abs(pnl) >= 1000 ? (Math.abs(pnl)/1000).toFixed(1)+'k' : Math.abs(pnl).toFixed(0)}
                     </span>
-                  )}
-                  {/* Win/loss bar */}
-                  {hasData && (
-                    <div style={{
-                      position: 'absolute', bottom: 3, left: '20%', right: '20%',
-                      height: 2, borderRadius: 99,
-                      background: isWin ? D.accent : D.red,
-                      opacity: 0.6,
-                    }} />
                   )}
                 </div>
               );
             })}
-
-            {/* Weekly P&L summary cell */}
-            <div className="cal-cell" style={{
-              borderRadius: 8, padding: '6px 6px',
-              background: wPnl != null
-                ? (wPnl >= 0 ? `${D.accent}12` : `${D.red}10`)
-                : D.cardBg2,
-              border: wPnl != null
-                ? `1px solid ${wPnl >= 0 ? D.accent : D.red}25`
-                : `1px solid ${D.border}`,
-              display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 3,
-              minHeight: 52,
+            <div style={{
+              borderRadius: 8, padding: '6px 4px',
+              background: wPnl != null ? (wPnl >= 0 ? `${D.green}10` : `${D.red}08`) : D.cardInner,
+              display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 2,
+              minHeight: 48,
             }}>
-              <span style={{ fontSize: 8, fontWeight: 700, color: D.textSub, letterSpacing: '0.06em', textTransform: 'uppercase' }}>WK</span>
               {wPnl != null ? (
-                <span style={{
-                  fontSize: 11, fontWeight: 800, letterSpacing: '-0.01em',
-                  color: wPnl >= 0 ? D.accent : D.red,
-                }}>
+                <span style={{ fontSize: 10, fontWeight: 700, color: wPnl >= 0 ? D.green : D.red }}>
                   {wPnl >= 0 ? '+' : ''}${Math.abs(wPnl) >= 1000 ? (Math.abs(wPnl)/1000).toFixed(1)+'k' : Math.abs(wPnl).toFixed(0)}
                 </span>
               ) : (
-                <span style={{ fontSize: 12, color: D.textMute, fontWeight: 500 }}>—</span>
+                <span style={{ fontSize: 11, color: D.textMute }}>—</span>
               )}
             </div>
           </div>
         );
       })}
 
-      {/* Legend */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginTop: 14, justifyContent: 'flex-end' }}>
-        {[
-          { color: D.accent, label: 'Profit day' },
-          { color: D.red,    label: 'Loss day' },
-        ].map(l => (
-          <div key={l.label} style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-            <div style={{ width: 10, height: 10, borderRadius: 3, background: l.color, opacity: 0.7 }} />
-            <span style={{ fontSize: 10, color: D.textSub }}>{l.label}</span>
+      <div className="flex items-center justify-end gap-4 mt-4">
+        {[{ color: D.green, label: 'Profit' }, { color: D.red, label: 'Loss' }].map(l => (
+          <div key={l.label} className="flex items-center gap-1.5">
+            <div style={{ width: 8, height: 8, borderRadius: 2, background: l.color, opacity: 0.7 }} />
+            <span className="text-[10px] text-gray-400 dark:text-gray-500">{l.label}</span>
           </div>
         ))}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-          <div style={{ width: 10, height: 10, borderRadius: 3, border: `1.5px solid ${D.accent}` }} />
-          <span style={{ fontSize: 10, color: D.textSub }}>Today</span>
+        <div className="flex items-center gap-1.5">
+          <div style={{ width: 8, height: 8, borderRadius: 2, boxShadow: `0 0 0 1.5px ${D.green}` }} />
+          <span className="text-[10px] text-gray-400 dark:text-gray-500">Today</span>
         </div>
       </div>
+    </Card>
+  );
+}
+
+// ── Section header ────────────────────────────────────────────────────────────
+function SectionHeader({ title, action }) {
+  return (
+    <div className="flex items-center justify-between mb-5">
+      <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-widest m-0">{title}</h3>
+      {action}
     </div>
   );
 }
 
-// ── Card style helper ────────────────────────────────────────────────────────
-function cardStyle(D, extra = {}) {
-  return {
-    background: D.cardBg,
-    border: `1px solid ${D.border}`,
-    borderRadius: 14,
-    boxShadow: D.shadow || 'none',
-    ...extra,
-  };
-}
-
-// ── Main Component ───────────────────────────────────────────────────────────
+// ── Main Component ────────────────────────────────────────────────────────────
 export default function EconomicDashboard({ onViewChange }) {
   const theme = useTheme();
   const { user } = useAuth();
@@ -316,6 +312,8 @@ export default function EconomicDashboard({ onViewChange }) {
   const [keyEvent,   setKeyEvent]   = useState(null);
   const [loading,    setLoading]    = useState(true);
 
+  const D = theme.isDark ? DARK : LIGHT;
+
   const goTo = (view) => {
     if (onViewChange) { onViewChange(view); return; }
     window.history.pushState({ view }, '', `/${view}`);
@@ -325,34 +323,19 @@ export default function EconomicDashboard({ onViewChange }) {
   useEffect(() => {
     const token = getAuthToken();
     if (!token) { setLoading(false); return; }
-
-    const now        = new Date();
-    const monday     = new Date(now);
+    const now    = new Date();
+    const monday = new Date(now);
     monday.setDate(now.getDate() - ((now.getDay() + 6) % 7));
     monday.setHours(0, 0, 0, 0);
-    const weekStart  = monday.toISOString().split('T')[0];
-    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
-    const headers    = { Authorization: `Bearer ${token}` };
-
+    const headers = { Authorization: `Bearer ${token}` };
     Promise.allSettled([
       fetch(`${API_URL}/api/journal/trades?limit=200`, { headers }).then(r => r.ok ? r.json() : null),
       fetch(`${API_URL}/api/economic/dashboard`, { headers }).then(r => r.ok ? r.json() : null),
     ]).then(([allResult, eco]) => {
-      // Normalize DB field names so all downstream code (t.pnl, t.date, t.emotion_before) works
-      // Also correct P&L sign for old trades stored with wrong sign (outcome takes precedence)
       const normalize = (t) => {
         const rawPnl = parseFloat(t.profit_loss) || 0;
-        const pnl = t.outcome === 'loss'
-          ? -Math.abs(rawPnl)
-          : t.outcome === 'win'
-          ? Math.abs(rawPnl)
-          : rawPnl;
-        return {
-          ...t,
-          pnl,
-          date:           t.created_at,
-          emotion_before: t.emotional_state,
-        };
+        const pnl = t.outcome === 'loss' ? -Math.abs(rawPnl) : t.outcome === 'win' ? Math.abs(rawPnl) : rawPnl;
+        return { ...t, pnl, date: t.created_at, emotion_before: t.emotional_state };
       };
       const calc = (data) => {
         if (!Array.isArray(data) || !data.length) return null;
@@ -366,16 +349,16 @@ export default function EconomicDashboard({ onViewChange }) {
         setWeekStats(calc(allData.filter(t => new Date(t.created_at) >= monday)));
         setMonthStats(calc(allData.filter(t => new Date(t.created_at) >= new Date(now.getFullYear(), now.getMonth(), 1))));
       }
-      if (eco.status   === 'fulfilled' && eco.value) {
+      if (eco.status === 'fulfilled' && eco.value) {
         const events = Array.isArray(eco.value) ? eco.value : (eco.value?.events ?? []);
-        const high   = events.find(e => (e.impact ?? '').toLowerCase() === 'high');
+        const high = events.find(e => (e.impact ?? '').toLowerCase() === 'high');
         if (high) setKeyEvent({ title: high.event ?? high.title ?? 'High Impact Event', time: high.time ?? '' });
       }
       setLoading(false);
     });
   }, []);
 
-  // ── Derived data ─────────────────────────────────────────────────────────
+  // ── Derived data ──────────────────────────────────────────────────────────
   const edgeData = useMemo(() => {
     if (!allTrades || allTrades.length < 5) return null;
     const byKey = (fn) => {
@@ -394,24 +377,7 @@ export default function EconomicDashboard({ onViewChange }) {
       });
       return best;
     };
-    return {
-      bestSession: byKey(t => t.session),
-      bestPair:    byKey(t => t.pair),
-      topEmotion:  byKey(t => t.emotion_before),
-    };
-  }, [allTrades]);
-
-  const streak = useMemo(() => {
-    if (!allTrades?.length) return null;
-    const sorted = [...allTrades].sort((a, b) => new Date(b.date) - new Date(a.date));
-    let count = 0, type = null;
-    for (const t of sorted) {
-      const win = parseFloat(t.pnl ?? 0) > 0;
-      if (!type) { type = win ? 'win' : 'loss'; count = 1; }
-      else if ((type === 'win') === win) count++;
-      else break;
-    }
-    return { count, type };
+    return { bestSession: byKey(t => t.session), bestPair: byKey(t => t.pair), topEmotion: byKey(t => t.emotion_before) };
   }, [allTrades]);
 
   const recentTrades = useMemo(() => {
@@ -419,7 +385,6 @@ export default function EconomicDashboard({ onViewChange }) {
     return [...allTrades].sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 5);
   }, [allTrades]);
 
-  // Quick stats
   const quickStats = useMemo(() => {
     if (!allTrades?.length) return null;
     const closed  = allTrades.filter(t => parseFloat(t.pnl ?? 0) !== 0);
@@ -438,393 +403,296 @@ export default function EconomicDashboard({ onViewChange }) {
   const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0)) / 86400000);
   const quote     = QUOTES[dayOfYear % QUOTES.length];
   const sessions  = getCurrentSessions();
-  const todayStr  = new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+  const todayStr  = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
 
-  // ── Design tokens ────────────────────────────────────────────────────────
-  const D = theme.isDark ? {
-    pageBg:      theme.bg,
-    cardBg:      theme.surface,
-    cardBg2:     theme.surface2,
-    border:      theme.border,
-    border2:     'rgba(255,255,255,0.10)',
-    text:        theme.text,
-    textSub:     '#8892a4',
-    textMute:    'rgba(255,255,255,0.08)',
-    accent:      '#10b981',
-    gold:        '#f59e0b',
-    red:         '#ef4444',
-    blue:        '#0ea5e9',
-    shadow:      'none',
-    shadowHover: '0 4px 24px rgba(0,0,0,0.35)',
-  } : {
-    pageBg:      '#f1f5f9',
-    cardBg:      '#ffffff',
-    cardBg2:     '#f8fafc',
-    border:      'rgba(0,0,0,0.07)',
-    border2:     'rgba(0,0,0,0.12)',
-    text:        '#0f172a',
-    textSub:     '#475569',
-    textMute:    '#94a3b8',
-    accent:      '#10b981',
-    gold:        '#d97706',
-    red:         '#dc2626',
-    blue:        '#2563eb',
-    shadow:      '0 1px 3px rgba(0,0,0,0.04), 0 4px 20px rgba(0,0,0,0.05)',
-    shadowHover: '0 4px 16px rgba(0,0,0,0.08), 0 12px 40px rgba(0,0,0,0.08)',
-  };
+  const totalPnl      = allTrades?.reduce((s, t) => s + (parseFloat(t.pnl) || 0), 0) ?? 0;
+  const totalPnlColor = allTrades?.length ? (totalPnl >= 0 ? D.green : D.red) : D.textMute;
+  const wins          = allTrades?.filter(t => parseFloat(t.pnl ?? 0) > 0).length ?? 0;
+  const losses        = allTrades?.filter(t => parseFloat(t.pnl ?? 0) < 0).length ?? 0;
+  const wr            = allTrades?.length ? Math.round((wins / allTrades.length) * 100) : 0;
+  const wrColor       = !allTrades?.length ? D.textMute : wr >= 50 ? D.green : D.red;
 
   if (loading) return (
-    <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', background: D.pageBg, height: '100%' }}>
-      <div style={{ textAlign: 'center' }}>
-        <div style={{ width: 28, height: 28, border: `2px solid ${theme.accent}`, borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 0.8s linear infinite', margin: '0 auto 10px' }} />
+    <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', background: D.page, height: '100%' }}>
+      <div className="text-center">
+        <div style={{ width: 28, height: 28, border: `2px solid ${D.green}`, borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 0.8s linear infinite', margin: '0 auto 12px' }} />
         <p style={{ fontSize: 13, color: D.textSub, margin: 0 }}>Loading your dashboard…</p>
       </div>
       <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
     </div>
   );
 
-  const CS = cardStyle.bind(null, D);
-
   return (
-    <div style={{ flex: 1, overflowY: 'auto', background: D.pageBg, padding: '24px 24px 56px' }}>
+    <div style={{ flex: 1, overflowY: 'auto', background: D.page, padding: '32px 24px 64px' }}>
       <style>{`
         @keyframes spin { to { transform: rotate(360deg); } }
-        .dc:hover { border-color: ${D.border2} !important; box-shadow: ${D.shadowHover} !important; }
-        .trade-row { transition: background 0.12s ease; border-radius: 8px; }
-        .trade-row:hover { background: ${D.cardBg2} !important; }
-        .qcard:hover { border-color: var(--qhc) !important; background: var(--qhb) !important; }
-        .new-entry-btn:hover { opacity: 0.92 !important; transform: translateY(-1px); box-shadow: 0 6px 24px rgba(16,185,129,0.35) !important; }
-        .cal-cell { transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease; cursor: default; position: relative; }
-        .cal-cell:not(.cal-future):hover { transform: scale(1.06); box-shadow: ${D.shadowHover}; border-color: ${D.border2} !important; z-index: 2; }
-        .qstat { transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease; cursor: default; }
-        .qstat:hover { transform: translateY(-2px); box-shadow: ${D.shadowHover}; border-color: ${D.border2} !important; }
+        .trade-row:hover { background: ${D.cardInner} !important; }
       `}</style>
 
-      <div style={{ maxWidth: 1200, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 20 }}>
+      <div style={{ maxWidth: 1280, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 24 }}>
 
-        {/* ══ ROW 1: HEADER ══════════════════════════════════════════════ */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 10, marginBottom: 4 }}>
+        {/* ══ HEADER ════════════════════════════════════════════════════ */}
+        <div className="flex items-start justify-between flex-wrap gap-4">
           <div>
-            <h1 style={{ fontSize: 22, fontWeight: 700, color: D.text, margin: 0, letterSpacing: '-0.02em' }}>
-              {greeting}, <span style={{ color: theme.accent }}>{firstName}</span>
+            <h1 className="text-2xl font-semibold m-0" style={{ color: D.text, letterSpacing: '-0.02em' }}>
+              {greeting}, <span style={{ color: D.green }}>{firstName}</span>
             </h1>
-            <p style={{ fontSize: 13, color: D.textSub, margin: '3px 0 0' }}>{todayStr}</p>
+            <p className="text-sm m-0 mt-1" style={{ color: D.textSub }}>{todayStr}</p>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+          <div className="flex items-center gap-2 flex-wrap">
             {sessions.length > 0 ? sessions.map(s => (
               <span key={s.name} style={{
-                fontSize: 11, fontWeight: 700, padding: '5px 12px', borderRadius: 99,
-                color: s.color, background: `${s.color}15`, border: `1px solid ${s.color}35`,
-                letterSpacing: '0.06em', display: 'flex', alignItems: 'center', gap: 5,
+                fontSize: 11, fontWeight: 600, padding: '4px 10px', borderRadius: 99,
+                color: s.color, background: `${s.color}12`,
+                display: 'inline-flex', alignItems: 'center', gap: 5,
               }}>
-                <span style={{ width: 6, height: 6, borderRadius: '50%', background: s.color, boxShadow: `0 0 6px ${s.color}` }} />
+                <span style={{ width: 6, height: 6, borderRadius: '50%', background: s.color }} />
                 {s.name}
               </span>
             )) : (
-              <span style={{ fontSize: 11, fontWeight: 600, padding: '5px 12px', borderRadius: 99, color: D.textSub, background: D.cardBg2, border: `1px solid ${D.border}` }}>
+              <span style={{ fontSize: 11, fontWeight: 500, padding: '4px 10px', borderRadius: 99, color: D.textSub, background: D.cardInner }}>
                 All Sessions Closed
               </span>
             )}
             <button
               onClick={() => goTo('journal')}
-              className="new-entry-btn"
               style={{
-                padding: '9px 18px', background: theme.accent, color: '#fff',
-                border: 'none', borderRadius: 8, fontSize: 13, fontWeight: 700,
-                cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6,
-                boxShadow: `0 4px 14px ${theme.accent}40`,
-                transition: 'opacity 0.15s, transform 0.15s',
+                padding: '9px 18px', background: D.green, color: '#fff',
+                border: 'none', borderRadius: 10, fontSize: 13, fontWeight: 600,
+                cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 6,
+                boxShadow: `0 4px 16px ${D.green}35`,
               }}
             >
-              <Plus style={{ width: 14, height: 14 }} /> New Entry
+              <Plus size={14} /> New Entry
             </button>
           </div>
         </div>
 
-        {/* ══ ROW 2: STAT CARDS ══════════════════════════════════════════ */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 14 }}>
-          {/* Total P&L */}
-          {(() => {
-            const totalPnl = allTrades?.reduce((s, t) => s + (parseFloat(t.pnl) || 0), 0) ?? 0;
-            return (
-              <MetricCard
-                label="Total P&L"
-                value={allTrades?.length ? `${totalPnl >= 0 ? '+' : ''}$${Math.abs(totalPnl).toFixed(2)}` : '+$0.00'}
-                sub={allTrades?.length ? `${allTrades.length} total trades` : '0 trades'}
-                accentColor={totalPnl >= 0 ? D.accent : D.red}
-                iconBg="#10b98118"
-                iconColor={D.accent}
-                icon={DollarSign}
-                badge="TOTAL"
-                badgeColor={D.blue}
-              />
-            );
-          })()}
-
-          {/* Win Rate */}
-          {(() => {
-            const wins = allTrades?.filter(t => parseFloat(t.pnl ?? 0) > 0).length ?? 0;
-            const losses = allTrades?.filter(t => parseFloat(t.pnl ?? 0) < 0).length ?? 0;
-            const wr = allTrades?.length ? Math.round((wins / allTrades.length) * 100) : 0;
-            return (
-              <MetricCard
-                label="Win Rate"
-                value={allTrades?.length ? `${wr}%` : '0%'}
-                sub={allTrades?.length ? `${wins}W · ${losses}L` : 'No trades yet'}
-                accentColor={!allTrades?.length ? D.textSub : wr >= 50 ? D.accent : D.red}
-                iconBg="#f59e0b18"
-                iconColor={D.gold}
-                icon={Percent}
-              />
-            );
-          })()}
-
-          {/* This Week P&L */}
-          <MetricCard
-            label="This Week P&L"
-            value={weekStats?.total > 0 ? `${weekStats.pnl >= 0 ? '+' : ''}$${Math.abs(weekStats.pnl).toFixed(2)}` : '+$0.00'}
-            sub={weekStats?.total > 0 ? `${weekStats.wins}W · ${weekStats.losses}L this week` : 'No trades this week'}
-            accentColor={weekStats?.total > 0 ? (weekStats.pnl >= 0 ? D.accent : D.red) : D.textSub}
-            iconBg="#0ea5e918"
-            iconColor={D.blue}
-            icon={weekStats?.pnl >= 0 ? TrendingUp : TrendingDown}
-          />
-
-          {/* Profit Factor */}
-          <MetricCard
-            label="Profit Factor"
-            value={quickStats?.pf > 0 ? quickStats.pf.toFixed(2) : '0.00'}
-            sub={quickStats ? `Avg win: $${quickStats.avgWin.toFixed(0)}` : 'No closed trades'}
-            accentColor={quickStats?.pf >= 1 ? D.accent : quickStats?.pf > 0 ? D.red : D.textSub}
-            iconBg="#10b98118"
-            iconColor={D.accent}
-            icon={Trophy}
-          />
+        {/* ══ ROW 1: KPI GRID 6/2/2/2 ═══════════════════════════════════ */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(12, 1fr)', gap: 16 }}>
+          <div style={{ gridColumn: 'span 6' }}>
+            <PrimaryKPICard
+              label="Total P&L"
+              value={allTrades?.length ? `${totalPnl >= 0 ? '+' : ''}$${Math.abs(totalPnl).toFixed(2)}` : '$0.00'}
+              sub={allTrades?.length ? `Across ${allTrades.length} total trades` : 'No trades logged yet'}
+              color={totalPnlColor}
+              icon={DollarSign}
+              badge="ALL TIME"
+              badgeColor={D.blue}
+            />
+          </div>
+          <div style={{ gridColumn: 'span 2' }}>
+            <SecondaryKPICard
+              label="Win Rate"
+              value={allTrades?.length ? `${wr}%` : '—'}
+              sub={allTrades?.length ? `${wins}W · ${losses}L` : 'No trades'}
+              color={wrColor}
+              icon={Percent}
+            />
+          </div>
+          <div style={{ gridColumn: 'span 2' }}>
+            <SecondaryKPICard
+              label="This Week"
+              value={weekStats?.total > 0 ? `${weekStats.pnl >= 0 ? '+' : ''}$${Math.abs(weekStats.pnl).toFixed(0)}` : '$0'}
+              sub={weekStats?.total > 0 ? `${weekStats.wins}W · ${weekStats.losses}L` : 'No trades'}
+              color={weekStats?.total > 0 ? (weekStats.pnl >= 0 ? D.green : D.red) : D.textMute}
+              icon={weekStats?.pnl >= 0 ? TrendingUp : TrendingDown}
+            />
+          </div>
+          <div style={{ gridColumn: 'span 2' }}>
+            <SecondaryKPICard
+              label="Profit Factor"
+              value={quickStats?.pf > 0 ? quickStats.pf.toFixed(2) : '—'}
+              sub={quickStats ? `Avg win $${quickStats.avgWin.toFixed(0)}` : 'No closed trades'}
+              color={quickStats?.pf >= 1 ? D.green : quickStats?.pf > 0 ? D.red : D.textMute}
+              icon={Trophy}
+            />
+          </div>
         </div>
 
-        {/* ══ ROW 3: MONTHLY CALENDAR + QUICK STATS ══════════════════════ */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 16 }}>
-
-          {/* Monthly P&L Calendar */}
-          <MonthlyCalendar trades={allTrades} D={D} />
-
-          {/* Quick Stats */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-
-            {/* Quote card */}
-            <div style={{
-              ...CS({ padding: '18px 20px' }),
-              borderLeft: `3px solid ${theme.accent}`,
-            }}>
-              <div style={{ fontSize: 9, fontWeight: 700, color: D.textSub, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 10 }}>
-                Today's Mindset
-              </div>
-              <p style={{ fontSize: 13, color: D.text, fontStyle: 'italic', margin: 0, lineHeight: 1.7 }}>
-                "{quote}"
+        {/* ══ ROW 2: CALENDAR 8 / MINDSET+STATS 4 ══════════════════════ */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(12, 1fr)', gap: 16 }}>
+          <div style={{ gridColumn: 'span 8' }}>
+            <MonthlyCalendar trades={allTrades} D={D} />
+          </div>
+          <div style={{ gridColumn: 'span 4', display: 'flex', flexDirection: 'column', gap: 16 }}>
+            <Card style={{ padding: '24px 20px', borderLeft: `3px solid ${D.green}` }}>
+              <p className="text-xs font-semibold uppercase tracking-widest mb-3 m-0" style={{ color: D.textSub }}>
+                Today&apos;s Mindset
               </p>
-            </div>
-
-            {/* Quick Stats card */}
-            <div style={{ ...CS({ padding: '18px 20px' }), flex: 1 }}>
-              <div style={{ fontSize: 11, fontWeight: 700, color: D.textSub, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 14 }}>
+              <p className="text-sm leading-relaxed m-0 italic" style={{ color: D.text }}>
+                &ldquo;{quote}&rdquo;
+              </p>
+            </Card>
+            <Card style={{ padding: '24px 20px', flex: 1 }}>
+              <p className="text-xs font-semibold uppercase tracking-widest mb-4 m-0" style={{ color: D.textSub }}>
                 Quick Stats
-              </div>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(110px, 1fr))', gap: 10 }}>
+              </p>
+              <div className="grid grid-cols-2 gap-3">
                 {[
-                  { label: 'Avg Win',     value: quickStats ? `+$${quickStats.avgWin.toFixed(0)}`    : '—', color: D.accent, accent: D.accent },
-                  { label: 'Avg Loss',    value: quickStats ? `-$${quickStats.avgLoss.toFixed(0)}`   : '—', color: quickStats ? D.red : D.textSub, accent: D.red },
-                  { label: 'Best Trade',  value: quickStats ? `+$${quickStats.best.toFixed(0)}`      : '—', color: D.accent, accent: D.accent },
-                  { label: 'Worst Trade', value: quickStats ? `$${quickStats.worst.toFixed(0)}`      : '—', color: quickStats?.worst < 0 ? D.red : D.textSub, accent: D.red },
+                  { label: 'Avg Win',     value: quickStats ? `+$${quickStats.avgWin.toFixed(0)}`  : '—', color: D.green },
+                  { label: 'Avg Loss',    value: quickStats ? `-$${quickStats.avgLoss.toFixed(0)}` : '—', color: quickStats ? D.red : D.textMute },
+                  { label: 'Best Trade',  value: quickStats ? `+$${quickStats.best.toFixed(0)}`    : '—', color: D.green },
+                  { label: 'Worst Trade', value: quickStats ? `$${quickStats.worst.toFixed(0)}`    : '—', color: quickStats?.worst < 0 ? D.red : D.textMute },
                 ].map(q => (
-                  <div key={q.label} className="qstat" style={{
-                    background: D.cardBg2,
-                    border: `1px solid ${D.border}`,
-                    borderLeft: `3px solid ${q.accent}30`,
-                    borderRadius: 8,
-                    padding: '12px 13px',
-                  }}>
-                    <div style={{ fontSize: 9, fontWeight: 700, color: D.textSub, letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 6 }}>
-                      {q.label}
-                    </div>
-                    <div style={{ fontSize: 17, fontWeight: 800, color: q.color, letterSpacing: '-0.02em', lineHeight: 1 }}>
-                      {q.value}
-                    </div>
+                  <div key={q.label} style={{ borderRadius: 10, padding: '12px', background: D.cardInner }}>
+                    <p className="text-[10px] font-semibold uppercase tracking-wider m-0 mb-1.5" style={{ color: D.textSub }}>{q.label}</p>
+                    <p className="text-base font-bold leading-none m-0" style={{ color: q.color, letterSpacing: '-0.02em' }}>{q.value}</p>
                   </div>
                 ))}
               </div>
-
-              {/* Key event */}
               {keyEvent && (
-                <div style={{ marginTop: 12, padding: '10px 12px', borderRadius: 8, background: `${D.gold}10`, border: `1px solid ${D.gold}25`, display: 'flex', alignItems: 'flex-start', gap: 8 }}>
-                  <Calendar style={{ width: 13, height: 13, color: D.gold, flexShrink: 0, marginTop: 1 }} />
+                <div className="flex items-start gap-2 mt-4 rounded-xl p-3" style={{ background: `${D.blue}0d` }}>
+                  <Calendar size={13} style={{ color: D.blue, flexShrink: 0, marginTop: 1 }} />
                   <div>
-                    <div style={{ fontSize: 9, fontWeight: 700, color: D.gold, letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 3 }}>Key Event</div>
-                    <div style={{ fontSize: 12, fontWeight: 600, color: D.text, lineHeight: 1.4 }}>{keyEvent.title}</div>
-                    {keyEvent.time && <div style={{ fontSize: 11, color: D.textSub, marginTop: 2 }}>{keyEvent.time}</div>}
+                    <p className="text-[10px] font-semibold uppercase tracking-wider m-0 mb-1" style={{ color: D.blue }}>Key Event</p>
+                    <p className="text-xs font-semibold m-0" style={{ color: D.text }}>{keyEvent.title}</p>
+                    {keyEvent.time && <p className="text-[11px] m-0 mt-0.5" style={{ color: D.textSub }}>{keyEvent.time}</p>}
                   </div>
                 </div>
               )}
-            </div>
+            </Card>
           </div>
         </div>
 
-        {/* ══ ROW 4: YOUR EDGE + RECENT TRADES ══════════════════════════ */}
-        <div style={{ display: 'grid', gridTemplateColumns: '300px 1fr', gap: 16 }}>
-
-          {/* Your Edge */}
-          <div className="dc" style={{ ...CS({ padding: '20px' }) }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
-              <h2 style={{ fontSize: 11, fontWeight: 700, color: D.textSub, letterSpacing: '0.12em', textTransform: 'uppercase', margin: 0 }}>Your Edge</h2>
-              <button onClick={() => goTo('journal')} style={{ fontSize: 11, color: theme.accent, background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 3, fontWeight: 600 }}>
-                View all <ChevronRight style={{ width: 11, height: 11 }} />
-              </button>
-            </div>
-
-            {edgeData ? (
-              <div>
-                {[
-                  { label: 'Best Session', value: edgeData.bestSession?.key, rate: edgeData.bestSession?.rate, icon: Clock,    color: theme.accent },
-                  { label: 'Best Pair',    value: edgeData.bestPair?.key,    rate: edgeData.bestPair?.rate,    icon: Activity, color: D.gold   },
-                  { label: 'Top Mindset',  value: edgeData.topEmotion?.key,  rate: edgeData.topEmotion?.rate,  icon: Brain,    color: D.blue   },
-                ].map((row, i, arr) => (
-                  <div key={row.label} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 0', borderBottom: i < arr.length - 1 ? `1px solid ${D.border}` : 'none' }}>
-                    <div style={{ width: 34, height: 34, borderRadius: 9, flexShrink: 0, background: `${row.color}14`, border: `1px solid ${row.color}22`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <row.icon style={{ width: 14, height: 14, color: row.color }} />
+        {/* ══ ROW 3: EDGE 6 / RECENT ACTIVITY 6 ════════════════════════ */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(12, 1fr)', gap: 16 }}>
+          <div style={{ gridColumn: 'span 6' }}>
+            <Card style={{ padding: '24px' }}>
+              <SectionHeader
+                title="Your Edge"
+                action={
+                  <button onClick={() => goTo('journal')}
+                    style={{ fontSize: 12, color: D.green, background: 'none', border: 'none', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 3, fontWeight: 600, padding: 0 }}>
+                    View all <ChevronRight size={12} />
+                  </button>
+                }
+              />
+              {edgeData ? (
+                <div className="flex flex-col">
+                  {[
+                    { label: 'Best Session', value: edgeData.bestSession?.key, rate: edgeData.bestSession?.rate, Icon: Clock,    color: D.green },
+                    { label: 'Best Pair',    value: edgeData.bestPair?.key,    rate: edgeData.bestPair?.rate,    Icon: Activity, color: D.blue  },
+                    { label: 'Top Mindset',  value: edgeData.topEmotion?.key,  rate: edgeData.topEmotion?.rate,  Icon: Brain,    color: D.blue  },
+                  ].map((row, i, arr) => (
+                    <div key={row.label} style={{
+                      display: 'flex', alignItems: 'center', gap: 12,
+                      padding: '14px 0',
+                      borderBottom: i < arr.length - 1 ? `1px solid ${D.cardInner}` : 'none',
+                    }}>
+                      <div style={{ width: 36, height: 36, borderRadius: 10, flexShrink: 0, background: `${row.color}10`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <row.Icon size={15} style={{ color: row.color }} />
+                      </div>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <p className="text-[10px] font-semibold uppercase tracking-wider m-0 mb-1" style={{ color: D.textSub }}>{row.label}</p>
+                        <p className="text-sm font-semibold m-0 truncate" style={{ color: D.text }}>{row.value ?? '—'}</p>
+                      </div>
+                      {row.rate > 0 && (
+                        <span style={{ fontSize: 13, fontWeight: 700, color: row.color, background: `${row.color}10`, padding: '3px 10px', borderRadius: 99, flexShrink: 0 }}>
+                          {row.rate}%
+                        </span>
+                      )}
                     </div>
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ fontSize: 10, color: D.textSub, fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: 2 }}>{row.label}</div>
-                      <div style={{ fontSize: 14, fontWeight: 700, color: D.text, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{row.value ?? '—'}</div>
+                  ))}
+                </div>
+              ) : (
+                <div className="flex flex-col items-center gap-3 py-8 text-center">
+                  <div style={{ width: 48, height: 48, borderRadius: 14, background: `${D.green}0e`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Award size={22} style={{ color: D.green }} />
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold m-0 mb-1" style={{ color: D.text }}>Unlock Your Edge</p>
+                    <p className="text-xs m-0" style={{ color: D.textSub }}>
+                      Log <span style={{ color: D.green, fontWeight: 700 }}>{Math.max(0, 5 - (allTrades?.length ?? 0))} more trade{Math.max(0, 5 - (allTrades?.length ?? 0)) !== 1 ? 's' : ''}</span> to reveal patterns
+                    </p>
+                  </div>
+                  {allTrades?.length > 0 && (
+                    <div className="flex gap-1">
+                      {[...Array(5)].map((_, i) => (
+                        <div key={i} style={{ width: 20, height: 3, borderRadius: 99, background: i < allTrades.length ? D.green : D.cardInner }} />
+                      ))}
                     </div>
-                    {row.rate > 0 && (
-                      <span style={{ fontSize: 12, fontWeight: 800, color: row.color, background: `${row.color}12`, border: `1px solid ${row.color}25`, padding: '3px 9px', borderRadius: 99, flexShrink: 0 }}>
-                        {row.rate}%
+                  )}
+                </div>
+              )}
+            </Card>
+          </div>
+
+          <div style={{ gridColumn: 'span 6' }}>
+            <Card style={{ padding: '24px' }}>
+              <SectionHeader
+                title="Recent Activity"
+                action={
+                  <button onClick={() => goTo('journal')}
+                    style={{ fontSize: 12, color: D.green, background: 'none', border: 'none', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 3, fontWeight: 600, padding: 0 }}>
+                    View all <ChevronRight size={12} />
+                  </button>
+                }
+              />
+              {recentTrades.length > 0 ? recentTrades.map((t, i) => {
+                const pnl     = parseFloat(t.pnl ?? 0);
+                const dir     = (t.direction ?? '').toUpperCase();
+                const outcome = (t.outcome ?? (pnl > 0 ? 'WIN' : pnl < 0 ? 'LOSS' : '')).toUpperCase();
+                const isWin   = outcome === 'WIN';
+                return (
+                  <div key={t.id ?? i} className="trade-row flex items-center gap-3 px-2 py-3 rounded-xl cursor-pointer" style={{ marginBottom: 2 }}>
+                    <div style={{ width: 7, height: 7, borderRadius: '50%', flexShrink: 0, background: isWin ? D.green : outcome === 'LOSS' ? D.red : D.textMute }} />
+                    <span style={{ fontSize: 11, color: D.textSub, width: 52, flexShrink: 0 }}>
+                      {t.date ? new Date(t.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '—'}
+                    </span>
+                    <span style={{ fontSize: 13, fontWeight: 700, color: D.text, width: 72, flexShrink: 0 }}>{t.pair ?? '—'}</span>
+                    {dir && (
+                      <span style={{ fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 99, flexShrink: 0, background: dir === 'BUY' ? `${D.green}12` : `${D.red}12`, color: dir === 'BUY' ? D.green : D.red }}>
+                        {dir}
                       </span>
                     )}
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12, padding: '16px 0', textAlign: 'center' }}>
-                <div style={{ width: 48, height: 48, borderRadius: 14, background: `${theme.accent}10`, border: `1px solid ${theme.accent}20`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <Award style={{ width: 22, height: 22, color: theme.accent }} />
-                </div>
-                <div>
-                  <div style={{ fontSize: 13, fontWeight: 700, color: D.text, marginBottom: 5 }}>Unlock Your Edge</div>
-                  <div style={{ fontSize: 12, color: D.textSub, lineHeight: 1.7 }}>
-                    Log <span style={{ color: theme.accent, fontWeight: 700 }}>{Math.max(0, 5 - (allTrades?.length ?? 0))} more trade{Math.max(0, 5 - (allTrades?.length ?? 0)) !== 1 ? 's' : ''}</span> to reveal patterns
-                  </div>
-                </div>
-                {allTrades?.length > 0 && (
-                  <div style={{ display: 'flex', gap: 4 }}>
-                    {[...Array(5)].map((_, i) => (
-                      <div key={i} style={{ width: 22, height: 4, borderRadius: 99, background: i < allTrades.length ? theme.accent : D.border2 }} />
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-
-          {/* Recent Trades */}
-          <div className="dc" style={{ ...CS({ padding: '20px' }) }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
-              <h2 style={{ fontSize: 11, fontWeight: 700, color: D.textSub, letterSpacing: '0.12em', textTransform: 'uppercase', margin: 0 }}>Recent Activity</h2>
-              <button onClick={() => goTo('journal')} style={{ fontSize: 11, color: theme.accent, background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 3, fontWeight: 600 }}>
-                View all <ChevronRight style={{ width: 11, height: 11 }} />
-              </button>
-            </div>
-
-            {recentTrades.length > 0 ? recentTrades.map((t, i) => {
-              const pnl     = parseFloat(t.pnl ?? 0);
-              const dir     = (t.direction ?? '').toUpperCase();
-              const outcome = (t.outcome ?? (pnl > 0 ? 'WIN' : pnl < 0 ? 'LOSS' : '')).toUpperCase();
-              const isWin   = outcome === 'WIN';
-              return (
-                <div key={t.id ?? i} className="trade-row" style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 8px', marginBottom: 2, cursor: 'pointer' }}>
-                  {/* Outcome dot */}
-                  <div style={{ width: 8, height: 8, borderRadius: '50%', flexShrink: 0, background: isWin ? D.accent : outcome === 'LOSS' ? D.red : D.border2 }} />
-
-                  {/* Date */}
-                  <span style={{ fontSize: 11, color: D.textSub, width: 54, flexShrink: 0 }}>
-                    {t.date ? new Date(t.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '—'}
-                  </span>
-
-                  {/* Pair */}
-                  <span style={{ fontSize: 13, fontWeight: 700, color: D.text, width: 75, flexShrink: 0 }}>{t.pair ?? '—'}</span>
-
-                  {/* Direction */}
-                  {dir && (
-                    <span style={{ fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 99, flexShrink: 0, background: dir === 'BUY' ? `${D.accent}15` : `${D.red}15`, color: dir === 'BUY' ? D.accent : D.red, border: `1px solid ${dir === 'BUY' ? D.accent : D.red}30` }}>
-                      {dir}
+                    {t.session && (
+                      <span style={{ fontSize: 10, color: D.textSub, background: D.cardInner, padding: '2px 7px', borderRadius: 99, flexShrink: 0 }}>{t.session}</span>
+                    )}
+                    <span style={{ marginLeft: 'auto', fontSize: 14, fontWeight: 700, color: pnl > 0 ? D.green : pnl < 0 ? D.red : D.textSub, letterSpacing: '-0.02em', flexShrink: 0 }}>
+                      {pnl !== 0 ? `${pnl > 0 ? '+' : ''}$${Math.abs(pnl).toFixed(2)}` : '—'}
                     </span>
-                  )}
-
-                  {/* Session */}
-                  {t.session && (
-                    <span style={{ fontSize: 11, color: D.textSub, background: D.cardBg2, border: `1px solid ${D.border}`, padding: '2px 7px', borderRadius: 99, flexShrink: 0 }}>{t.session}</span>
-                  )}
-
-                  {/* Strategy */}
-                  {t.strategy && (
-                    <span style={{ fontSize: 10, color: D.textSub, background: D.cardBg2, border: `1px solid ${D.border}`, padding: '2px 7px', borderRadius: 99, flexShrink: 0, maxWidth: 85, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{t.strategy}</span>
-                  )}
-
-                  {/* P&L */}
-                  <span style={{ marginLeft: 'auto', fontSize: 14, fontWeight: 800, color: pnl > 0 ? D.accent : pnl < 0 ? D.red : D.textSub, letterSpacing: '-0.02em', flexShrink: 0 }}>
-                    {pnl !== 0 ? `${pnl > 0 ? '+' : ''}$${Math.abs(pnl).toFixed(2)}` : '—'}
-                  </span>
+                  </div>
+                );
+              }) : (
+                <div className="flex flex-col items-center gap-3 py-10 text-center">
+                  <div style={{ width: 52, height: 52, borderRadius: 16, background: `${D.green}0d`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <BookOpen size={24} style={{ color: D.green }} />
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold m-0 mb-1" style={{ color: D.text }}>No trades logged yet</p>
+                    <p className="text-xs m-0 mb-4" style={{ color: D.textSub }}>Start journaling to track performance and unlock AI insights</p>
+                    <button onClick={() => goTo('journal')} style={{ padding: '10px 20px', background: D.green, color: '#fff', border: 'none', borderRadius: 10, fontSize: 13, fontWeight: 600, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                      <Plus size={14} /> Log Your First Trade
+                    </button>
+                  </div>
                 </div>
-              );
-            }) : (
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12, padding: '28px 0', textAlign: 'center' }}>
-                <div style={{ width: 52, height: 52, borderRadius: 16, background: `${theme.accent}10`, border: `1px solid ${theme.accent}18`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <BookOpen style={{ width: 24, height: 24, color: theme.accent }} />
-                </div>
-                <div>
-                  <div style={{ fontSize: 14, fontWeight: 700, color: D.text, marginBottom: 5 }}>No trades logged yet</div>
-                  <div style={{ fontSize: 12, color: D.textSub, marginBottom: 16, lineHeight: 1.7 }}>Start journaling to track performance and unlock AI insights</div>
-                  <button onClick={() => goTo('journal')} style={{ padding: '10px 22px', background: theme.accent, color: '#fff', border: 'none', borderRadius: 8, fontSize: 13, fontWeight: 700, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 6, boxShadow: `0 4px 14px ${theme.accent}35` }}>
-                    <Plus style={{ width: 14, height: 14 }} /> Log Your First Trade
-                  </button>
-                </div>
-              </div>
-            )}
+              )}
+            </Card>
           </div>
         </div>
 
-        {/* ══ ROW 5: QUICK ACCESS ════════════════════════════════════════ */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12 }}>
+        {/* ══ ROW 4: QUICK ACCESS ════════════════════════════════════════ */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 16 }}>
           {[
-            { view: 'intelligence',Icon: Zap,       color: D.blue,   title: 'AI Insights',         desc: 'Macroeconomic surprise scores and market intelligence',   badge: 'AI' },
-            { view: 'calendar',    Icon: Calendar,  color: D.gold,   title: 'Economic Calendar',   desc: 'High impact economic events and their market impact',     badge: null },
+            { view: 'intelligence', Icon: Zap,      color: D.blue, title: 'AI Insights',       desc: 'Macro surprise scores and market intelligence', badge: 'AI' },
+            { view: 'calendar',     Icon: Calendar, color: D.blue, title: 'Economic Calendar', desc: 'High-impact events and their market effects',    badge: null },
           ].map(item => (
-            <button
-              key={item.view}
-              onClick={() => goTo(item.view)}
-              className="dc qcard"
-              style={{
-                '--qhc': `${item.color}40`,
-                '--qhb': `${item.color}06`,
-                ...CS({ padding: '16px 18px' }),
-                display: 'flex', alignItems: 'flex-start', gap: 12,
-                textAlign: 'left', cursor: 'pointer',
-                transition: 'border-color 0.15s ease, background 0.15s ease',
-              }}
-            >
-              <div style={{ width: 38, height: 38, borderRadius: 10, flexShrink: 0, background: `${item.color}14`, border: `1px solid ${item.color}22`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <item.Icon style={{ width: 17, height: 17, color: item.color }} />
+            <Card key={item.view} onClick={() => goTo(item.view)} style={{ padding: '20px 22px', display: 'flex', alignItems: 'center', gap: 14 }}>
+              <div style={{ width: 40, height: 40, borderRadius: 12, flexShrink: 0, background: `${item.color}10`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <item.Icon size={18} style={{ color: item.color }} />
               </div>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
-                  <span style={{ fontSize: 13, fontWeight: 700, color: D.text }}>{item.title}</span>
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="text-sm font-semibold" style={{ color: D.text }}>{item.title}</span>
                   {item.badge && (
-                    <span style={{ fontSize: 9, fontWeight: 800, color: '#8b5cf6', background: '#8b5cf615', border: '1px solid #8b5cf625', padding: '2px 5px', borderRadius: 99 }}>{item.badge}</span>
+                    <span style={{ fontSize: 9, fontWeight: 700, color: D.blue, background: `${D.blue}12`, padding: '2px 5px', borderRadius: 99 }}>{item.badge}</span>
                   )}
                 </div>
-                <p style={{ fontSize: 12, color: D.textSub, margin: 0, lineHeight: 1.5 }}>{item.desc}</p>
+                <p className="text-xs m-0" style={{ color: D.textSub }}>{item.desc}</p>
               </div>
-              <ArrowUpRight style={{ width: 14, height: 14, color: D.textMute, flexShrink: 0, marginTop: 2 }} />
-            </button>
+              <ArrowUpRight size={14} style={{ color: D.textMute, flexShrink: 0 }} />
+            </Card>
           ))}
         </div>
 
@@ -832,4 +700,3 @@ export default function EconomicDashboard({ onViewChange }) {
     </div>
   );
 }
-

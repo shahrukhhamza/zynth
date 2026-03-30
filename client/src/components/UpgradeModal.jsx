@@ -134,13 +134,9 @@ export default function UpgradeModal({
 
   if (!visible) return null;
 
-  const headingText  = theme.isDark ? '#f8fafc' : '#0f172a';
-  const mutedText    = theme.isDark ? '#9ca3af' : '#64748b';
-  const subtleText   = theme.isDark ? '#94a3b8' : '#526174';
-  const panelSurface = theme.isDark ? 'rgba(255,255,255,0.04)' : '#f8fafc';
-  const modalBg      = theme.isDark
-    ? 'linear-gradient(180deg, rgba(8,12,20,0.98), rgba(6,9,16,0.98))'
-    : '#ffffff';
+  // CSS-variable-backed strings — values live in :root / .dark in index.css
+  const headingText = 'var(--z-text)';
+  const subtleText  = 'var(--z-muted)';
 
   function goToStep(n) {
     setStepIn(false);
@@ -198,7 +194,7 @@ export default function UpgradeModal({
     <div
       className="fixed inset-0 z-[9999] flex items-center justify-center p-4"
       style={{
-        background:           'rgba(0,0,0,0.88)',
+        background:           'var(--z-overlay)',
         backdropFilter:       'blur(16px)',
         WebkitBackdropFilter: 'blur(16px)',
       }}
@@ -281,7 +277,7 @@ export default function UpgradeModal({
           <div
             className="relative rounded-2xl"
             style={{
-              background:  'linear-gradient(155deg, #0a0c14 0%, #0d1020 60%, #09090f 100%)',
+            background:  'var(--z-modal)',
               maxHeight:   'calc(92vh - 2px)',
               overflowY:   'auto',
             }}
@@ -290,9 +286,9 @@ export default function UpgradeModal({
             <button
               onClick={handleClose}
               className="absolute top-4 right-4 z-20 flex h-8 w-8 items-center justify-center rounded-lg transition-colors"
-              style={{ background: 'rgba(255,255,255,0.06)', color: '#6b7280' }}
-              onMouseOver={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.12)'; e.currentTarget.style.color = '#f8fafc'; }}
-              onMouseOut={e =>  { e.currentTarget.style.background = 'rgba(255,255,255,0.06)'; e.currentTarget.style.color = '#6b7280'; }}
+              style={{ background: 'var(--z-close-bg)', color: 'var(--z-muted)' }}
+              onMouseOver={e => { e.currentTarget.style.background = 'var(--z-close-hov)'; e.currentTarget.style.color = 'var(--z-text)'; }}
+              onMouseOut={e =>  { e.currentTarget.style.background = 'var(--z-close-bg)'; e.currentTarget.style.color = 'var(--z-muted)'; }}
             >
               <X className="w-4 h-4" />
             </button>
@@ -301,15 +297,15 @@ export default function UpgradeModal({
               {/* ── LEFT: Progress + Emotion ── */}
               <div
                 className="flex flex-col gap-6 p-7 sm:p-8"
-                style={{ borderRight: '1px solid rgba(255,255,255,0.05)' }}
+                style={{ borderRight: '1px solid var(--z-border-sm)' }}
               >
                 {/* Badge */}
                 <span
                   className="self-start text-[11px] font-bold px-3 py-1 rounded-full tracking-widest"
                   style={{
-                    background: 'rgba(99,102,241,0.15)',
-                    color:      '#a5b4fc',
-                    border:     '1px solid rgba(99,102,241,0.32)',
+                    background: 'var(--z-badge-bg)',
+                    color:      'var(--z-badge-text)',
+                    border:     '1px solid var(--z-badge-bdr)',
                   }}
                 >
                   ANALYSIS IN PROGRESS
@@ -321,7 +317,7 @@ export default function UpgradeModal({
                     className="font-extrabold leading-tight"
                     style={{
                       fontSize:   28,
-                      background: 'linear-gradient(135deg, #f8fafc 30%, #c4b5fd 100%)',
+                      background: 'var(--z-h-grad)',
                       WebkitBackgroundClip: 'text',
                       WebkitTextFillColor: 'transparent',
                       backgroundClip: 'text',
@@ -329,7 +325,7 @@ export default function UpgradeModal({
                   >
                     {headline || "You\u2019re closer than you think."}
                   </h2>
-                  <p className="mt-3 text-sm leading-relaxed font-medium" style={{ color: '#cbd5e1' }}>
+                  <p className="mt-3 text-sm leading-relaxed font-medium" style={{ color: 'var(--z-text2)' }}>
                     {message || "You\u2019ve already uncovered early patterns. The real insights start after this point."}
                   </p>
                 </div>
@@ -337,10 +333,10 @@ export default function UpgradeModal({
                 {/* Progress bar */}
                 <div>
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs font-semibold" style={{ color: '#94a3b8' }}>Analysis Progress</span>
-                    <span className="text-xs font-bold" style={{ color: '#c4b5fd' }}>{progressPct}% complete</span>
+                    <span className="text-xs font-semibold" style={{ color: 'var(--z-muted)' }}>Analysis Progress</span>
+                    <span className="text-xs font-bold" style={{ color: 'var(--z-soft-purple)' }}>{progressPct}% complete</span>
                   </div>
-                  <div className="relative h-[7px] rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.07)' }}>
+                  <div className="relative h-[7px] rounded-full overflow-hidden" style={{ background: 'var(--z-track)' }}>
                     <motion.div
                       className="h-full rounded-full"
                       initial={{ width: '0%' }}
@@ -364,7 +360,7 @@ export default function UpgradeModal({
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 1.8, duration: 0.5 }}
-                    style={{ color: '#818cf8' }}
+                    style={{ color: 'var(--z-progress-txt)' }}
                   >
                     You&apos;re ahead of most users at this stage
                   </motion.p>
@@ -382,18 +378,18 @@ export default function UpgradeModal({
                     >
                       {item.done
                         ? <CheckCircle2 size={15} style={{ color: '#34d399', flexShrink: 0 }} />
-                        : <Lock size={13} style={{ color: '#374151', flexShrink: 0 }} />
+                        : <Lock size={13} style={{ color: 'var(--z-muted)', flexShrink: 0 }} />
                       }
                       <span
                         className="text-sm font-medium flex-1"
-                        style={{ color: item.done ? '#f1f5f9' : '#4b5563', opacity: item.done ? 1 : 0.5 }}
+                        style={{ color: item.done ? 'var(--z-text)' : 'var(--z-muted)', opacity: item.done ? 1 : 0.5 }}
                       >
                         {item.text}
                       </span>
                       {!item.done && (
                         <span
                           className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
-                          style={{ background: 'rgba(99,102,241,0.15)', color: '#a5b4fc', border: '1px solid rgba(99,102,241,0.28)', flexShrink: 0 }}
+                          style={{ background: 'var(--z-badge-bg)', color: 'var(--z-badge-text)', border: '1px solid var(--z-badge-bdr)', flexShrink: 0 }}
                         >
                           Elite
                         </span>
@@ -406,11 +402,11 @@ export default function UpgradeModal({
                 <div
                   className="rounded-xl p-4 mt-auto"
                   style={{
-                    background: 'rgba(251,191,36,0.06)',
-                    border:     '1px solid rgba(251,191,36,0.18)',
+                    background: 'var(--z-warn-bg)',
+                    border:     '1px solid var(--z-warn-bdr)',
                   }}
                 >
-                  <p className="text-sm font-semibold leading-relaxed" style={{ color: '#fde68a' }}>
+                  <p className="text-sm font-semibold leading-relaxed" style={{ color: 'var(--z-warn-text)' }}>
                     ⚡ Stopping here means missing the insights that actually improve outcomes.
                   </p>
                 </div>
@@ -420,7 +416,7 @@ export default function UpgradeModal({
               <div className="flex flex-col gap-4 p-7 sm:p-8">
                 <p
                   className="text-xs font-bold uppercase tracking-widest"
-                  style={{ color: '#6b7280' }}
+                  style={{ color: 'var(--z-muted)' }}
                 >
                   Choose your plan
                 </p>
@@ -443,15 +439,15 @@ export default function UpgradeModal({
                     padding:    '1px',
                     background: selectedPlan === 'elite'
                       ? 'linear-gradient(135deg, #6366f1, #8b5cf6, #a78bfa)'
-                      : 'rgba(255,255,255,0.07)',
+                      : 'var(--z-border)',
                   }}
                 >
                   <div
                     className="rounded-[15px] p-4"
                     style={{
                       background: selectedPlan === 'elite'
-                        ? 'linear-gradient(160deg, #0f1120, #0c0e1c)'
-                        : 'rgba(255,255,255,0.02)',
+                        ? 'var(--z-inner)'
+                        : 'var(--z-surface)',
                     }}
                   >
                     <div className="flex items-start justify-between mb-3">
@@ -459,15 +455,15 @@ export default function UpgradeModal({
                         animate={{ y: [0, -2, 0] }}
                         transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }}
                         className="text-[11px] font-bold px-2.5 py-0.5 rounded-full"
-                        style={{ background: 'rgba(139,92,246,0.2)', color: '#c4b5fd', border: '1px solid rgba(139,92,246,0.35)', display: 'inline-block' }}
+                        style={{ background: 'var(--z-badge-bg)', color: 'var(--z-badge-text)', border: '1px solid var(--z-badge-bdr)', display: 'inline-block' }}
                       >
                         ☆ Recommended
                       </motion.span>
                       <Crown size={14} style={{ color: '#a78bfa', marginTop: 2, flexShrink: 0 }} />
                     </div>
-                    <h3 className="text-base font-bold mb-0.5" style={{ color: '#f8fafc' }}>Continue without limits</h3>
+                    <h3 className="text-base font-bold mb-0.5" style={{ color: 'var(--z-text)' }}>Continue without limits</h3>
                     <div className="flex items-baseline gap-2 mb-0.5">
-                      <span className="text-lg font-extrabold" style={{ color: '#e2e8f0' }}>{eliteDisp.amountDisplay}</span>
+                      <span className="text-lg font-extrabold" style={{ color: 'var(--z-text)' }}>{eliteDisp.amountDisplay}</span>
                       <span className="text-xs font-medium" style={{ color: '#6b7280' }}>{eliteDisp.suffix}</span>
                     </div>
                     <p className="text-xs font-medium mb-3" style={{ color: '#6366f1' }}>Most users upgrade at this stage</p>
@@ -475,7 +471,7 @@ export default function UpgradeModal({
                       {eliteFeatures.map((f, i) => (
                         <div key={i} className="flex items-center gap-2">
                           <CheckCircle2 size={12} style={{ color: '#a78bfa', flexShrink: 0 }} />
-                          <span className="text-xs font-medium" style={{ color: '#e2e8f0' }}>{f}</span>
+                          <span className="text-xs font-medium" style={{ color: 'var(--z-text2)' }}>{f}</span>
                         </div>
                       ))}
                     </div>
@@ -487,8 +483,8 @@ export default function UpgradeModal({
                   onClick={() => setSelectedPlan('pro')}
                   className="cursor-pointer rounded-xl p-4 transition-all duration-200"
                   style={{
-                    background: selectedPlan === 'pro' ? 'rgba(37,99,235,0.1)' : 'rgba(255,255,255,0.025)',
-                    border:     `1px solid ${selectedPlan === 'pro' ? 'rgba(59,130,246,0.45)' : 'rgba(255,255,255,0.07)'}`,
+                    background: selectedPlan === 'pro' ? 'rgba(37,99,235,0.1)' : 'var(--z-surface)',
+                    border:     `1px solid ${selectedPlan === 'pro' ? 'rgba(59,130,246,0.45)' : 'var(--z-border)'}`,
                     boxShadow:  selectedPlan === 'pro' ? '0 0 18px rgba(37,99,235,0.12)' : 'none',
                   }}
                 >
@@ -496,8 +492,8 @@ export default function UpgradeModal({
                     <div className="flex items-center gap-2.5">
                       <Rocket size={13} style={{ color: '#60a5fa', flexShrink: 0 }} />
                       <div>
-                        <h3 className="text-sm font-semibold" style={{ color: '#d1d5db' }}>Build consistency over time</h3>
-                        <p className="text-xs mt-0.5 font-medium" style={{ color: '#6b7280' }}>Pro · {proDisp.label}</p>
+                        <h3 className="text-sm font-semibold" style={{ color: 'var(--z-text2)' }}>Build consistency over time</h3>
+                        <p className="text-xs mt-0.5 font-medium" style={{ color: 'var(--z-muted)' }}>Pro · {proDisp.label}</p>
                       </div>
                     </div>
                     {selectedPlan === 'pro' && (
@@ -516,8 +512,8 @@ export default function UpgradeModal({
                       className="text-xs px-3 py-1.5 rounded-lg font-semibold transition-all duration-150"
                       style={{
                         background: activeBillingCycle === cycle ? 'rgba(99,102,241,0.18)' : 'transparent',
-                        color:      activeBillingCycle === cycle ? '#c4b5fd' : '#6b7280',
-                        border:     `1px solid ${activeBillingCycle === cycle ? 'rgba(99,102,241,0.45)' : 'rgba(255,255,255,0.08)'}`,
+                        color:      activeBillingCycle === cycle ? 'var(--z-soft-purple)' : 'var(--z-muted)',
+                        border:     `1px solid ${activeBillingCycle === cycle ? 'rgba(99,102,241,0.45)' : 'var(--z-border)'}`,
                       }}
                     >
                       {cycle === 'annual' ? 'Annual (save 17%)' : 'Monthly'}
@@ -554,27 +550,27 @@ export default function UpgradeModal({
                     />
                     <span className="relative z-10">Continue My Analysis →</span>
                   </motion.button>
-                  <p className="text-center text-xs font-medium mt-2" style={{ color: '#6b7280' }}>Takes less than 30 seconds</p>
+                  <p className="text-center text-xs font-medium mt-2" style={{ color: 'var(--z-muted)' }}>Takes less than 30 seconds</p>
                 </div>
 
                 {/* Social proof */}
-                <p className="text-center text-xs font-medium" style={{ color: '#6b7280' }}>
-                  <span style={{ color: '#818cf8', fontWeight: 700 }}>2,000+</span> users unlocked deeper insights after this step
+                <p className="text-center text-xs font-medium" style={{ color: 'var(--z-muted)' }}>
+                  <span style={{ color: 'var(--z-progress-txt)', fontWeight: 700 }}>2,000+</span> users unlocked deeper insights after this step
                 </p>
 
                 {/* Trust */}
                 <div className="flex items-center justify-center gap-4 flex-wrap">
                   <div className="flex items-center gap-1.5">
-                    <Shield size={10} style={{ color: '#4b5563', flexShrink: 0 }} />
-                    <span className="text-xs font-medium" style={{ color: '#6b7280' }}>No commitment</span>
+                    <Shield size={10} style={{ color: 'var(--z-muted)', flexShrink: 0 }} />
+                    <span className="text-xs font-medium" style={{ color: 'var(--z-muted)' }}>No commitment</span>
                   </div>
                   <div className="flex items-center gap-1.5">
-                    <CheckCircle2 size={10} style={{ color: '#4b5563', flexShrink: 0 }} />
-                    <span className="text-xs font-medium" style={{ color: '#6b7280' }}>Cancel anytime</span>
+                    <CheckCircle2 size={10} style={{ color: 'var(--z-muted)', flexShrink: 0 }} />
+                    <span className="text-xs font-medium" style={{ color: 'var(--z-muted)' }}>Cancel anytime</span>
                   </div>
                   <div className="flex items-center gap-1.5">
-                    <Shield size={10} style={{ color: '#4b5563', flexShrink: 0 }} />
-                    <span className="text-xs font-medium" style={{ color: '#6b7280' }}>Secure checkout</span>
+                    <Shield size={10} style={{ color: 'var(--z-muted)', flexShrink: 0 }} />
+                    <span className="text-xs font-medium" style={{ color: 'var(--z-muted)' }}>Secure checkout</span>
                   </div>
                 </div>
               </div>
@@ -601,7 +597,7 @@ export default function UpgradeModal({
         display: 'flex',
         flexDirection: 'column',
         borderRadius: 20,
-        background: '#0d1120',
+        background: 'var(--z-card)',
         border: '1px solid rgba(99,102,241,0.45)',
         boxShadow: '0 32px 80px rgba(0,0,0,0.85)',
         overflow: 'hidden',
@@ -612,11 +608,11 @@ export default function UpgradeModal({
           style={{
             position: 'absolute', top: 12, right: 12, zIndex: 10,
             width: 30, height: 30, borderRadius: 8, border: 'none', cursor: 'pointer',
-            background: 'rgba(255,255,255,0.08)', color: '#9ca3af',
+            background: 'var(--z-close-bg)', color: 'var(--z-muted)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
           }}
-          onMouseOver={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.15)'; e.currentTarget.style.color = '#f8fafc'; }}
-          onMouseOut={e =>  { e.currentTarget.style.background = 'rgba(255,255,255,0.08)'; e.currentTarget.style.color = '#9ca3af'; }}
+          onMouseOver={e => { e.currentTarget.style.background = 'var(--z-close-hov)'; e.currentTarget.style.color = 'var(--z-text)'; }}
+          onMouseOut={e =>  { e.currentTarget.style.background = 'var(--z-close-bg)'; e.currentTarget.style.color = 'var(--z-muted)'; }}
         >
           <X size={14} />
         </button>
@@ -624,68 +620,68 @@ export default function UpgradeModal({
         <div style={{ flex: '1 1 0%', overflowY: 'auto', padding: '24px 20px 8px' }}>
 
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
-            <button type="button" onClick={() => goToStep(1)} style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 12, fontWeight: 600, padding: '6px 12px', borderRadius: 8, cursor: 'pointer', color: '#9ca3af', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}
-              onMouseOver={e => { e.currentTarget.style.color = '#e2e8f0'; }}
-              onMouseOut={e => { e.currentTarget.style.color = '#9ca3af'; }}
+            <button type="button" onClick={() => goToStep(1)} style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 12, fontWeight: 600, padding: '6px 12px', borderRadius: 8, cursor: 'pointer', color: 'var(--z-muted)', background: 'var(--z-surface)', border: '1px solid var(--z-border)' }}
+              onMouseOver={e => { e.currentTarget.style.color = 'var(--z-text)'; }}
+              onMouseOut={e => { e.currentTarget.style.color = 'var(--z-muted)'; }}
             >&#8592; Change Plan</button>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <span style={{ width: 8, height: 6, borderRadius: 3, background: 'rgba(255,255,255,0.15)', display: 'inline-block' }} />
+              <span style={{ width: 8, height: 6, borderRadius: 3, background: 'var(--z-border)', display: 'inline-block' }} />
               <span style={{ width: 24, height: 6, borderRadius: 3, background: '#6366f1', display: 'inline-block' }} />
-              <span style={{ fontSize: 11, color: '#6b7280', fontWeight: 500 }}>Step 2 of 2</span>
+              <span style={{ fontSize: 11, color: 'var(--z-muted)', fontWeight: 500 }}>Step 2 of 2</span>
             </div>
           </div>
 
-          <div style={{ borderRadius: 14, marginBottom: 12, background: 'linear-gradient(135deg, rgba(99,102,241,0.18), rgba(139,92,246,0.12))', border: '1px solid rgba(99,102,241,0.3)' }}>
+          <div style={{ borderRadius: 14, marginBottom: 12, background: 'var(--z-plan-card-bg)', border: '1px solid var(--z-badge-bdr)' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '14px 16px 12px' }}>
               <div style={{ flexShrink: 0, width: 34, height: 34, borderRadius: 9, display: 'flex', alignItems: 'center', justifyContent: 'center', background: selected.accent + '25', border: '1px solid ' + selected.accent + '50' }}>
                 <SelectedPlanIcon size={15} color={selected.accent} />
               </div>
               <div style={{ flex: '1 1 0%', minWidth: 0 }}>
-                <div style={{ fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.07em', color: '#6b7280' }}>Plan selected</div>
-                <div style={{ fontSize: 15, fontWeight: 700, color: '#f1f5f9' }}>{selected.name}</div>
+                <div style={{ fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.07em', color: 'var(--z-muted)' }}>Plan selected</div>
+                <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--z-text)' }}>{selected.name}</div>
               </div>
               <div style={{ flexShrink: 0, fontSize: 10, fontWeight: 700, padding: '3px 10px', borderRadius: 999, border: '1px solid ' + selected.accent + '60', color: selected.accent, background: selected.accent + '20', whiteSpace: 'nowrap' }}>{selected.badge}</div>
             </div>
             <div style={{ padding: '12px 16px 14px', borderTop: '1px solid rgba(99,102,241,0.18)' }}>
-              <div style={{ fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.07em', color: '#6b7280', marginBottom: 3 }}>Total due</div>
-              <div style={{ fontSize: 26, fontWeight: 800, lineHeight: 1, background: 'linear-gradient(90deg, #f1f5f9, #c4b5fd)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>{isPakistanPayment ? amountPkrLabel : amountLabel}</div>
-              <div style={{ fontSize: 11, color: '#6b7280', marginTop: 4 }}>{activeBillingCycle === 'annual' ? 'billed annually' : 'billed monthly'} &middot; Instant access after verification</div>
+              <div style={{ fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.07em', color: 'var(--z-muted)', marginBottom: 3 }}>Total due</div>
+              <div style={{ fontSize: 26, fontWeight: 800, lineHeight: 1, background: 'var(--z-p-grad)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>{isPakistanPayment ? amountPkrLabel : amountLabel}</div>
+              <div style={{ fontSize: 11, color: 'var(--z-muted)', marginTop: 4 }}>{activeBillingCycle === 'annual' ? 'billed annually' : 'billed monthly'} &middot; Instant access after verification</div>
             </div>
             {isPakistanPayment && (
-              <div style={{ padding: '9px 16px', background: 'rgba(251,191,36,0.09)', borderTop: '1px solid rgba(251,191,36,0.2)' }}>
-                <div style={{ fontSize: 11, fontWeight: 600, color: '#fde68a' }}>&#9888; Send the exact amount above. Plan activates after verification.</div>
+              <div style={{ padding: '9px 16px', background: 'var(--z-warn-bg)', borderTop: '1px solid var(--z-warn-bdr)' }}>
+                <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--z-warn-text)' }}>&#9888; Send the exact amount above. Plan activates after verification.</div>
               </div>
             )}
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 4, padding: 4, borderRadius: 12, background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)', marginBottom: 12 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 4, padding: 4, borderRadius: 12, background: 'var(--z-surface)', border: '1px solid var(--z-border)', marginBottom: 12 }}>
             {[{ key: 'INTL', label: 'International' }, { key: 'PK', label: 'Pakistan' }].map(r => (
               <button key={r.key} type="button"
                 onClick={() => { setPaymentRegion(r.key); const m = PAYMENT_OPTIONS_BY_REGION[r.key] || []; if (m.length > 0) setMethodKey(m[0].key); }}
-                style={{ padding: '8px 0', borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: 'pointer', border: 'none', background: paymentRegion === r.key ? 'rgba(99,102,241,0.25)' : 'transparent', color: paymentRegion === r.key ? '#c4b5fd' : '#6b7280', outline: paymentRegion === r.key ? '1px solid rgba(99,102,241,0.4)' : 'none' }}
+                style={{ padding: '8px 0', borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: 'pointer', border: 'none', background: paymentRegion === r.key ? 'var(--z-badge-bg)' : 'transparent', color: paymentRegion === r.key ? 'var(--z-soft-purple)' : 'var(--z-muted)', outline: paymentRegion === r.key ? '1px solid var(--z-badge-bdr)' : 'none' }}
               >{r.label}</button>
             ))}
           </div>
 
           <div style={{ marginBottom: 12 }}>
-            <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#6b7280', marginBottom: 8 }}>Choose Payment Method</div>
+            <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--z-muted)', marginBottom: 8 }}>Choose Payment Method</div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
               {currentRegionMethods.map((option, idx) => {
                 const active = option.key === methodKey;
                 const Icon = option.Icon;
                 return (
                   <button key={option.key} type="button" onClick={() => setMethodKey(option.key)}
-                    style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: 12, padding: '10px 14px', borderRadius: 11, cursor: 'pointer', textAlign: 'left', background: active ? 'rgba(99,102,241,0.16)' : 'rgba(255,255,255,0.04)', border: active ? '1px solid rgba(99,102,241,0.5)' : '1px solid rgba(255,255,255,0.08)' }}
+                    style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: 12, padding: '10px 14px', borderRadius: 11, cursor: 'pointer', textAlign: 'left', background: active ? 'rgba(99,102,241,0.16)' : 'var(--z-surface)', border: active ? '1px solid rgba(99,102,241,0.5)' : '1px solid var(--z-border)' }}
                   >
-                    {idx === 0 && (<span style={{ position: 'absolute', top: -8, left: 12, fontSize: 9, fontWeight: 700, padding: '2px 8px', borderRadius: 999, background: 'rgba(99,102,241,0.25)', color: '#a5b4fc', border: '1px solid rgba(99,102,241,0.4)' }}>Recommended</span>)}
-                    <div style={{ flexShrink: 0, width: 32, height: 32, borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', background: active ? 'rgba(99,102,241,0.25)' : 'rgba(255,255,255,0.07)' }}>
-                      <Icon size={14} color={active ? '#a5b4fc' : '#6b7280'} />
+                    {idx === 0 && (<span style={{ position: 'absolute', top: -8, left: 12, fontSize: 9, fontWeight: 700, padding: '2px 8px', borderRadius: 999, background: 'var(--z-badge-bg)', color: 'var(--z-badge-text)', border: '1px solid var(--z-badge-bdr)' }}>Recommended</span>)}
+                    <div style={{ flexShrink: 0, width: 32, height: 32, borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', background: active ? 'rgba(99,102,241,0.25)' : 'var(--z-track)' }}>
+                      <Icon size={14} color={active ? 'var(--z-badge-text)' : 'var(--z-muted)'} />
                     </div>
                     <div style={{ flex: '1 1 0%', minWidth: 0 }}>
-                      <div style={{ fontSize: 13, fontWeight: 600, color: active ? '#f1f5f9' : '#d1d5db' }}>{option.name}</div>
-                      <div style={{ fontSize: 11, color: '#6b7280' }}>{paymentRegion === 'INTL' ? 'USD wire transfer' : 'Local mobile transfer'}</div>
+                      <div style={{ fontSize: 13, fontWeight: 600, color: active ? 'var(--z-text)' : 'var(--z-text2)' }}>{option.name}</div>
+                      <div style={{ fontSize: 11, color: 'var(--z-muted)' }}>{paymentRegion === 'INTL' ? 'USD wire transfer' : 'Local mobile transfer'}</div>
                     </div>
-                    {active && (<div style={{ flexShrink: 0, width: 14, height: 14, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(99,102,241,0.3)', border: '1px solid #6366f1' }}><div style={{ width: 6, height: 6, borderRadius: '50%', background: '#a5b4fc' }} /></div>)}
+                    {active && (<div style={{ flexShrink: 0, width: 14, height: 14, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--z-badge-bg)', border: '1px solid var(--z-progress-txt)' }}><div style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--z-badge-text)' }} /></div>)}
                   </button>
                 );
               })}
@@ -693,35 +689,35 @@ export default function UpgradeModal({
           </div>
 
           {currentMethod && (
-            <div style={{ borderRadius: 14, marginBottom: 12, border: '1px solid rgba(99,102,241,0.3)', background: '#111527' }}>
-              <div style={{ padding: '12px 16px', borderBottom: '1px solid rgba(99,102,241,0.2)', background: 'rgba(99,102,241,0.12)', borderRadius: '14px 14px 0 0' }}>
-                <div style={{ fontSize: 14, fontWeight: 700, color: '#f1f5f9' }}>{currentMethod.name}</div>
-                <div style={{ fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.07em', color: '#6b7280', marginTop: 2 }}>Bank transfer details</div>
+            <div style={{ borderRadius: 14, marginBottom: 12, border: '1px solid rgba(99,102,241,0.3)', background: 'var(--z-inner)' }}>
+              <div style={{ padding: '12px 16px', borderBottom: '1px solid var(--z-badge-bdr)', background: 'var(--z-plan-hdr-bg)', borderRadius: '14px 14px 0 0' }}>
+                <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--z-text)' }}>{currentMethod.name}</div>
+                <div style={{ fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.07em', color: 'var(--z-muted)', marginTop: 2 }}>Bank transfer details</div>
               </div>
-              <div style={{ padding: '10px 16px', borderBottom: '1px solid rgba(99,102,241,0.15)', background: 'rgba(99,102,241,0.08)' }}>
-                <div style={{ fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.07em', color: '#6b7280', marginBottom: 2 }}>Amount to send</div>
-                <div style={{ fontSize: 20, fontWeight: 800, color: '#a5b4fc' }}>{isPakistanPayment ? amountPkrLabel : amountLabel}</div>
+              <div style={{ padding: '10px 16px', borderBottom: '1px solid var(--z-badge-bdr)', background: 'var(--z-plan-amt-bg)' }}>
+                <div style={{ fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.07em', color: 'var(--z-muted)', marginBottom: 2 }}>Amount to send</div>
+                <div style={{ fontSize: 20, fontWeight: 800, color: 'var(--z-amount-text)' }}>{isPakistanPayment ? amountPkrLabel : amountLabel}</div>
               </div>
               {currentMethod.details.map((d, i) => (
-                <div key={d.label} style={{ padding: '12px 16px', borderBottom: i < currentMethod.details.length - 1 ? '1px solid rgba(255,255,255,0.06)' : 'none', background: i % 2 === 0 ? 'rgba(255,255,255,0.03)' : 'transparent' }}>
-                  <div style={{ fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.07em', color: '#6b7280', marginBottom: 4 }}>{d.label}</div>
-                  <div style={{ fontSize: 13, fontWeight: 600, color: '#e2e8f0', wordBreak: 'break-all', lineHeight: 1.5, marginBottom: 8 }}>{d.value}</div>
+                <div key={d.label} style={{ padding: '12px 16px', borderBottom: i < currentMethod.details.length - 1 ? '1px solid var(--z-divider)' : 'none', background: i % 2 === 0 ? 'var(--z-surface)' : 'transparent' }}>
+                  <div style={{ fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.07em', color: 'var(--z-muted)', marginBottom: 4 }}>{d.label}</div>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--z-text)', wordBreak: 'break-all', lineHeight: 1.5, marginBottom: 8 }}>{d.value}</div>
                   <button type="button" onClick={() => copyText(d.value)}
-                    style={{ fontSize: 11, fontWeight: 700, padding: '4px 14px', borderRadius: 7, cursor: 'pointer', background: 'rgba(99,102,241,0.18)', color: '#a5b4fc', border: '1px solid rgba(99,102,241,0.4)' }}
-                    onMouseOver={e => { e.currentTarget.style.background = 'rgba(99,102,241,0.35)'; }}
-                    onMouseOut={e => { e.currentTarget.style.background = 'rgba(99,102,241,0.18)'; }}
+                    style={{ fontSize: 11, fontWeight: 700, padding: '4px 14px', borderRadius: 7, cursor: 'pointer', background: 'var(--z-copy-bg)', color: 'var(--z-copy-text)', border: '1px solid var(--z-copy-bdr)' }}
+                    onMouseOver={e => { e.currentTarget.style.background = 'var(--z-copy-hov)'; }}
+                    onMouseOut={e => { e.currentTarget.style.background = 'var(--z-copy-bg)'; }}
                   >Copy</button>
                 </div>
               ))}
-              <div style={{ padding: '10px 16px', borderTop: '1px solid rgba(255,255,255,0.06)', borderRadius: '0 0 14px 14px', background: 'rgba(0,0,0,0.15)' }}>
-                <div style={{ fontSize: 11, color: '#6b7280', lineHeight: 1.5 }}>{paymentRegion === 'PK' ? 'Send exactly ' + amountPkrLabel + '. Plan activates after verification.' : 'US: Routing Number (ACH). International: SWIFT. Verified within 1-2 hours.'}</div>
+              <div style={{ padding: '10px 16px', borderTop: '1px solid var(--z-divider)', borderRadius: '0 0 14px 14px', background: 'var(--z-surface)' }}>
+                <div style={{ fontSize: 11, color: 'var(--z-muted)', lineHeight: 1.5 }}>{paymentRegion === 'PK' ? 'Send exactly ' + amountPkrLabel + '. Plan activates after verification.' : 'US: Routing Number (ACH). International: SWIFT. Verified within 1-2 hours.'}</div>
               </div>
             </div>
           )}
 
-          <div style={{ borderRadius: 14, marginBottom: 4, border: '1px solid rgba(255,255,255,0.12)', background: '#111527' }}>
-            <div style={{ padding: '10px 16px', borderBottom: '1px solid rgba(255,255,255,0.08)', background: 'rgba(255,255,255,0.04)', borderRadius: '14px 14px 0 0' }}>
-              <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#94a3b8' }}>Confirm Payment</div>
+          <div style={{ borderRadius: 14, marginBottom: 4, border: '1px solid var(--z-border)', background: 'var(--z-inner)' }}>
+            <div style={{ padding: '10px 16px', borderBottom: '1px solid var(--z-border-sm)', background: 'var(--z-surface)', borderRadius: '14px 14px 0 0' }}>
+              <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--z-muted)' }}>Confirm Payment</div>
             </div>
             <div style={{ padding: 16, display: 'flex', flexDirection: 'column', gap: 10 }}>
               <div onClick={() => fileRef.current && fileRef.current.click()}
@@ -730,32 +726,32 @@ export default function UpgradeModal({
                 onMouseOut={e => { if (!proof) e.currentTarget.style.borderColor = 'rgba(99,102,241,0.45)'; }}
               >
                 <Upload size={18} color={proof ? '#34d399' : '#6366f1'} style={{ margin: '0 auto 8px', display: 'block' }} />
-                <div style={{ fontSize: 13, fontWeight: 600, color: proof ? '#34d399' : '#a5b4fc', wordBreak: 'break-all' }}>{proof ? proof.name : 'Upload payment screenshot'}</div>
-                <div style={{ fontSize: 11, color: '#6b7280', marginTop: 4 }}>{proof ? 'Tap to replace' : 'PNG, JPG, or WebP - click to browse'}</div>
+                <div style={{ fontSize: 13, fontWeight: 600, color: proof ? '#34d399' : 'var(--z-badge-text)', wordBreak: 'break-all' }}>{proof ? proof.name : 'Upload payment screenshot'}</div>
+                <div style={{ fontSize: 11, color: 'var(--z-muted)', marginTop: 4 }}>{proof ? 'Tap to replace' : 'PNG, JPG, or WebP - click to browse'}</div>
               </div>
               <input ref={fileRef} type="file" accept="image/jpeg,image/png,image/webp,image/gif" style={{ display: 'none' }} onChange={e => setProof(e.target.files && e.target.files[0] ? e.target.files[0] : null)} />
               <textarea value={note} onChange={e => setNote(e.target.value)} placeholder="Transaction reference or note (optional)" rows={2}
-                style={{ width: '100%', borderRadius: 9, padding: '9px 12px', fontSize: 12, fontWeight: 500, background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: '#e2e8f0', outline: 'none', resize: 'vertical', boxSizing: 'border-box' }}
+                style={{ width: '100%', borderRadius: 9, padding: '9px 12px', fontSize: 12, fontWeight: 500, background: 'var(--z-input)', border: '1px solid var(--z-input-bdr)', color: 'var(--z-text)', outline: 'none', resize: 'vertical', boxSizing: 'border-box' }}
               />
             </div>
           </div>
 
         </div>
 
-        <div style={{ flexShrink: 0, padding: '14px 20px 16px', borderTop: '1px solid rgba(255,255,255,0.08)', background: 'rgba(9,9,20,0.98)', display: 'flex', flexDirection: 'column', gap: 10 }}>
+        <div style={{ flexShrink: 0, padding: '14px 20px 16px', borderTop: '1px solid var(--z-border)', background: 'var(--z-footer)', display: 'flex', flexDirection: 'column', gap: 10 }}>
           {error && <ErrorBar message={error} />}
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 20, flexWrap: 'wrap' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}><Shield size={12} color="#6366f1" /><span style={{ fontSize: 11, fontWeight: 500, color: '#94a3b8' }}>Secure payment</span></div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}><CreditCard size={12} color="#6366f1" /><span style={{ fontSize: 11, fontWeight: 500, color: '#94a3b8' }}>Trusted processing</span></div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}><RotateCcw size={12} color="#6366f1" /><span style={{ fontSize: 11, fontWeight: 500, color: '#94a3b8' }}>Refund guarantee</span></div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}><Shield size={12} color="#6366f1" /><span style={{ fontSize: 11, fontWeight: 500, color: 'var(--z-muted)' }}>Secure payment</span></div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}><CreditCard size={12} color="#6366f1" /><span style={{ fontSize: 11, fontWeight: 500, color: 'var(--z-muted)' }}>Trusted processing</span></div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}><RotateCcw size={12} color="#6366f1" /><span style={{ fontSize: 11, fontWeight: 500, color: 'var(--z-muted)' }}>Refund guarantee</span></div>
           </div>
           <button type="button" onClick={submitPayment} disabled={submitting || !proof}
             style={{ width: '100%', padding: '14px 0', borderRadius: 12, border: 'none', cursor: submitting || !proof ? 'not-allowed' : 'pointer', fontSize: 15, fontWeight: 700, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, background: submitting || !proof ? 'rgba(99,102,241,0.35)' : 'linear-gradient(135deg, #6366f1, #8b5cf6)', boxShadow: submitting || !proof ? 'none' : '0 0 24px rgba(99,102,241,0.4)', opacity: submitting ? 0.7 : 1 }}
           >
             {submitting ? <><Loader2 size={15} style={{ animation: 'spin 1s linear infinite' }} /> Submitting&hellip;</> : 'Complete Secure Payment \u2192'}
           </button>
-          <p style={{ textAlign: 'center', fontSize: 11, color: '#4b5563', margin: 0 }}>
-            Need help? <a href="mailto:getzynth@gmail.com" style={{ color: '#818cf8', textDecoration: 'none' }}>getzynth@gmail.com</a> &mdash; we respond fast.
+          <p style={{ textAlign: 'center', fontSize: 11, color: 'var(--z-muted)', margin: 0 }}>
+            Need help? <a href="mailto:getzynth@gmail.com" style={{ color: 'var(--z-progress-txt)', textDecoration: 'none' }}>getzynth@gmail.com</a> &mdash; we respond fast.
           </p>
         </div>
 

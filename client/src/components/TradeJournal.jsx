@@ -4,16 +4,127 @@ import { BookOpen, List, BarChart2, Brain, X, RefreshCw, Activity, Fingerprint, 
 import { useTheme } from '../contexts/ThemeContext';
 import { resolveMediaUrl } from '../utils/mediaUrl';
 import { listTrades, getAnalytics } from '../services/journalApi';
+import { API_URL } from '../config/api';
+import { getAuthToken } from '../utils/authStorage';
 import TradeEntryForm from './journal/TradeEntryForm';
 import TradeHistoryTable from './journal/TradeHistoryTable';
 import PerformanceDashboard from './journal/PerformanceDashboard';
-import AiInsightsPanel from './journal/AiInsightsPanel';
+import NewAiInsightsDashboard from './ai-insights/NewAiInsightsDashboard';
 import MacroCorrelation from './MacroCorrelation';
 import TradingDNA from './TradingDNA';
 import TradeDetailPage from './journal/TradeDetailPage';
 import JournalUpgradePrompt from './journal/JournalUpgradePrompt';
 import UsageBanner from './journal/UsageBanner';
 import { usePlan } from '../hooks/usePlan';
+
+const INSIGHT_GROUPS = [
+  { key: 'labor', title: 'Labor', keys: ['nfp', 'unemployment', 'joblessclaims'] },
+  { key: 'inflation', title: 'Inflation', keys: ['cpi', 'corepce'] },
+  { key: 'growth', title: 'Growth', keys: ['gdp', 'retailsales', 'ismmanufacturing'] },
+];
+
+function normalizeInsightKey(value) {
+  return String(value || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+}
+
+function classifySentiment(label) {
+  const normalized = String(label || '').toLowerCase();
+  if (normalized.includes('bull')) return 'Bullish';
+  if (normalized.includes('bear')) return 'Bearish';
+  return 'Neutral';
+}
+
+function formatRelativeTime(input) {
+  if (!input) return 'Unavailable';
+  const stamp = typeof input === 'number' ? input : new Date(input).getTime();
+  if (!stamp || Number.isNaN(stamp)) return 'Unavailable';
+  const diff = Math.max(0, Date.now() - stamp);
+  const minutes = Math.floor(diff / 60000);
+  if (minutes < 1) return 'Just now';
+  if (minutes < 60) return `${minutes} min ago`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours}h ago`;
+  return `${Math.floor(hours / 24)}d ago`;
+}
+
+function splitAiAnalysis(analysis) {
+  if (!analysis) {
+    return {
+      summary: 'Macro intelligence is not available yet.',
+      action: 'Wait for fresh economic data before adjusting bias.',
+    };
+  }
+
+  const sentences = String(analysis)
+    .split(/(?<=[.!?])\s+/)
+    .map((sentence) => sentence.trim())
+    .filter(Boolean);
+
+  if (sentences.length === 0) {
+    return {
+      summary: 'Macro intelligence is not available yet.',
+      action: 'Wait for fresh economic data before adjusting bias.',
+    };
+  }
+
+  return {
+    summary: sentences.slice(0, Math.max(1, sentences.length - 1)).join(' '),
+    action: sentences[sentences.length - 1],
+  };
+}
+
+function transformMacroData(macroScore, dashboard) {
+  if (!macroScore && !dashboard) return null;
+
+  const indicators = Object.values(dashboard?.indicators || {})
+    .filter(Boolean)
+    .filter((item) => !item.error)
+    .map((item) => ({
+      ...item,
+      normalizedCode: normalizeInsightKey(item.code || item.indicator),
+    }));
+
+  const contributors = (macroScore?.contributors || []).map((contributor) => {
+    const normalizedCode = normalizeInsightKey(contributor.code);
+    const indicator = indicators.find((item) => item.normalizedCode === normalizedCode);
+    const bias = classifySentiment(contributor.impact || dashboard?.overallSentiment || macroScore?.label);
+    return {
+      code: contributor.code,
+      name: indicator?.indicator || contributor.indicator || contributor.code,
+      value: indicator?.actual != null ? `${indicator.actual}${indicator.unit || ''}` : `${contributor.surprise ?? 0}${contributor.unit || ''}`,
+      bias,
+      intensity: Math.max(8, Math.min(100, Math.abs(contributor.contribution || 0) * 18)),
+    };
+  });
+
+  const categories = INSIGHT_GROUPS.map((group) => ({
+    key: group.key,
+    title: group.title,
+    indicators: indicators
+      .filter((indicator) => group.keys.includes(indicator.normalizedCode))
+      .map((indicator) => ({
+        code: indicator.code,
+        name: indicator.indicator,
+        actual: `${indicator.actual ?? '—'}${indicator.unit || ''}`,
+        forecast: `${indicator.forecast ?? '—'}${indicator.unit || ''}`,
+        bias: classifySentiment(indicator.impact || indicator.impactColor || dashboard?.overallSentiment),
+        intensity: Math.max(8, Math.min(100, Math.abs(indicator.surprisePercentage ?? indicator.surprise ?? 0) * 2.5)),
+      })),
+  })).filter((group) => group.indicators.length > 0);
+
+  const ai = splitAiAnalysis(dashboard?.aiAnalysis?.analysis);
+  const score = macroScore?.score ?? 0;
+
+  return {
+    score,
+    sentiment: classifySentiment(macroScore?.label || dashboard?.overallSentiment),
+    confidence: Math.min(100, Math.round(Math.abs(score) * 10)),
+    updated: formatRelativeTime(macroScore?.updatedAt || dashboard?.aiAnalysis?.timestamp),
+    drivers: contributors.slice(0, 5),
+    categories,
+    ai,
+  };
+}
 
 const TABS = [
   { key: 'log',         label: 'Log Trade',          icon: BookOpen  },
@@ -277,8 +388,10 @@ export default function TradeJournal() {
   const journalLimitReached = isFree && maxJournal !== Infinity && maxJournal > 0 && total >= maxJournal;
   const [page, setPage] = useState(0);
   const [metrics, setMetrics] = useState(null);
+  const [macroData, setMacroData] = useState(null);
   const [loadingTrades, setLoadingTrades] = useState(false);
   const [loadingMetrics, setLoadingMetrics] = useState(false);
+  const [loadingInsights, setLoadingInsights] = useState(false);
   const [selectedTrade, setSelectedTrade] = useState(null);
   const LIMIT = 20;
 
@@ -307,6 +420,32 @@ export default function TradeJournal() {
     }
   }, []);
 
+  const fetchInsightsData = useCallback(async () => {
+    const token = getAuthToken();
+    if (!token) {
+      setMacroData(null);
+      return;
+    }
+
+    setLoadingInsights(true);
+    try {
+      const headers = { Authorization: `Bearer ${token}` };
+      const [dashboardRes, scoreRes] = await Promise.all([
+        fetch(`${API_URL}/api/economic/dashboard`, { headers }),
+        fetch(`${API_URL}/api/economic/macro-score`, { headers }),
+      ]);
+
+      const dashboard = dashboardRes.ok ? await dashboardRes.json() : null;
+      const score = scoreRes.ok ? await scoreRes.json() : null;
+      setMacroData(transformMacroData(score, dashboard));
+    } catch (err) {
+      console.error('Failed to load AI insights:', err);
+      setMacroData(null);
+    } finally {
+      setLoadingInsights(false);
+    }
+  }, []);
+
   useEffect(() => {
     fetchTrades(page);
   }, [page]);
@@ -314,17 +453,18 @@ export default function TradeJournal() {
   useEffect(() => {
     if (tab === 'performance' || tab === 'insights') {
       fetchMetrics();
-      if (tab === 'insights') fetchTrades(0);
+      if (tab === 'insights') {
+        fetchTrades(0);
+        fetchInsightsData();
+      }
     } else if (tab === 'history') {
       fetchTrades(page);
     }
   }, [tab]);
 
   const handleSaved = () => {
-    setTab('history');
     fetchTrades(0);
     setPage(0);
-    // refresh metrics too
     fetchMetrics();
   };
 
@@ -445,7 +585,7 @@ export default function TradeJournal() {
       </div>
 
       {tab === 'log' && (
-        <div className="max-w-xl mx-auto mt-0">
+        <div className="max-w-3xl mx-auto mt-0">
           {isFree && journalLimitReached ? (
             <JournalUpgradePrompt total={total} />
           ) : (
@@ -490,12 +630,13 @@ export default function TradeJournal() {
 
       {tab === 'insights' && (
         <div className="max-w-6xl mx-auto">
-          {refreshBtn}
-          <AiInsightsPanel
-            trades={trades}
-            metrics={metrics}
-            onReportGenerated={() => {}}
-          />
+          <button onClick={() => { fetchTrades(0); fetchMetrics(); fetchInsightsData(); }}
+            className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs transition-colors hover:bg-gray-100 dark:hover:bg-white/10 mb-4"
+            style={{ color: theme.muted, border: `1px solid ${theme.border}` }}>
+            <RefreshCw className={`w-3 h-3 ${loadingTrades || loadingMetrics || loadingInsights ? 'animate-spin' : ''}`} />
+            Refresh
+          </button>
+          <NewAiInsightsDashboard macroData={macroData} />
         </div>
       )}
 

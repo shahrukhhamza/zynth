@@ -157,7 +157,9 @@ export default {
         // Interactive elevation
         'z-card':  '0 1px 3px rgba(15,23,42,0.08), 0 4px 16px rgba(15,23,42,0.07)',
         'z-hover': '0 6px 20px rgba(15,23,42,0.12), 0 16px 44px rgba(15,23,42,0.09)',
+        'z-hover-strong': '0 10px 32px rgba(15,23,42,0.14), 0 24px 56px rgba(15,23,42,0.10)',
         'z-modal': '0 24px 80px rgba(15,23,42,0.18)',
+        'z-dark':  '0 2px 8px rgba(0,0,0,0.25), 0 1px 2px rgba(0,0,0,0.15)',
         // Focus
         'z-focus': '0 0 0 3px rgba(59,130,246,0.15)',
         'z-focus-dark': '0 0 0 3px rgba(59,130,246,0.22)',

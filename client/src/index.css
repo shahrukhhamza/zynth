@@ -2,6 +2,85 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ── Zynth theme CSS variables — used by inline-style components (UpgradeModal etc.)
+   Automatically switch via the .dark class that ThemeContext syncs to <html>.   */
+:root {
+  --z-overlay:      rgba(0,0,0,0.45);
+  --z-modal:        #ffffff;
+  --z-card:         #ffffff;
+  --z-inner:        #f1f5f9;
+  --z-surface:      #f8fafc;
+  --z-footer:       #f8fafc;
+  --z-text:         #0f172a;
+  --z-text2:        #334155;
+  --z-muted:        #475569;
+  --z-border:       #e2e8f0;
+  --z-border-sm:    #f1f5f9;
+  --z-input:        #f8fafc;
+  --z-input-bdr:    #cbd5e1;
+  --z-divider:      #e2e8f0;
+  --z-track:        #e2e8f0;
+  --z-close-bg:     #f1f5f9;
+  --z-close-hov:    #e2e8f0;
+  --z-h-grad:       linear-gradient(135deg, #1e293b 30%, #6366f1 100%);
+  --z-p-grad:       linear-gradient(90deg, #1e293b, #6366f1);
+  /* Semantic accent tokens */
+  --z-badge-bg:     rgba(99,102,241,0.08);
+  --z-badge-bdr:    rgba(99,102,241,0.25);
+  --z-badge-text:   #4338ca;
+  --z-soft-purple:  #5b21b6;
+  --z-progress-txt: #6366f1;
+  --z-warn-bg:      rgba(161,98,7,0.07);
+  --z-warn-bdr:     rgba(161,98,7,0.22);
+  --z-warn-text:    #92400e;
+  --z-amount-text:  #4338ca;
+  --z-copy-bg:      rgba(99,102,241,0.08);
+  --z-copy-bdr:     rgba(99,102,241,0.28);
+  --z-copy-hov:     rgba(99,102,241,0.16);
+  --z-copy-text:    #4338ca;
+  --z-plan-card-bg: linear-gradient(135deg, rgba(99,102,241,0.07), rgba(139,92,246,0.04));
+  --z-plan-hdr-bg:  rgba(99,102,241,0.06);
+  --z-plan-amt-bg:  rgba(99,102,241,0.04);
+}
+.dark {
+  --z-overlay:      rgba(0,0,0,0.88);
+  --z-modal:        linear-gradient(155deg, #0a0c14 0%, #0d1020 60%, #09090f 100%);
+  --z-card:         #0d1120;
+  --z-inner:        #111527;
+  --z-surface:      rgba(255,255,255,0.025);
+  --z-footer:       rgba(9,9,20,0.98);
+  --z-text:         #f8fafc;
+  --z-text2:        #cbd5e1;
+  --z-muted:        #94a3b8;
+  --z-border:       rgba(255,255,255,0.08);
+  --z-border-sm:    rgba(255,255,255,0.05);
+  --z-input:        rgba(255,255,255,0.05);
+  --z-input-bdr:    rgba(255,255,255,0.10);
+  --z-divider:      rgba(255,255,255,0.06);
+  --z-track:        rgba(255,255,255,0.07);
+  --z-close-bg:     rgba(255,255,255,0.06);
+  --z-close-hov:    rgba(255,255,255,0.15);
+  --z-h-grad:       linear-gradient(135deg, #f8fafc 30%, #c4b5fd 100%);
+  --z-p-grad:       linear-gradient(90deg, #f1f5f9, #c4b5fd);
+  /* Semantic accent tokens */
+  --z-badge-bg:     rgba(99,102,241,0.15);
+  --z-badge-bdr:    rgba(99,102,241,0.32);
+  --z-badge-text:   #a5b4fc;
+  --z-soft-purple:  #c4b5fd;
+  --z-progress-txt: #818cf8;
+  --z-warn-bg:      rgba(251,191,36,0.07);
+  --z-warn-bdr:     rgba(251,191,36,0.20);
+  --z-warn-text:    #fde68a;
+  --z-amount-text:  #a5b4fc;
+  --z-copy-bg:      rgba(99,102,241,0.18);
+  --z-copy-bdr:     rgba(99,102,241,0.40);
+  --z-copy-hov:     rgba(99,102,241,0.35);
+  --z-copy-text:    #a5b4fc;
+  --z-plan-card-bg: linear-gradient(135deg, rgba(99,102,241,0.18), rgba(139,92,246,0.12));
+  --z-plan-hdr-bg:  rgba(99,102,241,0.12);
+  --z-plan-amt-bg:  rgba(99,102,241,0.08);
+}
+
 /* ═══════════════════════════════════════════════════════════════════════════
    ZYNTH DESIGN SYSTEM — Component layer
    Usage: apply these classes directly in JSX className strings.
@@ -13,7 +92,7 @@
 
   /* Full-page scroll container with themed background */
   .z-page {
-    @apply flex-1 overflow-y-auto bg-gray-50 dark:bg-slate-950 min-h-0;
+    @apply flex-1 overflow-y-auto bg-[#f8fafc] dark:bg-slate-950 min-h-0;
   }
 
   /* Max-width content constraint with horizontal padding */
@@ -26,9 +105,9 @@
   /* Base card — white in light, slate-900 in dark */
   .z-card {
     @apply bg-white dark:bg-slate-900
-           border border-gray-200 dark:border-gray-700
+           border border-gray-200 dark:border-gray-700/30
            rounded-2xl
-           shadow-z-sm
+           shadow-z-sm dark:shadow-z-dark
            transition-all duration-200;
   }
 
@@ -39,15 +118,15 @@
 
   /* Inset / secondary surface (table rows, code blocks, inner panels) */
   .z-surface {
-    @apply bg-gray-50 dark:bg-gray-900
-           border border-gray-200 dark:border-gray-700
+    @apply bg-[#f8fafc] dark:bg-gray-900
+           border border-gray-200 dark:border-gray-700/30
            rounded-xl;
   }
 
   /* Stat / metric card — prominently bordered left accent */
   .z-stat-card {
     @apply z-card p-5
-           hover:shadow-z-hover hover:scale-[1.02]
+           hover:shadow-z-hover hover:-translate-y-[2px]
            cursor-default;
   }
 
