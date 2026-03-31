@@ -5,9 +5,9 @@ const TREND_ARROW = {
 };
 
 const FRESHNESS_DOT = {
-  fresh:    'bg-emerald-500',
-  stale:    'bg-amber-400',
-  outdated: 'bg-red-500',
+  fresh:    { dot: '🟢', title: 'Fresh data' },
+  stale:    { dot: '🟡', title: 'Stale data' },
+  outdated: { dot: '🔴', title: 'Outdated data' },
 };
 
 const STRENGTH_CONFIG = {
@@ -42,7 +42,7 @@ export default function KeyDrivers({ drivers }) {
       {/* Rank rows */}
       {drivers.map((driver, i) => {
         const trendCfg    = TREND_ARROW[driver.trend]            ?? TREND_ARROW.stable;
-        const freshDot    = FRESHNESS_DOT[driver.freshness]      ?? FRESHNESS_DOT.outdated;
+        const freshDot    = FRESHNESS_DOT[driver.freshness]      ?? { dot: '◯', title: 'Unknown' };
         const strengthCfg = STRENGTH_CONFIG[driver.impactStrength] ?? STRENGTH_CONFIG.weak;
         const isLast      = i === drivers.length - 1;
 
@@ -72,9 +72,9 @@ export default function KeyDrivers({ drivers }) {
               {trendCfg.symbol}
             </span>
 
-            {/* Freshness dot */}
-            <span title={`Data: ${driver.freshness ?? 'unknown'}`}>
-              <span className={`inline-block h-1.5 w-1.5 rounded-full ${freshDot}`} />
+            {/* Freshness dot (emoji) */}
+            <span className="text-lg" title={freshDot.title}>
+              {freshDot.dot}
             </span>
 
             {/* Bias */}

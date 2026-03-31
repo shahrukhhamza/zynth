@@ -21,13 +21,17 @@ function alertTextColor(text) {
   return 'text-slate-500 dark:text-slate-400';
 }
 
-function RiskStrip({ riskAlerts, signalConflict }) {
+function RiskStrip({ riskAlerts, signalConflict, conflictingIndicators = [] }) {
   const [open, setOpen] = useState(false);
-  const hasConflict = signalConflict && signalConflict.level !== 'low';
+  const level = typeof signalConflict === 'string' ? signalConflict : signalConflict?.level;
+  const conflicts = Array.isArray(conflictingIndicators) && conflictingIndicators.length > 0
+    ? conflictingIndicators
+    : (signalConflict?.conflictingIndicators ?? []);
+  const hasConflict = level && level !== 'low';
 
   const allAlerts = [
     ...(hasConflict
-      ? [`${signalConflict.level === 'high' ? 'High' : 'Mixed'} signal conflict — ${(signalConflict.conflictingIndicators ?? []).join(', ')}`]
+      ? [`${level === 'high' ? 'High' : 'Mixed'} signal conflict — ${conflicts.join(', ')}`]
       : []),
     ...(riskAlerts ?? []),
   ];
@@ -97,7 +101,8 @@ const CONFLICT_LABEL = {
 
 function DataFooter({ meta, confidence, signalConflict }) {
   if (!meta) return null;
-  const cc = CONFLICT_LABEL[signalConflict?.level] ?? CONFLICT_LABEL.low;
+  const level = typeof signalConflict === 'string' ? signalConflict : signalConflict?.level;
+  const cc = CONFLICT_LABEL[level] ?? CONFLICT_LABEL.low;
 
   return (
     <div className="space-y-3 rounded-2xl border border-slate-200 bg-white px-5 py-4 dark:border-white/[0.07] dark:bg-slate-900">
@@ -157,7 +162,18 @@ export default function NewAiInsightsDashboard({ macroData }) {
     monetary:  'Monetary Policy',
   };
 
-  const categories = Object.entries(macroData.indicators || {})
+  const groupedIndicators = macroData.indicatorsByCategory
+    || (Array.isArray(macroData.indicators)
+      ? macroData.indicators.reduce((acc, item) => {
+          if (!item?.group) return acc;
+          if (!acc[item.group]) acc[item.group] = [];
+          acc[item.group].push(item);
+          return acc;
+        }, {})
+      : macroData.indicators)
+    || {};
+
+  const categories = Object.entries(groupedIndicators)
     .filter(([, items]) => Array.isArray(items) && items.length > 0)
     .map(([key, items], i) => ({
       key,
@@ -173,7 +189,11 @@ export default function NewAiInsightsDashboard({ macroData }) {
       <HeroSummary macroData={macroData} />
 
       {/* 2 · Risk strip */}
-      <RiskStrip riskAlerts={macroData.riskAlerts} signalConflict={macroData.signalConflict} />
+      <RiskStrip
+        riskAlerts={macroData.riskAlerts}
+        signalConflict={macroData.signalConflictDetail || macroData.signalConflict}
+        conflictingIndicators={macroData.conflictingIndicators}
+      />
 
       {/* 3 · Key drivers */}
       <div>
@@ -209,7 +229,7 @@ export default function NewAiInsightsDashboard({ macroData }) {
       <DataFooter
         meta={macroData.meta}
         confidence={macroData.confidence}
-        signalConflict={macroData.signalConflict}
+        signalConflict={macroData.signalConflictDetail || macroData.signalConflict}
       />
 
     </div>

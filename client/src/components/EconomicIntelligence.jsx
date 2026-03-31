@@ -5,6 +5,7 @@ import { useUpgrade } from '../contexts/UpgradeContext';
 import { usePlanGate } from '../hooks/usePlanGate';
 import { getAuthToken } from '../utils/authStorage';
 import NewAiInsightsDashboard from './ai-insights/NewAiInsightsDashboard';
+import AIInsightsDashboard from './ai-insights/AIInsightsDashboard';
 
 // ── Indicator Card ────────────────────────────────────────────────────────────
 function IndicatorCard({ data, accentColor, D }) {
@@ -449,7 +450,7 @@ export default function EconomicIntelligence() {
         </div>
 
         {/* ── Dashboard ───────────────────────────────────────────────── */}
-        <NewAiInsightsDashboard macroData={loading ? null : macroData} />
+        <AIInsightsDashboard macroData={loading ? null : macroData} />
 
       </div>
     </div>

@@ -2,21 +2,568 @@
  * Economic Intelligence Service
  *
  * Data strategy:
- * - ACTUAL values:  fetched LIVE from FRED API (mirrors official BLS releases in real-time)
- * - FORECAST values: from config/economicData.js (analyst consensus — no free live API exists)
+ * - ACTUAL values: fetched from latest available FRED releases
+ * - FORECAST values: external provider when configured, otherwise manual consensus with low confidence
  * - HISTORICAL charts: from FRED API (12-month time-series)
- *
- * FRED is the Federal Reserve's official data repository and mirrors every
- * BLS release (NFP, CPI, Unemployment) within hours of publication.
- * Actual values are NEVER hardcoded — always fetched live.
  */
 
 import axios from 'axios';
 import NodeCache from 'node-cache';
 import { REAL_ECONOMIC_DATA } from '../config/economicData.js';
+import { calculateMarketImpact, generateDataTransparency, buildMacroSummary } from './macroImpactEngine.js';
 
-// Cache with 1-hour TTL
-const cache = new NodeCache({ stdTTL: 3600 });
+// Release-aware cache (no TTL). Entries are invalidated when release windows are reached.
+const cache = new NodeCache({ stdTTL: 0 });
+
+const RELEASE_FREQUENCY_BY_CODE = {
+  NFP: 'monthly',
+  CPI: 'monthly',
+  UNEMPLOYMENT: 'monthly',
+  FedRate: 'monthly',
+  GDP: 'quarterly',
+  CorePCE: 'monthly',
+  JoblessClaims: 'weekly',
+  RetailSales: 'monthly',
+  ISMManufacturing: 'monthly',
+  ConsumerConf: 'monthly',
+};
+
+const RELEASE_ID_BY_CODE = {
+  CPI: 10,
+  NFP: 50,
+  UNEMPLOYMENT: 50,
+  GDP: 53,
+  JoblessClaims: 44,
+};
+
+const FORECAST_LOOKUP_BY_CODE = {
+  NFP: 'non farm payrolls',
+  CPI: 'consumer price index',
+  UNEMPLOYMENT: 'unemployment rate',
+  FedRate: 'interest rate',
+  GDP: 'gdp growth rate',
+  CorePCE: 'core pce price index',
+  JoblessClaims: 'initial jobless claims',
+  RetailSales: 'retail sales',
+  ISMManufacturing: 'manufacturing pmi',
+  ConsumerConf: 'consumer confidence',
+};
+
+const SERIES_ID_BY_CODE = {
+  NFP: 'PAYEMS',
+  CPI: 'CPIAUCSL',
+  UNEMPLOYMENT: 'UNRATE',
+  GDP: 'A191RL1Q225SBEA',
+  CorePCE: 'PCEPILFE',
+  JoblessClaims: 'ICSA',
+  RetailSales: 'RSAFS',
+};
+
+function debugLog(message, payload) {
+  if (process.env.ECON_DEBUG === 'true') {
+    if (payload !== undefined) {
+      console.log(`[ECON_DEBUG] ${message}`, payload);
+    } else {
+      console.log(`[ECON_DEBUG] ${message}`);
+    }
+  }
+}
+
+function toUtcDate(value) {
+  if (!value) return null;
+  const d = new Date(`${value}T00:00:00Z`);
+  return Number.isNaN(d.getTime()) ? null : d;
+}
+
+function todayIso() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+function parseReleaseTimeToUtcDate(dateIso, releaseTime) {
+  if (!dateIso || !releaseTime) return null;
+  const [hh, mm] = String(releaseTime).split(':').map(Number);
+  if (Number.isNaN(hh) || Number.isNaN(mm)) return null;
+  const d = new Date(`${dateIso}T00:00:00Z`);
+  d.setUTCHours(hh, mm, 0, 0);
+  return d;
+}
+
+function evaluateReleaseAvailability(nextReleaseDate, releaseTime) {
+  if (!nextReleaseDate) {
+    return {
+      isReleaseDue: false,
+      isReleaseDelayed: false,
+      delayReason: 'No scheduled release date available',
+      releaseAvailableAt: null,
+    };
+  }
+
+  const now = new Date();
+  const nowDate = now.toISOString().slice(0, 10);
+  if (nowDate < nextReleaseDate) {
+    return {
+      isReleaseDue: false,
+      isReleaseDelayed: false,
+      delayReason: `Next release scheduled for ${nextReleaseDate}`,
+      releaseAvailableAt: null,
+    };
+  }
+  if (nowDate > nextReleaseDate) {
+    return {
+      isReleaseDue: true,
+      isReleaseDelayed: false,
+      delayReason: '',
+      releaseAvailableAt: null,
+    };
+  }
+
+  const releaseAt = parseReleaseTimeToUtcDate(nextReleaseDate, releaseTime);
+  if (!releaseAt) {
+    return {
+      isReleaseDue: true,
+      isReleaseDelayed: false,
+      delayReason: 'Release-time buffer skipped because release time is unavailable',
+      releaseAvailableAt: null,
+    };
+  }
+
+  const availableAt = new Date(releaseAt.getTime() + (2 * 60 * 60 * 1000));
+  const isReleaseDelayed = now < availableAt;
+  return {
+    isReleaseDue: !isReleaseDelayed,
+    isReleaseDelayed,
+    delayReason: isReleaseDelayed
+      ? `Release published on ${nextReleaseDate} at ${releaseTime} UTC; applying 2-hour availability buffer`
+      : '',
+    releaseAvailableAt: availableAt.toISOString(),
+  };
+}
+
+function daysSince(dateIso) {
+  const date = toUtcDate(dateIso);
+  if (!date) return null;
+  return Math.floor((Date.now() - date.getTime()) / 86_400_000);
+}
+
+function addDays(dateIso, days) {
+  const d = toUtcDate(dateIso);
+  if (!d) return null;
+  d.setUTCDate(d.getUTCDate() + days);
+  return d.toISOString().slice(0, 10);
+}
+
+function addMonths(dateIso, months) {
+  const d = toUtcDate(dateIso);
+  if (!d) return null;
+  d.setUTCMonth(d.getUTCMonth() + months);
+  return d.toISOString().slice(0, 10);
+}
+
+function getMostRecentHistoricalPoint(historicalData) {
+  if (!historicalData || historicalData.length === 0) return null;
+  const valid = historicalData
+    .filter(p => p && p.date && p.value !== null && p.value !== undefined && !Number.isNaN(p.value))
+    .sort((a, b) => new Date(a.date) - new Date(b.date));
+  if (valid.length === 0) return null;
+  return valid[valid.length - 1];
+}
+
+function deriveReleaseMetadataFromCadence(code, latestDate, historicalData) {
+  const releaseFrequency = RELEASE_FREQUENCY_BY_CODE[code] || 'monthly';
+  const latestPoint = getMostRecentHistoricalPoint(historicalData);
+  const lastReleaseDate = latestDate || latestPoint?.date || null;
+
+  let nextReleaseDate = null;
+  if (lastReleaseDate) {
+    if (releaseFrequency === 'weekly') {
+      nextReleaseDate = addDays(lastReleaseDate, 7);
+    } else if (releaseFrequency === 'quarterly') {
+      nextReleaseDate = addMonths(lastReleaseDate, 3);
+    } else {
+      nextReleaseDate = addMonths(lastReleaseDate, 1);
+    }
+  }
+
+  const isReleaseDue = Boolean(nextReleaseDate && todayIso() >= nextReleaseDate);
+
+  return {
+    releaseFrequency,
+    lastReleaseDate,
+    nextReleaseDate,
+    isReleaseDue,
+    isNewDataAvailable: isReleaseDue,
+    releaseCalendarSource: 'cadence_derived',
+  };
+}
+
+async function fetchFredReleaseDates(releaseId) {
+  try {
+    const fredKey = process.env.FRED_API_KEY || 'demo';
+    const response = await axios.get('https://api.stlouisfed.org/fred/release/dates', {
+      params: {
+        release_id: releaseId,
+        api_key: fredKey,
+        file_type: 'json',
+        sort_order: 'asc',
+        limit: 100,
+      },
+      timeout: 10000,
+    });
+
+    const releaseDates = Array.isArray(response.data?.release_dates)
+      ? response.data.release_dates.map(r => r.date).filter(Boolean)
+      : [];
+    return releaseDates;
+  } catch (error) {
+    console.log(`⚠️  FRED release calendar error for release_id=${releaseId}: ${error.message}`);
+    return null;
+  }
+}
+
+function getLastAndNextRelease(releaseDates, fallbackLastDate, frequency) {
+  const today = todayIso();
+  const sorted = [...(releaseDates || [])].sort();
+
+  let lastReleaseDate = fallbackLastDate || null;
+  let nextReleaseDate = null;
+
+  for (const d of sorted) {
+    if (d <= today) lastReleaseDate = d;
+    if (d > today) {
+      nextReleaseDate = d;
+      break;
+    }
+  }
+
+  if (!nextReleaseDate && lastReleaseDate) {
+    if (frequency === 'weekly') nextReleaseDate = addDays(lastReleaseDate, 7);
+    else if (frequency === 'quarterly') nextReleaseDate = addMonths(lastReleaseDate, 3);
+    else nextReleaseDate = addMonths(lastReleaseDate, 1);
+  }
+
+  return { lastReleaseDate, nextReleaseDate };
+}
+
+async function deriveReleaseMetadata(code, latestDate, historicalData) {
+  const fallback = deriveReleaseMetadataFromCadence(code, latestDate, historicalData);
+  const releaseId = RELEASE_ID_BY_CODE[code];
+  if (!releaseId) return fallback;
+
+  const cacheKey = `release_calendar_${releaseId}`;
+  const cachedSchedule = cache.get(cacheKey);
+  if (cachedSchedule && cachedSchedule.nextReleaseDate && todayIso() < cachedSchedule.nextReleaseDate) {
+    return cachedSchedule;
+  }
+
+  const releaseDates = await fetchFredReleaseDates(releaseId);
+  if (!releaseDates || releaseDates.length === 0) {
+    return fallback;
+  }
+
+  const { lastReleaseDate, nextReleaseDate } = getLastAndNextRelease(
+    releaseDates,
+    fallback.lastReleaseDate,
+    fallback.releaseFrequency,
+  );
+  const isReleaseDue = Boolean(nextReleaseDate && todayIso() >= nextReleaseDate);
+
+  const schedule = {
+    releaseFrequency: fallback.releaseFrequency,
+    lastReleaseDate,
+    nextReleaseDate,
+    isReleaseDue,
+    isNewDataAvailable: isReleaseDue,
+    releaseCalendarSource: 'fred_release_calendar',
+  };
+  cache.set(cacheKey, schedule);
+  return schedule;
+}
+
+function getCacheRefreshDecision(cacheKey) {
+  const cached = cache.get(cacheKey);
+  if (!cached) {
+    return {
+      cached: null,
+      shouldRefetch: true,
+      isNewDataAvailable: false,
+      refreshReason: 'No cached snapshot available; fetched latest available economic data',
+    };
+  }
+
+  const cachedFreshness = cached.latestDate && cached.code
+    ? calcFreshness(cached.latestDate, cached.code)
+    : 'fresh';
+  if (cachedFreshness === 'outdated') {
+    debugLog(`Refresh forced for ${cacheKey}: cached data is outdated`, { latestDate: cached.latestDate, code: cached.code });
+    return {
+      cached,
+      shouldRefetch: true,
+      isNewDataAvailable: false,
+      isReleaseDelayed: false,
+      delayReason: '',
+      refreshReason: 'Cached snapshot is outdated and must be refreshed',
+    };
+  }
+
+  if (!cached.nextReleaseDate) {
+    return {
+      cached,
+      shouldRefetch: false,
+      isNewDataAvailable: false,
+      isReleaseDelayed: false,
+      delayReason: '',
+      refreshReason: 'Using cached data; next release date unavailable',
+    };
+  }
+
+  const availability = evaluateReleaseAvailability(cached.nextReleaseDate, cached.releaseTime);
+  if (availability.isReleaseDelayed) {
+    debugLog(`Refresh skipped for ${cacheKey}: release delayed by buffer`, availability);
+    return {
+      cached,
+      shouldRefetch: false,
+      isNewDataAvailable: false,
+      isReleaseDelayed: true,
+      delayReason: availability.delayReason,
+      refreshReason: `Release date reached but data may still be propagating (${cached.nextReleaseDate})`,
+    };
+  }
+
+  if (availability.isReleaseDue) {
+    debugLog(`Refresh triggered for ${cacheKey}: release due`, { nextReleaseDate: cached.nextReleaseDate });
+    return {
+      cached,
+      shouldRefetch: true,
+      isNewDataAvailable: true,
+      isReleaseDelayed: false,
+      delayReason: '',
+      refreshReason: `Release date reached (${cached.nextReleaseDate}); checking source for new data`,
+    };
+  }
+
+  debugLog(`Using cache for ${cacheKey}: next release not due`, { nextReleaseDate: cached.nextReleaseDate });
+  return {
+    cached,
+    shouldRefetch: false,
+    isNewDataAvailable: false,
+    isReleaseDelayed: false,
+    delayReason: '',
+    refreshReason: `Using cached data until next scheduled release on ${cached.nextReleaseDate}`,
+  };
+}
+
+function getCachedIfFresh(cacheKey) {
+  const decision = getCacheRefreshDecision(cacheKey);
+  if (!decision.cached || decision.shouldRefetch) return null;
+  return {
+    ...decision.cached,
+    isNewDataAvailable: decision.isNewDataAvailable,
+    isReleaseDue: false,
+    isReleaseDelayed: decision.isReleaseDelayed,
+    delayReason: decision.delayReason,
+    refreshReason: decision.refreshReason,
+  };
+}
+
+function buildDataWarning(actual, historicalData, latestDate, lastReleaseDate) {
+  const latestPoint = getMostRecentHistoricalPoint(historicalData);
+  const warnings = [];
+
+  if (lastReleaseDate && latestDate && lastReleaseDate !== latestDate) {
+    warnings.push('Mismatch between release data and observation');
+  }
+
+  if (!latestPoint) {
+    return warnings.length > 0 ? warnings.join(' | ') : null;
+  }
+
+  if (latestDate && latestPoint.date && latestDate < latestPoint.date) {
+    warnings.push('Current value outdated compared to latest release');
+  }
+  if (actual !== null && latestPoint.value !== null && Math.abs(actual - latestPoint.value) > 0.001) {
+    warnings.push('Current value does not match latest release');
+  }
+
+  return warnings.length > 0 ? warnings.join(' | ') : null;
+}
+
+function calcFreshnessWithReason(latestDate, code) {
+  const ageDays = daysSince(latestDate);
+  if (ageDays === null) {
+    return {
+      freshness: 'outdated',
+      freshnessReason: 'No valid release date is available for this indicator',
+      daysSinceRelease: null,
+    };
+  }
+
+  let thresholds;
+  if (code === 'CPI') {
+    thresholds = { fresh: 30, stale: 45 };
+  } else if (code === 'JoblessClaims') {
+    thresholds = { fresh: 7, stale: 14 };
+  } else if (code === 'GDP') {
+    thresholds = { fresh: 90, stale: 120 };
+  } else {
+    const releaseFrequency = RELEASE_FREQUENCY_BY_CODE[code] || 'monthly';
+    thresholds = releaseFrequency === 'weekly'
+      ? { fresh: 7, stale: 14 }
+      : releaseFrequency === 'quarterly'
+        ? { fresh: 90, stale: 120 }
+        : { fresh: 30, stale: 45 };
+  }
+
+  if (ageDays < thresholds.fresh) {
+    const freq = RELEASE_FREQUENCY_BY_CODE[code] || 'monthly';
+    return {
+      freshness: 'fresh',
+      freshnessReason: `${code} is fresh (released ${ageDays} day(s) ago, ${freq} indicator)`,
+      daysSinceRelease: ageDays,
+    };
+  }
+  if (ageDays <= thresholds.stale) {
+    const freq = RELEASE_FREQUENCY_BY_CODE[code] || 'monthly';
+    return {
+      freshness: 'stale',
+      freshnessReason: `${code} is stale (released ${ageDays} day(s) ago, ${freq} indicator)`,
+      daysSinceRelease: ageDays,
+    };
+  }
+  const freq = RELEASE_FREQUENCY_BY_CODE[code] || 'monthly';
+  return {
+    freshness: 'outdated',
+    freshnessReason: `${code} is outdated (released ${ageDays} day(s) ago, ${freq} indicator)`,
+    daysSinceRelease: ageDays,
+  };
+}
+
+async function fetchTradingEconomicsForecast(code) {
+  const apiKey = process.env.TRADING_ECONOMICS_API_KEY;
+  if (!apiKey) return null;
+
+  try {
+    const endpoint = process.env.TRADING_ECONOMICS_FORECAST_URL || 'https://api.tradingeconomics.com/forecast/country/united%20states';
+    const response = await axios.get(endpoint, {
+      params: { c: apiKey },
+      timeout: 8000,
+    });
+
+    const rows = Array.isArray(response.data) ? response.data : [];
+    const lookup = (FORECAST_LOOKUP_BY_CODE[code] || '').toLowerCase();
+    const match = rows.find(row => {
+      const title = String(row?.Calendar || row?.Category || row?.Indicator || row?.Title || '').toLowerCase();
+      return lookup && title.includes(lookup);
+    });
+
+    if (!match) return null;
+
+    const rawForecast = match.Forecast ?? match.forecast ?? match.TEForecast ?? match.teforecast;
+    const forecast = rawForecast !== null && rawForecast !== undefined ? Number(rawForecast) : null;
+    if (forecast === null || Number.isNaN(forecast)) return null;
+
+    return {
+      forecast,
+      forecastSource: 'TradingEconomics',
+      forecastConfidence: 'high',
+    };
+  } catch (error) {
+    console.log(`⚠️ Forecast provider unavailable for ${code}: ${error.message}`);
+    return null;
+  }
+}
+
+async function resolveForecast({ code, configEntry }) {
+  const external = await fetchTradingEconomicsForecast(code);
+  if (external) return external;
+
+  const released = getLatestReleasedEntry(configEntry);
+  if (released?.forecast !== null && released?.forecast !== undefined) {
+    return {
+      forecast: released.forecast,
+      forecastSource: 'manual',
+      forecastConfidence: 'low',
+    };
+  }
+
+  return {
+    forecast: null,
+    forecastSource: 'none',
+    forecastConfidence: 'low',
+  };
+}
+
+async function getRevisionMetadata(seriesId, observationDate) {
+  if (!seriesId || !observationDate) {
+    return {
+      isRevised: false,
+      revisionMagnitude: 0,
+      revisionNote: 'Revision tracking unavailable for this indicator',
+    };
+  }
+
+  const cacheKey = `revision_${seriesId}_${observationDate}`;
+  const cached = cache.get(cacheKey);
+  if (cached) return cached;
+
+  try {
+    const fredKey = process.env.FRED_API_KEY || 'demo';
+    const response = await axios.get('https://api.stlouisfed.org/fred/series/observations', {
+      params: {
+        series_id: seriesId,
+        api_key: fredKey,
+        file_type: 'json',
+        observation_start: observationDate,
+        observation_end: observationDate,
+        realtime_start: '1776-07-04',
+        realtime_end: '9999-12-31',
+        sort_order: 'asc',
+        limit: 1000,
+      },
+      timeout: 10000,
+    });
+
+    const observations = Array.isArray(response.data?.observations) ? response.data.observations : [];
+    const distinctValues = [...new Set(observations
+      .map(o => o.value)
+      .filter(v => v !== '.' && v !== null && v !== undefined)
+      .map(v => Number(v).toString()))];
+
+    const newest = distinctValues.length > 0 ? Number(distinctValues[distinctValues.length - 1]) : null;
+    const oldest = distinctValues.length > 0 ? Number(distinctValues[0]) : null;
+    const revisionMagnitude = (newest !== null && oldest !== null)
+      ? Math.round(Math.abs(newest - oldest) * 10000) / 10000
+      : 0;
+
+    const meta = distinctValues.length > 1
+      ? {
+          isRevised: true,
+          revisionMagnitude,
+          revisionNote: `ALFRED detected ${distinctValues.length} historical values for ${observationDate}`,
+        }
+      : {
+          isRevised: false,
+          revisionMagnitude: 0,
+          revisionNote: 'No ALFRED revision detected for latest observation',
+        };
+    cache.set(cacheKey, meta);
+    return meta;
+  } catch (error) {
+    return {
+      isRevised: false,
+      revisionMagnitude: 0,
+      revisionNote: `ALFRED check unavailable: ${error.message}`,
+    };
+  }
+}
+
+function validateConflictConsistency(signalConflictDetail) {
+  if (!signalConflictDetail) return null;
+  const count = (signalConflictDetail.conflictingIndicators || []).length;
+  const expected = count === 0 ? 'low' : count <= 3 ? 'medium' : 'high';
+  return expected !== signalConflictDetail.level
+    ? 'Conflict logic mismatch'
+    : null;
+}
 
 /**
  * Fetch economic data from FRED API
@@ -60,21 +607,6 @@ async function fetchFredSeries(seriesId, observations = 12) {
     console.log(`❌ FRED API error for ${seriesId}: ${error.message}`);
     return null;
   }
-}
-
-/**
- * Calculate forecast using average of last 3 values
- */
-function calculateForecast(historicalData) {
-  if (!historicalData || historicalData.length < 3) {
-    return null;
-  }
-
-  const lastThree = historicalData.slice(-3);
-  const sum = lastThree.reduce((acc, item) => acc + item.value, 0);
-  const forecast = sum / 3;
-
-  return Math.round(forecast * 100) / 100; // Round to 2 decimals
 }
 
 /**
@@ -132,7 +664,7 @@ function determineGoldImpact(indicator, surprise) {
  */
 async function analyzeFromConfig(id, code, indicatorName) {
   const cacheKey = `${id}_analysis`;
-  const cached = cache.get(cacheKey);
+  const cached = getCachedIfFresh(cacheKey);
   if (cached) return cached;
 
   const configEntry = REAL_ECONOMIC_DATA.indicators.find(i => i.id === id);
@@ -142,7 +674,6 @@ async function analyzeFromConfig(id, code, indicatorName) {
   if (!released) return { error: `No released data for ${id}`, indicator: code };
 
   const latestActual   = released.actual;
-  const latestForecast = released.forecast;
   const latestDate     = released.date;
 
   // Build historical from config
@@ -151,8 +682,14 @@ async function analyzeFromConfig(id, code, indicatorName) {
     .sort((a, b) => new Date(a.date) - new Date(b.date))
     .map(h => ({ date: h.date, value: h.actual }));
 
+  const forecastInfo = await resolveForecast({ code, configEntry });
+  const latestForecast = forecastInfo.forecast;
   const surprise = calculateSurprise(latestActual, latestForecast);
   const impact   = determineGoldImpact(code, surprise);
+  const releaseMeta = await deriveReleaseMetadata(code, latestDate, historicalData);
+  const timingState = evaluateReleaseAvailability(releaseMeta.nextReleaseDate, configEntry.time);
+  const revisionMeta = await getRevisionMetadata(SERIES_ID_BY_CODE[code], latestDate);
+  const dataWarning = buildDataWarning(latestActual, historicalData, latestDate, releaseMeta.lastReleaseDate);
 
   const analysis = {
     indicator: indicatorName,
@@ -172,7 +709,25 @@ async function analyzeFromConfig(id, code, indicatorName) {
     usualEffect: configEntry.usualEffect,
     frequency:   configEntry.frequency,
     actualSource:   'Verified Config Data',
-    forecastSource: 'Analyst Consensus (config)',
+    forecastSource: forecastInfo.forecastSource,
+    forecastConfidence: forecastInfo.forecastConfidence,
+    releaseFrequency: releaseMeta.releaseFrequency,
+    lastReleaseDate: releaseMeta.lastReleaseDate,
+    nextReleaseDate: releaseMeta.nextReleaseDate,
+    isReleaseDue: timingState.isReleaseDue,
+    isNewDataAvailable: timingState.isReleaseDue,
+    isReleaseDelayed: timingState.isReleaseDelayed,
+    delayReason: timingState.delayReason,
+    refreshReason: timingState.isReleaseDue
+      ? `Release date reached (${releaseMeta.nextReleaseDate}); indicator was refreshed`
+      : `No release due. Latest available economic data retained until ${releaseMeta.nextReleaseDate || 'next schedule'}`,
+    isRevised: revisionMeta.isRevised,
+    revisionMagnitude: revisionMeta.revisionMagnitude,
+    revisionNote: revisionMeta.revisionNote,
+    dataConflict: false,
+    dataWarning,
+    lastReleaseCheckAt: new Date().toISOString(),
+    releaseTime: configEntry.time || null,
   };
 
   cache.set(cacheKey, analysis);
@@ -231,19 +786,19 @@ function getLatestReleasedEntry(configEntry) {
 
 /**
  * Fetch and analyze Non-Farm Payrolls (NFP)
- * Actual:   FRED PAYEMS — month-over-month change (live BLS release mirror)
- * Forecast: config/economicData.js — analyst consensus (no free live forecast API)
+ * Actual:   FRED PAYEMS — month-over-month change from latest available release
+ * Forecast: config/economicData.js — analyst consensus fallback
  * Charts:   FRED PAYEMS — 12-month monthly changes
  */
 export async function analyzeNFP() {
   const cacheKey = 'nfp_analysis';
-  const cached = cache.get(cacheKey);
+  const cached = getCachedIfFresh(cacheKey);
   if (cached) return cached;
 
   try {
-    console.log('📊 Analyzing Non-Farm Payrolls (NFP) — fetching live from FRED...');
+    console.log('📊 Analyzing Non-Farm Payrolls (NFP) — fetching latest available release from FRED...');
 
-    // ── 1. LIVE actual from FRED PAYEMS ───────────────────────────────────
+    // ── 1. Latest available actual from FRED PAYEMS ───────────────────────
     // PAYEMS = Total Nonfarm Employees (thousands). Monthly diff = NFP release.
     const rawData = await fetchFredSeries('PAYEMS', 14);
     if (!rawData || rawData.length < 2) {
@@ -277,10 +832,15 @@ export async function analyzeNFP() {
       latestDate   = released.date;
     }
 
-    const latestForecast = released?.forecast ?? calculateForecast(historicalData);
+    const forecastInfo = await resolveForecast({ code: 'NFP', configEntry });
+    const latestForecast = forecastInfo.forecast;
 
     const surprise = calculateSurprise(latestActual, latestForecast);
     const impact   = determineGoldImpact('NFP', surprise);
+    const releaseMeta = await deriveReleaseMetadata('NFP', latestDate, historicalData);
+    const timingState = evaluateReleaseAvailability(releaseMeta.nextReleaseDate, configEntry?.time);
+    const revisionMeta = await getRevisionMetadata('PAYEMS', latestDate);
+    const dataWarning = buildDataWarning(latestActual, historicalData, latestDate, releaseMeta.lastReleaseDate);
 
     const analysis = {
       indicator: 'Non-Farm Payrolls',
@@ -296,12 +856,30 @@ export async function analyzeNFP() {
       impactColor: getImpactColor(impact),
       latestDate,
       historicalData,
-      actualSource:   'FRED API (live — PAYEMS monthly diff)',
-      forecastSource: 'Analyst Consensus (config)',
+      actualSource:   'FRED API (latest available — PAYEMS monthly diff)',
+      forecastSource: forecastInfo.forecastSource,
+      forecastConfidence: forecastInfo.forecastConfidence,
+      releaseFrequency: releaseMeta.releaseFrequency,
+      lastReleaseDate: releaseMeta.lastReleaseDate,
+      nextReleaseDate: releaseMeta.nextReleaseDate,
+      isReleaseDue: timingState.isReleaseDue,
+      isNewDataAvailable: timingState.isReleaseDue,
+      isReleaseDelayed: timingState.isReleaseDelayed,
+      delayReason: timingState.delayReason,
+      refreshReason: timingState.isReleaseDue
+        ? `Release date reached (${releaseMeta.nextReleaseDate}); indicator was refreshed`
+        : `No release due. Latest available economic data retained until ${releaseMeta.nextReleaseDate || 'next schedule'}`,
+      isRevised: revisionMeta.isRevised,
+      revisionMagnitude: revisionMeta.revisionMagnitude,
+      revisionNote: revisionMeta.revisionNote,
+      dataConflict: false,
+      dataWarning,
+      lastReleaseCheckAt: new Date().toISOString(),
+      releaseTime: configEntry?.time || null,
     };
 
     cache.set(cacheKey, analysis);
-    console.log(`✅ NFP: ${latestActual}K actual (FRED live) | ${latestForecast}K forecast | surprise ${surprise}K`);
+    console.log(`✅ NFP: ${latestActual}K actual (FRED latest available) | ${latestForecast}K forecast | surprise ${surprise}K`);
     return analysis;
 
   } catch (error) {
@@ -313,19 +891,19 @@ export async function analyzeNFP() {
 /**
  * Fetch and analyze Consumer Price Index (CPI m/m)
  * Markets watch the MONTHLY change, not the index level or YoY.
- * Actual:   FRED CPIAUCSL — month-over-month % change (live BLS release mirror)
+ * Actual:   FRED CPIAUCSL — month-over-month % change from latest available release
  * Forecast: config/economicData.js — analyst consensus
  * Charts:   FRED CPIAUCSL — 12-month m/m % changes
  */
 export async function analyzeCPI() {
   const cacheKey = 'cpi_analysis';
-  const cached = cache.get(cacheKey);
+  const cached = getCachedIfFresh(cacheKey);
   if (cached) return cached;
 
   try {
-    console.log('📊 Analyzing CPI (m/m) — fetching live from FRED...');
+    console.log('📊 Analyzing CPI (m/m) — fetching latest available release from FRED...');
 
-    // ── 1. LIVE actual from FRED CPIAUCSL ─────────────────────────────────
+    // ── 1. Latest available actual from FRED CPIAUCSL ─────────────────────
     // CPIAUCSL = CPI index level. Monthly % change = what markets trade.
     const rawData = await fetchFredSeries('CPIAUCSL', 14);
     if (!rawData || rawData.length < 2) {
@@ -357,10 +935,15 @@ export async function analyzeCPI() {
       latestDate   = released.date;
     }
 
-    const latestForecast = released?.forecast ?? calculateForecast(historicalData);
+    const forecastInfo = await resolveForecast({ code: 'CPI', configEntry });
+    const latestForecast = forecastInfo.forecast;
 
     const surprise = calculateSurprise(latestActual, latestForecast);
     const impact   = determineGoldImpact('CPI', surprise);
+    const releaseMeta = await deriveReleaseMetadata('CPI', latestDate, historicalData);
+    const timingState = evaluateReleaseAvailability(releaseMeta.nextReleaseDate, configEntry?.time);
+    const revisionMeta = await getRevisionMetadata('CPIAUCSL', latestDate);
+    const dataWarning = buildDataWarning(latestActual, historicalData, latestDate, releaseMeta.lastReleaseDate);
 
     const analysis = {
       indicator: 'Consumer Price Index (m/m)',
@@ -376,12 +959,30 @@ export async function analyzeCPI() {
       impactColor: getImpactColor(impact),
       latestDate,
       historicalData,
-      actualSource:   'FRED API (live — CPIAUCSL m/m)',
-      forecastSource: 'Analyst Consensus (config)',
+      actualSource:   'FRED API (latest available — CPIAUCSL m/m)',
+      forecastSource: forecastInfo.forecastSource,
+      forecastConfidence: forecastInfo.forecastConfidence,
+      releaseFrequency: releaseMeta.releaseFrequency,
+      lastReleaseDate: releaseMeta.lastReleaseDate,
+      nextReleaseDate: releaseMeta.nextReleaseDate,
+      isReleaseDue: timingState.isReleaseDue,
+      isNewDataAvailable: timingState.isReleaseDue,
+      isReleaseDelayed: timingState.isReleaseDelayed,
+      delayReason: timingState.delayReason,
+      refreshReason: timingState.isReleaseDue
+        ? `Release date reached (${releaseMeta.nextReleaseDate}); indicator was refreshed`
+        : `No release due. Latest available economic data retained until ${releaseMeta.nextReleaseDate || 'next schedule'}`,
+      isRevised: revisionMeta.isRevised,
+      revisionMagnitude: revisionMeta.revisionMagnitude,
+      revisionNote: revisionMeta.revisionNote,
+      dataConflict: false,
+      dataWarning,
+      lastReleaseCheckAt: new Date().toISOString(),
+      releaseTime: configEntry?.time || null,
     };
 
     cache.set(cacheKey, analysis);
-    console.log(`✅ CPI: ${latestActual}% actual (FRED live) | ${latestForecast}% forecast | surprise ${surprise}%`);
+    console.log(`✅ CPI: ${latestActual}% actual (FRED latest available) | ${latestForecast}% forecast | surprise ${surprise}%`);
     return analysis;
 
   } catch (error) {
@@ -392,19 +993,19 @@ export async function analyzeCPI() {
 
 /**
  * Fetch and analyze Unemployment Rate
- * Actual:   FRED UNRATE — latest observation (live BLS release mirror)
+ * Actual:   FRED UNRATE — latest observation from available release
  * Forecast: config/economicData.js — analyst consensus
  * Charts:   FRED UNRATE — 12-month history
  */
 export async function analyzeUnemployment() {
   const cacheKey = 'unemployment_analysis';
-  const cached = cache.get(cacheKey);
+  const cached = getCachedIfFresh(cacheKey);
   if (cached) return cached;
 
   try {
-    console.log('📊 Analyzing Unemployment Rate — fetching live from FRED...');
+    console.log('📊 Analyzing Unemployment Rate — fetching latest available release from FRED...');
 
-    // ── 1. LIVE actual from FRED UNRATE ───────────────────────────────────
+    // ── 1. Latest available actual from FRED UNRATE ───────────────────────
     // UNRATE = Civilian Unemployment Rate (%). Latest obs = official BLS rate.
     const rawData = await fetchFredSeries('UNRATE', 12);
     if (!rawData || rawData.length < 1) {
@@ -430,10 +1031,15 @@ export async function analyzeUnemployment() {
       latestDate   = released.date;
     }
 
-    const latestForecast = released?.forecast ?? calculateForecast(rawData);
+    const forecastInfo = await resolveForecast({ code: 'UNEMPLOYMENT', configEntry });
+    const latestForecast = forecastInfo.forecast;
 
     const surprise = calculateSurprise(latestActual, latestForecast);
     const impact   = determineGoldImpact('Unemployment', surprise);
+    const releaseMeta = await deriveReleaseMetadata('UNEMPLOYMENT', latestDate, historicalData);
+    const timingState = evaluateReleaseAvailability(releaseMeta.nextReleaseDate, configEntry?.time);
+    const revisionMeta = await getRevisionMetadata('UNRATE', latestDate);
+    const dataWarning = buildDataWarning(latestActual, historicalData, latestDate, releaseMeta.lastReleaseDate);
 
     const analysis = {
       indicator: 'Unemployment Rate',
@@ -449,12 +1055,30 @@ export async function analyzeUnemployment() {
       impactColor: getImpactColor(impact),
       latestDate,
       historicalData,
-      actualSource:   'FRED API (live — UNRATE)',
-      forecastSource: 'Analyst Consensus (config)',
+      actualSource:   'FRED API (latest available — UNRATE)',
+      forecastSource: forecastInfo.forecastSource,
+      forecastConfidence: forecastInfo.forecastConfidence,
+      releaseFrequency: releaseMeta.releaseFrequency,
+      lastReleaseDate: releaseMeta.lastReleaseDate,
+      nextReleaseDate: releaseMeta.nextReleaseDate,
+      isReleaseDue: timingState.isReleaseDue,
+      isNewDataAvailable: timingState.isReleaseDue,
+      isReleaseDelayed: timingState.isReleaseDelayed,
+      delayReason: timingState.delayReason,
+      refreshReason: timingState.isReleaseDue
+        ? `Release date reached (${releaseMeta.nextReleaseDate}); indicator was refreshed`
+        : `No release due. Latest available economic data retained until ${releaseMeta.nextReleaseDate || 'next schedule'}`,
+      isRevised: revisionMeta.isRevised,
+      revisionMagnitude: revisionMeta.revisionMagnitude,
+      revisionNote: revisionMeta.revisionNote,
+      dataConflict: false,
+      dataWarning,
+      lastReleaseCheckAt: new Date().toISOString(),
+      releaseTime: configEntry?.time || null,
     };
 
     cache.set(cacheKey, analysis);
-    console.log(`✅ Unemployment: ${latestActual}% actual (FRED live) | ${latestForecast}% forecast | surprise ${surprise}%`);
+    console.log(`✅ Unemployment: ${latestActual}% actual (FRED latest available) | ${latestForecast}% forecast | surprise ${surprise}%`);
     return analysis;
 
   } catch (error) {
@@ -481,11 +1105,11 @@ export async function analyzeFedRate() {
  */
 export async function analyzeGDP() {
   const cacheKey = 'gdp_analysis';
-  const cached = cache.get(cacheKey);
+  const cached = getCachedIfFresh(cacheKey);
   if (cached) return cached;
 
   try {
-    console.log('📊 Analyzing GDP q/q — fetching live from FRED A191RL1Q225SBEA...');
+    console.log('📊 Analyzing GDP q/q — fetching latest available release from FRED A191RL1Q225SBEA...');
 
     const rawData = await fetchFredSeries('A191RL1Q225SBEA', 8);
     const configEntry = REAL_ECONOMIC_DATA.indicators.find(i => i.id === 'gdp');
@@ -511,9 +1135,14 @@ export async function analyzeGDP() {
       historicalData = (configEntry?.historicalData || []).map(h => ({ date: h.date, value: h.actual }));
     }
 
-    const latestForecast = released?.forecast ?? calculateForecast(historicalData);
+    const forecastInfo = await resolveForecast({ code: 'GDP', configEntry });
+    const latestForecast = forecastInfo.forecast;
     const surprise = calculateSurprise(latestActual, latestForecast);
     const impact   = determineGoldImpact('GDP', surprise);
+    const releaseMeta = await deriveReleaseMetadata('GDP', latestDate, historicalData);
+    const timingState = evaluateReleaseAvailability(releaseMeta.nextReleaseDate, configEntry?.time);
+    const revisionMeta = await getRevisionMetadata('A191RL1Q225SBEA', latestDate);
+    const dataWarning = buildDataWarning(latestActual, historicalData, latestDate, releaseMeta.lastReleaseDate);
 
     const analysis = {
       indicator: 'GDP q/q (Advance)',
@@ -526,7 +1155,25 @@ export async function analyzeGDP() {
       usualEffect: configEntry?.usualEffect,
       frequency:   configEntry?.frequency,
       actualSource:   rawData ? 'FRED API (A191RL1Q225SBEA)' : 'Verified Config Data',
-      forecastSource: 'Analyst Consensus (config)',
+      forecastSource: forecastInfo.forecastSource,
+      forecastConfidence: forecastInfo.forecastConfidence,
+      releaseFrequency: releaseMeta.releaseFrequency,
+      lastReleaseDate: releaseMeta.lastReleaseDate,
+      nextReleaseDate: releaseMeta.nextReleaseDate,
+      isReleaseDue: timingState.isReleaseDue,
+      isNewDataAvailable: timingState.isReleaseDue,
+      isReleaseDelayed: timingState.isReleaseDelayed,
+      delayReason: timingState.delayReason,
+      refreshReason: timingState.isReleaseDue
+        ? `Release date reached (${releaseMeta.nextReleaseDate}); indicator was refreshed`
+        : `No release due. Latest available economic data retained until ${releaseMeta.nextReleaseDate || 'next schedule'}`,
+      isRevised: revisionMeta.isRevised,
+      revisionMagnitude: revisionMeta.revisionMagnitude,
+      revisionNote: revisionMeta.revisionNote,
+      dataConflict: false,
+      dataWarning,
+      lastReleaseCheckAt: new Date().toISOString(),
+      releaseTime: configEntry?.time || null,
     };
     cache.set(cacheKey, analysis);
     console.log(`✅ GDP: ${latestActual}% | forecast ${latestForecast}% | surprise ${surprise}%`);
@@ -544,11 +1191,11 @@ export async function analyzeGDP() {
  */
 export async function analyzeCorePCE() {
   const cacheKey = 'core_pce_analysis';
-  const cached = cache.get(cacheKey);
+  const cached = getCachedIfFresh(cacheKey);
   if (cached) return cached;
 
   try {
-    console.log('📊 Analyzing Core PCE m/m — fetching live from FRED PCEPILFE...');
+    console.log('📊 Analyzing Core PCE m/m — fetching latest available release from FRED PCEPILFE...');
 
     const rawData = await fetchFredSeries('PCEPILFE', 14);
     const configEntry = REAL_ECONOMIC_DATA.indicators.find(i => i.id === 'core_pce');
@@ -576,9 +1223,14 @@ export async function analyzeCorePCE() {
       historicalData = (configEntry?.historicalData || []).map(h => ({ date: h.date, value: h.actual }));
     }
 
-    const latestForecast = released?.forecast ?? calculateForecast(historicalData);
+    const forecastInfo = await resolveForecast({ code: 'CorePCE', configEntry });
+    const latestForecast = forecastInfo.forecast;
     const surprise = calculateSurprise(latestActual, latestForecast);
     const impact   = determineGoldImpact('CorePCE', surprise);
+    const releaseMeta = await deriveReleaseMetadata('CorePCE', latestDate, historicalData);
+    const timingState = evaluateReleaseAvailability(releaseMeta.nextReleaseDate, configEntry?.time);
+    const revisionMeta = await getRevisionMetadata('PCEPILFE', latestDate);
+    const dataWarning = buildDataWarning(latestActual, historicalData, latestDate, releaseMeta.lastReleaseDate);
 
     const analysis = {
       indicator: "Core PCE Price Index m/m (Fed's Preferred Inflation)",
@@ -591,7 +1243,25 @@ export async function analyzeCorePCE() {
       usualEffect: configEntry?.usualEffect,
       frequency:   configEntry?.frequency,
       actualSource:   rawData ? 'FRED API (PCEPILFE m/m)' : 'Verified Config Data',
-      forecastSource: 'Analyst Consensus (config)',
+      forecastSource: forecastInfo.forecastSource,
+      forecastConfidence: forecastInfo.forecastConfidence,
+      releaseFrequency: releaseMeta.releaseFrequency,
+      lastReleaseDate: releaseMeta.lastReleaseDate,
+      nextReleaseDate: releaseMeta.nextReleaseDate,
+      isReleaseDue: timingState.isReleaseDue,
+      isNewDataAvailable: timingState.isReleaseDue,
+      isReleaseDelayed: timingState.isReleaseDelayed,
+      delayReason: timingState.delayReason,
+      refreshReason: timingState.isReleaseDue
+        ? `Release date reached (${releaseMeta.nextReleaseDate}); indicator was refreshed`
+        : `No release due. Latest available economic data retained until ${releaseMeta.nextReleaseDate || 'next schedule'}`,
+      isRevised: revisionMeta.isRevised,
+      revisionMagnitude: revisionMeta.revisionMagnitude,
+      revisionNote: revisionMeta.revisionNote,
+      dataConflict: false,
+      dataWarning,
+      lastReleaseCheckAt: new Date().toISOString(),
+      releaseTime: configEntry?.time || null,
     };
     cache.set(cacheKey, analysis);
     console.log(`✅ Core PCE: ${latestActual}% | forecast ${latestForecast}% | surprise ${surprise}%`);
@@ -608,11 +1278,11 @@ export async function analyzeCorePCE() {
  */
 export async function analyzeJoblessClaims() {
   const cacheKey = 'jobless_claims_analysis';
-  const cached = cache.get(cacheKey);
+  const cached = getCachedIfFresh(cacheKey);
   if (cached) return cached;
 
   try {
-    console.log('📊 Analyzing Initial Jobless Claims — fetching live from FRED ICSA...');
+    console.log('📊 Analyzing Initial Jobless Claims — fetching latest available release from FRED ICSA...');
 
     // Fetch last 12 weeks
     const rawData = await fetchFredSeries('ICSA', 12);
@@ -638,9 +1308,14 @@ export async function analyzeJoblessClaims() {
       historicalData = (configEntry?.historicalData || []).map(h => ({ date: h.date, value: h.actual }));
     }
 
-    const latestForecast = released?.forecast ?? null;
+    const forecastInfo = await resolveForecast({ code: 'JoblessClaims', configEntry });
+    const latestForecast = forecastInfo.forecast;
     const surprise = calculateSurprise(latestActual, latestForecast);
     const impact   = determineGoldImpact('JoblessClaims', surprise);
+    const releaseMeta = await deriveReleaseMetadata('JoblessClaims', latestDate, historicalData);
+    const timingState = evaluateReleaseAvailability(releaseMeta.nextReleaseDate, configEntry?.time);
+    const revisionMeta = await getRevisionMetadata('ICSA', latestDate);
+    const dataWarning = buildDataWarning(latestActual, historicalData, latestDate, releaseMeta.lastReleaseDate);
 
     const analysis = {
       indicator: 'Initial Jobless Claims (weekly)',
@@ -653,7 +1328,25 @@ export async function analyzeJoblessClaims() {
       usualEffect: configEntry?.usualEffect,
       frequency:   configEntry?.frequency,
       actualSource:   rawData ? 'FRED API (ICSA)' : 'Verified Config Data',
-      forecastSource: 'Analyst Consensus (config)',
+      forecastSource: forecastInfo.forecastSource,
+      forecastConfidence: forecastInfo.forecastConfidence,
+      releaseFrequency: releaseMeta.releaseFrequency,
+      lastReleaseDate: releaseMeta.lastReleaseDate,
+      nextReleaseDate: releaseMeta.nextReleaseDate,
+      isReleaseDue: timingState.isReleaseDue,
+      isNewDataAvailable: timingState.isReleaseDue,
+      isReleaseDelayed: timingState.isReleaseDelayed,
+      delayReason: timingState.delayReason,
+      refreshReason: timingState.isReleaseDue
+        ? `Release date reached (${releaseMeta.nextReleaseDate}); indicator was refreshed`
+        : `No release due. Latest available economic data retained until ${releaseMeta.nextReleaseDate || 'next schedule'}`,
+      isRevised: revisionMeta.isRevised,
+      revisionMagnitude: revisionMeta.revisionMagnitude,
+      revisionNote: revisionMeta.revisionNote,
+      dataConflict: false,
+      dataWarning,
+      lastReleaseCheckAt: new Date().toISOString(),
+      releaseTime: configEntry?.time || null,
     };
     cache.set(cacheKey, analysis);
     console.log(`✅ Jobless Claims: ${latestActual}K | forecast ${latestForecast}K | surprise ${surprise}K`);
@@ -671,11 +1364,11 @@ export async function analyzeJoblessClaims() {
  */
 export async function analyzeRetailSales() {
   const cacheKey = 'retail_sales_analysis';
-  const cached = cache.get(cacheKey);
+  const cached = getCachedIfFresh(cacheKey);
   if (cached) return cached;
 
   try {
-    console.log('📊 Analyzing Retail Sales m/m — fetching live from FRED RSAFS...');
+    console.log('📊 Analyzing Retail Sales m/m — fetching latest available release from FRED RSAFS...');
 
     const rawData = await fetchFredSeries('RSAFS', 14);
     const configEntry = REAL_ECONOMIC_DATA.indicators.find(i => i.id === 'retail_sales');
@@ -703,9 +1396,14 @@ export async function analyzeRetailSales() {
       historicalData = (configEntry?.historicalData || []).map(h => ({ date: h.date, value: h.actual }));
     }
 
-    const latestForecast = released?.forecast ?? calculateForecast(historicalData);
+    const forecastInfo = await resolveForecast({ code: 'RetailSales', configEntry });
+    const latestForecast = forecastInfo.forecast;
     const surprise = calculateSurprise(latestActual, latestForecast);
     const impact   = determineGoldImpact('RetailSales', surprise);
+    const releaseMeta = await deriveReleaseMetadata('RetailSales', latestDate, historicalData);
+    const timingState = evaluateReleaseAvailability(releaseMeta.nextReleaseDate, configEntry?.time);
+    const revisionMeta = await getRevisionMetadata('RSAFS', latestDate);
+    const dataWarning = buildDataWarning(latestActual, historicalData, latestDate, releaseMeta.lastReleaseDate);
 
     const analysis = {
       indicator: 'Retail Sales m/m',
@@ -718,7 +1416,25 @@ export async function analyzeRetailSales() {
       usualEffect: configEntry?.usualEffect,
       frequency:   configEntry?.frequency,
       actualSource:   rawData ? 'FRED API (RSAFS m/m)' : 'Verified Config Data',
-      forecastSource: 'Analyst Consensus (config)',
+      forecastSource: forecastInfo.forecastSource,
+      forecastConfidence: forecastInfo.forecastConfidence,
+      releaseFrequency: releaseMeta.releaseFrequency,
+      lastReleaseDate: releaseMeta.lastReleaseDate,
+      nextReleaseDate: releaseMeta.nextReleaseDate,
+      isReleaseDue: timingState.isReleaseDue,
+      isNewDataAvailable: timingState.isReleaseDue,
+      isReleaseDelayed: timingState.isReleaseDelayed,
+      delayReason: timingState.delayReason,
+      refreshReason: timingState.isReleaseDue
+        ? `Release date reached (${releaseMeta.nextReleaseDate}); indicator was refreshed`
+        : `No release due. Latest available economic data retained until ${releaseMeta.nextReleaseDate || 'next schedule'}`,
+      isRevised: revisionMeta.isRevised,
+      revisionMagnitude: revisionMeta.revisionMagnitude,
+      revisionNote: revisionMeta.revisionNote,
+      dataConflict: false,
+      dataWarning,
+      lastReleaseCheckAt: new Date().toISOString(),
+      releaseTime: configEntry?.time || null,
     };
     cache.set(cacheKey, analysis);
     console.log(`✅ Retail Sales: ${latestActual}% | forecast ${latestForecast}% | surprise ${surprise}%`);
@@ -748,7 +1464,7 @@ export async function analyzeConsumerConfidence() {
  */
 export async function getEconomicDashboard() {
   const cacheKey = 'economic_dashboard';
-  const cached = cache.get(cacheKey);
+  const cached = getCachedIfFresh(cacheKey);
   
   if (cached) {
     console.log('✓ Returning cached economic dashboard');
@@ -789,8 +1505,9 @@ export async function getEconomicDashboard() {
 
     const dashboard = {
       timestamp: new Date().toISOString(),
+      isNewDataAvailable: allIndicators.filter(item => !item.error).some(item => item.isNewDataAvailable),
       indicators: {
-        // Primary (labor + inflation — FRED live)
+        // Primary (labor + inflation — FRED latest available releases)
         nfp,
         cpi,
         unemployment,
@@ -818,7 +1535,16 @@ export async function getEconomicDashboard() {
       },
     };
 
-    cache.set(cacheKey, dashboard);
+    const nextReleaseDate = allIndicators
+      .filter(item => item && !item.error && item.nextReleaseDate)
+      .map(item => item.nextReleaseDate)
+      .sort()[0] || null;
+
+    cache.set(cacheKey, {
+      ...dashboard,
+      nextReleaseDate,
+      lastReleaseCheckAt: new Date().toISOString(),
+    });
     console.log(`✅ Economic Dashboard ready: ${overallSentiment}`);
     
     return dashboard;
@@ -844,7 +1570,7 @@ export async function getEconomicDashboard() {
  */
 export async function calculateMacroSurpriseScore() {
   const cacheKey = 'macro_surprise_score';
-  const cached = cache.get(cacheKey);
+  const cached = getCachedIfFresh(cacheKey);
   if (cached) return cached;
 
   try {
@@ -918,9 +1644,21 @@ export async function calculateMacroSurpriseScore() {
     // Sort by absolute contribution so the biggest movers appear first
     contributors.sort((a, b) => Math.abs(b.contribution) - Math.abs(a.contribution));
 
-    const result = { score, label, contributors, updatedAt: Date.now() };
+    const nextReleaseDate = Object.values(dashboard.indicators || {})
+      .filter(item => item && !item.error && item.nextReleaseDate)
+      .map(item => item.nextReleaseDate)
+      .sort()[0] || null;
 
-    cache.set(cacheKey, result, 3600);
+    const result = {
+      score,
+      label,
+      contributors,
+      updatedAt: Date.now(),
+      nextReleaseDate,
+      lastReleaseCheckAt: new Date().toISOString(),
+    };
+
+    cache.set(cacheKey, result);
     console.log(`✅ Macro Surprise Score: ${score} (${label})`);
     return result;
 
@@ -940,41 +1678,11 @@ export function clearEconomicCache() {
 
 // ─────────────────────────────────────────────────────────────────────────────
 // FRESHNESS SYSTEM
-// Deterministic — derives "fresh" | "stale" | "outdated" from release frequency.
+// Deterministic — release-aware freshness with indicator-specific thresholds.
 // ─────────────────────────────────────────────────────────────────────────────
 
-/**
- * Expected release cadence per indicator code.
- * fresh  → data is within normal publication window
- * stale  → slightly beyond window (FRED lag / revision delay tolerated)
- * outdated → significantly behind; treat with lower confidence
- */
-const FRESHNESS_SCHEDULE = {
-  NFP:              { fresh: 40,  stale: 80  }, // monthly BLS
-  CPI:              { fresh: 40,  stale: 80  }, // monthly BLS
-  UNEMPLOYMENT:     { fresh: 40,  stale: 80  }, // monthly BLS (with NFP)
-  CorePCE:          { fresh: 40,  stale: 80  }, // monthly BEA
-  GDP:              { fresh: 100, stale: 190 }, // quarterly BEA advance
-  RetailSales:      { fresh: 40,  stale: 80  }, // monthly Census
-  ISMManufacturing: { fresh: 40,  stale: 80  }, // monthly ISM
-  ConsumerConf:     { fresh: 40,  stale: 80  }, // monthly Conference Board
-  FedRate:          { fresh: 60,  stale: 120 }, // FOMC ~8×/year ≈ 45-day gaps
-  JoblessClaims:    { fresh: 10,  stale: 21  }, // weekly DOL
-};
-
-/**
- * Classify indicator data age into a freshness tier.
- * @param {string|null} latestDate – YYYY-MM-DD date of last released data point
- * @param {string} code            – indicator code for cadence lookup
- * @returns {"fresh"|"stale"|"outdated"}
- */
 function calcFreshness(latestDate, code) {
-  if (!latestDate) return 'outdated';
-  const days = Math.floor((Date.now() - new Date(latestDate).getTime()) / 86_400_000);
-  const th   = FRESHNESS_SCHEDULE[code] || { fresh: 45, stale: 90 };
-  if (days <= th.fresh) return 'fresh';
-  if (days <= th.stale) return 'stale';
-  return 'outdated';
+  return calcFreshnessWithReason(latestDate, code).freshness;
 }
 
 /**
@@ -1246,7 +1954,93 @@ function buildRiskAlerts(available, allIndicatorValues, confidence, signalConfli
     alerts.push('Low overall confidence — consider waiting for fresher data before forming a strong macro bias');
   }
 
+  const lowConfidenceForecasts = available.filter(i => i.forecastSource === 'manual' || i.forecastSource === 'none');
+  if (lowConfidenceForecasts.length > 0) {
+    alerts.push(
+      `Forecast confidence is low for: ${lowConfidenceForecasts.map(i => i.code).join(', ')}`,
+    );
+  }
+
+  const forecastCoverage = available.length > 0
+    ? available.filter(i => i.forecast !== null && i.forecast !== undefined).length / available.length
+    : 0;
+  if (forecastCoverage < 0.7) {
+    alerts.push(`Low forecast coverage (${Math.round(forecastCoverage * 100)}%)`);
+  }
+
+  const integrityWarnings = available
+    .map(i => i.dataWarning)
+    .filter(Boolean);
+  for (const warning of integrityWarnings) {
+    if (!alerts.includes(warning)) alerts.push(warning);
+  }
+
   return alerts;
+}
+
+function calculateSignalConsistencyScore(available, signalConflictDetail) {
+  if (!available || available.length === 0) return 0;
+  const bullish = available.filter(i => i.impactColor === 'green').length;
+  const bearish = available.filter(i => i.impactColor === 'red').length;
+  const dominant = Math.max(bullish, bearish);
+  const alignmentRatio = dominant / available.length;
+  const base = Math.round(alignmentRatio * 100);
+  const conflictPenalty = signalConflictDetail.level === 'high'
+    ? 35
+    : signalConflictDetail.level === 'medium'
+      ? 20
+      : 5;
+  const score = Math.max(0, Math.min(100, base - conflictPenalty));
+  debugLog('Signal consistency score calculated', { base, conflictPenalty, score });
+  return score;
+}
+
+function calculateDataCompletenessScore(available, allIndicatorValues) {
+  const expected = (allIndicatorValues || []).length || 10;
+  const present = available.length;
+  const availabilityScore = (present / expected) * 100;
+
+  const staleCount = available.filter(i => calcFreshness(i.latestDate, i.code) === 'stale').length;
+  const outdatedCount = available.filter(i => calcFreshness(i.latestDate, i.code) === 'outdated').length;
+  const freshnessPenalty = staleCount * 6 + outdatedCount * 15;
+
+  const score = Math.max(0, Math.min(100, Math.round(availabilityScore - freshnessPenalty)));
+  debugLog('Data completeness score calculated', { expected, present, staleCount, outdatedCount, score });
+  return score;
+}
+
+function getSystemHealth({ available, confidence, dataCompletenessScore }) {
+  const staleCount = available.filter(i => calcFreshness(i.latestDate, i.code) === 'stale').length;
+  const outdatedCount = available.filter(i => calcFreshness(i.latestDate, i.code) === 'outdated').length;
+  const freshnessStatus = outdatedCount >= 2 ? 'poor' : staleCount >= 2 ? 'moderate' : 'good';
+
+  const completenessStatus = dataCompletenessScore >= 80
+    ? 'good'
+    : dataCompletenessScore >= 55
+      ? 'moderate'
+      : 'poor';
+
+  const forecastCoverage = available.length > 0
+    ? available.filter(i => i.forecast !== null && i.forecast !== undefined).length / available.length
+    : 0;
+  const forecastQuality = forecastCoverage >= 0.85
+    ? 'high'
+    : forecastCoverage >= 0.7
+      ? 'medium'
+      : 'low';
+
+  const overallStatus = (freshnessStatus === 'poor' || completenessStatus === 'poor' || confidence.level === 'Low')
+    ? 'critical'
+    : (freshnessStatus === 'moderate' || completenessStatus === 'moderate' || forecastQuality === 'medium')
+      ? 'warning'
+      : 'healthy';
+
+  return {
+    dataFreshness: freshnessStatus,
+    dataCompleteness: completenessStatus,
+    forecastQuality,
+    overallStatus,
+  };
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -1273,7 +2067,7 @@ const KEY_INDICATOR_CODES = ['NFP', 'CPI', 'UNEMPLOYMENT', 'CorePCE'];
 /**
  * Derive overall system status from freshness of critical indicators.
  * @param {Array} available – error-free indicator objects
- * @returns {"live"|"delayed"|"partial"}
+ * @returns {"up_to_date"|"delayed"|"partial"}
  */
 function deriveSystemStatus(available) {
   const keyFreshness = KEY_INDICATOR_CODES.map(code => {
@@ -1283,7 +2077,7 @@ function deriveSystemStatus(available) {
   });
   if (keyFreshness.some(f => f === 'missing' || f === 'outdated')) return 'partial';
   if (keyFreshness.some(f => f === 'stale'))                        return 'delayed';
-  return 'live';
+  return 'up_to_date';
 }
 
 /**
@@ -1330,12 +2124,13 @@ export function buildAiInsightsPayload(dashboard, macroScore, aiAnalysis) {
   const available = indicatorValues.filter(i => !i.error);
 
   // Compute signal conflict FIRST — it feeds into the confidence penalty
-  const signalConflict = detectSignalConflict(available);
-  const confidence     = calculateConfidence(indicatorValues, signalConflict.level);
+  const signalConflictDetail = detectSignalConflict(available);
+  const confidence     = calculateConfidence(indicatorValues, signalConflictDetail.level);
   const systemStatus   = deriveSystemStatus(available);
+  debugLog('Signal conflict analysis complete', signalConflictDetail);
 
-  // ── Group indicators by category ─────────────────────────────────────────
-  const indicators = { labor: [], inflation: [], growth: [], monetary: [] };
+  const indicators = [];
+  const indicatorsByCategory = { labor: [], inflation: [], growth: [], monetary: [] };
   for (const ind of available) {
     const group = GROUP_MAP[ind.code];
     if (!group) continue;
@@ -1343,7 +2138,8 @@ export function buildAiInsightsPayload(dashboard, macroScore, aiAnalysis) {
     const prevVal = ind.historicalData && ind.historicalData.length >= 2
       ? (ind.historicalData[ind.historicalData.length - 2]?.value ?? null)
       : null;
-    indicators[group].push({
+    const { freshness, freshnessReason, daysSinceRelease } = calcFreshnessWithReason(ind.latestDate, ind.code);
+    const row = {
       code:                  ind.code,
       name:                  ind.indicator,
       actual:                ind.actual,
@@ -1365,13 +2161,33 @@ export function buildAiInsightsPayload(dashboard, macroScore, aiAnalysis) {
                            : 'Neutral',
       intensity:             Math.max(8, Math.min(100, Math.abs(ind.surprisePercentage ?? ind.surprise ?? 0) * 2.5)),
       lastUpdated:           ind.latestDate   || null,
-      freshness:             calcFreshness(ind.latestDate, ind.code),
+      freshness,
+      freshnessReason,
+      daysSinceRelease,
+      releaseFrequency:      ind.releaseFrequency ?? RELEASE_FREQUENCY_BY_CODE[ind.code] ?? 'monthly',
+      lastReleaseDate:       ind.lastReleaseDate ?? ind.latestDate ?? null,
+      nextReleaseDate:       ind.nextReleaseDate ?? null,
+      isReleaseDue:          Boolean(ind.isReleaseDue),
+      isNewDataAvailable:    Boolean(ind.isNewDataAvailable),
+      isReleaseDelayed:      Boolean(ind.isReleaseDelayed),
+      delayReason:           ind.delayReason || '',
+      refreshReason:         ind.refreshReason || 'Latest available economic data',
+      forecastSource:        ind.forecastSource ?? 'none',
+      forecastConfidence:    ind.forecastConfidence ?? 'low',
+      isRevised:             Boolean(ind.isRevised),
+      revisionMagnitude:     Number(ind.revisionMagnitude || 0),
+      revisionNote:          ind.revisionNote || 'Revision data unavailable',
+      dataConflict:          Boolean(ind.dataConflict),
+      dataWarning:           ind.dataWarning ?? buildDataWarning(ind.actual, ind.historicalData, ind.latestDate, ind.lastReleaseDate),
       dataSource:            ind.actualSource || 'FRED API',
       // lastDate kept for legacy UI compatibility
       lastDate:              ind.latestDate   || null,
       // Weight of this indicator in the overall confidence calculation (0-1)
       confidenceContribution: Math.round((INDICATOR_IMPORTANCE[ind.code] ?? 1.0) / TOTAL_IMPORTANCE * 100) / 100,
-    });
+      group,
+    };
+    indicators.push(row);
+    indicatorsByCategory[group].push(row);
   }
 
   // ── Top drivers ──────────────────────────────────────────────────────────
@@ -1397,7 +2213,20 @@ export function buildAiInsightsPayload(dashboard, macroScore, aiAnalysis) {
     });
 
   // Build risk alerts AFTER confidence so the Low-confidence alert fires correctly
-  const riskAlerts = buildRiskAlerts(available, indicatorValues, confidence, signalConflict);
+  const riskAlerts = buildRiskAlerts(available, indicatorValues, confidence, signalConflictDetail);
+  const signalConsistencyScore = calculateSignalConsistencyScore(available, signalConflictDetail);
+  const dataCompleteness = calculateDataCompletenessScore(available, indicatorValues);
+  const systemHealth = getSystemHealth({ available, confidence, dataCompletenessScore: dataCompleteness });
+  const conflictModelWarning = validateConflictConsistency(signalConflictDetail);
+  if (conflictModelWarning) {
+    riskAlerts.push(conflictModelWarning);
+    debugLog('Conflict model warning raised', { signalConflictDetail });
+  }
+
+  const fredFailureCount = indicatorValues.filter(i => i && i.error && /fred|api/i.test(String(i.error))).length;
+  const fallbackMode = fredFailureCount > 0;
+  const fallbackReason = fallbackMode ? 'FRED API unavailable' : null;
+  const dataReliability = fallbackMode ? 'reduced' : 'normal';
 
   // ── Unique data sources list ──────────────────────────────────────────────
   const sourcesSet = new Set();
@@ -1408,7 +2237,13 @@ export function buildAiInsightsPayload(dashboard, macroScore, aiAnalysis) {
       sourcesSet.add(ind.actualSource);
     }
   }
-  sourcesSet.add('Analyst Consensus (forecast)');
+  for (const ind of available) {
+    if (ind.forecastSource === 'manual') {
+      sourcesSet.add('Manual forecast input (low confidence)');
+    } else if (ind.forecastSource && ind.forecastSource !== 'none') {
+      sourcesSet.add(ind.forecastSource);
+    }
+  }
 
   // ── AI summary (structured) or null ──────────────────────────────────────
   const hasValidAi = aiAnalysis && !aiAnalysis.error && aiAnalysis.summary;
@@ -1422,7 +2257,7 @@ export function buildAiInsightsPayload(dashboard, macroScore, aiAnalysis) {
         generatedAt:  aiAnalysis.timestamp    || now,
         warnings: [
           'AI commentary is generated using only the data listed above — no external sources were used.',
-          'Economic indicators are lagging — signals may not reflect the most current market conditions.',
+          'Economic indicators are release-driven; no real-time price feed is used here.',
           'Not financial advice. Always conduct your own analysis before trading.',
         ],
       }
@@ -1432,19 +2267,43 @@ export function buildAiInsightsPayload(dashboard, macroScore, aiAnalysis) {
 
   // ── Deterministic contextual note ────────────────────────────────────────
   const actionContext = buildActionContext(macroScore?.score ?? 0, available);
+  const isNewDataAvailable = indicators.some(i => i.isNewDataAvailable);
+  const nextReleaseDate = indicators
+    .map(i => i.nextReleaseDate)
+    .filter(Boolean)
+    .sort()[0] || null;
+  const dueCodes = indicators.filter(i => i.isReleaseDue).map(i => i.code);
+  const refreshReason = dueCodes.length > 0
+    ? `Release due for ${dueCodes.join(', ')}; refreshed latest available economic data`
+    : `No release due; using cached latest available economic data${nextReleaseDate ? ` until ${nextReleaseDate}` : ''}`;
 
   return {
     meta: {
       lastUpdated: dashboard?.timestamp || now,
-      dataLag:     'Lagging indicators — monthly data is typically released 2\u20134 weeks after the period ends; weekly data (Jobless Claims) has a ~1-week lag.',
+      dataLag:     'Latest available economic data. Releases are periodic (weekly, monthly, quarterly) and not real-time.',
       dataSources: [...sourcesSet],
     },
+    lastUpdated:   dashboard?.timestamp || now,
     status:        systemStatus,
+    isNewDataAvailable,
+    refreshReason,
     score:         macroScore?.score ?? 0,
     sentiment:     macroScore?.label || dashboard?.overallSentiment || 'Neutral',
     confidence,
-    signalConflict,
+    signalConflict: signalConflictDetail.level,
+    conflictingIndicators: signalConflictDetail.conflictingIndicators,
+    signalConflictDetail,
+    systemWarning: conflictModelWarning || null,
+    signalConsistencyScore,
+    dataCompleteness,
+    systemHealth,
+    fallbackMode,
+    fallbackReason,
+    dataReliability,
     riskAlerts,
+    marketImpact: calculateMarketImpact(indicators),
+    dataTransparency: generateDataTransparency(indicators),
+    macroSummary: buildMacroSummary(indicators, riskAlerts),
     summary: {
       bullishCount:    dashboard?.summary?.bullishIndicators ?? 0,
       bearishCount:    dashboard?.summary?.bearishIndicators ?? 0,
@@ -1453,6 +2312,7 @@ export function buildAiInsightsPayload(dashboard, macroScore, aiAnalysis) {
     },
     drivers,
     indicators,
+    indicatorsByCategory,
     aiSummary,
     aiStatus,
     actionContext,
