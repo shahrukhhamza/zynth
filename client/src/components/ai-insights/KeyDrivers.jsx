@@ -1,86 +1,119 @@
-const TREND_ARROW = {
-  rising:  { symbol: '↑', color: 'text-emerald-400' },
-  falling: { symbol: '↓', color: 'text-red-400'     },
-  stable:  { symbol: '→', color: 'text-slate-400'   },
+﻿import { useState } from 'react';
+
+const BASELINE_WEIGHTS = {
+  CPI: 2.0, NFP: 1.8, FedRate: 1.8, CorePCE: 1.6, UNEMPLOYMENT: 1.2,
+  GDP: 1.2, JoblessClaims: 0.8, RetailSales: 0.8, ISMManufacturing: 0.7, ConsumerConf: 0.7,
 };
 
-const FRESHNESS_DOT = {
-  fresh:    { dot: '🟢', title: 'Fresh data' },
-  stale:    { dot: '🟡', title: 'Stale data' },
-  outdated: { dot: '🔴', title: 'Outdated data' },
-};
-
-const STRENGTH_CONFIG = {
-  strong:   { label: 'Strong',   cls: 'text-slate-500 dark:text-slate-300 font-semibold' },
-  moderate: { label: 'Moderate', cls: 'text-slate-400 dark:text-slate-400' },
-  weak:     { label: 'Weak',     cls: 'text-slate-300 dark:text-slate-600' },
-};
-
-function biasColor(bias) {
-  if (bias === 'Bullish') return 'text-emerald-500';
-  if (bias === 'Bearish') return 'text-red-500';
+function biasColor(b) {
+  if (b === 'Bullish') return 'text-emerald-400';
+  if (b === 'Bearish') return 'text-red-400';
   return 'text-slate-400';
 }
 
-export default function KeyDrivers({ drivers }) {
+function freshDot(f) {
+  if (f === 'fresh') return { cls: 'text-emerald-400', title: 'Fresh' };
+  if (f === 'stale') return { cls: 'text-amber-400', title: 'Stale' };
+  return { cls: 'text-red-400', title: 'Outdated' };
+}
+
+function trendArrow(t) {
+  if (t === 'rising') return { sym: '\u25b2', cls: 'text-emerald-400' };
+  if (t === 'falling') return { sym: '\u25bc', cls: 'text-red-400' };
+  return { sym: '\u2013', cls: 'text-slate-500' };
+}
+
+function fmtDate(iso) {
+  if (!iso) return null;
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return null;
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+}
+
+function validLabel(v) {
+  if (!v) return { label: 'Unchecked', cls: 'text-slate-400 border-slate-500/20 bg-slate-500/[0.06]' };
+  if (v.valid) return { label: 'Valid', cls: 'text-emerald-300 border-emerald-500/20 bg-emerald-500/[0.06]' };
+  return { label: 'Partial', cls: 'text-amber-300 border-amber-500/20 bg-amber-500/[0.06]' };
+}
+
+export default function KeyDrivers({ drivers, macroScore }) {
+  const [openCode, setOpenCode] = useState(null);
+
   if (!drivers || drivers.length === 0) {
     return (
-      <div className="rounded-2xl border border-slate-200 bg-white dark:border-white/[0.07] dark:bg-slate-900 px-5 py-4">
-        <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-400">Key Drivers</p>
-        <p className="mt-2 text-sm text-slate-400">No driver data available.</p>
+      <div className="rounded-2xl border border-white/[0.06] bg-[#0c1018] px-5 py-4">
+        <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-500">Key Drivers</p>
+        <p className="mt-2 text-[12px] text-slate-400">No driver data available yet.</p>
       </div>
     );
   }
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white dark:border-white/[0.07] dark:bg-slate-900">
-      {/* Section header */}
-      <div className="border-b border-slate-100 dark:border-white/5 px-5 py-3">
-        <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-400">Key Drivers</p>
+    <div className="rounded-2xl border border-white/[0.06] bg-[#0c1018] overflow-hidden">
+      <div className="border-b border-white/[0.04] px-5 py-3 space-y-1">
+        <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-500">Key Drivers</p>
+        <p className="text-[10px] text-slate-500">Actual, forecast, surprise, weighted contribution, bias, reasoning.</p>
       </div>
 
-      {/* Rank rows */}
-      {drivers.map((driver, i) => {
-        const trendCfg    = TREND_ARROW[driver.trend]            ?? TREND_ARROW.stable;
-        const freshDot    = FRESHNESS_DOT[driver.freshness]      ?? { dot: '◯', title: 'Unknown' };
-        const strengthCfg = STRENGTH_CONFIG[driver.impactStrength] ?? STRENGTH_CONFIG.weak;
-        const isLast      = i === drivers.length - 1;
+      {drivers.map((d, i) => {
+        const trend = trendArrow(d.trend);
+        const fresh = freshDot(d.freshness);
+        const isOpen = openCode === d.code;
+        const vl = validLabel(d.validation);
 
         return (
-          <div
-            key={driver.code}
-            className={`grid grid-cols-[20px_1fr_60px_16px_16px_56px] items-center gap-3 px-5 py-3.5 transition-colors hover:bg-slate-50 dark:hover:bg-white/[0.025] ${!isLast ? 'border-b border-slate-100 dark:border-white/5' : ''}`}
-          >
-            {/* Rank */}
-            <span className="text-[10px] font-mono tabular-nums text-slate-300 dark:text-slate-600">
-              {String(i + 1).padStart(2, '0')}
-            </span>
+          <div key={d.code} className="border-b border-white/[0.03] last:border-0">
+            <button type="button" onClick={() => setOpenCode(prev => prev === d.code ? null : d.code)} className="w-full px-5 py-3 text-left hover:bg-white/[0.015] transition-colors">
+              <div className="grid grid-cols-[20px_1fr_70px_60px_20px_20px] items-center gap-2">
+                <span className="text-[10px] font-mono text-slate-500">{String(i + 1).padStart(2, '0')}</span>
+                <div className="min-w-0">
+                  <p className="truncate text-[13px] font-semibold text-white">{d.name}</p>
+                  <p className="text-[10px] tabular-nums text-slate-400">{d.value ?? '\u2014'}</p>
+                </div>
+                <span className="text-right text-[11px] tabular-nums text-cyan-300">{Number.isFinite(d.contribution) ? `${d.contribution > 0 ? '+' : ''}${d.contribution}` : '\u2013'}</span>
+                <span className={`text-right text-[11px] font-semibold ${biasColor(d.bias)}`}>{d.bias || 'Neutral'}</span>
+                <span className={`text-center text-[10px] ${fresh.cls}`} title={fresh.title}>{'\u2022'}</span>
+                <span className={`text-center text-[11px] ${trend.cls}`}>{trend.sym}</span>
+              </div>
+            </button>
 
-            {/* Name + value */}
-            <div className="min-w-0">
-              <p className="truncate text-sm font-semibold text-slate-900 dark:text-white">{driver.name}</p>
-              <p className="text-[11px] tabular-nums text-slate-400">{driver.value}</p>
-            </div>
+            {isOpen && (
+              <div className="px-5 pb-4 space-y-2.5">
+                <div className="flex flex-wrap gap-1.5 text-[9px] uppercase tracking-[0.1em]">
+                  <span className={`rounded-md border px-1.5 py-0.5 ${vl.cls}`}>{vl.label}</span>
+                  <span className="rounded-md border border-blue-500/15 bg-blue-500/[0.06] px-1.5 py-0.5 text-blue-200">{d.dataSource || 'FRED API'}</span>
+                  <span className="rounded-md border border-violet-500/15 bg-violet-500/[0.06] px-1.5 py-0.5 text-violet-200">Reliability: {d.sourceReliability || 'medium'}</span>
+                  <span className="rounded-md border border-slate-500/15 bg-slate-500/[0.06] px-1.5 py-0.5 text-slate-300">Weight: {d.weight || BASELINE_WEIGHTS[d.code] || '\u2014'}</span>
+                </div>
 
-            {/* Impact strength */}
-            <span className={`text-right text-[10px] ${strengthCfg.cls}`}>
-              {strengthCfg.label}
-            </span>
+                <div className="flex gap-4 text-[10px] text-slate-400">
+                  {fmtDate(d.releaseTime) && <span>Released: {fmtDate(d.releaseTime)}</span>}
+                  {fmtDate(d.fetchedAt) && <span>Fetched: {fmtDate(d.fetchedAt)}</span>}
+                  {!fmtDate(d.releaseTime) && !fmtDate(d.fetchedAt) && <span className="text-slate-500">Timing data pending</span>}
+                </div>
 
-            {/* Trend arrow */}
-            <span className={`text-sm font-bold ${trendCfg.color}`} title={`Trend: ${driver.trend ?? 'stable'}`}>
-              {trendCfg.symbol}
-            </span>
+                <div className="rounded-lg border border-white/[0.05] bg-white/[0.02] px-3 py-2.5">
+                  <p className="text-[9px] font-semibold uppercase tracking-[0.1em] text-slate-500 mb-1">Why this matters</p>
+                  <p className="text-[11px] leading-relaxed text-slate-200">{d.reasoning || 'Analysis pending \u2014 data being validated.'}</p>
+                </div>
 
-            {/* Freshness dot (emoji) */}
-            <span className="text-lg" title={freshDot.title}>
-              {freshDot.dot}
-            </span>
+                {d.historicalValidation && (
+                  <div className="rounded-lg border border-cyan-500/15 bg-cyan-500/[0.04] px-3 py-2.5">
+                    <p className="text-[9px] font-semibold uppercase tracking-[0.1em] text-cyan-400 mb-1">Backtest (last {d.historicalValidation.sampleSize || 10})</p>
+                    <p className="text-[11px] leading-relaxed text-cyan-200/80">{d.historicalValidation.statement}</p>
+                  </div>
+                )}
 
-            {/* Bias */}
-            <span className={`text-right text-xs font-bold tabular-nums ${biasColor(driver.bias)}`}>
-              {driver.bias}
-            </span>
+                {Array.isArray(d.validation?.issues) && d.validation.issues.length > 0 && (
+                  <div className="rounded-lg border border-amber-500/15 bg-amber-500/[0.04] px-3 py-2.5">
+                    <p className="text-[9px] font-semibold uppercase tracking-[0.1em] text-amber-400 mb-1">Validation Notes</p>
+                    {d.validation.issues.map(issue => (
+                      <p key={issue} className="text-[11px] text-amber-200/80">{'\u2022'} {issue}</p>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         );
       })}

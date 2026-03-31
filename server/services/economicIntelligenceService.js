@@ -11,6 +11,16 @@ import axios from 'axios';
 import NodeCache from 'node-cache';
 import { REAL_ECONOMIC_DATA } from '../config/economicData.js';
 import { calculateMarketImpact, generateDataTransparency, buildMacroSummary } from './macroImpactEngine.js';
+import {
+  validateEconomicIndicator,
+  computeMacroScore,
+  buildHistoricalValidation,
+  generateImpactReason,
+  determineMacroBias,
+  detectMacroVsPriceConflict,
+  logConflictEvent,
+} from './economicValidationService.js';
+import { generateMarketNarrative } from './marketNarrativeService.js';
 
 // Release-aware cache (no TTL). Entries are invalidated when release windows are reached.
 const cache = new NodeCache({ stdTTL: 0 });
@@ -67,6 +77,92 @@ function debugLog(message, payload) {
       console.log(`[ECON_DEBUG] ${message}`);
     }
   }
+}
+
+function buildTradeInsight({ macroScore = {}, marketValidation = null } = {}) {
+  const bias = determineMacroBias(macroScore);
+  const strength = macroScore?.signalStrength || 'Weak';
+  const confidence = macroScore?.signalConfidence || 'Low';
+  const uncertainty = macroScore?.uncertainty || 'High';
+  const conflict = Boolean(marketValidation?.conflict);
+
+  let action = 'Wait';
+  let explanation = `${strength} ${bias} bias with ${confidence} confidence. Wait for clearer confirmation.`;
+
+  if (conflict) {
+    action = 'No Trade';
+    explanation = `${strength} ${bias} bias conflicts with price action. No trade until macro and price align.`;
+  } else if (strength === 'Weak' || uncertainty === 'High') {
+    action = 'Wait';
+    explanation = `${strength} ${bias} bias with ${uncertainty} uncertainty. Wait for pullback and confirmation before any setup.`;
+  } else if (strength === 'Moderate' && confidence === 'Medium') {
+    if (bias === 'Bullish') {
+      action = 'Look for Buy';
+      explanation = `${strength} ${bias} bias. Look for buy setups only after pullback and confirmation.`;
+    } else if (bias === 'Bearish') {
+      action = 'Look for Sell';
+      explanation = `${strength} ${bias} bias. Look for sell setups only after pullback and confirmation.`;
+    } else {
+      action = 'Wait';
+      explanation = `${strength} ${bias} bias. Look for clearer setup structure before considering any trade.`;
+    }
+  } else if (strength === 'Strong' && confidence === 'High') {
+    if (bias === 'Bullish') {
+      action = 'Look for Buy';
+      explanation = `${strength} ${bias} bias with ${confidence} confidence. Look for bullish entry triggers on validated setups.`;
+    } else if (bias === 'Bearish') {
+      action = 'Look for Sell';
+      explanation = `${strength} ${bias} bias with ${confidence} confidence. Look for bearish entry triggers on validated setups.`;
+    } else {
+      action = 'Wait';
+      explanation = `${strength} ${bias} bias with ${confidence} confidence. Wait for directional confirmation before entry.`;
+    }
+  }
+
+  return {
+    bias,
+    strength,
+    action,
+    explanation,
+  };
+}
+
+function generateTraderMessage(macroScore = {}, marketValidation = null) {
+  const bias = determineMacroBias(macroScore);
+  const signalStrength = macroScore?.signalStrength || 'Weak';
+  const signalConfidence = macroScore?.signalConfidence || 'Low';
+  const uncertainty = macroScore?.uncertainty || 'High';
+  const conflict = Boolean(marketValidation?.conflict);
+  const context = conflict ? 'Price disagrees' : 'Price mostly aligned';
+
+  let conviction = 'Weak';
+  if (signalStrength === 'Strong' && signalConfidence === 'High') conviction = 'Strong';
+  else if (signalStrength === 'Moderate' || signalConfidence === 'Medium') conviction = 'Moderate';
+
+  let action = 'Wait';
+  let explanation = `Bias is slightly ${String(bias).toLowerCase()}, but conviction is weak - no clear setup right now.`;
+
+  if (conflict) {
+    action = 'No Trade';
+    explanation = `Macro suggests ${String(bias).toLowerCase()}, but price action disagrees - stay cautious.`;
+  } else if (signalStrength === 'Weak') {
+    action = 'Wait';
+    explanation = `Bias is slightly ${String(bias).toLowerCase()}, but conviction is weak - no clear setup right now.`;
+  } else if (signalStrength === 'Moderate' && uncertainty === 'Medium') {
+    action = 'Wait';
+    explanation = `${bias} bias is building, but conviction is not strong enough yet - wait for confirmation.`;
+  } else if (signalStrength === 'Strong' && signalConfidence === 'High') {
+    action = bias === 'Bullish' ? 'Look for Buy' : bias === 'Bearish' ? 'Look for Sell' : 'Wait';
+    explanation = `Strong ${String(bias).toLowerCase()} bias with strong conviction - look for opportunities in that direction.`;
+  } else if (signalStrength === 'Moderate') {
+    action = bias === 'Bullish' ? 'Look for Buy' : bias === 'Bearish' ? 'Look for Sell' : 'Wait';
+    explanation = `${bias} bias is in play with moderate conviction - focus on setup quality and confirmation.`;
+  }
+
+  return {
+    headline: `${bias} Bias -> ${conviction} Conviction -> ${action} -> ${context}`,
+    explanation,
+  };
 }
 
 function toUtcDate(value) {
@@ -162,7 +258,11 @@ function addMonths(dateIso, months) {
 function getMostRecentHistoricalPoint(historicalData) {
   if (!historicalData || historicalData.length === 0) return null;
   const valid = historicalData
-    .filter(p => p && p.date && p.value !== null && p.value !== undefined && !Number.isNaN(p.value))
+    .filter(p => {
+      if (!p || !p.date) return false;
+      const v = p.value ?? p.actual;
+      return v !== null && v !== undefined && !Number.isNaN(Number(v));
+    })
     .sort((a, b) => new Date(a.date) - new Date(b.date));
   if (valid.length === 0) return null;
   return valid[valid.length - 1];
@@ -617,7 +717,7 @@ function calculateSurprise(actual, forecast) {
     return null;
   }
 
-  return Math.round((actual - forecast) * 100) / 100;
+  return Math.round((actual - forecast) * 10000) / 10000;
 }
 
 /**
@@ -632,6 +732,7 @@ function determineGoldImpact(indicator, surprise) {
     // Labor market
     'NFP':               { positive: 'Bearish for Gold', negative: 'Bullish for Gold' },
     'Unemployment':      { positive: 'Bullish for Gold', negative: 'Bearish for Gold' },
+    'UNEMPLOYMENT':      { positive: 'Bullish for Gold', negative: 'Bearish for Gold' },
     'JoblessClaims':     { positive: 'Bullish for Gold', negative: 'Bearish for Gold' }, // more claims = bad economy = bullish gold
     // Inflation
     'CPI':               { positive: 'Bullish for Gold', negative: 'Bearish for Gold' },
@@ -1623,10 +1724,17 @@ export async function calculateMacroSurpriseScore() {
       contributors.push({
         code:         data.code,
         indicator:    data.indicator,
+        actual:       data.actual ?? null,
+        forecast:     data.forecast ?? null,
+        surprise:     data.surprise,
         contribution: Math.round(contribution * 100) / 100,
         impact:       data.impact,
-        surprise:     data.surprise,
         unit:         data.unit,
+        reasoning:    generateImpactReason({
+          code: data.code,
+          impact: data.impactColor === 'green' ? 'bullish' : data.impactColor === 'red' ? 'bearish' : 'neutral',
+          surprise: data.surprise,
+        }),
       });
     }
 
@@ -1649,9 +1757,19 @@ export async function calculateMacroSurpriseScore() {
       .map(item => item.nextReleaseDate)
       .sort()[0] || null;
 
+    const posCount = contributors.filter(c => c.contribution > 0).length;
+    const negCount = contributors.filter(c => c.contribution < 0).length;
+    const strongCount = contributors.filter(c => Math.abs(c.contribution) >= 1.2).length;
+    const confidence = (strongCount >= 3 && (posCount === 0 || negCount === 0))
+      ? 'High'
+      : (contributors.length >= 3 ? 'Medium' : 'Low');
+
     const result = {
       score,
       label,
+      confidence,
+      formula: 'score = clamp(-10..10, (sum(weight_i * direction_i * magnitude_i) / (3 * sum(weights))) * 10)',
+      weights: WEIGHTS,
       contributors,
       updatedAt: Date.now(),
       nextReleaseDate,
@@ -2118,7 +2236,7 @@ function buildActionContext(score, available) {
  * @param {Object|null} aiAnalysis  – result of analyzeMacroeconomicImpact() or null
  * @returns {Object} ready-to-render payload
  */
-export function buildAiInsightsPayload(dashboard, macroScore, aiAnalysis) {
+export async function buildAiInsightsPayload(dashboard, macroScore, aiAnalysis, currentPrice = null, previousPrice = null) {
   const now = new Date().toISOString();
   const indicatorValues = Object.values(dashboard?.indicators || {}).filter(Boolean);
   const available = indicatorValues.filter(i => !i.error);
@@ -2131,6 +2249,7 @@ export function buildAiInsightsPayload(dashboard, macroScore, aiAnalysis) {
 
   const indicators = [];
   const indicatorsByCategory = { labor: [], inflation: [], growth: [], monetary: [] };
+  const fetchedAtIso = now;
   for (const ind of available) {
     const group = GROUP_MAP[ind.code];
     if (!group) continue;
@@ -2180,6 +2299,8 @@ export function buildAiInsightsPayload(dashboard, macroScore, aiAnalysis) {
       dataConflict:          Boolean(ind.dataConflict),
       dataWarning:           ind.dataWarning ?? buildDataWarning(ind.actual, ind.historicalData, ind.latestDate, ind.lastReleaseDate),
       dataSource:            ind.actualSource || 'FRED API',
+      source:                ind.actualSource || 'FRED API',
+      releaseTime:           ind.releaseTime || null,
       // lastDate kept for legacy UI compatibility
       lastDate:              ind.latestDate   || null,
       // Weight of this indicator in the overall confidence calculation (0-1)
@@ -2189,26 +2310,47 @@ export function buildAiInsightsPayload(dashboard, macroScore, aiAnalysis) {
     indicators.push(row);
     indicatorsByCategory[group].push(row);
   }
+  const validatedIndicators = indicators.map((row) => validateEconomicIndicator(row, fetchedAtIso));
+  const historicalValidationByCode = await buildHistoricalValidation(validatedIndicators, 10);
+  for (const row of validatedIndicators) {
+    row.historicalValidation = historicalValidationByCode[row.code] || null;
+    if (!row.reasoning) {
+      row.reasoning = generateImpactReason(row);
+    }
+  }
+
+  const validatedByCategory = { labor: [], inflation: [], growth: [], monetary: [] };
+  for (const row of validatedIndicators) {
+    if (row.group && validatedByCategory[row.group]) {
+      validatedByCategory[row.group].push(row);
+    }
+  }
+
+  const deterministicMacroScore = computeMacroScore(validatedIndicators);
 
   // ── Top drivers ──────────────────────────────────────────────────────────
-  const drivers = (macroScore?.contributors || [])
+  const drivers = (deterministicMacroScore?.contributors || [])
     .slice(0, 5)
-    .map(c => {
-      const ind = available.find(i => i.code === c.code);
+    .map((c) => {
+      const ind = validatedIndicators.find((row) => row.code === c.code);
       return {
-        code:           c.code,
-        name:           ind?.indicator || c.indicator || c.code,
-        value:          ind ? `${ind.actual ?? '\u2014'}${ind.unit || ''}` : '\u2014',
-        bias:           c.contribution > 0 ? 'Bullish'
-                      : c.contribution < 0 ? 'Bearish'
-                      : 'Neutral',
-        contribution:   c.contribution,
-        intensity:      Math.max(8, Math.min(100, Math.abs(c.contribution || 0) * 18)),
-        trend:          ind ? calcTrend(ind.historicalData) : 'stable',
-        impactStrength: ind ? calcImpactStrength(ind.code, ind.surprisePercentage) : 'weak',
-        dataSource:     ind?.actualSource || 'FRED API',
-        lastDate:       ind?.latestDate   || null,
-        freshness:      ind ? calcFreshness(ind.latestDate, ind.code) : 'outdated',
+        code: c.code,
+        name: c.name || c.code,
+        value: ind ? `${ind.actual ?? '\u2014'}${ind.unit || ''}` : '\u2014',
+        bias: c.contribution > 0 ? 'Bullish' : c.contribution < 0 ? 'Bearish' : 'Neutral',
+        contribution: c.contribution,
+        intensity: Math.max(8, Math.min(100, Math.abs(c.contribution || 0) * 20)),
+        trend: ind ? calcTrend(ind.historicalData) : 'stable',
+        impactStrength: ind?.impactStrength || 'weak',
+        dataSource: c.source || ind?.source || 'Unknown',
+        releaseTime: c.releasedAt || ind?.releasedAt || null,
+        fetchedAt: c.lastUpdated || ind?.dataFetchedAt || null,
+        lastDate: ind?.latestDate || null,
+        freshness: ind ? calcFreshness(ind.latestDate, ind.code) : 'outdated',
+        reasoning: c.reasoning,
+        sourceReliability: ind?.sourceReliability || 'medium',
+        validation: ind?.validation || null,
+        historicalValidation: ind?.historicalValidation || null,
       };
     });
 
@@ -2266,29 +2408,64 @@ export function buildAiInsightsPayload(dashboard, macroScore, aiAnalysis) {
   const aiStatus = aiSummary ? 'available' : 'unavailable';
 
   // ── Deterministic contextual note ────────────────────────────────────────
-  const actionContext = buildActionContext(macroScore?.score ?? 0, available);
-  const isNewDataAvailable = indicators.some(i => i.isNewDataAvailable);
-  const nextReleaseDate = indicators
+  const actionContext = buildActionContext(deterministicMacroScore?.score ?? macroScore?.score ?? 0, available);
+  const isNewDataAvailable = validatedIndicators.some(i => i.isNewDataAvailable);
+  const nextReleaseDate = validatedIndicators
     .map(i => i.nextReleaseDate)
     .filter(Boolean)
     .sort()[0] || null;
-  const dueCodes = indicators.filter(i => i.isReleaseDue).map(i => i.code);
+  const dueCodes = validatedIndicators.filter(i => i.isReleaseDue).map(i => i.code);
   const refreshReason = dueCodes.length > 0
     ? `Release due for ${dueCodes.join(', ')}; refreshed latest available economic data`
     : `No release due; using cached latest available economic data${nextReleaseDate ? ` until ${nextReleaseDate}` : ''}`;
+  const dataTransparency = generateDataTransparency(validatedIndicators);
+  const macroSummary = buildMacroSummary(validatedIndicators, riskAlerts);
+
+  // ── Market Validation (macro vs price conflict) ──────────────────────────
+  const marketValidation = currentPrice !== null && previousPrice !== null
+    ? detectMacroVsPriceConflict(currentPrice, previousPrice, deterministicMacroScore)
+    : {
+        priceDirection: 'SIDEWAYS',
+        macroBias: determineMacroBias(deterministicMacroScore),
+        conflict: false,
+        severity: 'none',
+        severityLabel: 'Aligned',
+        message: 'Price data not available for validation.',
+      };
+  
+  // Log conflict if present
+  if (marketValidation.conflict) {
+    logConflictEvent(marketValidation, 'XAUUSD');
+  }
+
+  // ── Generate market narrative ─────────────────────────────────────────────
+  const marketNarrative = generateMarketNarrative({
+    indicators: validatedIndicators,
+    contributors: deterministicMacroScore?.contributors || [],
+    macroScore: deterministicMacroScore,
+    goldPrice: {},
+  });
+
+  const tradeInsight = buildTradeInsight({
+    macroScore: deterministicMacroScore,
+    marketValidation,
+  });
+  const tradeNarrative = generateTraderMessage(deterministicMacroScore, marketValidation);
 
   return {
     meta: {
       lastUpdated: dashboard?.timestamp || now,
+      generatedAt: now,
       dataLag:     'Latest available economic data. Releases are periodic (weekly, monthly, quarterly) and not real-time.',
       dataSources: [...sourcesSet],
     },
+    generatedAt:   now,
     lastUpdated:   dashboard?.timestamp || now,
     status:        systemStatus,
     isNewDataAvailable,
     refreshReason,
-    score:         macroScore?.score ?? 0,
-    sentiment:     macroScore?.label || dashboard?.overallSentiment || 'Neutral',
+    score:         deterministicMacroScore?.score ?? macroScore?.score ?? 0,
+    sentiment:     deterministicMacroScore?.label || macroScore?.label || dashboard?.overallSentiment || 'Neutral',
     confidence,
     signalConflict: signalConflictDetail.level,
     conflictingIndicators: signalConflictDetail.conflictingIndicators,
@@ -2301,9 +2478,20 @@ export function buildAiInsightsPayload(dashboard, macroScore, aiAnalysis) {
     fallbackReason,
     dataReliability,
     riskAlerts,
-    marketImpact: calculateMarketImpact(indicators),
-    dataTransparency: generateDataTransparency(indicators),
-    macroSummary: buildMacroSummary(indicators, riskAlerts),
+    marketImpact: calculateMarketImpact(validatedIndicators),
+    dataTransparency,
+    macroScore: {
+      ...deterministicMacroScore,
+      updatedAt: now,
+    },
+    macroSummary: {
+      ...macroSummary,
+      generatedAt: now,
+      dataInfo: {
+        ...(macroSummary?.dataInfo || {}),
+        generatedAt: now,
+      },
+    },
     summary: {
       bullishCount:    dashboard?.summary?.bullishIndicators ?? 0,
       bearishCount:    dashboard?.summary?.bearishIndicators ?? 0,
@@ -2311,8 +2499,12 @@ export function buildAiInsightsPayload(dashboard, macroScore, aiAnalysis) {
       totalIndicators: available.length,
     },
     drivers,
-    indicators,
-    indicatorsByCategory,
+    indicators: validatedIndicators,
+    indicatorsByCategory: validatedByCategory,
+    marketNarrative,
+    marketValidation,
+    tradeInsight,
+    tradeNarrative,
     aiSummary,
     aiStatus,
     actionContext,

@@ -237,10 +237,15 @@ router.get('/ai-insights', async (req, res) => {
       }
     }
 
-    const payload = buildAiInsightsPayload(
+    const currentPrice = req.query.currentPrice ? parseFloat(req.query.currentPrice) : null;
+    const previousPrice = req.query.previousPrice ? parseFloat(req.query.previousPrice) : null;
+
+    const payload = await buildAiInsightsPayload(
       dashboard,
       macroScore.error ? null : macroScore,
       aiAnalysis,
+      currentPrice,
+      previousPrice,
     );
 
     res.json(payload);
@@ -258,8 +263,12 @@ router.get('/macro-score', async (req, res) => {
   try {
     const result = await calculateMacroSurpriseScore();
     if (result.error) {
-      return res.status(503).json({ error: 'Failed to calculate macro score', details: result.error });
+      return res.status(503).json({
+        error: 'Failed to calculate macro score',
+        details: result.error,
+      });
     }
+
     res.json(result);
   } catch (error) {
     console.error('Macro score endpoint error:', error);
@@ -284,3 +293,66 @@ router.get('/health', (req, res) => {
 });
 
 export default router;
+
+router.get('/ai-insights-with-price', async (req, res) => {
+  try {
+    const [dashboard, macroScore] = await Promise.all([
+      getEconomicDashboard(),
+      calculateMacroSurpriseScore(),
+    ]);
+
+    if (dashboard.error) {
+      return res.status(503).json({
+        error: 'Economic data unavailable',
+        details: dashboard.error,
+      });
+    }
+
+    let aiAnalysis = null;
+    if (process.env.USE_GEMINI_AI !== 'false' && process.env.GEMINI_API_KEY) {
+      try {
+        aiAnalysis = await analyzeMacroeconomicImpact(dashboard);
+      } catch (err) {
+        console.log('⚠️  Gemini commentary failed (non-critical):', err.message);
+      }
+    }
+
+    const currentPrice = req.query.currentPrice ? parseFloat(req.query.currentPrice) : null;
+    const previousPrice = req.query.previousPrice ? parseFloat(req.query.previousPrice) : null;
+
+    const payload = await buildAiInsightsPayload(
+      dashboard,
+      macroScore.error ? null : macroScore,
+      aiAnalysis,
+      currentPrice,
+      previousPrice,
+    );
+
+    res.json(payload);
+  } catch (error) {
+    console.error('AI Insights endpoint error:', error);
+    res.status(500).json({ error: 'Internal server error', message: error.message });
+  }
+});
+
+/**
+ * GET /api/economic/macro-score
+ * Composite macro surprise score for gold (-10 to +10)
+ */
+router.get('/macro-score', async (req, res) => {
+  try {
+    const result = await calculateMacroSurpriseScore();
+
+    if (result.error) {
+      return res.status(503).json({
+        error: 'Failed to calculate macro score',
+        details: result.error,
+      });
+    }
+
+    res.json(result);
+  } catch (error) {
+    console.error('Macro score endpoint error:', error);
+    res.status(500).json({ error: 'Internal server error', message: error.message });
+  }
+});
