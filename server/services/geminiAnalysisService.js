@@ -383,10 +383,13 @@ Keep response under 150 words.
 }
 
 /**
- * Analyze macroeconomic impact on gold (XAUUSD)
- * 
- * Takes economic dashboard data and generates a 3-sentence macro analysis
- * explaining the impact on gold markets.
+ * Generate a safe, grounded macro commentary using Gemini.
+ *
+ * SAFETY CONTRACT:
+ *  - AI only reads data from the prompt — no invented numbers allowed.
+ *  - Temperature 0.2 to keep output factual.
+ *  - Prompt explicitly forbids financial advice and invented values.
+ *  - Output is labelled "AI commentary" in the UI, not "signal" or "recommendation".
  */
 export async function analyzeMacroeconomicImpact(dashboardData) {
   try {
@@ -396,79 +399,110 @@ export async function analyzeMacroeconomicImpact(dashboardData) {
       return null;
     }
 
-    console.log('🤖 Analyzing macroeconomic impact on gold with Gemini AI...');
+    console.log('🤖 Generating Gemini macro commentary (structured JSON mode)...');
 
     const { indicators, overallSentiment } = dashboardData;
-    
-    // Build structured data summary
-    const dataPoints = [];
-    
-    if (indicators.nfp && !indicators.nfp.error) {
-      const { actual, forecast, surprise, impact } = indicators.nfp;
-      dataPoints.push(
-        `NFP: Actual ${actual}K vs Forecast ${forecast}K (Surprise: ${surprise}K) - ${impact}`
-      );
-    }
-    
-    if (indicators.cpi && !indicators.cpi.error) {
-      const { actual, forecast, surprise, impact, yoyChange } = indicators.cpi;
-      dataPoints.push(
-        `CPI: ${yoyChange}% YoY, Surprise: ${surprise?.toFixed(2)} - ${impact}`
-      );
-    }
-    
-    if (indicators.unemployment && !indicators.unemployment.error) {
-      const { actual, forecast, surprise, impact } = indicators.unemployment;
-      dataPoints.push(
-        `Unemployment: ${actual}% vs Forecast ${forecast}% (Surprise: ${surprise}%) - ${impact}`
+
+    // Build a read-only, fully explicit data block.
+    // Every number Gemini sees must come from this list —
+    // the prompt explicitly forbids inventing new values.
+    const dataLines = [];
+    for (const ind of Object.values(indicators || {})) {
+      if (!ind || ind.error) continue;
+      const surpriseStr = ind.surprise != null
+        ? ` | Surprise vs forecast: ${ind.surprise > 0 ? '+' : ''}${ind.surprise}${ind.unit || ''}`
+        : '';
+      dataLines.push(
+        `${ind.indicator}: Actual ${ind.actual ?? 'n/a'}${ind.unit || ''}, ` +
+        `Forecast ${ind.forecast ?? 'n/a'}${ind.unit || ''}${surpriseStr} → ${ind.impact}`
       );
     }
 
-    const prompt = `Analyze the following economic indicators and explain their macro impact on gold (XAUUSD) in EXACTLY 3 sentences.
+    if (dataLines.length === 0) {
+      console.log('⚠️  No valid indicator data — skipping Gemini commentary');
+      return null;
+    }
 
-Economic Data:
-${dataPoints.join('\n')}
+    // Request structured JSON output. temperature 0.2 for factual stability.
+    const prompt = `You are a financial data commentary assistant. Return ONLY valid JSON — no markdown, no code fences, no explanation outside the JSON.
 
-Overall Market Sentiment: ${overallSentiment}
+STRICT RULES — non-negotiable:
+1. Only reference exact values from PROVIDED DATA — never invent, extrapolate, or add new numbers.
+2. Use uncertainty language throughout: "suggests", "may indicate", "has historically been associated with", "could".
+3. Do NOT issue trade recommendations, buy/sell signals, or specific price targets.
+4. If signals conflict across indicators, acknowledge the conflict plainly in riskNote.
+5. Each field must be exactly 1 sentence.
 
-Instructions:
-1. First sentence: Summarize the key economic surprise and its immediate interpretation
-2. Second sentence: Explain the monetary policy or inflation implications
-3. Third sentence: State the specific expected impact on gold prices
+PROVIDED DATA (source: FRED API / official BLS releases):
+${dataLines.join('\n')}
 
-Be concise, professional, and actionable. Focus on gold trading implications.`;
+Computed macro sentiment (deterministic, not AI): ${overallSentiment}
+
+Return this exact JSON object and nothing else:
+{
+  "summary": "<plain-English overview of what the combined data suggests about the current macro environment>",
+  "marketImpact": "<one cautious sentence on what this environment has historically meant for safe-haven assets like gold>",
+  "whyItMatters": "<one sentence explaining why these readings are relevant to traders monitoring XAUUSD>",
+  "riskNote": "<one sentence noting data limitations, conflicting signals, or uncertainty in this reading>"
+}`;
 
     const response = await axios.post(
-      'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent',
+      'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent',
       {
-        contents: [{
-          parts: [{ text: prompt }]
-        }],
+        contents: [{ parts: [{ text: prompt }] }],
         generationConfig: {
-          temperature: 0.3, // Low temperature for factual analysis
-          maxOutputTokens: 300,
-        }
+          temperature: 0.2,
+          maxOutputTokens: 400,
+        },
       },
       {
-        params: { key: apiKey },
+        params:  { key: apiKey },
         headers: { 'Content-Type': 'application/json' },
         timeout: 15000,
       }
     );
 
-    if (!response.data?.candidates?.[0]?.content?.parts?.[0]?.text) {
-      console.log('⚠️  Gemini returned unexpected response format');
+    const raw = response.data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
+    if (!raw) {
+      console.log('⚠️  Gemini returned empty response');
       return null;
     }
 
-    const analysis = response.data.candidates[0].content.parts[0].text.trim();
-    
-    console.log('✅ Gemini macro analysis generated');
-    
+    // Strip accidental markdown code fences Gemini may add despite instructions
+    const clean = raw
+      .replace(/^```json\s*/i, '')
+      .replace(/^```\s*/,       '')
+      .replace(/```$/,          '')
+      .trim();
+
+    let parsed;
+    try {
+      parsed = JSON.parse(clean);
+      if (!parsed.summary) {
+        console.log('⚠️  Gemini JSON missing required fields — treating as unavailable');
+        return null;
+      }
+    } catch (_parseErr) {
+      // Gemini ignored JSON instruction — degraded fallback to plain text as summary
+      console.log('⚠️  Gemini returned non-JSON — using plain text as summary fallback');
+      parsed = {
+        summary:      raw.slice(0, 350),
+        marketImpact: '',
+        whyItMatters: '',
+        riskNote:     'AI response could not be fully structured; showing partial output.',
+      };
+    }
+
+    bumpGemini('macroAnalysis');
+    console.log('✅ Gemini macro commentary generated (structured)');
+
     return {
-      analysis,
-      timestamp: new Date().toISOString(),
-      model: 'gemini-pro',
+      summary:      parsed.summary      || '',
+      marketImpact: parsed.marketImpact || '',
+      whyItMatters: parsed.whyItMatters || '',
+      riskNote:     parsed.riskNote     || '',
+      model:        'gemini-1.5-flash',
+      timestamp:    new Date().toISOString(),
     };
 
   } catch (error) {

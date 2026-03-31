@@ -1,48 +1,89 @@
-function driverColor(bias) {
-  if (bias === 'Bullish') return 'bg-emerald-500';
-  if (bias === 'Bearish') return 'bg-red-500';
-  return 'bg-blue-600';
-}
+const TREND_ARROW = {
+  rising:  { symbol: '↑', color: 'text-emerald-400' },
+  falling: { symbol: '↓', color: 'text-red-400'     },
+  stable:  { symbol: '→', color: 'text-slate-400'   },
+};
 
-function textColor(bias) {
+const FRESHNESS_DOT = {
+  fresh:    'bg-emerald-500',
+  stale:    'bg-amber-400',
+  outdated: 'bg-red-500',
+};
+
+const STRENGTH_CONFIG = {
+  strong:   { label: 'Strong',   cls: 'text-slate-500 dark:text-slate-300 font-semibold' },
+  moderate: { label: 'Moderate', cls: 'text-slate-400 dark:text-slate-400' },
+  weak:     { label: 'Weak',     cls: 'text-slate-300 dark:text-slate-600' },
+};
+
+function biasColor(bias) {
   if (bias === 'Bullish') return 'text-emerald-500';
   if (bias === 'Bearish') return 'text-red-500';
-  return 'text-blue-600 dark:text-blue-400';
+  return 'text-slate-400';
 }
 
 export default function KeyDrivers({ drivers }) {
+  if (!drivers || drivers.length === 0) {
+    return (
+      <div className="rounded-2xl border border-slate-200 bg-white dark:border-white/[0.07] dark:bg-slate-900 px-5 py-4">
+        <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-400">Key Drivers</p>
+        <p className="mt-2 text-sm text-slate-400">No driver data available.</p>
+      </div>
+    );
+  }
+
   return (
-    <section className="rounded-3xl bg-white p-5 shadow-sm transition-all duration-200 hover:-translate-y-0.5 dark:bg-[#111827] dark:shadow-[0_12px_32px_rgba(0,0,0,0.28)] md:p-6">
-      <div className="mb-4">
-        <p className="text-sm font-semibold text-gray-900 dark:text-white">Key Drivers</p>
-        <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">The strongest indicators behind the current macro bias.</p>
+    <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white dark:border-white/[0.07] dark:bg-slate-900">
+      {/* Section header */}
+      <div className="border-b border-slate-100 dark:border-white/5 px-5 py-3">
+        <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-400">Key Drivers</p>
       </div>
 
-      <div className="space-y-3">
-        {drivers.map((driver) => (
-          <div key={driver.code} className="rounded-2xl bg-slate-50 px-4 py-3 dark:bg-white/5">
-            <div className="grid grid-cols-[minmax(0,1.2fr)_auto] gap-3 md:grid-cols-[minmax(0,1.2fr)_120px_90px] md:items-center">
-              <div className="min-w-0">
-                <p className="truncate text-sm font-semibold text-gray-900 dark:text-white">{driver.name}</p>
-                <p className="mt-1 truncate text-xs text-gray-500 dark:text-gray-400">{driver.value}</p>
-              </div>
-              <div className="hidden md:block">
-                <div className="h-2 overflow-hidden rounded-full bg-slate-200 dark:bg-white/10">
-                  <div className={`h-full rounded-full ${driverColor(driver.bias)}`} style={{ width: `${driver.intensity}%` }} />
-                </div>
-              </div>
-              <div className={`text-right text-xs font-semibold ${textColor(driver.bias)}`}>
-                {driver.bias}
-              </div>
+      {/* Rank rows */}
+      {drivers.map((driver, i) => {
+        const trendCfg    = TREND_ARROW[driver.trend]            ?? TREND_ARROW.stable;
+        const freshDot    = FRESHNESS_DOT[driver.freshness]      ?? FRESHNESS_DOT.outdated;
+        const strengthCfg = STRENGTH_CONFIG[driver.impactStrength] ?? STRENGTH_CONFIG.weak;
+        const isLast      = i === drivers.length - 1;
+
+        return (
+          <div
+            key={driver.code}
+            className={`grid grid-cols-[20px_1fr_60px_16px_16px_56px] items-center gap-3 px-5 py-3.5 transition-colors hover:bg-slate-50 dark:hover:bg-white/[0.025] ${!isLast ? 'border-b border-slate-100 dark:border-white/5' : ''}`}
+          >
+            {/* Rank */}
+            <span className="text-[10px] font-mono tabular-nums text-slate-300 dark:text-slate-600">
+              {String(i + 1).padStart(2, '0')}
+            </span>
+
+            {/* Name + value */}
+            <div className="min-w-0">
+              <p className="truncate text-sm font-semibold text-slate-900 dark:text-white">{driver.name}</p>
+              <p className="text-[11px] tabular-nums text-slate-400">{driver.value}</p>
             </div>
-            <div className="mt-3 md:hidden">
-              <div className="h-2 overflow-hidden rounded-full bg-slate-200 dark:bg-white/10">
-                <div className={`h-full rounded-full ${driverColor(driver.bias)}`} style={{ width: `${driver.intensity}%` }} />
-              </div>
-            </div>
+
+            {/* Impact strength */}
+            <span className={`text-right text-[10px] ${strengthCfg.cls}`}>
+              {strengthCfg.label}
+            </span>
+
+            {/* Trend arrow */}
+            <span className={`text-sm font-bold ${trendCfg.color}`} title={`Trend: ${driver.trend ?? 'stable'}`}>
+              {trendCfg.symbol}
+            </span>
+
+            {/* Freshness dot */}
+            <span title={`Data: ${driver.freshness ?? 'unknown'}`}>
+              <span className={`inline-block h-1.5 w-1.5 rounded-full ${freshDot}`} />
+            </span>
+
+            {/* Bias */}
+            <span className={`text-right text-xs font-bold tabular-nums ${biasColor(driver.bias)}`}>
+              {driver.bias}
+            </span>
           </div>
-        ))}
-      </div>
-    </section>
+        );
+      })}
+    </div>
   );
 }

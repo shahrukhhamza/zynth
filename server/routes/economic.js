@@ -23,6 +23,7 @@ import {
   getEconomicDashboard,
   calculateMacroSurpriseScore,
   clearEconomicCache,
+  buildAiInsightsPayload,
 } from '../services/economicIntelligenceService.js';
 import { analyzeMacroeconomicImpact } from '../services/geminiAnalysisService.js';
 
@@ -198,6 +199,54 @@ router.post('/refresh', async (req, res) => {
       error: 'Failed to refresh cache',
       message: error.message,
     });
+  }
+});
+
+/**
+ * GET /api/economic/ai-insights
+ *
+ * Single endpoint for the AI Insights dashboard.
+ * Returns a standardised, ready-to-render payload:
+ *   { meta, score, sentiment, confidence, summary, drivers, indicators, aiSummary }
+ *
+ * All transformation logic runs on the server — the client receives a
+ * presentation-ready object with no further processing required.
+ */
+router.get('/ai-insights', async (req, res) => {
+  try {
+    // Run dashboard + score concurrently
+    const [dashboard, macroScore] = await Promise.all([
+      getEconomicDashboard(),
+      calculateMacroSurpriseScore(),
+    ]);
+
+    if (dashboard.error) {
+      return res.status(503).json({
+        error: 'Economic data unavailable',
+        details: dashboard.error,
+      });
+    }
+
+    // Gemini commentary is optional — never block the response if it fails
+    let aiAnalysis = null;
+    if (process.env.USE_GEMINI_AI !== 'false' && process.env.GEMINI_API_KEY) {
+      try {
+        aiAnalysis = await analyzeMacroeconomicImpact(dashboard);
+      } catch (err) {
+        console.log('⚠️  Gemini commentary failed (non-critical):', err.message);
+      }
+    }
+
+    const payload = buildAiInsightsPayload(
+      dashboard,
+      macroScore.error ? null : macroScore,
+      aiAnalysis,
+    );
+
+    res.json(payload);
+  } catch (error) {
+    console.error('AI Insights endpoint error:', error);
+    res.status(500).json({ error: 'Internal server error', message: error.message });
   }
 });
 

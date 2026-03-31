@@ -938,6 +938,527 @@ export function clearEconomicCache() {
   console.log('✓ Economic intelligence cache cleared');
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// FRESHNESS SYSTEM
+// Deterministic — derives "fresh" | "stale" | "outdated" from release frequency.
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Expected release cadence per indicator code.
+ * fresh  → data is within normal publication window
+ * stale  → slightly beyond window (FRED lag / revision delay tolerated)
+ * outdated → significantly behind; treat with lower confidence
+ */
+const FRESHNESS_SCHEDULE = {
+  NFP:              { fresh: 40,  stale: 80  }, // monthly BLS
+  CPI:              { fresh: 40,  stale: 80  }, // monthly BLS
+  UNEMPLOYMENT:     { fresh: 40,  stale: 80  }, // monthly BLS (with NFP)
+  CorePCE:          { fresh: 40,  stale: 80  }, // monthly BEA
+  GDP:              { fresh: 100, stale: 190 }, // quarterly BEA advance
+  RetailSales:      { fresh: 40,  stale: 80  }, // monthly Census
+  ISMManufacturing: { fresh: 40,  stale: 80  }, // monthly ISM
+  ConsumerConf:     { fresh: 40,  stale: 80  }, // monthly Conference Board
+  FedRate:          { fresh: 60,  stale: 120 }, // FOMC ~8×/year ≈ 45-day gaps
+  JoblessClaims:    { fresh: 10,  stale: 21  }, // weekly DOL
+};
+
+/**
+ * Classify indicator data age into a freshness tier.
+ * @param {string|null} latestDate – YYYY-MM-DD date of last released data point
+ * @param {string} code            – indicator code for cadence lookup
+ * @returns {"fresh"|"stale"|"outdated"}
+ */
+function calcFreshness(latestDate, code) {
+  if (!latestDate) return 'outdated';
+  const days = Math.floor((Date.now() - new Date(latestDate).getTime()) / 86_400_000);
+  const th   = FRESHNESS_SCHEDULE[code] || { fresh: 45, stale: 90 };
+  if (days <= th.fresh) return 'fresh';
+  if (days <= th.stale) return 'stale';
+  return 'outdated';
+}
+
+/**
+ * Score a single indicator's recency on a 0-100 scale (used in confidence).
+ */
+function recencyScore(latestDate) {
+  if (!latestDate) return 30;
+  const days = Math.floor((Date.now() - new Date(latestDate).getTime()) / 86_400_000);
+  if (days <= 7)   return 100;
+  if (days <= 30)  return 80;
+  if (days <= 90)  return 60;
+  if (days <= 180) return 40;
+  return 20;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// CONFIDENCE SYSTEM
+// Deterministic — no AI involved.
+// Formula weights: 40 % data recency, 35 % indicator availability, 25 % signal consistency
+// Freshness penalty applied on top: stale −3 pts each, outdated −7 pts each (max −20).
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Compute a composite confidence score from all indicator values.
+ * @param {Array} indicatorValues – raw indicator objects (may include error entries)
+ * @returns {{ value: number, level: "Low"|"Medium"|"High", reasoning: string, label: string }}
+ */
+export function calculateConfidence(indicatorValues, signalConflictLevel = 'low') {
+  const EXPECTED_COUNT = 10;
+  const available = (indicatorValues || []).filter(i => i && !i.error);
+
+  // 1. Availability: what fraction of expected indicators are present
+  const availabilityScore = (available.length / EXPECTED_COUNT) * 100;
+
+  // 2. Recency: average recency score across available indicators
+  const recencyScores = available.map(ind => recencyScore(ind.latestDate));
+  const avgRecency = recencyScores.length > 0
+    ? recencyScores.reduce((a, b) => a + b, 0) / recencyScores.length
+    : 30;
+
+  // 3. Signal consistency: how strongly do indicators agree on a direction?
+  const bullish  = available.filter(i => i.impactColor === 'green').length;
+  const bearish  = available.filter(i => i.impactColor === 'red').length;
+  const dominant = Math.max(bullish, bearish);
+  const consistencyScore = available.length > 0
+    ? (dominant / available.length) * 100
+    : 50;
+
+  // 4. Freshness penalty
+  const staleCount    = available.filter(i => calcFreshness(i.latestDate, i.code) === 'stale').length;
+  const outdatedCount = available.filter(i => calcFreshness(i.latestDate, i.code) === 'outdated').length;
+  const freshnessPenalty = Math.min(20, staleCount * 3 + outdatedCount * 7);
+
+  const raw = Math.round(
+    0.40 * avgRecency +
+    0.35 * availabilityScore +
+    0.25 * consistencyScore,
+  );
+  // Signal conflict penalty: ambiguous macro environment reduces actionable confidence
+  const conflictPenalty = signalConflictLevel === 'high'   ? 10
+                        : signalConflictLevel === 'medium' ? 5
+                        : 0;
+  const value = Math.max(0, Math.min(100, raw - freshnessPenalty - conflictPenalty));
+
+  const level = value >= 70 ? 'High' : value >= 45 ? 'Medium' : 'Low';
+  const recentCount = recencyScores.filter(s => s >= 80).length;
+  const reasoning =
+    `${available.length}/${EXPECTED_COUNT} indicators available; ` +
+    `${recentCount} updated within 30 days; ` +
+    `${bullish} bullish, ${bearish} bearish, ` +
+    `${available.length - bullish - bearish} neutral signals`;
+
+  // Human-readable label — non-technical, user-facing
+  const signalsMixed = bullish > 0 && bearish > 0 && Math.abs(bullish - bearish) <= 2;
+  const hasStaleData  = staleCount > 0 || outdatedCount > 0;
+  let label;
+  if (level === 'High' && !signalsMixed && !hasStaleData) {
+    label = 'High reliability — indicators are current and directionally aligned';
+  } else if (level === 'High' && signalsMixed) {
+    label = 'High reliability — good indicator coverage, though signals are mixed';
+  } else if (level === 'High') {
+    label = 'High reliability — broad indicator coverage with consistent signals';
+  } else if (level === 'Medium' && hasStaleData && signalsMixed) {
+    label = 'Moderate reliability — mixed signals and some data may be lagging';
+  } else if (level === 'Medium' && hasStaleData) {
+    label = 'Moderate reliability — some key indicators may be lagging behind recent releases';
+  } else if (level === 'Medium' && signalsMixed) {
+    label = 'Moderate reliability — signals are mixed; interpret with caution';
+  } else if (level === 'Medium') {
+    label = 'Moderate reliability — most key data is available and reasonably current';
+  } else if (outdatedCount >= 3) {
+    label = 'Lower reliability — significant data lag detected across multiple indicators';
+  } else if (available.length < 5) {
+    label = 'Lower reliability — insufficient indicator coverage for a strong signal';
+  } else {
+    label = 'Lower reliability — conflicting or incomplete signals';
+  }
+
+  return { value, level, reasoning, label };
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// TREND, IMPACT STRENGTH, CONFLICT & RISK ALERT ENGINES
+// All deterministic — no AI involved.
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Compute directional trend from last 3-5 historical releases via linear regression.
+ * Slope is normalised by |mean| so it's a relative-change-per-period comparison.
+ * @param {Array} historicalData – [{date, value}, ...]
+ * @returns {"rising"|"falling"|"stable"}
+ */
+function calcTrend(historicalData) {
+  if (!historicalData || historicalData.length < 3) return 'stable';
+  const values = historicalData
+    .slice(-5)
+    .map(d => d.value)
+    .filter(v => v != null && !isNaN(v));
+  if (values.length < 3) return 'stable';
+
+  const n     = values.length;
+  const meanX = (n - 1) / 2;
+  const meanY = values.reduce((a, b) => a + b, 0) / n;
+  let num = 0, den = 0;
+  for (let i = 0; i < n; i++) {
+    num += (i - meanX) * (values[i] - meanY);
+    den += (i - meanX) ** 2;
+  }
+  const slope = den !== 0 ? num / den : 0;
+  // Normalise: express slope as fraction of |mean| per period
+  const relSlope = Math.abs(meanY) > 0.001
+    ? Math.abs(slope / meanY)
+    : Math.abs(slope);
+  if (relSlope < 0.015) return 'stable'; // < 1.5 % per period = flat
+  return slope > 0 ? 'rising' : 'falling';
+}
+
+/**
+ * Indicator importance weights — mirror the WEIGHTS used in the macro surprise score.
+ * Used to scale surprise magnitude into a meaningful impact strength tier.
+ */
+const INDICATOR_IMPORTANCE = {
+  CPI:              2.0,
+  NFP:              1.8,
+  FedRate:          1.8,
+  CorePCE:          1.6,
+  UNEMPLOYMENT:     1.2,
+  GDP:              1.2,
+  JoblessClaims:    0.8,
+  RetailSales:      0.8,
+  ISMManufacturing: 0.7,
+  ConsumerConf:     0.7,
+};
+const TOTAL_IMPORTANCE = Object.values(INDICATOR_IMPORTANCE).reduce((a, b) => a + b, 0);
+
+/**
+ * Rate the impact of a surprise into a strength tier.
+ * Score = |surprisePercentage| × indicator importance.
+ * @param {string} code            – indicator code
+ * @param {number} surprisePercent – |surprise / forecast| × 100 (may be null)
+ * @returns {"weak"|"moderate"|"strong"}
+ */
+function calcImpactStrength(code, surprisePercent) {
+  if (surprisePercent == null || surprisePercent === 0) return 'weak';
+  const score = Math.abs(surprisePercent) * (INDICATOR_IMPORTANCE[code] ?? 1.0);
+  if (score >= 25) return 'strong';
+  if (score >= 8)  return 'moderate';
+  return 'weak';
+}
+
+/**
+ * Detect pairs of high-importance indicators pointing in opposite directions for gold.
+ * A conflict = one indicator bullish for gold while a correlated peer is simultaneously bearish.
+ * @param {Array} available – error-free indicator objects
+ * @returns {{ level: "low"|"medium"|"high", conflictingIndicators: string[] }}
+ */
+function detectSignalConflict(available) {
+  if (!available || available.length === 0) {
+    return { level: 'low', conflictingIndicators: [] };
+  }
+
+  const byCode = {};
+  for (const ind of available) byCode[ind.code] = ind;
+
+  // Each pair: opposite impactColor across a macro thesis = conflict for gold traders
+  const CONFLICT_PAIRS = [
+    ['CPI',          'FedRate'],       // Hot inflation (bullish gold) vs Fed tightening (bearish gold)
+    ['CorePCE',      'FedRate'],       // Core inflation vs Fed tightening
+    ['CPI',          'NFP'],           // Hot inflation vs strong payrolls (both move the Fed)
+    ['CorePCE',      'UNEMPLOYMENT'],  // Core inflation vs falling unemployment
+    ['NFP',          'GDP'],           // Weak jobs vs strong growth
+    ['UNEMPLOYMENT', 'RetailSales'],   // Rising unemployment vs strong consumption
+  ];
+
+  const conflictingCodes = new Set();
+  for (const [a, b] of CONFLICT_PAIRS) {
+    const indA = byCode[a];
+    const indB = byCode[b];
+    if (!indA || !indB) continue;
+    if (
+      (indA.impactColor === 'green' && indB.impactColor === 'red') ||
+      (indA.impactColor === 'red'   && indB.impactColor === 'green')
+    ) {
+      conflictingCodes.add(a);
+      conflictingCodes.add(b);
+    }
+  }
+
+  const uniqueConflicting = [...conflictingCodes];
+  const level = uniqueConflicting.length === 0 ? 'low'
+              : uniqueConflicting.length <= 3   ? 'medium'
+              :                                   'high';
+
+  return { level, conflictingIndicators: uniqueConflicting };
+}
+
+/**
+ * Build a list of human-readable risk alerts from current data state.
+ * @param {Array}  available          – error-free indicator objects
+ * @param {Array}  allIndicatorValues – full set (includes errored entries)
+ * @param {Object} confidence         – calculateConfidence() output
+ * @param {Object} signalConflict     – detectSignalConflict() output
+ * @returns {string[]}
+ */
+function buildRiskAlerts(available, allIndicatorValues, confidence, signalConflict) {
+  const alerts = [];
+
+  const outdated = available.filter(i => calcFreshness(i.latestDate, i.code) === 'outdated');
+  const stale    = available.filter(i => calcFreshness(i.latestDate, i.code) === 'stale');
+
+  if (outdated.length > 0) {
+    alerts.push(
+      `Outdated data: ${outdated.map(i => i.code).join(', ')} — readings may not reflect recent conditions`,
+    );
+  }
+  if (stale.length > 0) {
+    alerts.push(
+      stale.length > 3
+        ? `${stale.length} indicators are beyond their expected release window`
+        : `Lagging indicators: ${stale.map(i => i.code).join(', ')} — beyond expected release window`,
+    );
+  }
+
+  const errorCount = (allIndicatorValues || []).filter(i => i && i.error).length;
+  if (errorCount > 0) {
+    alerts.push(
+      `${errorCount} indicator${errorCount > 1 ? 's' : ''} could not be fetched — data coverage is reduced`,
+    );
+  }
+
+  const keyMissing = KEY_INDICATOR_CODES.filter(code => !available.find(i => i.code === code));
+  if (keyMissing.length > 0) {
+    alerts.push(
+      `Key indicator${keyMissing.length > 1 ? 's' : ''} missing: ${keyMissing.join(', ')}`,
+    );
+  }
+
+  if (signalConflict.level === 'high') {
+    alerts.push(
+      `High signal conflict across ${signalConflict.conflictingIndicators.join(', ')} — directional bias is unreliable`,
+    );
+  } else if (signalConflict.level === 'medium') {
+    alerts.push(
+      `Mixed signals between ${signalConflict.conflictingIndicators.join(' and ')} — interpret macro bias with caution`,
+    );
+  }
+
+  if (confidence.level === 'Low') {
+    alerts.push('Low overall confidence — consider waiting for fresher data before forming a strong macro bias');
+  }
+
+  return alerts;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// AI INSIGHTS PAYLOAD BUILDER
+// All transformation lives here — the frontend receives a ready-to-render object.
+// ─────────────────────────────────────────────────────────────────────────────
+
+const GROUP_MAP = {
+  NFP:              'labor',
+  UNEMPLOYMENT:     'labor',
+  JoblessClaims:    'labor',
+  CPI:              'inflation',
+  CorePCE:          'inflation',
+  GDP:              'growth',
+  RetailSales:      'growth',
+  ISMManufacturing: 'growth',
+  FedRate:          'monetary',
+  ConsumerConf:     'monetary',
+};
+
+/** Key indicators used for system-status classification */
+const KEY_INDICATOR_CODES = ['NFP', 'CPI', 'UNEMPLOYMENT', 'CorePCE'];
+
+/**
+ * Derive overall system status from freshness of critical indicators.
+ * @param {Array} available – error-free indicator objects
+ * @returns {"live"|"delayed"|"partial"}
+ */
+function deriveSystemStatus(available) {
+  const keyFreshness = KEY_INDICATOR_CODES.map(code => {
+    const ind = available.find(i => i.code === code);
+    if (!ind) return 'missing';
+    return calcFreshness(ind.latestDate, ind.code);
+  });
+  if (keyFreshness.some(f => f === 'missing' || f === 'outdated')) return 'partial';
+  if (keyFreshness.some(f => f === 'stale'))                        return 'delayed';
+  return 'live';
+}
+
+/**
+ * Deterministic, non-advice contextual note surfaced alongside AI commentary.
+ * Describes historical macro context without directing specific trades.
+ * @param {number} score   – macro surprise score (-10 → +10)
+ * @param {Array}  available – error-free indicator objects
+ * @returns {string}
+ */
+function buildActionContext(score, available) {
+  const infBull = available.some(i => ['CPI', 'CorePCE'].includes(i.code) && i.impactColor === 'green');
+  const infBear = available.some(i => ['CPI', 'CorePCE'].includes(i.code) && i.impactColor === 'red');
+  const laborBull = available.some(i => ['NFP', 'UNEMPLOYMENT', 'JoblessClaims'].includes(i.code) && i.impactColor === 'green');
+  const laborBear = available.some(i => ['NFP', 'UNEMPLOYMENT'].includes(i.code) && i.impactColor === 'red');
+
+  if (infBull && laborBull) {
+    return 'Combined inflation surprise and labor-market weakness have historically been associated with increased safe-haven demand. Traders monitoring gold often pay close attention to these concurrent signals.';
+  }
+  if (infBull && laborBear) {
+    return 'Hot inflation alongside strong labor data may raise expectations of continued Fed tightening. Historically, this combination has created headwinds for gold through USD strength.';
+  }
+  if (infBear && laborBear) {
+    return 'Cooling inflation combined with labor-market resilience has historically reduced safe-haven demand. Traders often monitor USD movements closely in this environment.';
+  }
+  if (score >= 4) {
+    return 'Several macro indicators are printing above consensus, a pattern that has historically been associated with elevated safe-haven demand. Traders often look for confirmation across multiple sessions before adjusting positioning.';
+  }
+  if (score <= -4) {
+    return 'Multiple indicators are printing below consensus, pointing to a stronger economic backdrop. In similar past environments, risk-on assets gained while gold faced headwinds from reduced safe-haven demand.';
+  }
+  return 'Macro signals are currently mixed. Traders often treat such environments with caution, watching for a directional break in high-impact releases such as CPI or NFP before forming a strong bias.';
+}
+
+/**
+ * Assemble the clean, standardised AI Insights payload.
+ * @param {Object}      dashboard   – result of getEconomicDashboard()
+ * @param {Object}      macroScore  – result of calculateMacroSurpriseScore()
+ * @param {Object|null} aiAnalysis  – result of analyzeMacroeconomicImpact() or null
+ * @returns {Object} ready-to-render payload
+ */
+export function buildAiInsightsPayload(dashboard, macroScore, aiAnalysis) {
+  const now = new Date().toISOString();
+  const indicatorValues = Object.values(dashboard?.indicators || {}).filter(Boolean);
+  const available = indicatorValues.filter(i => !i.error);
+
+  // Compute signal conflict FIRST — it feeds into the confidence penalty
+  const signalConflict = detectSignalConflict(available);
+  const confidence     = calculateConfidence(indicatorValues, signalConflict.level);
+  const systemStatus   = deriveSystemStatus(available);
+
+  // ── Group indicators by category ─────────────────────────────────────────
+  const indicators = { labor: [], inflation: [], growth: [], monetary: [] };
+  for (const ind of available) {
+    const group = GROUP_MAP[ind.code];
+    if (!group) continue;
+    // previous = second-to-last value in the historical series
+    const prevVal = ind.historicalData && ind.historicalData.length >= 2
+      ? (ind.historicalData[ind.historicalData.length - 2]?.value ?? null)
+      : null;
+    indicators[group].push({
+      code:                  ind.code,
+      name:                  ind.indicator,
+      actual:                ind.actual,
+      forecast:              ind.forecast,
+      previous:              prevVal,
+      change:                ind.actual != null && prevVal != null
+                               ? Math.round((ind.actual - prevVal) * 100) / 100
+                               : null,
+      unit:                  ind.unit || '',
+      surprise:              ind.surprise,
+      trend:                 calcTrend(ind.historicalData),
+      impact:                ind.impactColor === 'green' ? 'bullish'
+                           : ind.impactColor === 'red'   ? 'bearish'
+                           : 'neutral',
+      impactStrength:        calcImpactStrength(ind.code, ind.surprisePercentage),
+      // Legacy alias kept for existing UI components
+      bias:                  ind.impactColor === 'green' ? 'Bullish'
+                           : ind.impactColor === 'red'   ? 'Bearish'
+                           : 'Neutral',
+      intensity:             Math.max(8, Math.min(100, Math.abs(ind.surprisePercentage ?? ind.surprise ?? 0) * 2.5)),
+      lastUpdated:           ind.latestDate   || null,
+      freshness:             calcFreshness(ind.latestDate, ind.code),
+      dataSource:            ind.actualSource || 'FRED API',
+      // lastDate kept for legacy UI compatibility
+      lastDate:              ind.latestDate   || null,
+      // Weight of this indicator in the overall confidence calculation (0-1)
+      confidenceContribution: Math.round((INDICATOR_IMPORTANCE[ind.code] ?? 1.0) / TOTAL_IMPORTANCE * 100) / 100,
+    });
+  }
+
+  // ── Top drivers ──────────────────────────────────────────────────────────
+  const drivers = (macroScore?.contributors || [])
+    .slice(0, 5)
+    .map(c => {
+      const ind = available.find(i => i.code === c.code);
+      return {
+        code:           c.code,
+        name:           ind?.indicator || c.indicator || c.code,
+        value:          ind ? `${ind.actual ?? '\u2014'}${ind.unit || ''}` : '\u2014',
+        bias:           c.contribution > 0 ? 'Bullish'
+                      : c.contribution < 0 ? 'Bearish'
+                      : 'Neutral',
+        contribution:   c.contribution,
+        intensity:      Math.max(8, Math.min(100, Math.abs(c.contribution || 0) * 18)),
+        trend:          ind ? calcTrend(ind.historicalData) : 'stable',
+        impactStrength: ind ? calcImpactStrength(ind.code, ind.surprisePercentage) : 'weak',
+        dataSource:     ind?.actualSource || 'FRED API',
+        lastDate:       ind?.latestDate   || null,
+        freshness:      ind ? calcFreshness(ind.latestDate, ind.code) : 'outdated',
+      };
+    });
+
+  // Build risk alerts AFTER confidence so the Low-confidence alert fires correctly
+  const riskAlerts = buildRiskAlerts(available, indicatorValues, confidence, signalConflict);
+
+  // ── Unique data sources list ──────────────────────────────────────────────
+  const sourcesSet = new Set();
+  for (const ind of available) {
+    if (ind.actualSource?.includes('FRED')) {
+      sourcesSet.add('FRED API (Federal Reserve)');
+    } else if (ind.actualSource) {
+      sourcesSet.add(ind.actualSource);
+    }
+  }
+  sourcesSet.add('Analyst Consensus (forecast)');
+
+  // ── AI summary (structured) or null ──────────────────────────────────────
+  const hasValidAi = aiAnalysis && !aiAnalysis.error && aiAnalysis.summary;
+  const aiSummary = hasValidAi
+    ? {
+        summary:      aiAnalysis.summary      || '',
+        marketImpact: aiAnalysis.marketImpact || '',
+        whyItMatters: aiAnalysis.whyItMatters || '',
+        riskNote:     aiAnalysis.riskNote     || '',
+        model:        aiAnalysis.model        || 'gemini-1.5-flash',
+        generatedAt:  aiAnalysis.timestamp    || now,
+        warnings: [
+          'AI commentary is generated using only the data listed above — no external sources were used.',
+          'Economic indicators are lagging — signals may not reflect the most current market conditions.',
+          'Not financial advice. Always conduct your own analysis before trading.',
+        ],
+      }
+    : null;
+
+  const aiStatus = aiSummary ? 'available' : 'unavailable';
+
+  // ── Deterministic contextual note ────────────────────────────────────────
+  const actionContext = buildActionContext(macroScore?.score ?? 0, available);
+
+  return {
+    meta: {
+      lastUpdated: dashboard?.timestamp || now,
+      dataLag:     'Lagging indicators — monthly data is typically released 2\u20134 weeks after the period ends; weekly data (Jobless Claims) has a ~1-week lag.',
+      dataSources: [...sourcesSet],
+    },
+    status:        systemStatus,
+    score:         macroScore?.score ?? 0,
+    sentiment:     macroScore?.label || dashboard?.overallSentiment || 'Neutral',
+    confidence,
+    signalConflict,
+    riskAlerts,
+    summary: {
+      bullishCount:    dashboard?.summary?.bullishIndicators ?? 0,
+      bearishCount:    dashboard?.summary?.bearishIndicators ?? 0,
+      neutralCount:    dashboard?.summary?.neutralIndicators ?? 0,
+      totalIndicators: available.length,
+    },
+    drivers,
+    indicators,
+    aiSummary,
+    aiStatus,
+    actionContext,
+  };
+}
+
 export { cache };
 
 export default {

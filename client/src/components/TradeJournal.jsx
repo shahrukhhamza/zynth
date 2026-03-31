@@ -17,115 +17,6 @@ import JournalUpgradePrompt from './journal/JournalUpgradePrompt';
 import UsageBanner from './journal/UsageBanner';
 import { usePlan } from '../hooks/usePlan';
 
-const INSIGHT_GROUPS = [
-  { key: 'labor', title: 'Labor', keys: ['nfp', 'unemployment', 'joblessclaims'] },
-  { key: 'inflation', title: 'Inflation', keys: ['cpi', 'corepce'] },
-  { key: 'growth', title: 'Growth', keys: ['gdp', 'retailsales', 'ismmanufacturing'] },
-];
-
-function normalizeInsightKey(value) {
-  return String(value || '').toLowerCase().replace(/[^a-z0-9]/g, '');
-}
-
-function classifySentiment(label) {
-  const normalized = String(label || '').toLowerCase();
-  if (normalized.includes('bull')) return 'Bullish';
-  if (normalized.includes('bear')) return 'Bearish';
-  return 'Neutral';
-}
-
-function formatRelativeTime(input) {
-  if (!input) return 'Unavailable';
-  const stamp = typeof input === 'number' ? input : new Date(input).getTime();
-  if (!stamp || Number.isNaN(stamp)) return 'Unavailable';
-  const diff = Math.max(0, Date.now() - stamp);
-  const minutes = Math.floor(diff / 60000);
-  if (minutes < 1) return 'Just now';
-  if (minutes < 60) return `${minutes} min ago`;
-  const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `${hours}h ago`;
-  return `${Math.floor(hours / 24)}d ago`;
-}
-
-function splitAiAnalysis(analysis) {
-  if (!analysis) {
-    return {
-      summary: 'Macro intelligence is not available yet.',
-      action: 'Wait for fresh economic data before adjusting bias.',
-    };
-  }
-
-  const sentences = String(analysis)
-    .split(/(?<=[.!?])\s+/)
-    .map((sentence) => sentence.trim())
-    .filter(Boolean);
-
-  if (sentences.length === 0) {
-    return {
-      summary: 'Macro intelligence is not available yet.',
-      action: 'Wait for fresh economic data before adjusting bias.',
-    };
-  }
-
-  return {
-    summary: sentences.slice(0, Math.max(1, sentences.length - 1)).join(' '),
-    action: sentences[sentences.length - 1],
-  };
-}
-
-function transformMacroData(macroScore, dashboard) {
-  if (!macroScore && !dashboard) return null;
-
-  const indicators = Object.values(dashboard?.indicators || {})
-    .filter(Boolean)
-    .filter((item) => !item.error)
-    .map((item) => ({
-      ...item,
-      normalizedCode: normalizeInsightKey(item.code || item.indicator),
-    }));
-
-  const contributors = (macroScore?.contributors || []).map((contributor) => {
-    const normalizedCode = normalizeInsightKey(contributor.code);
-    const indicator = indicators.find((item) => item.normalizedCode === normalizedCode);
-    const bias = classifySentiment(contributor.impact || dashboard?.overallSentiment || macroScore?.label);
-    return {
-      code: contributor.code,
-      name: indicator?.indicator || contributor.indicator || contributor.code,
-      value: indicator?.actual != null ? `${indicator.actual}${indicator.unit || ''}` : `${contributor.surprise ?? 0}${contributor.unit || ''}`,
-      bias,
-      intensity: Math.max(8, Math.min(100, Math.abs(contributor.contribution || 0) * 18)),
-    };
-  });
-
-  const categories = INSIGHT_GROUPS.map((group) => ({
-    key: group.key,
-    title: group.title,
-    indicators: indicators
-      .filter((indicator) => group.keys.includes(indicator.normalizedCode))
-      .map((indicator) => ({
-        code: indicator.code,
-        name: indicator.indicator,
-        actual: `${indicator.actual ?? '—'}${indicator.unit || ''}`,
-        forecast: `${indicator.forecast ?? '—'}${indicator.unit || ''}`,
-        bias: classifySentiment(indicator.impact || indicator.impactColor || dashboard?.overallSentiment),
-        intensity: Math.max(8, Math.min(100, Math.abs(indicator.surprisePercentage ?? indicator.surprise ?? 0) * 2.5)),
-      })),
-  })).filter((group) => group.indicators.length > 0);
-
-  const ai = splitAiAnalysis(dashboard?.aiAnalysis?.analysis);
-  const score = macroScore?.score ?? 0;
-
-  return {
-    score,
-    sentiment: classifySentiment(macroScore?.label || dashboard?.overallSentiment),
-    confidence: Math.min(100, Math.round(Math.abs(score) * 10)),
-    updated: formatRelativeTime(macroScore?.updatedAt || dashboard?.aiAnalysis?.timestamp),
-    drivers: contributors.slice(0, 5),
-    categories,
-    ai,
-  };
-}
-
 const TABS = [
   { key: 'log',         label: 'Log Trade',          icon: BookOpen  },
   { key: 'history',     label: 'Trade History',       icon: List      },
@@ -429,15 +320,14 @@ export default function TradeJournal() {
 
     setLoadingInsights(true);
     try {
-      const headers = { Authorization: `Bearer ${token}` };
-      const [dashboardRes, scoreRes] = await Promise.all([
-        fetch(`${API_URL}/api/economic/dashboard`, { headers }),
-        fetch(`${API_URL}/api/economic/macro-score`, { headers }),
-      ]);
-
-      const dashboard = dashboardRes.ok ? await dashboardRes.json() : null;
-      const score = scoreRes.ok ? await scoreRes.json() : null;
-      setMacroData(transformMacroData(score, dashboard));
+      const res = await fetch(`${API_URL}/api/economic/ai-insights`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) {
+        const body = await res.text().catch(() => '');
+        throw new Error(`AI insights request failed (${res.status})${body ? `: ${body}` : ''}`);
+      }
+      setMacroData(await res.json());
     } catch (err) {
       console.error('Failed to load AI insights:', err);
       setMacroData(null);

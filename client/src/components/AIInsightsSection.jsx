@@ -172,6 +172,30 @@ export default function AIInsightsSection({ onGetStarted }) {
       className="relative px-6 py-24 overflow-hidden"
       style={{ background: isDark ? 'transparent' : '#f8fafc' }}
     >
+      {/* Sample-data disclosure banner */}
+      <div
+        className="mx-auto mb-8 flex max-w-2xl items-center justify-center gap-2 rounded-xl border px-4 py-2"
+        style={{
+          background: isDark ? 'rgba(245,158,11,0.06)' : '#fffbeb',
+          borderColor: isDark ? 'rgba(245,158,11,0.18)' : '#fcd34d',
+        }}
+      >
+        <span
+          className="rounded px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest"
+          style={{
+            background: isDark ? 'rgba(245,158,11,0.15)' : '#fef3c7',
+            color: isDark ? '#fbbf24' : '#b45309',
+          }}
+        >
+          Sample Data
+        </span>
+        <p
+          className="text-xs"
+          style={{ color: isDark ? '#d97706' : '#92400e' }}
+        >
+          These cards show illustrative examples only. Your real insights are generated from your personal trading activity.
+        </p>
+      </div>
       {/* Background decorative blobs — light mode only */}
       {!isDark && (
         <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 90% 70% at 50% 50%, rgba(59,130,246,0.04) 0%, transparent 70%)' }} />

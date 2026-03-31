@@ -1,22 +1,66 @@
-export default function AIRecommendation({ ai }) {
+import { AlertTriangle, Bot } from 'lucide-react';
+
+// Ordered commentary sections
+const SECTIONS = [
+  { key: 'summary',      label: 'Overview'        },
+  { key: 'marketImpact', label: 'Market Context'  },
+  { key: 'whyItMatters', label: 'Why It Matters'  },
+  { key: 'riskNote',     label: 'Risk Note', isRisk: true },
+];
+
+export default function AIRecommendation({ aiSummary, aiStatus }) {
+  // Unavailable — single muted line, no card chrome
+  if (aiStatus === 'unavailable' || !aiSummary) {
+    return (
+      <div className="flex items-center gap-3 px-1">
+        <Bot size={13} className="shrink-0 text-slate-400" />
+        <p className="text-sm italic text-slate-400 dark:text-slate-500">
+          AI commentary unavailable — showing data-driven insights only.
+        </p>
+      </div>
+    );
+  }
+
   return (
-    <section className="rounded-3xl bg-white p-5 shadow-sm transition-all duration-200 hover:-translate-y-0.5 dark:bg-[#111827] dark:shadow-[0_12px_32px_rgba(0,0,0,0.28)] md:p-6">
-      <div className="mb-4">
-        <p className="text-sm font-semibold text-gray-900 dark:text-white">AI Recommendation</p>
-        <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">Decision support, not noise.</p>
+    <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white dark:border-white/[0.07] dark:bg-slate-900">
+      {/* ── Header ────────────────────────────────────────────────────────── */}
+      <div className="flex items-center justify-between border-b border-slate-100 dark:border-white/5 px-5 py-3.5">
+        <div className="flex items-center gap-2">
+          <Bot size={13} className="text-blue-500 shrink-0" />
+          <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-400">AI Commentary</span>
+        </div>
+        {aiSummary.model && (
+          <span className="text-[10px] text-slate-400 dark:text-slate-500">{aiSummary.model}</span>
+        )}
       </div>
 
-      <div className="space-y-4">
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-gray-500 dark:text-gray-400">Summary</p>
-          <p className="mt-2 text-sm leading-6 text-gray-900 dark:text-white">{ai.summary}</p>
-        </div>
-
-        <div className="rounded-2xl bg-blue-50 px-4 py-4 dark:bg-blue-500/10">
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-blue-700 dark:text-blue-300">Action</p>
-          <p className="mt-2 text-sm leading-6 text-gray-900 dark:text-white">{ai.action}</p>
-        </div>
+      {/* ── Content sections ──────────────────────────────────────────────── */}
+      <div className="divide-y divide-slate-100 dark:divide-white/5">
+        {SECTIONS.map(({ key, label, isRisk }) => {
+          const text = aiSummary[key];
+          if (!text) return null;
+          return (
+            <div key={key} className="px-5 py-4">
+              <p className="mb-1.5 text-[9px] font-bold uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500">
+                {label}
+              </p>
+              <p className={`text-sm leading-[1.75] ${isRisk ? 'text-amber-600 dark:text-amber-400' : 'text-slate-700 dark:text-slate-300'}`}>
+                {text}
+              </p>
+            </div>
+          );
+        })}
       </div>
-    </section>
+
+      {/* ── Warnings strip (first warning only) ──────────────────────────── */}
+      {aiSummary.warnings && aiSummary.warnings.length > 0 && (
+        <div className="flex items-start gap-2 border-t border-slate-100 dark:border-white/5 bg-slate-50/50 dark:bg-white/[0.015] px-5 py-3">
+          <AlertTriangle size={10} className="mt-0.5 shrink-0 text-amber-400" />
+          <p className="text-[10px] leading-4 text-slate-400 dark:text-slate-500">
+            {aiSummary.warnings[0]}
+          </p>
+        </div>
+      )}
+    </div>
   );
 }

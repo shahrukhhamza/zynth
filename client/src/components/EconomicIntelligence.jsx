@@ -1,40 +1,10 @@
-import { useState, useEffect } from 'react';
-import {
-  TrendingUp, TrendingDown, Activity, AlertCircle,
-  RefreshCcw, Brain, ChevronDown, ChevronUp, Minus,
-} from 'lucide-react';
+import { useState, useEffect, useCallback } from 'react';
+import { Brain, RefreshCcw, AlertCircle } from 'lucide-react';
 import { API_URL } from '../config/api';
-import { useTheme } from '../contexts/ThemeContext';
 import { useUpgrade } from '../contexts/UpgradeContext';
 import { usePlanGate } from '../hooks/usePlanGate';
 import { getAuthToken } from '../utils/authStorage';
-
-import { Line } from 'react-chartjs-2';
-import {
-  Chart as ChartJS, CategoryScale, LinearScale,
-  PointElement, LineElement, Title, Tooltip, Legend,
-} from 'chart.js';
-
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
-
-const GROUPS = [
-  { label: 'Labor Market',      accent: '#3b82f6', keys: ['nfp', 'unemployment', 'joblessClaims'] },
-  { label: 'Inflation',         accent: '#f59e0b', keys: ['cpi', 'corePCE'] },
-  { label: 'Monetary Policy',   accent: '#0ea5e9', keys: ['fedRate'] },
-  { label: 'Growth & Activity', accent: '#10b981', keys: ['gdp', 'retailSales', 'ismMfg'] },
-  { label: 'Sentiment',         accent: '#ec4899', keys: ['consumerConf'] },
-];
-
-function impactColors(color) {
-  if (color === 'green') return { border: '#10b981', text: '#10b981', bg: 'rgba(16,185,129,0.08)', badge: 'rgba(16,185,129,0.12)' };
-  if (color === 'red')   return { border: '#ef4444', text: '#ef4444', bg: 'rgba(239,68,68,0.06)',  badge: 'rgba(239,68,68,0.12)'  };
-  return                        { border: '#374151', text: '#6b7280', bg: 'rgba(55,65,81,0.04)',   badge: 'rgba(55,65,81,0.10)'   };
-}
-
-function fmt(v, unit) {
-  if (v == null || v === '') return '—';
-  return `${v}${unit ?? ''}`;
-}
+import NewAiInsightsDashboard from './ai-insights/NewAiInsightsDashboard';
 
 // ── Indicator Card ────────────────────────────────────────────────────────────
 function IndicatorCard({ data, accentColor, D }) {
@@ -133,7 +103,7 @@ function IndicatorCard({ data, accentColor, D }) {
 function HistoricalChart({ data, code, unit, isDark, color }) {
   if (!data?.length) return null;
   const gridColor = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.05)';
-  const tickColor = isDark ? theme.muted : theme.textMuted;
+  const tickColor = isDark ? '#9ca3af' : '#6b7280';
 
   const chartData = {
     labels: data.map(d => d.date?.slice(0, 7) ?? ''),
@@ -156,10 +126,10 @@ function HistoricalChart({ data, code, unit, isDark, color }) {
     plugins: {
       legend: { display: false },
       tooltip: {
-        backgroundColor: isDark ? theme.surface2 : '#fff',
-        titleColor: isDark ? theme.text : '#0a0a0a',
-        bodyColor:  isDark ? theme.muted : theme.textMuted,
-        borderColor: isDark ? theme.border : '#e4e4e4',
+        backgroundColor: isDark ? '#1f2937' : '#fff',
+        titleColor: isDark ? '#f9fafb' : '#0a0a0a',
+        bodyColor:  isDark ? '#9ca3af' : '#6b7280',
+        borderColor: isDark ? '#374151' : '#e4e4e4',
         borderWidth: 1,
         padding: 10,
         callbacks: { label: ctx => ` ${ctx.parsed.y}${unit ?? ''}` },
@@ -376,54 +346,35 @@ function PaywallPricingBlock({ onUpgrade }) {
 
 // ── Main ──────────────────────────────────────────────────────────────────────
 export default function EconomicIntelligence() {
-  const theme = useTheme();
   const { openUpgradeModal } = useUpgrade();
   const { isPro, isElite, isAdmin } = usePlanGate();
-  const [dashboard,  setDashboard]  = useState(null);
+  const [macroData,  setMacroData]  = useState(null);
   const [loading,    setLoading]    = useState(true);
   const [error,      setError]      = useState(null);
   const [refreshing, setRefreshing] = useState(false);
-  const [macroScore, setMacroScore] = useState(null);
 
   const canAccess = isPro || isElite || isAdmin;
 
-  // ── Design tokens ────────────────────────────────────────────────────────
-  const D = {
-    isDark:   theme.isDark,
-    pageBg:   theme.isDark ? theme.bg        : '#f1f3f6',
-    cardBg:   theme.isDark ? theme.surface    : '#ffffff',
-    cardBg2:  theme.isDark ? theme.surface2   : '#f7f8fa',
-    border:   theme.isDark ? theme.border     : '#e5e8ed',
-    text:     theme.isDark ? theme.text       : '#0d1117',
-    textSub:  theme.isDark ? '#8892a4'        : '#526174',
-    textMute: theme.isDark ? 'rgba(255,255,255,0.08)' : '#8b97a8',
-    accent:   '#3b82f6',
-  };
-  const disclaimerBg = theme.isDark ? 'rgba(245,158,11,0.05)' : '#fff7ed';
-  const disclaimerBorder = theme.isDark ? 'rgba(245,158,11,0.15)' : '#fdba74';
-  const disclaimerText = theme.isDark ? 'rgba(251,191,36,0.72)' : '#9a3412';
-  const disclaimerLabel = theme.isDark ? 'rgba(251,191,36,0.92)' : '#c2410c';
-
-  const loadDashboard = async () => {
+  const loadData = useCallback(async () => {
     if (!canAccess) return;
     try {
       setError(null);
       const token = getAuthToken();
       if (!token) { setError('Please log in'); setLoading(false); return; }
-      const headers = { Authorization: `Bearer ${token}` };
-      const [dashRes, scoreRes] = await Promise.all([
-        fetch(`${API_URL}/api/economic/dashboard`, { headers }),
-        fetch(`${API_URL}/api/economic/macro-score`, { headers }),
-      ]);
-      if (!dashRes.ok) throw new Error('Failed to load economic intelligence');
-      setDashboard(await dashRes.json());
-      if (scoreRes.ok) setMacroScore(await scoreRes.json());
+      const res = await fetch(`${API_URL}/api/economic/ai-insights`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) {
+        const body = await res.text().catch(() => '');
+        throw new Error(`Request failed (${res.status})${body ? `: ${body}` : ''}`);
+      }
+      setMacroData(await res.json());
     } catch (err) {
       setError(err.message);
     } finally {
       setLoading(false);
     }
-  };
+  }, [canAccess]);
 
   const handleRefresh = async () => {
     try {
@@ -434,7 +385,7 @@ export default function EconomicIntelligence() {
         headers: token ? { Authorization: `Bearer ${token}` } : {},
       });
       setLoading(true);
-      await loadDashboard();
+      await loadData();
     } finally {
       setRefreshing(false);
     }
@@ -442,197 +393,63 @@ export default function EconomicIntelligence() {
 
   useEffect(() => {
     if (!canAccess) { setLoading(false); return; }
-    loadDashboard();
-    const id = setInterval(loadDashboard, 300000);
+    loadData();
+    const id = setInterval(loadData, 300000);
     return () => clearInterval(id);
-  }, [canAccess]);
+  }, [canAccess, loadData]);
 
   // ── Pro gate ─────────────────────────────────────────────────────────────
   if (!canAccess) return (
     <div className="flex flex-col items-center justify-center min-h-[520px] px-6 py-16 text-center relative
       bg-gradient-to-br from-blue-50 to-indigo-50
       dark:from-slate-900 dark:to-slate-800">
-
-      {/* Glow blob */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden>
         <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-96 h-96 rounded-full opacity-20
           bg-gradient-to-br from-blue-400 to-emerald-400 blur-3xl" />
       </div>
-
       <PaywallPricingBlock onUpgrade={openUpgradeModal} />
-    </div>
-  );
-
-  // ── Loading ───────────────────────────────────────────────────────────────
-  if (loading) return (
-    <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', background: D.pageBg, minHeight: 320 }}>
-      <div style={{ textAlign: 'center' }}>
-        <div style={{ width: 32, height: 32, border: `2px solid ${D.accent}`, borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 0.8s linear infinite', margin: '0 auto 12px' }} />
-        <p style={{ fontSize: 13, color: D.textSub, margin: 0 }}>Loading economic data…</p>
-      </div>
-      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
     </div>
   );
 
   // ── Error ─────────────────────────────────────────────────────────────────
   if (error) return (
-    <div style={{ flex: 1, padding: 24, background: D.pageBg }}>
-      <div style={{ background: 'rgba(239,68,68,0.06)', border: '1px solid #ef4444', borderRadius: 12, padding: '18px 22px', display: 'flex', gap: 12 }}>
-        <AlertCircle style={{ width: 18, height: 18, color: '#ef4444', flexShrink: 0, marginTop: 1 }} />
+    <div className="p-6">
+      <div className="flex gap-3 rounded-xl border border-red-500/30 bg-red-500/5 px-5 py-4">
+        <AlertCircle size={16} className="mt-0.5 shrink-0 text-red-500" />
         <div>
-          <p style={{ fontSize: 14, fontWeight: 600, color: '#ef4444', margin: '0 0 4px' }}>Failed to load economic intelligence</p>
-          <p style={{ fontSize: 13, color: D.textSub, margin: 0 }}>{error}</p>
+          <p className="text-sm font-semibold text-red-500">Failed to load economic intelligence</p>
+          <p className="mt-0.5 text-xs text-slate-500">{error}</p>
         </div>
       </div>
     </div>
   );
 
-  if (!dashboard || dashboard.error) return null;
-
-  const { indicators, overallSentiment, sentimentColor, summary, aiAnalysis } = dashboard;
-  const sc = impactColors(sentimentColor);
-
   return (
-    <div style={{ flex: 1, overflowY: 'auto', background: D.pageBg }}>
-      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+    <div className="min-h-full bg-slate-50 dark:bg-slate-950">
+      <div className="mx-auto max-w-3xl px-4 py-6 pb-16">
 
-      <div style={{ maxWidth: 1200, margin: '0 auto', padding: '24px 16px 56px' }}>
-
-        {/* ── Page Header ──────────────────────────────────────────────── */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12, marginBottom: 24 }}>
+        {/* ── Page header ─────────────────────────────────────────────── */}
+        <div className="mb-6 flex items-center justify-between gap-3">
           <div>
-            <h1 style={{ fontSize: 22, fontWeight: 700, color: D.text, margin: 0, letterSpacing: '-0.02em' }}>
+            <h1 className="text-xl font-bold tracking-tight text-slate-900 dark:text-white">
               Economic Intelligence
             </h1>
-            <p style={{ fontSize: 13, color: D.textSub, margin: '4px 0 0' }}>
+            <p className="mt-0.5 text-xs text-slate-400">
               Macroeconomic surprise indicators for gold (XAUUSD)
             </p>
           </div>
           <button
             onClick={handleRefresh}
             disabled={refreshing}
-            style={{
-              background: D.accent, color: '#fff', border: 'none',
-              borderRadius: 8, padding: '9px 18px', fontSize: 13, fontWeight: 700,
-              cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 7,
-              opacity: refreshing ? 0.7 : 1, transition: 'opacity 0.15s',
-              boxShadow: `0 4px 14px ${D.accent}35`,
-            }}
+            className="flex items-center gap-2 rounded-lg bg-blue-500 px-4 py-2 text-xs font-bold text-white transition-colors hover:bg-blue-600 disabled:opacity-60"
           >
-            <RefreshCcw style={{ width: 14, height: 14, animation: refreshing ? 'spin 0.8s linear infinite' : 'none' }} />
+            <RefreshCcw size={12} className={refreshing ? 'animate-spin' : ''} />
             Refresh
           </button>
         </div>
 
-        {/* ── Macro Score ───────────────────────────────────────────────── */}
-        <div style={{ marginBottom: 20 }}>
-          <MacroScoreWidget macroScore={macroScore} D={D} />
-        </div>
-
-        {/* ── Overall Sentiment ─────────────────────────────────────────── */}
-        <div style={{
-          background: D.cardBg, border: `1px solid ${sc.border}40`,
-          borderRadius: 12, padding: '20px 24px',
-          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          flexWrap: 'wrap', gap: 16, marginBottom: 20,
-          borderLeft: `4px solid ${sc.border}`,
-        }}>
-          <div>
-            <div style={{ fontSize: 10, fontWeight: 700, color: sc.text, letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 6 }}>
-              Overall Market Sentiment
-            </div>
-            <div style={{ fontSize: 32, fontWeight: 900, color: sc.text, letterSpacing: '-0.03em', marginBottom: 10 }}>
-              {overallSentiment}
-            </div>
-            <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap' }}>
-              {[
-                { label: `${summary.bullishIndicators} Bullish`, color: '#10b981', Icon: TrendingUp  },
-                { label: `${summary.bearishIndicators} Bearish`, color: '#ef4444', Icon: TrendingDown },
-                { label: `${summary.neutralIndicators} Neutral`, color: D.textSub,  Icon: Minus        },
-              ].map(s => (
-                <div key={s.label} style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                  <s.Icon style={{ width: 14, height: 14, color: s.color }} />
-                  <span style={{ fontSize: 13, fontWeight: 600, color: s.color }}>{s.label}</span>
-                </div>
-              ))}
-              <span style={{ fontSize: 13, color: D.textSub }}>/ {summary.totalIndicators ?? 10} indicators</span>
-            </div>
-          </div>
-          <div style={{
-            width: 64, height: 64, borderRadius: 18,
-            background: `${sc.border}12`,
-            border: `1px solid ${sc.border}30`,
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            flexShrink: 0,
-          }}>
-            {sentimentColor === 'green'
-              ? <TrendingUp  style={{ width: 30, height: 30, color: sc.border }} />
-              : sentimentColor === 'red'
-              ? <TrendingDown style={{ width: 30, height: 30, color: sc.border }} />
-              : <Activity    style={{ width: 30, height: 30, color: D.textSub }} />}
-          </div>
-        </div>
-
-        {/* ── AI Analysis ───────────────────────────────────────────────── */}
-        {aiAnalysis && !aiAnalysis.error && (
-          <div style={{
-            background: D.cardBg,
-            border: `1px solid #0ea5e930`,
-            borderLeft: '4px solid #0ea5e9',
-            borderRadius: 12, padding: '18px 22px',
-            display: 'flex', gap: 14, marginBottom: 20,
-          }}>
-            <div style={{ width: 36, height: 36, borderRadius: 10, background: '#0ea5e915', border: '1px solid #0ea5e925', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-              <Brain style={{ width: 16, height: 16, color: '#0ea5e9' }} />
-            </div>
-            <div>
-              <div style={{ fontSize: 10, fontWeight: 700, color: '#0ea5e9', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 8 }}>
-                AI Macro Analysis
-              </div>
-              <p style={{ fontSize: 13, color: D.text, margin: 0, lineHeight: 1.7 }}>{aiAnalysis.analysis}</p>
-            </div>
-          </div>
-        )}
-
-        {/* ── Indicator Groups ──────────────────────────────────────────── */}
-        {GROUPS.map(group => {
-          const items = group.keys
-            .map(k => ({ key: k, data: indicators[k] }))
-            .filter(({ data }) => data && !data.error);
-          if (!items.length) return null;
-
-          return (
-            <div key={group.label} style={{ marginBottom: 28 }}>
-              {/* Group header */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
-                <span style={{ width: 10, height: 10, borderRadius: '50%', background: group.accent, flexShrink: 0 }} />
-                <h3 style={{ fontSize: 11, fontWeight: 700, color: group.accent, letterSpacing: '0.1em', textTransform: 'uppercase', margin: 0 }}>
-                  {group.label}
-                </h3>
-                <div style={{ flex: 1, height: 1, background: `${group.accent}25` }} />
-                <span style={{ fontSize: 11, color: D.textSub }}>{items.length} indicator{items.length !== 1 ? 's' : ''}</span>
-              </div>
-
-              {/* Cards */}
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 12 }}>
-                {items.map(({ key, data }) => (
-                  <IndicatorCard key={key} data={data} accentColor={group.accent} D={D} />
-                ))}
-              </div>
-            </div>
-          );
-        })}
-
-        {/* ── Disclaimer ───────────────────────────────────────────────── */}
-        <div style={{
-          background: disclaimerBg,
-          border: `1px solid ${disclaimerBorder}`,
-          borderRadius: 10, padding: '12px 16px', marginTop: 8,
-        }}>
-          <p style={{ fontSize: 11, color: disclaimerText, lineHeight: 1.6, margin: 0, textAlign: 'center' }}>
-            <strong style={{ color: disclaimerLabel }}>Disclaimer:</strong> Economic data and AI analysis are for informational purposes only and do not constitute financial or investment advice. Always verify data with primary sources before making trading decisions.
-          </p>
-        </div>
+        {/* ── Dashboard ───────────────────────────────────────────────── */}
+        <NewAiInsightsDashboard macroData={loading ? null : macroData} />
 
       </div>
     </div>
