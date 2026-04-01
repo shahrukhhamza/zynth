@@ -9,6 +9,7 @@ import { useTheme } from '../contexts/ThemeContext';
 import { useAuth } from '../contexts/AuthContext';
 import { usePlanGate } from '../hooks/usePlanGate';
 import PlanGateBanner from './PlanGateBanner';
+import JournalUpgradePrompt, { MACRO_FEATURES } from './journal/JournalUpgradePrompt';
 import UpgradeModal from './UpgradeModal';
 import { API_URL } from '../config/api';
 import ErrorBar from './ErrorBar';
@@ -688,17 +689,16 @@ function EmptyState({ theme, onGenerate, loading }) {
 
 // ── Pro gate ──────────────────────────────────────────────────────────────────
 function ProGate() {
-  const theme = useTheme();
-  const [showModal, setShowModal] = useState(false);
   return (
     <div style={{ padding: '24px 0' }}>
-      <PlanGateBanner
-        feature="Macro-Journal Correlation"
-        requiredPlan="Pro"
-        description="See how macro conditions affect your trades and which economic events you should avoid. Pro and Elite users only."
-        onUpgradeClick={() => setShowModal(true)}
+      <JournalUpgradePrompt
+        headline="Macro Correlation is a Pro feature"
+        description="See how macro conditions affect your trades and which economic events you should avoid."
+        badge="Pro Feature"
+        features={MACRO_FEATURES}
+        ctaLabel="Unlock Macro Correlation"
+        openWith={{ requiredPlan: 'pro', headline: 'Unlock Full Zynth', message: 'See the macro forces driving your wins and losses.' }}
       />
-      <UpgradeModal open={showModal} onClose={() => setShowModal(false)} />
     </div>
   );
 }

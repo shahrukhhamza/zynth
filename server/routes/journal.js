@@ -276,7 +276,9 @@ router.put('/trades/:id', upload.single('screenshot'), async (req, res) => {
 // ── DELETE /trades/:id ────────────────────────────────────────────────────────
 router.delete('/trades/:id', async (req, res) => {
   try {
-    await deleteTrade(parseInt(req.params.id));
+    const userId = getUserId(req);
+    const deleted = await deleteTrade(parseInt(req.params.id), userId);
+    if (!deleted) return res.status(404).json({ success: false, error: 'Trade not found' });
     res.json({ success: true });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });

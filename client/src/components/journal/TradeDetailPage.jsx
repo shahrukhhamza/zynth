@@ -2,10 +2,11 @@
 import {
   ArrowLeft, ChevronLeft, ChevronRight, Maximize2, X,
   MessageSquare, Sparkles, Camera,
-  BarChart2, Activity, ArrowUpRight, ArrowDownRight, Pencil, TrendingUp,
+  BarChart2, Activity, ArrowUpRight, ArrowDownRight, Pencil, TrendingUp, Trash2,
 } from 'lucide-react';
 import { useTheme } from '../../contexts/ThemeContext';
 import { resolveMediaUrl } from '../../utils/mediaUrl';
+import { deleteTrade } from '../../services/journalApi';
 import TradeEntryForm from './TradeEntryForm';
 import TradeContextReport from './TradeContextReport';
 
@@ -120,10 +121,12 @@ function NoteEntry({ label, value, dotColor, isLast }) {
 /* ═══════════════════════════════════════════════════════════════════
    Main component
 ═══════════════════════════════════════════════════════════════════ */
-export default function TradeDetailPage({ trade, trades, tradeIndex, onBack, onNavigate, onSaved }) {
+export default function TradeDetailPage({ trade, trades, tradeIndex, onBack, onNavigate, onSaved, onDeleted }) {
   const theme = useTheme();
   const [imgFullscreen, setImgFullscreen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   if (!trade) return null;
 
@@ -243,6 +246,49 @@ export default function TradeDetailPage({ trade, trades, tradeIndex, onBack, onN
               <Pencil className="w-3 h-3" />
               <span className="hidden sm:inline">Edit</span>
             </button>
+            {confirmDelete ? (
+              <div className="flex items-center gap-1.5 flex-shrink-0">
+                <span className="text-[10px] font-semibold" style={{ color: '#ef4444' }}>Delete?</span>
+                <button
+                  onClick={async () => {
+                    setDeleting(true);
+                    try {
+                      await deleteTrade(trade.id);
+                      onDeleted?.();
+                      onBack();
+                    } catch (err) {
+                      console.error('Failed to delete trade:', err);
+                    } finally {
+                      setDeleting(false);
+                      setConfirmDelete(false);
+                    }
+                  }}
+                  disabled={deleting}
+                  className="px-2 py-1 rounded text-[10px] font-bold transition-colors"
+                  style={{ color: '#fff', backgroundColor: '#ef4444', border: 'none', cursor: 'pointer', opacity: deleting ? 0.5 : 1 }}
+                >
+                  {deleting ? '...' : 'Yes'}
+                </button>
+                <button
+                  onClick={() => setConfirmDelete(false)}
+                  className="px-2 py-1 rounded text-[10px] font-bold transition-colors"
+                  style={{ color: theme.muted, backgroundColor: 'transparent', border: `1px solid ${theme.border}`, cursor: 'pointer' }}
+                >
+                  No
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={() => setConfirmDelete(true)}
+                className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-colors flex-shrink-0"
+                style={{ color: '#ef4444', border: '1px solid #ef444444', backgroundColor: '#ef44440d' }}
+                onMouseEnter={e => e.currentTarget.style.backgroundColor = '#ef44441a'}
+                onMouseLeave={e => e.currentTarget.style.backgroundColor = '#ef44440d'}
+              >
+                <Trash2 className="w-3 h-3" />
+                <span className="hidden sm:inline">Delete</span>
+              </button>
+            )}
             <span className="tabular-nums hidden sm:block" style={{ fontSize: '11px', background: theme.surface2, border: `1px solid ${theme.border}`, color: theme.muted, padding: '4px 10px', borderRadius: '6px', ...MONO }}>
               {date}{time ? ` · ${time}` : ''}
             </span>

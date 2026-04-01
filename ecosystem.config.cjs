@@ -5,7 +5,7 @@ module.exports = {
       script: 'server.js',
       cwd: 'D:\\US DATA\\server',
       interpreter: 'node',
-      interpreter_args: '--env-file=D:\\US DATA\\.env',
+      interpreter_args: '"--env-file=D:\\US DATA\\.env"',
       env: {
         NODE_ENV: 'production',
         PORT: '5000',

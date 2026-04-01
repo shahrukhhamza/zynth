@@ -1,11 +1,13 @@
+import { useState } from 'react';
 import {
   ChevronLeft, ChevronRight,
   ArrowUpRight, ArrowDownRight,
   CheckCircle2, XCircle, Minus,
   Brain, CalendarDays, BarChart2,
-  ChevronsRight,
+  ChevronsRight, Trash2,
 } from 'lucide-react';
 import { useTheme } from '../../contexts/ThemeContext';
+import { deleteTrade } from '../../services/journalApi';
 
 const MONO = { fontFamily: "'ui-monospace','Cascadia Code','SF Mono','Consolas',monospace" };
 
@@ -82,6 +84,31 @@ function AiScoreBadge({ ai_analysis }) {
 export default function TradeHistoryTable({ trades, total, page, limit, onPageChange, onDeleted, onAnalyze, onView }) {
   const theme = useTheme();
   const totalPages = Math.ceil(total / limit);
+  const [deletingId, setDeletingId] = useState(null);
+  const [confirmId, setConfirmId] = useState(null);
+
+  const handleDelete = async (e, tradeId) => {
+    e.stopPropagation();
+    if (confirmId !== tradeId) {
+      setConfirmId(tradeId);
+      return;
+    }
+    setDeletingId(tradeId);
+    try {
+      await deleteTrade(tradeId);
+      setConfirmId(null);
+      onDeleted?.();
+    } catch (err) {
+      console.error('Failed to delete trade:', err);
+    } finally {
+      setDeletingId(null);
+    }
+  };
+
+  const cancelDelete = (e) => {
+    e.stopPropagation();
+    setConfirmId(null);
+  };
 
   /* shared header cell style */
   const thBase = {
@@ -151,7 +178,7 @@ export default function TradeHistoryTable({ trades, total, page, limit, onPageCh
                 <th key={label} style={{ ...thBase, ...(mono ? MONO : {}) }}>{label}</th>
               ))}
               {/* chevron hint col — no label */}
-              <th style={{ ...thBase, width: '40px', padding: '12px 0.75rem' }} />
+              <th style={{ ...thBase, width: '80px', padding: '12px 0.75rem' }} />
             </tr>
           </thead>
 
@@ -247,12 +274,42 @@ export default function TradeHistoryTable({ trades, total, page, limit, onPageCh
                     <AiScoreBadge ai_analysis={t.ai_analysis} />
                   </td>
 
-                  {/* Chevron row hint */}
-                  <td style={{ ...tdBase, ...noBorder, padding: '0.95rem 0.75rem', width: '40px' }}>
-                    <ChevronsRight
-                      className="row-chevron w-3.5 h-3.5"
-                      style={{ color: theme.muted, opacity: 0, transition: 'opacity 0.15s' }}
-                    />
+                  {/* Delete + Chevron */}
+                  <td style={{ ...tdBase, ...noBorder, padding: '0.95rem 0.75rem', width: '80px' }}>
+                    <div className="flex items-center gap-1">
+                      {confirmId === t.id ? (
+                        <>
+                          <button
+                            onClick={(e) => handleDelete(e, t.id)}
+                            disabled={deletingId === t.id}
+                            className="px-2 py-0.5 rounded text-[10px] font-bold transition-colors"
+                            style={{ color: '#fff', backgroundColor: '#ef4444', border: 'none', cursor: 'pointer', opacity: deletingId === t.id ? 0.5 : 1 }}
+                          >
+                            {deletingId === t.id ? '...' : 'Yes'}
+                          </button>
+                          <button
+                            onClick={cancelDelete}
+                            className="px-2 py-0.5 rounded text-[10px] font-bold transition-colors"
+                            style={{ color: theme.muted, backgroundColor: 'transparent', border: `1px solid ${theme.border}`, cursor: 'pointer' }}
+                          >
+                            No
+                          </button>
+                        </>
+                      ) : (
+                        <button
+                          onClick={(e) => handleDelete(e, t.id)}
+                          className="p-1 rounded-md transition-colors hover:bg-red-500/10"
+                          style={{ color: theme.muted, border: 'none', cursor: 'pointer', backgroundColor: 'transparent' }}
+                          title="Delete trade"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      )}
+                      <ChevronsRight
+                        className="row-chevron w-3.5 h-3.5"
+                        style={{ color: theme.muted, opacity: 0, transition: 'opacity 0.15s' }}
+                      />
+                    </div>
                   </td>
                 </tr>
               );

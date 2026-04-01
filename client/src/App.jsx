@@ -26,6 +26,8 @@ import TradeJournal from './components/TradeJournal'
 import ChartsPage from './components/ChartsPage'
 import TradingDesk from './components/TradingDesk'
 import HelpCenter from './components/HelpCenter'
+import ProfitCalculator from './components/ProfitCalculator'
+import RiskPlanner from './components/RiskPlanner'
 import ZynthAssistant from './components/ZynthAssistant'
 import LoginPage from './components/LoginPage'
 import SignupPage from './components/SignupPage'
@@ -42,6 +44,7 @@ import PricingPage from './components/PricingPage'
 import RefundPage from './components/RefundPage'
 import ServicePolicy from './components/ServicePolicy'
 import ServicesPage from './components/ServicesPage'
+import PaymentPage from './components/PaymentPage'
 import { fetchNews } from './services/api'
 import { UpgradeProvider, useUpgrade } from './contexts/UpgradeContext'
 import { useUpgradeIntelligence } from './hooks/useUpgradeIntelligence'
@@ -144,7 +147,7 @@ function AppShell() {
     const path = window.location.pathname.replace(/^\//, '');
     const validViews = [
       'data', 'journal', 'intelligence', 'markets', 'calendar',
-      'news', 'tools', 'help', 'charts', 'backtesting', 'admin',
+      'news', 'tools', 'help', 'charts', 'backtesting', 'admin', 'payment',
     ];
     if (path && validViews.includes(path)) {
       setCurrentView(path);
@@ -162,6 +165,13 @@ function AppShell() {
     window.addEventListener('popstate', handlePopState);
     return () => window.removeEventListener('popstate', handlePopState);
   }, []);
+
+  // Listen for navigation events dispatched from modals (e.g. UpgradeModal → PaymentPage)
+  useEffect(() => {
+    const handler = (e) => { if (e.detail?.view) navigate(e.detail.view); };
+    window.addEventListener('zynth:navigate', handler);
+    return () => window.removeEventListener('zynth:navigate', handler);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Track GA4 page view on every view change
   useEffect(() => {
@@ -320,10 +330,16 @@ function AppShell() {
             <ChartsPage key="charts" onNavigate={navigate} />
           ) : currentView === 'backtesting' ? (
             <ChartsPage key="backtesting" initialTab="backtesting" onNavigate={navigate} />
+          ) : currentView === 'payment' ? (
+            <PaymentPage key="payment" onBack={() => navigate('data')} />
           ) : currentView === 'tools' ? (
             <TradingDesk key="tools" />
           ) : currentView === 'help' ? (
             <div key="help" style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0 }}><HelpCenter /></div>
+          ) : currentView === 'calculator/profit' ? (
+            <ProfitCalculator key="calc-profit" />
+          ) : currentView === 'calculator/risk' ? (
+            <RiskPlanner key="calc-risk" />
           ) : (
             <>
               {/* News Feed */}

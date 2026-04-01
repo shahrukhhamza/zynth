@@ -15,6 +15,7 @@ import { randomUUID }     from 'crypto';
 import { requireAuth, requireAdmin } from '../middleware/authMiddleware.js';
 import * as Payments      from '../db/payments.js';
 import * as Users         from '../db/users.js';
+import { activateUserSubscription } from '../db/users.js';
 import { trackEvent }     from '../db/events.js';
 import { UPLOADS_DIR }    from '../config/storagePaths.js';
 
@@ -60,8 +61,12 @@ router.post('/submit', requireAuth, upload.single('proof'), async (req, res) => 
       return res.status(400).json({ error: 'Invalid billing cycle. Must be monthly or annual.' });
     }
 
-    if (!req.file) {
+    const isCrypto = /crypto|usdt|trc20/i.test(String(method).trim());
+    if (!req.file && !isCrypto) {
       return res.status(400).json({ error: 'Payment proof is required.' });
+    }
+    if (isCrypto && !note?.trim()) {
+      return res.status(400).json({ error: 'Transaction ID (TXID) is required for crypto payments.' });
     }
 
     if (amount && !/^[A-Za-z0-9$.,\s/+~-]{1,30}$/.test(String(amount).trim())) {
@@ -126,27 +131,40 @@ router.put('/:id/approve', requireAuth, requireAdmin, async (req, res) => {
 
     const existing = await Payments.getPaymentRequestById(id);
     if (!existing)                          return res.status(404).json({ error: 'Payment request not found.' });
-    if (existing.status === 'approved')     return res.status(409).json({ error: 'Already approved.' });
+    if (existing.status === 'verified')     return res.status(409).json({ error: 'Already verified.' });
 
-    const updated = await Payments.updatePaymentStatus(id, 'approved', req.user.id);
+    const updated = await Payments.updatePaymentStatus(id, 'verified', req.user.id);
 
-    // Upgrade the user's plan according to the billing cycle attached to the request.
-    const expiresAt = new Date();
+    // ── Activate subscription (only on 'verified' path) ─────────────────────
+    const now       = new Date();
+    const expiresAt = new Date(now);
     if (existing.billing_cycle === 'annual') {
       expiresAt.setFullYear(expiresAt.getFullYear() + 1);
     } else {
       expiresAt.setMonth(expiresAt.getMonth() + 1);
     }
-    await Users.updateUserPlan(existing.user_id, existing.plan, expiresAt.toISOString());
 
-    trackEvent(req.user.id, 'payment_approved', {
-      requestId: existing.id,
-      userId: existing.user_id,
-      plan: existing.plan,
+    await activateUserSubscription(existing.user_id, existing.plan, expiresAt.toISOString());
+
+    trackEvent(req.user.id, 'payment_verified', {
+      requestId:    existing.id,
+      userId:       existing.user_id,
+      plan:         existing.plan,
       billingCycle: existing.billing_cycle,
     });
 
-    res.json({ ok: true, request: updated });
+    return res.json({
+      ok: true,
+      request: updated,
+      subscription: {
+        userId:           existing.user_id,
+        plan:             existing.plan,
+        billingCycle:     existing.billing_cycle,
+        active:           true,
+        subscriptionStart: now.toISOString(),
+        expiresAt:        expiresAt.toISOString(),
+      },
+    });
   } catch (err) {
     console.error('payments/approve error:', err);
     res.status(500).json({ error: 'Failed to approve payment.' });

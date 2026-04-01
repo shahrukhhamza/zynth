@@ -2,7 +2,7 @@
 import {
   Search, Filter, Calendar, X, Brain,
   Camera, ChevronLeft, ChevronRight, Crown, Settings, HelpCircle, Clock,
-  LayoutDashboard, Star, Zap,
+  LayoutDashboard, Star, Zap, Calculator, TrendingUp, ShieldCheck,
 } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 import { useTimezone } from '../contexts/TimezoneContext';
@@ -24,6 +24,11 @@ const NAV_ITEMS = [
   { key: 'intelligence', icon: Brain,           label: 'AI Insights',         badge: { text: 'AI', color: '#0ea5e9' } },
   { key: 'calendar',     icon: Calendar,        label: 'Economic Calendar',   badge: null },
   { key: 'help',         icon: HelpCircle,      label: 'Help & Docs',         badge: null },
+];
+
+const CALC_ITEMS = [
+  { key: 'calculator/profit', icon: TrendingUp,   label: 'Profit Calculator' },
+  { key: 'calculator/risk',   icon: ShieldCheck,  label: 'Risk Planner' },
 ];
 
 function NavButton({ icon: Icon, label, badge, active, collapsed, onClick, core }) {
@@ -349,6 +354,33 @@ function SidebarInner({
               label={item.label}
               badge={item.badge}
               core={!!item.core}
+              active={currentView === item.key}
+              collapsed={collapsed}
+              onClick={() => navigate(item.key)}
+            />
+          ))}
+        </nav>
+
+        {/* Calculators section label */}
+        {!collapsed && (
+          <p style={{
+            fontSize: 9, fontWeight: 700, color: theme.muted,
+            letterSpacing: '0.1em', textTransform: 'uppercase',
+            padding: '10px 4px 4px', marginBottom: 2,
+            display: 'flex', alignItems: 'center', gap: 5,
+          }}>
+            <Calculator style={{ width: 10, height: 10 }} /> Calculators
+          </p>
+        )}
+
+        {/* Calculator items */}
+        <nav style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+          {CALC_ITEMS.map(item => (
+            <NavButton
+              key={item.key}
+              icon={item.icon}
+              label={item.label}
+              badge={null}
               active={currentView === item.key}
               collapsed={collapsed}
               onClick={() => navigate(item.key)}

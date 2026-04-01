@@ -50,6 +50,8 @@ import chartsRouter from './routes/charts.js';
 import levelsRouter from './routes/levels.js';
 import eventsRouter from './routes/events.js';
 import paymentsRouter from './routes/payments.js';
+import paymentRouter  from './routes/payment.js';
+import tradingRouter from './routes/trading.js';
 import { requireAuth, requireAdmin } from './middleware/authMiddleware.js';
 import * as Users from './db/users.js';
 import { initDb } from './db/users.js';
@@ -302,6 +304,7 @@ app.use('/api/auth', authLimiter, authRouter);
 app.use('/api/admin', adminRouter);
 app.use('/api/events', eventsRouter);
 app.use('/api/payments', paymentsRouter);
+app.use('/api/payment',  paymentRouter);
 
 app.use('/api/journal', journalRouter);
 app.use('/api/checklist', checklistRouter);
@@ -309,6 +312,7 @@ app.use('/api/analysis',  analysisRouter);
 app.use('/api/assistant', requireAuth, aiLimiter, assistantRouter);
 app.use('/api/charts', requireAuth, chartsRouter);
 app.use('/api/levels', requireAuth, levelsRouter);
+app.use('/api/calc', tradingRouter);  // Pure math — no DB/auth needed
 
 
 // Serve uploaded files from configured persistent path
@@ -350,32 +354,35 @@ httpServer.on('error', (err) => {
 wss.on('error', (err) => console.error('❌ WebSocketServer error:', err.message));
 
 // ── Start server ──────────────────────────────────────────────────────────────
-// Initialize PostgreSQL schemas BEFORE listening
+// Initialize PostgreSQL schemas BEFORE listening — but don't crash if DB is down
+function startListening() {
+  httpServer.listen(PORT, HOST, () => {
+    console.log(`🚀 Server running on ${HOST}:${PORT}`);
+    console.log(`📊 Financial News Dashboard API`);
+    console.log(`🔑 Polygon API Key: ${process.env.POLYGON_API_KEY ? 'Yes' : 'No'}`);
+    console.log('Twelve Data key loaded:', !!process.env.TWELVE_DATA_API_KEY);
+
+    startAutoReleaseScheduler(wss);
+
+    // ── Daily macro snapshot ─────────────────────────────────────────────
+    setInterval(async () => {
+      try {
+        const { calculateMacroSurpriseScore } = await import('./services/economicIntelligenceService.js');
+        const result = await calculateMacroSurpriseScore();
+        if (result?.score !== undefined) {
+          const date = new Date().toISOString().slice(0, 10);
+          try { await insertMacroSnapshot({ score: result.score, label: result.label ?? 'Unknown', date }); } catch {}
+          console.log(`📊 Macro snapshot saved: ${date} score=${result.score}`);
+        }
+      } catch (err) { console.error('⚠️  Macro snapshot error:', err.message); }
+    }, 24 * 60 * 60 * 1000);
+  });
+}
+
 Promise.all([initDb(), initJournalDb(), initEventsDb(), initPaymentsDb()])
-  .then(() => {
-    httpServer.listen(PORT, HOST, () => {
-      console.log(`🚀 Server running on ${HOST}:${PORT}`);
-      console.log(`📊 Financial News Dashboard API`);
-      console.log(`🔑 Polygon API Key: ${process.env.POLYGON_API_KEY ? 'Yes' : 'No'}`);
-      console.log('Twelve Data key loaded:', !!process.env.TWELVE_DATA_API_KEY);
-
-      startAutoReleaseScheduler(wss);
-
-      // ── Daily macro snapshot ─────────────────────────────────────────────
-      setInterval(async () => {
-        try {
-          const { calculateMacroSurpriseScore } = await import('./services/economicIntelligenceService.js');
-          const result = await calculateMacroSurpriseScore();
-          if (result?.score !== undefined) {
-            const date = new Date().toISOString().slice(0, 10);
-            try { await insertMacroSnapshot({ score: result.score, label: result.label ?? 'Unknown', date }); } catch {}
-            console.log(`📊 Macro snapshot saved: ${date} score=${result.score}`);
-          }
-        } catch (err) { console.error('⚠️  Macro snapshot error:', err.message); }
-      }, 24 * 60 * 60 * 1000);
-    });
-  })
+  .then(() => startListening())
   .catch(err => {
-    console.error('❌ Failed to initialise database:', err.message);
-    process.exit(1);
+    console.error('⚠️  Database initialisation failed:', err.message);
+    console.error('⚠️  Starting server anyway — DB-dependent features will be unavailable');
+    startListening();
   });

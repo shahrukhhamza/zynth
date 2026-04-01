@@ -101,3 +101,28 @@ export async function getPaymentRequestsByUser(userId) {
   );
   return rows;
 }
+
+// ── Latest status for a user (most recent request) ────────────────────────────
+export async function getLatestPaymentStatusByUser(userId) {
+  const { rows } = await pool.query(
+    `SELECT id, plan, billing_cycle, method, amount, status, created_at, reviewed_at
+     FROM payment_requests
+     WHERE user_id = $1
+     ORDER BY created_at DESC
+     LIMIT 1`,
+    [userId],
+  );
+  return rows[0] ?? null;
+}
+
+// ── All requests for a user (summary list) ────────────────────────────────────
+export async function getPaymentHistoryByUser(userId) {
+  const { rows } = await pool.query(
+    `SELECT id, plan, billing_cycle, method, amount, status, created_at, reviewed_at
+     FROM payment_requests
+     WHERE user_id = $1
+     ORDER BY created_at DESC`,
+    [userId],
+  );
+  return rows;
+}

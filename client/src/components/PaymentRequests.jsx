@@ -17,12 +17,12 @@ import ErrorBar from './ErrorBar';
 // ── Status badge ──────────────────────────────────────────────────────────────
 const STATUS_STYLES = {
   pending:  { bg: 'rgba(245,158,11,0.12)', color: '#fbbf24', border: 'rgba(245,158,11,0.25)' },
-  approved: { bg: 'rgba(16,185,129,0.12)', color: '#10B981', border: 'rgba(16,185,129,0.25)' },
+  verified: { bg: 'rgba(16,185,129,0.12)', color: '#10B981', border: 'rgba(16,185,129,0.25)' },
   rejected: { bg: 'rgba(239,68,68,0.10)',  color: '#f87171', border: 'rgba(239,68,68,0.25)'  },
 };
 const STATUS_ICONS = {
   pending:  <Clock    size={11} />,
-  approved: <CheckCircle size={11} />,
+  verified: <CheckCircle size={11} />,
   rejected: <XCircle  size={11} />,
 };
 
@@ -89,7 +89,7 @@ export default function PaymentRequests() {
   const [error,     setError]     = useState(null);
   const [acting,    setActing]    = useState(null); // id being acted on
   const [collapsed, setCollapsed] = useState(false);
-  const [filter,    setFilter]    = useState('all'); // 'all' | 'pending' | 'approved' | 'rejected'
+  const [filter,    setFilter]    = useState('all'); // 'all' | 'pending' | 'verified' | 'rejected'
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -113,7 +113,7 @@ export default function PaymentRequests() {
   async function act(id, action) {
     setActing(id);
     // Optimistic update — map verb to past-tense status
-    const optimisticStatus = action === 'approve' ? 'approved' : 'rejected';
+    const optimisticStatus = action === 'approve' ? 'verified' : 'rejected';
     setRequests(prev => prev.map(r => r.id === id ? { ...r, status: optimisticStatus } : r));
     try {
       const res = await fetch(`${API_URL}/api/payments/${id}/${action}`, {
@@ -128,7 +128,7 @@ export default function PaymentRequests() {
       }
       // Sync with server-returned data
       setRequests(prev => prev.map(r => r.id === id ? { ...r, ...d.request } : r));
-      toast.success(action === 'approve' ? '✅ Payment approved — plan upgraded!' : '❌ Payment rejected.');
+      toast.success(action === 'approve' ? '✅ Payment verified — plan upgraded!' : '❌ Payment rejected.');
     } catch (e) {
       toast.error(e.message);
     } finally {
@@ -187,7 +187,7 @@ export default function PaymentRequests() {
         <div>
           {/* ── Filter tabs ── */}
           <div className="flex items-center gap-1 px-5 py-3" style={{ borderBottom: `1px solid ${theme.border}` }}>
-            {['all', 'pending', 'approved', 'rejected'].map(f => (
+            {['all', 'pending', 'verified', 'rejected'].map(f => (
               <button
                 key={f}
                 onClick={() => setFilter(f)}
@@ -200,7 +200,7 @@ export default function PaymentRequests() {
               >
                 {f === 'all' ? `All (${requests.length})` : (
                   f === 'pending' ?  `Pending (${requests.filter(r=>r.status==='pending').length})` :
-                  f === 'approved' ? `Approved (${requests.filter(r=>r.status==='approved').length})` :
+                  f === 'verified' ? `Verified (${requests.filter(r=>r.status==='verified').length})` :
                   `Rejected (${requests.filter(r=>r.status==='rejected').length})`
                 )}
               </button>

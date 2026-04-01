@@ -524,7 +524,10 @@ export default function UpgradeModal({
                 {/* CTA */}
                 <div>
                   <motion.button
-                    onClick={() => goToStep(2)}
+                    onClick={() => {
+                      window.dispatchEvent(new CustomEvent('zynth:navigate', { detail: { view: 'payment' } }));
+                      handleClose();
+                    }}
                     className="w-full rounded-xl py-4 text-base font-bold text-white relative overflow-hidden"
                     style={{
                       background:    'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',

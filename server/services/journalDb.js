@@ -130,6 +130,7 @@ export async function initJournalDb() {
       `ALTER TABLE trade_journals ADD COLUMN IF NOT EXISTS macro_events_json   TEXT`,
       `ALTER TABLE trade_journals ADD COLUMN IF NOT EXISTS macro_narrative     TEXT`,
       `ALTER TABLE trade_journals ADD COLUMN IF NOT EXISTS macro_analysed_at   TIMESTAMPTZ`,
+      `ALTER TABLE trades ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMPTZ DEFAULT NULL`,
     ];
     for (const sql of alterCols) {
       try { await pool.query(sql); } catch (_) { /* already exists */ }
@@ -181,7 +182,7 @@ export async function getTrades(userId = 'default', limit = 100, offset = 0) {
             j.id AS journal_id
      FROM trades t
      LEFT JOIN trade_journals j ON j.trade_id = t.id
-     WHERE t.user_id = $1
+     WHERE t.user_id = $1 AND t.deleted_at IS NULL
      ORDER BY t.created_at DESC
      LIMIT $2 OFFSET $3`,
     [userId, limit, offset]
@@ -215,8 +216,12 @@ export async function updateTrade(id, data) {
   await pool.query(`UPDATE trades SET ${assignments.join(', ')} WHERE id = $${values.length}`, values);
 }
 
-export async function deleteTrade(id) {
-  await pool.query('DELETE FROM trades WHERE id = $1', [id]);
+export async function deleteTrade(id, userId) {
+  const { rowCount } = await pool.query(
+    'UPDATE trades SET deleted_at = NOW() WHERE id = $1 AND user_id = $2 AND deleted_at IS NULL',
+    [id, userId]
+  );
+  return rowCount > 0;
 }
 
 export async function getTradesBySymbol(userId = 'default', symbol, limit = 100, offset = 0) {
@@ -227,7 +232,7 @@ export async function getTradesBySymbol(userId = 'default', symbol, limit = 100,
             j.id AS journal_id
      FROM trades t
      LEFT JOIN trade_journals j ON j.trade_id = t.id
-     WHERE t.user_id = $1 AND UPPER(t.pair) = UPPER($2)
+     WHERE t.user_id = $1 AND UPPER(t.pair) = UPPER($2) AND t.deleted_at IS NULL
      ORDER BY t.created_at DESC
      LIMIT $3 OFFSET $4`,
     [userId, symbol, limit, offset]
@@ -237,14 +242,14 @@ export async function getTradesBySymbol(userId = 'default', symbol, limit = 100,
 
 export async function countTradesBySymbol(userId = 'default', symbol) {
   const { rows } = await pool.query(
-    'SELECT COUNT(*)::int AS n FROM trades WHERE user_id = $1 AND UPPER(pair) = UPPER($2)',
+    'SELECT COUNT(*)::int AS n FROM trades WHERE user_id = $1 AND UPPER(pair) = UPPER($2) AND deleted_at IS NULL',
     [userId, symbol]
   );
   return rows[0]?.n ?? 0;
 }
 
 export async function countTrades(userId = 'default') {
-  const { rows } = await pool.query('SELECT COUNT(*)::int AS n FROM trades WHERE user_id = $1', [userId]);
+  const { rows } = await pool.query('SELECT COUNT(*)::int AS n FROM trades WHERE user_id = $1 AND deleted_at IS NULL', [userId]);
   return rows[0]?.n ?? 0;
 }
 
@@ -321,7 +326,7 @@ export async function getAllTradesForUser(userId = 'default') {
     `SELECT t.*, j.strategy, j.reasoning, j.emotional_state, j.lessons_learned, j.notes
      FROM trades t
      LEFT JOIN trade_journals j ON j.trade_id = t.id
-     WHERE t.user_id = $1
+     WHERE t.user_id = $1 AND t.deleted_at IS NULL
      ORDER BY t.created_at ASC`,
     [userId]
   );

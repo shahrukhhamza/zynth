@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Brain, RefreshCcw, AlertCircle } from 'lucide-react';
+import { Brain, RefreshCcw, AlertCircle, Zap, TrendingUp, BarChart2, Activity, Lock, ArrowRight, CheckCircle2 } from 'lucide-react';
 import { API_URL } from '../config/api';
 import { useUpgrade } from '../contexts/UpgradeContext';
 import { usePlanGate } from '../hooks/usePlanGate';
@@ -277,7 +277,15 @@ function MacroScoreWidget({ macroScore, D }) {
   );
 }
 
+const PAYWALL_FEATURES = [
+  { icon: TrendingUp,  text: 'Macro surprise scores & trend shifts' },
+  { icon: BarChart2,   text: 'Event-to-trade correlation engine' },
+  { icon: Activity,    text: 'Real-time economic signal alerts' },
+];
+
 function PaywallPricingBlock({ onUpgrade }) {
+  const [hovered, setHovered] = useState(false);
+
   const handleUpgrade = () => {
     onUpgrade({
       requiredPlan: 'pro',
@@ -289,58 +297,146 @@ function PaywallPricingBlock({ onUpgrade }) {
 
   return (
     <div style={{
+      position: 'relative', zIndex: 1,
       display: 'flex', flexDirection: 'column', alignItems: 'center',
-      textAlign: 'center', maxWidth: 420, margin: '0 auto',
+      textAlign: 'center', maxWidth: 520, width: '100%',
+      margin: '0 auto', padding: '0 24px',
     }}>
 
-      {/* Icon */}
+      {/* Icon badge */}
       <div style={{
+        position: 'relative', marginBottom: 28,
         display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-        width: 48, height: 48, borderRadius: 14, marginBottom: 20,
-        background: 'rgba(59,130,246,0.14)',
-        border: '1px solid rgba(59,130,246,0.3)',
       }}>
-        <Brain size={20} color="#60a5fa" />
+        {/* Pulse ring */}
+        <div style={{
+          position: 'absolute', inset: -8, borderRadius: '50%',
+          border: '1px solid rgba(99,102,241,0.25)',
+          animation: 'paywall-ring 2.4s ease-in-out infinite',
+        }} />
+        <div style={{
+          width: 72, height: 72, borderRadius: 22,
+          display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+          background: 'linear-gradient(135deg, rgba(99,102,241,0.2), rgba(139,92,246,0.15))',
+          border: '1px solid rgba(99,102,241,0.35)',
+          boxShadow: '0 8px 32px rgba(99,102,241,0.2)',
+        }}>
+          <Brain size={28} color="#a5b4fc" />
+        </div>
+        {/* Lock badge */}
+        <div style={{
+          position: 'absolute', bottom: -4, right: -4,
+          width: 22, height: 22, borderRadius: '50%',
+          background: 'linear-gradient(135deg, #f59e0b, #d97706)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          boxShadow: '0 2px 8px rgba(245,158,11,0.4)',
+          border: '2px solid var(--z-modal)',
+        }}>
+          <Lock size={10} color="#fff" />
+        </div>
       </div>
+
+      {/* Badge */}
+      <span style={{
+        display: 'inline-flex', alignItems: 'center', gap: 5,
+        fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase',
+        padding: '4px 12px', borderRadius: 99, marginBottom: 16,
+        background: 'var(--z-badge-bg)',
+        border: '1px solid var(--z-badge-bdr)',
+        color: 'var(--z-badge-text)',
+      }}>
+        <Zap size={10} />
+        Pro Feature
+      </span>
 
       {/* Headline */}
       <h2 style={{
-        fontSize: 22, fontWeight: 800, lineHeight: 1.3,
-        color: 'var(--z-text)', margin: '0 0 10px',
+        fontSize: 28, fontWeight: 900, lineHeight: 1.25,
+        margin: '0 0 12px',
+        background: 'var(--z-h-grad)',
+        WebkitBackgroundClip: 'text',
+        WebkitTextFillColor: 'transparent',
+        backgroundClip: 'text',
       }}>
         AI Insights is a Pro feature
       </h2>
 
-      {/* Benefit */}
+      {/* Subtext */}
       <p style={{
-        fontSize: 14, lineHeight: 1.65, color: 'var(--z-muted)',
-        margin: '0 0 28px', maxWidth: 340,
+        fontSize: 14, lineHeight: 1.7, color: 'var(--z-muted)',
+        margin: '0 0 28px', maxWidth: 380,
       }}>
         Get macro surprise scores, trend shifts, and event-to-trade correlation — all in one view.
       </p>
 
-      {/* CTA */}
+      {/* Feature pills */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 10, width: '100%', maxWidth: 360, marginBottom: 32 }}>
+        {PAYWALL_FEATURES.map(({ icon: Icon, text }, i) => (
+          <div key={i} style={{
+            display: 'flex', alignItems: 'center', gap: 12,
+            padding: '11px 16px', borderRadius: 12, textAlign: 'left',
+            background: 'var(--z-surface)',
+            border: '1px solid var(--z-border-sm)',
+          }}>
+            <div style={{
+              width: 32, height: 32, borderRadius: 9, flexShrink: 0,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              background: 'rgba(99,102,241,0.12)',
+              border: '1px solid rgba(99,102,241,0.2)',
+            }}>
+              <Icon size={15} color="#818cf8" />
+            </div>
+            <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--z-text2)' }}>{text}</span>
+            <CheckCircle2 size={14} color="#34d399" style={{ marginLeft: 'auto', flexShrink: 0 }} />
+          </div>
+        ))}
+      </div>
+
+      {/* CTA button */}
       <button
         onClick={handleUpgrade}
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
         style={{
-          display: 'inline-flex', alignItems: 'center', gap: 6,
-          padding: '12px 32px', borderRadius: 11, border: 'none', cursor: 'pointer',
-          fontSize: 15, fontWeight: 700, color: '#fff',
-          background: 'linear-gradient(135deg, #3b82f6, #6366f1)',
-          boxShadow: '0 4px 18px rgba(59,130,246,0.35)',
-          transition: 'opacity 0.15s',
+          display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+          width: '100%', maxWidth: 360, padding: '15px 32px',
+          borderRadius: 14, border: 'none', cursor: 'pointer',
+          fontSize: 15, fontWeight: 800, color: '#fff',
+          background: hovered
+            ? 'linear-gradient(135deg, #4f46e5, #7c3aed)'
+            : 'linear-gradient(135deg, #6366f1, #8b5cf6)',
+          boxShadow: hovered
+            ? '0 8px 32px rgba(99,102,241,0.55)'
+            : '0 4px 20px rgba(99,102,241,0.38)',
+          transform: hovered ? 'translateY(-2px)' : 'translateY(0)',
+          transition: 'all 0.18s ease',
+          letterSpacing: '0.01em',
         }}
-        onMouseOver={e => { e.currentTarget.style.opacity = '0.88'; }}
-        onMouseOut={e => { e.currentTarget.style.opacity = '1'; }}
       >
-        Unlock full access &rarr;
+        <Zap size={16} />
+        Unlock AI Insights
+        <ArrowRight size={15} style={{ opacity: 0.8 }} />
       </button>
 
-      {/* Pricing hint + social proof */}
-      <p style={{ fontSize: 12, color: 'var(--z-muted)', margin: '14px 0 0' }}>
-        From $9/mo &middot; Most users upgrade here
-      </p>
+      {/* Trust line */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginTop: 16, flexWrap: 'wrap', justifyContent: 'center' }}>
+        <span style={{ fontSize: 12, color: 'var(--z-muted)', display: 'flex', alignItems: 'center', gap: 4 }}>
+          <CheckCircle2 size={12} color="#34d399" /> From $8.90/mo
+        </span>
+        <span style={{ fontSize: 12, color: 'var(--z-muted)', display: 'flex', alignItems: 'center', gap: 4 }}>
+          <CheckCircle2 size={12} color="#34d399" /> Cancel anytime
+        </span>
+        <span style={{ fontSize: 12, color: 'var(--z-muted)', display: 'flex', alignItems: 'center', gap: 4 }}>
+          <CheckCircle2 size={12} color="#34d399" /> 2,000+ traders upgraded
+        </span>
+      </div>
 
+      <style>{`
+        @keyframes paywall-ring {
+          0%, 100% { transform: scale(1); opacity: 0.5; }
+          50% { transform: scale(1.15); opacity: 1; }
+        }
+      `}</style>
     </div>
   );
 }
@@ -401,12 +497,12 @@ export default function EconomicIntelligence() {
 
   // ── Pro gate ─────────────────────────────────────────────────────────────
   if (!canAccess) return (
-    <div className="flex flex-col items-center justify-center min-h-[520px] px-6 py-16 text-center relative
-      bg-gradient-to-br from-blue-50 to-indigo-50
-      dark:from-slate-900 dark:to-slate-800">
-      <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden>
-        <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-96 h-96 rounded-full opacity-20
-          bg-gradient-to-br from-blue-400 to-emerald-400 blur-3xl" />
+    <div className="min-h-full bg-slate-50 dark:bg-slate-950" style={{ position: 'relative', minHeight: 560, display: 'flex', alignItems: 'center', justifyContent: 'center', paddingTop: 64, paddingBottom: 48 }}>
+      {/* Ambient glows — pointer-events:none so they never block clicks */}
+      <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none' }}>
+        <div style={{ position: 'absolute', top: '-10%', left: '50%', transform: 'translateX(-50%)', width: 600, height: 400, borderRadius: '50%', background: 'radial-gradient(ellipse, rgba(99,102,241,0.14) 0%, transparent 70%)', filter: 'blur(32px)' }} />
+        <div style={{ position: 'absolute', bottom: '0', left: '15%', width: 280, height: 280, borderRadius: '50%', background: 'radial-gradient(ellipse, rgba(16,185,129,0.08) 0%, transparent 70%)', filter: 'blur(24px)' }} />
+        <div style={{ position: 'absolute', top: '20%', right: '10%', width: 200, height: 200, borderRadius: '50%', background: 'radial-gradient(ellipse, rgba(59,130,246,0.1) 0%, transparent 70%)', filter: 'blur(20px)' }} />
       </div>
       <PaywallPricingBlock onUpgrade={openUpgradeModal} />
     </div>

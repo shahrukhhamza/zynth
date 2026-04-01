@@ -72,7 +72,7 @@ function RightPanel({ sentimentStats, highImpactNews, totalNews }) {
                 </div>
               </div>
 
-              {/* Bearish */}}
+              {/* Bearish */}
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                   <div style={{ width: 28, height: 28, borderRadius: 7, backgroundColor: 'rgba(239,68,68,0.10)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -88,7 +88,7 @@ function RightPanel({ sentimentStats, highImpactNews, totalNews }) {
                 </div>
               </div>
 
-              {/* Neutral */}}
+              {/* Neutral */}
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                   <div style={{ width: 28, height: 28, borderRadius: 7, backgroundColor: theme.bg, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>

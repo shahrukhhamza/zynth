@@ -6,7 +6,7 @@ import { useConfirm } from '../contexts/ConfirmContext';
 import { API_URL } from '../config/api';
 import AnalyticsDashboard from './AnalyticsDashboard';
 import UserActivityTimeline from './UserActivityTimeline';
-import PaymentRequests from './PaymentRequests';
+import AdminPayments from './AdminPayments';
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell,
 } from 'recharts';
@@ -542,7 +542,7 @@ function AdminDashboardInner() {
         <AnalyticsDashboard />
 
         {/* Manual payment requests */}
-        <PaymentRequests />
+        <AdminPayments />
 
       </div>
     </div>

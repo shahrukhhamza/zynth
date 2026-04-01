@@ -9,11 +9,11 @@ import { getAuthToken } from '../utils/authStorage';
 import TradeEntryForm from './journal/TradeEntryForm';
 import TradeHistoryTable from './journal/TradeHistoryTable';
 import PerformanceDashboard from './journal/PerformanceDashboard';
-import NewAiInsightsDashboard from './ai-insights/NewAiInsightsDashboard';
+import JournalCoach from './journal/JournalCoach';
 import MacroCorrelation from './MacroCorrelation';
 import TradingDNA from './TradingDNA';
 import TradeDetailPage from './journal/TradeDetailPage';
-import JournalUpgradePrompt from './journal/JournalUpgradePrompt';
+import JournalUpgradePrompt, { PERFORMANCE_FEATURES, INSIGHTS_FEATURES } from './journal/JournalUpgradePrompt';
 import UsageBanner from './journal/UsageBanner';
 import { usePlan } from '../hooks/usePlan';
 
@@ -21,7 +21,7 @@ const TABS = [
   { key: 'log',         label: 'Log Trade',          icon: BookOpen  },
   { key: 'history',     label: 'Trade History',       icon: List      },
   { key: 'performance', label: 'Performance',         icon: BarChart2 },
-  { key: 'insights',    label: 'AI Insights',         icon: Brain     },
+  { key: 'insights',    label: 'Trade Coach',          icon: Sparkles  },
   { key: 'macro',       label: 'Macro Correlation',   icon: Activity     },
   { key: 'dna',         label: 'Trading DNA',          icon: Fingerprint  },
 ];
@@ -279,10 +279,8 @@ export default function TradeJournal() {
   const journalLimitReached = isFree && maxJournal !== Infinity && maxJournal > 0 && total >= maxJournal;
   const [page, setPage] = useState(0);
   const [metrics, setMetrics] = useState(null);
-  const [macroData, setMacroData] = useState(null);
   const [loadingTrades, setLoadingTrades] = useState(false);
   const [loadingMetrics, setLoadingMetrics] = useState(false);
-  const [loadingInsights, setLoadingInsights] = useState(false);
   const [selectedTrade, setSelectedTrade] = useState(null);
   const LIMIT = 20;
 
@@ -311,42 +309,13 @@ export default function TradeJournal() {
     }
   }, []);
 
-  const fetchInsightsData = useCallback(async () => {
-    const token = getAuthToken();
-    if (!token) {
-      setMacroData(null);
-      return;
-    }
-
-    setLoadingInsights(true);
-    try {
-      const res = await fetch(`${API_URL}/api/economic/ai-insights`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (!res.ok) {
-        const body = await res.text().catch(() => '');
-        throw new Error(`AI insights request failed (${res.status})${body ? `: ${body}` : ''}`);
-      }
-      setMacroData(await res.json());
-    } catch (err) {
-      console.error('Failed to load AI insights:', err);
-      setMacroData(null);
-    } finally {
-      setLoadingInsights(false);
-    }
-  }, []);
-
   useEffect(() => {
     fetchTrades(page);
   }, [page]);
 
   useEffect(() => {
-    if (tab === 'performance' || tab === 'insights') {
+    if ((tab === 'performance' || tab === 'insights') && !isFree) {
       fetchMetrics();
-      if (tab === 'insights') {
-        fetchTrades(0);
-        fetchInsightsData();
-      }
     } else if (tab === 'history') {
       fetchTrades(page);
     }
@@ -355,7 +324,7 @@ export default function TradeJournal() {
   const handleSaved = () => {
     fetchTrades(0);
     setPage(0);
-    fetchMetrics();
+    if (!isFree) fetchMetrics();
   };
 
   const handleAnalyze = (tradeId, analysis) => {
@@ -428,6 +397,7 @@ export default function TradeJournal() {
         trades={trades}
         tradeIndex={selectedIdx === -1 ? 0 : selectedIdx}
         onBack={() => setSelectedTrade(null)}
+        onDeleted={() => { fetchTrades(0); setPage(0); fetchMetrics(); }}
         onNavigate={(idx) => setSelectedTrade(trades[idx])}
         onSaved={async (tradeId) => {
           const res = await listTrades(0, 200);
@@ -505,28 +475,46 @@ export default function TradeJournal() {
       )}
 
       {tab === 'performance' && (
-        <div className="max-w-6xl mx-auto">
-          {refreshBtn}
-          {loadingMetrics ? (
-            <div className="text-center py-16" style={{ color: theme.muted }}>
-              <RefreshCw className="w-8 h-8 mx-auto mb-3 animate-spin opacity-50" />
-              <p>Loading analytics…</p>
-            </div>
+        <div className="max-w-3xl mx-auto">
+          {isFree ? (
+            <JournalUpgradePrompt
+              headline="Performance Analytics is a Pro feature"
+              description="Track your win rate, P&L curves, drawdown, and emotion patterns — all in one dashboard."
+              badge="Pro Feature"
+              features={PERFORMANCE_FEATURES}
+              ctaLabel="Unlock Performance Analytics"
+              openWith={{ requiredPlan: 'pro', headline: 'Unlock Full Zynth', message: "Start measuring what’s working and fix what isn’t." }}
+            />
           ) : (
-            <PerformanceDashboard metrics={metrics} />
+            <>
+              {refreshBtn}
+              {loadingMetrics ? (
+                <div className="text-center py-16" style={{ color: theme.muted }}>
+                  <RefreshCw className="w-8 h-8 mx-auto mb-3 animate-spin opacity-50" />
+                  <p>Loading analytics…</p>
+                </div>
+              ) : (
+                <PerformanceDashboard metrics={metrics} />
+              )}
+            </>
           )}
         </div>
       )}
 
       {tab === 'insights' && (
-        <div className="max-w-6xl mx-auto">
-          <button onClick={() => { fetchTrades(0); fetchMetrics(); fetchInsightsData(); }}
-            className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs transition-colors hover:bg-gray-100 dark:hover:bg-white/10 mb-4"
-            style={{ color: theme.muted, border: `1px solid ${theme.border}` }}>
-            <RefreshCw className={`w-3 h-3 ${loadingTrades || loadingMetrics || loadingInsights ? 'animate-spin' : ''}`} />
-            Refresh
-          </button>
-          <NewAiInsightsDashboard macroData={macroData} />
+        <div className="max-w-3xl mx-auto">
+          {isFree ? (
+            <JournalUpgradePrompt
+              headline="Trade Coach is a Pro feature"
+              description="Get AI-generated coaching reports with psychological assessments, strategy breakdowns, and personalised action items."
+              badge="Pro Feature"
+              features={INSIGHTS_FEATURES}
+              ctaLabel="Unlock Trade Coach"
+              openWith={{ requiredPlan: 'pro', headline: 'Unlock Your Trade Coach', message: "Let AI coach you based on your own trade journal data." }}
+            />
+          ) : (
+            <JournalCoach />
+          )}
         </div>
       )}
 

@@ -69,6 +69,9 @@ export async function initDb() {
     // Monthly AI tracking for Pro plan
     `ALTER TABLE users ADD COLUMN IF NOT EXISTS ai_monthly_count INTEGER DEFAULT 0`,
     `ALTER TABLE users ADD COLUMN IF NOT EXISTS ai_month_reset TIMESTAMPTZ DEFAULT NOW()`,
+    // Subscription audit fields — set when a payment is verified
+    `ALTER TABLE users ADD COLUMN IF NOT EXISTS subscription_start  TIMESTAMPTZ DEFAULT NULL`,
+    `ALTER TABLE users ADD COLUMN IF NOT EXISTS subscription_active INTEGER     DEFAULT 0`,
   ];
 
   for (const sql of migrations) {
@@ -138,6 +141,24 @@ export async function updateUserPlan(id, plan, expiresAt = null) {
   await pool.query(
     'UPDATE users SET plan = $1, plan_expires_at = $2 WHERE id = $3',
     [normalizedPlan, expiresAt, id]
+  );
+}
+
+/**
+ * Atomically activate a user's subscription after payment is verified.
+ * Sets plan, expiry, subscription start date, and marks the account active.
+ * Only called when payment status transitions to 'verified'.
+ */
+export async function activateUserSubscription(id, plan, expiresAt) {
+  const normalizedPlan = String(plan || 'pro').trim().toLowerCase();
+  await pool.query(
+    `UPDATE users
+     SET plan                = $1,
+         plan_expires_at     = $2,
+         subscription_start  = NOW(),
+         subscription_active = 1
+     WHERE id = $3`,
+    [normalizedPlan, expiresAt, id],
   );
 }
 
