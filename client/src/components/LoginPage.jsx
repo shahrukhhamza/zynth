@@ -2,6 +2,7 @@
 import { useAuth } from '../contexts/AuthContext';
 import { API_URL } from '../config/api';
 import { getPublicStats } from '../utils/publicStats';
+import { isInAppBrowser } from '../utils/inAppBrowser';
 import { Eye, EyeOff, TrendingUp, TrendingDown, AlertCircle, Loader2, Mail, Lock, ArrowRight, ArrowLeft, ChevronLeft, Shield, Zap, BarChart2, Activity, BookOpen, Brain, Bot, Flame } from 'lucide-react';
 import { BrandMark } from './BrandLogo';
 import ErrorBar from './ErrorBar';
@@ -39,12 +40,16 @@ export default function LoginPage({ onSwitchToSignup, onBack, onForgotPassword }
   const [spotsLeft, setSpotsLeft] = useState(null);
   const [fieldErrors, setFieldErrors] = useState({ email: '', password: '' });
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const [isIAB, setIsIAB] = useState(false);
+  const [linkCopied, setLinkCopied] = useState(false);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  useEffect(() => { setIsIAB(isInAppBrowser()); }, []);
 
   useEffect(() => {
     getPublicStats()
@@ -402,6 +407,37 @@ export default function LoginPage({ onSwitchToSignup, onBack, onForgotPassword }
           ) : <ErrorBar message={error} className="mb-4" />)}
 
           {/* Google button */}
+          {isIAB ? (
+            <div style={{ marginBottom:'14px', borderRadius:'11px', overflow:'hidden',
+              border:'1px solid rgba(251,191,36,0.35)',
+              background: isDark?'rgba(251,191,36,0.08)':'rgba(254,252,232,0.9)',
+              animation:'fadeUp 0.45s ease 0.15s both' }}>
+              <div style={{ padding:'11px 14px', display:'flex', alignItems:'flex-start', gap:'10px' }}>
+                <span style={{ fontSize:'15px', flexShrink:0, marginTop:'1px' }}>⚠️</span>
+                <div style={{ flex:1 }}>
+                  <p style={{ margin:'0 0 4px', fontSize:'12.5px', fontWeight:600, color: isDark?'#fcd34d':'#92400e', lineHeight:1.4 }}>
+                    Google Sign-in is blocked in Instagram's browser
+                  </p>
+                  <p style={{ margin:'0 0 10px', fontSize:'12px', color: isDark?'rgba(253,230,138,0.8)':'#78350f', lineHeight:1.5 }}>
+                    Copy the link below and open it in Chrome or Safari to sign in with Google.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      navigator.clipboard.writeText(window.location.href).then(() => {
+                        setLinkCopied(true);
+                        setTimeout(() => setLinkCopied(false), 2500);
+                      }).catch(() => {});
+                    }}
+                    style={{ fontSize:'12px', fontWeight:600, padding:'6px 12px', borderRadius:'7px', border:'none', cursor:'pointer',
+                      background: isDark?'rgba(251,191,36,0.22)':'rgba(251,191,36,0.30)',
+                      color: isDark?'#fcd34d':'#92400e', transition:'opacity 0.15s' }}>
+                    {linkCopied ? '✓ Link copied!' : 'Copy Link'}
+                  </button>
+                </div>
+              </div>
+            </div>
+          ) : (
           <button type="button" onClick={handleGoogleClick} disabled={loading||googleLoading||!GOOGLE_CLIENT_ID}
             style={{ width:'100%', padding:'10px 16px',
               background: isDark?'rgba(255,255,255,0.96)':'#ffffff',
@@ -425,6 +461,7 @@ export default function LoginPage({ onSwitchToSignup, onBack, onForgotPassword }
               </svg>}
             <span>{googleLoading ? 'Signing in…' : 'Continue with Google'}</span>
           </button>
+          )}
 
           {/* Divider */}
           <div style={{ display:'flex', alignItems:'center', gap:'10px', marginBottom:'14px', animation:'fadeUp 0.45s ease 0.19s both' }}>
