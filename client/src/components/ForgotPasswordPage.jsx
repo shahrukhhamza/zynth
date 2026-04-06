@@ -28,7 +28,7 @@ export default function ForgotPasswordPage({ onBack }) {
   }
 
   return (
-    <div style={{ minHeight:'100vh', background: isDark?'#020617':'#f8fafc', position:'relative', overflowX:'hidden', overflowY:'auto' }}>
+    <div style={{ minHeight:'100vh', background: isDark?'#0B0B0F':'#f8fafc', position:'relative', overflowX:'hidden', overflowY:'auto' }}>
       <style>{`
         @keyframes blobDrift {
           0%,100% { transform: translate(0px,0px) scale(1); }
@@ -60,7 +60,7 @@ export default function ForgotPasswordPage({ onBack }) {
       <div style={{ position:'fixed', top:'-220px', left:'-180px', width:'720px', height:'720px',
         pointerEvents:'none', zIndex:0,
         background: isDark
-          ? 'radial-gradient(circle, rgba(59,130,246,0.11) 0%, rgba(99,102,241,0.06) 35%, transparent 65%)'
+          ? 'radial-gradient(circle, rgba(255,77,0,0.07) 0%, rgba(255,122,0,0.03) 35%, transparent 65%)'
           : 'radial-gradient(circle, rgba(99,102,241,0.09) 0%, rgba(168,85,247,0.04) 35%, transparent 65%)',
         filter:'blur(82px)', animation:'blobDrift 18s ease-in-out infinite',
       }} />
@@ -69,7 +69,7 @@ export default function ForgotPasswordPage({ onBack }) {
       <div style={{ position:'fixed', bottom:'-200px', right:'-180px', width:'640px', height:'640px',
         pointerEvents:'none', zIndex:0,
         background: isDark
-          ? 'radial-gradient(circle, rgba(99,102,241,0.09) 0%, rgba(59,130,246,0.04) 35%, transparent 65%)'
+          ? 'radial-gradient(circle, rgba(255,122,0,0.05) 0%, rgba(255,77,0,0.02) 35%, transparent 65%)'
           : 'radial-gradient(circle, rgba(59,130,246,0.07) 0%, rgba(99,102,241,0.03) 35%, transparent 65%)',
         filter:'blur(82px)', animation:'blobDrift2 22s ease-in-out infinite',
       }} />
@@ -77,7 +77,7 @@ export default function ForgotPasswordPage({ onBack }) {
       {/* Corner vignette */}
       <div style={{ position:'fixed', inset:0, pointerEvents:'none', zIndex:0,
         background: isDark
-          ? 'radial-gradient(ellipse 100% 100% at 50% 50%, transparent 40%, rgba(2,6,23,0.6) 100%)'
+          ? 'radial-gradient(ellipse 100% 100% at 50% 50%, transparent 40%, rgba(11,11,15,0.6) 100%)'
           : 'radial-gradient(ellipse 100% 100% at 50% 50%, transparent 40%, rgba(240,244,250,0.6) 100%)',
       }} />
 
@@ -85,7 +85,7 @@ export default function ForgotPasswordPage({ onBack }) {
       <div style={{ position:'fixed', top:0, left:0, right:0, zIndex:20, height:'52px',
         display:'flex', alignItems:'center', justifyContent:'space-between', padding:'0 24px',
         borderBottom: isDark?'1px solid rgba(255,255,255,0.045)':'1px solid rgba(0,0,0,0.045)',
-        background: isDark?'rgba(2,6,23,0.65)':'rgba(248,250,252,0.75)',
+        background: isDark?'rgba(11,11,15,0.65)':'rgba(248,250,252,0.75)',
         backdropFilter:'blur(20px)', WebkitBackdropFilter:'blur(20px)',
       }}>
         <button onClick={onBack}
@@ -120,16 +120,16 @@ export default function ForgotPasswordPage({ onBack }) {
           border: isDark?'1px solid rgba(255,255,255,0.076)':'1px solid rgba(0,0,0,0.06)',
           borderRadius:'18px', padding:'30px 28px 26px',
           boxShadow: isDark
-            ? '0 0 0 0.5px rgba(255,255,255,0.055) inset, 0 20px 60px rgba(0,0,0,0.82), 0 0 0 1px rgba(59,130,246,0.07)'
+            ? '0 0 0 0.5px rgba(255,255,255,0.055) inset, 0 20px 60px rgba(0,0,0,0.82), 0 0 0 1px rgba(255,77,0,0.07)'
             : '0 0 0 1px rgba(0,0,0,0.035), 0 6px 28px rgba(15,23,42,0.09), 0 1.5px 6px rgba(15,23,42,0.04)',
           animation:'cardIn 0.45s cubic-bezier(0.22,1,0.36,1) 0.06s both',
         }}>
           {success ? (
             <div style={{ textAlign:'center', padding:'8px 0' }}>
               <div style={{ width:'58px', height:'58px', borderRadius:'50%',
-                background:'linear-gradient(135deg, #2563eb, #0284c7)',
+                background:'linear-gradient(135deg, #FF4D00, #FF7A00)',
                 display:'flex', alignItems:'center', justifyContent:'center', margin:'0 auto 18px',
-                boxShadow:'0 0 32px rgba(37,99,235,0.35)' }}>
+                boxShadow:'0 0 32px rgba(255,77,0,0.35)' }}>
                 <CheckCircle2 size={26} color="#fff" />
               </div>
               <h2 style={{ fontSize:'20px', fontWeight:700, letterSpacing:'-0.025em', color: isDark?'#f1f5f9':'#0f172a', marginBottom:'8px' }}>Check your email</h2>
@@ -141,9 +141,9 @@ export default function ForgotPasswordPage({ onBack }) {
                 you'll receive a reset link shortly. Check your spam folder too.
               </p>
               <button onClick={onBack}
-                style={{ fontSize:'13px', fontWeight:500, color:'#3b82f6', background:'none', border:'none', cursor:'pointer', padding:0, transition:'color 0.12s' }}
-                onMouseEnter={e => e.currentTarget.style.color='#60a5fa'}
-                onMouseLeave={e => e.currentTarget.style.color='#3b82f6'}>
+                style={{ fontSize:'13px', fontWeight:500, color:'#FF7A00', background:'none', border:'none', cursor:'pointer', padding:0, transition:'color 0.12s' }}
+                onMouseEnter={e => e.currentTarget.style.color='#FF9A40'}
+                onMouseLeave={e => e.currentTarget.style.color='#FF7A00'}>
                 ← Back to sign in
               </button>
             </div>
@@ -171,21 +171,21 @@ export default function ForgotPasswordPage({ onBack }) {
                       border: isDark?'1px solid rgba(255,255,255,0.088)':'1px solid rgba(0,0,0,0.088)',
                       borderRadius:'10px', padding:'10px 13px',
                       color: isDark?'#f1f5f9':'#0f172a' }}
-                    onFocus={e => { e.target.style.borderColor='rgba(59,130,246,0.52)'; e.target.style.boxShadow='0 0 0 3px rgba(59,130,246,0.10)'; e.target.style.background=isDark?'rgba(255,255,255,0.06)':'#fff'; }}
+                    onFocus={e => { e.target.style.borderColor='rgba(255,77,0,0.52)'; e.target.style.boxShadow='0 0 0 3px rgba(255,77,0,0.10)'; e.target.style.background=isDark?'rgba(255,255,255,0.06)':'#fff'; }}
                     onBlur={e => { e.target.style.borderColor=isDark?'rgba(255,255,255,0.088)':'rgba(0,0,0,0.088)'; e.target.style.boxShadow='none'; e.target.style.background=isDark?'rgba(255,255,255,0.044)':'rgba(0,0,0,0.024)'; }}
                   />
                 </div>
 
                 <button type="submit" disabled={loading}
                   style={{ width:'100%', padding:'11px',
-                    background: loading?'rgba(59,130,246,0.45)':'linear-gradient(135deg,#2563eb 0%,#0284c7 100%)',
+                    background: loading?'rgba(255,77,0,0.45)':'linear-gradient(135deg,#FF4D00 0%,#FF7A00 100%)',
                     border:'none', borderRadius:'11px', color:'#fff', fontSize:'13.5px', fontWeight:600,
                     cursor: loading?'not-allowed':'pointer', transition:'all 0.18s ease',
                     display:'flex', alignItems:'center', justifyContent:'center', gap:'7px',
-                    boxShadow: loading?'none':'0 2px 14px rgba(37,99,235,0.38), 0 1px 3px rgba(37,99,235,0.22)',
+                    boxShadow: loading?'none':'0 2px 14px rgba(255,77,0,0.38), 0 1px 3px rgba(255,77,0,0.22)',
                     letterSpacing:'0.01em' }}
-                  onMouseEnter={e => { if(!loading){ e.currentTarget.style.transform='translateY(-1.5px)'; e.currentTarget.style.boxShadow='0 8px 28px rgba(37,99,235,0.50), 0 2px 8px rgba(37,99,235,0.28)'; }}}
-                  onMouseLeave={e => { e.currentTarget.style.transform=''; e.currentTarget.style.boxShadow=loading?'none':'0 2px 14px rgba(37,99,235,0.38), 0 1px 3px rgba(37,99,235,0.22)'; }}
+                  onMouseEnter={e => { if(!loading){ e.currentTarget.style.transform='translateY(-1.5px)'; e.currentTarget.style.boxShadow='0 8px 28px rgba(255,77,0,0.50), 0 2px 8px rgba(255,77,0,0.28)'; }}}
+                  onMouseLeave={e => { e.currentTarget.style.transform=''; e.currentTarget.style.boxShadow=loading?'none':'0 2px 14px rgba(255,77,0,0.38), 0 1px 3px rgba(255,77,0,0.22)'; }}
                   onMouseDown={e => { if(!loading) e.currentTarget.style.transform='scale(0.985)'; }}
                   onMouseUp={e => { if(!loading) e.currentTarget.style.transform='translateY(-1.5px)'; }}>
                   {loading ? <><Loader2 size={14} className="animate-spin"/><span>Sending…</span></> : <span>Send reset link</span>}
@@ -208,9 +208,9 @@ export default function ForgotPasswordPage({ onBack }) {
         <p style={{ marginTop:'20px', fontSize:'13px', color: isDark?'rgba(255,255,255,0.32)':'#94a3b8', animation:'cardIn 0.45s ease 0.1s both' }}>
           Remember it?{' '}
           <button onClick={onBack}
-            style={{ color:'#3b82f6', background:'none', border:'none', cursor:'pointer', fontSize:'13px', padding:0, fontWeight:500, transition:'color 0.12s' }}
-            onMouseEnter={e => e.currentTarget.style.color='#60a5fa'}
-            onMouseLeave={e => e.currentTarget.style.color='#3b82f6'}>
+            style={{ color:'#FF7A00', background:'none', border:'none', cursor:'pointer', fontSize:'13px', padding:0, fontWeight:500, transition:'color 0.12s' }}
+            onMouseEnter={e => e.currentTarget.style.color='#FF9A40'}
+            onMouseLeave={e => e.currentTarget.style.color='#FF7A00'}>
             Back to sign in →
           </button>
         </p>

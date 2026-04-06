@@ -1,14 +1,16 @@
 ﻿import { ArrowLeft, Zap, Clock, CheckCircle2, Server } from 'lucide-react';
 import { getPlanMonthlyLabel } from '../config/pricingPlans';
 import { BrandMark } from './BrandLogo';
+import { useTheme } from '../contexts/ThemeContext';
 
 function Section({ id, title, children }) {
+  const { isDark } = useTheme();
   return (
     <section id={id} style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-      <h2 style={{ fontSize: 17, fontWeight: 700, color: '#f1f5f9', marginBottom: 4, borderBottom: '1px solid rgba(59,130,246,0.12)', paddingBottom: 10 }}>
+      <h2 style={{ fontSize: 17, fontWeight: 700, color: isDark ? '#FF7A00' : '#FF4D00', marginBottom: 4, borderBottom: `1px solid ${isDark ? 'rgba(255,77,0,0.12)' : 'rgba(255,77,0,0.15)'}`, paddingBottom: 10 }}>
         {title}
       </h2>
-      <div style={{ fontSize: 13, color: '#9ca3af', lineHeight: 1.8, display: 'flex', flexDirection: 'column', gap: 8 }}>
+      <div style={{ fontSize: 13, color: isDark ? '#9ca3af' : '#4b5563', lineHeight: 1.8, display: 'flex', flexDirection: 'column', gap: 8 }}>
         {children}
       </div>
     </section>
@@ -16,6 +18,7 @@ function Section({ id, title, children }) {
 }
 
 export default function ServicePolicy({ onBack }) {
+  const { isDark } = useTheme();
   const proMonthlyPrice = getPlanMonthlyLabel('pro');
   const eliteMonthlyPrice = getPlanMonthlyLabel('elite');
 
@@ -24,28 +27,32 @@ export default function ServicePolicy({ onBack }) {
   };
 
   return (
-    <div style={{ backgroundColor: '#0a0a0a', minHeight: '100vh', color: '#e2e8f0' }}>
+    <div className={isDark ? '' : 'legal-light'} style={{ backgroundColor: isDark ? '#0B0B0F' : '#f8fafc', minHeight: '100vh', color: isDark ? '#e2e8f0' : '#1e293b' }}>
+      <style>{`
+        .legal-light strong { color: #0f172a !important; }
+        .legal-light ul li { color: #4b5563 !important; }
+      `}</style>
       {/* Sticky header */}
       <div style={{
         position: 'sticky', top: 0, zIndex: 50,
-        backgroundColor: 'rgba(10,10,10,0.95)',
+        backgroundColor: isDark ? 'rgba(11,11,15,0.95)' : 'rgba(255,255,255,0.95)',
         backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)',
-        borderBottom: '1px solid rgba(59,130,246,0.15)',
+        borderBottom: isDark ? '1px solid rgba(255,77,0,0.15)' : '1px solid rgba(0,0,0,0.08)',
       }}>
         <div style={{ maxWidth: 860, margin: '0 auto', padding: '12px 24px', display: 'flex', alignItems: 'center', gap: 12 }}>
           <button onClick={handleBack} style={{ display: 'flex', alignItems: 'center', gap: 6, color: '#6b7280', fontSize: 13, cursor: 'pointer', background: 'none', border: 'none', padding: '4px 8px', borderRadius: 6 }}
-            onMouseEnter={e => (e.currentTarget.style.color = '#3b82f6')}
+            onMouseEnter={e => (e.currentTarget.style.color = '#FF7A00')}
             onMouseLeave={e => (e.currentTarget.style.color = '#6b7280')}>
             <ArrowLeft size={15} /> Back
           </button>
           <div style={{ width: 1, height: 18, backgroundColor: 'rgba(107,114,128,0.4)' }} />
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <Zap size={16} style={{ color: '#3b82f6' }} />
-            <span style={{ fontSize: 14, fontWeight: 600, color: '#e2e8f0' }}>Service &amp; Delivery Policy</span>
+            <Zap size={16} style={{ color: '#FF7A00' }} />
+            <span style={{ fontSize: 14, fontWeight: 600, color: isDark ? '#e2e8f0' : '#0f172a' }}>Service &amp; Delivery Policy</span>
           </div>
           <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 8 }}>
             <BrandMark size={30} />
-            <span style={{ fontSize: 13, fontWeight: 700, color: '#e2e8f0', letterSpacing: '0.04em' }}>Zynth</span>
+            <span style={{ fontSize: 13, fontWeight: 700, color: isDark ? '#e2e8f0' : '#0f172a', letterSpacing: '0.04em' }}>Zynth</span>
           </div>
         </div>
       </div>
@@ -53,26 +60,26 @@ export default function ServicePolicy({ onBack }) {
       {/* Content */}
       <div style={{ maxWidth: 860, margin: '0 auto', padding: '40px 24px 80px' }}>
         <div style={{ marginBottom: 40 }}>
-          <h1 style={{ fontSize: 30, fontWeight: 800, color: '#f1f5f9', marginBottom: 8 }}>Service &amp; Delivery Policy</h1>
+          <h1 style={{ fontSize: 30, fontWeight: 800, color: isDark ? '#f1f5f9' : '#0f172a', marginBottom: 8 }}>Service &amp; Delivery Policy</h1>
           <p style={{ fontSize: 13, color: '#6b7280' }}>Last updated: March 2026 &nbsp;·&nbsp; Applies to all Zynth subscription plans</p>
         </div>
 
         {/* Key stat boxes */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 14, marginBottom: 36 }}>
-          <div style={{ padding: '16px 18px', borderRadius: 10, backgroundColor: 'rgba(59,130,246,0.07)', border: '1px solid rgba(59,130,246,0.2)' }}>
+          <div style={{ padding: '16px 18px', borderRadius: 10, backgroundColor: isDark ? 'rgba(59,130,246,0.07)' : 'rgba(59,130,246,0.04)', border: '1px solid rgba(59,130,246,0.2)' }}>
             <Zap size={18} style={{ color: '#3b82f6', marginBottom: 8 }} />
             <p style={{ fontSize: 13, fontWeight: 700, color: '#3b82f6', marginBottom: 4 }}>Instant Access</p>
-            <p style={{ fontSize: 12, color: '#6b7280', lineHeight: 1.6 }}>Service access is granted immediately upon successful payment — no waiting period.</p>
+            <p style={{ fontSize: 12, color: isDark ? '#6b7280' : '#64748b', lineHeight: 1.6 }}>Service access is granted immediately upon successful payment — no waiting period.</p>
           </div>
-          <div style={{ padding: '16px 18px', borderRadius: 10, backgroundColor: 'rgba(14,165,233,0.07)', border: '1px solid rgba(14,165,233,0.2)' }}>
+          <div style={{ padding: '16px 18px', borderRadius: 10, backgroundColor: isDark ? 'rgba(14,165,233,0.07)' : 'rgba(14,165,233,0.04)', border: '1px solid rgba(14,165,233,0.2)' }}>
             <Server size={18} style={{ color: '#0ea5e9', marginBottom: 8 }} />
             <p style={{ fontSize: 13, fontWeight: 700, color: '#0ea5e9', marginBottom: 4 }}>100% Digital</p>
-            <p style={{ fontSize: 12, color: '#6b7280', lineHeight: 1.6 }}>All services are delivered digitally via the Zynth web platform. No physical goods are shipped.</p>
+            <p style={{ fontSize: 12, color: isDark ? '#6b7280' : '#64748b', lineHeight: 1.6 }}>All services are delivered digitally via the Zynth web platform. No physical goods are shipped.</p>
           </div>
-          <div style={{ padding: '16px 18px', borderRadius: 10, backgroundColor: 'rgba(245,158,11,0.07)', border: '1px solid rgba(245,158,11,0.2)' }}>
+          <div style={{ padding: '16px 18px', borderRadius: 10, backgroundColor: isDark ? 'rgba(245,158,11,0.07)' : 'rgba(245,158,11,0.04)', border: '1px solid rgba(245,158,11,0.2)' }}>
             <Clock size={18} style={{ color: '#f59e0b', marginBottom: 8 }} />
             <p style={{ fontSize: 13, fontWeight: 700, color: '#f59e0b', marginBottom: 4 }}>99% Uptime Target</p>
-            <p style={{ fontSize: 12, color: '#6b7280', lineHeight: 1.6 }}>We target 99% monthly uptime. Planned maintenance is communicated in advance where possible.</p>
+            <p style={{ fontSize: 12, color: isDark ? '#6b7280' : '#64748b', lineHeight: 1.6 }}>We target 99% monthly uptime. Planned maintenance is communicated in advance where possible.</p>
           </div>
         </div>
 
@@ -80,7 +87,7 @@ export default function ServicePolicy({ onBack }) {
 
           <Section id="service-description" title="1. Service Description">
             <p>
-              Zynth is an <strong style={{ color: '#e2e8f0' }}>AI-powered performance analytics platform</strong> delivered as a Software-as-a-Service (SaaS). Zynth is not a financial advisory service and does not provide investment, trading, or financial advice of any kind. All services are provided exclusively through the Zynth web application accessible at <a href="https://app.zynth.io" style={{ color: '#3b82f6', textDecoration: 'none' }}>app.zynth.io</a>.
+              Zynth is an <strong style={{ color: '#e2e8f0' }}>AI-powered performance analytics platform</strong> delivered as a Software-as-a-Service (SaaS). Zynth is not a financial advisory service and does not provide investment, trading, or financial advice of any kind. All services are provided exclusively through the Zynth web application accessible at <a href="https://app.zynth.io" style={{ color: '#FF7A00', textDecoration: 'none' }}>app.zynth.io</a>.
             </p>
             <p>The platform includes the following services depending on your subscription plan:</p>
             <ul style={{ paddingLeft: 20, display: 'flex', flexDirection: 'column', gap: 6 }}>
@@ -119,7 +126,7 @@ export default function ServicePolicy({ onBack }) {
               <li>AI analysis quotas (e.g. 50/month for Pro) reset on the 1st of each calendar month</li>
               <li>Unused quota does not roll over to the next month</li>
             </ul>
-            <p>AI-generated content is produced using Google Gemini and may occasionally produce inaccurate or incomplete results. See our <a href="/terms" style={{ color: '#3b82f6', textDecoration: 'none' }}>Terms of Service</a> AI disclaimer for full details.</p>
+            <p>AI-generated content is produced using Google Gemini and may occasionally produce inaccurate or incomplete results. See our <a href="/terms" style={{ color: '#FF7A00', textDecoration: 'none' }}>Terms of Service</a> AI disclaimer for full details.</p>
           </Section>
 
           <Section id="data-services" title="5. Contextual and Market Data Services">
@@ -155,23 +162,23 @@ export default function ServicePolicy({ onBack }) {
 
           <Section id="contact-service" title="8. Contact">
             <p>For service-related enquiries or technical support:</p>
-            <div style={{ backgroundColor: 'rgba(59,130,246,0.06)', border: '1px solid rgba(59,130,246,0.15)', borderRadius: 8, padding: '16px 20px', marginTop: 6, display: 'flex', flexDirection: 'column', gap: 6 }}>
-              <p style={{ fontSize: 14, color: '#3b82f6', fontWeight: 700 }}>Zynth Support</p>
-              <p style={{ fontSize: 13, color: '#9ca3af' }}>Email: <a href="mailto:getzynth@gmail.com" style={{ color: '#3b82f6', textDecoration: 'none' }}>getzynth@gmail.com</a></p>
-              <p style={{ fontSize: 13, color: '#9ca3af' }}>Address: Zynth, Azeem Town, Sihala Street 2, Islamabad, Pakistan</p>
-              <p style={{ fontSize: 13, color: '#9ca3af' }}>Phone: <a href="tel:+923175516692" style={{ color: '#3b82f6', textDecoration: 'none' }}>+92 317 5516692</a></p>
+            <div style={{ backgroundColor: isDark ? 'rgba(255,77,0,0.06)' : 'rgba(255,77,0,0.04)', border: `1px solid ${isDark ? 'rgba(255,77,0,0.15)' : 'rgba(255,77,0,0.2)'}`, borderRadius: 8, padding: '16px 20px', marginTop: 6, display: 'flex', flexDirection: 'column', gap: 6 }}>
+              <p style={{ fontSize: 14, color: '#FF7A00', fontWeight: 700 }}>Zynth Support</p>
+              <p style={{ fontSize: 13, color: isDark ? '#9ca3af' : '#4b5563' }}>Email: <a href="mailto:getzynth@gmail.com" style={{ color: '#FF7A00', textDecoration: 'none' }}>getzynth@gmail.com</a></p>
+              <p style={{ fontSize: 13, color: isDark ? '#9ca3af' : '#4b5563' }}>Address: Zynth, Azeem Town, Sihala Street 2, Islamabad, Pakistan</p>
+              <p style={{ fontSize: 13, color: isDark ? '#9ca3af' : '#4b5563' }}>Phone: <a href="tel:+923175516692" style={{ color: '#FF7A00', textDecoration: 'none' }}>+92 317 5516692</a></p>
             </div>
           </Section>
 
         </div>
 
         {/* Footer */}
-        <div style={{ marginTop: 48, borderTop: '1px solid rgba(59,130,246,0.1)', paddingTop: 24, display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
-          <p style={{ fontSize: 12, color: '#4b5563' }}>© 2026 Zynth. All rights reserved.</p>
+        <div style={{ marginTop: 48, borderTop: `1px solid ${isDark ? 'rgba(255,77,0,0.1)' : 'rgba(0,0,0,0.08)'}`, paddingTop: 24, display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
+          <p style={{ fontSize: 12, color: isDark ? '#4b5563' : '#94a3b8' }}>© 2026 Zynth. All rights reserved.</p>
           <div style={{ display: 'flex', gap: 16 }}>
-            <a href="/terms" style={{ fontSize: 12, color: '#6b7280', textDecoration: 'none' }} onMouseEnter={e => (e.currentTarget.style.color = '#3b82f6')} onMouseLeave={e => (e.currentTarget.style.color = '#6b7280')}>Terms of Service</a>
-            <a href="/privacy" style={{ fontSize: 12, color: '#6b7280', textDecoration: 'none' }} onMouseEnter={e => (e.currentTarget.style.color = '#3b82f6')} onMouseLeave={e => (e.currentTarget.style.color = '#6b7280')}>Privacy Policy</a>
-            <a href="/refund" style={{ fontSize: 12, color: '#6b7280', textDecoration: 'none' }} onMouseEnter={e => (e.currentTarget.style.color = '#3b82f6')} onMouseLeave={e => (e.currentTarget.style.color = '#6b7280')}>Refund Policy</a>
+            <a href="/terms" style={{ fontSize: 12, color: '#6b7280', textDecoration: 'none' }} onMouseEnter={e => (e.currentTarget.style.color = '#FF7A00')} onMouseLeave={e => (e.currentTarget.style.color = '#6b7280')}>Terms of Service</a>
+            <a href="/privacy" style={{ fontSize: 12, color: '#6b7280', textDecoration: 'none' }} onMouseEnter={e => (e.currentTarget.style.color = '#FF7A00')} onMouseLeave={e => (e.currentTarget.style.color = '#6b7280')}>Privacy Policy</a>
+            <a href="/refund" style={{ fontSize: 12, color: '#6b7280', textDecoration: 'none' }} onMouseEnter={e => (e.currentTarget.style.color = '#FF7A00')} onMouseLeave={e => (e.currentTarget.style.color = '#6b7280')}>Refund Policy</a>
           </div>
         </div>
       </div>

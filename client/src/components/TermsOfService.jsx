@@ -1,7 +1,9 @@
 ﻿import { ArrowLeft, Shield, AlertTriangle, FileText } from 'lucide-react';
 import { BrandMark } from './BrandLogo';
+import { useTheme } from '../contexts/ThemeContext';
 
 export default function TermsOfService({ onBack }) {
+  const { isDark } = useTheme();
   const handleBack = () => {
     if (onBack) {
       onBack();
@@ -11,17 +13,22 @@ export default function TermsOfService({ onBack }) {
   };
 
   return (
-    <div style={{ backgroundColor: '#0a0a0a', minHeight: '100vh', color: '#e2e8f0' }}>
+    <div className={isDark ? '' : 'legal-light'} style={{ backgroundColor: isDark ? '#0B0B0F' : '#f8fafc', minHeight: '100vh', color: isDark ? '#e2e8f0' : '#1e293b' }}>
+      <style>{`
+        .legal-light strong { color: #0f172a !important; }
+        .legal-light .tos-section li, .legal-light .tos-section p { color: #4b5563 !important; }
+        .legal-light a[href^="mailto:"], .legal-light a[href^="tel:"] { color: #FF7A00 !important; }
+      `}</style>
       {/* Sticky header */}
       <div
         style={{
           position: 'sticky',
           top: 0,
           zIndex: 50,
-          backgroundColor: 'rgba(10,10,10,0.95)',
+          backgroundColor: isDark ? 'rgba(11,11,15,0.95)' : 'rgba(255,255,255,0.95)',
           backdropFilter: 'blur(12px)',
           WebkitBackdropFilter: 'blur(12px)',
-          borderBottom: '1px solid rgba(16,185,129,0.15)',
+          borderBottom: isDark ? '1px solid rgba(255,77,0,0.15)' : '1px solid rgba(0,0,0,0.08)',
         }}
       >
         <div style={{ maxWidth: 860, margin: '0 auto', padding: '12px 24px', display: 'flex', alignItems: 'center', gap: 12 }}>
@@ -40,20 +47,20 @@ export default function TermsOfService({ onBack }) {
               borderRadius: 6,
               transition: 'color 0.15s',
             }}
-            onMouseEnter={e => (e.currentTarget.style.color = '#3b82f6')}
+            onMouseEnter={e => (e.currentTarget.style.color = '#FF7A00')}
             onMouseLeave={e => (e.currentTarget.style.color = '#6b7280')}
           >
             <ArrowLeft size={15} />
             Back
           </button>
-          <div style={{ width: 1, height: 18, backgroundColor: 'rgba(107,114,128,0.4)' }} />
+          <div style={{ width: 1, height: 18, backgroundColor: isDark ? 'rgba(107,114,128,0.4)' : 'rgba(0,0,0,0.12)' }} />
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <FileText size={16} style={{ color: '#3b82f6' }} />
-            <span style={{ fontSize: 14, fontWeight: 600, color: '#e2e8f0' }}>Terms of Service</span>
+            <FileText size={16} style={{ color: '#FF7A00' }} />
+            <span style={{ fontSize: 14, fontWeight: 600, color: isDark ? '#e2e8f0' : '#0f172a' }}>Terms of Service</span>
           </div>
           <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 8 }}>
             <BrandMark size={28} />
-            <span style={{ fontSize: 14, fontWeight: 700, color: '#e2e8f0' }}>Zynth</span>
+            <span style={{ fontSize: 14, fontWeight: 700, color: isDark ? '#e2e8f0' : '#0f172a' }}>Zynth</span>
           </div>
         </div>
       </div>
@@ -62,7 +69,7 @@ export default function TermsOfService({ onBack }) {
       <div style={{ maxWidth: 860, margin: '0 auto', padding: '40px 24px 80px' }}>
         {/* Title block */}
         <div style={{ marginBottom: 40 }}>
-          <h1 style={{ fontSize: 30, fontWeight: 800, color: '#f1f5f9', marginBottom: 8 }}>Terms of Service</h1>
+          <h1 style={{ fontSize: 30, fontWeight: 800, color: isDark ? '#f1f5f9' : '#0f172a', marginBottom: 8 }}>Terms of Service</h1>
           <p style={{ fontSize: 13, color: '#6b7280' }}>Last updated: March 2026 &nbsp;&middot;&nbsp; Effective immediately upon account creation</p>
         </div>
 
@@ -100,7 +107,7 @@ export default function TermsOfService({ onBack }) {
 
           {/* Section 2 */}
           <Section id="service" title="2. Nature of Service">
-            <p>Zynth is a <strong style={{ color: '#3b82f6' }}>software information platform</strong> that aggregates and displays:</p>
+            <p>Zynth is a <strong style={{ color: '#FF7A00' }}>software information platform</strong> that aggregates and displays:</p>
             <ul>
               <li>Macroeconomic data from public and licensed sources (e.g. FRED, BLS, BEA)</li>
               <li>Market data feeds and price information</li>
@@ -262,7 +269,7 @@ export default function TermsOfService({ onBack }) {
               <li style={{ marginBottom: 6 }}>Abuse of the refund policy (e.g., repeated usage and refund requests) may result in denial of future refunds.</li>
             </ul>
 
-            <p>To request a refund or cancel your subscription, contact: <a href="mailto:getzynth@gmail.com" style={{ color: '#3b82f6', textDecoration: 'none' }} onMouseEnter={e => (e.currentTarget.style.textDecoration = 'underline')} onMouseLeave={e => (e.currentTarget.style.textDecoration = 'none')}>getzynth@gmail.com</a></p>
+            <p>To request a refund or cancel your subscription, contact: <a href="mailto:getzynth@gmail.com" style={{ color: '#FF7A00', textDecoration: 'none' }} onMouseEnter={e => (e.currentTarget.style.textDecoration = 'underline')} onMouseLeave={e => (e.currentTarget.style.textDecoration = 'none')}>getzynth@gmail.com</a></p>
 
             <p style={{ fontWeight: 700, marginTop: 14 }}>Cancellation</p>
             <ul style={{ paddingLeft: 20, margin: '8px 0' }}>
@@ -277,8 +284,8 @@ export default function TermsOfService({ onBack }) {
             <p>If you have questions about these Terms of Service, privacy practices, or need to request account deletion, please contact:</p>
             <div
               style={{
-                backgroundColor: 'rgba(16,185,129,0.06)',
-                border: '1px solid rgba(16,185,129,0.15)',
+              backgroundColor: isDark ? 'rgba(16,185,129,0.06)' : 'rgba(255,77,0,0.04)',
+              border: isDark ? '1px solid rgba(16,185,129,0.15)' : '1px solid rgba(255,77,0,0.15)',
                 borderRadius: 8,
                 padding: '16px 20px',
                 marginTop: 10,
@@ -287,12 +294,12 @@ export default function TermsOfService({ onBack }) {
                 gap: 6,
               }}
             >
-              <p style={{ fontSize: 14, color: '#3b82f6', fontWeight: 700 }}>Zynth</p>
+              <p style={{ fontSize: 14, color: '#FF7A00', fontWeight: 700 }}>Zynth</p>
               <p style={{ fontSize: 13, color: '#9ca3af' }}>
                 Email:{' '}
                 <a
                   href="mailto:getzynth@gmail.com"
-                  style={{ color: '#3b82f6', textDecoration: 'none' }}
+                  style={{ color: '#FF7A00', textDecoration: 'none' }}
                   onMouseEnter={e => (e.currentTarget.style.textDecoration = 'underline')}
                   onMouseLeave={e => (e.currentTarget.style.textDecoration = 'none')}
                 >
@@ -302,7 +309,7 @@ export default function TermsOfService({ onBack }) {
               <p style={{ fontSize: 13, color: '#9ca3af' }}>Address: Zynth, Azeem Town, Sihala Street 2, Islamabad, Pakistan</p>
               <p style={{ fontSize: 13, color: '#9ca3af' }}>
                 Phone:{' '}
-                <a href="tel:+923175516692" style={{ color: '#3b82f6', textDecoration: 'none' }}
+                <a href="tel:+923175516692" style={{ color: '#FF7A00', textDecoration: 'none' }}
                   onMouseEnter={e => (e.currentTarget.style.textDecoration = 'underline')}
                   onMouseLeave={e => (e.currentTarget.style.textDecoration = 'none')}
                 >+92 317 5516692</a>
@@ -316,7 +323,7 @@ export default function TermsOfService({ onBack }) {
         <div
           style={{
             marginTop: 48,
-            borderTop: '1px solid rgba(16,185,129,0.1)',
+            borderTop: isDark ? '1px solid rgba(255,77,0,0.1)' : '1px solid rgba(0,0,0,0.08)',
             paddingTop: 24,
             display: 'flex',
             alignItems: 'center',
@@ -324,10 +331,10 @@ export default function TermsOfService({ onBack }) {
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <Shield size={14} style={{ color: '#3b82f6' }} />
-            <span style={{ fontSize: 11, color: '#4b5563' }}>Zynth Trading Intelligence Platform</span>
+            <Shield size={14} style={{ color: '#FF7A00' }} />
+            <span style={{ fontSize: 11, color: isDark ? '#4b5563' : '#94a3b8' }}>Zynth Trading Intelligence Platform</span>
           </div>
-          <span style={{ fontSize: 11, color: '#4b5563' }}>&copy; {new Date().getFullYear()} Zynth. All rights reserved.</span>
+          <span style={{ fontSize: 11, color: isDark ? '#4b5563' : '#94a3b8' }}>&copy; {new Date().getFullYear()} Zynth. All rights reserved.</span>
         </div>
       </div>
     </div>
@@ -335,21 +342,22 @@ export default function TermsOfService({ onBack }) {
 }
 
 function Section({ id, title, children }) {
+  const { isDark } = useTheme();
   return (
     <section id={id}>
       <style>{`
         .tos-section ul { list-style: disc; padding-left: 20px; display: flex; flex-direction: column; gap: 4px; }
-        .tos-section li { font-size: 13px; color: #9ca3af; line-height: 1.7; }
+        .tos-section li { font-size: 13px; color: ${isDark ? '#9ca3af' : '#4b5563'}; line-height: 1.7; }
         .tos-section p  { margin: 0; }
       `}</style>
       <h2
         style={{
           fontSize: 15,
           fontWeight: 700,
-          color: '#34d399',
+          color: isDark ? '#FF7A00' : '#FF4D00',
           marginBottom: 12,
           paddingBottom: 8,
-          borderBottom: '1px solid rgba(16,185,129,0.12)',
+          borderBottom: isDark ? '1px solid rgba(255,77,0,0.12)' : '1px solid rgba(255,77,0,0.15)',
         }}
       >
         {title}
@@ -358,7 +366,7 @@ function Section({ id, title, children }) {
         className="tos-section"
         style={{
           fontSize: 13,
-          color: '#9ca3af',
+          color: isDark ? '#9ca3af' : '#4b5563',
           lineHeight: 1.75,
           display: 'flex',
           flexDirection: 'column',

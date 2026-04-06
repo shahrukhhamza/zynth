@@ -11,9 +11,9 @@ function Reveal({ children, delay = 0, className = '' }) {
     <motion.div
       ref={ref}
       className={className}
-      initial={{ opacity: 0, y: 20 }}
-      animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.56, ease: [0.22, 1, 0.36, 1], delay }}
+      initial={{ opacity: 0, y: 28, filter: 'blur(6px)', scale: 0.97 }}
+      animate={inView ? { opacity: 1, y: 0, filter: 'blur(0px)', scale: 1 } : {}}
+      transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1], delay }}
     >
       {children}
     </motion.div>
@@ -78,11 +78,16 @@ export default function HowItWorks({ onGetStarted }) {
             return (
               <Reveal key={step.number} delay={i * 0.1}>
                 <div
-                  className="rounded-2xl p-7 border h-full transition-all duration-300 hover:-translate-y-1"
+                  className="rounded-2xl p-7 border h-full"
                   style={{
-                    background: isDark ? '#111113' : '#ffffff',
+                    background: isDark ? 'rgba(255,255,255,0.03)' : '#ffffff',
                     borderColor: isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.07)',
+                    backdropFilter: isDark ? 'blur(12px)' : 'none',
+                    boxShadow: isDark ? '0 4px 24px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.04)' : '0 1px 3px rgba(0,0,0,0.04)',
+                    transition: 'all 0.4s cubic-bezier(0.22, 1, 0.36, 1)',
                   }}
+                  onMouseEnter={e => { if (isDark) { e.currentTarget.style.borderColor = 'rgba(255,100,0,0.25)'; e.currentTarget.style.boxShadow = '0 20px 50px rgba(0,0,0,0.5), 0 0 30px rgba(255,77,0,0.08)'; e.currentTarget.style.transform = 'translateY(-4px)'; } }}
+                  onMouseLeave={e => { if (isDark) { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.07)'; e.currentTarget.style.boxShadow = '0 4px 24px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.04)'; e.currentTarget.style.transform = 'translateY(0)'; } }}
                 >
                   <div
                     className="w-10 h-10 rounded-xl flex items-center justify-center mb-5"

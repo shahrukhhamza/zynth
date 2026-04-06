@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { ArrowRight, Bot, Globe } from 'lucide-react';
-import { motion, animate, useMotionValue, useInView } from 'framer-motion';
+import { ArrowRight, Bot, Globe, TrendingUp, BarChart2, Wallet } from 'lucide-react';
+import { motion, animate, useMotionValue, useInView, useScroll, useTransform, useSpring } from 'framer-motion';
 import { useTheme } from '../contexts/ThemeContext';
 
 // ─── Counter ──────────────────────────────────────────────────────────────────
@@ -23,333 +23,544 @@ function Counter({ from = 0, to, duration = 2, suffix = '', prefix = '' }) {
   return <span ref={ref}>{prefix}{display}{suffix}</span>;
 }
 
-// ─── Product Preview ─────────────────────────────────────────────────────────
-function ProductPreview({ isDark }) {
-  const [visibleInsights, setVisibleInsights] = useState(1);
-  const allInsights = [
-    { type: 'warn',    msg: 'Revenge trade pattern — 3× avg size',  val: '−$420' },
-    { type: 'success', msg: 'Peak window confirmed: 9:30–10:15am',  val: '+67% WR' },
-    { type: 'warn',    msg: 'Overtrading after loss detected',       val: '+38% freq' },
-  ];
-
-  useEffect(() => {
-    if (visibleInsights >= allInsights.length) return;
-    const t = setTimeout(() => setVisibleInsights(v => v + 1), 1600);
-    return () => clearTimeout(t);
-  }, [visibleInsights, allInsights.length]);
-
-  const BARS = [42, 65, 38, 78, 55, 90, 71];
-
+// ─── Floating Badge ──────────────────────────────────────────────────────────
+function FloatingBadge({ label, icon, top, left, right, bottom, delay = 0 }) {
   return (
-    <div
-      className="rounded-2xl overflow-hidden select-none"
+    <motion.div
+      initial={{ opacity: 0, scale: 0.8 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.7, delay, ease: [0.22, 1, 0.36, 1] }}
+      className="absolute hidden lg:flex items-center gap-2 px-4 py-2 rounded-full select-none"
       style={{
-        background: '#0a0a0c',
+        top, left, right, bottom,
+        background: 'rgba(255,255,255,0.04)',
         border: '1px solid rgba(255,255,255,0.08)',
-        boxShadow: isDark
-          ? '0 40px 80px -20px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.04)'
-          : '0 28px 60px -16px rgba(0,0,0,0.22), 0 0 0 1px rgba(255,255,255,0.08)',
+        backdropFilter: 'blur(12px)',
+        color: '#a1a1aa',
+        fontSize: 13,
+        fontWeight: 500,
+        zIndex: 5,
       }}
     >
-      {/* Browser chrome */}
-      <div style={{
-        background: '#111113',
-        borderBottom: '1px solid rgba(255,255,255,0.06)',
-        padding: '10px 16px',
-        display: 'flex', alignItems: 'center', gap: 10,
-      }}>
-        <div style={{ display: 'flex', gap: 5.5 }}>
-          {['#ff5f57', '#ffbd2e', '#28ca41'].map(c => (
-            <div key={c} style={{ width: 11, height: 11, borderRadius: '50%', background: c }} />
-          ))}
-        </div>
-        <div style={{
-          flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5,
-          background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)',
-          borderRadius: 6, padding: '3px 10px',
-          color: 'rgba(148,163,184,0.35)', fontSize: 10, fontFamily: 'monospace',
-        }}>
-          <Globe size={8} />
-          app.zynth.codes
-        </div>
-        <div style={{ width: 40 }} />
-      </div>
+      <motion.div
+        animate={{ y: [0, -6, 0] }}
+        transition={{ duration: 3 + delay, repeat: Infinity, ease: 'easeInOut' }}
+        className="flex items-center gap-2"
+      >
+        {icon && <span style={{ fontSize: 14 }}>{icon}</span>}
+        {label}
+      </motion.div>
+    </motion.div>
+  );
+}
 
-      {/* Stats row */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
-        {[
-          { label: 'WIN RATE', value: '67%',     delta: '+4% wk' },
-          { label: 'NET P&L',  value: '+$2,847', delta: 'this mo.' },
-          { label: 'SCORE',    value: '81/100',  delta: '+14 pts' },
-        ].map((s, i) => (
-          <div key={s.label} style={{
-            padding: '14px 16px',
-            borderRight: i < 2 ? '1px solid rgba(255,255,255,0.04)' : 'none',
-          }}>
-            <div style={{ fontSize: 9, color: 'rgba(148,163,184,0.3)', letterSpacing: '0.1em', fontFamily: 'monospace', marginBottom: 5 }}>{s.label}</div>
-            <div style={{ fontSize: 17, fontWeight: 700, color: '#f4f4f5', fontFamily: 'monospace', letterSpacing: '-0.02em' }}>{s.value}</div>
-            <div style={{ fontSize: 10, color: '#22c55e', marginTop: 3, fontFamily: 'monospace' }}>{s.delta}</div>
+// ─── Markets Card (left) ─────────────────────────────────────────────────────
+function MarketsCard() {
+  const assets = [
+    { symbol: 'EUR/USD', price: '1.0847', change: '+0.24%', color: '#22c55e', icon: '💱' },
+    { symbol: 'GBP/USD', price: '1.2695', change: '-0.08%', color: '#ef4444', icon: '📊' },
+    { symbol: 'SPX500', price: '5,234.18', change: '+1.2%', color: '#22c55e', icon: '📈' },
+  ];
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, x: -40, y: 20 }}
+      animate={{ opacity: 1, x: 0, y: 0 }}
+      transition={{ duration: 0.8, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
+      whileHover={{ y: -8, transition: { duration: 0.35, ease: 'easeOut' } }}
+      className="rounded-2xl overflow-hidden group/card"
+      style={{
+        background: 'rgba(17,17,21,0.85)',
+        border: '1px solid rgba(255,255,255,0.08)',
+        backdropFilter: 'blur(20px)',
+        boxShadow: '0 20px 60px rgba(0,0,0,0.5)',
+        width: 220,
+        transition: 'border-color 0.4s ease, box-shadow 0.4s ease',
+      }}
+      onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(255,100,0,0.25)'; e.currentTarget.style.boxShadow = '0 25px 70px rgba(0,0,0,0.6), 0 0 30px rgba(255,77,0,0.1)'; }}
+      onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)'; e.currentTarget.style.boxShadow = '0 20px 60px rgba(0,0,0,0.5)'; }}
+    >
+      <div className="flex items-center justify-between px-4 pt-4 pb-2">
+        <span style={{ fontSize: 14, fontWeight: 700, color: '#f4f4f5' }}>Markets</span>
+        <span style={{ fontSize: 11, color: '#FF5500', fontWeight: 600, cursor: 'pointer' }}>See All</span>
+      </div>
+      {assets.map((a, i) => (
+        <div
+          key={a.symbol}
+          className="flex items-center gap-3 px-4 py-2.5"
+          style={{ borderTop: i > 0 ? '1px solid rgba(255,255,255,0.04)' : 'none' }}
+        >
+          <span style={{ fontSize: 16 }}>{a.icon}</span>
+          <div className="flex-1 min-w-0">
+            <div style={{ fontSize: 13, fontWeight: 600, color: '#f4f4f5' }}>{a.symbol}</div>
+            <div style={{ fontSize: 10, color: '#52525b' }}>Market</div>
           </div>
-        ))}
-      </div>
-
-      {/* Bar chart */}
-      <div style={{ padding: '14px 16px 10px', borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 9 }}>
-          <span style={{ fontSize: 9, color: 'rgba(148,163,184,0.35)', fontFamily: 'monospace', letterSpacing: '0.09em' }}>7D PERFORMANCE</span>
-          <span style={{ fontSize: 10, color: '#22c55e', fontFamily: 'monospace', fontWeight: 600 }}>+12.4%</span>
-        </div>
-        <div style={{ display: 'flex', alignItems: 'flex-end', gap: 4, height: 44 }}>
-          {BARS.map((h, i) => (
-            <div key={i} style={{
-              flex: 1, height: `${h}%`, borderRadius: 2,
-              background: i === 5 ? '#2563eb' : 'rgba(255,255,255,0.07)',
-            }} />
-          ))}
-        </div>
-        <div style={{ display: 'flex', marginTop: 5 }}>
-          {['M','T','W','T','F','S','S'].map((d, i) => (
-            <span key={i} style={{ flex: 1, textAlign: 'center', fontSize: 9, color: 'rgba(148,163,184,0.2)', fontFamily: 'monospace' }}>{d}</span>
-          ))}
-        </div>
-      </div>
-
-      {/* AI Insights */}
-      <div style={{ padding: '14px 16px 16px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 10 }}>
-          <Bot size={10} style={{ color: '#3b82f6' }} />
-          <span style={{ fontSize: 9, color: 'rgba(148,163,184,0.35)', fontFamily: 'monospace', letterSpacing: '0.1em' }}>AI BEHAVIORAL INSIGHTS</span>
-          <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 4 }}>
-            <div style={{ width: 5, height: 5, borderRadius: '50%', background: '#22c55e', boxShadow: '0 0 5px rgba(34,197,94,0.7)' }} />
-            <span style={{ fontSize: 9, color: '#22c55e', fontFamily: 'monospace' }}>LIVE</span>
+          <div className="text-right">
+            <div style={{ fontSize: 12, fontWeight: 600, color: '#f4f4f5' }}>{a.price}</div>
+            <div style={{ fontSize: 10, color: a.color, fontWeight: 500 }}>{a.change}</div>
           </div>
         </div>
-        {allInsights.slice(0, visibleInsights).map((ins, i) => (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0, y: 5 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+      ))}
+    </motion.div>
+  );
+}
+
+// ─── Balance Card (center) ───────────────────────────────────────────────────
+function BalanceCard() {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.8, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
+      whileHover={{ y: -8, transition: { duration: 0.35, ease: 'easeOut' } }}
+      className="rounded-2xl overflow-hidden relative"
+      style={{
+        background: 'rgba(17,17,21,0.9)',
+        border: '1px solid rgba(255,255,255,0.08)',
+        backdropFilter: 'blur(20px)',
+        boxShadow: '0 30px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.03)',
+        width: 280,
+        transition: 'border-color 0.4s ease, box-shadow 0.4s ease',
+      }}
+      onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(255,100,0,0.3)'; e.currentTarget.style.boxShadow = '0 35px 90px rgba(0,0,0,0.7), 0 0 40px rgba(255,77,0,0.12)'; }}
+      onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)'; e.currentTarget.style.boxShadow = '0 30px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.03)'; }}
+    >
+      {/* Top nav */}
+      <div className="flex items-center justify-between px-5 pt-4 pb-3">
+        <span style={{ color: '#52525b', fontSize: 16 }}>☰</span>
+        <div className="flex items-center gap-3">
+          <span style={{ color: '#52525b', fontSize: 14 }}>🏠</span>
+          <span style={{ color: '#52525b', fontSize: 14 }}>🔍</span>
+        </div>
+      </div>
+
+      {/* Tabs */}
+      <div className="flex items-center gap-1 px-5 pb-3">
+        {['Home', 'Leverage', 'Earn', 'NFT'].map((tab, i) => (
+          <span
+            key={tab}
+            className="px-3 py-1 rounded-full text-[11px] font-medium"
             style={{
-              display: 'flex', alignItems: 'center', gap: 10,
-              padding: '8px 10px', borderRadius: 6, marginBottom: i < allInsights.length - 1 ? 5 : 0,
-              background: ins.type === 'success' ? 'rgba(34,197,94,0.05)' : 'rgba(239,68,68,0.05)',
-              border: `1px solid ${ins.type === 'success' ? 'rgba(34,197,94,0.14)' : 'rgba(239,68,68,0.14)'}`,
+              background: i === 0 ? 'rgba(255,85,0,0.15)' : 'transparent',
+              color: i === 0 ? '#FF7A00' : '#52525b',
+              border: i === 0 ? '1px solid rgba(255,85,0,0.25)' : '1px solid transparent',
             }}
           >
-            <span style={{ color: ins.type === 'success' ? '#22c55e' : '#f87171', fontSize: 10, flexShrink: 0, fontFamily: 'monospace' }}>
-              {ins.type === 'success' ? '✓' : '!'}
-            </span>
-            <span style={{ fontSize: 11, color: 'rgba(226,232,240,0.55)', flex: 1, fontFamily: 'monospace' }}>{ins.msg}</span>
-            <span style={{ fontSize: 11, fontWeight: 700, color: ins.type === 'success' ? '#22c55e' : '#f87171', fontFamily: 'monospace', flexShrink: 0 }}>{ins.val}</span>
-          </motion.div>
+            {tab}
+          </span>
         ))}
-        {visibleInsights < allInsights.length && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginTop: 7 }}>
-            <span style={{ color: 'rgba(148,163,184,0.25)', fontFamily: 'monospace', fontSize: 10 }}>$</span>
-            <motion.div
-              animate={{ opacity: [1, 0, 1] }}
-              transition={{ duration: 0.9, repeat: Infinity }}
-              style={{ width: 7, height: 13, background: 'rgba(59,130,246,0.45)', borderRadius: 1 }}
-            />
-          </div>
-        )}
       </div>
-    </div>
+
+      {/* Balance */}
+      <div className="px-5 pb-4">
+        <div style={{ fontSize: 28, fontWeight: 800, color: '#f4f4f5', letterSpacing: '-0.03em' }}>
+          $15,4<span style={{ color: '#71717a' }}>,75</span> <span style={{ fontSize: 12, color: '#52525b', fontWeight: 500 }}>USD</span>
+        </div>
+        <div className="mt-1 text-[11px]" style={{ color: '#52525b' }}>Total Balance</div>
+      </div>
+
+      {/* Mini chart */}
+      <div className="px-5 pb-3">
+        <svg viewBox="0 0 240 50" className="w-full" style={{ height: 50 }}>
+          <path
+            d="M0,40 C20,35 40,42 60,30 C80,18 100,25 120,20 C140,15 160,22 180,12 C200,8 220,18 240,15"
+            fill="none"
+            stroke="rgba(255,255,255,0.15)"
+            strokeWidth="1.5"
+          />
+          <motion.path
+            d="M0,40 C20,35 40,42 60,30 C80,18 100,25 120,20 C140,15 160,22 180,12 C200,8 220,18 240,15"
+            fill="none"
+            stroke="url(#chartGradient)"
+            strokeWidth="2"
+            initial={{ pathLength: 0 }}
+            animate={{ pathLength: 1 }}
+            transition={{ duration: 2, delay: 0.8, ease: [0.22, 1, 0.36, 1] }}
+          />
+          <defs>
+            <linearGradient id="chartGradient" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stopColor="#FF4D00" stopOpacity="0.6" />
+              <stop offset="100%" stopColor="#f4f4f5" />
+            </linearGradient>
+          </defs>
+          <motion.circle
+            cx="240" cy="15" r="3"
+            fill="#f4f4f5"
+            initial={{ opacity: 0, scale: 0 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 2.8, duration: 0.4 }}
+          />
+        </svg>
+      </div>
+
+      {/* Bottom stats */}
+      <div className="flex items-center justify-between px-5 pb-4">
+        <span style={{ fontSize: 11, color: '#52525b' }}>~$432.49</span>
+        <span style={{ fontSize: 11, color: '#22c55e', fontWeight: 600 }}>[+12%]</span>
+      </div>
+    </motion.div>
+  );
+}
+
+// ─── Exchange Card (right) ───────────────────────────────────────────────────
+function ExchangeCard() {
+  const pairs = [
+    { symbol: 'NAS100', arrow: '↗', price: '18,245.60', high: '18,410', color: '#22c55e' },
+    { symbol: 'XAUUSD', arrow: '↘', price: '2,347.85', high: '2,431', color: '#ef4444' },
+  ];
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, x: 40, y: 20 }}
+      animate={{ opacity: 1, x: 0, y: 0 }}
+      transition={{ duration: 0.8, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
+      whileHover={{ y: -8, transition: { duration: 0.35, ease: 'easeOut' } }}
+      className="rounded-2xl overflow-hidden"
+      style={{
+        background: 'rgba(17,17,21,0.85)',
+        border: '1px solid rgba(255,255,255,0.08)',
+        backdropFilter: 'blur(20px)',
+        boxShadow: '0 20px 60px rgba(0,0,0,0.5)',
+        width: 230,
+        transition: 'border-color 0.4s ease, box-shadow 0.4s ease',
+      }}
+      onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(255,100,0,0.25)'; e.currentTarget.style.boxShadow = '0 25px 70px rgba(0,0,0,0.6), 0 0 30px rgba(255,77,0,0.1)'; }}
+      onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)'; e.currentTarget.style.boxShadow = '0 20px 60px rgba(0,0,0,0.5)'; }}
+    >
+      <div className="flex items-center justify-between px-4 pt-4 pb-2">
+        <span style={{ fontSize: 14, fontWeight: 700, color: '#f4f4f5' }}>Trade Exchange</span>
+        <span style={{ color: '#52525b', fontSize: 14 }}>⋮</span>
+      </div>
+
+      {/* Tabs */}
+      <div className="flex items-center gap-2 px-4 pb-3">
+        {['USD/ETH', 'Forex', '24 hrs'].map((tab, i) => (
+          <span
+            key={tab}
+            className="px-2.5 py-1 rounded text-[10px] font-medium"
+            style={{
+              background: i === 0 ? 'rgba(255,255,255,0.06)' : 'transparent',
+              color: i === 0 ? '#f4f4f5' : '#52525b',
+              border: '1px solid rgba(255,255,255,0.06)',
+            }}
+          >
+            {tab}
+          </span>
+        ))}
+      </div>
+
+      {pairs.map((p, i) => (
+        <div
+          key={p.symbol}
+          className="flex items-center gap-3 px-4 py-3"
+          style={{ borderTop: '1px solid rgba(255,255,255,0.04)' }}
+        >
+          <span style={{ color: p.color, fontSize: 12, fontWeight: 700 }}>{p.arrow}</span>
+          <div className="flex-1">
+            <div style={{ fontSize: 13, fontWeight: 600, color: '#f4f4f5' }}>{p.symbol} →</div>
+            <div style={{ fontSize: 18, fontWeight: 700, color: '#f4f4f5' }}>{p.price}</div>
+          </div>
+          <div className="text-right">
+            <div style={{ fontSize: 10, color: '#52525b' }}>Peak</div>
+            <div style={{ fontSize: 12, fontWeight: 600, color: '#a1a1aa' }}>{p.high}</div>
+          </div>
+        </div>
+      ))}
+    </motion.div>
   );
 }
 
 // ─── Hero ─────────────────────────────────────────────────────────────────────
 export default function Hero({ spotsLeft, onGetStarted, onSignIn }) {
   const { isDark } = useTheme();
+  const sectionRef = useRef(null);
+  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ['start start', 'end start'] });
+  const parallaxY = useTransform(scrollYProgress, [0, 1], [0, 120]);
+  const parallaxOrbY = useTransform(scrollYProgress, [0, 1], [0, 80]);
+  const parallaxScale = useTransform(scrollYProgress, [0, 1], [1, 1.08]);
+  const smoothParallaxY = useSpring(parallaxY, { stiffness: 100, damping: 30 });
+  const smoothOrbY = useSpring(parallaxOrbY, { stiffness: 80, damping: 25 });
+
+  const staggerContainer = {
+    animate: { transition: { staggerChildren: 0.1, delayChildren: 0.05 } },
+  };
 
   const fadeUp = (delay = 0) => ({
-    initial: { opacity: 0, y: 18 },
-    animate: { opacity: 1, y: 0 },
-    transition: { duration: 0.65, delay, ease: [0.22, 1, 0.36, 1] },
+    initial: { opacity: 0, y: 24, filter: 'blur(8px)' },
+    animate: { opacity: 1, y: 0, filter: 'blur(0px)' },
+    transition: { duration: 0.75, delay, ease: [0.22, 1, 0.36, 1] },
   });
 
-  const AVATARS = [
-    { initial: 'D', bg: '#1d4ed8' }, { initial: 'P', bg: '#6d28d9' },
-    { initial: 'J', bg: '#0f766e' }, { initial: 'T', bg: '#b45309' },
-    { initial: 'L', bg: '#be185d' },
-  ];
-
   return (
-    <section className="relative overflow-hidden" style={{ padding: '108px 24px 120px' }}>
+    <section ref={sectionRef} className="relative overflow-hidden" style={{ padding: '80px 24px 60px' }}>
 
-      {/* Subtle grid */}
-      <div className="absolute inset-0 pointer-events-none" style={{
+      {/* ── Premium CSS Animations ── */}
+      <style>{`
+        @keyframes hero-shimmer {
+          0%, 100% { background-position: -200% center; }
+          50% { background-position: 200% center; }
+        }
+        @keyframes hero-glow-pulse {
+          0%, 100% { box-shadow: 0 4px 28px rgba(255,77,0,0.4), 0 0 0 0 rgba(255,100,0,0.3); }
+          50% { box-shadow: 0 8px 40px rgba(255,77,0,0.55), 0 0 0 8px rgba(255,100,0,0); }
+        }
+        @keyframes hero-orb-breathe {
+          0%, 100% { opacity: 0.14; transform: translateX(-50%) scale(1); }
+          50% { opacity: 0.2; transform: translateX(-50%) scale(1.05); }
+        }
+        @keyframes hero-grid-move {
+          0% { transform: translateY(0); }
+          100% { transform: translateY(60px); }
+        }
+        @keyframes hero-float-gentle {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-10px); }
+        }
+      `}</style>
+
+      {/* ── Layer 1: Base radial gradients ── */}
+      {isDark && (
+        <motion.div className="absolute inset-0 pointer-events-none" style={{
+          y: smoothParallaxY,
+          background:
+            'radial-gradient(circle at 50% 15%, rgba(255,80,0,0.18) 0%, transparent 45%),' +
+            'radial-gradient(circle at 50% 10%, rgba(255,60,0,0.12) 0%, transparent 55%),' +
+            'radial-gradient(circle at 80% 20%, rgba(255,110,0,0.06) 0%, transparent 40%),' +
+            'radial-gradient(circle at 20% 25%, rgba(180,50,0,0.05) 0%, transparent 38%)',
+        }} />
+      )}
+
+      {/* ── Layer 2: Large centered orange orb (breathing + parallax) ── */}
+      {isDark && (
+        <>
+          <motion.div className="absolute pointer-events-none" style={{
+            top: '-25%', left: '50%', transform: 'translateX(-50%)',
+            width: '80vw', height: '80vh', maxWidth: 900,
+            background: 'radial-gradient(circle, rgba(255,70,0,0.14) 0%, rgba(255,50,0,0.08) 30%, rgba(200,40,0,0.03) 55%, transparent 70%)',
+            filter: 'blur(40px)',
+            y: smoothOrbY,
+            scale: parallaxScale,
+            animation: 'hero-orb-breathe 6s ease-in-out infinite',
+          }} />
+          <motion.div className="absolute pointer-events-none" style={{
+            top: '-30%', left: '50%', transform: 'translateX(-50%)',
+            width: '100vw', height: '90vh', maxWidth: 1200,
+            background: 'radial-gradient(circle, transparent 35%, rgba(255,60,0,0.04) 45%, transparent 60%)',
+            filter: 'blur(30px)',
+            y: smoothOrbY,
+          }} />
+        </>
+      )}
+
+      {/* ── Layer 3: Fine grid texture (subtle scroll) ── */}
+      <motion.div className="absolute inset-0 pointer-events-none" style={{
+        y: useTransform(scrollYProgress, [0, 1], [0, 60]),
         backgroundImage: isDark
-          ? 'linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px)'
-          : 'linear-gradient(rgba(0,0,0,0.028) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.028) 1px, transparent 1px)',
-        backgroundSize: '64px 64px',
+          ? 'linear-gradient(rgba(255,255,255,0.022) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.022) 1px, transparent 1px)'
+          : 'linear-gradient(rgba(0,0,0,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.025) 1px, transparent 1px)',
+        backgroundSize: '60px 60px',
+        maskImage: isDark
+          ? 'radial-gradient(ellipse 70% 70% at 50% 10%, rgba(0,0,0,0.5) 0%, transparent 70%)'
+          : undefined,
+        WebkitMaskImage: isDark
+          ? 'radial-gradient(ellipse 70% 70% at 50% 10%, rgba(0,0,0,0.5) 0%, transparent 70%)'
+          : undefined,
       }} />
-      {/* Vignette over grid edges */}
+      {isDark && (
+        <div className="absolute inset-0 pointer-events-none" style={{
+          opacity: 0.03,
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='grain'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23grain)'/%3E%3C/svg%3E")`,
+          backgroundSize: '160px 160px',
+        }} />
+      )}
+
+      {/* ── Layer 5: Vignette ── */}
       <div className="absolute inset-0 pointer-events-none" style={{
         background: isDark
-          ? 'radial-gradient(ellipse 90% 55% at 50% -10%, transparent 45%, #09090b 85%)'
+          ? 'radial-gradient(ellipse 90% 90% at 50% 10%, transparent 30%, rgba(11,11,15,0.7) 70%, rgba(11,11,15,0.97) 100%)'
           : 'radial-gradient(ellipse 90% 55% at 50% -10%, transparent 45%, #f8fafc 85%)',
       }} />
-      {/* Single focused glow */}
-      <div className="absolute pointer-events-none" style={{
-        top: '-5%', left: '20%', width: '65vw', height: '55vh',
-        background: isDark
-          ? 'radial-gradient(ellipse, rgba(37,99,235,0.055) 0%, transparent 65%)'
-          : 'radial-gradient(ellipse, rgba(37,99,235,0.065) 0%, transparent 65%)',
-        filter: 'blur(60px)',
-      }} />
 
-      <div className="relative z-10 max-w-7xl mx-auto">
-        <div className="grid lg:grid-cols-2 gap-16 xl:gap-24 items-center">
+      {/* ── Floating Badges ── */}
+      {isDark && (
+        <>
+          <FloatingBadge label="Smart Journal" icon="📊" top="18%" left="8%" delay={0.4} />
+          <FloatingBadge label="AI Analysis" icon="🔗" top="42%" left="5%" delay={0.55} />
+          <FloatingBadge label="Risk Alerts" icon="⚡" top="15%" right="10%" delay={0.5} />
+          <FloatingBadge label="Trade Score" icon="💎" top="38%" right="6%" delay={0.6} />
+        </>
+      )}
 
-          {/* ── Left ── */}
-          <div>
-            {/* Status pill */}
-            <motion.div
-              {...fadeUp(0)}
-              className="inline-flex items-center gap-2.5 px-3 py-1.5 rounded-full mb-8"
+      {/* ── Content ── */}
+      <motion.div
+        className="relative z-10 max-w-7xl mx-auto"
+        variants={staggerContainer}
+        initial="initial"
+        animate="animate"
+      >
+
+        {/* ── Centered Hero Text ── */}
+        <div className="text-center max-w-4xl mx-auto">
+
+          {/* Badge above headline */}
+          <motion.div {...fadeUp(0.02)} className="flex justify-center mb-6">
+            <span
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-[12px] font-semibold"
               style={{
-                background: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.03)',
-                border: `1px solid ${isDark ? 'rgba(255,255,255,0.09)' : 'rgba(0,0,0,0.09)'}`,
+                background: isDark ? 'rgba(255,77,0,0.08)' : 'rgba(255,77,0,0.06)',
+                border: `1px solid ${isDark ? 'rgba(255,77,0,0.2)' : 'rgba(255,77,0,0.15)'}`,
+                color: isDark ? '#FF7A00' : '#CC3D00',
               }}
             >
-              <span style={{
-                width: 6, height: 6, borderRadius: '50%',
-                background: '#22c55e', display: 'inline-block', flexShrink: 0,
-                boxShadow: '0 0 6px rgba(34,197,94,0.7)',
-              }} />
-              <span style={{ fontSize: 11, fontWeight: 500, color: isDark ? '#71717a' : '#52525b' }}>
-                AI-Powered Trading Analytics
-              </span>
-            </motion.div>
+              <span className="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse" />
+              AI-Powered Trading Analytics Platform
+            </span>
+          </motion.div>
 
-            {/* Headline */}
-            <motion.div {...fadeUp(0.07)}>
-              <h1 style={{
-                fontSize: 'clamp(40px, 5.5vw, 66px)',
-                fontWeight: 800, lineHeight: 1.04, letterSpacing: '-0.04em',
-                color: isDark ? '#f4f4f5' : '#09090b', marginBottom: 0,
-              }}>
-                The AI trading
-              </h1>
-              <h1 style={{
-                fontSize: 'clamp(40px, 5.5vw, 66px)',
-                fontWeight: 800, lineHeight: 1.04, letterSpacing: '-0.04em',
-                marginBottom: 28,
-                backgroundImage: isDark
-                  ? 'linear-gradient(135deg, #f4f4f5 0%, #52525b 100%)'
-                  : 'linear-gradient(135deg, #09090b 0%, #71717a 100%)',
-                WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
-              }}>
-                journal that thinks.
-              </h1>
-            </motion.div>
-
-            {/* Subtext */}
-            <motion.p {...fadeUp(0.14)} style={{
-              fontSize: 17, lineHeight: 1.68,
-              color: isDark ? '#71717a' : '#52525b',
-              maxWidth: 440, marginBottom: 38,
+          <motion.div {...fadeUp(0.07)}>
+            <h1 style={{
+              fontSize: 'clamp(38px, 6vw, 72px)',
+              fontWeight: 800, lineHeight: 1.06, letterSpacing: '-0.04em',
+              color: isDark ? '#f4f4f5' : '#09090b',
+              marginBottom: 0,
             }}>
-              Log your trades, get AI behavioral analysis, and understand exactly what patterns are costing you — then systematically fix them.
-            </motion.p>
+              Trade Smarter with
+            </h1>
+            <h1 style={{
+              fontSize: 'clamp(38px, 6vw, 72px)',
+              fontWeight: 800, lineHeight: 1.06, letterSpacing: '-0.04em',
+              marginBottom: 24,
+              backgroundImage: isDark
+                ? 'linear-gradient(90deg, #FF4D00 0%, #FF7A00 25%, #FFB366 50%, #FF7A00 75%, #FF4D00 100%)'
+                : 'linear-gradient(135deg, #FF4D00 0%, #FF7A00 100%)',
+              backgroundSize: isDark ? '200% auto' : '100% auto',
+              animation: isDark ? 'hero-shimmer 4s ease-in-out infinite' : 'none',
+              WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
+            }}>
+              AI-Powered Insights
+            </h1>
+          </motion.div>
 
-            {/* CTAs */}
-            <motion.div {...fadeUp(0.2)} style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 12, marginBottom: 38 }}>
-              <button
-                onClick={() => onGetStarted()}
-                style={{
-                  display: 'flex', alignItems: 'center', gap: 8,
-                  padding: '12px 22px', borderRadius: 11,
-                  background: isDark ? '#f4f4f5' : '#09090b',
-                  color: isDark ? '#09090b' : '#f4f4f5',
-                  fontSize: 14, fontWeight: 600, border: 'none', cursor: 'pointer',
-                  boxShadow: isDark ? '0 4px 20px rgba(255,255,255,0.1)' : '0 4px 18px rgba(0,0,0,0.22)',
-                  transition: 'transform 0.18s ease, box-shadow 0.18s ease',
-                }}
-                onMouseEnter={e => {
-                  e.currentTarget.style.transform = 'translateY(-1px)';
-                  e.currentTarget.style.boxShadow = isDark ? '0 8px 28px rgba(255,255,255,0.15)' : '0 8px 26px rgba(0,0,0,0.3)';
-                }}
-                onMouseLeave={e => {
-                  e.currentTarget.style.transform = '';
-                  e.currentTarget.style.boxShadow = isDark ? '0 4px 20px rgba(255,255,255,0.1)' : '0 4px 18px rgba(0,0,0,0.22)';
-                }}
-              >
-                Start for free
-                <ArrowRight size={15} />
-              </button>
+          <motion.p {...fadeUp(0.14)} style={{
+            fontSize: 17, lineHeight: 1.68,
+            color: isDark ? '#71717a' : '#52525b',
+            maxWidth: 520, margin: '0 auto 36px',
+          }}>
+            Track performance, analyze strategies, and improve every trade with Zynth — your AI-powered trading companion.
+          </motion.p>
 
-              <button
-                onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}
-                style={{
-                  display: 'flex', alignItems: 'center', gap: 7,
-                  padding: '12px 20px', borderRadius: 11, background: 'transparent',
-                  color: isDark ? '#a1a1aa' : '#71717a', fontSize: 14, fontWeight: 500,
-                  border: `1px solid ${isDark ? 'rgba(255,255,255,0.09)' : 'rgba(0,0,0,0.1)'}`,
-                  cursor: 'pointer', transition: 'color 0.18s, border-color 0.18s',
-                }}
-                onMouseEnter={e => {
-                  e.currentTarget.style.color = isDark ? '#f4f4f5' : '#09090b';
-                  e.currentTarget.style.borderColor = isDark ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.2)';
-                }}
-                onMouseLeave={e => {
-                  e.currentTarget.style.color = isDark ? '#a1a1aa' : '#71717a';
-                  e.currentTarget.style.borderColor = isDark ? 'rgba(255,255,255,0.09)' : 'rgba(0,0,0,0.1)';
-                }}
-              >
-                See how it works
-              </button>
-            </motion.div>
-
-            {/* Social proof row */}
-            <motion.div {...fadeUp(0.27)} style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
-              <div style={{ display: 'flex' }}>
-                {AVATARS.map((a, i) => (
-                  <div key={i} style={{
-                    width: 28, height: 28, borderRadius: '50%',
-                    background: a.bg,
-                    border: `2px solid ${isDark ? '#09090b' : '#ffffff'}`,
-                    marginLeft: i > 0 ? -8 : 0,
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    fontSize: 10, fontWeight: 700, color: '#fff',
-                    zIndex: AVATARS.length - i, position: 'relative',
-                  }}>
-                    {a.initial}
-                  </div>
-                ))}
-              </div>
-              <span style={{ fontSize: 12.5, color: isDark ? '#52525b' : '#a1a1aa' }}>
-                Joined by <strong style={{ color: isDark ? '#a1a1aa' : '#52525b', fontWeight: 600 }}>2,400+ traders</strong>
-              </span>
-              <span style={{ color: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)' }}>·</span>
-              <span style={{ fontSize: 12.5, color: '#f59e0b' }}>★★★★★</span>
-              <span style={{ fontSize: 12.5, color: isDark ? '#52525b' : '#a1a1aa' }}>4.9 avg rating</span>
-            </motion.div>
-          </div>
-
-          {/* ── Right – Product Preview ── */}
-          <motion.div
-            initial={{ opacity: 0, y: 28 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.18, ease: [0.22, 1, 0.36, 1] }}
-          >
-            <ProductPreview isDark={isDark} />
+          {/* CTA */}
+          <motion.div {...fadeUp(0.2)} className="flex items-center justify-center gap-4 mb-16">
+            <button
+              onClick={() => onGetStarted()}
+              className="group inline-flex items-center gap-2.5"
+              style={{
+                padding: '16px 32px', borderRadius: 50,
+                background: 'linear-gradient(135deg, #FF4D00 0%, #FF7A00 100%)',
+                color: '#ffffff',
+                fontSize: 15, fontWeight: 700, border: 'none', cursor: 'pointer',
+                animation: isDark ? 'hero-glow-pulse 2.5s ease-in-out infinite' : 'none',
+                boxShadow: '0 4px 28px rgba(255,77,0,0.4), 0 0 0 1px rgba(255,120,0,0.15)',
+                transition: 'transform 0.2s ease',
+              }}
+              onMouseEnter={e => {
+                e.currentTarget.style.transform = 'translateY(-3px) scale(1.04)';
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.transform = '';
+              }}
+            >
+              Get Started
+              <ArrowRight size={16} className="transition-transform duration-300 group-hover:translate-x-0.5" />
+            </button>
           </motion.div>
         </div>
 
-        {/* ── Stats strip ── */}
+        {/* ── Three Preview Cards Row ── */}
+        {isDark && (
+          <motion.div
+            initial={{ opacity: 0, y: 40, filter: 'blur(10px)' }}
+            animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+            transition={{ duration: 1, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
+            className="flex items-start justify-center gap-5 flex-wrap lg:flex-nowrap px-4"
+          >
+            <div className="hidden md:block" style={{ marginTop: 40, animation: 'hero-float-gentle 5s ease-in-out infinite' }}>
+              <MarketsCard />
+            </div>
+            <div style={{ marginTop: 0, animation: 'hero-float-gentle 6s ease-in-out infinite 0.5s' }}>
+              <BalanceCard />
+            </div>
+            <div className="hidden md:block" style={{ marginTop: 40, animation: 'hero-float-gentle 5.5s ease-in-out infinite 1s' }}>
+              <ExchangeCard />
+            </div>
+          </motion.div>
+        )}
+
+        {/* Light mode fallback */}
+        {!isDark && (
+          <motion.div
+            initial={{ opacity: 0, y: 28 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+            className="max-w-2xl mx-auto mt-4"
+          >
+            <div className="rounded-2xl p-6 border text-center" style={{
+              background: '#ffffff',
+              borderColor: 'rgba(0,0,0,0.08)',
+              boxShadow: '0 20px 60px rgba(0,0,0,0.08)',
+            }}>
+              <div className="flex justify-center gap-8 mb-4">
+                {[
+                  { label: 'Win Rate', value: '67%' },
+                  { label: 'Net P&L', value: '+$2,847' },
+                  { label: 'Score', value: '81/100' },
+                ].map(s => (
+                  <div key={s.label}>
+                    <div style={{ fontSize: 22, fontWeight: 800, color: '#09090b' }}>{s.value}</div>
+                    <div style={{ fontSize: 11, color: '#a1a1aa' }}>{s.label}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </motion.div>
+        )}
+
+        {/* ── Trust Bar ── */}
+        {isDark && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.65, delay: 0.65, ease: [0.22, 1, 0.36, 1] }}
+            className="text-center mt-20"
+          >
+            <p className="text-[13px] mb-6" style={{ color: '#52525b' }}>
+              Simplifying Trading Workflows For <strong style={{ color: '#a1a1aa' }}>2,500+ Organizations</strong>
+            </p>
+            <div className="flex items-center justify-center gap-10 flex-wrap opacity-30">
+              {[1, 2, 3, 4, 5].map(i => (
+                <span key={i} style={{ fontSize: 14, color: '#a1a1aa', fontWeight: 600, letterSpacing: '0.05em' }}>
+                  ✦ Logoipsum
+                </span>
+              ))}
+            </div>
+          </motion.div>
+        )}
+
+        {/* ── Stats Strip ── */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.65, delay: 0.48, ease: [0.22, 1, 0.36, 1] }}
+          initial={{ opacity: 0, y: 30, filter: 'blur(6px)' }}
+          animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+          transition={{ duration: 0.8, delay: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          className="mt-16 grid grid-cols-2 md:grid-cols-4 overflow-hidden"
           style={{
-            display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)',
-            marginTop: 80,
-            border: `1px solid ${isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.07)'}`,
-            borderRadius: 16, overflow: 'hidden',
+            border: `1px solid ${isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.07)'}`,
+            borderRadius: 20,
+            background: isDark ? 'rgba(255,255,255,0.02)' : '#fafafa',
+            backdropFilter: isDark ? 'blur(16px)' : 'none',
+            transition: 'border-color 0.4s ease, box-shadow 0.4s ease',
           }}
+          onMouseEnter={e => { if (isDark) { e.currentTarget.style.borderColor = 'rgba(255,100,0,0.15)'; e.currentTarget.style.boxShadow = '0 0 40px rgba(255,77,0,0.06)'; } }}
+          onMouseLeave={e => { if (isDark) { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.06)'; e.currentTarget.style.boxShadow = 'none'; } }}
         >
           {[
             { to: 2400,  suffix: '+',    label: 'Active traders' },
@@ -359,12 +570,14 @@ export default function Hero({ spotsLeft, onGetStarted, onSignIn }) {
           ].map((s, i) => (
             <div key={s.label} style={{
               padding: '24px 28px',
-              background: isDark ? '#111113' : '#fafafa',
-              borderRight: i < 3 ? `1px solid ${isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)'}` : 'none',
+              borderRight: i < 3 ? `1px solid ${isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.06)'}` : 'none',
             }}>
               <div style={{
                 fontSize: 'clamp(22px, 2.5vw, 30px)', fontWeight: 800, letterSpacing: '-0.03em',
-                color: isDark ? '#f4f4f5' : '#09090b', lineHeight: 1, marginBottom: 7,
+                backgroundImage: isDark ? 'linear-gradient(135deg, #FF6B35, #FF9A5C)' : undefined,
+                WebkitBackgroundClip: isDark ? 'text' : undefined,
+                WebkitTextFillColor: isDark ? 'transparent' : undefined,
+                color: isDark ? undefined : '#09090b', lineHeight: 1, marginBottom: 7,
               }}>
                 <Counter to={s.to} suffix={s.suffix} />
               </div>
@@ -372,7 +585,7 @@ export default function Hero({ spotsLeft, onGetStarted, onSignIn }) {
             </div>
           ))}
         </motion.div>
-      </div>
+      </motion.div>
     </section>
   );
 }

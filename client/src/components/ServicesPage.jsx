@@ -1,5 +1,6 @@
 ﻿import { ArrowLeft, BarChart2, BookOpen, Brain, Calendar, TrendingUp, Bot, Activity, ClipboardCheck, Layers } from 'lucide-react';
 import { BrandMark } from './BrandLogo';
+import { useTheme } from '../contexts/ThemeContext';
 
 const SERVICES = [
   {
@@ -165,33 +166,38 @@ const SERVICES = [
 ];
 
 export default function ServicesPage({ onBack }) {
+  const { isDark } = useTheme();
   const handleBack = () => {
     if (onBack) { onBack(); } else { window.history.back(); }
   };
 
   return (
-    <div style={{ backgroundColor: '#0a0a0a', minHeight: '100vh', color: '#e2e8f0' }}>
+    <div className={isDark ? '' : 'legal-light'} style={{ backgroundColor: isDark ? '#0B0B0F' : '#f8fafc', minHeight: '100vh', color: isDark ? '#e2e8f0' : '#1e293b' }}>
+      <style>{`
+        .legal-light strong { color: #0f172a !important; }
+        .legal-light ul li { color: #4b5563 !important; }
+      `}</style>
       {/* Sticky header */}
       <div style={{
         position: 'sticky', top: 0, zIndex: 50,
-        backgroundColor: 'rgba(10,10,10,0.95)',
+        backgroundColor: isDark ? 'rgba(11,11,15,0.95)' : 'rgba(255,255,255,0.95)',
         backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)',
-        borderBottom: '1px solid rgba(16,185,129,0.15)',
+        borderBottom: isDark ? '1px solid rgba(255,77,0,0.15)' : '1px solid rgba(0,0,0,0.08)',
       }}>
         <div style={{ maxWidth: 1000, margin: '0 auto', padding: '12px 24px', display: 'flex', alignItems: 'center', gap: 12 }}>
           <button onClick={handleBack} style={{ display: 'flex', alignItems: 'center', gap: 6, color: '#6b7280', fontSize: 13, cursor: 'pointer', background: 'none', border: 'none', padding: '4px 8px', borderRadius: 6 }}
-            onMouseEnter={e => (e.currentTarget.style.color = '#3b82f6')}
+            onMouseEnter={e => (e.currentTarget.style.color = '#FF7A00')}
             onMouseLeave={e => (e.currentTarget.style.color = '#6b7280')}>
             <ArrowLeft size={15} /> Back
           </button>
           <div style={{ width: 1, height: 18, backgroundColor: 'rgba(107,114,128,0.4)' }} />
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <Layers size={16} style={{ color: '#3b82f6' }} />
-            <span style={{ fontSize: 14, fontWeight: 600, color: '#e2e8f0' }}>Services</span>
+            <Layers size={16} style={{ color: '#FF7A00' }} />
+            <span style={{ fontSize: 14, fontWeight: 600, color: isDark ? '#e2e8f0' : '#0f172a' }}>Services</span>
           </div>
           <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 8 }}>
             <BrandMark size={30} />
-            <span style={{ fontSize: 13, fontWeight: 700, color: '#e2e8f0', letterSpacing: '0.04em' }}>Zynth</span>
+            <span style={{ fontSize: 13, fontWeight: 700, color: isDark ? '#e2e8f0' : '#0f172a', letterSpacing: '0.04em' }}>Zynth</span>
           </div>
         </div>
       </div>
@@ -199,14 +205,14 @@ export default function ServicesPage({ onBack }) {
       {/* Hero */}
       <div style={{ maxWidth: 1000, margin: '0 auto', padding: '56px 24px 0' }}>
         <div style={{ textAlign: 'center', marginBottom: 56 }}>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '6px 14px', borderRadius: 20, backgroundColor: 'rgba(59,130,246,0.1)', border: '1px solid rgba(59,130,246,0.2)', marginBottom: 20 }}>
-            <span style={{ fontSize: 12, fontWeight: 700, color: '#3b82f6', letterSpacing: '0.08em' }}>AI PERFORMANCE ANALYTICS PLATFORM</span>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '6px 14px', borderRadius: 20, backgroundColor: isDark ? 'rgba(255,77,0,0.1)' : 'rgba(255,77,0,0.06)', border: `1px solid ${isDark ? 'rgba(255,77,0,0.2)' : 'rgba(255,77,0,0.25)'}`, marginBottom: 20 }}>
+            <span style={{ fontSize: 12, fontWeight: 700, color: '#FF7A00', letterSpacing: '0.08em' }}>AI PERFORMANCE ANALYTICS PLATFORM</span>
           </div>
-          <h1 style={{ fontSize: 36, fontWeight: 800, color: '#f1f5f9', marginBottom: 14, lineHeight: 1.2 }}>
+          <h1 style={{ fontSize: 36, fontWeight: 800, color: isDark ? '#f1f5f9' : '#0f172a', marginBottom: 14, lineHeight: 1.2 }}>
             Everything You Need to<br />
-            <span style={{ color: '#3b82f6' }}>Understand Your Performance</span>
+            <span style={{ color: '#FF7A00' }}>Understand Your Performance</span>
           </h1>
-          <p style={{ fontSize: 15, color: '#6b7280', maxWidth: 560, margin: '0 auto', lineHeight: 1.7 }}>
+          <p style={{ fontSize: 15, color: isDark ? '#6b7280' : '#64748b', maxWidth: 560, margin: '0 auto', lineHeight: 1.7 }}>
             Zynth combines AI-powered behavioral analytics, real-time contextual data, and activity logging into a single platform built for performance-focused professionals.
           </p>
         </div>
@@ -236,16 +242,16 @@ export default function ServicesPage({ onBack }) {
                 {/* Right: content */}
                 <div style={{ flex: 1 }}>
                   <div style={{ marginBottom: 12 }}>
-                    <h2 style={{ fontSize: 17, fontWeight: 800, color: '#f1f5f9', marginBottom: 3 }}>{svc.name}</h2>
+                    <h2 style={{ fontSize: 17, fontWeight: 800, color: isDark ? '#f1f5f9' : '#0f172a', marginBottom: 3 }}>{svc.name}</h2>
                     <p style={{ fontSize: 12, fontWeight: 600, color: svc.color, letterSpacing: '0.04em' }}>{svc.tagline}</p>
                   </div>
-                  <p style={{ fontSize: 13, color: '#9ca3af', lineHeight: 1.7, marginBottom: 14 }}>{svc.desc}</p>
+                  <p style={{ fontSize: 13, color: isDark ? '#9ca3af' : '#4b5563', lineHeight: 1.7, marginBottom: 14 }}>{svc.desc}</p>
 
                   <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap' }}>
                     {/* Feature bullets */}
                     <ul style={{ flex: 2, minWidth: 200, paddingLeft: 16, display: 'flex', flexDirection: 'column', gap: 4, margin: 0 }}>
                       {svc.features.map((f, i) => (
-                        <li key={i} style={{ fontSize: 12, color: '#9ca3af', lineHeight: 1.6 }}>
+                        <li key={i} style={{ fontSize: 12, color: isDark ? '#9ca3af' : '#4b5563', lineHeight: 1.6 }}>
                           <span style={{ color: svc.color, marginRight: 6 }}>✓</span>{f}
                         </li>
                       ))}
@@ -253,7 +259,7 @@ export default function ServicesPage({ onBack }) {
 
                     {/* Plan availability */}
                     <div style={{ flexShrink: 0 }}>
-                      <p style={{ fontSize: 10, fontWeight: 700, color: '#6b7280', letterSpacing: '0.06em', marginBottom: 6 }}>AVAILABLE ON</p>
+                      <p style={{ fontSize: 10, fontWeight: 700, color: isDark ? '#6b7280' : '#94a3b8', letterSpacing: '0.06em', marginBottom: 6 }}>AVAILABLE ON</p>
                       <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
                         {svc.plans.map((plan, i) => (
                           <span key={i} style={{ fontSize: 11, fontWeight: 600, color: svc.color, background: svc.bg, border: `1px solid ${svc.border}`, padding: '3px 10px', borderRadius: 6, whiteSpace: 'nowrap' }}>
@@ -270,13 +276,13 @@ export default function ServicesPage({ onBack }) {
         </div>
 
         {/* CTA */}
-        <div style={{ textAlign: 'center', padding: '40px 0 80px', borderTop: '1px solid rgba(59,130,246,0.1)' }}>
-          <p style={{ fontSize: 15, color: '#9ca3af', marginBottom: 20 }}>Ready to improve with AI-powered analytics?</p>
+        <div style={{ textAlign: 'center', padding: '40px 0 80px', borderTop: `1px solid ${isDark ? 'rgba(255,77,0,0.1)' : 'rgba(0,0,0,0.08)'}` }}>
+          <p style={{ fontSize: 15, color: isDark ? '#9ca3af' : '#64748b', marginBottom: 20 }}>Ready to improve with AI-powered analytics?</p>
           <a href="/"
             style={{
               display: 'inline-flex', alignItems: 'center', gap: 8,
               padding: '12px 28px', borderRadius: 10,
-              background: 'linear-gradient(135deg, #1d4ed8, #0284c7)',
+              background: 'linear-gradient(135deg, #FF4D00, #FF7A00)',
               color: '#fff', fontWeight: 700, fontSize: 14,
               textDecoration: 'none', letterSpacing: '0.02em',
             }}
@@ -289,15 +295,15 @@ export default function ServicesPage({ onBack }) {
       </div>
 
       {/* Footer */}
-      <div style={{ borderTop: '1px solid rgba(59,130,246,0.08)', padding: '24px', textAlign: 'center' }}>
+      <div style={{ borderTop: `1px solid ${isDark ? 'rgba(255,77,0,0.08)' : 'rgba(0,0,0,0.06)'}`, padding: '24px', textAlign: 'center' }}>
         <div style={{ display: 'flex', justifyContent: 'center', gap: 20, flexWrap: 'wrap', marginBottom: 10 }}>
           {[['Terms of Service', '/terms'], ['Privacy Policy', '/privacy'], ['Refund Policy', '/refund'], ['Service Policy', '/service-policy']].map(([label, href]) => (
             <a key={label} href={href} style={{ fontSize: 12, color: '#6b7280', textDecoration: 'none' }}
-              onMouseEnter={e => (e.currentTarget.style.color = '#3b82f6')}
+              onMouseEnter={e => (e.currentTarget.style.color = '#FF7A00')}
               onMouseLeave={e => (e.currentTarget.style.color = '#6b7280')}>{label}</a>
           ))}
         </div>
-        <p style={{ fontSize: 11, color: '#374151' }}>© 2026 Zynth. All rights reserved. Zynth is not a financial advisory service.</p>
+        <p style={{ fontSize: 11, color: isDark ? '#374151' : '#94a3b8' }}>© 2026 Zynth. All rights reserved. Zynth is not a financial advisory service.</p>
       </div>
     </div>
   );

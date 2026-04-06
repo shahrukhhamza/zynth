@@ -160,7 +160,7 @@ export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess })
   }
 
   return (
-    <div style={{ minHeight:'100vh', background: isDark?'#09090b':'#f8fafc', position:'relative', overflowX:'hidden', overflowY:'auto' }}>
+    <div style={{ minHeight:'100vh', background: isDark?'#0B0B0F':'#f8fafc', position:'relative', overflowX:'hidden', overflowY:'auto' }}>
       <style>{`
         @keyframes blobDrift {
           0%,100% { transform: translate(0px,0px)    scale(1);     }
@@ -211,11 +211,11 @@ export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess })
           cursor:pointer; position:relative; margin-top:1px;
           transition:background 0.14s, border-color 0.14s; background:transparent;
         }
-        .sp-checkbox:checked { background:#ffffff; border-color:#ffffff !important; }
+        .sp-checkbox:checked { background:#FF4D00; border-color:#FF4D00 !important; }
         .sp-checkbox:checked::after {
           content:''; position:absolute; left:3px; top:1px;
           width:9px; height:5px;
-          border-left:2px solid #09090b; border-bottom:2px solid #09090b;
+          border-left:2px solid #fff; border-bottom:2px solid #fff;
           transform:rotate(-45deg); animation:checkIn 0.14s ease;
         }
       `}</style>
@@ -224,7 +224,7 @@ export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess })
       <div style={{ position:'fixed', top:'-220px', left:'-180px', width:'720px', height:'720px',
         pointerEvents:'none', zIndex:0,
         background: isDark
-          ? 'radial-gradient(circle, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.02) 35%, transparent 65%)'
+          ? 'radial-gradient(circle, rgba(255,77,0,0.07) 0%, rgba(255,122,0,0.03) 35%, transparent 65%)'
           : 'radial-gradient(circle, rgba(0,0,0,0.04) 0%, rgba(0,0,0,0.02) 35%, transparent 65%)',
         filter:'blur(82px)', animation:'blobDrift 18s ease-in-out infinite',
       }} />
@@ -233,7 +233,7 @@ export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess })
       <div style={{ position:'fixed', bottom:'-200px', right:'-180px', width:'640px', height:'640px',
         pointerEvents:'none', zIndex:0,
         background: isDark
-          ? 'radial-gradient(circle, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.015) 35%, transparent 65%)'
+          ? 'radial-gradient(circle, rgba(255,122,0,0.05) 0%, rgba(255,77,0,0.02) 35%, transparent 65%)'
           : 'radial-gradient(circle, rgba(0,0,0,0.03) 0%, rgba(0,0,0,0.015) 35%, transparent 65%)',
         filter:'blur(82px)', animation:'blobDrift2 22s ease-in-out infinite',
       }} />
@@ -241,7 +241,7 @@ export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess })
       {/* ── Corner vignette ─────────────────────────────────────────────── */}
       <div style={{ position:'fixed', inset:0, pointerEvents:'none', zIndex:0,
         background: isDark
-          ? 'radial-gradient(ellipse 100% 100% at 50% 50%, transparent 40%, rgba(9,9,11,0.62) 100%)'
+          ? 'radial-gradient(ellipse 100% 100% at 50% 50%, transparent 40%, rgba(11,11,15,0.62) 100%)'
           : 'radial-gradient(ellipse 100% 100% at 50% 50%, transparent 34%, rgba(223,232,245,0.78) 100%)',
       }} />
 
@@ -249,7 +249,7 @@ export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess })
       <div style={{ position:'fixed', top:0, left:0, right:0, zIndex:20, height:'52px',
         display:'flex', alignItems:'center', justifyContent:'space-between', padding:'0 24px',
         borderBottom: isDark?'1px solid rgba(255,255,255,0.06)':'1px solid rgba(148,163,184,0.28)',
-        background: isDark?'rgba(9,9,11,0.75)':'rgba(255,255,255,0.76)',
+        background: isDark?'rgba(11,11,15,0.75)':'rgba(255,255,255,0.76)',
         backdropFilter:'blur(20px)', WebkitBackdropFilter:'blur(20px)',
         boxShadow: isDark?'none':'0 2px 14px rgba(148,163,184,0.18)',
       }}>
@@ -387,10 +387,10 @@ export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess })
         {success ? (
           /* ── Success screen ─────────────────────────────────────────── */
           <div style={{ textAlign:'center', animation:'cardIn 0.4s ease both' }}>
-            <div style={{ width:'68px', height:'68px', borderRadius:'50%', background: isDark?'linear-gradient(135deg,#ffffff,#e4e4e7)':'linear-gradient(135deg,#18181b,#27272a)',
+            <div style={{ width:'68px', height:'68px', borderRadius:'50%', background: isDark?'linear-gradient(135deg,#FF4D00,#FF7A00)':'linear-gradient(135deg,#18181b,#27272a)',
               display:'flex', alignItems:'center', justifyContent:'center', margin:'0 auto 20px',
-              boxShadow: isDark?'0 0 40px rgba(255,255,255,0.15)':'0 0 40px rgba(0,0,0,0.20)' }}>
-              <CheckCircle size={32} color={isDark?'#09090b':'#ffffff'} />
+              boxShadow: isDark?'0 0 40px rgba(255,77,0,0.3)':'0 0 40px rgba(0,0,0,0.20)' }}>
+              <CheckCircle size={32} color='#ffffff' />
             </div>
             <h2 style={{ fontSize:'22px', fontWeight:700, letterSpacing:'-0.025em', color: isDark?'#f1f5f9':'#0f172a', marginBottom:'8px' }}>
               Account created!
@@ -398,7 +398,7 @@ export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess })
             <p style={{ fontSize:'14px', color: isDark?'rgba(255,255,255,0.48)':'#64748b', marginBottom:0 }}>
               Redirecting you to your dashboard…
             </p>
-            <div style={{ width:'36px', height:'2.5px', background: isDark?'linear-gradient(90deg,#ffffff,#a1a1aa)':'linear-gradient(90deg,#18181b,#52525b)', borderRadius:'2px', margin:'18px auto 0', animation:'blobDrift2 1.6s ease-in-out infinite' }} />
+            <div style={{ width:'36px', height:'2.5px', background: isDark?'linear-gradient(90deg,#FF4D00,#FF7A00)':'linear-gradient(90deg,#18181b,#52525b)', borderRadius:'2px', margin:'18px auto 0', animation:'blobDrift2 1.6s ease-in-out infinite' }} />
           </div>
         ) : (
           <>
@@ -432,7 +432,7 @@ export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess })
                   Create your account.
                 </h1>
                 <p style={{ fontSize:'13.5px', color: isDark?'rgba(255,255,255,0.38)':'#64748b', margin:0 }}>
-                  {spotsLeft != null && <><span style={{ color:'#f59e0b', fontWeight:600 }}>{spotsLeft} spots</span> left at this price.{' '}</>}
+                  {spotsLeft != null && <><span style={{ color:'#FF7A00', fontWeight:600 }}>{spotsLeft} spots</span> left at this price.{' '}</>}
                   Already on Zynth?{' '}
                   <button onClick={onSwitchToLogin}
                     style={{ color: isDark?'#a1a1aa':'#52525b', background:'none', border:'none', cursor:'pointer', fontSize:'13.5px', padding:0, fontWeight:500, transition:'color 0.12s' }}
@@ -522,7 +522,7 @@ export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess })
                       background: isDark?'rgba(255,255,255,0.044)':'rgba(255,255,255,0.84)',
                       border: fieldErrors.name?'1px solid rgba(239,68,68,0.55)':isDark?'1px solid rgba(255,255,255,0.088)':'1px solid rgba(148,163,184,0.42)',
                       borderRadius:'10px', padding:'10px 13px', color: isDark?'#f1f5f9':'#0f172a' }}
-                    onFocus={e => { e.target.style.borderColor=isDark?'rgba(255,255,255,0.28)':'rgba(0,0,0,0.3)'; e.target.style.boxShadow=isDark?'0 0 0 3px rgba(255,255,255,0.06)':'0 0 0 3px rgba(0,0,0,0.06)'; e.target.style.background=isDark?'rgba(255,255,255,0.06)':'#ffffff'; }}
+                    onFocus={e => { e.target.style.borderColor=isDark?'rgba(255,77,0,0.5)':'rgba(0,0,0,0.3)'; e.target.style.boxShadow=isDark?'0 0 0 3px rgba(255,77,0,0.1)':'0 0 0 3px rgba(0,0,0,0.06)'; e.target.style.background=isDark?'rgba(255,255,255,0.06)':'#ffffff'; }}
                     onBlur={e => { if(!fieldErrors.name){ e.target.style.borderColor=isDark?'rgba(255,255,255,0.088)':'rgba(148,163,184,0.42)'; e.target.style.boxShadow='none'; e.target.style.background=isDark?'rgba(255,255,255,0.044)':'rgba(255,255,255,0.84)'; }}}
                   />
                   {fieldErrors.name && <div style={{ display:'flex', alignItems:'center', gap:'4px', marginTop:'5px' }}><AlertCircle size={11} color="#ef4444"/><span style={{ fontSize:'11px', color:'#ef4444' }}>{fieldErrors.name}</span></div>}
@@ -538,7 +538,7 @@ export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess })
                       background: isDark?'rgba(255,255,255,0.044)':'rgba(255,255,255,0.84)',
                       border: fieldErrors.email?'1px solid rgba(239,68,68,0.55)':isDark?'1px solid rgba(255,255,255,0.088)':'1px solid rgba(148,163,184,0.42)',
                       borderRadius:'10px', padding:'10px 13px', color: isDark?'#f1f5f9':'#0f172a' }}
-                    onFocus={e => { e.target.style.borderColor=isDark?'rgba(255,255,255,0.28)':'rgba(0,0,0,0.3)'; e.target.style.boxShadow=isDark?'0 0 0 3px rgba(255,255,255,0.06)':'0 0 0 3px rgba(0,0,0,0.06)'; e.target.style.background=isDark?'rgba(255,255,255,0.06)':'#ffffff'; }}
+                    onFocus={e => { e.target.style.borderColor=isDark?'rgba(255,77,0,0.5)':'rgba(0,0,0,0.3)'; e.target.style.boxShadow=isDark?'0 0 0 3px rgba(255,77,0,0.1)':'0 0 0 3px rgba(0,0,0,0.06)'; e.target.style.background=isDark?'rgba(255,255,255,0.06)':'#ffffff'; }}
                     onBlur={e => { if(!fieldErrors.email){ e.target.style.borderColor=isDark?'rgba(255,255,255,0.088)':'rgba(148,163,184,0.42)'; e.target.style.boxShadow='none'; e.target.style.background=isDark?'rgba(255,255,255,0.044)':'rgba(255,255,255,0.84)'; }}}
                   />
                   {fieldErrors.email && <div style={{ display:'flex', alignItems:'center', gap:'4px', marginTop:'5px' }}><AlertCircle size={11} color="#ef4444"/><span style={{ fontSize:'11px', color:'#ef4444' }}>{fieldErrors.email}</span></div>}
@@ -555,7 +555,7 @@ export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess })
                         background: isDark?'rgba(255,255,255,0.044)':'rgba(255,255,255,0.84)',
                         border: fieldErrors.password?'1px solid rgba(239,68,68,0.55)':isDark?'1px solid rgba(255,255,255,0.088)':'1px solid rgba(148,163,184,0.42)',
                         borderRadius:'10px', padding:'10px 36px 10px 13px', color: isDark?'#f1f5f9':'#0f172a' }}
-                      onFocus={e => { e.target.style.borderColor=isDark?'rgba(255,255,255,0.28)':'rgba(0,0,0,0.3)'; e.target.style.boxShadow=isDark?'0 0 0 3px rgba(255,255,255,0.06)':'0 0 0 3px rgba(0,0,0,0.06)'; e.target.style.background=isDark?'rgba(255,255,255,0.06)':'#ffffff'; }}
+                      onFocus={e => { e.target.style.borderColor=isDark?'rgba(255,77,0,0.5)':'rgba(0,0,0,0.3)'; e.target.style.boxShadow=isDark?'0 0 0 3px rgba(255,77,0,0.1)':'0 0 0 3px rgba(0,0,0,0.06)'; e.target.style.background=isDark?'rgba(255,255,255,0.06)':'#ffffff'; }}
                       onBlur={e => { if(!fieldErrors.password){ e.target.style.borderColor=isDark?'rgba(255,255,255,0.088)':'rgba(148,163,184,0.42)'; e.target.style.boxShadow='none'; e.target.style.background=isDark?'rgba(255,255,255,0.044)':'rgba(255,255,255,0.84)'; }}}
                     />
                     <button type="button" onClick={() => setShowPass(v=>!v)} tabIndex={-1}
@@ -598,7 +598,7 @@ export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess })
                         background: isDark?'rgba(255,255,255,0.044)':'rgba(255,255,255,0.84)',
                         border: fieldErrors.confirm?'1px solid rgba(239,68,68,0.55)':isDark?'1px solid rgba(255,255,255,0.088)':'1px solid rgba(148,163,184,0.42)',
                         borderRadius:'10px', padding:'10px 36px 10px 13px', color: isDark?'#f1f5f9':'#0f172a' }}
-                      onFocus={e => { e.target.style.borderColor=isDark?'rgba(255,255,255,0.28)':'rgba(0,0,0,0.3)'; e.target.style.boxShadow=isDark?'0 0 0 3px rgba(255,255,255,0.06)':'0 0 0 3px rgba(0,0,0,0.06)'; e.target.style.background=isDark?'rgba(255,255,255,0.06)':'#ffffff'; }}
+                      onFocus={e => { e.target.style.borderColor=isDark?'rgba(255,77,0,0.5)':'rgba(0,0,0,0.3)'; e.target.style.boxShadow=isDark?'0 0 0 3px rgba(255,77,0,0.1)':'0 0 0 3px rgba(0,0,0,0.06)'; e.target.style.background=isDark?'rgba(255,255,255,0.06)':'#ffffff'; }}
                       onBlur={e => { if(!fieldErrors.confirm){ e.target.style.borderColor=isDark?'rgba(255,255,255,0.088)':'rgba(148,163,184,0.42)'; e.target.style.boxShadow='none'; e.target.style.background=isDark?'rgba(255,255,255,0.044)':'rgba(255,255,255,0.84)'; }}}
                     />
                     <button type="button" onClick={() => setShowConfirm(v=>!v)} tabIndex={-1}
@@ -631,14 +631,14 @@ export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess })
                 {/* Submit */}
                 <button type="submit" disabled={loading}
                   style={{ width:'100%', padding:'11px',
-                    background: loading?(isDark?'rgba(255,255,255,0.2)':'rgba(0,0,0,0.3)'):(isDark?'linear-gradient(135deg, #ffffff 0%, #e4e4e7 100%)':'linear-gradient(135deg, #18181b 0%, #27272a 100%)'),
-                    border:'none', borderRadius:'11px', color: isDark?'#09090b':'#fff', fontSize:'13.5px', fontWeight:600,
+                    background: loading?(isDark?'rgba(255,77,0,0.3)':'rgba(0,0,0,0.3)'):(isDark?'linear-gradient(135deg, #FF4D00 0%, #FF7A00 100%)':'linear-gradient(135deg, #18181b 0%, #27272a 100%)'),
+                    border:'none', borderRadius:'11px', color:'#fff', fontSize:'13.5px', fontWeight:600,
                     cursor:loading?'not-allowed':'pointer', transition:'all 0.18s ease',
                     display:'flex', alignItems:'center', justifyContent:'center', gap:'7px',
-                    boxShadow: loading?'none':(isDark?'0 2px 14px rgba(255,255,255,0.1), 0 1px 3px rgba(0,0,0,0.2)':'0 2px 14px rgba(0,0,0,0.18), 0 1px 3px rgba(0,0,0,0.1)'),
+                    boxShadow: loading?'none':(isDark?'0 2px 14px rgba(255,77,0,0.3), 0 1px 3px rgba(0,0,0,0.2)':'0 2px 14px rgba(0,0,0,0.18), 0 1px 3px rgba(0,0,0,0.1)'),
                     letterSpacing:'0.01em' }}
-                  onMouseEnter={e => { if(!loading){ e.currentTarget.style.transform='translateY(-1.5px)'; e.currentTarget.style.boxShadow=isDark?'0 8px 28px rgba(255,255,255,0.16), 0 2px 8px rgba(0,0,0,0.2)':'0 8px 28px rgba(0,0,0,0.25), 0 2px 8px rgba(0,0,0,0.12)'; }}}
-                  onMouseLeave={e => { e.currentTarget.style.transform=''; e.currentTarget.style.boxShadow=loading?'none':(isDark?'0 2px 14px rgba(255,255,255,0.1), 0 1px 3px rgba(0,0,0,0.2)':'0 2px 14px rgba(0,0,0,0.18), 0 1px 3px rgba(0,0,0,0.1)'); }}
+                  onMouseEnter={e => { if(!loading){ e.currentTarget.style.transform='translateY(-1.5px)'; e.currentTarget.style.boxShadow=isDark?'0 8px 28px rgba(255,77,0,0.4), 0 2px 8px rgba(0,0,0,0.2)':'0 8px 28px rgba(0,0,0,0.25), 0 2px 8px rgba(0,0,0,0.12)'; }}}
+                  onMouseLeave={e => { e.currentTarget.style.transform=''; e.currentTarget.style.boxShadow=loading?'none':(isDark?'0 2px 14px rgba(255,77,0,0.3), 0 1px 3px rgba(0,0,0,0.2)':'0 2px 14px rgba(0,0,0,0.18), 0 1px 3px rgba(0,0,0,0.1)'); }}
                   onMouseDown={e => { if(!loading) e.currentTarget.style.transform='scale(0.985)'; }}
                   onMouseUp={e => { if(!loading) e.currentTarget.style.transform='translateY(-1.5px)'; }}>
                   {loading ? <><Loader2 size={14} className="animate-spin"/><span>Creating account…</span></> : <><span>Create account</span><ArrowRight size={14}/></>}

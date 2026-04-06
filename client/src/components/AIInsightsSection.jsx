@@ -87,19 +87,22 @@ function InsightCard({ insight, index, isDark }) {
   return (
     <motion.div
       ref={ref}
-      initial={{ opacity: 0, y: 28 }}
-      animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1], delay: index * 0.1 }}
-      whileHover={{ y: -3 }}
+      initial={{ opacity: 0, y: 28, filter: 'blur(6px)' }}
+      animate={inView ? { opacity: 1, y: 0, filter: 'blur(0px)' } : {}}
+      transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1], delay: index * 0.1 }}
+      whileHover={{ y: -6, transition: { duration: 0.3 } }}
       className="rounded-2xl border overflow-hidden cursor-default"
       style={{
-        background: isDark ? '#111113' : '#ffffff',
+        background: isDark ? 'rgba(255,255,255,0.03)' : '#ffffff',
         borderColor: isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.07)',
+        backdropFilter: isDark ? 'blur(12px)' : 'none',
         boxShadow: isDark
-          ? '0 4px 20px rgba(0,0,0,0.25)'
+          ? '0 4px 24px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.04)'
           : '0 2px 12px rgba(0,0,0,0.05)',
-        transition: 'transform 0.22s ease',
+        transition: 'border-color 0.4s ease, box-shadow 0.5s ease',
       }}
+      onMouseEnter={e => { if (isDark) { e.currentTarget.style.borderColor = `${insight.border}`; e.currentTarget.style.boxShadow = `0 20px 50px rgba(0,0,0,0.4), 0 0 25px ${insight.glow}`; } }}
+      onMouseLeave={e => { if (isDark) { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.07)'; e.currentTarget.style.boxShadow = '0 4px 24px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.04)'; } }}
     >
 
       <div className="relative p-5">

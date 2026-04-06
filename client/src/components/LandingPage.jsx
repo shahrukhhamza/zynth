@@ -1,6 +1,6 @@
 ﻿import { useState, useEffect, useRef } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { motion, useInView, useScroll, AnimatePresence } from 'framer-motion';
+import { motion, useInView, useScroll, AnimatePresence, useTransform, useSpring } from 'framer-motion';
 import {
   BarChart2, BookOpen, Shield, Zap, Brain,
   AlertCircle, Check, ArrowRight, Menu, X,
@@ -20,14 +20,14 @@ import SocialProofToast from './SocialProofToast';
 function Reveal({ children, delay = 0, className = '', direction = 'up' }) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-60px 0px' });
-  const offsets = { up: { y: 24 }, down: { y: -24 }, left: { x: -24 }, right: { x: 24 } };
+  const offsets = { up: { y: 32 }, down: { y: -32 }, left: { x: -32 }, right: { x: 32 } };
   return (
     <motion.div
       ref={ref}
       className={className}
-      initial={{ opacity: 0, ...offsets[direction] }}
-      animate={inView ? { opacity: 1, x: 0, y: 0 } : {}}
-      transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1], delay }}
+      initial={{ opacity: 0, filter: 'blur(6px)', scale: 0.97, ...offsets[direction] }}
+      animate={inView ? { opacity: 1, filter: 'blur(0px)', scale: 1, x: 0, y: 0 } : {}}
+      transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1], delay }}
     >
       {children}
     </motion.div>
@@ -96,13 +96,15 @@ function ProblemSection({ isDark }) {
           {problems.map((p, i) => (
             <Reveal key={p.title} delay={i * 0.08} direction={['left', 'up', 'right'][i]}>
               <div
-                className="rounded-2xl p-7 h-full border transition-all duration-300 hover:-translate-y-1"
+                className={`rounded-2xl p-7 h-full border ${isDark ? 'premium-card-glow premium-card-shine' : ''}`}
                 style={{
-                  background: isDark ? '#111113' : '#ffffff',
+                  background: isDark ? 'rgba(255,255,255,0.03)' : '#ffffff',
                   borderColor: isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.07)',
+                  backdropFilter: isDark ? 'blur(10px)' : 'none',
                   boxShadow: isDark
-                    ? '0 1px 0 rgba(255,255,255,0.04) inset'
+                    ? '0 4px 24px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.04)'
                     : '0 1px 3px rgba(0,0,0,0.04)',
+                  transition: 'all 0.4s cubic-bezier(0.22, 1, 0.36, 1)',
                 }}
               >
                 <div
@@ -177,6 +179,8 @@ function FeaturesGrid({ isDark, onGetStarted }) {
     },
   ];
 
+  const BARS = [30, 55, 40, 70, 48, 85, 62, 45, 72, 58, 90, 65];
+
   return (
     <section id="features" className="py-28 px-6">
       <div className="max-w-6xl mx-auto">
@@ -190,7 +194,17 @@ function FeaturesGrid({ isDark, onGetStarted }) {
               letterSpacing: '-0.03em',
             }}
           >
-            Everything you need to improve
+            Powerful Features For{' '}
+            <span
+              className="bg-clip-text text-transparent"
+              style={{
+                backgroundImage: isDark
+                  ? 'linear-gradient(135deg, #FF6B35, #FF9A5C)'
+                  : 'linear-gradient(135deg, #CC3D00, #FF4D00)',
+              }}
+            >
+              Smarter Trading
+            </span>
           </h2>
           <p
             className="mt-4 text-[16px] max-w-md mx-auto leading-relaxed"
@@ -204,10 +218,13 @@ function FeaturesGrid({ isDark, onGetStarted }) {
           {features.map((f, i) => (
             <Reveal key={f.title} delay={i * 0.05}>
               <div
-                className="rounded-2xl p-7 h-full border transition-all duration-300 hover:-translate-y-1 cursor-default"
+                className={`rounded-2xl p-7 h-full border cursor-default ${isDark ? 'premium-card-glow premium-card-shine' : ''}`}
                 style={{
-                  background: isDark ? '#111113' : '#ffffff',
+                  background: isDark ? 'rgba(255,255,255,0.03)' : '#ffffff',
                   borderColor: isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.07)',
+                  backdropFilter: isDark ? 'blur(10px)' : 'none',
+                  boxShadow: isDark ? '0 4px 24px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.04)' : '0 1px 3px rgba(0,0,0,0.04)',
+                  transition: 'all 0.4s cubic-bezier(0.22, 1, 0.36, 1)',
                 }}
               >
                 <div
@@ -236,6 +253,122 @@ function FeaturesGrid({ isDark, onGetStarted }) {
             </Reveal>
           ))}
         </div>
+
+        {/* ── Dashboard Preview Split Section ── */}
+        {isDark && (
+          <div className="mt-20 grid lg:grid-cols-2 gap-12 items-center">
+            {/* Left text */}
+            <Reveal direction="left">
+              <SectionLabel text="Dashboard" isDark={isDark} />
+              <h3
+                className="font-bold tracking-tight leading-[1.1] mb-5"
+                style={{ fontSize: 'clamp(26px, 3vw, 40px)', color: '#f4f4f5', letterSpacing: '-0.03em' }}
+              >
+                Tools For Better{' '}
+                <span
+                  className="bg-clip-text text-transparent"
+                  style={{ backgroundImage: 'linear-gradient(135deg, #FF6B35, #FF9A5C)' }}
+                >
+                  Trading Performance
+                </span>
+              </h3>
+              <p
+                className="text-[15px] leading-relaxed mb-8"
+                style={{ color: '#71717a', maxWidth: 420 }}
+              >
+                Track your metrics in real-time with our AI-powered dashboard. Visualize patterns, 
+                spot weaknesses, and build consistency — all in one unified view.
+              </p>
+              <button
+                onClick={() => onGetStarted()}
+                className="group inline-flex items-center gap-2.5 px-6 py-3 rounded-full text-[14px] font-bold transition-all duration-300 hover:-translate-y-0.5"
+                style={{
+                  background: 'linear-gradient(135deg, #FF4D00 0%, #FF7A00 100%)',
+                  color: '#ffffff',
+                  boxShadow: '0 4px 24px rgba(255,77,0,0.35)',
+                }}
+              >
+                Get Started
+                <ArrowRight size={15} className="transition-transform duration-300 group-hover:translate-x-0.5" />
+              </button>
+            </Reveal>
+
+            {/* Right chart card */}
+            <Reveal direction="right">
+              <div
+                className="rounded-2xl overflow-hidden premium-card-glow"
+                style={{
+                  background: 'rgba(17,17,21,0.9)',
+                  border: '1px solid rgba(255,255,255,0.08)',
+                  backdropFilter: 'blur(20px)',
+                  boxShadow: '0 30px 80px rgba(0,0,0,0.5)',
+                  transition: 'all 0.5s cubic-bezier(0.22, 1, 0.36, 1)',
+                }}
+              >
+                {/* Chart header */}
+                <div className="flex items-center justify-between px-6 pt-5 pb-3">
+                  <div>
+                    <div style={{ fontSize: 16, fontWeight: 700, color: '#f4f4f5' }}>Performance</div>
+                    <div style={{ fontSize: 12, color: '#52525b' }}>Last 30 days</div>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    {['D', 'W', '1M', '6M', '1Y', 'ALL'].map((tab, i) => (
+                      <span
+                        key={tab}
+                        className="px-2.5 py-1 rounded text-[10px] font-medium cursor-pointer transition-all"
+                        style={{
+                          background: i === 2 ? 'rgba(255,85,0,0.15)' : 'transparent',
+                          color: i === 2 ? '#FF7A00' : '#52525b',
+                          border: i === 2 ? '1px solid rgba(255,85,0,0.25)' : '1px solid transparent',
+                        }}
+                      >
+                        {tab}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Balance display */}
+                <div className="px-6 pb-3">
+                  <div style={{ fontSize: 28, fontWeight: 800, color: '#f4f4f5', letterSpacing: '-0.03em' }}>
+                    $12,847.50
+                  </div>
+                  <span style={{ fontSize: 12, color: '#22c55e', fontWeight: 600 }}>+12.4% ↑</span>
+                </div>
+
+                {/* Bar chart */}
+                <div className="px-6 pb-5">
+                  <div style={{ display: 'flex', alignItems: 'flex-end', gap: 3, height: 80 }}>
+                    {BARS.map((h, i) => (
+                      <div key={i} style={{
+                        flex: 1, height: `${h}%`, borderRadius: 3,
+                        background: i === 10 ? '#FF5500' : 'rgba(255,255,255,0.06)',
+                        transition: 'background 0.2s',
+                      }} />
+                    ))}
+                  </div>
+                </div>
+
+                {/* Bottom stats */}
+                <div
+                  className="grid grid-cols-3 px-6 py-4"
+                  style={{ borderTop: '1px solid rgba(255,255,255,0.04)' }}
+                >
+                  {[
+                    { label: 'Win Rate', value: '67%', color: '#22c55e' },
+                    { label: 'Avg. R:R', value: '2.3:1', color: '#f4f4f5' },
+                    { label: 'Score', value: '81/100', color: '#FF7A00' },
+                  ].map(s => (
+                    <div key={s.label}>
+                      <div style={{ fontSize: 10, color: '#52525b', marginBottom: 4 }}>{s.label}</div>
+                      <div style={{ fontSize: 16, fontWeight: 700, color: s.color }}>{s.value}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </Reveal>
+          </div>
+        )}
       </div>
     </section>
   );
@@ -315,16 +448,19 @@ function TestimonialsGrid({ isDark }) {
           {TESTIMONIALS.map((t, i) => (
             <Reveal key={t.name} delay={i * 0.05}>
               <div
-                className="rounded-2xl p-7 flex flex-col h-full border transition-all duration-300 hover:-translate-y-1"
+                className={`rounded-2xl p-7 flex flex-col h-full border ${isDark ? 'premium-card-glow premium-card-shine' : ''}`}
                 style={{
-                  background: isDark ? '#111113' : '#ffffff',
+                  background: isDark ? 'rgba(255,255,255,0.03)' : '#ffffff',
                   borderColor: isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.07)',
+                  backdropFilter: isDark ? 'blur(10px)' : 'none',
+                  boxShadow: isDark ? '0 4px 24px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.04)' : '0 1px 3px rgba(0,0,0,0.04)',
+                  transition: 'all 0.4s cubic-bezier(0.22, 1, 0.36, 1)',
                 }}
               >
                 {/* Stars */}
                 <div className="flex gap-0.5 mb-4">
                   {Array.from({ length: t.stars }).map((_, s) => (
-                    <span key={s} style={{ color: '#f59e0b', fontSize: '12px' }}>★</span>
+                    <span key={s} style={{ color: '#FF6B35', fontSize: '12px' }}>★</span>
                   ))}
                 </div>
 
@@ -397,8 +533,8 @@ function LandingPricing({ isDark, onGetStarted }) {
           position: 'absolute', top: '0', left: '50%', transform: 'translateX(-50%)',
           width: '900px', height: '500px',
           background: isDark
-            ? 'radial-gradient(ellipse, rgba(139,92,246,0.06) 0%, transparent 60%)'
-            : 'radial-gradient(ellipse, rgba(139,92,246,0.08) 0%, transparent 60%)',
+            ? 'radial-gradient(ellipse, rgba(255,77,0,0.07) 0%, transparent 60%)'
+            : 'radial-gradient(ellipse, rgba(255,77,0,0.06) 0%, transparent 60%)',
           filter: 'blur(40px)',
         }} />
       </div>
@@ -435,9 +571,9 @@ function LandingPricing({ isDark, onGetStarted }) {
                 key={c}
                 onClick={() => setCycle(c)}
                 className="relative px-5 py-2 rounded-full text-[13px] font-semibold transition-all duration-200"
-                style={cycle === c
+              style={cycle === c
                   ? isDark
-                    ? { background: 'rgba(255,255,255,0.12)', color: '#ffffff', boxShadow: '0 1px 4px rgba(0,0,0,0.3)' }
+                    ? { background: 'linear-gradient(135deg, #FF4D00, #FF7A00)', color: '#ffffff', boxShadow: '0 2px 8px rgba(255,77,0,0.3)' }
                     : { background: '#ffffff', color: '#0f172a', boxShadow: '0 1px 4px rgba(0,0,0,0.1)' }
                   : { color: isDark ? '#71717a' : '#52525b' }
                 }
@@ -466,15 +602,31 @@ function LandingPricing({ isDark, onGetStarted }) {
           {/* Elite */}
           <Reveal>
             <div
-              className="group relative rounded-2xl overflow-hidden flex flex-col h-full border transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl"
+              className="group relative rounded-2xl overflow-hidden flex flex-col h-full border premium-card-shine"
               style={isDark ? {
-                background: 'linear-gradient(160deg, #14111f 0%, #111113 100%)',
-                border: '1px solid rgba(139,92,246,0.3)',
-                boxShadow: '0 12px 40px rgba(0,0,0,0.6), 0 0 0 1px rgba(139,92,246,0.1)',
+                background: 'linear-gradient(160deg, #140A00 0%, #0F0804 100%)',
+                border: '1px solid rgba(255,100,0,0.3)',
+                boxShadow: '0 12px 40px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,77,0,0.1)',
+                transition: 'all 0.5s cubic-bezier(0.22, 1, 0.36, 1)',
               } : {
                 background: '#ffffff',
-                border: '1px solid rgba(139,92,246,0.25)',
+                border: '1px solid rgba(255,77,0,0.25)',
                 boxShadow: '0 12px 40px rgba(15,23,42,0.09)',
+                transition: 'all 0.5s cubic-bezier(0.22, 1, 0.36, 1)',
+              }}
+              onMouseEnter={e => {
+                if (isDark) {
+                  e.currentTarget.style.borderColor = 'rgba(255,100,0,0.5)';
+                  e.currentTarget.style.boxShadow = '0 20px 60px rgba(0,0,0,0.7), 0 0 50px rgba(255,77,0,0.12)';
+                  e.currentTarget.style.transform = 'translateY(-6px)';
+                }
+              }}
+              onMouseLeave={e => {
+                if (isDark) {
+                  e.currentTarget.style.borderColor = 'rgba(255,100,0,0.3)';
+                  e.currentTarget.style.boxShadow = '0 12px 40px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,77,0,0.1)';
+                  e.currentTarget.style.transform = 'translateY(0)';
+                }
               }}
             >
               {/* Top glow */}
@@ -482,8 +634,8 @@ function LandingPricing({ isDark, onGetStarted }) {
                 className="absolute inset-0 pointer-events-none opacity-100"
                 style={{
                   background: isDark
-                    ? 'radial-gradient(ellipse 80% 35% at 50% -5%, rgba(168,85,247,0.14) 0%, transparent 70%)'
-                    : 'radial-gradient(ellipse 80% 35% at 50% -5%, rgba(167,139,250,0.2) 0%, transparent 70%)',
+                    ? 'radial-gradient(ellipse 80% 35% at 50% -5%, rgba(255,100,0,0.15) 0%, transparent 70%)'
+                    : 'radial-gradient(ellipse 80% 35% at 50% -5%, rgba(255,122,0,0.18) 0%, transparent 70%)',
                 }}
               />
 
@@ -493,8 +645,8 @@ function LandingPricing({ isDark, onGetStarted }) {
                     <span
                       className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[10px] font-extrabold uppercase tracking-[0.14em] mb-3"
                       style={isDark
-                        ? { background: 'rgba(168,85,247,0.18)', border: '1px solid rgba(168,85,247,0.35)', color: '#c084fc' }
-                        : { background: 'rgba(139,92,246,0.1)', border: '1px solid rgba(139,92,246,0.3)', color: '#6d28d9', boxShadow: '0 1px 4px rgba(139,92,246,0.1)' }
+                        ? { background: 'rgba(255,100,0,0.18)', border: '1px solid rgba(255,100,0,0.35)', color: '#FF7A00' }
+                        : { background: 'rgba(255,77,0,0.1)', border: '1px solid rgba(255,77,0,0.3)', color: '#CC3D00', boxShadow: '0 1px 4px rgba(255,77,0,0.1)' }
                       }
                     >
                       🔥 Most Popular
@@ -525,7 +677,7 @@ function LandingPricing({ isDark, onGetStarted }) {
                 {/* Price */}
                 <div
                   className="mb-7 pb-7"
-                  style={{ borderBottom: isDark ? '1px solid rgba(139,92,246,0.12)' : '1px solid rgba(139,92,246,0.1)' }}
+                  style={{ borderBottom: isDark ? '1px solid rgba(255,100,0,0.15)' : '1px solid rgba(255,77,0,0.1)' }}
                 >
                   <div className="flex items-end gap-2">
                     {elite.anchoredAmount && elite.anchoredAmount > elite.amount && (
@@ -560,13 +712,11 @@ function LandingPricing({ isDark, onGetStarted }) {
                   onClick={() => onGetStarted?.({ plan: 'elite', billingCycle: cycle })}
                   className="group/btn relative w-full rounded-xl py-[14px] text-[14px] font-bold mb-7 overflow-hidden transition-all duration-300 hover:-translate-y-0.5 active:scale-[0.98]"
                   style={{
-                    background: isDark
-                      ? 'linear-gradient(135deg, #8b5cf6, #6366f1)'
-                      : 'linear-gradient(135deg, #7c3aed, #4f46e5)',
+                    background: 'linear-gradient(135deg, #FF4D00, #FF7A00)',
                     color: '#fff',
                     boxShadow: isDark
-                      ? '0 6px 28px rgba(139,92,246,0.35)'
-                      : '0 6px 24px rgba(124,58,237,0.3)',
+                      ? '0 6px 28px rgba(255,77,0,0.4)'
+                      : '0 6px 24px rgba(255,77,0,0.3)',
                   }}
                 >
                   <span
@@ -587,9 +737,9 @@ function LandingPricing({ isDark, onGetStarted }) {
                     <li key={f} className="flex items-start gap-3">
                       <span
                         className="shrink-0 mt-[1px] w-[18px] h-[18px] rounded-full flex items-center justify-center"
-                        style={{ background: 'rgba(139,92,246,0.15)' }}
+                        style={{ background: 'rgba(255,100,0,0.15)' }}
                       >
-                        <Check className="w-[9px] h-[9px]" style={{ color: isDark ? '#c084fc' : '#7c3aed' }} />
+                        <Check className="w-[9px] h-[9px]" style={{ color: isDark ? '#FF7A00' : '#CC3D00' }} />
                       </span>
                       <span className="text-[13px] leading-snug" style={{ color: isDark ? '#d4d4d8' : '#3f3f46' }}>{f}</span>
                     </li>
@@ -602,15 +752,17 @@ function LandingPricing({ isDark, onGetStarted }) {
           {/* Pro */}
           <Reveal delay={0.1}>
             <div
-              className="group relative rounded-2xl overflow-hidden flex flex-col h-full border transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl"
+              className={`group relative rounded-2xl overflow-hidden flex flex-col h-full border ${isDark ? 'premium-card-glow premium-card-shine' : ''}`}
               style={isDark ? {
                 background: '#111113',
                 border: '1px solid rgba(255,255,255,0.08)',
                 boxShadow: '0 12px 40px rgba(0,0,0,0.55)',
+                transition: 'all 0.5s cubic-bezier(0.22, 1, 0.36, 1)',
               } : {
                 background: '#ffffff',
                 border: '1px solid rgba(0,0,0,0.08)',
                 boxShadow: '0 12px 40px rgba(15,23,42,0.08)',
+                transition: 'all 0.5s cubic-bezier(0.22, 1, 0.36, 1)',
               }}
             >
               <div
@@ -824,8 +976,8 @@ function FAQSection({ isDark }) {
               className="bg-clip-text text-transparent"
               style={{
                 backgroundImage: isDark
-                  ? 'linear-gradient(135deg, #94a3b8, #cbd5e1)'
-                  : 'linear-gradient(135deg, #334155, #64748b)',
+                  ? 'linear-gradient(135deg, #FF6B35, #FF9A5C)'
+                  : 'linear-gradient(135deg, #CC3D00, #FF4D00)',
               }}
             >
               questions
@@ -837,15 +989,17 @@ function FAQSection({ isDark }) {
           {FAQS.map((faq, i) => (
             <Reveal key={i} delay={i * 0.05}>
               <div
-                className="rounded-2xl border overflow-hidden transition-all duration-300"
+                className={`rounded-2xl border overflow-hidden ${isDark ? 'premium-card-glow' : ''}`}
                 style={{
-                  background: isDark ? '#111113' : '#ffffff',
+                  background: isDark ? 'rgba(255,255,255,0.03)' : '#ffffff',
+                  backdropFilter: isDark ? 'blur(10px)' : 'none',
                   borderColor: openFaq === i
-                    ? (isDark ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.14)')
+                    ? (isDark ? 'rgba(255,100,0,0.3)' : 'rgba(255,77,0,0.2)')
                     : (isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.07)'),
                   boxShadow: isDark
-                    ? '0 8px 32px rgba(0,0,0,0.45)'
+                    ? '0 4px 24px rgba(0,0,0,0.3)'
                     : '0 8px 32px rgba(15,23,42,0.07)',
+                  transition: 'all 0.4s cubic-bezier(0.22, 1, 0.36, 1)',
                 }}
               >
                 <button
@@ -901,17 +1055,54 @@ function FAQSection({ isDark }) {
 // ─── Final CTA ────────────────────────────────────────────────────────────────
 function FinalCTA({ isDark, onGetStarted }) {
   return (
-    <section className="py-28 px-6">
+    <section className="py-28 px-6 relative overflow-hidden">
+      {/* Centered orange glow - breathing */}
+      {isDark && (
+        <>
+          <div className="absolute pointer-events-none" style={{
+            top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
+            width: '60vw', height: '50vh', maxWidth: 700,
+            background: 'radial-gradient(circle, rgba(255,70,0,0.08) 0%, transparent 60%)',
+            filter: 'blur(50px)',
+            animation: 'hero-orb-breathe 5s ease-in-out infinite',
+          }} />
+          {/* Floating particles */}
+          {[...Array(6)].map((_, i) => (
+            <motion.div
+              key={i}
+              className="absolute pointer-events-none rounded-full"
+              style={{
+                width: 3 + Math.random() * 4,
+                height: 3 + Math.random() * 4,
+                background: `rgba(255,${80 + i * 15},0,${0.15 + Math.random() * 0.15})`,
+                left: `${15 + i * 12}%`,
+                top: `${20 + (i % 3) * 25}%`,
+              }}
+              animate={{
+                y: [0, -30 - Math.random() * 20, 0],
+                x: [0, (i % 2 === 0 ? 10 : -10), 0],
+                opacity: [0.3, 0.7, 0.3],
+              }}
+              transition={{
+                duration: 4 + Math.random() * 3,
+                repeat: Infinity,
+                ease: 'easeInOut',
+                delay: i * 0.5,
+              }}
+            />
+          ))}
+        </>
+      )}
       <Reveal className="relative z-10 max-w-3xl mx-auto text-center">
         <div
           className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full mb-8 text-[11px] font-semibold"
           style={{
-            background: isDark ? 'rgba(59,130,246,0.1)' : 'rgba(37,99,235,0.08)',
-            border: `1px solid ${isDark ? 'rgba(59,130,246,0.25)' : 'rgba(37,99,235,0.2)'}`,
-            color: isDark ? '#60a5fa' : '#2563eb',
+            background: isDark ? 'rgba(255,77,0,0.1)' : 'rgba(255,77,0,0.08)',
+            border: `1px solid ${isDark ? 'rgba(255,77,0,0.25)' : 'rgba(255,77,0,0.2)'}`,
+            color: isDark ? '#FF7A00' : '#CC3D00',
           }}
         >
-          <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse inline-block" />
+          <span className="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse inline-block" />
           Join 2,400+ traders already improving
         </div>
 
@@ -924,7 +1115,20 @@ function FinalCTA({ isDark, onGetStarted }) {
           }}
         >
           Start improving{' '}
-          <span style={{ color: isDark ? '#60a5fa' : '#2563eb' }}>today.</span>
+          <span
+            style={{
+              backgroundImage: isDark
+                ? 'linear-gradient(90deg, #FF4D00, #FF7A00, #FFB366, #FF7A00, #FF4D00)'
+                : undefined,
+              backgroundSize: isDark ? '200% auto' : undefined,
+              animation: isDark ? 'hero-shimmer 4s ease-in-out infinite' : undefined,
+              WebkitBackgroundClip: isDark ? 'text' : undefined,
+              WebkitTextFillColor: isDark ? 'transparent' : undefined,
+              color: isDark ? undefined : '#FF4D00',
+            }}
+          >
+            today.
+          </span>
         </h2>
 
         <p
@@ -937,13 +1141,14 @@ function FinalCTA({ isDark, onGetStarted }) {
         <div className="flex flex-wrap items-center justify-center gap-4">
           <button
             onClick={() => onGetStarted()}
-            className="group relative overflow-hidden inline-flex items-center gap-2.5 px-8 py-4 rounded-2xl text-[16px] font-bold transition-all duration-300 hover:-translate-y-1 active:scale-[0.97]"
+            className="group relative overflow-hidden inline-flex items-center gap-2.5 px-8 py-4 rounded-full text-[16px] font-bold transition-all duration-300 hover:-translate-y-1 active:scale-[0.97]"
             style={{
-              background: isDark ? '#f4f4f5' : '#09090b',
-              color: isDark ? '#09090b' : '#f4f4f5',
+              background: 'linear-gradient(135deg, #FF4D00, #FF7A00)',
+              color: '#ffffff',
+              animation: isDark ? 'premium-pulse-ring 2s ease-out infinite' : 'none',
               boxShadow: isDark
-                ? '0 4px 20px rgba(255,255,255,0.12)'
-                : '0 4px 18px rgba(0,0,0,0.22)',
+                ? '0 4px 28px rgba(255,77,0,0.4)'
+                : '0 4px 24px rgba(255,77,0,0.35)',
             }}
           >
             <span
@@ -956,7 +1161,7 @@ function FinalCTA({ isDark, onGetStarted }) {
 
           <button
             onClick={() => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })}
-            className="inline-flex items-center gap-2 px-7 py-4 rounded-2xl text-[15px] font-semibold transition-all duration-300 hover:-translate-y-0.5"
+            className={`inline-flex items-center gap-2 px-7 py-4 rounded-full text-[15px] font-semibold transition-all duration-300 hover:-translate-y-0.5 ${isDark ? 'premium-card-glow' : ''}`}
             style={{
               background: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)',
               border: `1px solid ${isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'}`,
@@ -1029,10 +1234,10 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
       </Helmet>
 
       <div
-        className={`min-h-screen overflow-x-hidden ${isDark ? 'bg-[#09090b] text-white' : 'bg-[#f6f5f3] text-[#18181b]'}`}
+        className={`min-h-screen overflow-x-hidden ${isDark ? 'bg-[#0b0b0f] text-white' : 'bg-[#f6f5f3] text-[#18181b]'}`}
         style={{
           backgroundImage: isDark
-            ? 'radial-gradient(ellipse 80% 40% at 50% -5%, rgba(37,99,235,0.05) 0%, transparent 70%)'
+            ? 'radial-gradient(ellipse 80% 40% at 50% -5%, rgba(255,90,0,0.07) 0%, transparent 70%)'
             : undefined,
         }}
       >
@@ -1057,7 +1262,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
             position: absolute;
             bottom: -4px; left: 0;
             width: 0; height: 1.5px;
-            background: currentColor;
+            background: #FF5500;
             transition: width 0.22s ease;
           }
           .nav-link-hover:hover::after { width: 100%; }
@@ -1073,6 +1278,87 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
             pointer-events: none;
           }
           .btn-shimmer:hover::after { transform: translateX(100%); }
+
+          /* ── Premium Animations ── */
+          @keyframes premium-gradient-shift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+          }
+
+          @keyframes premium-border-glow {
+            0%, 100% { border-color: rgba(255,100,0,0.15); }
+            50% { border-color: rgba(255,100,0,0.35); }
+          }
+
+          @keyframes premium-float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+          }
+
+          @keyframes premium-shine {
+            0% { left: -100%; }
+            100% { left: 200%; }
+          }
+
+          @keyframes premium-pulse-ring {
+            0% { box-shadow: 0 0 0 0 rgba(255,77,0,0.35); }
+            70% { box-shadow: 0 0 0 12px rgba(255,77,0,0); }
+            100% { box-shadow: 0 0 0 0 rgba(255,77,0,0); }
+          }
+
+          @keyframes hero-orb-breathe {
+            0%, 100% { opacity: 0.08; transform: translate(-50%, -50%) scale(1); }
+            50% { opacity: 0.14; transform: translate(-50%, -50%) scale(1.06); }
+          }
+
+          @keyframes hero-shimmer {
+            0%, 100% { background-position: -200% center; }
+            50% { background-position: 200% center; }
+          }
+
+          ${isDark ? `
+          .premium-card-glow {
+            position: relative;
+            transition: border-color 0.4s ease, box-shadow 0.5s ease, transform 0.4s ease;
+          }
+          .premium-card-glow:hover {
+            border-color: rgba(255,100,0,0.25) !important;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5), 0 0 30px rgba(255,77,0,0.08) !important;
+            transform: translateY(-4px);
+          }
+          .premium-card-glow::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            background: radial-gradient(600px at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255,100,0,0.06) 0%, transparent 70%);
+          }
+          .premium-card-glow:hover::before {
+            opacity: 1;
+          }
+
+          .premium-card-shine {
+            position: relative;
+            overflow: hidden;
+          }
+          .premium-card-shine::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.03), transparent);
+            transition: none;
+            pointer-events: none;
+          }
+          .premium-card-shine:hover::after {
+            animation: premium-shine 0.8s ease forwards;
+          }
+          ` : ''}
 
           /* Noise grain on dark mode body */
           ${isDark ? `
@@ -1094,20 +1380,22 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
           className="fixed top-0 left-0 right-0 z-[100] h-[2px] origin-left"
           style={{
             scaleX: scrollYProgress,
-            background: '#3b82f6',
+            background: 'linear-gradient(90deg, #FF4D00, #FF7A00)',
           }}
         />
 
         {/* ══════════════════════════════ NAVBAR ══════════════════════════════ */}
         <header
-          className="sticky top-0 z-50 border-b transition-all duration-300"
+          className="sticky top-0 z-50 transition-all duration-300"
           style={{
             background: scrolled
-              ? (isDark ? 'rgba(9,9,11,0.92)' : 'rgba(248,250,252,0.92)')
-              : (isDark ? 'rgba(9,9,11,0.6)' : 'rgba(248,250,252,0.6)'),
-            backdropFilter: 'blur(20px) saturate(160%)',
-            WebkitBackdropFilter: 'blur(20px) saturate(160%)',
-            borderBottomColor: isDark ? 'rgba(255,255,255,0.07)' : 'rgba(15,23,42,0.07)',
+              ? (isDark ? 'rgba(11,11,15,0.95)' : 'rgba(248,250,252,0.92)')
+              : 'transparent',
+            backdropFilter: scrolled ? 'blur(20px) saturate(160%)' : 'none',
+            WebkitBackdropFilter: scrolled ? 'blur(20px) saturate(160%)' : 'none',
+            borderBottom: scrolled
+              ? `1px solid ${isDark ? 'rgba(255,255,255,0.07)' : 'rgba(15,23,42,0.07)'}`
+              : '1px solid transparent',
             boxShadow: scrolled
               ? (isDark ? '0 8px 30px rgba(0,0,0,0.4)' : '0 8px 24px rgba(15,23,42,0.08)')
               : 'none',
@@ -1125,16 +1413,29 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
               </span>
             </div>
 
-            {/* Desktop nav */}
-            <nav className="hidden md:flex items-center gap-8">
+            {/* Desktop nav - pill style */}
+            <nav
+              className="hidden md:flex items-center gap-1 px-1.5 py-1 rounded-full"
+              style={{
+                background: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.03)',
+                border: `1px solid ${isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.06)'}`,
+                backdropFilter: 'blur(12px)',
+              }}
+            >
               {NAV_LINKS.map(l => (
                 <a
                   key={l}
                   href={`#${l.toLowerCase()}`}
-                  className="nav-link-hover text-[14px] font-medium transition-colors"
-                  style={{ color: isDark ? 'rgba(148,163,184,0.8)' : 'rgba(71,85,105,0.9)' }}
-                  onMouseEnter={e => e.currentTarget.style.color = isDark ? '#f4f4f5' : '#18181b'}
-                  onMouseLeave={e => e.currentTarget.style.color = isDark ? 'rgba(148,163,184,0.8)' : 'rgba(71,85,105,0.9)'}
+                  className="text-[13px] font-medium px-4 py-1.5 rounded-full transition-all duration-200"
+                  style={{ color: isDark ? '#71717a' : '#52525b' }}
+                  onMouseEnter={e => {
+                    e.currentTarget.style.color = isDark ? '#f4f4f5' : '#18181b';
+                    e.currentTarget.style.background = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.05)';
+                  }}
+                  onMouseLeave={e => {
+                    e.currentTarget.style.color = isDark ? '#71717a' : '#52525b';
+                    e.currentTarget.style.background = 'transparent';
+                  }}
                 >
                   {l}
                 </a>
@@ -1145,7 +1446,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
             <div className="hidden md:flex items-center gap-3">
               <button
                 onClick={toggleTheme}
-                className="w-9 h-9 flex items-center justify-center rounded-xl transition-all duration-200 hover:-translate-y-px"
+                className="w-9 h-9 flex items-center justify-center rounded-full transition-all duration-200 hover:-translate-y-px"
                 style={{
                   background: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.04)',
                   border: isDark ? '1px solid rgba(255,255,255,0.08)' : '1px solid rgba(0,0,0,0.08)',
@@ -1160,7 +1461,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
 
               <button
                 onClick={onSignIn}
-                className="text-[13px] font-medium px-4 py-2 rounded-lg transition-all duration-200"
+                className="text-[13px] font-medium px-4 py-2 rounded-full transition-all duration-200"
                 style={{ color: isDark ? 'rgba(148,163,184,0.9)' : 'rgba(71,85,105,0.9)' }}
                 onMouseEnter={e => e.currentTarget.style.color = isDark ? '#f4f4f5' : '#18181b'}
                 onMouseLeave={e => e.currentTarget.style.color = isDark ? 'rgba(148,163,184,0.9)' : 'rgba(71,85,105,0.9)'}
@@ -1170,15 +1471,14 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
 
               <button
                 onClick={() => onGetStarted()}
-                className="btn-shimmer text-[13px] font-semibold px-5 py-2.5 rounded-xl transition-all duration-300 hover:-translate-y-0.5 active:scale-[0.97]"
+                className="btn-shimmer text-[13px] font-semibold px-5 py-2.5 rounded-full transition-all duration-300 hover:-translate-y-0.5 active:scale-[0.97]"
                 style={{
-                  background: isDark
-                    ? 'linear-gradient(135deg, #3b82f6, #8b5cf6)'
-                    : 'linear-gradient(135deg, #1d4ed8, #6d28d9)',
+                  background: 'linear-gradient(135deg, #FF4D00, #FF7A00)',
                   color: '#ffffff',
+                  animation: isDark ? 'premium-pulse-ring 2.5s ease-out infinite' : 'none',
                   boxShadow: isDark
-                    ? '0 4px 18px rgba(59,130,246,0.3)'
-                    : '0 4px 16px rgba(29,78,216,0.25)',
+                    ? '0 4px 18px rgba(255,77,0,0.35)'
+                    : '0 4px 16px rgba(255,77,0,0.3)',
                 }}
               >
                 Get Started
@@ -1210,7 +1510,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
                 transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
                 className="md:hidden border-t overflow-hidden"
                 style={{
-                  background: isDark ? 'rgba(9,9,11,0.98)' : 'rgba(248,250,252,0.98)',
+                  background: isDark ? 'rgba(11,11,15,0.98)' : 'rgba(248,250,252,0.98)',
                   borderColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.07)',
                 }}
               >
@@ -1252,7 +1552,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
                       onClick={() => { setMobileOpen(false); onGetStarted(); }}
                       className="flex-1 text-[13px] font-semibold rounded-xl py-2.5"
                       style={{
-                        background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)',
+                        background: 'linear-gradient(135deg, #FF4D00, #FF7A00)',
                         color: '#ffffff',
                       }}
                     >
@@ -1329,7 +1629,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
           style={{
             borderColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.07)',
             background: isDark
-              ? 'linear-gradient(180deg, transparent 0%, rgba(9,9,11,0.8) 100%)'
+              ? 'linear-gradient(180deg, transparent 0%, rgba(11,11,15,0.8) 100%)'
               : 'transparent',
           }}
         >
