@@ -8,7 +8,7 @@
 
 import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
-import { AlertTriangle, TrendingDown, Clock, TrendingUp, Bot, Sparkles } from 'lucide-react';
+import { AlertTriangle, TrendingDown, Clock, TrendingUp, Sparkles } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 import { IconContainer } from './ui';
 
@@ -90,32 +90,17 @@ function InsightCard({ insight, index, isDark }) {
       initial={{ opacity: 0, y: 28 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1], delay: index * 0.1 }}
-      whileHover={{ y: -4, scale: 1.015 }}
-      className="group relative rounded-2xl border overflow-hidden cursor-default"
+      whileHover={{ y: -3 }}
+      className="rounded-2xl border overflow-hidden cursor-default"
       style={{
-        background: isDark
-          ? `linear-gradient(135deg, ${insight.bg} 0%, rgba(255,255,255,0.01) 100%)`
-          : `linear-gradient(135deg, ${insight.bg} 0%, rgba(255,255,255,0.6) 100%)`,
-        borderColor: insight.border,
+        background: isDark ? '#111113' : '#ffffff',
+        borderColor: isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.07)',
         boxShadow: isDark
-          ? `0 4px 24px rgba(0,0,0,0.3), 0 0 0 1px ${insight.border}`
-          : `0 4px 16px rgba(0,0,0,0.06), 0 0 0 1px ${insight.border}`,
-        transition: 'transform 0.22s ease, box-shadow 0.22s ease',
-      }}
-      onMouseEnter={e => {
-        e.currentTarget.style.boxShadow = `0 12px 40px rgba(0,0,0,0.25), 0 0 0 1px ${insight.border}, 0 0 40px ${insight.glow}`;
-      }}
-      onMouseLeave={e => {
-        e.currentTarget.style.boxShadow = isDark
-          ? `0 4px 24px rgba(0,0,0,0.3), 0 0 0 1px ${insight.border}`
-          : `0 4px 16px rgba(0,0,0,0.06), 0 0 0 1px ${insight.border}`;
+          ? '0 4px 20px rgba(0,0,0,0.25)'
+          : '0 2px 12px rgba(0,0,0,0.05)',
+        transition: 'transform 0.22s ease',
       }}
     >
-      {/* Subtle corner glow */}
-      <div
-        className="absolute -top-8 -right-8 w-28 h-28 rounded-full blur-[40px] opacity-60 pointer-events-none transition-opacity group-hover:opacity-100"
-        style={{ background: insight.glow }}
-      />
 
       <div className="relative p-5">
         {/* Top row: icon + badge */}
@@ -132,7 +117,7 @@ function InsightCard({ insight, index, isDark }) {
         {/* Headline */}
         <p
           className="text-[14px] font-bold leading-snug mb-2"
-          style={{ color: isDark ? '#f1f5f9' : '#0f172a' }}
+          style={{ color: isDark ? '#f4f4f5' : '#18181b' }}
         >
           {insight.headline}
         </p>
@@ -140,7 +125,7 @@ function InsightCard({ insight, index, isDark }) {
         {/* Detail text */}
         <p
           className="text-[12px] leading-relaxed mb-4"
-          style={{ color: isDark ? '#6b7280' : '#64748b' }}
+          style={{ color: isDark ? '#71717a' : '#52525b' }}
         >
           {insight.detail}
         </p>
@@ -153,7 +138,7 @@ function InsightCard({ insight, index, isDark }) {
           <span className="text-[13px] font-black font-mono" style={{ color: insight.color }}>
             {insight.stat}
           </span>
-          <span className="text-[10px] font-medium" style={{ color: isDark ? '#9ca3af' : '#64748b' }}>
+          <span className="text-[10px] font-medium" style={{ color: isDark ? '#71717a' : '#52525b' }}>
             {insight.statLabel}
           </span>
         </div>
@@ -170,7 +155,7 @@ export default function AIInsightsSection({ onGetStarted }) {
   return (
     <section
       className="relative px-6 py-24 overflow-hidden"
-      style={{ background: isDark ? 'transparent' : '#f8fafc' }}
+      style={{ background: isDark ? 'transparent' : '#f6f5f3' }}
     >
       {/* Sample-data disclosure banner */}
       <div
@@ -211,27 +196,27 @@ export default function AIInsightsSection({ onGetStarted }) {
           transition={{ duration: 0.5 }}
           className="text-center mb-14"
         >
-          <div
-            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border mb-5"
-            style={{ background: 'rgba(59,130,246,0.07)', borderColor: 'rgba(59,130,246,0.2)' }}
+          <p
+            className="text-[11px] font-semibold tracking-[0.2em] uppercase mb-4"
+            style={{ color: isDark ? '#52525b' : '#a1a1aa' }}
           >
-            <Bot size={13} style={{ color: '#3b82f6' }} />
-            <span className="text-[11px] font-bold tracking-[0.18em] text-blue-400 uppercase">What Zynth Finds In Your Activity Data</span>
-          </div>
+            What Zynth Finds
+          </p>
 
           <h2
-            className="text-[36px] md:text-[44px] font-extrabold tracking-tight mb-4 leading-tight"
-            style={{ color: isDark ? '#ffffff' : '#0f172a' }}
+            className="font-bold tracking-tight leading-[1.08] mb-4"
+            style={{
+              fontSize: 'clamp(30px, 4vw, 52px)',
+              color: isDark ? '#f4f4f5' : '#18181b',
+              letterSpacing: '-0.03em',
+            }}
           >
-            This is what your decision patterns{' '}
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-cyan-400">
-              actually look like.
-            </span>
+            This is what your decision patterns actually look like.
           </h2>
 
           <p
             className="text-[16px] max-w-[520px] mx-auto leading-relaxed"
-            style={{ color: isDark ? '#6b7280' : '#64748b' }}
+            style={{ color: isDark ? '#71717a' : '#52525b' }}
           >
             Zynth doesn&apos;t guess. It shows you patterns from your real activity data instantly.
           </p>
@@ -260,10 +245,10 @@ export default function AIInsightsSection({ onGetStarted }) {
           </p>
           <button
             onClick={() => onGetStarted()}
-            className="group inline-flex items-center gap-2 px-7 py-3.5 rounded-xl text-[14px] font-bold text-white transition-all hover:scale-[1.03]"
+            className={`group inline-flex items-center gap-2 px-7 py-3.5 rounded-xl text-[14px] font-bold transition-all hover:scale-[1.03] ${isDark ? 'text-[#09090b]' : 'text-white'}`}
             style={{
-              background: 'linear-gradient(135deg,#1d4ed8,#0284c7)',
-              boxShadow: '0 6px 24px rgba(59,130,246,0.35)',
+              background: isDark ? '#f4f4f5' : '#18181b',
+              boxShadow: isDark ? '0 4px 20px rgba(255,255,255,0.08)' : '0 4px 20px rgba(0,0,0,0.15)',
             }}
           >
             Get My Insights
