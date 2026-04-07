@@ -384,7 +384,7 @@ function PaywallPricingBlock({ onUpgrade }) {
               background: 'rgba(99,102,241,0.12)',
               border: '1px solid rgba(99,102,241,0.2)',
             }}>
-              <Icon size={15} color="#818cf8" />
+              <Icon size={15} color="#CA8A04" />
             </div>
             <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--z-text2)' }}>{text}</span>
             <CheckCircle2 size={14} color="#34d399" style={{ marginLeft: 'auto', flexShrink: 0 }} />
@@ -403,8 +403,8 @@ function PaywallPricingBlock({ onUpgrade }) {
           borderRadius: 14, border: 'none', cursor: 'pointer',
           fontSize: 15, fontWeight: 800, color: '#fff',
           background: hovered
-            ? 'linear-gradient(135deg, #4f46e5, #7c3aed)'
-            : 'linear-gradient(135deg, #6366f1, #8b5cf6)',
+            ? 'linear-gradient(135deg, #A16207, #7c3aed)'
+            : 'linear-gradient(135deg, #CA8A04, #8b5cf6)',
           boxShadow: hovered
             ? '0 8px 32px rgba(99,102,241,0.55)'
             : '0 4px 20px rgba(99,102,241,0.38)',
@@ -497,12 +497,12 @@ export default function EconomicIntelligence() {
 
   // ── Pro gate ─────────────────────────────────────────────────────────────
   if (!canAccess) return (
-    <div className="min-h-full bg-slate-50 dark:bg-slate-950" style={{ position: 'relative', minHeight: 560, display: 'flex', alignItems: 'center', justifyContent: 'center', paddingTop: 64, paddingBottom: 48 }}>
+    <div className="min-h-full bg-zinc-50 dark:bg-zinc-950" style={{ position: 'relative', minHeight: 560, display: 'flex', alignItems: 'center', justifyContent: 'center', paddingTop: 64, paddingBottom: 48 }}>
       {/* Ambient glows — pointer-events:none so they never block clicks */}
       <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none' }}>
         <div style={{ position: 'absolute', top: '-10%', left: '50%', transform: 'translateX(-50%)', width: 600, height: 400, borderRadius: '50%', background: 'radial-gradient(ellipse, rgba(99,102,241,0.14) 0%, transparent 70%)', filter: 'blur(32px)' }} />
         <div style={{ position: 'absolute', bottom: '0', left: '15%', width: 280, height: 280, borderRadius: '50%', background: 'radial-gradient(ellipse, rgba(16,185,129,0.08) 0%, transparent 70%)', filter: 'blur(24px)' }} />
-        <div style={{ position: 'absolute', top: '20%', right: '10%', width: 200, height: 200, borderRadius: '50%', background: 'radial-gradient(ellipse, rgba(59,130,246,0.1) 0%, transparent 70%)', filter: 'blur(20px)' }} />
+        <div style={{ position: 'absolute', top: '20%', right: '10%', width: 200, height: 200, borderRadius: '50%', background: 'radial-gradient(ellipse, rgba(202,138,4,0.1) 0%, transparent 70%)', filter: 'blur(20px)' }} />
       </div>
       <PaywallPricingBlock onUpgrade={openUpgradeModal} />
     </div>
@@ -515,30 +515,30 @@ export default function EconomicIntelligence() {
         <AlertCircle size={16} className="mt-0.5 shrink-0 text-red-500" />
         <div>
           <p className="text-sm font-semibold text-red-500">Failed to load economic intelligence</p>
-          <p className="mt-0.5 text-xs text-slate-500">{error}</p>
+          <p className="mt-0.5 text-xs text-zinc-500">{error}</p>
         </div>
       </div>
     </div>
   );
 
   return (
-    <div className="min-h-full bg-slate-50 dark:bg-slate-950">
+    <div className="min-h-full bg-zinc-50 dark:bg-zinc-950">
       <div className="mx-auto max-w-3xl px-4 py-6 pb-16">
 
         {/* ── Page header ─────────────────────────────────────────────── */}
         <div className="mb-6 flex items-center justify-between gap-3">
           <div>
-            <h1 className="text-xl font-bold tracking-tight text-slate-900 dark:text-white">
+            <h1 className="text-xl font-bold tracking-tight text-zinc-900 dark:text-white">
               Economic Intelligence
             </h1>
-            <p className="mt-0.5 text-xs text-slate-400">
+            <p className="mt-0.5 text-xs text-zinc-400">
               Macroeconomic surprise indicators for gold (XAUUSD)
             </p>
           </div>
           <button
             onClick={handleRefresh}
             disabled={refreshing}
-            className="flex items-center gap-2 rounded-lg bg-blue-500 px-4 py-2 text-xs font-bold text-white transition-colors hover:bg-blue-600 disabled:opacity-60"
+            className="flex items-center gap-2 rounded-lg bg-[#CA8A04] px-4 py-2 text-xs font-bold text-white transition-colors hover:bg-[#A16207] disabled:opacity-60"
           >
             <RefreshCcw size={12} className={refreshing ? 'animate-spin' : ''} />
             Refresh

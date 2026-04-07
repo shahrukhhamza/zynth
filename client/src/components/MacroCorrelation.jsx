@@ -165,7 +165,7 @@ function AlignmentStats({ hdrs }) {
                 <span style={{ fontSize: 13, fontWeight: 700, color: theme.text }}>{cfg.label}</span>
                 <span style={{ fontSize: 11, color: theme.muted }}>{cfg.desc}</span>
                 {cat === best && (
-                  <span style={{ fontSize: 10, fontWeight: 700, color: '#10b981', background: 'rgba(16,185,129,0.12)', padding: '1px 7px', borderRadius: 20 }}>BEST</span>
+                  <span style={{ fontSize: 10, fontWeight: 700, color: '#CA8A04', background: 'rgba(202,138,4,0.12)', padding: '1px 7px', borderRadius: 20 }}>BEST</span>
                 )}
               </div>
               <span style={{ fontSize: 12, color: theme.muted }}>{s.wins}W / {s.losses}L · {s.total} trades</span>
@@ -191,8 +191,8 @@ function AlignmentStats({ hdrs }) {
 
       {/* Key insight — use backend alignmentEdge when available */}
       {best && stats.stats?.[best]?.winRate != null && (
-        <div style={{ padding: '12px 14px', borderRadius: 10, backgroundColor: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.22)', fontSize: 13, color: theme.text, lineHeight: 1.6 }}>
-          <span style={{ color: '#10b981', fontWeight: 700 }}>⚡ Key Insight: </span>
+        <div style={{ padding: '12px 14px', borderRadius: 10, backgroundColor: 'rgba(202,138,4,0.08)', border: '1px solid rgba(202,138,4,0.22)', fontSize: 13, color: theme.text, lineHeight: 1.6 }}>
+          <span style={{ color: '#CA8A04', fontWeight: 700 }}>⚡ Key Insight: </span>
           Your win rate when macro is <strong style={{ color: ALIGN_CFG[best].color }}>{best}</strong> is{' '}
           <strong style={{ color: ALIGN_CFG[best].color }}>{stats.stats[best].winRate}%</strong>
           {stats.alignmentEdge != null && best === 'aligned'
@@ -521,7 +521,7 @@ function CorrelationScatter({ timelineTrades, macroTimeline }) {
 
         {/* Macro score line */}
         {linePath && (
-          <path d={linePath} fill="none" stroke="#3b82f6" strokeWidth={2} strokeLinejoin="round" opacity={0.85} />
+          <path d={linePath} fill="none" stroke="#CA8A04" strokeWidth={2} strokeLinejoin="round" opacity={0.85} />
         )}
 
         {/* Trade dots */}
@@ -565,7 +565,7 @@ function CorrelationScatter({ timelineTrades, macroTimeline }) {
       <div style={{ display: 'flex', gap: 16, marginTop: 8, flexWrap: 'wrap' }}>
         {linePts.length >= 2 && (
           <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, color: theme.muted }}>
-            <div style={{ width: 20, height: 2, backgroundColor: '#3b82f6' }} />
+            <div style={{ width: 20, height: 2, backgroundColor: '#CA8A04' }} />
             Macro Score (monthly)
           </div>
         )}
@@ -597,12 +597,12 @@ function AiNarrative({ text }) {
     <div style={{
       padding:         20,
       borderRadius:    12,
-      backgroundColor: theme.isDark ? 'rgba(14,165,233,0.07)' : 'rgba(14,165,233,0.05)',
-      border:          `1px solid rgba(14,165,233,0.2)`,
+      backgroundColor: theme.isDark ? 'rgba(202,138,4,0.07)' : 'rgba(202,138,4,0.05)',
+      border:          `1px solid rgba(202,138,4,0.2)`,
     }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
-        <div style={{ width: 28, height: 28, borderRadius: 8, backgroundColor: 'rgba(14,165,233,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <Brain style={{ width: 14, height: 14, color: '#0ea5e9' }} />
+        <div style={{ width: 28, height: 28, borderRadius: 8, backgroundColor: 'rgba(202,138,4,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <Brain style={{ width: 14, height: 14, color: '#CA8A04' }} />
         </div>
         <span style={{ fontSize: 13, fontWeight: 700, color: theme.text }}>AI Macro Analysis</span>
         <span style={{ fontSize: 11, color: theme.muted, marginLeft: 'auto' }}>✦ Zynth AI</span>
@@ -676,7 +676,7 @@ function EmptyState({ theme, onGenerate, loading }) {
           cursor:          loading ? 'wait' : 'pointer',
           fontWeight:      700,
           fontSize:        14,
-          backgroundColor: '#10b981',
+          backgroundColor: '#CA8A04',
           color:           '#fff',
           opacity:         loading ? 0.7 : 1,
         }}>
@@ -761,7 +761,7 @@ export default function MacroCorrelation() {
               cursor:          loading ? 'wait' : 'pointer',
               fontWeight:      700,
               fontSize:        13,
-              backgroundColor: '#10b981',
+              backgroundColor: '#CA8A04',
               color:           '#fff',
               opacity:         loading ? 0.7 : 1,
             }}>
@@ -825,7 +825,7 @@ export default function MacroCorrelation() {
             </SectionTitle>
             <MacroRangeChart data={data.macroRangeStats} />
             {data.keyInsight && (
-              <Insight icon={Zap} text={`${data.keyInsight}`} color="#10b981" />
+              <Insight icon={Zap} text={`${data.keyInsight}`} color="#CA8A04" />
             )}
             {data.dataSource !== 'fred_historical' && (
               <Insight

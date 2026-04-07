@@ -71,16 +71,16 @@ export default function WhyTradersFail({ onGetStarted }) {
           </div>
           <h2
             className={`text-[38px] md:text-[48px] font-extrabold tracking-tight mb-4 ${
-              isDark ? 'text-white' : 'text-gray-900'
+              isDark ? 'text-white' : 'text-zinc-900'
             }`}
           >
             Your approach isn&apos;t the problem.
             <br />
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-red-400 to-orange-400">
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-red-400 to-yellow-400">
               Your patterns are.
             </span>
           </h2>
-          <p className={`text-[16px] max-w-xl mx-auto ${isDark ? 'text-gray-500' : 'text-gray-600'}`}>
+          <p className={`text-[16px] max-w-xl mx-auto ${isDark ? 'text-zinc-500' : 'text-zinc-600'}`}>
             Most setbacks come from repeated behavioral patterns, not a flawed approach.
           </p>
         </Reveal>
@@ -92,9 +92,9 @@ export default function WhyTradersFail({ onGetStarted }) {
             return (
               <Reveal key={item.pain} delay={i * 0.10}>
                 <div
-                  className="rounded-2xl border overflow-hidden transition-all duration-300 hover:-translate-y-1"
+                  className="rounded-2xl border overflow-hidden transition-all duration-300 hover:-tranzinc-y-1"
                   style={{
-                    background: isDark ? '#0f172a' : '#ffffff',
+                    background: isDark ? '#0b0b0f' : '#ffffff',
                     borderColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.07)',
                     boxShadow: isDark ? '0 4px 24px rgba(0,0,0,0.5)' : '0 1px 3px rgba(0,0,0,0.04), 0 4px 20px rgba(0,0,0,0.07)',
                   }}
@@ -116,12 +116,12 @@ export default function WhyTradersFail({ onGetStarted }) {
                           The Problem
                         </div>
                         <h3
-                          className={`text-[17px] font-bold mb-2 ${isDark ? 'text-white' : 'text-gray-900'}`}
+                          className={`text-[17px] font-bold mb-2 ${isDark ? 'text-white' : 'text-zinc-900'}`}
                         >
                           {item.pain}
                         </h3>
                         <p
-                          className={`text-[13px] leading-relaxed ${isDark ? 'text-gray-500' : 'text-gray-600'}`}
+                          className={`text-[13px] leading-relaxed ${isDark ? 'text-zinc-500' : 'text-zinc-600'}`}
                         >
                           {item.painDesc}
                         </p>
@@ -149,7 +149,7 @@ export default function WhyTradersFail({ onGetStarted }) {
                           Zynth Solution · {item.solutionLabel}
                         </div>
                         <p
-                          className={`text-[13px] leading-relaxed font-medium ${isDark ? 'text-gray-300' : 'text-gray-700'}`}
+                          className={`text-[13px] leading-relaxed font-medium ${isDark ? 'text-zinc-300' : 'text-zinc-700'}`}
                         >
                           {item.solution}
                         </p>
@@ -168,13 +168,13 @@ export default function WhyTradersFail({ onGetStarted }) {
             onClick={() => onGetStarted()}
             className="group relative overflow-hidden inline-flex items-center gap-2.5 text-[15px] font-semibold text-white px-9 py-4 rounded-2xl hover:scale-[1.03] transition-all"
             style={{
-              background: 'linear-gradient(135deg,#1d4ed8 0%,#0284c7 100%)',
-              boxShadow: '0 4px 24px rgba(59,130,246,0.32)',
+              background: 'linear-gradient(135deg,#CA8A04 0%,#EAB308 100%)',
+              boxShadow: '0 4px 24px rgba(202,138,4,0.32)',
             }}
           >
             <span className="relative z-10 flex items-center gap-2">
               Get My Insights
-              <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+              <ArrowRight size={16} className="group-hover:tranzinc-x-1 transition-transform" />
             </span>
             <span
               className="absolute inset-0 pointer-events-none"
@@ -185,7 +185,7 @@ export default function WhyTradersFail({ onGetStarted }) {
               }}
             />
           </button>
-          <p className={`text-[12px] mt-3 ${isDark ? 'text-gray-600' : 'text-gray-500'}`}>
+          <p className={`text-[12px] mt-3 ${isDark ? 'text-zinc-600' : 'text-zinc-500'}`}>
             Free plan · No credit card required
           </p>
         </Reveal>

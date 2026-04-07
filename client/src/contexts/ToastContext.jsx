@@ -23,7 +23,7 @@ const ICONS = {
 const COLORS = {
   success: { bg: 'rgba(16,185,129,0.10)', border: 'rgba(16,185,129,0.30)', icon: '#10b981', bar: '#10b981' },
   error:   { bg: 'rgba(239,68,68,0.10)',  border: 'rgba(239,68,68,0.30)',  icon: '#ef4444', bar: '#ef4444' },
-  info:    { bg: 'rgba(59,130,246,0.10)', border: 'rgba(59,130,246,0.30)', icon: '#3b82f6', bar: '#3b82f6' },
+  info:    { bg: 'rgba(202,138,4,0.10)', border: 'rgba(202,138,4,0.30)', icon: '#CA8A04', bar: '#CA8A04' },
   warning: { bg: 'rgba(245,158,11,0.10)', border: 'rgba(245,158,11,0.30)', icon: '#f59e0b', bar: '#f59e0b' },
 };
 
@@ -105,7 +105,7 @@ export function ToastProvider({ children }) {
 
               <span style={{
                 fontSize: 13, fontWeight: 500, lineHeight: 1.4,
-                color: '#f1f5f9', flex: 1,
+                color: '#fafaf9', flex: 1,
               }}>
                 {t.message}
               </span>
@@ -114,7 +114,7 @@ export function ToastProvider({ children }) {
                 onClick={() => dismiss(t.id)}
                 style={{
                   background: 'none', border: 'none', cursor: 'pointer',
-                  padding: 2, flexShrink: 0, opacity: 0.5, color: '#f1f5f9',
+                  padding: 2, flexShrink: 0, opacity: 0.5, color: '#fafaf9',
                   lineHeight: 1,
                 }}
                 aria-label="Dismiss"

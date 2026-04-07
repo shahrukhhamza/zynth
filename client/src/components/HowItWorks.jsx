@@ -86,7 +86,7 @@ export default function HowItWorks({ onGetStarted }) {
                     boxShadow: isDark ? '0 4px 24px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.04)' : '0 1px 3px rgba(0,0,0,0.04)',
                     transition: 'all 0.4s cubic-bezier(0.22, 1, 0.36, 1)',
                   }}
-                  onMouseEnter={e => { if (isDark) { e.currentTarget.style.borderColor = 'rgba(255,100,0,0.25)'; e.currentTarget.style.boxShadow = '0 20px 50px rgba(0,0,0,0.5), 0 0 30px rgba(255,77,0,0.08)'; e.currentTarget.style.transform = 'translateY(-4px)'; } }}
+                  onMouseEnter={e => { if (isDark) { e.currentTarget.style.borderColor = 'rgba(255,100,0,0.25)'; e.currentTarget.style.boxShadow = '0 20px 50px rgba(0,0,0,0.5), 0 0 30px rgba(202,138,4,0.08)'; e.currentTarget.style.transform = 'translateY(-4px)'; } }}
                   onMouseLeave={e => { if (isDark) { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.07)'; e.currentTarget.style.boxShadow = '0 4px 24px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.04)'; e.currentTarget.style.transform = 'translateY(0)'; } }}
                 >
                   <div
@@ -133,7 +133,7 @@ export default function HowItWorks({ onGetStarted }) {
             onMouseLeave={e => { e.currentTarget.style.color = isDark ? '#52525b' : '#a1a1aa'; }}
           >
             Get started free
-            <ArrowRight size={15} className="group-hover:translate-x-1 transition-transform" />
+            <ArrowRight size={15} className="group-hover:tranzinc-x-1 transition-transform" />
           </button>
         </Reveal>
       </div>

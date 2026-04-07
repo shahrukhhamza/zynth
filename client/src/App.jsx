@@ -393,13 +393,13 @@ function SetupReminderBanner({ onSetup, onDismiss }) {
     <div
       className="fixed top-0 left-0 right-0 z-[200] flex items-center gap-3 px-4 py-2 text-sm"
       style={{
-        backgroundColor: theme.isDark ? 'rgba(59,130,246,0.12)' : 'rgba(29,78,216,0.06)',
-        borderBottom: `1px solid ${theme.isDark ? 'rgba(59,130,246,0.28)' : 'rgba(29,78,216,0.15)'}`,
+        backgroundColor: theme.isDark ? 'rgba(202,138,4,0.12)' : 'rgba(29,78,216,0.06)',
+        borderBottom: `1px solid ${theme.isDark ? 'rgba(202,138,4,0.28)' : 'rgba(29,78,216,0.15)'}`,
         backdropFilter: 'blur(8px)',
         WebkitBackdropFilter: 'blur(8px)',
       }}
     >
-      <Sparkles size={14} style={{ color: '#3b82f6', flexShrink: 0 }} />
+      <Sparkles size={14} style={{ color: '#CA8A04', flexShrink: 0 }} />
       <p className="flex-1 text-xs" style={{ color: theme.text }}>
         Complete your profile setup to personalize your Zynth experience.
       </p>

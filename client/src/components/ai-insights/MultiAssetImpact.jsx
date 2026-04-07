@@ -1,11 +1,11 @@
-﻿import { TrendingUp, TrendingDown, Minus, AlertTriangle } from 'lucide-react';
+import { TrendingUp, TrendingDown, Minus, AlertTriangle } from 'lucide-react';
 
 function biasConfig(bias) {
   const b = String(bias || '').toLowerCase();
   if (b === 'bullish') return { text: 'text-emerald-400', bg: 'bg-emerald-500/8', icon: TrendingUp };
   if (b === 'bearish') return { text: 'text-red-400', bg: 'bg-red-500/8', icon: TrendingDown };
   if (b === 'mixed') return { text: 'text-amber-400', bg: 'bg-amber-500/8', icon: AlertTriangle };
-  return { text: 'text-slate-400', bg: 'bg-slate-500/8', icon: Minus };
+  return { text: 'text-zinc-400', bg: 'bg-zinc-500/8', icon: Minus };
 }
 
 function strengthLabel(s) {
@@ -42,7 +42,7 @@ export default function MultiAssetImpact({ summary }) {
 
   return (
     <section>
-      <p className="mb-3 text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-500">Market Impact</p>
+      <p className="mb-3 text-[10px] font-semibold uppercase tracking-[0.16em] text-zinc-500">Market Impact</p>
       <div className="rounded-2xl border border-white/[0.06] bg-[#0c1018] overflow-hidden">
         <AssetRow name="Gold" signal={gold} />
         <AssetRow name="EUR/USD" signal={forex.EURUSD} />
@@ -53,7 +53,7 @@ export default function MultiAssetImpact({ summary }) {
 
       {(forex.AUDUSD || forex.USDCHF) && (
         <div className="mt-3 rounded-2xl border border-white/[0.06] bg-[#0c1018] overflow-hidden">
-          <div className="px-4 py-2.5 text-[9px] font-semibold uppercase tracking-[0.14em] text-slate-600 border-b border-white/[0.04]">Derived Pairs</div>
+          <div className="px-4 py-2.5 text-[9px] font-semibold uppercase tracking-[0.14em] text-zinc-600 border-b border-white/[0.04]">Derived Pairs</div>
           <AssetRow name="AUD/USD" signal={forex.AUDUSD} />
           <AssetRow name="USD/CHF" signal={forex.USDCHF} />
         </div>

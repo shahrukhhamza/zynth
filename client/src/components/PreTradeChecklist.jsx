@@ -258,10 +258,10 @@ export default function PreTradeChecklist({ direction, entry_price, tp, sl, stra
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 5 }}>
                 <span style={{ fontSize: 11, color: theme.muted }}>{answeredCount} / 6 answered</span>
-                <span style={{ fontSize: 11, fontWeight: 700, color: answeredCount === 6 ? '#3b82f6' : theme.muted }}>{Math.round((answeredCount / 6) * 100)}%</span>
+                <span style={{ fontSize: 11, fontWeight: 700, color: answeredCount === 6 ? '#CA8A04' : theme.muted }}>{Math.round((answeredCount / 6) * 100)}%</span>
               </div>
               <div style={{ height: 5, borderRadius: 5, backgroundColor: theme.border, overflow: 'hidden' }}>
-                <div style={{ height: '100%', borderRadius: 5, width: `${(answeredCount / 6) * 100}%`, backgroundColor: '#3b82f6', transition: 'width 0.35s ease' }} />
+                <div style={{ height: '100%', borderRadius: 5, width: `${(answeredCount / 6) * 100}%`, backgroundColor: '#CA8A04', transition: 'width 0.35s ease' }} />
               </div>
             </div>
           </div>
@@ -400,7 +400,7 @@ export default function PreTradeChecklist({ direction, entry_price, tp, sl, stra
 
                 {allAnswered
                   ? <button type="button" onClick={() => setScreen('result')}
-                      style={{ width: '100%', padding: '12px 0', borderRadius: 10, border: 'none', cursor: 'pointer', fontWeight: 700, fontSize: 14, backgroundColor: '#3b82f6', color: '#fff', marginTop: 4 }}>
+                      style={{ width: '100%', padding: '12px 0', borderRadius: 10, border: 'none', cursor: 'pointer', fontWeight: 700, fontSize: 14, backgroundColor: '#CA8A04', color: '#fff', marginTop: 4 }}>
                       See My Score →
                     </button>
                   : <div style={{ textAlign: 'center', fontSize: 12, color: theme.muted, padding: '6px 0 2px' }}>Answer all questions to see your score</div>

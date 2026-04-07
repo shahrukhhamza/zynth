@@ -250,7 +250,7 @@ export default function PaymentPage({ onBack }) {
 
         {/* ─── Card wrapper — gradient border matching UpgradeModal ─── */}
         <div className="rounded-2xl p-[1px]" style={{
-          background: 'linear-gradient(140deg, rgba(99,102,241,0.7), rgba(139,92,246,0.55), rgba(59,130,246,0.5))',
+          background: 'linear-gradient(140deg, rgba(99,102,241,0.7), rgba(139,92,246,0.55), rgba(202,138,4,0.5))',
           boxShadow:  '0 40px 120px rgba(0,0,0,0.7), 0 0 64px rgba(99,102,241,0.12)',
         }}>
         <div className="rounded-2xl overflow-hidden" style={{ background: 'var(--z-modal)' }}>
@@ -303,7 +303,7 @@ export default function PaymentPage({ onBack }) {
                   style={{
                     padding: '1px',
                     background: active
-                      ? 'linear-gradient(135deg, #6366f1, #8b5cf6, #a78bfa)'
+                      ? 'linear-gradient(135deg, #CA8A04, #8b5cf6, #a78bfa)'
                       : 'var(--z-border)',
                     boxShadow: active
                       ? '0 0 28px rgba(99,102,241,0.35)'
@@ -434,7 +434,7 @@ export default function PaymentPage({ onBack }) {
                     onChange={(e) => { setTxid(e.target.value); setCryptoMsg(''); setCryptoStatus(null); }}
                     placeholder="Paste your TXID here after sending…"
                     disabled={submitted}
-                    className="w-full h-11 px-3 rounded-xl border text-sm outline-none transition-all focus:ring-2 focus:ring-blue-500/25 disabled:opacity-50"
+                    className="w-full h-11 px-3 rounded-xl border text-sm outline-none transition-all focus:ring-2 focus:ring-yellow-500/25 disabled:opacity-50"
                     style={{ background: inputBg, borderColor: border, color: theme.text, fontFamily: 'monospace' }}
                   />
                 </div>
@@ -466,9 +466,9 @@ export default function PaymentPage({ onBack }) {
                     </div>
                   ) : (
                     <button onClick={() => cryptoFileRef.current?.click()}
-                      className="w-full rounded-xl border-2 border-dashed px-4 py-4 flex flex-col items-center gap-2 transition-all hover:border-blue-500/50 hover:bg-blue-500/5"
+                      className="w-full rounded-xl border-2 border-dashed px-4 py-4 flex flex-col items-center gap-2 transition-all hover:border-yellow-500/50 hover:bg-yellow-500/5"
                       style={{ borderColor: border, background: inputBg }}>
-                      <Upload className="w-5 h-5" style={{ color: '#3b82f6' }} />
+                      <Upload className="w-5 h-5" style={{ color: '#CA8A04' }} />
                       <span className="text-sm font-semibold" style={{ color: theme.text }}>Upload Screenshot</span>
                       <span className="text-[11px]" style={{ color: theme.muted }}>PNG, JPG or PDF</span>
                     </button>
@@ -486,8 +486,8 @@ export default function PaymentPage({ onBack }) {
                 <button onClick={submitCrypto} disabled={cryptoStatus === 'submitting'}
                   className="w-full h-12 rounded-xl text-sm font-bold text-white transition-all hover:brightness-110 active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-wait"
                   style={{
-                    background: 'linear-gradient(135deg, #3b82f6, #6366f1)',
-                    boxShadow: '0 4px 14px rgba(59,130,246,0.3)',
+                    background: 'linear-gradient(135deg, #CA8A04, #EAB308)',
+                    boxShadow: '0 4px 14px rgba(202,138,4,0.3)',
                   }}>
                   {cryptoStatus === 'submitting'
                     ? <><Spinner /> Submitting…</>
@@ -546,7 +546,7 @@ export default function PaymentPage({ onBack }) {
                   ].map((step, i) => (
                     <div key={i} className="flex items-start gap-2">
                       <span className="w-4 h-4 shrink-0 rounded-full text-[10px] font-bold flex items-center justify-center mt-0.5"
-                        style={{ background: isDark ? 'rgba(59,130,246,0.15)' : 'rgba(59,130,246,0.1)', color: '#3b82f6' }}>
+                        style={{ background: isDark ? 'rgba(202,138,4,0.15)' : 'rgba(202,138,4,0.1)', color: '#CA8A04' }}>
                         {i + 1}
                       </span>
                       <p className="text-[12px]" style={{ color: theme.muted }}>{step}</p>
@@ -575,7 +575,7 @@ export default function PaymentPage({ onBack }) {
                         </button>
                       </div>
                     ) : (
-                      <label className="flex flex-col items-center gap-2 rounded-xl border-2 border-dashed px-4 py-6 cursor-pointer transition-colors hover:border-blue-500/40"
+                      <label className="flex flex-col items-center gap-2 rounded-xl border-2 border-dashed px-4 py-6 cursor-pointer transition-colors hover:border-yellow-500/40"
                         style={{ borderColor: border, background: inputBg }}>
                         <Upload className="w-6 h-6" style={{ color: theme.muted }} />
                         <span className="text-sm" style={{ color: theme.muted }}>Click to upload screenshot</span>
@@ -595,7 +595,7 @@ export default function PaymentPage({ onBack }) {
                       value={jcNote}
                       onChange={(e) => setJcNote(e.target.value)}
                       placeholder="e.g. TXN-82347628..."
-                      className="w-full h-11 px-3 rounded-xl border text-sm outline-none transition-all focus:ring-2 focus:ring-blue-500/25"
+                      className="w-full h-11 px-3 rounded-xl border text-sm outline-none transition-all focus:ring-2 focus:ring-yellow-500/25"
                       style={{ background: inputBg, borderColor: border, color: theme.text }}
                     />
                   </div>
@@ -609,7 +609,7 @@ export default function PaymentPage({ onBack }) {
               {!submitted && (
                 <button onClick={submitJazzCash} disabled={jcStatus === 'submitting'}
                   className="w-full h-12 rounded-xl text-sm font-bold text-white transition-all hover:brightness-110 active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-wait"
-                  style={{ background: 'linear-gradient(135deg, #3b82f6, #6366f1)', boxShadow: '0 4px 14px rgba(59,130,246,0.3)' }}>
+                  style={{ background: 'linear-gradient(135deg, #CA8A04, #EAB308)', boxShadow: '0 4px 14px rgba(202,138,4,0.3)' }}>
                   {jcStatus === 'submitting'
                     ? <><Spinner /> Submitting…</>
                     : <><Upload className="w-4 h-4" /> Submit Payment</>
@@ -654,17 +654,17 @@ function StatusBanner({ status, msg, theme, isDark }) {
           ? 'rgba(16,185,129,0.09)'
           : isError
           ? 'rgba(239,68,68,0.09)'
-          : 'rgba(59,130,246,0.09)',
-        border: `1px solid ${isSuccess ? 'rgba(16,185,129,0.25)' : isError ? 'rgba(239,68,68,0.25)' : 'rgba(59,130,246,0.25)'}`,
+          : 'rgba(202,138,4,0.09)',
+        border: `1px solid ${isSuccess ? 'rgba(16,185,129,0.25)' : isError ? 'rgba(239,68,68,0.25)' : 'rgba(202,138,4,0.25)'}`,
       }}>
       {isSuccess
         ? <CheckCircle2 className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#10b981' }} />
         : isError
         ? <X className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#ef4444' }} />
-        : <Zap className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#3b82f6' }} />
+        : <Zap className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#CA8A04' }} />
       }
       <p className="text-[13px] leading-relaxed"
-        style={{ color: isSuccess ? '#10b981' : isError ? '#ef4444' : '#3b82f6' }}>
+        style={{ color: isSuccess ? '#10b981' : isError ? '#ef4444' : '#CA8A04' }}>
         {msg}
       </p>
     </div>
@@ -788,7 +788,7 @@ function PaymentStatusTracker({ status, loading, lastChecked, onRefresh, pollLoa
           {steps.map((s, i) => {
             const done   = i < stepIndex;
             const active = i === stepIndex;
-            const dotColor = done ? '#10b981' : active ? (isRejected ? '#ef4444' : '#3b82f6') : (isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)');
+            const dotColor = done ? '#10b981' : active ? (isRejected ? '#ef4444' : '#CA8A04') : (isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)');
             const labelColor = (done || active) ? accent : (isDark ? 'rgba(148,163,184,0.5)' : '#94a3b8');
             return (
               <div key={s.key} style={{ flex: 1, display: 'flex', alignItems: 'center' }}>
@@ -799,7 +799,7 @@ function PaymentStatusTracker({ status, loading, lastChecked, onRefresh, pollLoa
                     color: '#fff',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     fontSize: 11, fontWeight: 700,
-                    boxShadow: active && !isRejected ? '0 0 0 4px rgba(59,130,246,0.2)' : undefined,
+                    boxShadow: active && !isRejected ? '0 0 0 4px rgba(202,138,4,0.2)' : undefined,
                     transition: 'all 0.3s',
                   }}>
                     {done ? '✓' : i + 1}
@@ -829,7 +829,7 @@ function PaymentStatusTracker({ status, loading, lastChecked, onRefresh, pollLoa
             </p>
           ) : (
             <>
-              <p style={{ fontSize: 13, fontWeight: 600, color: isDark ? '#e2e8f0' : '#1e293b', lineHeight: 1.6 }}>
+              <p style={{ fontSize: 13, fontWeight: 600, color: isDark ? '#e2e8f0' : '#161618', lineHeight: 1.6 }}>
                 Your transaction has been submitted and is currently being verified.
               </p>
               <div style={{
@@ -844,7 +844,7 @@ function PaymentStatusTracker({ status, loading, lastChecked, onRefresh, pollLoa
                 </p>
               </div>
               <p style={{ fontSize: 13, color: isDark ? 'rgba(148,163,184,0.85)' : '#475569', lineHeight: 1.6 }}>
-                Once confirmed, your <strong style={{ color: isDark ? '#e2e8f0' : '#1e293b' }}>Zynth {planName}</strong> access will be activated automatically.
+                Once confirmed, your <strong style={{ color: isDark ? '#e2e8f0' : '#161618' }}>Zynth {planName}</strong> access will be activated automatically.
               </p>
               <div style={{
                 display: 'flex', alignItems: 'flex-start', gap: 8,

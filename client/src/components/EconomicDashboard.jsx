@@ -23,7 +23,7 @@ const QUOTES = [
 
 const SESSIONS = [
   { name: 'Tokyo',    open: 0,  close: 9,  color: '#f59e0b' },
-  { name: 'London',   open: 8,  close: 17, color: '#3b82f6' },
+  { name: 'London',   open: 8,  close: 17, color: '#CA8A04' },
   { name: 'New York', open: 13, close: 22, color: '#10b981' },
 ];
 
@@ -37,23 +37,23 @@ const LIGHT = {
   page:        '#f8fafc',
   card:        '#ffffff',
   cardInner:   '#f8fafc',
-  text:        '#111827',
+  text:        '#0b0b0f',
   textSub:     '#6b7280',
   textMute:    '#9ca3af',
   green:       '#059669',
   red:         '#dc2626',
-  blue:        '#2563eb',
+  blue:        '#CA8A04',
 };
 const DARK = {
-  page:        '#0b1220',
-  card:        '#111827',
-  cardInner:   '#1a2236',
+  page:        '#0b0b0f',
+  card:        '#0b0b0f',
+  cardInner:   '#1c1c1e',
   text:        '#f9fafb',
   textSub:     '#9ca3af',
   textMute:    '#4b5563',
   green:       '#10b981',
   red:         '#ef4444',
-  blue:        '#60a5fa',
+  blue:        '#CA8A04',
 };
 
 // ── Shared shadows ─────────────────────────────────────────────────────────────
@@ -66,7 +66,7 @@ function Card({ children, className = '', style = {}, onClick }) {
   return (
     <Tag
       onClick={onClick}
-      className={`rounded-2xl bg-white dark:bg-[#111827] transition-all duration-200 hover:-translate-y-[2px] ${className}`}
+      className={`rounded-2xl bg-white dark:bg-[#0b0b0f] transition-all duration-200 hover:-tranzinc-y-[2px] ${className}`}
       style={{
         boxShadow: SHADOW_SM,
         border: 'none',
@@ -89,7 +89,7 @@ function PrimaryKPICard({ label, value, sub, color, icon: Icon, badge, badgeColo
     <Card style={{ padding: '32px 32px 28px' }}>
       <div className="flex items-start justify-between mb-6">
         <div>
-          <span className="text-sm font-semibold uppercase tracking-widest text-gray-500 dark:text-gray-400">
+          <span className="text-sm font-semibold uppercase tracking-widest text-zinc-500 dark:text-zinc-400">
             {label}
           </span>
           {badge && (
@@ -114,7 +114,7 @@ function PrimaryKPICard({ label, value, sub, color, icon: Icon, badge, badgeColo
       >
         {value}
       </div>
-      <p className="text-sm text-gray-500 dark:text-gray-400 font-medium m-0">{sub}</p>
+      <p className="text-sm text-zinc-500 dark:text-zinc-400 font-medium m-0">{sub}</p>
     </Card>
   );
 }
@@ -124,7 +124,7 @@ function SecondaryKPICard({ label, value, sub, color, icon: Icon }) {
   return (
     <Card style={{ padding: '24px 20px 20px' }}>
       <div className="flex items-start justify-between mb-4">
-        <span className="text-xs font-semibold uppercase tracking-widest text-gray-500 dark:text-gray-400">
+        <span className="text-xs font-semibold uppercase tracking-widest text-zinc-500 dark:text-zinc-400">
           {label}
         </span>
         <div
@@ -140,7 +140,7 @@ function SecondaryKPICard({ label, value, sub, color, icon: Icon }) {
       >
         {value}
       </div>
-      <p className="text-xs text-gray-500 dark:text-gray-400 font-medium m-0">{sub}</p>
+      <p className="text-xs text-zinc-500 dark:text-zinc-400 font-medium m-0">{sub}</p>
     </Card>
   );
 }
@@ -190,11 +190,11 @@ function MonthlyCalendar({ trades, D }) {
   return (
     <Card style={{ padding: '24px' }}>
       <div className="flex items-center justify-between mb-5">
-        <h3 className="text-sm font-semibold uppercase tracking-widest text-gray-500 dark:text-gray-400 m-0">
+        <h3 className="text-sm font-semibold uppercase tracking-widest text-zinc-500 dark:text-zinc-400 m-0">
           Monthly P&amp;L
         </h3>
         <div className="flex items-center gap-3">
-          <span className="text-sm text-gray-500 dark:text-gray-400">{monthName}</span>
+          <span className="text-sm text-zinc-500 dark:text-zinc-400">{monthName}</span>
           <span
             className="text-sm font-bold px-3 py-1 rounded-full"
             style={{
@@ -209,9 +209,9 @@ function MonthlyCalendar({ trades, D }) {
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr) 64px', gap: 3, marginBottom: 4 }}>
         {['Su','Mo','Tu','We','Th','Fr','Sa'].map(d => (
-          <div key={d} className="text-center text-[10px] font-semibold text-gray-400 dark:text-gray-500 py-1 uppercase tracking-wider">{d}</div>
+          <div key={d} className="text-center text-[10px] font-semibold text-zinc-400 dark:text-zinc-500 py-1 uppercase tracking-wider">{d}</div>
         ))}
-        <div className="text-center text-[10px] font-semibold text-gray-400 dark:text-gray-500 py-1 uppercase tracking-wider">Wk</div>
+        <div className="text-center text-[10px] font-semibold text-zinc-400 dark:text-zinc-500 py-1 uppercase tracking-wider">Wk</div>
       </div>
 
       {weeks.map((week, wi) => {
@@ -233,11 +233,11 @@ function MonthlyCalendar({ trades, D }) {
                   borderRadius: 8, padding: '6px 3px 5px',
                   textAlign: 'center',
                   background: isToday
-                    ? `${D.green}20`
+                    ? `${D.blue}20`
                     : isWin  ? `${D.green}${Math.round(intensity * 255).toString(16).padStart(2, '0')}`
                     : isLoss ? `${D.red}${Math.round(intensity * 0.85 * 255).toString(16).padStart(2, '0')}`
                     : D.cardInner,
-                  boxShadow: isToday ? `0 0 0 1.5px ${D.green}50` : 'none',
+                  boxShadow: isToday ? `0 0 0 1.5px ${D.blue}50` : 'none',
                   opacity: isFuture ? 0.3 : 1,
                   minHeight: 48,
                   display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 2,
@@ -246,7 +246,7 @@ function MonthlyCalendar({ trades, D }) {
                   <span style={{
                     fontSize: 11,
                     fontWeight: isToday ? 700 : hasData ? 600 : 400,
-                    color: isToday ? D.green : hasData ? D.text : D.textSub,
+                    color: isToday ? D.blue : hasData ? D.text : D.textSub,
                     lineHeight: 1,
                   }}>{day}</span>
                   {hasData && (
@@ -279,12 +279,12 @@ function MonthlyCalendar({ trades, D }) {
         {[{ color: D.green, label: 'Profit' }, { color: D.red, label: 'Loss' }].map(l => (
           <div key={l.label} className="flex items-center gap-1.5">
             <div style={{ width: 8, height: 8, borderRadius: 2, background: l.color, opacity: 0.7 }} />
-            <span className="text-[10px] text-gray-400 dark:text-gray-500">{l.label}</span>
+            <span className="text-[10px] text-zinc-400 dark:text-zinc-500">{l.label}</span>
           </div>
         ))}
         <div className="flex items-center gap-1.5">
-          <div style={{ width: 8, height: 8, borderRadius: 2, boxShadow: `0 0 0 1.5px ${D.green}` }} />
-          <span className="text-[10px] text-gray-400 dark:text-gray-500">Today</span>
+          <div style={{ width: 8, height: 8, borderRadius: 2, boxShadow: `0 0 0 1.5px ${D.blue}` }} />
+          <span className="text-[10px] text-zinc-400 dark:text-zinc-500">Today</span>
         </div>
       </div>
     </Card>
@@ -295,7 +295,7 @@ function MonthlyCalendar({ trades, D }) {
 function SectionHeader({ title, action }) {
   return (
     <div className="flex items-center justify-between mb-5">
-      <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-widest m-0">{title}</h3>
+      <h3 className="text-sm font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-widest m-0">{title}</h3>
       {action}
     </div>
   );
@@ -435,7 +435,7 @@ export default function EconomicDashboard({ onViewChange }) {
         <div className="flex items-start justify-between flex-wrap gap-4">
           <div>
             <h1 className="text-2xl font-semibold m-0" style={{ color: D.text, letterSpacing: '-0.02em' }}>
-              {greeting}, <span style={{ color: D.green }}>{firstName}</span>
+              {greeting}, <span style={{ color: D.blue }}>{firstName}</span>
             </h1>
             <p className="text-sm m-0 mt-1" style={{ color: D.textSub }}>{todayStr}</p>
           </div>
@@ -516,7 +516,7 @@ export default function EconomicDashboard({ onViewChange }) {
             <MonthlyCalendar trades={allTrades} D={D} />
           </div>
           <div style={{ gridColumn: 'span 4', display: 'flex', flexDirection: 'column', gap: 16 }}>
-            <Card style={{ padding: '24px 20px', borderLeft: `3px solid ${D.green}` }}>
+            <Card style={{ padding: '24px 20px', borderLeft: `3px solid ${D.blue}` }}>
               <p className="text-xs font-semibold uppercase tracking-widest mb-3 m-0" style={{ color: D.textSub }}>
                 Today&apos;s Mindset
               </p>

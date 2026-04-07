@@ -1,4 +1,4 @@
-﻿import { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { useTheme } from '../contexts/ThemeContext';
 import {
   ShieldCheck, Target, TrendingUp, TrendingDown, AlertTriangle,
@@ -142,7 +142,7 @@ function generateSmartInsights({ winRate, riskPct, rrRatio, ruinPct, expectancy,
 â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const REALISM = (s) =>
   s >= 80 ? { label: 'Highly Realistic', color: '#10b981', bg: 'rgba(16,185,129,0.10)', icon: CheckCircle2 }
-  : s >= 60 ? { label: 'Realistic', color: '#22d3ee', bg: 'rgba(34,211,238,0.10)', icon: CheckCircle2 }
+  : s >= 60 ? { label: 'Realistic', color: '#CA8A04', bg: 'rgba(202,138,4,0.10)', icon: CheckCircle2 }
   : s >= 40 ? { label: 'Moderate', color: '#f59e0b', bg: 'rgba(245,158,11,0.10)', icon: AlertTriangle }
   : s >= 20 ? { label: 'Aggressive', color: '#f97316', bg: 'rgba(249,115,22,0.10)', icon: AlertTriangle }
   : { label: 'Unrealistic', color: '#ef4444', bg: 'rgba(239,68,68,0.10)', icon: XCircle };
@@ -152,7 +152,7 @@ const RISK_TIER = (r) =>
   : r > 3 ? { label: 'High', color: '#f97316' }
   : r > 2 ? { label: 'Elevated', color: '#f59e0b' }
   : r > 1 ? { label: 'Balanced', color: '#10b981' }
-  : { label: 'Conservative', color: '#22d3ee' };
+  : { label: 'Conservative', color: '#CA8A04' };
 
 const fmtUsd = (v) => '$' + Number(v).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 });
 const fmtPct = (v, d = 1) => Number(v).toFixed(d) + '%';
@@ -181,9 +181,9 @@ function getWarnings(form, result) {
 STRATEGY PRESETS
 â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const PRESETS = [
-  { key: 'conservative', label: 'Conservative', desc: '1% risk Â· 1.5 R:R Â· slow and deep survival',       riskOverride: '1',   rrRatio: '1.5', winRate: '55', color: '#22d3ee' },
-  { key: 'balanced',     label: 'Balanced',     desc: '2% risk Â· 2 R:R Â· optimal for most traders',      riskOverride: '2',   rrRatio: '2',   winRate: '55', color: '#8b5cf6', recommended: true },
-  { key: 'aggressive',   label: 'Aggressive',   desc: '4% risk Â· 2.5 R:R Â· higher upside, higher ruin', riskOverride: '4',   rrRatio: '2.5', winRate: '55', color: '#f97316' },
+  { key: 'conservative', label: 'Conservative', desc: '1% risk · 1.5 R:R · slow and deep survival',       riskOverride: '1',   rrRatio: '1.5', winRate: '55', color: '#CA8A04' },
+  { key: 'balanced',     label: 'Balanced',     desc: '2% risk · 2 R:R · optimal for most traders',      riskOverride: '2',   rrRatio: '2',   winRate: '55', color: '#CA8A04', recommended: true },
+  { key: 'aggressive',   label: 'Aggressive',   desc: '4% risk · 2.5 R:R · higher upside, higher ruin', riskOverride: '4',   rrRatio: '2.5', winRate: '55', color: '#f97316' },
 ];
 
 /* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
@@ -224,13 +224,13 @@ function EquityCurveChart({ sampleCurves, initialBalance, isDark }) {
         <path key={`r${i}`} d={pd(c)} fill="none" stroke={isDark ? 'rgba(239,68,68,0.14)' : 'rgba(239,68,68,0.18)'} strokeWidth="1.2" />
       ))}
       {sorted.slice(t33, t67).map((c, i) => (
-        <path key={`m${i}`} d={pd(c)} fill="none" stroke={isDark ? 'rgba(139,92,246,0.18)' : 'rgba(139,92,246,0.2)'} strokeWidth="1.2" />
+        <path key={`m${i}`} d={pd(c)} fill="none" stroke={isDark ? 'rgba(202,138,4,0.18)' : 'rgba(202,138,4,0.2)'} strokeWidth="1.2" />
       ))}
       {sorted.slice(t67).map((c, i) => (
         <path key={`g${i}`} d={pd(c)} fill="none" stroke={isDark ? 'rgba(16,185,129,0.18)' : 'rgba(16,185,129,0.2)'} strokeWidth="1.2" />
       ))}
       {sorted[mid] && (
-        <path d={pd(sorted[mid])} fill="none" stroke="#8b5cf6" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+        <path d={pd(sorted[mid])} fill="none" stroke="#CA8A04" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
       )}
     </svg>
   );
@@ -254,8 +254,8 @@ function RiskSuccessChart({ curve, activeRisk, isDark }) {
     <svg viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', height: 'auto', display: 'block' }}>
       <defs>
         <linearGradient id="rscGrad" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%"   stopColor="#8b5cf6" stopOpacity={isDark ? 0.28 : 0.18} />
-          <stop offset="100%" stopColor="#8b5cf6" stopOpacity="0" />
+          <stop offset="0%"   stopColor="#CA8A04" stopOpacity={isDark ? 0.28 : 0.18} />
+          <stop offset="100%" stopColor="#CA8A04" stopOpacity="0" />
         </linearGradient>
       </defs>
       {yLabels.map(v => (
@@ -271,13 +271,13 @@ function RiskSuccessChart({ curve, activeRisk, isDark }) {
           fill={isDark ? 'rgba(255,255,255,0.28)' : 'rgba(0,0,0,0.3)'}>{v}%</text>
       ))}
       <path d={areaD} fill="url(#rscGrad)" />
-      <path d={lineD} fill="none" stroke="#8b5cf6" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+      <path d={lineD} fill="none" stroke="#CA8A04" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
       {activePoint && (
         <>
           <line x1={sx(activePoint.riskPct)} y1={P.t} x2={sx(activePoint.riskPct)} y2={P.t + cH}
             stroke="#f59e0b" strokeDasharray="3,3" strokeWidth="1.5" />
           <circle cx={sx(activePoint.riskPct)} cy={sy(activePoint.successPct)} r="5"
-            fill="#f59e0b" stroke={isDark ? '#1e293b' : '#fff'} strokeWidth="2" />
+            fill="#f59e0b" stroke={isDark ? '#161618' : '#fff'} strokeWidth="2" />
           <text x={sx(activePoint.riskPct) + 7} y={sy(activePoint.successPct) + 4}
             fontSize="9" fontWeight="bold" fill="#f59e0b">{activePoint.successPct.toFixed(0)}%</text>
         </>
@@ -403,13 +403,13 @@ export default function RiskPlanner() {
   }, [riskPct, mcData, expectancy, losingStreak, form.winRate, form.rrRatio]);
 
   const isDark   = theme.isDark;
-  const bg       = isDark ? '#0f172a' : '#f1f5f9';
-  const card     = isDark ? 'rgba(255,255,255,0.035)' : '#ffffff';
+  const bg       = theme.bg;
+  const card     = theme.surface;
   const border   = theme.border;
   const inputBg  = isDark ? 'rgba(255,255,255,0.06)' : '#f8fafc';
   const LBL = 'text-[11px] font-semibold tracking-wider uppercase mb-1.5';
-  const INP = 'w-full h-11 px-3.5 rounded-xl border text-sm outline-none transition-all focus:ring-2 focus:ring-violet-500/30';
-  const ruinColor = !mcData ? '#6366f1'
+  const INP = 'w-full h-11 px-3.5 rounded-xl border text-sm outline-none transition-all focus:ring-2 focus:ring-yellow-600/30';
+  const ruinColor = !mcData ? '#CA8A04'
     : mcData.ruinPct > 30 ? '#ef4444'
     : mcData.ruinPct > 10 ? '#f97316'
     : mcData.ruinPct > 3  ? '#f59e0b'
@@ -421,14 +421,14 @@ export default function RiskPlanner() {
 
         {/* â”€â”€ Header â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
         <div className="flex items-center gap-3.5 mb-6">
-          <div className="w-12 h-12 rounded-2xl flex items-center justify-center shadow-lg shadow-violet-500/25"
-            style={{ background: 'linear-gradient(135deg, #8b5cf6, #6d28d9)' }}>
+          <div className="w-12 h-12 rounded-2xl flex items-center justify-center shadow-lg shadow-yellow-600/25"
+            style={{ background: 'linear-gradient(135deg, #CA8A04, #A16207)' }}>
             <ShieldCheck className="w-6 h-6 text-white" />
           </div>
           <div>
             <h1 className="text-xl font-bold tracking-tight" style={{ color: theme.text }}>AI Risk Intelligence</h1>
             <p className="text-xs mt-0.5" style={{ color: theme.muted }}>
-              Monte Carlo Â· Risk of Ruin Â· Expectancy Engine Â· Losing Streak Â· Kelly Criterion
+              Monte Carlo · Risk of Ruin · Expectancy Engine · Losing Streak · Kelly Criterion
             </p>
           </div>
         </div>
@@ -439,7 +439,7 @@ export default function RiskPlanner() {
             <button key={p.key} onClick={() => applyPreset(p)}
               className="flex-1 min-w-[120px] rounded-xl border px-4 py-3 text-left transition-all hover:brightness-105"
               style={{
-                background:  activePreset === p.key ? (isDark ? 'rgba(139,92,246,0.09)' : '#f5f3ff') : (isDark ? 'rgba(255,255,255,0.025)' : '#fff'),
+                background:  activePreset === p.key ? (isDark ? 'rgba(202,138,4,0.09)' : '#fefce8') : (isDark ? 'rgba(255,255,255,0.025)' : '#fff'),
                 borderColor: activePreset === p.key ? p.color : border,
                 opacity:     activePreset && activePreset !== p.key ? 0.6 : 1,
               }}>
@@ -447,7 +447,7 @@ export default function RiskPlanner() {
                 <span className="text-xs font-bold" style={{ color: activePreset === p.key ? p.color : theme.text }}>{p.label}</span>
                 {p.recommended && (
                   <span className="text-[9px] font-bold uppercase px-1.5 py-0.5 rounded"
-                    style={{ background: 'rgba(139,92,246,0.15)', color: '#8b5cf6' }}>Recommended</span>
+                    style={{ background: 'rgba(202,138,4,0.15)', color: '#CA8A04' }}>Recommended</span>
                 )}
               </div>
               <p className="text-[10px] leading-relaxed" style={{ color: theme.muted }}>{p.desc}</p>
@@ -464,7 +464,7 @@ export default function RiskPlanner() {
             {/* Account Setup */}
             <div className="rounded-2xl border p-5 shadow-sm" style={{ background: card, borderColor: border }}>
               <div className="flex items-center gap-2 mb-4">
-                <Target className="w-4 h-4" style={{ color: '#8b5cf6' }} />
+                <Target className="w-4 h-4" style={{ color: '#CA8A04' }} />
                 <span className="text-xs font-bold uppercase tracking-wider" style={{ color: theme.muted }}>Account Setup</span>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -488,9 +488,9 @@ export default function RiskPlanner() {
                 </div>
               </div>
               {form.balance && form.target && parseFloat(form.target) > parseFloat(form.balance) && (
-                <div className="mt-3 flex items-center gap-2 px-3 py-2 rounded-lg" style={{ background: isDark ? 'rgba(139,92,246,0.08)' : '#f5f3ff' }}>
-                  <TrendingUp className="w-3.5 h-3.5" style={{ color: '#8b5cf6' }} />
-                  <span className="text-xs font-medium" style={{ color: isDark ? '#c4b5fd' : '#7c3aed' }}>
+                <div className="mt-3 flex items-center gap-2 px-3 py-2 rounded-lg" style={{ background: isDark ? 'rgba(202,138,4,0.08)' : '#fefce8' }}>
+                  <TrendingUp className="w-3.5 h-3.5" style={{ color: '#CA8A04' }} />
+                  <span className="text-xs font-medium" style={{ color: isDark ? '#FDE68A' : '#854D0E' }}>
                     Growth target: +{(((parseFloat(form.target) - parseFloat(form.balance)) / parseFloat(form.balance)) * 100).toFixed(1)}%
                     ({fmtUsd(parseFloat(form.target) - parseFloat(form.balance))} gain)
                   </span>
@@ -501,7 +501,7 @@ export default function RiskPlanner() {
             {/* Trade Parameters â€” 4-col grid */}
             <div className="rounded-2xl border p-5 shadow-sm" style={{ background: card, borderColor: border }}>
               <div className="flex items-center gap-2 mb-4">
-                <BarChart3 className="w-4 h-4" style={{ color: '#8b5cf6' }} />
+                <BarChart3 className="w-4 h-4" style={{ color: '#CA8A04' }} />
                 <span className="text-xs font-bold uppercase tracking-wider" style={{ color: theme.muted }}>Trade Parameters</span>
               </div>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
@@ -530,8 +530,8 @@ export default function RiskPlanner() {
                     onChange={e => { setSliderActive(!!e.target.value); set('riskOverride')(e); }}
                     className={INP} placeholder="auto"
                     style={{
-                      background:  form.riskOverride ? (isDark ? 'rgba(139,92,246,0.08)' : '#f5f3ff') : inputBg,
-                      borderColor: form.riskOverride ? 'rgba(139,92,246,0.4)' : border,
+                      background:  form.riskOverride ? (isDark ? 'rgba(202,138,4,0.08)' : '#fefce8') : inputBg,
+                      borderColor: form.riskOverride ? 'rgba(202,138,4,0.4)' : border,
                       color: theme.text,
                     }} />
                 </div>
@@ -541,22 +541,22 @@ export default function RiskPlanner() {
                   style={{ background: isDark ? 'rgba(255,255,255,0.03)' : '#fafafa', border: `1px solid ${border}` }}>
                   <div className="flex items-center justify-between">
                     <span className="text-[10px] font-semibold" style={{ color: theme.muted }}>Risk per trade</span>
-                    <span className="text-sm font-bold tabular-nums" style={{ color: '#8b5cf6' }}>{form.riskOverride}%</span>
+                    <span className="text-sm font-bold tabular-nums" style={{ color: '#CA8A04' }}>{form.riskOverride}%</span>
                   </div>
                   <input type="range" min="0.5" max="10" step="0.5"
                     value={form.riskOverride || 2}
                     onChange={(e) => setForm(p => ({ ...p, riskOverride: e.target.value }))}
                     className="w-full h-2 rounded-full appearance-none cursor-pointer"
                     style={{
-                      background: `linear-gradient(to right, #8b5cf6 ${((parseFloat(form.riskOverride || 2) - 0.5) / 9.5) * 100}%, ${isDark ? 'rgba(255,255,255,0.1)' : '#e2e8f0'} 0%)`,
+                      background: `linear-gradient(to right, #CA8A04 ${((parseFloat(form.riskOverride || 2) - 0.5) / 9.5) * 100}%, ${isDark ? 'rgba(255,255,255,0.1)' : '#e2e8f0'} 0%)`,
                     }} />
                   <div className="flex gap-1">
                     {[1, 2, 3, 5].map(v => (
                       <button key={v} onClick={() => setForm(p => ({ ...p, riskOverride: String(v) }))}
                         className="flex-1 text-[10px] font-semibold py-1 rounded-md transition-all"
                         style={{
-                          background: parseFloat(form.riskOverride) === v ? 'rgba(139,92,246,0.15)' : 'transparent',
-                          color:      parseFloat(form.riskOverride) === v ? '#8b5cf6' : theme.muted,
+                          background: parseFloat(form.riskOverride) === v ? 'rgba(202,138,4,0.15)' : 'transparent',
+                          color:      parseFloat(form.riskOverride) === v ? '#CA8A04' : theme.muted,
                         }}>{v}%</button>
                     ))}
                   </div>
@@ -591,8 +591,8 @@ export default function RiskPlanner() {
             )}
 
             <button onClick={plan} disabled={loading}
-              className="w-full h-12 rounded-2xl text-sm font-bold text-white transition-all hover:brightness-110 hover:shadow-lg hover:shadow-violet-500/25 active:scale-[0.98] flex items-center justify-center gap-2.5 disabled:opacity-60"
-              style={{ background: 'linear-gradient(135deg, #8b5cf6, #6d28d9)' }}>
+              className="w-full h-12 rounded-2xl text-sm font-bold text-white transition-all hover:brightness-110 hover:shadow-lg hover:shadow-yellow-600/25 active:scale-[0.98] flex items-center justify-center gap-2.5 disabled:opacity-60"
+              style={{ background: 'linear-gradient(135deg, #CA8A04, #A16207)' }}>
               {loading ? (
                 <div className="flex items-center gap-2">
                   <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -619,8 +619,8 @@ export default function RiskPlanner() {
               <div className="rounded-2xl border p-8 flex flex-col items-center justify-center text-center min-h-[440px]"
                 style={{ background: card, borderColor: border }}>
                 <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-4"
-                  style={{ background: isDark ? 'rgba(139,92,246,0.08)' : '#f5f3ff' }}>
-                  <Activity className="w-7 h-7" style={{ color: isDark ? '#a78bfa' : '#8b5cf6' }} />
+                  style={{ background: isDark ? 'rgba(202,138,4,0.08)' : '#fefce8' }}>
+                  <Activity className="w-7 h-7" style={{ color: isDark ? '#EAB308' : '#CA8A04' }} />
                 </div>
                 <p className="text-sm font-semibold mb-1" style={{ color: theme.text }}>Analysis Engine Ready</p>
                 <p className="text-xs leading-relaxed max-w-[220px] mb-5" style={{ color: theme.muted }}>
@@ -629,7 +629,7 @@ export default function RiskPlanner() {
                 <div className="grid grid-cols-1 gap-2 text-left w-full max-w-[240px]">
                   {['Monte Carlo (1,000 simulations)', 'Risk of Ruin probability', 'Expectancy engine (R + $)', 'Losing streak + drawdown', 'Risk vs Success curve', 'Kelly Criterion analysis'].map((f, i) => (
                     <div key={i} className="flex items-center gap-2">
-                      <div className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: '#8b5cf6' }} />
+                      <div className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: '#CA8A04' }} />
                       <span className="text-[11px]" style={{ color: theme.muted }}>{f}</span>
                     </div>
                   ))}
@@ -695,14 +695,14 @@ export default function RiskPlanner() {
                   <div className="rounded-2xl border p-5 shadow-sm" style={{ background: card, borderColor: border }}>
                     <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center gap-2">
-                        <Activity className="w-4 h-4" style={{ color: '#8b5cf6' }} />
+                        <Activity className="w-4 h-4" style={{ color: '#CA8A04' }} />
                         <span className="text-[11px] font-bold uppercase tracking-wider" style={{ color: theme.muted }}>Monte Carlo Projection</span>
                       </div>
                     </div>
                     <div className="grid grid-cols-3 gap-2 mb-4">
                       {[
                         { label: 'Worst',    value: mcData.worst,  sub: 'Bottom 10%', color: '#ef4444', bg: isDark ? 'rgba(239,68,68,0.07)' : '#fef2f2' },
-                        { label: 'Expected', value: mcData.median, sub: 'Median',     color: '#8b5cf6', bg: isDark ? 'rgba(139,92,246,0.07)' : '#f5f3ff' },
+                        { label: 'Expected', value: mcData.median, sub: 'Median',     color: '#CA8A04', bg: isDark ? 'rgba(202,138,4,0.07)' : '#fefce8' },
                         { label: 'Best',     value: mcData.best,   sub: 'Top 10%',    color: '#10b981', bg: isDark ? 'rgba(16,185,129,0.07)' : '#ecfdf5' },
                       ].map(({ label, value, sub, color, bg: bg2 }) => (
                         <div key={label} className="rounded-xl p-3 text-center" style={{ background: bg2 }}>
@@ -717,7 +717,7 @@ export default function RiskPlanner() {
                       <div className="px-3 py-1.5 flex items-center justify-between border-b" style={{ borderColor: border }}>
                         <span className="text-[9px] font-bold uppercase tracking-wider" style={{ color: theme.muted }}>Equity Curve Fan</span>
                         <div className="flex items-center gap-3">
-                          {[{ c: '#10b981', l: 'Best' }, { c: '#8b5cf6', l: 'Median' }, { c: '#ef4444', l: 'Worst' }].map(({ c, l }) => (
+                          {[{ c: '#10b981', l: 'Best' }, { c: '#CA8A04', l: 'Median' }, { c: '#ef4444', l: 'Worst' }].map(({ c, l }) => (
                             <div key={l} className="flex items-center gap-1">
                               <div className="w-3 h-0.5 rounded" style={{ background: c }} />
                               <span className="text-[8px]" style={{ color: theme.muted }}>{l}</span>
@@ -740,7 +740,7 @@ export default function RiskPlanner() {
                   <div className="rounded-2xl border p-5 shadow-sm" style={{ background: card, borderColor: border }}>
                     <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center gap-2">
-                        <Zap className="w-4 h-4" style={{ color: '#8b5cf6' }} />
+                        <Zap className="w-4 h-4" style={{ color: '#CA8A04' }} />
                         <span className="text-[11px] font-bold uppercase tracking-wider" style={{ color: theme.muted }}>Expectancy Engine</span>
                       </div>
                       <span className="text-[10px] font-bold px-2.5 py-1 rounded-full"
@@ -749,7 +749,7 @@ export default function RiskPlanner() {
                       </span>
                     </div>
                     <div className="grid grid-cols-2 gap-3 mb-3">
-                      <div className="rounded-xl p-3 text-center" style={{ background: isDark ? 'rgba(139,92,246,0.06)' : '#f5f3ff' }}>
+                      <div className="rounded-xl p-3 text-center" style={{ background: isDark ? 'rgba(202,138,4,0.06)' : '#fefce8' }}>
                         <p className="text-[9px] font-bold uppercase mb-1" style={{ color: theme.muted }}>Per Trade (R)</p>
                         <p className="text-xl font-black tabular-nums" style={{ color: expectancy.expectancyR >= 0 ? '#10b981' : '#ef4444' }}>
                           {expectancy.expectancyR >= 0 ? '+' : ''}{expectancy.expectancyR.toFixed(3)}R
@@ -774,7 +774,7 @@ export default function RiskPlanner() {
                 {rscData && (
                   <div className="rounded-2xl border p-5 shadow-sm" style={{ background: card, borderColor: border }}>
                     <div className="flex items-center gap-2 mb-1">
-                      <Crosshair className="w-4 h-4" style={{ color: '#8b5cf6' }} />
+                      <Crosshair className="w-4 h-4" style={{ color: '#CA8A04' }} />
                       <span className="text-[11px] font-bold uppercase tracking-wider" style={{ color: theme.muted }}>Risk % vs Target Success</span>
                     </div>
                     <p className="text-[10px] mb-3" style={{ color: theme.muted }}>Higher risk â‰  higher success â€” the curve shows the optimal point</p>
@@ -841,19 +841,19 @@ export default function RiskPlanner() {
                 <div className="rounded-2xl border p-5 shadow-sm" style={{ background: card, borderColor: border }}>
                   <div className="flex items-center justify-between mb-3">
                     <span className="text-[11px] font-bold uppercase tracking-wider" style={{ color: theme.muted }}>Goal Completion</span>
-                    <span className="text-sm font-bold tabular-nums" style={{ color: goalPct >= 100 ? '#10b981' : '#8b5cf6' }}>{goalPct.toFixed(1)}%</span>
+                    <span className="text-sm font-bold tabular-nums" style={{ color: goalPct >= 100 ? '#10b981' : '#CA8A04' }}>{goalPct.toFixed(1)}%</span>
                   </div>
                   <div className="w-full h-3 rounded-full overflow-hidden" style={{ background: isDark ? 'rgba(255,255,255,0.06)' : '#e2e8f0' }}>
                     <div className="h-full rounded-full transition-all duration-1000 ease-out"
                       style={{
                         width: `${goalPct}%`,
-                        background: goalPct >= 100 ? 'linear-gradient(90deg,#10b981,#059669)' : goalPct >= 70 ? 'linear-gradient(90deg,#8b5cf6,#6d28d9)' : 'linear-gradient(90deg,#f59e0b,#d97706)',
+                        background: goalPct >= 100 ? 'linear-gradient(90deg,#10b981,#059669)' : goalPct >= 70 ? 'linear-gradient(90deg,#CA8A04,#A16207)' : 'linear-gradient(90deg,#f59e0b,#d97706)',
                       }} />
                   </div>
                   <div className="flex items-center justify-between mt-2">
                     <span className="text-[10px] font-medium" style={{ color: theme.muted }}>{fmtUsd(form.balance)}</span>
                     <ChevronRight className="w-3 h-3" style={{ color: theme.muted }} />
-                    <span className="text-[10px] font-bold" style={{ color: goalPct >= 100 ? '#10b981' : '#8b5cf6' }}>{fmtUsd(result.finalBalanceProjection)}</span>
+                    <span className="text-[10px] font-bold" style={{ color: goalPct >= 100 ? '#10b981' : '#CA8A04' }}>{fmtUsd(result.finalBalanceProjection)}</span>
                     <ChevronRight className="w-3 h-3" style={{ color: theme.muted }} />
                     <span className="text-[10px] font-medium" style={{ color: theme.muted }}>{fmtUsd(form.target)}</span>
                   </div>
@@ -863,9 +863,9 @@ export default function RiskPlanner() {
                 <div className="rounded-2xl border p-5 shadow-sm space-y-3" style={{ background: card, borderColor: border }}>
                   <span className="text-[11px] font-bold uppercase tracking-wider" style={{ color: theme.muted }}>Risk Plan</span>
                   <div className="rounded-xl px-4 py-4 text-center"
-                    style={{ background: isDark ? 'rgba(139,92,246,0.06)' : '#f5f3ff', border: `1px solid ${isDark ? 'rgba(139,92,246,0.12)' : '#ede9fe'}` }}>
+                    style={{ background: isDark ? 'rgba(202,138,4,0.06)' : '#fefce8', border: `1px solid ${isDark ? 'rgba(202,138,4,0.12)' : '#fef9c3'}` }}>
                     <p className="text-[10px] font-semibold uppercase tracking-wider mb-1" style={{ color: theme.muted }}>Suggested Risk Per Trade</p>
-                    <p className="text-3xl font-black tabular-nums" style={{ color: '#8b5cf6' }}>{result.suggestedRiskPerTrade}%</p>
+                    <p className="text-3xl font-black tabular-nums" style={{ color: '#CA8A04' }}>{result.suggestedRiskPerTrade}%</p>
                     <span className="inline-block mt-1.5 text-[10px] font-bold uppercase px-2.5 py-0.5 rounded-full"
                       style={{ background: RISK_TIER(result.suggestedRiskPerTrade).color + '18', color: RISK_TIER(result.suggestedRiskPerTrade).color }}>
                       {RISK_TIER(result.suggestedRiskPerTrade).label}
@@ -901,7 +901,7 @@ export default function RiskPlanner() {
                 {result.scenarioBreakdown?.length > 0 && (
                   <div className="rounded-2xl border p-5 shadow-sm" style={{ background: card, borderColor: border }}>
                     <div className="flex items-center gap-2 mb-3">
-                      <Crosshair className="w-4 h-4" style={{ color: '#8b5cf6' }} />
+                      <Crosshair className="w-4 h-4" style={{ color: '#CA8A04' }} />
                       <span className="text-[11px] font-bold uppercase tracking-wider" style={{ color: theme.muted }}>Deterministic Risk Sweep</span>
                     </div>
                     <div className="space-y-1.5">
@@ -911,13 +911,13 @@ export default function RiskPlanner() {
                         return (
                           <div key={s.riskPercent} className="rounded-lg px-3 py-2"
                             style={{
-                              background: isOptimal ? (isDark ? 'rgba(139,92,246,0.10)' : '#f5f3ff') : (isDark ? 'rgba(255,255,255,0.02)' : '#fafafa'),
-                              border: isOptimal ? `1px solid ${isDark ? 'rgba(139,92,246,0.25)' : '#ddd6fe'}` : '1px solid transparent',
+                              background: isOptimal ? (isDark ? 'rgba(202,138,4,0.10)' : '#fefce8') : (isDark ? 'rgba(255,255,255,0.02)' : '#fafafa'),
+                              border: isOptimal ? `1px solid ${isDark ? 'rgba(202,138,4,0.25)' : '#fde68a'}` : '1px solid transparent',
                             }}>
                             <div className="flex items-center justify-between mb-1">
                               <div className="flex items-center gap-2">
-                                <span className="text-xs font-bold tabular-nums" style={{ color: isOptimal ? '#8b5cf6' : theme.text }}>{s.riskPercent}%</span>
-                                {isOptimal && <span className="text-[9px] font-bold uppercase px-1.5 py-0.5 rounded" style={{ background: 'rgba(139,92,246,0.15)', color: '#8b5cf6' }}>Optimal</span>}
+                                <span className="text-xs font-bold tabular-nums" style={{ color: isOptimal ? '#CA8A04' : theme.text }}>{s.riskPercent}%</span>
+                                {isOptimal && <span className="text-[9px] font-bold uppercase px-1.5 py-0.5 rounded" style={{ background: 'rgba(202,138,4,0.15)', color: '#CA8A04' }}>Optimal</span>}
                               </div>
                               <div className="flex items-center gap-2">
                                 <span className="text-[11px] font-semibold tabular-nums" style={{ color: s.reachesTarget ? '#10b981' : theme.muted }}>{fmtUsd(s.expectedBalance)}</span>
@@ -927,7 +927,7 @@ export default function RiskPlanner() {
                             <div className="w-full h-1.5 rounded-full overflow-hidden" style={{ background: isDark ? 'rgba(255,255,255,0.06)' : '#e2e8f0' }}>
                               <div className="h-full rounded-full" style={{
                                 width: `${barWidth}%`,
-                                background: s.reachesTarget ? (isOptimal ? '#8b5cf6' : '#10b981') : (isDark ? 'rgba(255,255,255,0.12)' : '#cbd5e1'),
+                                background: s.reachesTarget ? (isOptimal ? '#CA8A04' : '#10b981') : (isDark ? 'rgba(255,255,255,0.12)' : '#cbd5e1'),
                               }} />
                             </div>
                           </div>
@@ -967,7 +967,7 @@ export default function RiskPlanner() {
                 {smartInsights.length > 0 && (
                   <div className="rounded-2xl border p-5 shadow-sm" style={{ background: card, borderColor: border }}>
                     <div className="flex items-center gap-2 mb-4">
-                      <Brain className="w-4 h-4" style={{ color: '#8b5cf6' }} />
+                      <Brain className="w-4 h-4" style={{ color: '#CA8A04' }} />
                       <span className="text-[11px] font-bold uppercase tracking-wider" style={{ color: theme.muted }}>AI Risk Intelligence</span>
                     </div>
                     <div className="space-y-2.5">
@@ -976,7 +976,7 @@ export default function RiskPlanner() {
                           error:   { bg: isDark ? 'rgba(239,68,68,0.07)'  : '#fef2f2', bdr: isDark ? 'rgba(239,68,68,0.2)'  : '#fecaca', dot: '#ef4444', txt: isDark ? '#f87171' : '#991b1b' },
                           warn:    { bg: isDark ? 'rgba(245,158,11,0.07)' : '#fffbeb', bdr: isDark ? 'rgba(245,158,11,0.2)' : '#fde68a', dot: '#f59e0b', txt: isDark ? '#fbbf24' : '#92400e' },
                           success: { bg: isDark ? 'rgba(16,185,129,0.07)' : '#ecfdf5', bdr: isDark ? 'rgba(16,185,129,0.2)' : '#a7f3d0', dot: '#10b981', txt: isDark ? '#34d399' : '#065f46' },
-                          info:    { bg: isDark ? 'rgba(99,102,241,0.07)' : '#eff6ff', bdr: isDark ? 'rgba(99,102,241,0.2)' : '#c7d2fe', dot: '#6366f1', txt: isDark ? '#a5b4fc' : '#3730a3' },
+                          info:    { bg: isDark ? 'rgba(202,138,4,0.07)' : '#eff6ff', bdr: isDark ? 'rgba(202,138,4,0.2)' : '#c7d2fe', dot: '#CA8A04', txt: isDark ? '#FDE68A' : '#854D0E' },
                         }[ins.type];
                         return (
                           <div key={i} className="flex items-start gap-3 rounded-xl px-3 py-3"

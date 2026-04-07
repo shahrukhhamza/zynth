@@ -13,7 +13,7 @@ const FeatureCard = ({ title, description, icon: Icon, iconVariant = 'blue', cla
         <IconContainer icon={Icon} variant={iconVariant} size="lg" />
       </div>
       <h3 className="mb-2 text-xl font-bold text-white">{title}</h3>
-      <p className="text-sm leading-relaxed text-gray-400">{description}</p>
+      <p className="text-sm leading-relaxed text-zinc-400">{description}</p>
     </div>
     {children}
     <div className="absolute inset-0 z-0 bg-gradient-to-br from-emerald-500/5 via-transparent to-transparent opacity-0 transition-opacity hover:opacity-100" />
@@ -24,7 +24,7 @@ const FeaturesBento = () => {
   return (
     <section className="relative bg-[#030303] py-24 px-6 overflow-hidden">
       {/* Background Orbs */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-emerald-500/5 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute top-1/2 left-1/2 -tranzinc-x-1/2 -tranzinc-y-1/2 w-[800px] h-[800px] bg-emerald-500/5 rounded-full blur-[120px] pointer-events-none" />
 
       <div className="container mx-auto max-w-7xl">
         <div className="mb-16 text-center">
@@ -35,7 +35,7 @@ const FeaturesBento = () => {
           >
             Everything a <span className="text-emerald-400">Serious</span> Trader Needs
           </motion.h2>
-          <p className="text-gray-400 max-w-2xl mx-auto">
+          <p className="text-zinc-400 max-w-2xl mx-auto">
             Stop guessing. Start using institutional-grade data and behavioral science to fix your edge.
           </p>
         </div>

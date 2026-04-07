@@ -1,4 +1,4 @@
-﻿import { AlertTriangle, AlertCircle, ChevronDown, ChevronUp } from 'lucide-react';
+import { AlertTriangle, AlertCircle, ChevronDown, ChevronUp } from 'lucide-react';
 import { useState } from 'react';
 
 function alertSeverity(text) {
@@ -49,16 +49,16 @@ export default function RiskPanel({ summary }) {
         <div className="flex items-center gap-2">
           <AlertTriangle size={12} className={headerColor} />
           <span className={`text-[11px] font-semibold ${headerColor}`}>{items.length} Risk Alert{items.length > 1 ? 's' : ''}</span>
-          {!open && <span className="truncate text-[10px] text-slate-500 hidden sm:block">\u2014 {items[0].text}</span>}
+          {!open && <span className="truncate text-[10px] text-zinc-500 hidden sm:block">\u2014 {items[0].text}</span>}
         </div>
-        {open ? <ChevronUp size={12} className="text-slate-500" /> : <ChevronDown size={12} className="text-slate-500" />}
+        {open ? <ChevronUp size={12} className="text-zinc-500" /> : <ChevronDown size={12} className="text-zinc-500" />}
       </button>
 
       {open && (
         <div className="space-y-1.5 border-t border-white/[0.04] px-4 pb-3 pt-2">
           {items.map((item, i) => {
             const sev = item.severity || alertSeverity(item.text);
-            const cls = sev === 'high' ? 'text-red-400' : sev === 'medium' ? 'text-amber-400' : 'text-slate-400';
+            const cls = sev === 'high' ? 'text-red-400' : sev === 'medium' ? 'text-amber-400' : 'text-zinc-400';
             return (
               <div key={i} className={`flex items-start gap-1.5 text-[10px] leading-relaxed ${cls}`}>
                 <AlertCircle size={10} className="mt-0.5 shrink-0" />

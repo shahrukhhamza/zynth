@@ -71,24 +71,24 @@ function OptionCard({ label, desc, icon: Icon, selected, onClick, theme }) {
         background: selected
           ? theme.isDark
             ? 'linear-gradient(135deg, rgba(29,78,216,0.25) 0%, rgba(6,182,212,0.12) 100%)'
-            : 'linear-gradient(135deg, rgba(37,99,235,0.07) 0%, rgba(14,165,233,0.04) 100%)'
+            : 'linear-gradient(135deg, rgba(161,98,7,0.07) 0%, rgba(14,165,233,0.04) 100%)'
           : theme.isDark ? 'rgba(255,255,255,0.025)' : '#ffffff',
         borderColor: selected
-          ? theme.isDark ? 'rgba(59,130,246,0.6)' : 'rgba(37,99,235,0.55)'
+          ? theme.isDark ? 'rgba(202,138,4,0.6)' : 'rgba(161,98,7,0.55)'
           : theme.isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.08)',
         boxShadow: selected
           ? theme.isDark
-            ? '0 0 0 1px rgba(59,130,246,0.25), 0 4px 20px rgba(59,130,246,0.15), inset 0 1px 0 rgba(255,255,255,0.06)'
-            : '0 0 0 3px rgba(37,99,235,0.12), 0 4px 16px rgba(37,99,235,0.1)'
+            ? '0 0 0 1px rgba(202,138,4,0.25), 0 4px 20px rgba(202,138,4,0.15), inset 0 1px 0 rgba(255,255,255,0.06)'
+            : '0 0 0 3px rgba(161,98,7,0.12), 0 4px 16px rgba(161,98,7,0.1)'
           : theme.isDark ? 'none' : '0 1px 3px rgba(0,0,0,0.04)',
       }}
       onMouseEnter={e => {
         if (!selected) {
-          e.currentTarget.style.borderColor = theme.isDark ? 'rgba(59,130,246,0.35)' : 'rgba(37,99,235,0.3)';
+          e.currentTarget.style.borderColor = theme.isDark ? 'rgba(202,138,4,0.35)' : 'rgba(161,98,7,0.3)';
           e.currentTarget.style.boxShadow = theme.isDark
-            ? '0 2px 12px rgba(59,130,246,0.1)'
-            : '0 2px 12px rgba(37,99,235,0.08), 0 1px 3px rgba(0,0,0,0.05)';
-          e.currentTarget.style.background = theme.isDark ? 'rgba(59,130,246,0.07)' : 'rgba(59,130,246,0.025)';
+            ? '0 2px 12px rgba(202,138,4,0.1)'
+            : '0 2px 12px rgba(161,98,7,0.08), 0 1px 3px rgba(0,0,0,0.05)';
+          e.currentTarget.style.background = theme.isDark ? 'rgba(202,138,4,0.07)' : 'rgba(202,138,4,0.025)';
         }
       }}
       onMouseLeave={e => {
@@ -107,24 +107,24 @@ function OptionCard({ label, desc, icon: Icon, selected, onClick, theme }) {
             background: selected
               ? theme.isDark
                 ? 'linear-gradient(135deg, rgba(29,78,216,0.5), rgba(6,182,212,0.3))'
-                : 'linear-gradient(135deg, rgba(37,99,235,0.15), rgba(14,165,233,0.1))'
+                : 'linear-gradient(135deg, rgba(161,98,7,0.15), rgba(14,165,233,0.1))'
               : theme.isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)',
             border: selected
-              ? `1px solid ${theme.isDark ? 'rgba(59,130,246,0.4)' : 'rgba(37,99,235,0.3)'}`
+              ? `1px solid ${theme.isDark ? 'rgba(202,138,4,0.4)' : 'rgba(161,98,7,0.3)'}`
               : `1px solid ${theme.isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)'}`,
-            boxShadow: selected ? '0 0 12px rgba(59,130,246,0.2)' : 'none',
+            boxShadow: selected ? '0 0 12px rgba(202,138,4,0.2)' : 'none',
           }}
         >
           <Icon
             size={18}
-            style={{ color: selected ? (theme.isDark ? '#93c5fd' : '#1d4ed8') : theme.muted }}
+            style={{ color: selected ? (theme.isDark ? '#FBBF24' : '#854D0E') : theme.muted }}
           />
         </div>
 
         <div className="flex-1 min-w-0">
           <p
             className="text-[14px] font-semibold leading-tight transition-colors duration-150"
-            style={{ color: selected ? (theme.isDark ? '#f1f5f9' : '#0f172a') : theme.text }}
+            style={{ color: selected ? (theme.isDark ? '#fafaf9' : '#0b0b0f') : theme.text }}
           >
             {label}
           </p>
@@ -140,12 +140,12 @@ function OptionCard({ label, desc, icon: Icon, selected, onClick, theme }) {
           className="w-5 h-5 rounded-full border-2 flex-shrink-0 flex items-center justify-center transition-all duration-200"
           style={{
             borderColor: selected
-              ? theme.isDark ? '#3b82f6' : '#2563eb'
+              ? theme.isDark ? '#CA8A04' : '#A16207'
               : theme.isDark ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.18)',
             background: selected
-              ? 'linear-gradient(135deg, #1d4ed8, #0284c7)'
+              ? 'linear-gradient(135deg, #CA8A04, #EAB308)'
               : 'transparent',
-            boxShadow: selected ? '0 0 8px rgba(59,130,246,0.45)' : 'none',
+            boxShadow: selected ? '0 0 8px rgba(202,138,4,0.45)' : 'none',
           }}
         >
           {selected && <Check size={10} color="#fff" strokeWidth={3} />}
@@ -220,13 +220,13 @@ export default function PreSignupOnboarding({ onContinueToSignup, onClose }) {
           maxWidth: 500,
           borderRadius: 24,
           background: theme.isDark
-            ? 'linear-gradient(160deg, #0d1629 0%, #0b1220 50%, #080f1c 100%)'
+            ? 'linear-gradient(160deg, #0b0b0f 0%, #0b0b0f 50%, #0b0b0f 100%)'
             : '#ffffff',
           border: theme.isDark
             ? '1px solid rgba(255,255,255,0.09)'
             : '1px solid rgba(0,0,0,0.07)',
           boxShadow: theme.isDark
-            ? '0 0 0 1px rgba(59,130,246,0.07), 0 32px 80px rgba(0,0,0,0.8), 0 0 60px rgba(59,130,246,0.08)'
+            ? '0 0 0 1px rgba(202,138,4,0.07), 0 32px 80px rgba(0,0,0,0.8), 0 0 60px rgba(202,138,4,0.08)'
             : '0 0 0 1px rgba(0,0,0,0.04), 0 32px 80px rgba(15,23,42,0.2), 0 8px 32px rgba(15,23,42,0.08)',
         }}
       >
@@ -236,8 +236,8 @@ export default function PreSignupOnboarding({ onContinueToSignup, onClose }) {
           style={{
             height: 1,
             background: theme.isDark
-              ? 'linear-gradient(90deg, transparent 0%, rgba(59,130,246,0.6) 40%, rgba(6,182,212,0.5) 60%, transparent 100%)'
-              : 'linear-gradient(90deg, transparent 0%, rgba(37,99,235,0.35) 40%, rgba(14,165,233,0.3) 60%, transparent 100%)',
+              ? 'linear-gradient(90deg, transparent 0%, rgba(202,138,4,0.6) 40%, rgba(6,182,212,0.5) 60%, transparent 100%)'
+              : 'linear-gradient(90deg, transparent 0%, rgba(161,98,7,0.35) 40%, rgba(14,165,233,0.3) 60%, transparent 100%)',
           }}
         />
         <div
@@ -245,8 +245,8 @@ export default function PreSignupOnboarding({ onContinueToSignup, onClose }) {
           style={{
             height: 80,
             background: theme.isDark
-              ? 'radial-gradient(ellipse 70% 100% at 50% 0%, rgba(59,130,246,0.08) 0%, transparent 100%)'
-              : 'radial-gradient(ellipse 70% 100% at 50% 0%, rgba(37,99,235,0.05) 0%, transparent 100%)',
+              ? 'radial-gradient(ellipse 70% 100% at 50% 0%, rgba(202,138,4,0.08) 0%, transparent 100%)'
+              : 'radial-gradient(ellipse 70% 100% at 50% 0%, rgba(161,98,7,0.05) 0%, transparent 100%)',
           }}
         />
 
@@ -260,11 +260,11 @@ export default function PreSignupOnboarding({ onContinueToSignup, onClose }) {
           {/* AI init label */}
           <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full"
                style={{
-                 background: theme.isDark ? 'rgba(59,130,246,0.08)' : 'rgba(37,99,235,0.06)',
-                 border: `1px solid ${theme.isDark ? 'rgba(59,130,246,0.18)' : 'rgba(37,99,235,0.15)'}`,
+                 background: theme.isDark ? 'rgba(202,138,4,0.08)' : 'rgba(161,98,7,0.06)',
+                 border: `1px solid ${theme.isDark ? 'rgba(202,138,4,0.18)' : 'rgba(161,98,7,0.15)'}`,
                }}>
             <Bot size={11} style={{ color: theme.accent }} />
-            <span className="text-[10px] font-semibold" style={{ color: theme.isDark ? '#93c5fd' : '#1d4ed8' }}>
+            <span className="text-[10px] font-semibold" style={{ color: theme.isDark ? '#FBBF24' : '#854D0E' }}>
               Initializing trading profile
             </span>
             <span className="flex gap-[3px] items-center">
@@ -309,9 +309,9 @@ export default function PreSignupOnboarding({ onContinueToSignup, onClose }) {
                     width: step === n ? 22 : 6,
                     height: 6,
                     background: n <= step
-                      ? 'linear-gradient(90deg, #1d4ed8, #0284c7)'
+                      ? 'linear-gradient(90deg, #CA8A04, #EAB308)'
                       : theme.isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)',
-                    boxShadow: n === step ? '0 0 8px rgba(59,130,246,0.55)' : 'none',
+                    boxShadow: n === step ? '0 0 8px rgba(202,138,4,0.55)' : 'none',
                   }}
                 />
               ))}
@@ -336,8 +336,8 @@ export default function PreSignupOnboarding({ onContinueToSignup, onClose }) {
               className="h-full transition-all duration-500"
               style={{
                 width: `${(step / 3) * 100}%`,
-                background: 'linear-gradient(90deg, #1d4ed8, #0284c7)',
-                boxShadow: '0 0 8px rgba(59,130,246,0.4)',
+                background: 'linear-gradient(90deg, #CA8A04, #EAB308)',
+                boxShadow: '0 0 8px rgba(202,138,4,0.4)',
               }}
             />
           </div>
@@ -454,9 +454,9 @@ export default function PreSignupOnboarding({ onContinueToSignup, onClose }) {
                     style={{
                       background: theme.isDark
                         ? 'linear-gradient(135deg, rgba(29,78,216,0.35), rgba(2,132,199,0.2))'
-                        : 'linear-gradient(135deg, rgba(37,99,235,0.12), rgba(14,165,233,0.08))',
-                      border: `1px solid ${theme.isDark ? 'rgba(59,130,246,0.3)' : 'rgba(37,99,235,0.2)'}`,
-                      boxShadow: theme.isDark ? '0 0 20px rgba(59,130,246,0.15)' : 'none',
+                        : 'linear-gradient(135deg, rgba(161,98,7,0.12), rgba(14,165,233,0.08))',
+                      border: `1px solid ${theme.isDark ? 'rgba(202,138,4,0.3)' : 'rgba(161,98,7,0.2)'}`,
+                      boxShadow: theme.isDark ? '0 0 20px rgba(202,138,4,0.15)' : 'none',
                     }}
                   >
                     <Sparkles size={22} style={{ color: theme.accent }} />
@@ -506,13 +506,13 @@ export default function PreSignupOnboarding({ onContinueToSignup, onClose }) {
                       key={label}
                       className="text-center rounded-xl py-3 px-2"
                       style={{
-                        background: theme.isDark ? 'rgba(59,130,246,0.07)' : 'rgba(37,99,235,0.05)',
-                        border: `1px solid ${theme.isDark ? 'rgba(59,130,246,0.15)' : 'rgba(37,99,235,0.12)'}`,
+                        background: theme.isDark ? 'rgba(202,138,4,0.07)' : 'rgba(161,98,7,0.05)',
+                        border: `1px solid ${theme.isDark ? 'rgba(202,138,4,0.15)' : 'rgba(161,98,7,0.12)'}`,
                       }}
                     >
                       <div
                         className="text-[20px] font-extrabold leading-none mb-1"
-                        style={{ background: 'linear-gradient(135deg, #3b82f6, #0284c7)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}
+                        style={{ background: 'linear-gradient(135deg, #CA8A04, #EAB308)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}
                       >
                         {val}
                       </div>
@@ -559,7 +559,7 @@ export default function PreSignupOnboarding({ onContinueToSignup, onClose }) {
                 className="flex items-center gap-2 px-6 py-2.5 rounded-xl text-[14px] font-bold transition-all duration-200"
                 style={{
                   background: (step === 1 ? canAdvanceStep1 : canAdvanceStep2)
-                    ? 'linear-gradient(135deg, #1d4ed8 0%, #0284c7 100%)'
+                    ? 'linear-gradient(135deg, #CA8A04 0%, #EAB308 100%)'
                     : theme.isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.05)',
                   color: (step === 1 ? canAdvanceStep1 : canAdvanceStep2) ? '#ffffff' : theme.muted,
                   boxShadow: (step === 1 ? canAdvanceStep1 : canAdvanceStep2)
@@ -590,7 +590,7 @@ export default function PreSignupOnboarding({ onContinueToSignup, onClose }) {
                 onClick={handleSignupCTA}
                 className="flex items-center gap-2 px-6 py-2.5 rounded-xl text-[14px] font-bold text-white transition-all duration-200"
                 style={{
-                  background: 'linear-gradient(135deg, #1d4ed8 0%, #0284c7 100%)',
+                  background: 'linear-gradient(135deg, #CA8A04 0%, #EAB308 100%)',
                   boxShadow: '0 4px 20px rgba(29,78,216,0.42), 0 1px 4px rgba(0,0,0,0.15)',
                 }}
                 onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 10px 32px rgba(29,78,216,0.56), 0 2px 8px rgba(0,0,0,0.18)'; e.currentTarget.style.transform = 'translateY(-1px)'; }}

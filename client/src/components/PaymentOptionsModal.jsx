@@ -170,7 +170,7 @@ export default function PaymentOptionsModal({ plan: initialPlan = DEFAULT_SELECT
   }
 
   const card    = theme.isDark ? '#0d1424' : '#ffffff';
-  const surface = theme.isDark ? '#111827' : '#f8fafc';
+  const surface = theme.isDark ? '#0b0b0f' : '#f8fafc';
 
   // ── Success state ──────────────────────────────────────────────────────────
   if (submitted) {
@@ -180,7 +180,7 @@ export default function PaymentOptionsModal({ plan: initialPlan = DEFAULT_SELECT
         style={{ position: 'fixed', inset: 0, zIndex: 1300, background: 'rgba(0,0,0,0.65)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}
       >
         <div onClick={e => e.stopPropagation()} style={{ width: '100%', maxWidth: 440, background: card, borderRadius: 20, border: `1px solid ${theme.border}`, overflow: 'hidden', boxShadow: '0 32px 80px rgba(0,0,0,0.6)' }}>
-          <div style={{ height: 3, background: 'linear-gradient(90deg,#10b981,#3b82f6)' }} />
+          <div style={{ height: 3, background: 'linear-gradient(90deg,#10b981,#CA8A04)' }} />
           <div style={{ padding: '40px 32px', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14 }}>
             <div style={{ width: 56, height: 56, borderRadius: '50%', background: 'rgba(16,185,129,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <CheckCircle size={28} color="#10B981" />
@@ -227,7 +227,7 @@ export default function PaymentOptionsModal({ plan: initialPlan = DEFAULT_SELECT
         }}
       >
         {/* Gradient bar */}
-        <div style={{ height: 3, background: 'linear-gradient(90deg,#1d4ed8,#3b82f6,#06b6d4)' }} />
+        <div style={{ height: 3, background: 'linear-gradient(90deg,#CA8A04,#EAB308,#FBBF24)' }} />
 
         {/* Header */}
         <div style={{ padding: '20px 22px 0', display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
@@ -250,9 +250,9 @@ export default function PaymentOptionsModal({ plan: initialPlan = DEFAULT_SELECT
                 style={{
                   fontSize: 11,
                   fontWeight: 700,
-                  color: theme.isDark ? '#93c5fd' : '#1d4ed8',
-                  background: theme.isDark ? 'rgba(59,130,246,0.14)' : 'rgba(59,130,246,0.08)',
-                  border: `1px solid ${theme.isDark ? 'rgba(59,130,246,0.28)' : 'rgba(59,130,246,0.22)'}`,
+                  color: theme.isDark ? '#FBBF24' : '#854D0E',
+                  background: theme.isDark ? 'rgba(202,138,4,0.14)' : 'rgba(202,138,4,0.08)',
+                  border: `1px solid ${theme.isDark ? 'rgba(202,138,4,0.28)' : 'rgba(202,138,4,0.22)'}`,
                   padding: '5px 9px',
                   borderRadius: 999,
                 }}
@@ -290,14 +290,14 @@ export default function PaymentOptionsModal({ plan: initialPlan = DEFAULT_SELECT
                     onClick={() => setRegion(key)}
                     style={{
                       flex: '1 1 calc(50% - 5px)', minWidth: '140px', padding: '10px 12px', borderRadius: 10, cursor: 'pointer',
-                      border: `2px solid ${active ? '#3b82f6' : theme.border}`,
-                      background: active ? 'rgba(59,130,246,0.08)' : surface,
+                      border: `2px solid ${active ? '#CA8A04' : theme.border}`,
+                      background: active ? 'rgba(202,138,4,0.08)' : surface,
                       display: 'flex', alignItems: 'center', gap: 8, transition: 'all 0.15s',
                     }}
                   >
-                    <Icon size={15} color={active ? '#3b82f6' : theme.muted} />
+                    <Icon size={15} color={active ? '#CA8A04' : theme.muted} />
                     <div style={{ textAlign: 'left' }}>
-                      <div style={{ fontSize: 12, fontWeight: 700, color: active ? '#3b82f6' : theme.text }}>{m.label}</div>
+                      <div style={{ fontSize: 12, fontWeight: 700, color: active ? '#CA8A04' : theme.text }}>{m.label}</div>
                       <div style={{ fontSize: 10, color: theme.muted }}>{m.subtitle}</div>
                     </div>
                   </button>
@@ -335,7 +335,7 @@ export default function PaymentOptionsModal({ plan: initialPlan = DEFAULT_SELECT
           {/* Payment details */}
           <div style={{ borderRadius: 12, background: surface, border: `1px solid ${theme.border}`, padding: '14px 16px' }}>
               <div style={{ fontSize: 12, fontWeight: 700, color: theme.text, marginBottom: 10 }}>
-              {currentOption.name} — Send <span style={{ color: '#3b82f6' }}>{price}</span>
+              {currentOption.name} — Send <span style={{ color: '#CA8A04' }}>{price}</span>
             </div>
             {currentOption.details.map(d => (
               <DetailRow key={d.label} label={d.label} value={d.value} theme={theme} />
@@ -446,7 +446,7 @@ export default function PaymentOptionsModal({ plan: initialPlan = DEFAULT_SELECT
                 borderRadius: 10,
                 border: 'none',
                 cursor: submitting ? 'not-allowed' : 'pointer',
-                background: 'linear-gradient(135deg,#2563eb,#0ea5e9,#10b981)',
+                background: 'linear-gradient(135deg,#CA8A04,#EAB308,#FBBF24)',
                 boxShadow: '0 10px 28px rgba(14,165,233,0.32)',
                 color: '#fff',
                 fontWeight: 800,

@@ -42,8 +42,8 @@ const PROBLEM_COPY = {
     icon: Shuffle,
     headline: 'Your strategy isn\'t broken — you just don\'t know what\'s working.',
     desc: 'Zynth scores every setup you\'ve traded so you can double down on your edge.',
-    color: '#3b82f6',
-    colorBg: 'rgba(59,130,246,0.1)',
+    color: '#CA8A04',
+    colorBg: 'rgba(202,138,4,0.1)',
   },
   unknown: {
     label: 'Finding Your Edge',
@@ -107,9 +107,9 @@ export default function WelcomeScreen({ onAddFirstTrade, onSkip, userName = 'Tra
       >
         {/* Top glow orb */}
         <div
-          className="absolute top-0 left-1/2 -translate-x-1/2 w-[500px] h-[300px] pointer-events-none"
+          className="absolute top-0 left-1/2 -tranzinc-x-1/2 w-[500px] h-[300px] pointer-events-none"
           style={{
-            background: 'radial-gradient(ellipse at center, rgba(59,130,246,0.08) 0%, transparent 70%)',
+            background: 'radial-gradient(ellipse at center, rgba(202,138,4,0.08) 0%, transparent 70%)',
           }}
         />
 
@@ -121,12 +121,12 @@ export default function WelcomeScreen({ onAddFirstTrade, onSkip, userName = 'Tra
             transition={{ delay: 0.15, duration: 0.45, ease: [0.34, 1.56, 0.64, 1] }}
             className="w-16 h-16 rounded-2xl flex items-center justify-center"
             style={{
-              background: 'linear-gradient(135deg,rgba(59,130,246,0.18),rgba(6,182,212,0.12))',
-              border: '1px solid rgba(59,130,246,0.25)',
-              boxShadow: '0 0 40px rgba(59,130,246,0.2)',
+              background: 'linear-gradient(135deg,rgba(202,138,4,0.18),rgba(6,182,212,0.12))',
+              border: '1px solid rgba(202,138,4,0.25)',
+              boxShadow: '0 0 40px rgba(202,138,4,0.2)',
             }}
           >
-            <Sparkles size={30} style={{ color: '#3b82f6' }} />
+            <Sparkles size={30} style={{ color: '#CA8A04' }} />
           </motion.div>
         </div>
 
@@ -184,8 +184,8 @@ export default function WelcomeScreen({ onAddFirstTrade, onSkip, userName = 'Tra
             <div
               className="px-4 py-3 rounded-xl border text-center"
               style={{
-                background: theme.isDark ? 'rgba(59,130,246,0.05)' : 'rgba(59,130,246,0.04)',
-                borderColor: 'rgba(59,130,246,0.15)',
+                background: theme.isDark ? 'rgba(202,138,4,0.05)' : 'rgba(202,138,4,0.04)',
+                borderColor: 'rgba(202,138,4,0.15)',
               }}
             >
               <p className="text-[13px]" style={{ color: theme.muted }}>
@@ -230,9 +230,9 @@ export default function WelcomeScreen({ onAddFirstTrade, onSkip, userName = 'Tra
                 >
                   <div
                     className="w-5 h-5 rounded-full flex items-center justify-center shrink-0 mt-px"
-                    style={{ background: 'rgba(59,130,246,0.12)', border: '1px solid rgba(59,130,246,0.2)' }}
+                    style={{ background: 'rgba(202,138,4,0.12)', border: '1px solid rgba(202,138,4,0.2)' }}
                   >
-                    <Check size={10} style={{ color: '#3b82f6' }} />
+                    <Check size={10} style={{ color: '#CA8A04' }} />
                   </div>
                   <p className="text-[13px] leading-snug" style={{ color: theme.text }}>
                     {item.text}
@@ -254,14 +254,14 @@ export default function WelcomeScreen({ onAddFirstTrade, onSkip, userName = 'Tra
             onClick={onAddFirstTrade}
             className="group relative overflow-hidden inline-flex items-center gap-2.5 px-8 py-4 rounded-2xl text-[15px] font-bold text-white transition-all hover:scale-[1.03]"
             style={{
-              background: 'linear-gradient(135deg,#1d4ed8 0%,#0284c7 100%)',
-              boxShadow: '0 6px 28px rgba(59,130,246,0.40)',
+              background: 'linear-gradient(135deg,#CA8A04 0%,#EAB308 100%)',
+              boxShadow: '0 6px 28px rgba(202,138,4,0.40)',
             }}
           >
             <BookOpen size={18} />
             <span className="relative z-10 flex items-center gap-2">
               Add My First Trade
-              <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+              <ArrowRight size={16} className="group-hover:tranzinc-x-1 transition-transform" />
             </span>
             {/* shimmer */}
             <span

@@ -2,7 +2,7 @@ import { AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, Cart
 import { TrendingUp, TrendingDown, Target, AlertTriangle, Award, Activity } from 'lucide-react';
 import { useTheme } from '../../contexts/ThemeContext';
 
-const CHART_COLORS = ['#3b82f6','#22c55e','#f59e0b','#ef4444','#0ea5e9','#ec4899','#14b8a6','#f97316'];
+const CHART_COLORS = ['#CA8A04','#22c55e','#f59e0b','#ef4444','#8b5cf6','#ec4899','#6366f1','#f97316'];
 
 function StatCard({ label, value, sub, color, icon: Icon }) {
   const theme = useTheme();
@@ -83,15 +83,15 @@ export default function PerformanceDashboard({ metrics }) {
             <AreaChart data={metrics.equityCurve}>
               <defs>
                 <linearGradient id="eqGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3} />
-                  <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
+                  <stop offset="5%" stopColor="#CA8A04" stopOpacity={0.3} />
+                  <stop offset="95%" stopColor="#CA8A04" stopOpacity={0} />
                 </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke={`${theme.border}44`} />
               <XAxis dataKey="date" tick={{ fill: theme.muted, fontSize: 10 }} tickLine={false} />
               <YAxis tick={{ fill: theme.muted, fontSize: 10 }} tickLine={false} axisLine={false} />
               <Tooltip content={<CustomTooltip theme={theme} />} />
-              <Area type="monotone" dataKey="equity" name="Equity" stroke="#3b82f6" fill="url(#eqGrad)" strokeWidth={2} dot={false} />
+              <Area type="monotone" dataKey="equity" name="Equity" stroke="#CA8A04" fill="url(#eqGrad)" strokeWidth={2} dot={false} />
             </AreaChart>
           </ResponsiveContainer>
         </div>
@@ -144,7 +144,7 @@ export default function PerformanceDashboard({ metrics }) {
                 <XAxis type="number" tick={{ fill: theme.muted, fontSize: 10 }} tickLine={false} domain={[0, 100]} />
                 <YAxis type="category" dataKey="strategy" tick={{ fill: theme.muted, fontSize: 10 }} tickLine={false} width={90} />
                 <Tooltip content={<CustomTooltip theme={theme} />} />
-                <Bar dataKey="winRate" name="Win Rate %" radius={[0,3,3,0]} fill="#3b82f6" />
+                <Bar dataKey="winRate" name="Win Rate %" radius={[0,3,3,0]} fill="#CA8A04" />
               </BarChart>
             </ResponsiveContainer>
           </div>

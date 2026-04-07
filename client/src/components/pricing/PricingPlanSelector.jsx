@@ -85,12 +85,12 @@ function CompactPlanCard({ plan, selected, billingCycle, onSelect, context, pric
       className={`group relative flex flex-col rounded-2xl border p-3 text-left transition-all duration-200
         ${isElite
           ? 'bg-gradient-to-br from-violet-500/8 via-purple-500/6 to-indigo-500/8 dark:from-violet-500/12 dark:via-purple-500/8 dark:to-indigo-500/10'
-          : 'bg-white dark:bg-slate-800/50'}
+          : 'bg-white dark:bg-zinc-800/50'}
         ${selected
           ? isElite
             ? 'border-violet-400/60 shadow-[0_8px_24px_rgba(109,40,217,0.18)] dark:border-violet-500/50'
-            : 'border-slate-400 shadow-md dark:border-slate-500'
-          : 'border-slate-200/80 shadow-sm dark:border-slate-700/60'}`}
+            : 'border-zinc-400 shadow-md dark:border-zinc-500'
+          : 'border-zinc-200/80 shadow-sm dark:border-zinc-700/60'}`}
     >
       {/* Header: badge + price */}
       <div className="flex items-start justify-between gap-1">
@@ -99,7 +99,7 @@ function CompactPlanCard({ plan, selected, billingCycle, onSelect, context, pric
             🔥 Most Popular
           </span>
         ) : (
-          <span className="inline-flex items-center rounded-full border border-slate-200 bg-slate-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.12em] text-slate-500 dark:border-slate-500/70 dark:bg-slate-700/80 dark:text-slate-200">
+          <span className="inline-flex items-center rounded-full border border-zinc-200 bg-zinc-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.12em] text-zinc-500 dark:border-zinc-500/70 dark:bg-zinc-700/80 dark:text-zinc-200">
             {plan.badge}
           </span>
         )}
@@ -108,16 +108,16 @@ function CompactPlanCard({ plan, selected, billingCycle, onSelect, context, pric
       {/* Price */}
       <div className="mt-2 flex items-end gap-1">
         {display.anchoredAmount && display.anchoredAmount > display.amount && (
-          <span className="text-[11px] font-semibold text-slate-400 line-through dark:text-slate-400">
+          <span className="text-[11px] font-semibold text-zinc-400 line-through dark:text-zinc-400">
             {display.anchoredAmountDisplay}
           </span>
         )}
-        <span className={`text-xl font-black tracking-tight ${isElite ? 'text-slate-900 dark:text-white' : 'text-slate-700 dark:text-slate-200'}`}>
+        <span className={`text-xl font-black tracking-tight ${isElite ? 'text-zinc-900 dark:text-white' : 'text-zinc-700 dark:text-zinc-200'}`}>
           {display.amountDisplay}
         </span>
-        <span className="pb-0.5 text-[11px] font-medium text-slate-500 dark:text-slate-400">{display.suffix}</span>
+        <span className="pb-0.5 text-[11px] font-medium text-zinc-500 dark:text-zinc-400">{display.suffix}</span>
       </div>
-      <p className={`mt-0.5 text-sm font-bold ${isElite ? 'text-slate-900 dark:text-white' : 'text-slate-600 dark:text-slate-300'}`}>
+      <p className={`mt-0.5 text-sm font-bold ${isElite ? 'text-zinc-900 dark:text-white' : 'text-zinc-600 dark:text-zinc-300'}`}>
         {plan.name}
       </p>
 
@@ -132,11 +132,11 @@ function CompactPlanCard({ plan, selected, billingCycle, onSelect, context, pric
           </p>
         </div>
       ) : (
-        <div className="mt-2 rounded-lg border border-slate-200/80 bg-slate-50/80 px-2.5 py-1.5 dark:border-slate-500/45 dark:bg-slate-800/80">
-          <p className="text-[11px] font-semibold leading-4 text-slate-700 dark:text-slate-100">
+        <div className="mt-2 rounded-lg border border-zinc-200/80 bg-zinc-50/80 px-2.5 py-1.5 dark:border-zinc-500/45 dark:bg-zinc-800/80">
+          <p className="text-[11px] font-semibold leading-4 text-zinc-700 dark:text-zinc-100">
             {proHook.value}
           </p>
-          <p className="mt-0.5 text-[10px] text-slate-500 dark:text-slate-300">
+          <p className="mt-0.5 text-[10px] text-zinc-500 dark:text-zinc-300">
             {proHook.identity}
           </p>
         </div>
@@ -144,15 +144,15 @@ function CompactPlanCard({ plan, selected, billingCycle, onSelect, context, pric
 
       {/* Compact feature explanation */}
       {featurePreview.length > 0 && (
-        <div className={`mt-2 rounded-lg border px-2.5 py-2 ${isElite ? 'border-violet-200 bg-violet-50/80 dark:border-violet-400/30 dark:bg-violet-950/40' : 'border-slate-200 bg-slate-50/80 dark:border-slate-500/45 dark:bg-slate-800/70'}`}>
-          <p className={`text-[10px] font-bold uppercase tracking-[0.12em] ${isElite ? 'text-violet-700 dark:text-violet-200' : 'text-slate-600 dark:text-slate-200'}`}>
+        <div className={`mt-2 rounded-lg border px-2.5 py-2 ${isElite ? 'border-violet-200 bg-violet-50/80 dark:border-violet-400/30 dark:bg-violet-950/40' : 'border-zinc-200 bg-zinc-50/80 dark:border-zinc-500/45 dark:bg-zinc-800/70'}`}>
+          <p className={`text-[10px] font-bold uppercase tracking-[0.12em] ${isElite ? 'text-violet-700 dark:text-violet-200' : 'text-zinc-600 dark:text-zinc-200'}`}>
             What you get
           </p>
           <div className="mt-1.5 space-y-1">
             {featurePreview.map((feature) => (
               <div key={feature} className="flex items-start gap-1.5">
-                <Check size={11} className={`${isElite ? 'text-violet-500 dark:text-violet-300' : 'text-slate-500 dark:text-slate-300'} mt-[1px] shrink-0`} />
-                <span className={`${isElite ? 'text-violet-900 dark:text-violet-100/95' : 'text-slate-700 dark:text-slate-100'} text-[11px] leading-4`}>
+                <Check size={11} className={`${isElite ? 'text-violet-500 dark:text-violet-300' : 'text-zinc-500 dark:text-zinc-300'} mt-[1px] shrink-0`} />
+                <span className={`${isElite ? 'text-violet-900 dark:text-violet-100/95' : 'text-zinc-700 dark:text-zinc-100'} text-[11px] leading-4`}>
                   {feature}
                 </span>
               </div>
@@ -170,7 +170,7 @@ function CompactPlanCard({ plan, selected, billingCycle, onSelect, context, pric
 
       {/* Selected indicator */}
       {selected && (
-        <div className={`mt-auto pt-2 flex items-center gap-1 text-[10px] font-bold ${isElite ? 'text-violet-600 dark:text-violet-300' : 'text-slate-500 dark:text-slate-300'}`}>
+        <div className={`mt-auto pt-2 flex items-center gap-1 text-[10px] font-bold ${isElite ? 'text-violet-600 dark:text-violet-300' : 'text-zinc-500 dark:text-zinc-300'}`}>
           <Check size={10} />
           Selected
         </div>
@@ -195,7 +195,7 @@ function PlanCard({ plan, billingCycle, selected, onSelect, context, priceOverri
         onClick={() => onSelect(plan.id)}
         className={`group relative overflow-hidden rounded-2xl bg-gradient-to-br from-violet-600 via-purple-600 to-indigo-600 p-[1.5px] text-left transition-all duration-200 hover:shadow-[0_16px_40px_rgba(109,40,217,0.25)] ${selected ? 'shadow-[0_12px_32px_rgba(109,40,217,0.3)]' : 'opacity-[0.98]'}`}
       >
-        <div className="relative h-full rounded-[13px] bg-white px-5 py-5 dark:bg-[#16122a]">
+        <div className="relative h-full rounded-[13px] bg-white px-5 py-5 dark:bg-[#161618]">
           <div className="relative flex h-full flex-col">
             {/* Header: badge + urgency hook + icon */}
             <div className="flex items-start justify-between gap-2">
@@ -214,17 +214,17 @@ function PlanCard({ plan, billingCycle, selected, onSelect, context, priceOverri
               </div>
             </div>
 
-            <p className="mt-3 text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-400 dark:text-slate-300">
+            <p className="mt-3 text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-400 dark:text-zinc-300">
               {plan.eyebrow}
             </p>
 
             {/* Name + headline + reinforcing sub-line */}
             <div className="mt-1.5">
-              <h3 className="text-lg font-bold tracking-tight text-slate-900 dark:text-white">{plan.name}</h3>
+              <h3 className="text-lg font-bold tracking-tight text-zinc-900 dark:text-white">{plan.name}</h3>
               <p className="mt-0.5 text-xs font-semibold leading-4 text-violet-700 dark:text-violet-400">
                 {plan.headline}
               </p>
-              <p className="mt-0.5 text-[11px] font-medium text-slate-500 dark:text-slate-400">
+              <p className="mt-0.5 text-[11px] font-medium text-zinc-500 dark:text-zinc-400">
                 No limits. Full edge unlocked.
               </p>
             </div>
@@ -232,19 +232,19 @@ function PlanCard({ plan, billingCycle, selected, onSelect, context, priceOverri
             {/* Price */}
             <div className="mt-3 flex items-end gap-1.5">
               {display.anchoredAmount && display.anchoredAmount > display.amount && (
-                <span className="pb-0.5 text-xs font-semibold text-slate-400 line-through dark:text-slate-500">
+                <span className="pb-0.5 text-xs font-semibold text-zinc-400 line-through dark:text-zinc-500">
                   {display.anchoredAmountDisplay}
                 </span>
               )}
-              <span className="text-3xl font-black tracking-tight text-slate-900 dark:text-white">{display.amountDisplay}</span>
-              <span className="pb-0.5 text-xs font-medium text-slate-500 dark:text-slate-400">{display.suffix}</span>
+              <span className="text-3xl font-black tracking-tight text-zinc-900 dark:text-white">{display.amountDisplay}</span>
+              <span className="pb-0.5 text-xs font-medium text-zinc-500 dark:text-zinc-400">{display.suffix}</span>
             </div>
             <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-0.5">
               {display.savingsText && (
                 <p className="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">{display.savingsText}</p>
               )}
               {isYearly && display.dailyEquivalent && (
-                <p className="text-[11px] text-slate-400 dark:text-slate-300">{display.dailyEquivalentDisplay}/day</p>
+                <p className="text-[11px] text-zinc-400 dark:text-zinc-300">{display.dailyEquivalentDisplay}/day</p>
               )}
             </div>
 
@@ -253,7 +253,7 @@ function PlanCard({ plan, billingCycle, selected, onSelect, context, priceOverri
               <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-violet-600 dark:text-violet-400">
                 {plan.highlightLabel}
               </p>
-              <p className="mt-0.5 text-xs font-semibold text-slate-900 dark:text-white">{plan.highlightText}</p>
+              <p className="mt-0.5 text-xs font-semibold text-zinc-900 dark:text-white">{plan.highlightText}</p>
             </div>
 
             {/* Behavioral trigger */}
@@ -273,19 +273,19 @@ function PlanCard({ plan, billingCycle, selected, onSelect, context, priceOverri
                 .map((feature) => (
                   <div
                     key={feature}
-                    className="flex items-center gap-2.5 rounded-lg border border-slate-100 bg-slate-50/60 px-2.5 py-1.5 dark:border-white/[0.06] dark:bg-white/[0.03]"
+                    className="flex items-center gap-2.5 rounded-lg border border-zinc-100 bg-zinc-50/60 px-2.5 py-1.5 dark:border-white/[0.06] dark:bg-white/[0.03]"
                   >
                     <div className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-violet-100/80 text-violet-500 dark:bg-violet-500/20 dark:text-violet-400">
                       <Check size={10} />
                     </div>
-                    <span className="text-xs text-slate-600 dark:text-slate-400">{feature}</span>
+                    <span className="text-xs text-zinc-600 dark:text-zinc-400">{feature}</span>
                   </div>
                 ))}
             </div>
 
             {/* Selection indicator */}
             <div className="mt-auto pt-3 flex justify-end">
-              <div className={`flex h-6 w-6 items-center justify-center rounded-full border transition-all ${selected ? 'border-violet-400 bg-violet-100 text-violet-700 dark:border-violet-500 dark:bg-violet-500/20 dark:text-violet-300' : 'border-slate-200 bg-white text-slate-300 dark:border-white/10 dark:bg-white/[0.04] dark:text-slate-600'}`}>
+              <div className={`flex h-6 w-6 items-center justify-center rounded-full border transition-all ${selected ? 'border-violet-400 bg-violet-100 text-violet-700 dark:border-violet-500 dark:bg-violet-500/20 dark:text-violet-300' : 'border-zinc-200 bg-white text-zinc-300 dark:border-white/10 dark:bg-white/[0.04] dark:text-zinc-600'}`}>
                 <Check size={12} />
               </div>
             </div>
@@ -299,72 +299,72 @@ function PlanCard({ plan, billingCycle, selected, onSelect, context, priceOverri
     <button
       type="button"
       onClick={() => onSelect(plan.id)}
-      className={`group relative overflow-hidden rounded-2xl border p-5 text-left transition-all duration-200 hover:shadow-lg ${selected ? 'border-slate-300 bg-white shadow-md dark:border-slate-600 dark:bg-slate-800' : 'border-slate-200 bg-white/90 shadow-sm dark:border-slate-700/60 dark:bg-slate-800/60'}`}
+      className={`group relative overflow-hidden rounded-2xl border p-5 text-left transition-all duration-200 hover:shadow-lg ${selected ? 'border-zinc-300 bg-white shadow-md dark:border-zinc-600 dark:bg-zinc-800' : 'border-zinc-200 bg-white/90 shadow-sm dark:border-zinc-700/60 dark:bg-zinc-800/60'}`}
     >
       <div className="flex h-full flex-col">
         <div className="flex items-start justify-between gap-2">
-          <span className="inline-flex items-center rounded-full border border-slate-200 bg-slate-100 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-[0.14em] text-slate-600 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-300">
+          <span className="inline-flex items-center rounded-full border border-zinc-200 bg-zinc-100 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-[0.14em] text-zinc-600 dark:border-zinc-600 dark:bg-zinc-700 dark:text-zinc-300">
             {plan.badge}
           </span>
-          <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-slate-100 text-slate-500 dark:bg-slate-700/60 dark:text-slate-400">
+          <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-zinc-100 text-zinc-500 dark:bg-zinc-700/60 dark:text-zinc-400">
             <Icon size={16} />
           </div>
         </div>
 
-        <p className="mt-3 text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-400 dark:text-slate-500">
+        <p className="mt-3 text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-400 dark:text-zinc-500">
           {plan.eyebrow}
         </p>
 
         {/* Name + headline */}
         <div className="mt-1.5">
-          <h3 className="text-lg font-bold tracking-tight text-slate-900 dark:text-white">{plan.name}</h3>
-          <p className="mt-0.5 text-xs leading-4 text-slate-500 dark:text-slate-400">{plan.headline}</p>
+          <h3 className="text-lg font-bold tracking-tight text-zinc-900 dark:text-white">{plan.name}</h3>
+          <p className="mt-0.5 text-xs leading-4 text-zinc-500 dark:text-zinc-400">{plan.headline}</p>
         </div>
 
         {/* Price */}
         <div className="mt-3 flex items-end gap-1.5">
           {display.anchoredAmount && display.anchoredAmount > display.amount && (
-            <span className="pb-0.5 text-xs font-semibold text-slate-400 line-through dark:text-slate-500">
+            <span className="pb-0.5 text-xs font-semibold text-zinc-400 line-through dark:text-zinc-500">
               {display.anchoredAmountDisplay}
             </span>
           )}
-          <span className="text-3xl font-black tracking-tight text-slate-900 dark:text-white">{display.amountDisplay}</span>
-          <span className="pb-0.5 text-xs font-medium text-slate-500 dark:text-slate-400">{display.suffix}</span>
+          <span className="text-3xl font-black tracking-tight text-zinc-900 dark:text-white">{display.amountDisplay}</span>
+          <span className="pb-0.5 text-xs font-medium text-zinc-500 dark:text-zinc-400">{display.suffix}</span>
         </div>
         <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-0.5">
           {display.savingsText && (
             <p className="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">{display.savingsText}</p>
           )}
           {isYearly && display.dailyEquivalent && (
-            <p className="text-[11px] text-slate-500 dark:text-slate-400">{display.dailyEquivalentDisplay}/day</p>
+            <p className="text-[11px] text-zinc-500 dark:text-zinc-400">{display.dailyEquivalentDisplay}/day</p>
           )}
         </div>
 
         {/* Value highlight — positive framing */}
         {(plan.highlightLabel || plan.highlightText) && (
-          <div className="mt-3 rounded-xl border border-slate-200 bg-slate-50/80 px-3 py-2.5 dark:border-slate-600/40 dark:bg-slate-700/30">
-            <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-slate-500 dark:text-slate-400">
+          <div className="mt-3 rounded-xl border border-zinc-200 bg-zinc-50/80 px-3 py-2.5 dark:border-zinc-600/40 dark:bg-zinc-700/30">
+            <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-zinc-500 dark:text-zinc-400">
               {plan.highlightLabel}
             </p>
-            <p className="mt-0.5 text-xs font-semibold text-slate-800 dark:text-slate-200">{plan.highlightText}</p>
+            <p className="mt-0.5 text-xs font-semibold text-zinc-800 dark:text-zinc-200">{plan.highlightText}</p>
           </div>
         )}
 
         {/* Features */}
         <div className="mt-3 space-y-1.5">
           {plan.features.map((feature) => (
-            <div key={feature} className="flex items-center gap-2.5 rounded-lg border border-slate-100 bg-slate-50/80 px-2.5 py-1.5 dark:border-slate-700/50 dark:bg-slate-700/30">
-              <div className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-slate-200 text-slate-500 dark:bg-slate-600 dark:text-slate-400">
+            <div key={feature} className="flex items-center gap-2.5 rounded-lg border border-zinc-100 bg-zinc-50/80 px-2.5 py-1.5 dark:border-zinc-700/50 dark:bg-zinc-700/30">
+              <div className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-zinc-200 text-zinc-500 dark:bg-zinc-600 dark:text-zinc-400">
                 <Check size={10} />
               </div>
-              <span className="text-xs text-slate-600 dark:text-slate-400">{feature}</span>
+              <span className="text-xs text-zinc-600 dark:text-zinc-400">{feature}</span>
             </div>
           ))}
         </div>
 
         <div className="mt-auto pt-3 flex items-center justify-between">
-          <p className="text-[10px] text-slate-400 dark:text-slate-500">{plan.urgency}</p>
-          <div className={`flex h-6 w-6 items-center justify-center rounded-full border transition-all ${selected ? 'border-slate-400 bg-slate-100 text-slate-600 dark:border-slate-500 dark:bg-slate-600 dark:text-slate-300' : 'border-slate-200 bg-white text-slate-300 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-600'}`}>
+          <p className="text-[10px] text-zinc-400 dark:text-zinc-500">{plan.urgency}</p>
+          <div className={`flex h-6 w-6 items-center justify-center rounded-full border transition-all ${selected ? 'border-zinc-400 bg-zinc-100 text-zinc-600 dark:border-zinc-500 dark:bg-zinc-600 dark:text-zinc-300' : 'border-zinc-200 bg-white text-zinc-300 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-600'}`}>
             <Check size={12} />
           </div>
         </div>
@@ -440,19 +440,19 @@ export default function PricingPlanSelector({
   });
 
   return (
-    <div className={`rounded-2xl border border-slate-200/80 bg-white/80 backdrop-blur dark:border-slate-700/50 dark:bg-slate-900/80 ${compactMode ? 'p-3.5 shadow-[0_8px_24px_rgba(15,23,42,0.10)]' : 'p-5 shadow-[0_12px_40px_rgba(15,23,42,0.08)]'} ${className}`}>
+    <div className={`rounded-2xl border border-zinc-200/80 bg-white/80 backdrop-blur dark:border-zinc-700/50 dark:bg-zinc-900/80 ${compactMode ? 'p-3.5 shadow-[0_8px_24px_rgba(15,23,42,0.10)]' : 'p-5 shadow-[0_12px_40px_rgba(15,23,42,0.08)]'} ${className}`}>
       <div className={`flex ${compactMode ? 'flex-col gap-2.5' : 'flex-col gap-4 md:flex-row md:items-end md:justify-between'}`}>
         <div>
-          <h2 className={`${compactMode ? 'mt-1 text-[17px] md:text-[18px]' : 'mt-1.5 text-xl md:text-2xl'} font-black tracking-tight text-slate-950 dark:text-white`}>
+          <h2 className={`${compactMode ? 'mt-1 text-[17px] md:text-[18px]' : 'mt-1.5 text-xl md:text-2xl'} font-black tracking-tight text-zinc-950 dark:text-white`}>
             {title ?? copy.title}
           </h2>
-          <p className={`${compactMode ? 'mt-1 text-[12px] leading-5' : 'mt-2 text-sm leading-6'} max-w-2xl text-slate-600 dark:text-slate-300`}>
+          <p className={`${compactMode ? 'mt-1 text-[12px] leading-5' : 'mt-2 text-sm leading-6'} max-w-2xl text-zinc-600 dark:text-zinc-300`}>
             {subtitle ?? (compactMode ? copy.compactSubtitle : copy.subtitle)}
           </p>
         </div>
 
         {showBillingToggle && (
-          <div className={`inline-flex items-center rounded-2xl border border-slate-200/90 bg-slate-50 p-1 shadow-sm dark:border-slate-500/70 dark:bg-slate-800/90 dark:shadow-[0_0_0_1px_rgba(148,163,184,0.08)] ${compactMode ? 'self-start' : ''}`}>
+          <div className={`inline-flex items-center rounded-2xl border border-zinc-200/90 bg-zinc-50 p-1 shadow-sm dark:border-zinc-500/70 dark:bg-zinc-800/90 dark:shadow-[0_0_0_1px_rgba(148,163,184,0.08)] ${compactMode ? 'self-start' : ''}`}>
             {['monthly', 'annual'].map((cycle) => {
               const active = selectedBilling === cycle;
               return (
@@ -468,7 +468,7 @@ export default function PricingPlanSelector({
                       experimentVariant,
                     });
                   }}
-                  className={`rounded-xl border ${compactMode ? 'px-3 py-1.5 text-xs' : 'px-4 py-2 text-sm'} font-semibold transition-all ${active ? 'border-slate-200 bg-white text-slate-950 shadow-sm dark:border-indigo-400/45 dark:bg-indigo-500/20 dark:text-indigo-100' : 'border-transparent text-slate-600 hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-700/70'}`}
+                  className={`rounded-xl border ${compactMode ? 'px-3 py-1.5 text-xs' : 'px-4 py-2 text-sm'} font-semibold transition-all ${active ? 'border-zinc-200 bg-white text-zinc-950 shadow-sm dark:border-indigo-400/45 dark:bg-indigo-500/20 dark:text-indigo-100' : 'border-transparent text-zinc-600 hover:bg-zinc-100 dark:text-zinc-200 dark:hover:bg-zinc-700/70'}`}
                 >
                   {cycle === 'monthly' ? 'Monthly' : 'Yearly'}
                 </button>
@@ -494,7 +494,7 @@ export default function PricingPlanSelector({
         <div className="mt-2 flex items-center gap-2 rounded-xl border border-rose-200/70 bg-rose-50/70 px-3 py-2 dark:border-rose-500/25 dark:bg-rose-500/10">
           <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-rose-200 dark:bg-rose-500/20">
             <div
-              className="h-full rounded-full bg-gradient-to-r from-rose-500 to-orange-400 transition-all"
+              className="h-full rounded-full bg-gradient-to-r from-rose-500 to-yellow-400 transition-all"
               style={{ width: `${Math.min(usagePercent, 100)}%` }}
             />
           </div>
@@ -548,9 +548,9 @@ export default function PricingPlanSelector({
 
       {/* Social proof — compact only */}
       {compactMode && (
-        <p className="mt-2 text-center text-[11px] text-slate-500 dark:text-slate-400">
+        <p className="mt-2 text-center text-[11px] text-zinc-500 dark:text-zinc-400">
           Most traders upgrade after{' '}
-          <span className="font-semibold text-slate-700 dark:text-slate-300">5–10 trades</span>
+          <span className="font-semibold text-zinc-700 dark:text-zinc-300">5–10 trades</span>
           {' '}— this is where real insights start.
         </p>
       )}
@@ -558,7 +558,7 @@ export default function PricingPlanSelector({
       {showPrimaryAction && (
         <div className={compactMode ? 'mt-3' : 'mt-6'}>
           {!compactMode && (
-            <p className="mb-2 text-center text-xs font-semibold text-slate-600 dark:text-slate-300">
+            <p className="mb-2 text-center text-xs font-semibold text-zinc-600 dark:text-zinc-300">
               Upgrade once. No limits forever.
             </p>
           )}
@@ -575,29 +575,29 @@ export default function PricingPlanSelector({
               onPrimaryAction?.(selectedPlanId, selectedBilling);
               onContinue?.(selectedPlanId, selectedBilling);
             }}
-            className={`group inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-violet-600 via-purple-600 to-indigo-500 text-sm font-bold text-white transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] ${compactMode ? 'px-4 py-2.5 shadow-[0_8px_20px_rgba(109,40,217,0.25)]' : 'px-5 py-3.5 shadow-[0_16px_40px_rgba(99,102,241,0.28)] hover:shadow-[0_22px_55px_rgba(59,130,246,0.34)]'}`}
+            className={`group inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-violet-600 via-purple-600 to-indigo-500 text-sm font-bold text-white transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] ${compactMode ? 'px-4 py-2.5 shadow-[0_8px_20px_rgba(109,40,217,0.25)]' : 'px-5 py-3.5 shadow-[0_16px_40px_rgba(99,102,241,0.28)] hover:shadow-[0_22px_55px_rgba(202,138,4,0.34)]'}`}
           >
             {selectedCta}
-            <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+            <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:tranzinc-x-1" />
           </button>
           {compactMode ? (
             <div className="mt-2 space-y-0.5 text-center">
-              <p className="text-[11px] font-semibold text-slate-700 dark:text-slate-300">
+              <p className="text-[11px] font-semibold text-zinc-700 dark:text-zinc-300">
                 Upgrade once. Remove all limits.
               </p>
-              <p className="text-[10px] text-slate-400 dark:text-slate-300">
+              <p className="text-[10px] text-zinc-400 dark:text-zinc-300">
                 7-day risk-free · Cancel anytime
               </p>
-              <p className="text-sm text-slate-500 dark:text-slate-400">
+              <p className="text-sm text-zinc-500 dark:text-zinc-400">
                 Payment not working? Email us at getzynth@gmail.com and we&apos;ll assist you.
               </p>
             </div>
           ) : (
             <div className="mt-3 space-y-1 text-center">
-              <p className="text-xs text-slate-500 dark:text-slate-400">
+              <p className="text-xs text-zinc-500 dark:text-zinc-400">
                 7-day risk-free • Cancel anytime
               </p>
-              <p className="text-sm text-slate-500 dark:text-slate-400">
+              <p className="text-sm text-zinc-500 dark:text-zinc-400">
                 Payment not working? Email us at getzynth@gmail.com and we&apos;ll assist you.
               </p>
             </div>

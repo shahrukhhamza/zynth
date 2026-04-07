@@ -36,7 +36,7 @@ export const PAID_PLANS = {
   pro: {
     id: 'pro',
     name: 'Pro',
-    accent: '#2563eb',
+    accent: '#CA8A04',
     badge: 'Smart Start',
     eyebrow: 'Built for traders building consistency',
     headline: 'Includes 50 AI insights per month for consistent tracking',

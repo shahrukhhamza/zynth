@@ -19,8 +19,8 @@
 import { useLayoutEffect, useRef } from 'react';
 
 const COLOR_SCHEMES = {
-  blue:  { low: '#3B82F6', warn: '#F59E0B', crit: '#F43F5E', track: 'rgba(59,130,246,0.12)'  },
-  teal:  { low: '#14B8A6', warn: '#F59E0B', crit: '#F43F5E', track: 'rgba(20,184,166,0.12)'  },
+  blue:  { low: '#CA8A04', warn: '#F59E0B', crit: '#F43F5E', track: 'rgba(202,138,4,0.12)'  },
+  teal:  { low: '#CA8A04', warn: '#F59E0B', crit: '#F43F5E', track: 'rgba(202,138,4,0.12)'  },
   amber: { low: '#F59E0B', warn: '#F59E0B', crit: '#F43F5E', track: 'rgba(245,158,11,0.12)'  },
   red:   { low: '#F43F5E', warn: '#F43F5E', crit: '#F43F5E', track: 'rgba(244,63,94,0.12)'   },
 };

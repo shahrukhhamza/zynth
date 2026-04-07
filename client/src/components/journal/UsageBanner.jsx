@@ -48,7 +48,7 @@ export default function UsageBanner({ count: livCount }) {
           width: `${pct}%`,
           background: isMid
             ? 'linear-gradient(90deg, #f59e0b, #fb923c)'
-            : 'linear-gradient(90deg, #6366f1, #3b82f6)',
+            : 'linear-gradient(90deg, #CA8A04, #CA8A04)',
         }}
       />
     </div>
@@ -64,13 +64,13 @@ export default function UsageBanner({ count: livCount }) {
           border: '1px solid rgba(99,102,241,0.15)',
         }}
       >
-        <BarChart2 className="w-4 h-4 flex-shrink-0" style={{ color: '#818cf8' }} />
+        <BarChart2 className="w-4 h-4 flex-shrink-0" style={{ color: '#CA8A04' }} />
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between mb-1.5">
-            <span className="text-xs font-semibold" style={{ color: '#818cf8' }}>
+            <span className="text-xs font-semibold" style={{ color: '#CA8A04' }}>
               Journal Usage
             </span>
-            <span className="text-xs font-bold tabular-nums" style={{ color: '#818cf8' }}>
+            <span className="text-xs font-bold tabular-nums" style={{ color: '#CA8A04' }}>
               {journalCount}/{maxJournal}
             </span>
           </div>

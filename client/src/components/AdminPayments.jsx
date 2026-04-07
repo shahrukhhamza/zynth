@@ -44,7 +44,7 @@ function StatusBadge({ status }) {
 }
 
 const PLAN_CFG = {
-  pro:   { bg: 'rgba(59,130,246,0.12)', color: '#60a5fa', border: 'rgba(59,130,246,0.3)' },
+  pro:   { bg: 'rgba(202,138,4,0.12)', color: '#CA8A04', border: 'rgba(202,138,4,0.3)' },
   elite: { bg: 'rgba(245,158,11,0.12)', color: '#fbbf24', border: 'rgba(245,158,11,0.3)' },
 };
 function PlanBadge({ plan }) {
@@ -251,7 +251,7 @@ export default function AdminPayments() {
       {/* ── Page header ─────────────────────────────────────────────────── */}
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div className="flex items-center gap-3">
-          <div style={{ padding: 10, borderRadius: 12, background: 'rgba(59,130,246,0.12)', color: '#3b82f6', display: 'flex' }}>
+          <div style={{ padding: 10, borderRadius: 12, background: 'rgba(202,138,4,0.12)', color: '#CA8A04', display: 'flex' }}>
             <CreditCard size={20} />
           </div>
           <div>
@@ -280,7 +280,7 @@ export default function AdminPayments() {
         <StatCard label="Pending"  value={loading ? '—' : pendingCt}        color="#fbbf24" icon={<Clock size={16} />}       theme={theme} />
         <StatCard label="Verified" value={loading ? '—' : approvedCt}       color="#10B981" icon={<CheckCheck size={16} />}  theme={theme} />
         <StatCard label="Rejected" value={loading ? '—' : rejectedCt}       color="#f87171" icon={<XCircle size={16} />}     theme={theme} />
-        <StatCard label="Total"    value={loading ? '—' : requests.length}  color="#3b82f6" icon={<TrendingUp size={16} />}  theme={theme} />
+        <StatCard label="Total"    value={loading ? '—' : requests.length}  color="#CA8A04" icon={<TrendingUp size={16} />}  theme={theme} />
       </div>
 
       {/* ── Main card ───────────────────────────────────────────────────── */}
@@ -301,9 +301,9 @@ export default function AdminPayments() {
                 onClick={() => setFilter(t.key)}
                 className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-bold capitalize transition-all"
                 style={{
-                  background: filter === t.key ? 'rgba(59,130,246,0.12)' : 'transparent',
-                  color:      filter === t.key ? '#60a5fa' : theme.muted,
-                  border:     `1px solid ${filter === t.key ? 'rgba(59,130,246,0.3)' : 'transparent'}`,
+                  background: filter === t.key ? 'rgba(202,138,4,0.12)' : 'transparent',
+                  color:      filter === t.key ? '#CA8A04' : theme.muted,
+                  border:     `1px solid ${filter === t.key ? 'rgba(202,138,4,0.3)' : 'transparent'}`,
                 }}
               >
                 {t.label}
@@ -312,8 +312,8 @@ export default function AdminPayments() {
                     minWidth: 16, height: 16, padding: '0 4px', borderRadius: 99,
                     display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
                     fontSize: 9, fontWeight: 900,
-                    background: filter === t.key ? 'rgba(59,130,246,0.2)' : (theme.isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.07)'),
-                    color: filter === t.key ? '#93c5fd' : theme.muted,
+                    background: filter === t.key ? 'rgba(202,138,4,0.2)' : (theme.isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.07)'),
+                    color: filter === t.key ? '#CA8A04' : theme.muted,
                   }}>
                     {t.count}
                   </span>
@@ -399,7 +399,7 @@ export default function AdminPayments() {
                           <div className="flex items-center gap-2">
                             <div style={{
                               width: 28, height: 28, borderRadius: '50%', flexShrink: 0,
-                              background: 'rgba(59,130,246,0.15)', color: '#60a5fa',
+                              background: 'rgba(202,138,4,0.15)', color: '#CA8A04',
                               display: 'flex', alignItems: 'center', justifyContent: 'center',
                             }}>
                               <User size={13} />
@@ -470,9 +470,9 @@ export default function AdminPayments() {
                               style={{
                                 display: 'inline-flex', alignItems: 'center', gap: 5,
                                 padding: '5px 10px', borderRadius: 8, cursor: 'pointer',
-                                background: 'rgba(59,130,246,0.10)', color: '#60a5fa',
+                                background: 'rgba(202,138,4,0.10)', color: '#CA8A04',
                                 fontSize: 11, fontWeight: 600,
-                                border: '1px solid rgba(59,130,246,0.2)',
+                                border: '1px solid rgba(202,138,4,0.2)',
                               }}
                             >
                               <Image size={12} />

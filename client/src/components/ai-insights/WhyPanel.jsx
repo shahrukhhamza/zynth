@@ -1,4 +1,4 @@
-﻿import { useState } from 'react';
+import { useState } from 'react';
 import { AlertTriangle, Zap } from 'lucide-react';
 
 const ASSET_ORDER = ['gold', 'EURUSD', 'GBPUSD', 'USDJPY', 'oil'];
@@ -9,7 +9,7 @@ function biasConfig(bias) {
   if (b === 'bullish') return { color: 'text-emerald-400', bg: 'bg-emerald-500/8', border: 'border-emerald-500/20' };
   if (b === 'bearish') return { color: 'text-red-400', bg: 'bg-red-500/8', border: 'border-red-500/20' };
   if (b === 'mixed') return { color: 'text-amber-400', bg: 'bg-amber-500/8', border: 'border-amber-500/20' };
-  return { color: 'text-slate-400', bg: 'bg-slate-500/8', border: 'border-slate-500/20' };
+  return { color: 'text-zinc-400', bg: 'bg-zinc-500/8', border: 'border-zinc-500/20' };
 }
 
 function getExplanation(summary, asset) {
@@ -36,7 +36,7 @@ export default function WhyPanel({ summary }) {
 
   return (
     <section>
-      <p className="mb-3 text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-500">Why is the market moving?</p>
+      <p className="mb-3 text-[10px] font-semibold uppercase tracking-[0.16em] text-zinc-500">Why is the market moving?</p>
 
       <div className="mb-4 flex flex-wrap gap-1.5">
         {ASSET_ORDER.map(a => {
@@ -44,7 +44,7 @@ export default function WhyPanel({ summary }) {
           const ac = biasConfig(s?.bias);
           const isActive = a === active;
           return (
-            <button key={a} onClick={() => setActive(a)} className={`rounded-lg px-3 py-1.5 text-[10px] font-semibold transition-all ${isActive ? `${ac.bg} border ${ac.border} ${ac.color}` : 'border border-white/[0.05] text-slate-500 hover:text-slate-300'}`}>
+            <button key={a} onClick={() => setActive(a)} className={`rounded-lg px-3 py-1.5 text-[10px] font-semibold transition-all ${isActive ? `${ac.bg} border ${ac.border} ${ac.color}` : 'border border-white/[0.05] text-zinc-500 hover:text-zinc-300'}`}>
               {ASSET_LABEL[a]}
             </button>
           );

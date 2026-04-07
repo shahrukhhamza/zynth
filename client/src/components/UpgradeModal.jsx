@@ -1,4 +1,4 @@
-﻿import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   X, Landmark,
@@ -213,7 +213,7 @@ export default function UpgradeModal({
           className="w-full max-w-md rounded-2xl border p-8 text-center"
           style={{
             background:   theme.isDark ? 'rgba(8,12,20,0.97)' : '#ffffff',
-            borderColor:  theme.isDark ? 'rgba(59,130,246,0.25)' : 'rgba(59,130,246,0.2)',
+            borderColor:  theme.isDark ? 'rgba(202,138,4,0.25)' : 'rgba(202,138,4,0.2)',
             boxShadow:    '0 30px 90px rgba(0,0,0,0.45)',
           }}
         >
@@ -232,7 +232,7 @@ export default function UpgradeModal({
           <button
             onClick={handleClose}
             className="mt-6 w-full rounded-xl py-3 text-sm font-bold text-white"
-            style={{ background: 'linear-gradient(135deg,#1d4ed8,#06b6d4)' }}
+            style={{ background: 'linear-gradient(135deg,#CA8A04,#EAB308)' }}
           >
             Back to Dashboard
           </button>
@@ -269,7 +269,7 @@ export default function UpgradeModal({
           transition={{ type: 'spring', stiffness: 340, damping: 30 }}
           className="relative w-[95%] max-w-3xl rounded-2xl p-[1px]"
           style={{
-            background: 'linear-gradient(140deg, rgba(99,102,241,0.7), rgba(139,92,246,0.55), rgba(59,130,246,0.5))',
+            background: 'linear-gradient(140deg, rgba(99,102,241,0.7), rgba(139,92,246,0.55), rgba(202,138,4,0.5))',
             boxShadow:  '0 40px 120px rgba(0,0,0,0.9), 0 0 64px rgba(99,102,241,0.16)',
             maxHeight:  'min(92vh, 100%)',
           }}
@@ -342,7 +342,7 @@ export default function UpgradeModal({
                       initial={{ width: '0%' }}
                       animate={{ width: `${progressPct}%` }}
                       transition={{ duration: 1.3, ease: 'easeOut', delay: 0.15 }}
-                      style={{ background: 'linear-gradient(90deg, #6366f1, #8b5cf6)' }}
+                      style={{ background: 'linear-gradient(90deg, #CA8A04, #8b5cf6)' }}
                     />
                     <motion.div
                       style={{
@@ -438,7 +438,7 @@ export default function UpgradeModal({
                   style={{
                     padding:    '1px',
                     background: selectedPlan === 'elite'
-                      ? 'linear-gradient(135deg, #6366f1, #8b5cf6, #a78bfa)'
+                      ? 'linear-gradient(135deg, #CA8A04, #8b5cf6, #a78bfa)'
                       : 'var(--z-border)',
                   }}
                 >
@@ -466,7 +466,7 @@ export default function UpgradeModal({
                       <span className="text-lg font-extrabold" style={{ color: 'var(--z-text)' }}>{eliteDisp.amountDisplay}</span>
                       <span className="text-xs font-medium" style={{ color: '#6b7280' }}>{eliteDisp.suffix}</span>
                     </div>
-                    <p className="text-xs font-medium mb-3" style={{ color: '#6366f1' }}>Most users upgrade at this stage</p>
+                    <p className="text-xs font-medium mb-3" style={{ color: '#CA8A04' }}>Most users upgrade at this stage</p>
                     <div className="flex flex-col gap-2">
                       {eliteFeatures.map((f, i) => (
                         <div key={i} className="flex items-center gap-2">
@@ -483,21 +483,21 @@ export default function UpgradeModal({
                   onClick={() => setSelectedPlan('pro')}
                   className="cursor-pointer rounded-xl p-4 transition-all duration-200"
                   style={{
-                    background: selectedPlan === 'pro' ? 'rgba(37,99,235,0.1)' : 'var(--z-surface)',
-                    border:     `1px solid ${selectedPlan === 'pro' ? 'rgba(59,130,246,0.45)' : 'var(--z-border)'}`,
-                    boxShadow:  selectedPlan === 'pro' ? '0 0 18px rgba(37,99,235,0.12)' : 'none',
+                    background: selectedPlan === 'pro' ? 'rgba(161,98,7,0.1)' : 'var(--z-surface)',
+                    border:     `1px solid ${selectedPlan === 'pro' ? 'rgba(202,138,4,0.45)' : 'var(--z-border)'}`,
+                    boxShadow:  selectedPlan === 'pro' ? '0 0 18px rgba(161,98,7,0.12)' : 'none',
                   }}
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2.5">
-                      <Rocket size={13} style={{ color: '#60a5fa', flexShrink: 0 }} />
+                      <Rocket size={13} style={{ color: '#CA8A04', flexShrink: 0 }} />
                       <div>
                         <h3 className="text-sm font-semibold" style={{ color: 'var(--z-text2)' }}>Build consistency over time</h3>
                         <p className="text-xs mt-0.5 font-medium" style={{ color: 'var(--z-muted)' }}>Pro · {proDisp.label}</p>
                       </div>
                     </div>
                     {selectedPlan === 'pro' && (
-                      <CheckCircle2 size={15} style={{ color: '#60a5fa', flexShrink: 0 }} />
+                      <CheckCircle2 size={15} style={{ color: '#CA8A04', flexShrink: 0 }} />
                     )}
                   </div>
                 </div>
@@ -530,7 +530,7 @@ export default function UpgradeModal({
                     }}
                     className="w-full rounded-xl py-4 text-base font-bold text-white relative overflow-hidden"
                     style={{
-                      background:    'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
+                      background:    'linear-gradient(135deg, #CA8A04 0%, #8b5cf6 100%)',
                       boxShadow:     '0 0 28px rgba(99,102,241,0.35), 0 4px 14px rgba(0,0,0,0.4)',
                       letterSpacing: '0.01em',
                     }}
@@ -629,7 +629,7 @@ export default function UpgradeModal({
             >&#8592; Change Plan</button>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               <span style={{ width: 8, height: 6, borderRadius: 3, background: 'var(--z-border)', display: 'inline-block' }} />
-              <span style={{ width: 24, height: 6, borderRadius: 3, background: '#6366f1', display: 'inline-block' }} />
+              <span style={{ width: 24, height: 6, borderRadius: 3, background: '#CA8A04', display: 'inline-block' }} />
               <span style={{ fontSize: 11, color: 'var(--z-muted)', fontWeight: 500 }}>Step 2 of 2</span>
             </div>
           </div>
@@ -728,7 +728,7 @@ export default function UpgradeModal({
                 onMouseOver={e => { if (!proof) e.currentTarget.style.borderColor = 'rgba(99,102,241,0.7)'; }}
                 onMouseOut={e => { if (!proof) e.currentTarget.style.borderColor = 'rgba(99,102,241,0.45)'; }}
               >
-                <Upload size={18} color={proof ? '#34d399' : '#6366f1'} style={{ margin: '0 auto 8px', display: 'block' }} />
+                <Upload size={18} color={proof ? '#34d399' : '#CA8A04'} style={{ margin: '0 auto 8px', display: 'block' }} />
                 <div style={{ fontSize: 13, fontWeight: 600, color: proof ? '#34d399' : 'var(--z-badge-text)', wordBreak: 'break-all' }}>{proof ? proof.name : 'Upload payment screenshot'}</div>
                 <div style={{ fontSize: 11, color: 'var(--z-muted)', marginTop: 4 }}>{proof ? 'Tap to replace' : 'PNG, JPG, or WebP - click to browse'}</div>
               </div>
@@ -744,12 +744,12 @@ export default function UpgradeModal({
         <div style={{ flexShrink: 0, padding: '14px 20px 16px', borderTop: '1px solid var(--z-border)', background: 'var(--z-footer)', display: 'flex', flexDirection: 'column', gap: 10 }}>
           {error && <ErrorBar message={error} />}
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 20, flexWrap: 'wrap' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}><Shield size={12} color="#6366f1" /><span style={{ fontSize: 11, fontWeight: 500, color: 'var(--z-muted)' }}>Secure payment</span></div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}><CreditCard size={12} color="#6366f1" /><span style={{ fontSize: 11, fontWeight: 500, color: 'var(--z-muted)' }}>Trusted processing</span></div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}><RotateCcw size={12} color="#6366f1" /><span style={{ fontSize: 11, fontWeight: 500, color: 'var(--z-muted)' }}>Refund guarantee</span></div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}><Shield size={12} color="#CA8A04" /><span style={{ fontSize: 11, fontWeight: 500, color: 'var(--z-muted)' }}>Secure payment</span></div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}><CreditCard size={12} color="#CA8A04" /><span style={{ fontSize: 11, fontWeight: 500, color: 'var(--z-muted)' }}>Trusted processing</span></div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}><RotateCcw size={12} color="#CA8A04" /><span style={{ fontSize: 11, fontWeight: 500, color: 'var(--z-muted)' }}>Refund guarantee</span></div>
           </div>
           <button type="button" onClick={submitPayment} disabled={submitting || !proof}
-            style={{ width: '100%', padding: '14px 0', borderRadius: 12, border: 'none', cursor: submitting || !proof ? 'not-allowed' : 'pointer', fontSize: 15, fontWeight: 700, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, background: submitting || !proof ? 'rgba(99,102,241,0.35)' : 'linear-gradient(135deg, #6366f1, #8b5cf6)', boxShadow: submitting || !proof ? 'none' : '0 0 24px rgba(99,102,241,0.4)', opacity: submitting ? 0.7 : 1 }}
+            style={{ width: '100%', padding: '14px 0', borderRadius: 12, border: 'none', cursor: submitting || !proof ? 'not-allowed' : 'pointer', fontSize: 15, fontWeight: 700, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, background: submitting || !proof ? 'rgba(99,102,241,0.35)' : 'linear-gradient(135deg, #CA8A04, #8b5cf6)', boxShadow: submitting || !proof ? 'none' : '0 0 24px rgba(99,102,241,0.4)', opacity: submitting ? 0.7 : 1 }}
           >
             {submitting ? <><Loader2 size={15} style={{ animation: 'spin 1s linear infinite' }} /> Submitting&hellip;</> : 'Complete Secure Payment \u2192'}
           </button>

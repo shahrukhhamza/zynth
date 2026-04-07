@@ -64,7 +64,7 @@ const STYLES = {
   error:   { bg: 'rgba(239,68,68,0.08)',   border: 'rgba(239,68,68,0.25)',   text: '#ef4444', dot: '#ef4444' },
   warn:    { bg: 'rgba(245,158,11,0.08)',   border: 'rgba(245,158,11,0.25)',  text: '#f59e0b', dot: '#f59e0b' },
   success: { bg: 'rgba(16,185,129,0.08)',   border: 'rgba(16,185,129,0.25)',  text: '#10b981', dot: '#10b981' },
-  info:    { bg: 'rgba(99,102,241,0.08)',   border: 'rgba(99,102,241,0.25)',  text: '#6366f1', dot: '#6366f1' },
+  info:    { bg: 'rgba(99,102,241,0.08)',   border: 'rgba(99,102,241,0.25)',  text: '#CA8A04', dot: '#CA8A04' },
 };
 
 /* ── component ────────────────────────────────────────── */
@@ -89,7 +89,7 @@ export default function RiskInsights({ riskPercent = 0, winRate = 0, trades = 0 
     ? { label: 'Caution', color: '#f59e0b', bg: 'rgba(245,158,11,0.12)' }
     : allSuccess
     ? { label: 'Healthy', color: '#10b981', bg: 'rgba(16,185,129,0.12)' }
-    : { label: 'Review', color: '#6366f1', bg: 'rgba(99,102,241,0.12)' };
+    : { label: 'Review', color: '#CA8A04', bg: 'rgba(99,102,241,0.12)' };
 
   return (
     <div style={{
@@ -104,7 +104,7 @@ export default function RiskInsights({ riskPercent = 0, winRate = 0, trades = 0 
           <ShieldAlert size={18} style={{ color: severity.color }} />
           <span style={{
             fontSize: 14, fontWeight: 600, letterSpacing: 0.3,
-            color: isDark ? '#e2e8f0' : '#1e293b',
+            color: isDark ? '#e2e8f0' : '#161618',
           }}>
             Risk Insights
           </span>

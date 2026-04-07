@@ -15,7 +15,7 @@ export const ThemeProvider = ({ children }) => {
   // is already in the correct theme (avoids a light→dark flash on load).
   const [isDark, setIsDark] = useState(() => {
     const saved = localStorage.getItem('theme');
-    return saved ? saved === 'dark' : true; // default dark
+    return saved ? saved === 'dark' : false; // default light
   });
 
   // Keep <html> class in sync synchronously (useLayoutEffect) so the class
@@ -41,25 +41,25 @@ export const ThemeProvider = ({ children }) => {
 
   // ── Unified Design System Palette ────────────────────────────────────────────
   //
-  // Dark (blue-tinted slate — Linear / Vercel premium feel):
-  //   bg              #020617   slate-950  deepest layer
-  //   surface         #0B1220   card / modal panels
-  //   surfaceSecondary #111827  gray-900   inset cells, hover states
+  // Dark (zinc-black — premium warm-noir):
+  //   bg              #0b0b0f   deepest layer
+  //   surface         #161618   card / modal panels
+  //   surfaceSecondary #1c1c1e  inset cells, hover states
   //   border          rgba(255,255,255,0.08)
-  //   textPrimary     #E2E8F0   slate-200
-  //   textSecondary   #CBD5E1   slate-300
-  //   textMuted       #94A3B8   slate-400
-  //   primary / accent #3B82F6  blue-500
+  //   textPrimary     #f4f4f5   zinc-100
+  //   textSecondary   #a1a1aa   zinc-400
+  //   textMuted       #71717a   zinc-500
+  //   primary / accent #CA8A04  executive gold
   //
-  // Light (clean white + slate — matches Stripe / Notion):
-  //   bg              #F8FAFC   slate-50
+  // Light (warm stone — clean premium):
+  //   bg              #fafaf9   stone-50
   //   surface         #FFFFFF
-  //   surfaceSecondary #F1F5F9  slate-100
-  //   border          rgba(0,0,0,0.06)
-  //   textPrimary     #0F172A   slate-900
-  //   textSecondary   #334155   slate-700
-  //   textMuted       #64748B   slate-500
-  //   primary / accent #2563EB  blue-600
+  //   surfaceSecondary #f5f5f4  stone-100
+  //   border          rgba(0,0,0,0.08)
+  //   textPrimary     #09090b   zinc-950
+  //   textSecondary   #3f3f46   zinc-700
+  //   textMuted       #52525b   zinc-600
+  //   primary / accent #A16207  deep gold
   //
   // All legacy keys preserved for backward compatibility.
   // ─────────────────────────────────────────────────────────────────────────────
@@ -69,35 +69,39 @@ export const ThemeProvider = ({ children }) => {
     toggleTheme,
 
     // ── Backgrounds ────────────────────────────────────────────────────────────
-    bg:              isDark ? '#020617' : '#F8FAFC',
-    surface:         isDark ? '#0B1220' : '#FFFFFF',
-    surface2:        isDark ? '#111827' : '#F1F5F9',   // legacy alias
-    surfaceSecondary:isDark ? '#111827' : '#F1F5F9',   // canonical alias
+    bg:              isDark ? '#0b0b0f' : '#fafaf9',
+    surface:         isDark ? '#161618' : '#FFFFFF',
+    surface2:        isDark ? '#1c1c1e' : '#f5f5f4',   // legacy alias
+    surfaceSecondary:isDark ? '#1c1c1e' : '#f5f5f4',   // canonical alias
 
     // ── Borders & shadows ─────────────────────────────────────────────────────
-    border:  isDark ? 'rgba(255,255,255,0.08)' : 'rgba(15,23,42,0.10)',
+    border:  isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)',
     shadow:  isDark
       ? '0 4px 30px rgba(0,0,0,0.6)'
-      : '0 1px 3px rgba(15,23,42,0.08), 0 4px 16px rgba(15,23,42,0.07)',
+      : '0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04)',
     shadowMd: isDark
       ? '0 12px 40px rgba(0,0,0,0.7)'
-      : '0 4px 12px rgba(15,23,42,0.10), 0 12px 36px rgba(15,23,42,0.08)',
+      : '0 4px 12px rgba(0,0,0,0.08), 0 12px 36px rgba(0,0,0,0.06)',
     shadowLg: isDark
       ? '0 32px 80px rgba(0,0,0,0.75)'
-      : '0 8px 24px rgba(15,23,42,0.12), 0 24px 56px rgba(15,23,42,0.10)',
+      : '0 8px 24px rgba(0,0,0,0.10), 0 24px 56px rgba(0,0,0,0.08)',
 
     // ── Text ──────────────────────────────────────────────────────────────────
-    text:          isDark ? '#E2E8F0' : '#0F172A',   // legacy alias → textPrimary
-    textPrimary:   isDark ? '#E2E8F0' : '#0F172A',
-    textSecondary: isDark ? '#CBD5E1' : '#334155',
-    muted:         isDark ? '#94A3B8' : '#64748B',   // legacy alias → textMuted
-    textMuted:     isDark ? '#94A3B8' : '#64748B',
+    text:          isDark ? '#f4f4f5' : '#09090b',   // legacy alias → textPrimary
+    textPrimary:   isDark ? '#f4f4f5' : '#09090b',
+    textSecondary: isDark ? '#a1a1aa' : '#3f3f46',
+    muted:         isDark ? '#71717a' : '#52525b',   // legacy alias → textMuted
+    textMuted:     isDark ? '#71717a' : '#52525b',
 
     // ── Brand / interactive ───────────────────────────────────────────────────
-    primary:     isDark ? '#3B82F6' : '#2563EB',
-    accent:      isDark ? '#3B82F6' : '#2563EB',     // legacy alias
-    accentHover: isDark ? '#2563EB' : '#1D4ED8',
-    accentGlow:  isDark ? 'rgba(59,130,246,0.12)' : 'rgba(37,99,235,0.08)',
+    primary:     isDark ? '#CA8A04' : '#A16207',
+    accent:      isDark ? '#CA8A04' : '#A16207',     // legacy alias
+    accentHover: isDark ? '#EAB308' : '#854D0E',
+    accentGlow:  isDark ? 'rgba(202,138,4,0.15)' : 'rgba(161,98,7,0.10)',
+
+    // ── Secondary accent (informational / charts) ─────────────────────────────
+    info:        isDark ? '#CA8A04' : '#A16207',
+    infoGlow:    isDark ? 'rgba(202,138,4,0.12)' : 'rgba(161,98,7,0.08)',
 
     // ── Semantic colors ───────────────────────────────────────────────────────
     success: '#10B981',
@@ -106,11 +110,12 @@ export const ThemeProvider = ({ children }) => {
     danger:  isDark ? '#F43F5E' : '#E11D48',
     bullish: '#10B981',
     bearish: isDark ? '#F43F5E' : '#E11D48',
-    neutral: isDark ? '#64748B' : '#4B5563',
+    neutral: isDark ? '#71717a' : '#52525b',
 
     // ── Chart helpers ─────────────────────────────────────────────────────────
-    chartGrid: isDark ? 'rgba(255,255,255,0.06)' : '#E2E8F0',
-    chartAxis: isDark ? '#64748B' : '#4B5563',
+    chartGrid: isDark ? 'rgba(255,255,255,0.06)' : '#e7e5e4',
+    chartAxis: isDark ? '#71717a' : '#52525b',
+    chartLine: isDark ? '#60a5fa' : '#A16207',       // keep blue for data viz
   };
 
   return (

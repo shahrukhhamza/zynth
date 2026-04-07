@@ -18,7 +18,7 @@ import { getAuthToken } from '../../utils/authStorage';
 const GRADE = {
   'A+': { bg: 'rgba(34,197,94,0.12)',  border: 'rgba(34,197,94,0.35)',  text: '#4ade80' },
   'A':  { bg: 'rgba(34,197,94,0.10)',  border: 'rgba(34,197,94,0.28)',  text: '#4ade80' },
-  'B':  { bg: 'rgba(99,102,241,0.12)', border: 'rgba(99,102,241,0.35)', text: '#818cf8' },
+  'B':  { bg: 'rgba(99,102,241,0.12)', border: 'rgba(99,102,241,0.35)', text: '#CA8A04' },
   'C':  { bg: 'rgba(245,158,11,0.12)', border: 'rgba(245,158,11,0.35)', text: '#f59e0b' },
   'D':  { bg: 'rgba(249,115,22,0.12)', border: 'rgba(249,115,22,0.35)', text: '#f97316' },
   'F':  { bg: 'rgba(239,68,68,0.12)',  border: 'rgba(239,68,68,0.35)',  text: '#ef4444' },
@@ -170,9 +170,9 @@ function ReportCard({ report, expanded, onToggle, theme }) {
 
           {/* Strategy insights */}
           {data.strategy_insights?.filter(Boolean).length > 0 && (
-            <SectionBlock icon={Zap} title="Strategy Insights" color="#818cf8">
+            <SectionBlock icon={Zap} title="Strategy Insights" color="#CA8A04">
               {data.strategy_insights.filter(Boolean).map((s, i) => (
-                <Row key={i} icon={<ArrowRight size={13} color="#818cf8" />} text={s} theme={theme} />
+                <Row key={i} icon={<ArrowRight size={13} color="#CA8A04" />} text={s} theme={theme} />
               ))}
             </SectionBlock>
           )}
@@ -188,9 +188,9 @@ function ReportCard({ report, expanded, onToggle, theme }) {
 
           {/* Action items */}
           {data.action_items?.length > 0 && (
-            <SectionBlock icon={Target} title="Action Items" color="#38bdf8">
+            <SectionBlock icon={Target} title="Action Items" color="#CA8A04">
               {data.action_items.map((a, i) => (
-                <Row key={i} icon={<ArrowRight size={13} color="#38bdf8" />} text={a} theme={theme} />
+                <Row key={i} icon={<ArrowRight size={13} color="#CA8A04" />} text={a} theme={theme} />
               ))}
             </SectionBlock>
           )}
@@ -205,7 +205,7 @@ function ReportCard({ report, expanded, onToggle, theme }) {
             }}>
               <div style={{
                 width: 34, height: 34, borderRadius: 10, flexShrink: 0,
-                background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
+                background: 'linear-gradient(135deg, #CA8A04, #8b5cf6)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
               }}>
                 <Sparkles size={15} color="#fff" />
@@ -213,7 +213,7 @@ function ReportCard({ report, expanded, onToggle, theme }) {
               <div>
                 <p style={{
                   fontSize: 10, fontWeight: 800, textTransform: 'uppercase',
-                  letterSpacing: '0.08em', color: '#818cf8', margin: '0 0 5px',
+                  letterSpacing: '0.08em', color: '#CA8A04', margin: '0 0 5px',
                 }}>
                   AI Coach
                 </p>
@@ -344,7 +344,7 @@ export default function JournalCoach() {
               padding: '8px 16px', borderRadius: 10, fontSize: 13, fontWeight: 700,
               background: generating
                 ? 'rgba(99,102,241,0.35)'
-                : 'linear-gradient(135deg, #6366f1, #8b5cf6)',
+                : 'linear-gradient(135deg, #CA8A04, #8b5cf6)',
               color: '#fff', border: 'none',
               cursor: generating ? 'not-allowed' : 'pointer',
               boxShadow: generating ? 'none' : '0 2px 12px rgba(99,102,241,0.3)',
@@ -389,7 +389,7 @@ export default function JournalCoach() {
             border: '1px solid rgba(99,102,241,0.2)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
           }}>
-            <Sparkles size={24} color="#818cf8" />
+            <Sparkles size={24} color="#CA8A04" />
           </div>
           <h3 style={{ fontSize: 16, fontWeight: 700, color: theme.text, margin: '0 0 8px' }}>
             No coaching reports yet
@@ -406,7 +406,7 @@ export default function JournalCoach() {
             disabled={generating}
             style={{
               padding: '11px 28px', borderRadius: 12, fontSize: 14, fontWeight: 700,
-              background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
+              background: 'linear-gradient(135deg, #CA8A04, #8b5cf6)',
               color: '#fff', border: 'none', cursor: 'pointer',
               boxShadow: '0 4px 18px rgba(99,102,241,0.4)',
             }}

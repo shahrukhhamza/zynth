@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Search, Filter, Calendar, X, Brain,
   Camera, ChevronLeft, ChevronRight, Crown, Settings, HelpCircle, Clock,
@@ -14,14 +14,14 @@ import { BrandMark } from './BrandLogo';
 import { resolveMediaUrl } from '../utils/mediaUrl';
 
 const AVATAR_COLOR_MAP = {
-  emerald: '#10b981', blue: '#3b82f6', purple: '#0ea5e9', orange: '#f97316',
-  rose: '#f43f5e', amber: '#f59e0b', cyan: '#06b6d4', indigo: '#6366f1',
+  emerald: '#10b981', blue: '#CA8A04', purple: '#8b5cf6', orange: '#f97316',
+  rose: '#f43f5e', amber: '#f59e0b', cyan: '#06b6d4', indigo: '#CA8A04',
 };
 
 const NAV_ITEMS = [
   { key: 'data',         icon: LayoutDashboard, label: 'Dashboard',           badge: null },
   { key: 'journal',      icon: Star,            label: 'Trade Journal',       badge: null, core: true },
-  { key: 'intelligence', icon: Brain,           label: 'AI Insights',         badge: { text: 'AI', color: '#0ea5e9' } },
+  { key: 'intelligence', icon: Brain,           label: 'AI Insights',         badge: { text: 'AI', color: '#CA8A04' } },
   { key: 'calendar',     icon: Calendar,        label: 'Economic Calendar',   badge: null },
   { key: 'help',         icon: HelpCircle,      label: 'Help & Docs',         badge: null },
 ];
@@ -43,11 +43,11 @@ function NavButton({ icon: Icon, label, badge, active, collapsed, onClick, core 
         className={[
           'relative w-full flex items-center border-0 rounded-xl cursor-pointer select-none',
           'text-white transition-all duration-200 flex-shrink-0 h-12',
-          'shadow-[0_2px_12px_rgba(59,130,246,0.28)] hover:shadow-[0_4px_22px_rgba(59,130,246,0.42)]',
+          'shadow-[0_2px_12px_rgba(202,138,4,0.28)] hover:shadow-[0_4px_22px_rgba(202,138,4,0.42)]',
           'hover:brightness-110 active:scale-[0.98]',
           collapsed ? 'justify-center px-0' : 'gap-3 px-4',
         ].join(' ')}
-        style={{ background: 'linear-gradient(135deg, #1d4ed8, #2563eb)' }}
+        style={{ background: 'linear-gradient(135deg, #A16207, #CA8A04)' }}
       >
         <Icon style={{ width: 18, height: 18, flexShrink: 0, fill: 'rgba(255,255,255,0.18)' }} />
 
@@ -90,15 +90,15 @@ function NavButton({ icon: Icon, label, badge, active, collapsed, onClick, core 
         'cursor-pointer select-none transition-all duration-150 flex-shrink-0',
         collapsed ? 'justify-center' : 'gap-3',
         active
-          ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 font-semibold'
+          ? 'bg-yellow-50 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-500 font-semibold'
           : [
-              'text-gray-500 dark:text-gray-400 font-medium',
-              'hover:bg-gray-100 dark:hover:bg-slate-800',
-              'hover:text-gray-800 dark:hover:text-gray-200',
+              'text-zinc-500 dark:text-zinc-400 font-medium',
+              'hover:bg-zinc-100 dark:hover:bg-zinc-800',
+              'hover:text-zinc-800 dark:hover:text-zinc-200',
             ].join(' '),
       ].join(' ')}
       style={{
-        borderLeft: !collapsed ? `3px solid ${active ? '#3b82f6' : 'transparent'}` : 'none',
+        borderLeft: !collapsed ? `3px solid ${active ? '#CA8A04' : 'transparent'}` : 'none',
         paddingLeft:  collapsed ? 0 : active ? 13 : 16,
         paddingRight: collapsed ? 0 : 12,
       }}
@@ -193,8 +193,7 @@ function SidebarInner({
               }}>
                 Zynth
               </span>
-              <span style={{
-                fontSize: 9, color: '#3b82f6', fontWeight: 600,
+              <span style={{ fontSize: 9, color: '#CA8A04', fontWeight: 600,
                 letterSpacing: '0.1em', textTransform: 'uppercase',
               }}>
                 BETA
@@ -224,7 +223,7 @@ function SidebarInner({
               flexShrink: 0,
               transition: 'all 0.15s ease',
             }}
-            onMouseEnter={e => { e.currentTarget.style.background = theme.isDark ? 'rgba(255,255,255,0.09)' : 'rgba(0,0,0,0.08)'; e.currentTarget.style.color = '#3b82f6'; }}
+            onMouseEnter={e => { e.currentTarget.style.background = theme.isDark ? 'rgba(255,255,255,0.09)' : 'rgba(0,0,0,0.08)'; e.currentTarget.style.color = '#CA8A04'; }}
             onMouseLeave={e => { e.currentTarget.style.background = theme.isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)'; e.currentTarget.style.color = theme.muted; }}
           >
             {collapsed
@@ -420,7 +419,7 @@ function SidebarInner({
               <span style={{ fontSize: 9, fontWeight: 700, color: theme.muted, letterSpacing: '0.1em', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: 5 }}>
                 <Filter style={{ width: 10, height: 10 }} /> Filters
               </span>
-              <button onClick={onResetFilters} style={{ fontSize: 10, color: '#3b82f6', background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 3 }}>
+              <button onClick={onResetFilters} style={{ fontSize: 10, color: '#CA8A04', background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 3 }}>
                 <X style={{ width: 10, height: 10 }} /> Clear
               </button>
             </div>
@@ -440,7 +439,7 @@ function SidebarInner({
                   borderRadius: 7, fontSize: 12, color: theme.text,
                   outline: 'none',
                 }}
-                onFocus={e => e.target.style.borderColor = '#3b82f6'}
+                onFocus={e => e.target.style.borderColor = '#CA8A04'}
                 onBlur={e => e.target.style.borderColor = SB_BORDER}
               />
             </div>
@@ -454,9 +453,9 @@ function SidebarInner({
                     onClick={() => onFilterChange({ impactLevel: level })}
                     style={{
                       padding: '6px 8px', borderRadius: 6, fontSize: 11, fontWeight: 500,
-                      background: filters.impactLevel === level ? '#3b82f6' : theme.surface2,
+                      background: filters.impactLevel === level ? '#CA8A04' : theme.surface2,
                       color: filters.impactLevel === level ? '#fff' : theme.muted,
-                      border: `1px solid ${filters.impactLevel === level ? '#3b82f6' : SB_BORDER}`,
+                      border: `1px solid ${filters.impactLevel === level ? '#CA8A04' : SB_BORDER}`,
                       cursor: 'pointer', transition: 'all 0.15s ease',
                     }}
                   >
@@ -470,7 +469,7 @@ function SidebarInner({
               onClick={onApplyFilters}
               style={{
                 width: '100%', padding: '8px', borderRadius: 7,
-                background: '#3b82f6', color: '#fff',
+                background: '#CA8A04', color: '#fff',
                 fontSize: 12, fontWeight: 600, border: 'none', cursor: 'pointer',
               }}
             >
@@ -489,7 +488,7 @@ function SidebarInner({
                       background: 'transparent', color: theme.muted,
                       border: `1px solid ${SB_BORDER}`, cursor: 'pointer', transition: 'all 0.15s ease',
                     }}
-                    onMouseEnter={e => { e.currentTarget.style.borderColor = '#3b82f6'; e.currentTarget.style.color = '#3b82f6'; }}
+                    onMouseEnter={e => { e.currentTarget.style.borderColor = '#CA8A04'; e.currentTarget.style.color = '#CA8A04'; }}
                     onMouseLeave={e => { e.currentTarget.style.borderColor = SB_BORDER; e.currentTarget.style.color = theme.muted; }}
                   >
                     {tag}

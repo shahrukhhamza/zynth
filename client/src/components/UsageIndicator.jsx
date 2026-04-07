@@ -16,7 +16,7 @@ import UsageProgressBar from './UsageProgressBar';
 
 const PLAN_COLOR = {
   free:  { dot: '#94A3B8', label: 'Free',  badge: 'rgba(148,163,184,0.12)' },
-  pro:   { dot: '#3B82F6', label: 'Pro',   badge: 'rgba(59,130,246,0.12)'  },
+  pro:   { dot: '#CA8A04', label: 'Pro',   badge: 'rgba(202,138,4,0.12)'  },
   elite: { dot: '#F59E0B', label: 'Elite', badge: 'rgba(245,158,11,0.12)'  },
 };
 
@@ -89,8 +89,8 @@ export default function UsageIndicator({ compact = false, onUpgrade }) {
             style={{
               display: 'inline-flex', alignItems: 'center', gap: 3,
               padding: '2px 8px', borderRadius: 5,
-              background: 'rgba(59,130,246,0.14)',
-              color: '#3B82F6', fontWeight: 700, fontSize: 11,
+              background: 'rgba(202,138,4,0.14)',
+              color: '#CA8A04', fontWeight: 700, fontSize: 11,
               border: 'none', cursor: 'pointer',
             }}
           >
@@ -132,10 +132,10 @@ export default function UsageIndicator({ compact = false, onUpgrade }) {
             style={{
               display: 'inline-flex', alignItems: 'center', gap: 4,
               padding: '4px 10px', borderRadius: 7,
-              background: 'linear-gradient(135deg, #1d4ed8, #0284c7)',
+              background: 'linear-gradient(135deg, #CA8A04, #EAB308)',
               color: '#fff', fontSize: 11, fontWeight: 700,
               border: 'none', cursor: 'pointer',
-              boxShadow: '0 2px 8px rgba(59,130,246,0.28)',
+              boxShadow: '0 2px 8px rgba(202,138,4,0.28)',
             }}
           >
             Upgrade <ArrowUpRight size={11} />

@@ -1,4 +1,4 @@
-﻿import { Compass, ShieldAlert, Search, PauseCircle } from 'lucide-react';
+import { Compass, ShieldAlert, Search, PauseCircle } from 'lucide-react';
 
 function actionStyle(action) {
   if (action === 'No Trade') return { icon: ShieldAlert, text: 'text-red-300', bg: 'bg-red-500/8', border: 'border-red-500/20', badge: 'bg-red-500/15 text-red-300 border-red-500/25' };
@@ -9,7 +9,7 @@ function actionStyle(action) {
 function biasColor(bias) {
   if (bias === 'Bullish') return 'text-emerald-300';
   if (bias === 'Bearish') return 'text-red-300';
-  return 'text-slate-300';
+  return 'text-zinc-300';
 }
 
 export default function TradeInsightPanel({ tradeInsight, tradeNarrative }) {
@@ -25,8 +25,8 @@ export default function TradeInsightPanel({ tradeInsight, tradeNarrative }) {
     <section className={`rounded-2xl border px-5 py-4 ${style.bg} ${style.border}`}>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-2">
-          <Compass size={15} className="text-cyan-400" />
-          <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-500">Trader Insight</span>
+          <Compass size={15} className="text-yellow-400" />
+          <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-500">Trader Insight</span>
         </div>
         <span className={`inline-flex items-center gap-1 rounded-md border px-2.5 py-1 text-[10px] font-bold ${style.badge}`}>
           <ActionIcon size={12} />
@@ -34,7 +34,7 @@ export default function TradeInsightPanel({ tradeInsight, tradeNarrative }) {
         </span>
       </div>
       <p className={`mt-2 text-sm font-semibold ${biasColor(bias)}`}>{headline}</p>
-      {traderExplanation && <p className="mt-1.5 text-[11px] leading-relaxed text-slate-300">{traderExplanation}</p>}
+      {traderExplanation && <p className="mt-1.5 text-[11px] leading-relaxed text-zinc-300">{traderExplanation}</p>}
     </section>
   );
 }

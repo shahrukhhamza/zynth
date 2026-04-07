@@ -1,4 +1,4 @@
-﻿/**
+/**
  * HeroSection — clean, minimalistic macro bias card
  */
 
@@ -21,7 +21,7 @@ function deriveBias(summary) {
   if (b === 'bullish') return { label: 'Bullish', color: '#10b981', text: 'text-emerald-400', bg: 'bg-emerald-500/10', border: 'border-emerald-500/20', icon: TrendingUp };
   if (b === 'bearish') return { label: 'Bearish', color: '#ef4444', text: 'text-red-400', bg: 'bg-red-500/10', border: 'border-red-500/20', icon: TrendingDown };
   if (b === 'mixed') return { label: 'Mixed', color: '#f59e0b', text: 'text-amber-400', bg: 'bg-amber-500/10', border: 'border-amber-500/20', icon: Activity };
-  return { label: 'Neutral', color: '#64748b', text: 'text-slate-400', bg: 'bg-slate-500/10', border: 'border-slate-500/20', icon: Minus };
+  return { label: 'Neutral', color: '#64748b', text: 'text-zinc-400', bg: 'bg-zinc-500/10', border: 'border-zinc-500/20', icon: Minus };
 }
 
 function deriveStrength(s) {
@@ -34,7 +34,7 @@ function deriveStrength(s) {
 function confidenceColor(level) {
   if (level === 'High') return 'text-emerald-400';
   if (level === 'Medium') return 'text-amber-300';
-  return 'text-slate-400';
+  return 'text-zinc-400';
 }
 
 function statusDot(status) {
@@ -80,15 +80,15 @@ export default function HeroSection({ summary, generatedAt, macroScore }) {
 
         {/* Header */}
         <div className="flex items-center justify-between">
-          <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-500">Macro Intelligence</span>
-          <div className="flex items-center gap-3 text-[10px] tabular-nums text-slate-500">
+          <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-zinc-500">Macro Intelligence</span>
+          <div className="flex items-center gap-3 text-[10px] tabular-nums text-zinc-500">
             {releasedAt && (
               <span className="flex items-center gap-1">
-                <Clock size={10} className="text-slate-600" />
+                <Clock size={10} className="text-zinc-600" />
                 Released {releasedAt}
               </span>
             )}
-            {fetchedAt && <span className="text-slate-600">&#183; Fetched {fetchedAt}</span>}
+            {fetchedAt && <span className="text-zinc-600">&#183; Fetched {fetchedAt}</span>}
           </div>
         </div>
 
@@ -102,18 +102,18 @@ export default function HeroSection({ summary, generatedAt, macroScore }) {
               <span className={`text-3xl font-bold tracking-tight ${bias.text}`}>{bias.label}</span>
               <span className="text-base text-white/50">({strength})</span>
             </div>
-            <p className="text-[11px] text-slate-500 mt-0.5">Overall macro market bias</p>
+            <p className="text-[11px] text-zinc-500 mt-0.5">Overall macro market bias</p>
           </div>
         </div>
 
         {/* Metrics strip */}
         <div className="flex flex-wrap items-center gap-2">
           <Pill label="Signal" value={`${signalStrength} \u00b7 ${signalConfidence}`} cls={confidenceColor(signalConfidence)} />
-          <Pill label="Uncertainty" value={uncertainty} cls={uncertainty === 'High' ? 'text-amber-400' : uncertainty === 'Low' ? 'text-emerald-400' : 'text-slate-300'} />
+          <Pill label="Uncertainty" value={uncertainty} cls={uncertainty === 'High' ? 'text-amber-400' : uncertainty === 'Low' ? 'text-emerald-400' : 'text-zinc-300'} />
           <Pill label="System" value={systemStatus} cls={systemStatus === 'OK' ? 'text-emerald-400' : systemStatus === 'Warning' ? 'text-amber-400' : 'text-red-400'} prefix={<span className={`h-1.5 w-1.5 rounded-full ${statusDot(systemStatus)}`} />} />
           <Pill label="Regime" value={regime.replace(/_/g, ' ')} cls="text-purple-300" sub={`${regimeConfidence}%`} />
           <div className="ml-auto hidden sm:block">
-            <span className="text-[10px] text-slate-500">
+            <span className="text-[10px] text-zinc-500">
               Quality: <span className={dataConfidence >= 70 ? 'text-emerald-400' : dataConfidence >= 55 ? 'text-amber-300' : 'text-red-400'}>{dataConfidence}%</span>
             </span>
           </div>
@@ -135,10 +135,10 @@ function Pill({ label, value, cls = 'text-white/80', prefix, sub }) {
     <div className="flex items-center gap-1.5 rounded-lg border border-white/[0.05] bg-white/[0.02] px-2.5 py-1.5">
       {prefix}
       <div>
-        <p className="text-[8px] font-semibold uppercase tracking-[0.1em] text-slate-600">{label}</p>
+        <p className="text-[8px] font-semibold uppercase tracking-[0.1em] text-zinc-600">{label}</p>
         <p className={`text-[11px] font-bold leading-none ${cls}`}>
           {value}
-          {sub && <span className="text-[9px] font-normal text-slate-500 ml-1">{sub}</span>}
+          {sub && <span className="text-[9px] font-normal text-zinc-500 ml-1">{sub}</span>}
         </p>
       </div>
     </div>

@@ -29,7 +29,7 @@
 const VARIANT = {
   amber: { bg: 'rgba(245,158,11,0.90)', text: '#000',  shadow: 'rgba(245,158,11,0.35)' },
   red:   { bg: 'rgba(244,63,94,0.90)',  text: '#fff',  shadow: 'rgba(244,63,94,0.35)'  },
-  blue:  { bg: 'rgba(59,130,246,0.90)', text: '#fff',  shadow: 'rgba(59,130,246,0.35)' },
+  blue:  { bg: 'rgba(202,138,4,0.90)', text: '#fff',  shadow: 'rgba(202,138,4,0.35)' },
 };
 
 const POSITION_STYLES = {

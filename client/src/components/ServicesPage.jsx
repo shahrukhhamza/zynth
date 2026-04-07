@@ -1,4 +1,4 @@
-﻿import { ArrowLeft, BarChart2, BookOpen, Brain, Calendar, TrendingUp, Bot, Activity, ClipboardCheck, Layers } from 'lucide-react';
+import { ArrowLeft, BarChart2, BookOpen, Brain, Calendar, TrendingUp, Bot, Activity, ClipboardCheck, Layers } from 'lucide-react';
 import { BrandMark } from './BrandLogo';
 import { useTheme } from '../contexts/ThemeContext';
 
@@ -8,7 +8,7 @@ const SERVICES = [
     number: '01',
     name: 'AI-Powered Trade Journal',
     tagline: 'Log, review, and grow from every trade',
-    color: '#3b82f6',
+    color: '#CA8A04',
     bg: 'rgba(16,185,129,0.07)',
     border: 'rgba(16,185,129,0.2)',
     desc: 'A professional-grade digital trade journal that stores your complete trading history. Log entries manually or import from screenshots. Add notes, emotions, strategy tags, and session context. Gain a full picture of your trading behavior over time.',
@@ -44,9 +44,9 @@ const SERVICES = [
     number: '03',
     name: 'Macro Surprise Score & Economic Intelligence',
     tagline: 'Know the macro before you trade',
-    color: '#0ea5e9',
-    bg: 'rgba(14,165,233,0.07)',
-    border: 'rgba(14,165,233,0.2)',
+    color: '#CA8A04',
+    bg: 'rgba(202,138,4,0.07)',
+    border: 'rgba(202,138,4,0.2)',
     desc: 'A proprietary -10 to +10 Macro Surprise Score that aggregates 10 major US economic releases to give you an instant read on whether macro conditions are bullish or bearish for gold and risk assets. Updated automatically from official government sources.',
     features: [
       'Real-time score from NFP, CPI, PMI, GDP, Retail Sales, and more',
@@ -80,7 +80,7 @@ const SERVICES = [
     number: '05',
     name: 'Live Market Data & Price Feeds',
     tagline: 'Real-time prices for the markets you trade',
-    color: '#3b82f6',
+    color: '#CA8A04',
     bg: 'rgba(16,185,129,0.07)',
     border: 'rgba(16,185,129,0.2)',
     desc: 'Live and near-real-time price feeds for Forex, Gold, Crypto, US Stocks, and Indices. Monitor the markets you trade directly inside Zynth — alongside your charts, news, and economic data — for a complete trading context view.',
@@ -134,9 +134,9 @@ const SERVICES = [
     number: '08',
     name: 'Pre-Trade Checklist',
     tagline: 'Build discipline before every entry',
-    color: '#22d3ee',
-    bg: 'rgba(34,211,238,0.07)',
-    border: 'rgba(34,211,238,0.2)',
+    color: '#f59e0b',
+    bg: 'rgba(245,158,11,0.07)',
+    border: 'rgba(245,158,11,0.2)',
     desc: 'A customizable pre-trade checklist that enforces trading discipline before you enter a position. The checklist uses your own historical data to warn you when you are about to trade in a session or macro context where your win rate is historically low.',
     features: [
       'Customizable checklist items',
@@ -172,9 +172,9 @@ export default function ServicesPage({ onBack }) {
   };
 
   return (
-    <div className={isDark ? '' : 'legal-light'} style={{ backgroundColor: isDark ? '#0B0B0F' : '#f8fafc', minHeight: '100vh', color: isDark ? '#e2e8f0' : '#1e293b' }}>
+    <div className={isDark ? '' : 'legal-light'} style={{ backgroundColor: isDark ? '#0B0B0F' : '#f8fafc', minHeight: '100vh', color: isDark ? '#e2e8f0' : '#161618' }}>
       <style>{`
-        .legal-light strong { color: #0f172a !important; }
+        .legal-light strong { color: #0b0b0f !important; }
         .legal-light ul li { color: #4b5563 !important; }
       `}</style>
       {/* Sticky header */}
@@ -182,22 +182,22 @@ export default function ServicesPage({ onBack }) {
         position: 'sticky', top: 0, zIndex: 50,
         backgroundColor: isDark ? 'rgba(11,11,15,0.95)' : 'rgba(255,255,255,0.95)',
         backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)',
-        borderBottom: isDark ? '1px solid rgba(255,77,0,0.15)' : '1px solid rgba(0,0,0,0.08)',
+        borderBottom: isDark ? '1px solid rgba(202,138,4,0.15)' : '1px solid rgba(0,0,0,0.08)',
       }}>
         <div style={{ maxWidth: 1000, margin: '0 auto', padding: '12px 24px', display: 'flex', alignItems: 'center', gap: 12 }}>
           <button onClick={handleBack} style={{ display: 'flex', alignItems: 'center', gap: 6, color: '#6b7280', fontSize: 13, cursor: 'pointer', background: 'none', border: 'none', padding: '4px 8px', borderRadius: 6 }}
-            onMouseEnter={e => (e.currentTarget.style.color = '#FF7A00')}
+            onMouseEnter={e => (e.currentTarget.style.color = '#FBBF24')}
             onMouseLeave={e => (e.currentTarget.style.color = '#6b7280')}>
             <ArrowLeft size={15} /> Back
           </button>
           <div style={{ width: 1, height: 18, backgroundColor: 'rgba(107,114,128,0.4)' }} />
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <Layers size={16} style={{ color: '#FF7A00' }} />
-            <span style={{ fontSize: 14, fontWeight: 600, color: isDark ? '#e2e8f0' : '#0f172a' }}>Services</span>
+            <Layers size={16} style={{ color: '#FBBF24' }} />
+            <span style={{ fontSize: 14, fontWeight: 600, color: isDark ? '#e2e8f0' : '#0b0b0f' }}>Services</span>
           </div>
           <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 8 }}>
             <BrandMark size={30} />
-            <span style={{ fontSize: 13, fontWeight: 700, color: isDark ? '#e2e8f0' : '#0f172a', letterSpacing: '0.04em' }}>Zynth</span>
+            <span style={{ fontSize: 13, fontWeight: 700, color: isDark ? '#e2e8f0' : '#0b0b0f', letterSpacing: '0.04em' }}>Zynth</span>
           </div>
         </div>
       </div>
@@ -205,12 +205,12 @@ export default function ServicesPage({ onBack }) {
       {/* Hero */}
       <div style={{ maxWidth: 1000, margin: '0 auto', padding: '56px 24px 0' }}>
         <div style={{ textAlign: 'center', marginBottom: 56 }}>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '6px 14px', borderRadius: 20, backgroundColor: isDark ? 'rgba(255,77,0,0.1)' : 'rgba(255,77,0,0.06)', border: `1px solid ${isDark ? 'rgba(255,77,0,0.2)' : 'rgba(255,77,0,0.25)'}`, marginBottom: 20 }}>
-            <span style={{ fontSize: 12, fontWeight: 700, color: '#FF7A00', letterSpacing: '0.08em' }}>AI PERFORMANCE ANALYTICS PLATFORM</span>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '6px 14px', borderRadius: 20, backgroundColor: isDark ? 'rgba(202,138,4,0.1)' : 'rgba(202,138,4,0.06)', border: `1px solid ${isDark ? 'rgba(202,138,4,0.2)' : 'rgba(202,138,4,0.25)'}`, marginBottom: 20 }}>
+            <span style={{ fontSize: 12, fontWeight: 700, color: '#FBBF24', letterSpacing: '0.08em' }}>AI PERFORMANCE ANALYTICS PLATFORM</span>
           </div>
-          <h1 style={{ fontSize: 36, fontWeight: 800, color: isDark ? '#f1f5f9' : '#0f172a', marginBottom: 14, lineHeight: 1.2 }}>
+          <h1 style={{ fontSize: 36, fontWeight: 800, color: isDark ? '#fafaf9' : '#0b0b0f', marginBottom: 14, lineHeight: 1.2 }}>
             Everything You Need to<br />
-            <span style={{ color: '#FF7A00' }}>Understand Your Performance</span>
+            <span style={{ color: '#FBBF24' }}>Understand Your Performance</span>
           </h1>
           <p style={{ fontSize: 15, color: isDark ? '#6b7280' : '#64748b', maxWidth: 560, margin: '0 auto', lineHeight: 1.7 }}>
             Zynth combines AI-powered behavioral analytics, real-time contextual data, and activity logging into a single platform built for performance-focused professionals.
@@ -242,7 +242,7 @@ export default function ServicesPage({ onBack }) {
                 {/* Right: content */}
                 <div style={{ flex: 1 }}>
                   <div style={{ marginBottom: 12 }}>
-                    <h2 style={{ fontSize: 17, fontWeight: 800, color: isDark ? '#f1f5f9' : '#0f172a', marginBottom: 3 }}>{svc.name}</h2>
+                    <h2 style={{ fontSize: 17, fontWeight: 800, color: isDark ? '#fafaf9' : '#0b0b0f', marginBottom: 3 }}>{svc.name}</h2>
                     <p style={{ fontSize: 12, fontWeight: 600, color: svc.color, letterSpacing: '0.04em' }}>{svc.tagline}</p>
                   </div>
                   <p style={{ fontSize: 13, color: isDark ? '#9ca3af' : '#4b5563', lineHeight: 1.7, marginBottom: 14 }}>{svc.desc}</p>
@@ -276,13 +276,13 @@ export default function ServicesPage({ onBack }) {
         </div>
 
         {/* CTA */}
-        <div style={{ textAlign: 'center', padding: '40px 0 80px', borderTop: `1px solid ${isDark ? 'rgba(255,77,0,0.1)' : 'rgba(0,0,0,0.08)'}` }}>
+        <div style={{ textAlign: 'center', padding: '40px 0 80px', borderTop: `1px solid ${isDark ? 'rgba(202,138,4,0.1)' : 'rgba(0,0,0,0.08)'}` }}>
           <p style={{ fontSize: 15, color: isDark ? '#9ca3af' : '#64748b', marginBottom: 20 }}>Ready to improve with AI-powered analytics?</p>
           <a href="/"
             style={{
               display: 'inline-flex', alignItems: 'center', gap: 8,
               padding: '12px 28px', borderRadius: 10,
-              background: 'linear-gradient(135deg, #FF4D00, #FF7A00)',
+              background: 'linear-gradient(135deg, #CA8A04, #FBBF24)',
               color: '#fff', fontWeight: 700, fontSize: 14,
               textDecoration: 'none', letterSpacing: '0.02em',
             }}
@@ -295,11 +295,11 @@ export default function ServicesPage({ onBack }) {
       </div>
 
       {/* Footer */}
-      <div style={{ borderTop: `1px solid ${isDark ? 'rgba(255,77,0,0.08)' : 'rgba(0,0,0,0.06)'}`, padding: '24px', textAlign: 'center' }}>
+      <div style={{ borderTop: `1px solid ${isDark ? 'rgba(202,138,4,0.08)' : 'rgba(0,0,0,0.06)'}`, padding: '24px', textAlign: 'center' }}>
         <div style={{ display: 'flex', justifyContent: 'center', gap: 20, flexWrap: 'wrap', marginBottom: 10 }}>
           {[['Terms of Service', '/terms'], ['Privacy Policy', '/privacy'], ['Refund Policy', '/refund'], ['Service Policy', '/service-policy']].map(([label, href]) => (
             <a key={label} href={href} style={{ fontSize: 12, color: '#6b7280', textDecoration: 'none' }}
-              onMouseEnter={e => (e.currentTarget.style.color = '#FF7A00')}
+              onMouseEnter={e => (e.currentTarget.style.color = '#FBBF24')}
               onMouseLeave={e => (e.currentTarget.style.color = '#6b7280')}>{label}</a>
           ))}
         </div>

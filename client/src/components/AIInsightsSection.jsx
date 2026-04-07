@@ -255,7 +255,7 @@ export default function AIInsightsSection({ onGetStarted }) {
             }}
           >
             Get My Insights
-            <span className="ml-1 group-hover:translate-x-1 transition-transform inline-block">→</span>
+            <span className="ml-1 group-hover:tranzinc-x-1 transition-transform inline-block">→</span>
           </button>
         </motion.div>
       </div>

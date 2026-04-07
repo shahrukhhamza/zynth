@@ -1,30 +1,30 @@
-﻿import { TrendingUp, TrendingDown, Info, AlertCircle } from 'lucide-react';
+import { TrendingUp, TrendingDown, Info, AlertCircle } from 'lucide-react';
 
 function biasColor(bias) {
   if (bias === 'Bullish') return { text: 'text-emerald-400', bg: 'bg-emerald-500/8', border: 'border-emerald-500/20', icon: TrendingUp };
   if (bias === 'Bearish') return { text: 'text-red-400', bg: 'bg-red-500/8', border: 'border-red-500/20', icon: TrendingDown };
-  return { text: 'text-slate-400', bg: 'bg-slate-500/8', border: 'border-slate-500/20', icon: Info };
+  return { text: 'text-zinc-400', bg: 'bg-zinc-500/8', border: 'border-zinc-500/20', icon: Info };
 }
 
 function categoryBadge(cat) {
   if (cat === 'primary') return 'text-amber-300 border-amber-500/30 bg-amber-500/10';
-  if (cat === 'secondary') return 'text-blue-300 border-blue-500/30 bg-blue-500/10';
-  return 'text-slate-400 border-slate-500/20 bg-slate-500/[0.06]';
+  if (cat === 'secondary') return 'text-yellow-300 border-yellow-500/30 bg-yellow-500/10';
+  return 'text-zinc-400 border-zinc-500/20 bg-zinc-500/[0.06]';
 }
 
 function confColor(level) {
   if (level === 'High') return 'text-emerald-400';
   if (level === 'Medium') return 'text-amber-300';
-  return 'text-slate-400';
+  return 'text-zinc-400';
 }
 
 export default function MarketNarrativePanel({ narrative }) {
   if (!narrative) {
     return (
       <section>
-        <p className="mb-3 text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-500">Why Market Moved Today</p>
+        <p className="mb-3 text-[10px] font-semibold uppercase tracking-[0.16em] text-zinc-500">Why Market Moved Today</p>
         <div className="rounded-2xl border border-white/[0.06] bg-[#0c1018] px-5 py-4">
-          <p className="text-[12px] text-slate-400">Market narrative loading\u2026</p>
+          <p className="text-[12px] text-zinc-400">Market narrative loading\u2026</p>
         </div>
       </section>
     );
@@ -33,11 +33,11 @@ export default function MarketNarrativePanel({ narrative }) {
   if (narrative.reason && narrative.reason.includes('indicator') && narrative.drivers?.length === 0) {
     return (
       <section>
-        <p className="mb-3 text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-500">Why Market Moved Today</p>
+        <p className="mb-3 text-[10px] font-semibold uppercase tracking-[0.16em] text-zinc-500">Why Market Moved Today</p>
         <div className="rounded-2xl border border-white/[0.06] bg-[#0c1018] px-5 py-4">
           <div className="flex items-start gap-2">
-            <AlertCircle size={14} className="text-slate-500 shrink-0 mt-0.5" />
-            <p className="text-[12px] text-slate-400">{narrative.reason}</p>
+            <AlertCircle size={14} className="text-zinc-500 shrink-0 mt-0.5" />
+            <p className="text-[12px] text-zinc-400">{narrative.reason}</p>
           </div>
         </div>
       </section>
@@ -50,7 +50,7 @@ export default function MarketNarrativePanel({ narrative }) {
 
   return (
     <section>
-      <p className="mb-3 text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-500">Why Market Moved Today</p>
+      <p className="mb-3 text-[10px] font-semibold uppercase tracking-[0.16em] text-zinc-500">Why Market Moved Today</p>
       <div className="space-y-3">
         {/* Summary */}
         <div className={`rounded-2xl border ${bc.border} ${bc.bg} px-5 py-4`}>
@@ -71,7 +71,7 @@ export default function MarketNarrativePanel({ narrative }) {
         {/* Drivers */}
         {drivers.length > 0 && (
           <div className="rounded-2xl border border-white/[0.06] bg-[#0c1018] p-4 space-y-2">
-            <p className="text-[9px] font-semibold uppercase tracking-[0.12em] text-slate-500 pb-1">Key Drivers</p>
+            <p className="text-[9px] font-semibold uppercase tracking-[0.12em] text-zinc-500 pb-1">Key Drivers</p>
             {drivers.map((d, i) => {
               const dc = biasColor(d.impact);
               const DIcon = dc.icon;
@@ -79,7 +79,7 @@ export default function MarketNarrativePanel({ narrative }) {
                 <div key={d.code || i} className="rounded-lg border border-white/[0.04] bg-white/[0.01] px-3.5 py-2.5">
                   <div className="flex items-center justify-between gap-2 mb-1">
                     <div className="flex items-center gap-2">
-                      <span className="text-[10px] font-mono text-slate-500">{i + 1}</span>
+                      <span className="text-[10px] font-mono text-zinc-500">{i + 1}</span>
                       <span className="text-[12px] font-semibold text-white">{d.code}</span>
                       <span className={`inline-flex items-center gap-0.5 text-[10px] font-semibold ${dc.text}`}>
                         <DIcon size={10} />
@@ -91,9 +91,9 @@ export default function MarketNarrativePanel({ narrative }) {
                         </span>
                       )}
                     </div>
-                    <span className="text-[10px] font-mono text-cyan-300">{d.contribution > 0 ? '+' : ''}{d.contribution?.toFixed(2)}</span>
+                    <span className="text-[10px] font-mono text-yellow-300">{d.contribution > 0 ? '+' : ''}{d.contribution?.toFixed(2)}</span>
                   </div>
-                  <p className="text-[11px] leading-relaxed text-slate-300 ml-5">{d.explanation}</p>
+                  <p className="text-[11px] leading-relaxed text-zinc-300 ml-5">{d.explanation}</p>
                 </div>
               );
             })}
@@ -103,8 +103,8 @@ export default function MarketNarrativePanel({ narrative }) {
         {drivers.length === 0 && (
           <div className="rounded-2xl border border-white/[0.06] bg-[#0c1018] px-5 py-4">
             <div className="flex items-start gap-2">
-              <AlertCircle size={14} className="text-slate-500 shrink-0 mt-0.5" />
-              <p className="text-[12px] text-slate-400">More indicators needed for a complete narrative.</p>
+              <AlertCircle size={14} className="text-zinc-500 shrink-0 mt-0.5" />
+              <p className="text-[12px] text-zinc-400">More indicators needed for a complete narrative.</p>
             </div>
           </div>
         )}

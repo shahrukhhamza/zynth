@@ -1,4 +1,4 @@
-﻿import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { motion, useInView, useScroll, AnimatePresence, useTransform, useSpring } from 'framer-motion';
 import {
@@ -16,7 +16,7 @@ import { useTheme } from '../contexts/ThemeContext';
 import { DEFAULT_BILLING_CYCLE, getPlanDisplay, getPlanMonthlyLabel } from '../config/pricingPlans';
 import SocialProofToast from './SocialProofToast';
 
-// ─── Scroll Reveal ────────────────────────────────────────────────────────────
+// --- Scroll Reveal ------------------------------------------------------------
 function Reveal({ children, delay = 0, className = '', direction = 'up' }) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-60px 0px' });
@@ -34,7 +34,7 @@ function Reveal({ children, delay = 0, className = '', direction = 'up' }) {
   );
 }
 
-// ─── Section Label ────────────────────────────────────────────────────────────
+// --- Section Label ------------------------------------------------------------
 function SectionLabel({ text, isDark }) {
   return (
     <p
@@ -46,7 +46,7 @@ function SectionLabel({ text, isDark }) {
   );
 }
 
-// ─── Problem Section ──────────────────────────────────────────────────────────
+// --- Problem Section ----------------------------------------------------------
 function ProblemSection({ isDark }) {
   const problems = [
     {
@@ -88,7 +88,7 @@ function ProblemSection({ isDark }) {
             className="mt-4 text-[16px] max-w-md mx-auto leading-relaxed"
             style={{ color: isDark ? '#71717a' : '#52525b' }}
           >
-            Inconsistency isn't bad luck — it's untracked behavior.
+            Inconsistency isn't bad luck � it's untracked behavior.
           </p>
         </Reveal>
 
@@ -138,7 +138,7 @@ function ProblemSection({ isDark }) {
   );
 }
 
-// ─── Features Grid ────────────────────────────────────────────────────────────
+// --- Features Grid ------------------------------------------------------------
 function FeaturesGrid({ isDark, onGetStarted }) {
   const features = [
     {
@@ -199,8 +199,8 @@ function FeaturesGrid({ isDark, onGetStarted }) {
               className="bg-clip-text text-transparent"
               style={{
                 backgroundImage: isDark
-                  ? 'linear-gradient(135deg, #FF6B35, #FF9A5C)'
-                  : 'linear-gradient(135deg, #CC3D00, #FF4D00)',
+                  ? 'linear-gradient(135deg, #EAB308, #FBBF24)'
+                  : 'linear-gradient(135deg, #854D0E, #CA8A04)',
               }}
             >
               Smarter Trading
@@ -254,7 +254,7 @@ function FeaturesGrid({ isDark, onGetStarted }) {
           ))}
         </div>
 
-        {/* ── Dashboard Preview Split Section ── */}
+        {/* -- Dashboard Preview Split Section -- */}
         {isDark && (
           <div className="mt-20 grid lg:grid-cols-2 gap-12 items-center">
             {/* Left text */}
@@ -267,7 +267,7 @@ function FeaturesGrid({ isDark, onGetStarted }) {
                 Tools For Better{' '}
                 <span
                   className="bg-clip-text text-transparent"
-                  style={{ backgroundImage: 'linear-gradient(135deg, #FF6B35, #FF9A5C)' }}
+                  style={{ backgroundImage: 'linear-gradient(135deg, #EAB308, #FBBF24)' }}
                 >
                   Trading Performance
                 </span>
@@ -277,15 +277,15 @@ function FeaturesGrid({ isDark, onGetStarted }) {
                 style={{ color: '#71717a', maxWidth: 420 }}
               >
                 Track your metrics in real-time with our AI-powered dashboard. Visualize patterns, 
-                spot weaknesses, and build consistency — all in one unified view.
+                spot weaknesses, and build consistency � all in one unified view.
               </p>
               <button
                 onClick={() => onGetStarted()}
                 className="group inline-flex items-center gap-2.5 px-6 py-3 rounded-full text-[14px] font-bold transition-all duration-300 hover:-translate-y-0.5"
                 style={{
-                  background: 'linear-gradient(135deg, #FF4D00 0%, #FF7A00 100%)',
+                  background: 'linear-gradient(135deg, #CA8A04 0%, #FBBF24 100%)',
                   color: '#ffffff',
-                  boxShadow: '0 4px 24px rgba(255,77,0,0.35)',
+                  boxShadow: '0 4px 24px rgba(202,138,4,0.35)',
                 }}
               >
                 Get Started
@@ -318,7 +318,7 @@ function FeaturesGrid({ isDark, onGetStarted }) {
                         className="px-2.5 py-1 rounded text-[10px] font-medium cursor-pointer transition-all"
                         style={{
                           background: i === 2 ? 'rgba(255,85,0,0.15)' : 'transparent',
-                          color: i === 2 ? '#FF7A00' : '#52525b',
+                          color: i === 2 ? '#FBBF24' : '#52525b',
                           border: i === 2 ? '1px solid rgba(255,85,0,0.25)' : '1px solid transparent',
                         }}
                       >
@@ -333,7 +333,7 @@ function FeaturesGrid({ isDark, onGetStarted }) {
                   <div style={{ fontSize: 28, fontWeight: 800, color: '#f4f4f5', letterSpacing: '-0.03em' }}>
                     $12,847.50
                   </div>
-                  <span style={{ fontSize: 12, color: '#22c55e', fontWeight: 600 }}>+12.4% ↑</span>
+                  <span style={{ fontSize: 12, color: '#22c55e', fontWeight: 600 }}>+12.4% ?</span>
                 </div>
 
                 {/* Bar chart */}
@@ -357,7 +357,7 @@ function FeaturesGrid({ isDark, onGetStarted }) {
                   {[
                     { label: 'Win Rate', value: '67%', color: '#22c55e' },
                     { label: 'Avg. R:R', value: '2.3:1', color: '#f4f4f5' },
-                    { label: 'Score', value: '81/100', color: '#FF7A00' },
+                    { label: 'Score', value: '81/100', color: '#FBBF24' },
                   ].map(s => (
                     <div key={s.label}>
                       <div style={{ fontSize: 10, color: '#52525b', marginBottom: 4 }}>{s.label}</div>
@@ -374,13 +374,13 @@ function FeaturesGrid({ isDark, onGetStarted }) {
   );
 }
 
-// ─── Testimonials ─────────────────────────────────────────────────────────────
+// --- Testimonials -------------------------------------------------------------
 const TESTIMONIALS = [
   {
     quote: "I kept attributing poor outcomes to external factors. After logging about a month of activity, the AI flagged that I was acting impulsively during high-pressure periods. That one insight changed how I approach decisions entirely.",
     name: 'Daniel O.',
     role: 'Independent analyst, strategy consultant',
-    avatarColor: 'linear-gradient(135deg,#1d4ed8,#0ea5e9)',
+    avatarColor: 'linear-gradient(135deg,#ea580c,#CA8A04)',
     stars: 5,
   },
   {
@@ -394,11 +394,11 @@ const TESTIMONIALS = [
     quote: "Honestly didn't expect much from another analytics tool. But having the activity log, AI feedback, and data dashboard in one place meant I actually started reviewing my decisions instead of moving on.",
     name: 'James F.',
     role: 'Entrepreneur, part-time advisor',
-    avatarColor: 'linear-gradient(135deg,#0f766e,#06b6d4)',
+    avatarColor: 'linear-gradient(135deg,#059669,#10b981)',
     stars: 5,
   },
   {
-    quote: "I used to think I had a clear approach. Turns out I had a collection of habits — some good and some not. The pattern analysis made that unmistakably clear within the first two weeks.",
+    quote: "I used to think I had a clear approach. Turns out I had a collection of habits � some good and some not. The pattern analysis made that unmistakably clear within the first two weeks.",
     name: 'Tom B.',
     role: 'Operations manager, decision-maker',
     avatarColor: 'linear-gradient(135deg,#b45309,#f59e0b)',
@@ -412,7 +412,7 @@ const TESTIMONIALS = [
     stars: 5,
   },
   {
-    quote: "I was tracking everything in a spreadsheet before. This is a completely different experience. The AI feedback doesn't just describe what happened — it asks the kind of questions I should be asking myself.",
+    quote: "I was tracking everything in a spreadsheet before. This is a completely different experience. The AI feedback doesn't just describe what happened � it asks the kind of questions I should be asking myself.",
     name: 'Chris A.',
     role: 'Strategic planner, productivity enthusiast',
     avatarColor: 'linear-gradient(135deg,#166534,#22c55e)',
@@ -460,7 +460,7 @@ function TestimonialsGrid({ isDark }) {
                 {/* Stars */}
                 <div className="flex gap-0.5 mb-4">
                   {Array.from({ length: t.stars }).map((_, s) => (
-                    <span key={s} style={{ color: '#FF6B35', fontSize: '12px' }}>★</span>
+                    <span key={s} style={{ color: '#EAB308', fontSize: '12px' }}>?</span>
                   ))}
                 </div>
 
@@ -502,7 +502,7 @@ function TestimonialsGrid({ isDark }) {
   );
 }
 
-// ─── Pricing ──────────────────────────────────────────────────────────────────
+// --- Pricing ------------------------------------------------------------------
 function LandingPricing({ isDark, onGetStarted }) {
   const [cycle, setCycle] = useState(DEFAULT_BILLING_CYCLE);
   const isAnnual = cycle === 'annual';
@@ -511,7 +511,7 @@ function LandingPricing({ isDark, onGetStarted }) {
   const pro = getPlanDisplay('pro', cycle);
 
   const eliteFeatures = [
-    'Unlimited AI insights — no daily limits',
+    'Unlimited AI insights � no daily limits',
     'Premium behavioral breakdowns & reports',
     'Advanced analytics dashboard',
     'Context intelligence & awareness scoring',
@@ -533,8 +533,8 @@ function LandingPricing({ isDark, onGetStarted }) {
           position: 'absolute', top: '0', left: '50%', transform: 'translateX(-50%)',
           width: '900px', height: '500px',
           background: isDark
-            ? 'radial-gradient(ellipse, rgba(255,77,0,0.07) 0%, transparent 60%)'
-            : 'radial-gradient(ellipse, rgba(255,77,0,0.06) 0%, transparent 60%)',
+            ? 'radial-gradient(ellipse, rgba(202,138,4,0.07) 0%, transparent 60%)'
+            : 'radial-gradient(ellipse, rgba(202,138,4,0.06) 0%, transparent 60%)',
           filter: 'blur(40px)',
         }} />
       </div>
@@ -573,8 +573,8 @@ function LandingPricing({ isDark, onGetStarted }) {
                 className="relative px-5 py-2 rounded-full text-[13px] font-semibold transition-all duration-200"
               style={cycle === c
                   ? isDark
-                    ? { background: 'linear-gradient(135deg, #FF4D00, #FF7A00)', color: '#ffffff', boxShadow: '0 2px 8px rgba(255,77,0,0.3)' }
-                    : { background: '#ffffff', color: '#0f172a', boxShadow: '0 1px 4px rgba(0,0,0,0.1)' }
+                    ? { background: 'linear-gradient(135deg, #CA8A04, #FBBF24)', color: '#ffffff', boxShadow: '0 2px 8px rgba(202,138,4,0.3)' }
+                    : { background: '#ffffff', color: '#0b0b0f', boxShadow: '0 1px 4px rgba(0,0,0,0.1)' }
                   : { color: isDark ? '#71717a' : '#52525b' }
                 }
               >
@@ -606,25 +606,25 @@ function LandingPricing({ isDark, onGetStarted }) {
               style={isDark ? {
                 background: 'linear-gradient(160deg, #140A00 0%, #0F0804 100%)',
                 border: '1px solid rgba(255,100,0,0.3)',
-                boxShadow: '0 12px 40px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,77,0,0.1)',
+                boxShadow: '0 12px 40px rgba(0,0,0,0.6), 0 0 0 1px rgba(202,138,4,0.1)',
                 transition: 'all 0.5s cubic-bezier(0.22, 1, 0.36, 1)',
               } : {
                 background: '#ffffff',
-                border: '1px solid rgba(255,77,0,0.25)',
+                border: '1px solid rgba(202,138,4,0.25)',
                 boxShadow: '0 12px 40px rgba(15,23,42,0.09)',
                 transition: 'all 0.5s cubic-bezier(0.22, 1, 0.36, 1)',
               }}
               onMouseEnter={e => {
                 if (isDark) {
                   e.currentTarget.style.borderColor = 'rgba(255,100,0,0.5)';
-                  e.currentTarget.style.boxShadow = '0 20px 60px rgba(0,0,0,0.7), 0 0 50px rgba(255,77,0,0.12)';
+                  e.currentTarget.style.boxShadow = '0 20px 60px rgba(0,0,0,0.7), 0 0 50px rgba(202,138,4,0.12)';
                   e.currentTarget.style.transform = 'translateY(-6px)';
                 }
               }}
               onMouseLeave={e => {
                 if (isDark) {
                   e.currentTarget.style.borderColor = 'rgba(255,100,0,0.3)';
-                  e.currentTarget.style.boxShadow = '0 12px 40px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,77,0,0.1)';
+                  e.currentTarget.style.boxShadow = '0 12px 40px rgba(0,0,0,0.6), 0 0 0 1px rgba(202,138,4,0.1)';
                   e.currentTarget.style.transform = 'translateY(0)';
                 }
               }}
@@ -645,11 +645,11 @@ function LandingPricing({ isDark, onGetStarted }) {
                     <span
                       className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[10px] font-extrabold uppercase tracking-[0.14em] mb-3"
                       style={isDark
-                        ? { background: 'rgba(255,100,0,0.18)', border: '1px solid rgba(255,100,0,0.35)', color: '#FF7A00' }
-                        : { background: 'rgba(255,77,0,0.1)', border: '1px solid rgba(255,77,0,0.3)', color: '#CC3D00', boxShadow: '0 1px 4px rgba(255,77,0,0.1)' }
+                        ? { background: 'rgba(255,100,0,0.18)', border: '1px solid rgba(255,100,0,0.35)', color: '#FBBF24' }
+                        : { background: 'rgba(202,138,4,0.1)', border: '1px solid rgba(202,138,4,0.3)', color: '#854D0E', boxShadow: '0 1px 4px rgba(202,138,4,0.1)' }
                       }
                     >
-                      🔥 Most Popular
+                      ?? Most Popular
                     </span>
                     <h3
                       className="text-[22px] font-extrabold tracking-tight"
@@ -677,7 +677,7 @@ function LandingPricing({ isDark, onGetStarted }) {
                 {/* Price */}
                 <div
                   className="mb-7 pb-7"
-                  style={{ borderBottom: isDark ? '1px solid rgba(255,100,0,0.15)' : '1px solid rgba(255,77,0,0.1)' }}
+                  style={{ borderBottom: isDark ? '1px solid rgba(255,100,0,0.15)' : '1px solid rgba(202,138,4,0.1)' }}
                 >
                   <div className="flex items-end gap-2">
                     {elite.anchoredAmount && elite.anchoredAmount > elite.amount && (
@@ -712,11 +712,11 @@ function LandingPricing({ isDark, onGetStarted }) {
                   onClick={() => onGetStarted?.({ plan: 'elite', billingCycle: cycle })}
                   className="group/btn relative w-full rounded-xl py-[14px] text-[14px] font-bold mb-7 overflow-hidden transition-all duration-300 hover:-translate-y-0.5 active:scale-[0.98]"
                   style={{
-                    background: 'linear-gradient(135deg, #FF4D00, #FF7A00)',
+                    background: 'linear-gradient(135deg, #CA8A04, #FBBF24)',
                     color: '#fff',
                     boxShadow: isDark
-                      ? '0 6px 28px rgba(255,77,0,0.4)'
-                      : '0 6px 24px rgba(255,77,0,0.3)',
+                      ? '0 6px 28px rgba(202,138,4,0.4)'
+                      : '0 6px 24px rgba(202,138,4,0.3)',
                   }}
                 >
                   <span
@@ -739,7 +739,7 @@ function LandingPricing({ isDark, onGetStarted }) {
                         className="shrink-0 mt-[1px] w-[18px] h-[18px] rounded-full flex items-center justify-center"
                         style={{ background: 'rgba(255,100,0,0.15)' }}
                       >
-                        <Check className="w-[9px] h-[9px]" style={{ color: isDark ? '#FF7A00' : '#CC3D00' }} />
+                        <Check className="w-[9px] h-[9px]" style={{ color: isDark ? '#FBBF24' : '#854D0E' }} />
                       </span>
                       <span className="text-[13px] leading-snug" style={{ color: isDark ? '#d4d4d8' : '#3f3f46' }}>{f}</span>
                     </li>
@@ -784,7 +784,7 @@ function LandingPricing({ isDark, onGetStarted }) {
                         : { background: 'rgba(0,0,0,0.04)', border: '1px solid rgba(0,0,0,0.1)', color: '#3f3f46' }
                       }
                     >
-                      ⚡ Great Value
+                      ? Great Value
                     </span>
                     <h3
                       className="text-[22px] font-extrabold tracking-tight"
@@ -852,7 +852,7 @@ function LandingPricing({ isDark, onGetStarted }) {
                     color: '#e2e8f0',
                     boxShadow: '0 1px 4px rgba(0,0,0,0.3)',
                   } : {
-                    background: 'linear-gradient(135deg, #1e293b, #334155)',
+                    background: 'linear-gradient(135deg, #161618, #334155)',
                     color: '#ffffff',
                     boxShadow: '0 6px 24px rgba(0,0,0,0.2)',
                   }}
@@ -901,10 +901,10 @@ function LandingPricing({ isDark, onGetStarted }) {
         {/* Trust signals */}
         <Reveal className="mt-8 flex flex-wrap items-center justify-center gap-x-7 gap-y-2">
           {[
-            { label: 'Cancel anytime', icon: '✓' },
-            { label: 'No hidden fees', icon: '✓' },
-            { label: 'Secure checkout', icon: '🔒' },
-            { label: 'Instant access', icon: '⚡' },
+            { label: 'Cancel anytime', icon: '?' },
+            { label: 'No hidden fees', icon: '?' },
+            { label: 'Secure checkout', icon: '??' },
+            { label: 'Instant access', icon: '?' },
           ].map((t) => (
             <span
               key={t.label}
@@ -935,7 +935,7 @@ function LandingPricing({ isDark, onGetStarted }) {
               className="text-[13px] font-semibold transition-opacity hover:opacity-70"
               style={{ color: isDark ? '#f4f4f5' : '#18181b' }}
             >
-              Start Free →
+              Start Free ?
             </button>
           </div>
         </Reveal>
@@ -944,13 +944,13 @@ function LandingPricing({ isDark, onGetStarted }) {
   );
 }
 
-// ─── FAQ ──────────────────────────────────────────────────────────────────────
+// --- FAQ ----------------------------------------------------------------------
 const FAQS = [
   { q: 'What is Zynth?', a: 'Zynth is an AI-powered performance analytics platform that helps you understand your behavioral patterns, track activities, and improve your outcomes over time. Zynth is not a financial advisory tool and does not provide investment or trading advice of any kind.' },
   { q: 'Is my data safe?', a: 'Yes. All data is encrypted in transit (TLS 1.3) and stored securely. We never share or sell your personal data to third parties.' },
-  { q: 'What is the Context Awareness Score?', a: 'The Context Awareness Score analyzes key data inputs and summarizes external conditions relevant to your logged activities. It helps you understand how surrounding context may have influenced your decisions — without providing financial advice.' },
+  { q: 'What is the Context Awareness Score?', a: 'The Context Awareness Score analyzes key data inputs and summarizes external conditions relevant to your logged activities. It helps you understand how surrounding context may have influenced your decisions � without providing financial advice.' },
   { q: 'Is there a free plan?', a: 'Absolutely. The Free plan includes core features with no credit card required: 5 lifetime activity logs, 2 lifetime AI analyses, and access to the core analytics dashboard.' },
-  { q: 'What does the AI analysis include?', a: 'Our AI reads your activity logs and identifies behavioral patterns, recurring tendencies, and areas of inconsistency — then delivers personalized improvement suggestions to help you make more deliberate decisions.' },
+  { q: 'What does the AI analysis include?', a: 'Our AI reads your activity logs and identifies behavioral patterns, recurring tendencies, and areas of inconsistency � then delivers personalized improvement suggestions to help you make more deliberate decisions.' },
   { q: 'What data does Zynth work with?', a: 'Zynth works with user-logged activity data and contextual signals. You log what you do, and Zynth surfaces patterns across time, context, and outcome to help you understand what drives your performance.' },
   { q: 'What are the subscription prices?', a: `Pro is ${getPlanMonthlyLabel('pro')} and Elite is ${getPlanMonthlyLabel('elite')}. Both are billed monthly and you can cancel anytime. A free plan is available with no credit card required.` },
 ];
@@ -976,8 +976,8 @@ function FAQSection({ isDark }) {
               className="bg-clip-text text-transparent"
               style={{
                 backgroundImage: isDark
-                  ? 'linear-gradient(135deg, #FF6B35, #FF9A5C)'
-                  : 'linear-gradient(135deg, #CC3D00, #FF4D00)',
+                  ? 'linear-gradient(135deg, #EAB308, #FBBF24)'
+                  : 'linear-gradient(135deg, #854D0E, #CA8A04)',
               }}
             >
               questions
@@ -994,7 +994,7 @@ function FAQSection({ isDark }) {
                   background: isDark ? 'rgba(255,255,255,0.03)' : '#ffffff',
                   backdropFilter: isDark ? 'blur(10px)' : 'none',
                   borderColor: openFaq === i
-                    ? (isDark ? 'rgba(255,100,0,0.3)' : 'rgba(255,77,0,0.2)')
+                    ? (isDark ? 'rgba(255,100,0,0.3)' : 'rgba(202,138,4,0.2)')
                     : (isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.07)'),
                   boxShadow: isDark
                     ? '0 4px 24px rgba(0,0,0,0.3)'
@@ -1052,7 +1052,7 @@ function FAQSection({ isDark }) {
   );
 }
 
-// ─── Final CTA ────────────────────────────────────────────────────────────────
+// --- Final CTA ----------------------------------------------------------------
 function FinalCTA({ isDark, onGetStarted }) {
   return (
     <section className="py-28 px-6 relative overflow-hidden">
@@ -1097,12 +1097,12 @@ function FinalCTA({ isDark, onGetStarted }) {
         <div
           className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full mb-8 text-[11px] font-semibold"
           style={{
-            background: isDark ? 'rgba(255,77,0,0.1)' : 'rgba(255,77,0,0.08)',
-            border: `1px solid ${isDark ? 'rgba(255,77,0,0.25)' : 'rgba(255,77,0,0.2)'}`,
-            color: isDark ? '#FF7A00' : '#CC3D00',
+            background: isDark ? 'rgba(202,138,4,0.1)' : 'rgba(202,138,4,0.08)',
+            border: `1px solid ${isDark ? 'rgba(202,138,4,0.25)' : 'rgba(202,138,4,0.2)'}`,
+            color: isDark ? '#FBBF24' : '#854D0E',
           }}
         >
-          <span className="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse inline-block" />
+          <span className="w-1.5 h-1.5 rounded-full bg-yellow-500 animate-pulse inline-block" />
           Join 2,400+ traders already improving
         </div>
 
@@ -1118,13 +1118,13 @@ function FinalCTA({ isDark, onGetStarted }) {
           <span
             style={{
               backgroundImage: isDark
-                ? 'linear-gradient(90deg, #FF4D00, #FF7A00, #FFB366, #FF7A00, #FF4D00)'
+                ? 'linear-gradient(90deg, #CA8A04, #FBBF24, #FFB366, #FBBF24, #CA8A04)'
                 : undefined,
               backgroundSize: isDark ? '200% auto' : undefined,
               animation: isDark ? 'hero-shimmer 4s ease-in-out infinite' : undefined,
               WebkitBackgroundClip: isDark ? 'text' : undefined,
               WebkitTextFillColor: isDark ? 'transparent' : undefined,
-              color: isDark ? undefined : '#FF4D00',
+              color: isDark ? undefined : '#CA8A04',
             }}
           >
             today.
@@ -1143,12 +1143,12 @@ function FinalCTA({ isDark, onGetStarted }) {
             onClick={() => onGetStarted()}
             className="group relative overflow-hidden inline-flex items-center gap-2.5 px-8 py-4 rounded-full text-[16px] font-bold transition-all duration-300 hover:-translate-y-1 active:scale-[0.97]"
             style={{
-              background: 'linear-gradient(135deg, #FF4D00, #FF7A00)',
+              background: 'linear-gradient(135deg, #CA8A04, #FBBF24)',
               color: '#ffffff',
               animation: isDark ? 'premium-pulse-ring 2s ease-out infinite' : 'none',
               boxShadow: isDark
-                ? '0 4px 28px rgba(255,77,0,0.4)'
-                : '0 4px 24px rgba(255,77,0,0.35)',
+                ? '0 4px 28px rgba(202,138,4,0.4)'
+                : '0 4px 24px rgba(202,138,4,0.35)',
             }}
           >
             <span
@@ -1176,18 +1176,18 @@ function FinalCTA({ isDark, onGetStarted }) {
           className="mt-5 text-[12px]"
           style={{ color: isDark ? '#52525b' : '#a1a1aa' }}
         >
-          No credit card required · Free plan available · Cancel anytime
+          No credit card required � Free plan available � Cancel anytime
         </p>
       </Reveal>
     </section>
   );
 }
 
-// ─── Nav links ────────────────────────────────────────────────────────────────
+// --- Nav links ----------------------------------------------------------------
 const NAV_LINKS = ['Features', 'Pricing', 'FAQ'];
 const TOTAL_FOUNDING = 100;
 
-// ─── Main LandingPage ─────────────────────────────────────────────────────────
+// --- Main LandingPage ---------------------------------------------------------
 export default function LandingPage({ onSignIn, onGetStarted }) {
   const { isDark, toggleTheme } = useTheme();
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -1279,7 +1279,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
           }
           .btn-shimmer:hover::after { transform: translateX(100%); }
 
-          /* ── Premium Animations ── */
+          /* -- Premium Animations -- */
           @keyframes premium-gradient-shift {
             0%, 100% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
@@ -1301,9 +1301,9 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
           }
 
           @keyframes premium-pulse-ring {
-            0% { box-shadow: 0 0 0 0 rgba(255,77,0,0.35); }
-            70% { box-shadow: 0 0 0 12px rgba(255,77,0,0); }
-            100% { box-shadow: 0 0 0 0 rgba(255,77,0,0); }
+            0% { box-shadow: 0 0 0 0 rgba(202,138,4,0.35); }
+            70% { box-shadow: 0 0 0 12px rgba(202,138,4,0); }
+            100% { box-shadow: 0 0 0 0 rgba(202,138,4,0); }
           }
 
           @keyframes hero-orb-breathe {
@@ -1323,7 +1323,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
           }
           .premium-card-glow:hover {
             border-color: rgba(255,100,0,0.25) !important;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5), 0 0 30px rgba(255,77,0,0.08) !important;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5), 0 0 30px rgba(202,138,4,0.08) !important;
             transform: translateY(-4px);
           }
           .premium-card-glow::before {
@@ -1375,16 +1375,16 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
           ` : ''}
         `}</style>
 
-        {/* ── Scroll Progress Bar ── */}
+        {/* -- Scroll Progress Bar -- */}
         <motion.div
           className="fixed top-0 left-0 right-0 z-[100] h-[2px] origin-left"
           style={{
             scaleX: scrollYProgress,
-            background: 'linear-gradient(90deg, #FF4D00, #FF7A00)',
+            background: 'linear-gradient(90deg, #CA8A04, #FBBF24)',
           }}
         />
 
-        {/* ══════════════════════════════ NAVBAR ══════════════════════════════ */}
+        {/* ------------------------------ NAVBAR ------------------------------ */}
         <header
           className="sticky top-0 z-50 transition-all duration-300"
           style={{
@@ -1473,12 +1473,12 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
                 onClick={() => onGetStarted()}
                 className="btn-shimmer text-[13px] font-semibold px-5 py-2.5 rounded-full transition-all duration-300 hover:-translate-y-0.5 active:scale-[0.97]"
                 style={{
-                  background: 'linear-gradient(135deg, #FF4D00, #FF7A00)',
+                  background: 'linear-gradient(135deg, #CA8A04, #FBBF24)',
                   color: '#ffffff',
                   animation: isDark ? 'premium-pulse-ring 2.5s ease-out infinite' : 'none',
                   boxShadow: isDark
-                    ? '0 4px 18px rgba(255,77,0,0.35)'
-                    : '0 4px 16px rgba(255,77,0,0.3)',
+                    ? '0 4px 18px rgba(202,138,4,0.35)'
+                    : '0 4px 16px rgba(202,138,4,0.3)',
                 }}
               >
                 Get Started
@@ -1552,7 +1552,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
                       onClick={() => { setMobileOpen(false); onGetStarted(); }}
                       className="flex-1 text-[13px] font-semibold rounded-xl py-2.5"
                       style={{
-                        background: 'linear-gradient(135deg, #FF4D00, #FF7A00)',
+                        background: 'linear-gradient(135deg, #CA8A04, #FBBF24)',
                         color: '#ffffff',
                       }}
                     >
@@ -1565,34 +1565,34 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
           </AnimatePresence>
         </header>
 
-        {/* ══════════════════════════ HERO ══════════════════════════════════ */}
+        {/* -------------------------- HERO ---------------------------------- */}
         <Hero spotsLeft={spotsLeft} onGetStarted={onGetStarted} onSignIn={onSignIn} />
 
-        {/* ══════════════════════ PROBLEM ══════════════════════════════════ */}
+        {/* ---------------------- PROBLEM ---------------------------------- */}
         <ProblemSection isDark={isDark} />
 
-        {/* ══════════════════ AI INSIGHTS DEMO ════════════════════════════ */}
+        {/* ------------------ AI INSIGHTS DEMO ---------------------------- */}
         <AIInsightsSection onGetStarted={onGetStarted} />
 
-        {/* ══════════════════════ HOW IT WORKS ════════════════════════════ */}
+        {/* ---------------------- HOW IT WORKS ---------------------------- */}
         <HowItWorks onGetStarted={onGetStarted} />
 
-        {/* ════════════════════════ FEATURES ══════════════════════════════ */}
+        {/* ------------------------ FEATURES ------------------------------ */}
         <FeaturesGrid isDark={isDark} onGetStarted={onGetStarted} />
 
-        {/* ═══════════════════════ TESTIMONIALS ═══════════════════════════ */}
+        {/* ----------------------- TESTIMONIALS --------------------------- */}
         <TestimonialsGrid isDark={isDark} />
 
-        {/* ═══════════════════════════ PRICING ════════════════════════════ */}
+        {/* --------------------------- PRICING ---------------------------- */}
         <LandingPricing isDark={isDark} onGetStarted={onGetStarted} />
 
-        {/* ═══════════════════════════ FAQ ════════════════════════════════ */}
+        {/* --------------------------- FAQ -------------------------------- */}
         <FAQSection isDark={isDark} />
 
-        {/* ═══════════════════════ FINAL CTA ══════════════════════════════ */}
+        {/* ----------------------- FINAL CTA ------------------------------ */}
         <FinalCTA isDark={isDark} onGetStarted={onGetStarted} />
 
-        {/* ══════════════════ DISCLAIMER ═══════════════════════════════════ */}
+        {/* ------------------ DISCLAIMER ----------------------------------- */}
         <section className="py-12 px-6">
           <div className="max-w-4xl mx-auto">
             <div
@@ -1623,7 +1623,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
           </div>
         </section>
 
-        {/* ═══════════════════════════ FOOTER ═════════════════════════════ */}
+        {/* --------------------------- FOOTER ----------------------------- */}
         <footer
           className="border-t pt-16 pb-10 px-6"
           style={{
@@ -1753,13 +1753,13 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
           >
             <div className="flex flex-col gap-1.5">
               <p className="text-[11px]" style={{ color: isDark ? '#52525b' : '#a1a1aa' }}>
-                © 2026 Zynth. All rights reserved.
+                � 2026 Zynth. All rights reserved.
               </p>
               <p className="text-[11px]" style={{ color: isDark ? '#2d3748' : '#94a3b8' }}>
                 Azeem Town, Sihala Street 2, Islamabad, Pakistan
-                {' · '}
+                {' � '}
                 <a href="tel:+923175516692" style={{ color: 'inherit', textDecoration: 'none' }}>+92 317 5516692</a>
-                {' · '}
+                {' � '}
                 <a href="mailto:getzynth@gmail.com" style={{ color: 'inherit', textDecoration: 'none' }}>getzynth@gmail.com</a>
               </p>
             </div>

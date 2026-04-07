@@ -8,7 +8,7 @@ import AIRecommendation from './AIRecommendation';
 // ── Section label ─────────────────────────────────────────────────────────────
 function SectionLabel({ label }) {
   return (
-    <p className="mb-2 px-1 text-[9px] font-bold uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500">
+    <p className="mb-2 px-1 text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-400 dark:text-zinc-500">
       {label}
     </p>
   );
@@ -18,7 +18,7 @@ function SectionLabel({ label }) {
 function alertTextColor(text) {
   if (/outdated|missing/i.test(text)) return 'text-red-500 dark:text-red-400';
   if (/conflict|mixed/i.test(text))   return 'text-amber-500 dark:text-amber-400';
-  return 'text-slate-500 dark:text-slate-400';
+  return 'text-zinc-500 dark:text-zinc-400';
 }
 
 function RiskStrip({ riskAlerts, signalConflict, conflictingIndicators = [] }) {
@@ -57,14 +57,14 @@ function RiskStrip({ riskAlerts, signalConflict, conflictingIndicators = [] }) {
             {allAlerts.length} Risk Alert{allAlerts.length > 1 ? 's' : ''}
           </span>
           {!open && (
-            <span className="hidden truncate text-[11px] text-slate-400 sm:block">
+            <span className="hidden truncate text-[11px] text-zinc-400 sm:block">
               — {allAlerts[0]}
             </span>
           )}
         </div>
         {open
-          ? <ChevronUp   size={12} className="shrink-0 text-slate-400" />
-          : <ChevronDown size={12} className="shrink-0 text-slate-400" />}
+          ? <ChevronUp   size={12} className="shrink-0 text-zinc-400" />
+          : <ChevronDown size={12} className="shrink-0 text-zinc-400" />}
       </button>
 
       {open && (
@@ -86,8 +86,8 @@ function ActionContext({ text }) {
   if (!text) return null;
   return (
     <div className="flex items-start gap-3 px-1">
-      <div className="mt-1 h-full min-h-[40px] w-[2px] shrink-0 rounded-full bg-blue-400 dark:bg-blue-500" />
-      <p className="text-sm italic leading-[1.75] text-slate-500 dark:text-slate-400">{text}</p>
+      <div className="mt-1 h-full min-h-[40px] w-[2px] shrink-0 rounded-full bg-yellow-400 dark:bg-yellow-500" />
+      <p className="text-sm italic leading-[1.75] text-zinc-500 dark:text-zinc-400">{text}</p>
     </div>
   );
 }
@@ -105,12 +105,12 @@ function DataFooter({ meta, confidence, signalConflict }) {
   const cc = CONFLICT_LABEL[level] ?? CONFLICT_LABEL.low;
 
   return (
-    <div className="space-y-3 rounded-2xl border border-slate-200 bg-white px-5 py-4 dark:border-white/[0.07] dark:bg-slate-900">
+    <div className="space-y-3 rounded-2xl border border-zinc-200 bg-white px-5 py-4 dark:border-white/[0.07] dark:bg-zinc-900">
       {/* Sources + conflict indicator */}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex flex-wrap gap-x-3 gap-y-1">
           {(meta.dataSources ?? []).map(src => (
-            <span key={src} className="text-[10px] text-slate-400 dark:text-slate-500">{src}</span>
+            <span key={src} className="text-[10px] text-zinc-400 dark:text-zinc-500">{src}</span>
           ))}
         </div>
         {signalConflict && (
@@ -122,13 +122,13 @@ function DataFooter({ meta, confidence, signalConflict }) {
       {meta.dataLag && (
         <div className="flex items-start gap-2">
           <Clock size={10} className="mt-0.5 shrink-0 text-amber-400" />
-          <p className="text-[10px] leading-4 text-slate-400 dark:text-slate-500">{meta.dataLag}</p>
+          <p className="text-[10px] leading-4 text-zinc-400 dark:text-zinc-500">{meta.dataLag}</p>
         </div>
       )}
 
       {/* Confidence basis */}
       {confidence?.reasoning && (
-        <p className="text-[10px] text-slate-400 dark:text-slate-500">
+        <p className="text-[10px] text-zinc-400 dark:text-zinc-500">
           Confidence basis: {confidence.reasoning}
         </p>
       )}
@@ -143,7 +143,7 @@ function LoadingState() {
       {[160, 80, 80, 120].map((h, i) => (
         <div
           key={i}
-          className="animate-pulse rounded-2xl bg-slate-100 dark:bg-white/[0.05]"
+          className="animate-pulse rounded-2xl bg-zinc-100 dark:bg-white/[0.05]"
           style={{ height: h }}
         />
       ))}

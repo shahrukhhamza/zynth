@@ -91,21 +91,21 @@ export default function PlanGateModal({ reason, feature, requiredPlan = 'pro', o
           borderRadius: 20,
           overflow: 'hidden',
           boxShadow: isDark
-            ? '0 32px 80px rgba(0,0,0,0.72), 0 0 0 1px rgba(59,130,246,0.1)'
+            ? '0 32px 80px rgba(0,0,0,0.72), 0 0 0 1px rgba(202,138,4,0.1)'
             : '0 24px 60px rgba(15,23,42,0.16)',
         }}
       >
         {/* Blue gradient top strip */}
-        <div style={{ height: 3, background: 'linear-gradient(90deg, #1d4ed8, #3b82f6, #06b6d4)' }} />
+        <div style={{ height: 3, background: 'linear-gradient(90deg, #CA8A04, #EAB308, #FBBF24)' }} />
 
         {/* Header row */}
         <div style={{ padding: '22px 22px 0', display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
             <div style={{
               width: 42, height: 42, borderRadius: 12, flexShrink: 0,
-              background: 'linear-gradient(135deg, #1d4ed8, #06b6d4)',
+              background: 'linear-gradient(135deg, #CA8A04, #EAB308)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              boxShadow: '0 6px 18px rgba(37,99,235,0.28)',
+              boxShadow: '0 6px 18px rgba(161,98,7,0.28)',
             }}>
               <Zap size={20} color="#fff" />
             </div>

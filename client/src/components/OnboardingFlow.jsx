@@ -29,14 +29,14 @@ const GOAL_OPTIONS = [
 ];
 
 const AVATAR_COLORS = [
-  { value: 'emerald', label: 'Emerald', bg: '#3b82f6', ring: '#3b82f6' },
-  { value: 'blue',    label: 'Blue',    bg: '#3b82f6', ring: '#3b82f6' },
-  { value: 'purple',  label: 'Purple',  bg: '#0ea5e9', ring: '#0ea5e9' },
+  { value: 'emerald', label: 'Emerald', bg: '#CA8A04', ring: '#CA8A04' },
+  { value: 'blue',    label: 'Blue',    bg: '#CA8A04', ring: '#CA8A04' },
+  { value: 'purple',  label: 'Purple',  bg: '#8b5cf6', ring: '#8b5cf6' },
   { value: 'orange',  label: 'Orange',  bg: '#f97316', ring: '#f97316' },
   { value: 'rose',    label: 'Rose',    bg: '#f43f5e', ring: '#f43f5e' },
   { value: 'amber',   label: 'Amber',   bg: '#f59e0b', ring: '#f59e0b' },
   { value: 'cyan',    label: 'Cyan',    bg: '#06b6d4', ring: '#06b6d4' },
-  { value: 'indigo',  label: 'Indigo',  bg: '#6366f1', ring: '#6366f1' },
+  { value: 'indigo',  label: 'Indigo',  bg: '#CA8A04', ring: '#CA8A04' },
 ];
 
 const TOTAL_STEPS = 4; // actual content steps (0 = welcome, 1-4 = content)
@@ -276,7 +276,7 @@ export default function OnboardingFlow({ onComplete, onSkip }) {
         {step === 0 && (
           <div className="px-6 py-10 text-center">
             <div className="mb-4">
-              <Sparkles size={40} style={{ margin: '0 auto', display: 'block', color: '#3b82f6' }} />
+              <Sparkles size={40} style={{ margin: '0 auto', display: 'block', color: '#CA8A04' }} />
             </div>
             <h2 className="text-2xl font-bold mb-2" style={{ color: theme.text }}>
               Welcome to Zynth, {firstName}!

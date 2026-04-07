@@ -1,4 +1,4 @@
-﻿import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import { BookOpen, List, BarChart2, Brain, X, RefreshCw, Activity, Fingerprint, TrendingUp, TrendingDown, ArrowRightLeft, Target, Shield, Clock, Layers, Zap, MessageSquare, Lightbulb, StickyNote, Camera, Sparkles, ChevronRight } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
@@ -167,7 +167,7 @@ function TradeDetailModal({ trade, onClose }) {
             <div className="grid grid-cols-3 gap-2.5">
               <StatCard label="Session" value={trade.session ? trade.session.replace('_', ' ').toUpperCase() : '—'} />
               <StatCard label="Strategy" value={trade.strategy || '—'} color={theme.accent} />
-              <StatCard label="Emotion" value={trade.emotional_state ? trade.emotional_state.charAt(0).toUpperCase() + trade.emotional_state.slice(1) : '—'} color="#0ea5e9" />
+              <StatCard label="Emotion" value={trade.emotional_state ? trade.emotional_state.charAt(0).toUpperCase() + trade.emotional_state.slice(1) : '—'} color="#CA8A04" />
             </div>
           </div>
 
@@ -182,7 +182,7 @@ function TradeDetailModal({ trade, onClose }) {
                 <TextBlock icon={Lightbulb} label="Lessons Learned" value={trade.lessons_learned} accentColor="#f59e0b" />
               )}
               {trade.notes && (
-                <TextBlock icon={StickyNote} label="Notes / Remarks" value={trade.notes} accentColor="#0ea5e9" />
+                <TextBlock icon={StickyNote} label="Notes / Remarks" value={trade.notes} accentColor="#CA8A04" />
               )}
             </div>
           )}
@@ -221,26 +221,26 @@ function TradeDetailModal({ trade, onClose }) {
           {aiData && (
             <div>
               <SectionLabel icon={Sparkles} label="AI Analysis" />
-              <div className="rounded-xl overflow-hidden" style={{ border: '1px solid #0ea5e933', background: 'linear-gradient(135deg, #0a0a0a 0%, #050505 100%)' }}>
+              <div className="rounded-xl overflow-hidden" style={{ border: `1px solid ${theme.border}`, background: theme.surface }}>
                 <div className="p-4 space-y-3">
                   <div className="grid grid-cols-2 gap-3">
                     {aiData.psychology_score != null && (
-                      <div className="rounded-lg p-3 text-center" style={{ backgroundColor: 'rgba(14,165,233,0.1)', border: '1px solid rgba(14,165,233,0.2)' }}>
-                        <p className="text-xs uppercase tracking-wide mb-1" style={{ color: 'rgba(14,165,233,0.6)' }}>Psychology</p>
-                        <p className="text-2xl font-black" style={{ color: '#0ea5e9' }}>{aiData.psychology_score}<span className="text-sm font-normal">/10</span></p>
+                      <div className="rounded-lg p-3 text-center" style={{ backgroundColor: 'rgba(202,138,4,0.08)', border: '1px solid rgba(202,138,4,0.18)' }}>
+                        <p className="text-xs uppercase tracking-wide mb-1" style={{ color: 'rgba(202,138,4,0.6)' }}>Psychology</p>
+                        <p className="text-2xl font-black" style={{ color: '#CA8A04' }}>{aiData.psychology_score}<span className="text-sm font-normal">/10</span></p>
                       </div>
                     )}
                     {aiData.trade_quality && (
-                      <div className="rounded-lg p-3 text-center" style={{ backgroundColor: 'rgba(14,165,233,0.1)', border: '1px solid rgba(14,165,233,0.2)' }}>
-                        <p className="text-xs uppercase tracking-wide mb-1" style={{ color: 'rgba(14,165,233,0.6)' }}>Quality</p>
-                        <p className="text-base font-bold capitalize" style={{ color: '#0ea5e9' }}>{aiData.trade_quality}</p>
+                      <div className="rounded-lg p-3 text-center" style={{ backgroundColor: 'rgba(202,138,4,0.08)', border: '1px solid rgba(202,138,4,0.18)' }}>
+                        <p className="text-xs uppercase tracking-wide mb-1" style={{ color: 'rgba(202,138,4,0.6)' }}>Quality</p>
+                        <p className="text-base font-bold capitalize" style={{ color: '#CA8A04' }}>{aiData.trade_quality}</p>
                       </div>
                     )}
                   </div>
                   {aiData.coach_message && (
-                    <div className="flex gap-3 p-3 rounded-lg" style={{ backgroundColor: 'rgba(14,165,233,0.08)', border: '1px solid rgba(14,165,233,0.15)' }}>
-                      <Sparkles className="w-4 h-4 flex-shrink-0 mt-0.5" style={{ color: '#0ea5e9' }} />
-                      <p className="text-sm italic leading-relaxed" style={{ color: 'rgba(14,165,233,0.9)' }}>"{aiData.coach_message}"</p>
+                    <div className="flex gap-3 p-3 rounded-lg" style={{ backgroundColor: 'rgba(202,138,4,0.07)', border: '1px solid rgba(202,138,4,0.15)' }}>
+                      <Sparkles className="w-4 h-4 flex-shrink-0 mt-0.5" style={{ color: '#CA8A04' }} />
+                      <p className="text-sm italic leading-relaxed" style={{ color: theme.text }}>"{aiData.coach_message}"</p>
                     </div>
                   )}
                 </div>
@@ -359,13 +359,13 @@ export default function TradeJournal() {
               fontSize: '13px',
               backgroundColor: 'transparent',
               color: active
-                ? (theme.isDark ? '#60a5fa' : '#1d4ed8')
+                ? (theme.isDark ? '#EAB308' : '#854D0E')
                 : theme.muted,
               fontWeight: active ? 600 : 400,
               border: 'none',
               outline: 'none',
               borderBottom: active
-                ? `2px solid ${theme.isDark ? '#3b82f6' : '#2563eb'}`
+                ? `2px solid ${theme.isDark ? '#CA8A04' : '#A16207'}`
                 : '2px solid transparent',
               marginBottom: -2,
               cursor: 'pointer',
@@ -381,7 +381,7 @@ export default function TradeJournal() {
 
   const refreshBtn = (
     <button onClick={() => { fetchTrades(page); fetchMetrics(); }}
-      className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs transition-colors hover:bg-gray-100 dark:hover:bg-white/10 mb-4"
+      className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs transition-colors hover:bg-zinc-100 dark:hover:bg-white/10 mb-4"
       style={{ color: theme.muted, border: `1px solid ${theme.border}` }}>
       <RefreshCw className={`w-3 h-3 ${loadingTrades || loadingMetrics ? 'animate-spin' : ''}`} />
       Refresh

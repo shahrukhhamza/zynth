@@ -17,7 +17,7 @@ export default function SettingsModal({ onClose, autoRefresh, onToggleAutoRefres
     return () => mq.removeEventListener('change', handler);
   }, []);
 
-  const emerald = '#3b82f6';
+  const emerald = '#CA8A04';
   const sheetBg = theme.surface;
 
   // ── Shared sub-components ────────────────────────────────────────────────
@@ -58,7 +58,7 @@ export default function SettingsModal({ onClose, autoRefresh, onToggleAutoRefres
 
   const SectionCard = ({ icon: Icon, title, subtitle, children }) => (
     <div
-      className="bg-white dark:bg-slate-900 border border-gray-200 dark:border-gray-700 rounded-2xl p-5 shadow-sm"
+      className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-2xl p-5 shadow-sm"
     >
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 14 }}>
         <div style={{
@@ -75,9 +75,9 @@ export default function SettingsModal({ onClose, autoRefresh, onToggleAutoRefres
           <Icon style={{ color: emerald, width: 16, height: 16 }} />
         </div>
         <div>
-          <p className="text-[14px] font-bold text-gray-900 dark:text-gray-100 m-0">{title}</p>
+          <p className="text-[14px] font-bold text-zinc-900 dark:text-zinc-100 m-0">{title}</p>
           {subtitle && (
-            <p className="text-[12px] text-gray-500 dark:text-gray-400 mt-0.5 mb-0">{subtitle}</p>
+            <p className="text-[12px] text-zinc-500 dark:text-zinc-400 mt-0.5 mb-0">{subtitle}</p>
           )}
         </div>
       </div>
@@ -109,7 +109,7 @@ export default function SettingsModal({ onClose, autoRefresh, onToggleAutoRefres
       </div>
       <div style={{ flex: 1, minWidth: 0 }}>
         <p style={{
-          color: theme.isDark ? '#f1f5f9' : '#0f172a', fontWeight: 600, fontSize: 15,
+          color: theme.isDark ? '#fafaf9' : '#0b0b0f', fontWeight: 600, fontSize: 15,
           whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', margin: 0,
         }}>{label}</p>
         {description && (
@@ -139,8 +139,8 @@ export default function SettingsModal({ onClose, autoRefresh, onToggleAutoRefres
           <Globe style={{ color: emerald, width: 18, height: 18 }} />
         </div>
         <div>
-          <p className="text-[15px] font-semibold text-gray-900 dark:text-gray-100 m-0">Market Timezone</p>
-          <p className="text-[13px] text-gray-500 dark:text-gray-400 mt-0.5 mb-0">
+          <p className="text-[15px] font-semibold text-zinc-900 dark:text-zinc-100 m-0">Market Timezone</p>
+          <p className="text-[13px] text-zinc-500 dark:text-zinc-400 mt-0.5 mb-0">
             Used across all charts and calendar
           </p>
         </div>
@@ -155,7 +155,7 @@ export default function SettingsModal({ onClose, autoRefresh, onToggleAutoRefres
             border: theme.isDark ? '1px solid rgba(148,163,184,0.25)' : '1px solid rgba(203,213,225,0.9)',
             borderRadius: 10,
             padding: '12px 40px 12px 14px',
-            color: theme.isDark ? '#f1f5f9' : '#0f172a',
+            color: theme.isDark ? '#fafaf9' : '#0b0b0f',
             fontSize: 14,
             appearance: 'none',
             WebkitAppearance: 'none',
@@ -200,7 +200,7 @@ export default function SettingsModal({ onClose, autoRefresh, onToggleAutoRefres
           position: 'fixed', bottom: 0, left: 0, right: 0,
           height: '100dvh',
           borderRadius: '20px 20px 0 0',
-          backgroundColor: theme.isDark ? '#0f172a' : '#ffffff',
+          backgroundColor: theme.isDark ? '#0b0b0f' : '#ffffff',
           zIndex: 1000,
           display: 'flex',
           flexDirection: 'column',
@@ -214,7 +214,7 @@ export default function SettingsModal({ onClose, autoRefresh, onToggleAutoRefres
           {/* Sticky header */}
           <div style={{
             position: 'sticky', top: 0,
-            backgroundColor: theme.isDark ? '#0f172a' : '#ffffff',
+            backgroundColor: theme.isDark ? '#0b0b0f' : '#ffffff',
             zIndex: 10,
             padding: '8px 20px 10px',
             borderBottom: theme.isDark ? '1px solid rgba(148,163,184,0.20)' : '1px solid rgba(203,213,225,0.8)',
@@ -230,8 +230,8 @@ export default function SettingsModal({ onClose, autoRefresh, onToggleAutoRefres
                 <Settings style={{ color: emerald, width: 16, height: 16 }} />
               </div>
               <div>
-                <h2 className="text-[16px] font-bold text-gray-900 dark:text-gray-100 m-0">Settings</h2>
-                <p className="text-[12px] text-gray-500 dark:text-gray-400 m-0">Preferences &amp; display options</p>
+                <h2 className="text-[16px] font-bold text-zinc-900 dark:text-zinc-100 m-0">Settings</h2>
+                <p className="text-[12px] text-zinc-500 dark:text-zinc-400 m-0">Preferences &amp; display options</p>
               </div>
             </div>
             <button
@@ -322,7 +322,7 @@ export default function SettingsModal({ onClose, autoRefresh, onToggleAutoRefres
       onClick={e => { if (e.target === e.currentTarget) onClose(); }}
     >
       <div style={{
-        backgroundColor: theme.isDark ? '#0f172a' : '#ffffff',
+        backgroundColor: theme.isDark ? '#0b0b0f' : '#ffffff',
         border: theme.isDark ? '1px solid rgba(148,163,184,0.20)' : '1px solid rgba(203,213,225,0.8)',
         borderRadius: 16,
         width: '100%', maxWidth: 480,
@@ -347,8 +347,8 @@ export default function SettingsModal({ onClose, autoRefresh, onToggleAutoRefres
               <Settings style={{ color: emerald, width: 16, height: 16 }} />
             </div>
             <div>
-              <h2 className="text-[16px] font-bold text-gray-900 dark:text-gray-100 m-0">Settings</h2>
-              <p className="text-[12px] text-gray-500 dark:text-gray-400 m-0">Preferences &amp; display options</p>
+              <h2 className="text-[16px] font-bold text-zinc-900 dark:text-zinc-100 m-0">Settings</h2>
+              <p className="text-[12px] text-zinc-500 dark:text-zinc-400 m-0">Preferences &amp; display options</p>
             </div>
           </div>
           <button

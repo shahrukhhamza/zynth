@@ -8,77 +8,77 @@
   --z-overlay:      rgba(0,0,0,0.45);
   --z-modal:        #ffffff;
   --z-card:         #ffffff;
-  --z-inner:        #f1f5f9;
-  --z-surface:      #f8fafc;
-  --z-footer:       #f8fafc;
-  --z-text:         #0f172a;
-  --z-text2:        #334155;
-  --z-muted:        #475569;
-  --z-border:       #e2e8f0;
-  --z-border-sm:    #f1f5f9;
-  --z-input:        #f8fafc;
-  --z-input-bdr:    #cbd5e1;
-  --z-divider:      #e2e8f0;
-  --z-track:        #e2e8f0;
-  --z-close-bg:     #f1f5f9;
-  --z-close-hov:    #e2e8f0;
-  --z-h-grad:       linear-gradient(135deg, #1e293b 30%, #6366f1 100%);
-  --z-p-grad:       linear-gradient(90deg, #1e293b, #6366f1);
+  --z-inner:        #f5f5f4;
+  --z-surface:      #fafaf9;
+  --z-footer:       #fafaf9;
+  --z-text:         #09090b;
+  --z-text2:        #3f3f46;
+  --z-muted:        #52525b;
+  --z-border:       rgba(0,0,0,0.08);
+  --z-border-sm:    rgba(0,0,0,0.04);
+  --z-input:        #fafaf9;
+  --z-input-bdr:    #d6d3d1;
+  --z-divider:      rgba(0,0,0,0.08);
+  --z-track:        #e7e5e4;
+  --z-close-bg:     #f5f5f4;
+  --z-close-hov:    #e7e5e4;
+  --z-h-grad:       linear-gradient(135deg, #09090b 30%, #CA8A04 100%);
+  --z-p-grad:       linear-gradient(90deg, #09090b, #CA8A04);
   /* Semantic accent tokens */
-  --z-badge-bg:     rgba(99,102,241,0.08);
-  --z-badge-bdr:    rgba(99,102,241,0.25);
-  --z-badge-text:   #4338ca;
-  --z-soft-purple:  #5b21b6;
-  --z-progress-txt: #6366f1;
+  --z-badge-bg:     rgba(202,138,4,0.08);
+  --z-badge-bdr:    rgba(202,138,4,0.25);
+  --z-badge-text:   #854D0E;
+  --z-soft-purple:  #92400e;
+  --z-progress-txt: #A16207;
   --z-warn-bg:      rgba(161,98,7,0.07);
   --z-warn-bdr:     rgba(161,98,7,0.22);
   --z-warn-text:    #92400e;
-  --z-amount-text:  #4338ca;
-  --z-copy-bg:      rgba(99,102,241,0.08);
-  --z-copy-bdr:     rgba(99,102,241,0.28);
-  --z-copy-hov:     rgba(99,102,241,0.16);
-  --z-copy-text:    #4338ca;
-  --z-plan-card-bg: linear-gradient(135deg, rgba(99,102,241,0.07), rgba(139,92,246,0.04));
-  --z-plan-hdr-bg:  rgba(99,102,241,0.06);
-  --z-plan-amt-bg:  rgba(99,102,241,0.04);
+  --z-amount-text:  #A16207;
+  --z-copy-bg:      rgba(202,138,4,0.08);
+  --z-copy-bdr:     rgba(202,138,4,0.28);
+  --z-copy-hov:     rgba(202,138,4,0.16);
+  --z-copy-text:    #854D0E;
+  --z-plan-card-bg: linear-gradient(135deg, rgba(202,138,4,0.07), rgba(234,179,8,0.04));
+  --z-plan-hdr-bg:  rgba(202,138,4,0.06);
+  --z-plan-amt-bg:  rgba(202,138,4,0.04);
 }
 .dark {
   --z-overlay:      rgba(0,0,0,0.88);
-  --z-modal:        linear-gradient(155deg, #0a0c14 0%, #0d1020 60%, #09090f 100%);
-  --z-card:         #0d1120;
-  --z-inner:        #111527;
-  --z-surface:      rgba(255,255,255,0.025);
-  --z-footer:       rgba(9,9,20,0.98);
-  --z-text:         #f8fafc;
-  --z-text2:        #cbd5e1;
-  --z-muted:        #94a3b8;
+  --z-modal:        linear-gradient(155deg, #0b0b0f 0%, #161618 60%, #0b0b0f 100%);
+  --z-card:         #161618;
+  --z-inner:        #1c1c1e;
+  --z-surface:      #1c1c1e;
+  --z-footer:       rgba(11,11,15,0.98);
+  --z-text:         #f4f4f5;
+  --z-text2:        #a1a1aa;
+  --z-muted:        #71717a;
   --z-border:       rgba(255,255,255,0.08);
   --z-border-sm:    rgba(255,255,255,0.05);
-  --z-input:        rgba(255,255,255,0.05);
+  --z-input:        #1c1c1e;
   --z-input-bdr:    rgba(255,255,255,0.10);
   --z-divider:      rgba(255,255,255,0.06);
   --z-track:        rgba(255,255,255,0.07);
   --z-close-bg:     rgba(255,255,255,0.06);
   --z-close-hov:    rgba(255,255,255,0.15);
-  --z-h-grad:       linear-gradient(135deg, #f8fafc 30%, #c4b5fd 100%);
-  --z-p-grad:       linear-gradient(90deg, #f1f5f9, #c4b5fd);
+  --z-h-grad:       linear-gradient(135deg, #f4f4f5 30%, #EAB308 100%);
+  --z-p-grad:       linear-gradient(90deg, #f4f4f5, #EAB308);
   /* Semantic accent tokens */
-  --z-badge-bg:     rgba(99,102,241,0.15);
-  --z-badge-bdr:    rgba(99,102,241,0.32);
-  --z-badge-text:   #a5b4fc;
-  --z-soft-purple:  #c4b5fd;
-  --z-progress-txt: #818cf8;
+  --z-badge-bg:     rgba(202,138,4,0.15);
+  --z-badge-bdr:    rgba(202,138,4,0.32);
+  --z-badge-text:   #EAB308;
+  --z-soft-purple:  #FBBF24;
+  --z-progress-txt: #CA8A04;
   --z-warn-bg:      rgba(251,191,36,0.07);
   --z-warn-bdr:     rgba(251,191,36,0.20);
   --z-warn-text:    #fde68a;
-  --z-amount-text:  #a5b4fc;
-  --z-copy-bg:      rgba(99,102,241,0.18);
-  --z-copy-bdr:     rgba(99,102,241,0.40);
-  --z-copy-hov:     rgba(99,102,241,0.35);
-  --z-copy-text:    #a5b4fc;
-  --z-plan-card-bg: linear-gradient(135deg, rgba(99,102,241,0.18), rgba(139,92,246,0.12));
-  --z-plan-hdr-bg:  rgba(99,102,241,0.12);
-  --z-plan-amt-bg:  rgba(99,102,241,0.08);
+  --z-amount-text:  #EAB308;
+  --z-copy-bg:      rgba(202,138,4,0.18);
+  --z-copy-bdr:     rgba(202,138,4,0.40);
+  --z-copy-hov:     rgba(202,138,4,0.35);
+  --z-copy-text:    #EAB308;
+  --z-plan-card-bg: linear-gradient(135deg, rgba(202,138,4,0.18), rgba(234,179,8,0.12));
+  --z-plan-hdr-bg:  rgba(202,138,4,0.12);
+  --z-plan-amt-bg:  rgba(202,138,4,0.08);
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -92,7 +92,7 @@
 
   /* Full-page scroll container with themed background */
   .z-page {
-    @apply flex-1 overflow-y-auto bg-[#f8fafc] dark:bg-slate-950 min-h-0;
+    @apply flex-1 overflow-y-auto bg-[#fafaf9] dark:bg-[#0b0b0f] min-h-0;
   }
 
   /* Max-width content constraint with horizontal padding */
@@ -104,8 +104,8 @@
 
   /* Base card — white in light, slate-900 in dark */
   .z-card {
-    @apply bg-white dark:bg-slate-900
-           border border-gray-200 dark:border-gray-700/30
+    @apply bg-white dark:bg-[#161618]
+           border border-zinc-200 dark:border-zinc-800
            rounded-2xl
            shadow-z-sm dark:shadow-z-dark
            transition-all duration-200;
@@ -118,8 +118,8 @@
 
   /* Inset / secondary surface (table rows, code blocks, inner panels) */
   .z-surface {
-    @apply bg-[#f8fafc] dark:bg-gray-900
-           border border-gray-200 dark:border-gray-700/30
+    @apply bg-[#fafaf9] dark:bg-[#1c1c1e]
+           border border-zinc-200 dark:border-zinc-800
            rounded-xl;
   }
 
@@ -134,44 +134,44 @@
 
   /* Page / modal title */
   .z-title {
-    @apply text-xl font-semibold text-gray-900 dark:text-gray-100 tracking-tight;
+    @apply text-xl font-semibold text-zinc-900 dark:text-zinc-100 tracking-tight;
   }
 
   /* Section header (card headings) */
   .z-heading {
-    @apply text-lg font-medium text-gray-900 dark:text-gray-100;
+    @apply text-lg font-medium text-zinc-900 dark:text-zinc-100;
   }
 
   /* Section sub-header / label above a group */
   .z-section-label {
     @apply text-xs font-bold uppercase tracking-widest
-           text-gray-400 dark:text-gray-500;
+           text-zinc-400 dark:text-zinc-500;
   }
 
   /* Large metric / number */
   .z-value {
-    @apply text-2xl font-bold tracking-tight text-gray-900 dark:text-gray-100;
+    @apply text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100;
   }
 
   /* Extra-large stat number */
   .z-stat {
     @apply text-[28px] font-extrabold leading-none tracking-tight
-           text-gray-900 dark:text-gray-100;
+           text-zinc-900 dark:text-zinc-100;
   }
 
   /* Regular body text */
   .z-body {
-    @apply text-sm text-gray-700 dark:text-gray-300 leading-relaxed;
+    @apply text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed;
   }
 
   /* Muted label / caption */
   .z-label {
-    @apply text-sm text-gray-500 dark:text-gray-400;
+    @apply text-sm text-zinc-500 dark:text-zinc-400;
   }
 
   /* Smallest descriptive text */
   .z-micro {
-    @apply text-xs text-gray-400 dark:text-gray-500;
+    @apply text-xs text-zinc-400 dark:text-zinc-500;
   }
 
   /* Green P&L */
@@ -190,7 +190,7 @@
   .z-btn-primary {
     @apply inline-flex items-center justify-center gap-2
            px-5 py-2.5 rounded-btn
-           bg-blue-600 hover:bg-blue-700
+           bg-[#CA8A04] hover:bg-[#A16207]
            text-white text-sm font-semibold
            shadow-z-btn-primary hover:shadow-md
            transition-all duration-200
@@ -202,12 +202,12 @@
   .z-btn-secondary {
     @apply inline-flex items-center justify-center gap-2
            px-5 py-2.5 rounded-btn
-           bg-gray-100 dark:bg-gray-800
-           text-gray-700 dark:text-gray-300
-           border border-gray-200 dark:border-gray-700
+           bg-zinc-100 dark:bg-zinc-800
+           text-zinc-700 dark:text-zinc-300
+           border border-zinc-200 dark:border-zinc-700
            text-sm font-medium
            transition-all duration-200
-           hover:bg-gray-200 dark:hover:bg-gray-700
+           hover:bg-zinc-200 dark:hover:bg-zinc-700
            hover:shadow-md hover:scale-[1.02] active:scale-95
            disabled:opacity-50 disabled:cursor-not-allowed;
   }
@@ -226,12 +226,12 @@
   .z-btn-icon {
     @apply inline-flex items-center justify-center
            w-9 h-9 rounded-xl
-           bg-gray-100 dark:bg-gray-800
-           border border-gray-200 dark:border-gray-700
-           text-gray-500 dark:text-gray-400
+           bg-zinc-100 dark:bg-zinc-800
+           border border-zinc-200 dark:border-zinc-700
+           text-zinc-500 dark:text-zinc-400
            transition-all duration-150
-           hover:bg-gray-200 dark:hover:bg-gray-700
-           hover:text-gray-700 dark:hover:text-gray-200;
+           hover:bg-zinc-200 dark:hover:bg-zinc-700
+           hover:text-zinc-700 dark:hover:text-zinc-200;
   }
 
   /* ── Badges / Pills ──────────────────────────────────────────────────────── */
@@ -243,22 +243,23 @@
            text-xs font-semibold;
   }
 
+  .z-badge-orange { @apply z-badge bg-orange-50 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 border border-orange-200 dark:border-orange-700/50; }
   .z-badge-blue   { @apply z-badge bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 border border-blue-200 dark:border-blue-700/50; }
   .z-badge-green  { @apply z-badge bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-700/50; }
   .z-badge-red    { @apply z-badge bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-700/50; }
   .z-badge-amber  { @apply z-badge bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-700/50; }
-  .z-badge-gray   { @apply z-badge bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700; }
+  .z-badge-gray   { @apply z-badge bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 border border-zinc-200 dark:border-zinc-700; }
 
   /* ── Inputs ─────────────────────────────────────────────────────────────── */
 
   .z-input {
     @apply w-full px-3.5 py-2.5
-           bg-white dark:bg-gray-900
-           border border-gray-200 dark:border-gray-700
-           rounded-xl text-sm text-gray-900 dark:text-gray-100
-           placeholder-gray-400 dark:placeholder-gray-500
+           bg-white dark:bg-[#1c1c1e]
+           border border-zinc-200 dark:border-zinc-700
+           rounded-xl text-sm text-zinc-900 dark:text-zinc-100
+           placeholder-zinc-400 dark:placeholder-zinc-500
            transition-all duration-150
-           focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/15
+           focus:outline-none focus:border-[#CA8A04] focus:ring-2 focus:ring-[#CA8A04]/15
            disabled:opacity-50 disabled:cursor-not-allowed;
   }
 
@@ -273,7 +274,7 @@
   /* ── Divider ─────────────────────────────────────────────────────────────── */
 
   .z-divider {
-    @apply border-t border-gray-200 dark:border-gray-700 my-4;
+    @apply border-t border-zinc-200 dark:border-zinc-700 my-4;
   }
 
   /* ── Avatar ──────────────────────────────────────────────────────────────── */
@@ -290,21 +291,21 @@
 
   .z-th {
     @apply text-xs font-bold uppercase tracking-wider
-           text-gray-400 dark:text-gray-500
+           text-zinc-400 dark:text-zinc-500
            px-4 py-3
-           border-b border-gray-200 dark:border-gray-700
-           bg-gray-50 dark:bg-gray-900/60;
+           border-b border-zinc-200 dark:border-zinc-700
+           bg-zinc-50 dark:bg-zinc-900/60;
   }
 
   .z-td {
     @apply px-4 py-3.5
-           text-gray-700 dark:text-gray-300
-           border-b border-gray-100 dark:border-gray-800;
+           text-zinc-700 dark:text-zinc-300
+           border-b border-zinc-100 dark:border-zinc-800;
   }
 
   .z-tr {
     @apply transition-colors duration-100
-           hover:bg-gray-50 dark:hover:bg-gray-800/60;
+           hover:bg-zinc-50 dark:hover:bg-zinc-800/60;
   }
 
   /* ── Modal overlay ───────────────────────────────────────────────────────── */
@@ -316,8 +317,8 @@
   }
 
   .z-modal {
-    @apply bg-white dark:bg-slate-900
-           border border-gray-200 dark:border-gray-700
+    @apply bg-white dark:bg-[#161618]
+           border border-zinc-200 dark:border-zinc-700
            rounded-3xl shadow-z-modal
            w-full;
   }
@@ -338,7 +339,7 @@
   /* ── Loading / Skeleton ──────────────────────────────────────────────────── */
 
   .z-skeleton {
-    @apply rounded-xl bg-gray-200 dark:bg-gray-800 animate-pulse;
+    @apply rounded-xl bg-zinc-200 dark:bg-zinc-800 animate-pulse;
   }
 
   /* ── Section / Panel headers ─────────────────────────────────────────────── */
@@ -346,7 +347,7 @@
   .z-panel-header {
     @apply flex items-center justify-between
            pb-3 mb-4
-           border-b border-gray-200 dark:border-gray-700;
+           border-b border-zinc-200 dark:border-zinc-700;
   }
 
   /* ── Gradient accent bar (left side of stat cards) ───────────────────────── */
@@ -371,15 +372,15 @@ body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  /* Light mode base — slate-50 matches ThemeContext bg */
-  background-color: #F8FAFC;
-  color: #0F172A;
+  /* Light mode base — stone-50 */
+  background-color: #fafaf9;
+  color: #09090b;
 }
 
 /* Dark theme base */
 .dark body {
-  background-color: #020617;
-  color: #E2E8F0;
+  background-color: #0b0b0f;
+  color: #f4f4f5;
 }
 
 /* Smooth theme transition — applied globally so light↔dark toggle feels premium */
@@ -405,32 +406,32 @@ code {
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f5f9;
+  background: #f5f5f4;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: #d6d3d1;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: #a8a29e;
 }
 
 /* Custom scrollbar — dark theme */
 html.dark ::-webkit-scrollbar-track {
-  background: #111111;
+  background: #0b0b0f;
   border-radius: 4px;
 }
 
 html.dark ::-webkit-scrollbar-thumb {
-  background: #2b2b2b;
+  background: #1c1c1e;
   border-radius: 4px;
 }
 
 html.dark ::-webkit-scrollbar-thumb:hover {
-  background: #3b82f6;
+  background: #CA8A04;
 }
 
 /* Loading animation */
@@ -447,9 +448,9 @@ html.dark ::-webkit-scrollbar-thumb:hover {
   animation: shimmer 2s infinite linear;
   background: linear-gradient(
     to right,
-    #f1f5f9 4%,
-    #e2e8f0 25%,
-    #f1f5f9 36%
+    #f5f5f4 4%,
+    #e7e5e4 25%,
+    #f5f5f4 36%
   );
   background-size: 1000px 100%;
 }
@@ -515,14 +516,14 @@ aside {
 }
 
 html:not(.dark) .sidebar-tooltip {
-  background: #1e293b;
+  background: #161618;
   color: #f1f5f9;
   border-color: #334155;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
 }
 
 html:not(.dark) .sidebar-tooltip::before {
-  border-right-color: #1e293b;
+  border-right-color: #161618;
 }
 
 /* ── Nav active glow ─────────────────────────────────────────────────────── */
@@ -538,6 +539,11 @@ html:not(.dark) .sidebar-tooltip::before {
   background: #22c55e;
   animation: pulse-dot 1.5s ease-in-out infinite;
   box-shadow: 0 0 6px #22c55e;
+}
+
+/* ── Nav active glow — orange accent ─────────────────────────────────────── */
+.nav-active-glow {
+  box-shadow: 0 0 12px rgba(202,138,4,0.15);
 }
 
 /* ── Input/select: fast border-only transition (no color flash) ─────────── */
@@ -611,14 +617,14 @@ html:not(.dark) .card-hover:hover {
 
 /* ── Premium light mode surfaces ────────────────────────────────────────── */
 html:not(.dark) {
-  /* Base app background — slate-100 */
-  background-color: #f1f5f9;
+  /* Base app background — stone-50 */
+  background-color: #fafaf9;
 }
 
 html:not(.dark) [data-surface="card"] {
   background: #ffffff;
   border: 1px solid rgba(0, 0, 0, 0.07);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 20px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 20px rgba(0, 0, 0, 0.03);
   border-radius: 14px;
 }
 
@@ -627,16 +633,16 @@ html:not(.dark) input:focus,
 html:not(.dark) textarea:focus,
 html:not(.dark) select:focus {
   outline: none;
-  border-color: #3b82f6 !important;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12) !important;
+  border-color: #CA8A04 !important;
+  box-shadow: 0 0 0 3px rgba(202, 138, 4, 0.10) !important;
 }
 
 html.dark input:focus,
 html.dark textarea:focus,
 html.dark select:focus {
   outline: none;
-  border-color: #3b82f6 !important;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.18) !important;
+  border-color: #CA8A04 !important;
+  box-shadow: 0 0 0 3px rgba(202, 138, 4, 0.18) !important;
 }
 
 /* ── Smooth page transitions ─────────────────────────────────────────────── */
@@ -706,9 +712,9 @@ html.dark select:focus {
 html:not(.dark) .skeleton {
   background: linear-gradient(
     90deg,
-    #e2e8f0 25%,
-    #f1f5f9 50%,
-    #e2e8f0 75%
+    #e7e5e4 25%,
+    #f5f5f4 50%,
+    #e7e5e4 75%
   );
   background-size: 200% 100%;
 }

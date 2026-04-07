@@ -77,7 +77,7 @@ function MarketsCard() {
         width: 220,
         transition: 'border-color 0.4s ease, box-shadow 0.4s ease',
       }}
-      onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(255,100,0,0.25)'; e.currentTarget.style.boxShadow = '0 25px 70px rgba(0,0,0,0.6), 0 0 30px rgba(255,77,0,0.1)'; }}
+      onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(255,100,0,0.25)'; e.currentTarget.style.boxShadow = '0 25px 70px rgba(0,0,0,0.6), 0 0 30px rgba(202,138,4,0.1)'; }}
       onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)'; e.currentTarget.style.boxShadow = '0 20px 60px rgba(0,0,0,0.5)'; }}
     >
       <div className="flex items-center justify-between px-4 pt-4 pb-2">
@@ -122,7 +122,7 @@ function BalanceCard() {
         width: 280,
         transition: 'border-color 0.4s ease, box-shadow 0.4s ease',
       }}
-      onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(255,100,0,0.3)'; e.currentTarget.style.boxShadow = '0 35px 90px rgba(0,0,0,0.7), 0 0 40px rgba(255,77,0,0.12)'; }}
+      onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(255,100,0,0.3)'; e.currentTarget.style.boxShadow = '0 35px 90px rgba(0,0,0,0.7), 0 0 40px rgba(202,138,4,0.12)'; }}
       onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)'; e.currentTarget.style.boxShadow = '0 30px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.03)'; }}
     >
       {/* Top nav */}
@@ -142,7 +142,7 @@ function BalanceCard() {
             className="px-3 py-1 rounded-full text-[11px] font-medium"
             style={{
               background: i === 0 ? 'rgba(255,85,0,0.15)' : 'transparent',
-              color: i === 0 ? '#FF7A00' : '#52525b',
+              color: i === 0 ? '#FBBF24' : '#52525b',
               border: i === 0 ? '1px solid rgba(255,85,0,0.25)' : '1px solid transparent',
             }}
           >
@@ -179,7 +179,7 @@ function BalanceCard() {
           />
           <defs>
             <linearGradient id="chartGradient" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0%" stopColor="#FF4D00" stopOpacity="0.6" />
+              <stop offset="0%" stopColor="#CA8A04" stopOpacity="0.6" />
               <stop offset="100%" stopColor="#f4f4f5" />
             </linearGradient>
           </defs>
@@ -224,7 +224,7 @@ function ExchangeCard() {
         width: 230,
         transition: 'border-color 0.4s ease, box-shadow 0.4s ease',
       }}
-      onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(255,100,0,0.25)'; e.currentTarget.style.boxShadow = '0 25px 70px rgba(0,0,0,0.6), 0 0 30px rgba(255,77,0,0.1)'; }}
+      onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(255,100,0,0.25)'; e.currentTarget.style.boxShadow = '0 25px 70px rgba(0,0,0,0.6), 0 0 30px rgba(202,138,4,0.1)'; }}
       onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)'; e.currentTarget.style.boxShadow = '0 20px 60px rgba(0,0,0,0.5)'; }}
     >
       <div className="flex items-center justify-between px-4 pt-4 pb-2">
@@ -301,8 +301,8 @@ export default function Hero({ spotsLeft, onGetStarted, onSignIn }) {
           50% { background-position: 200% center; }
         }
         @keyframes hero-glow-pulse {
-          0%, 100% { box-shadow: 0 4px 28px rgba(255,77,0,0.4), 0 0 0 0 rgba(255,100,0,0.3); }
-          50% { box-shadow: 0 8px 40px rgba(255,77,0,0.55), 0 0 0 8px rgba(255,100,0,0); }
+          0%, 100% { box-shadow: 0 4px 28px rgba(202,138,4,0.4), 0 0 0 0 rgba(255,100,0,0.3); }
+          50% { box-shadow: 0 8px 40px rgba(202,138,4,0.55), 0 0 0 8px rgba(255,100,0,0); }
         }
         @keyframes hero-orb-breathe {
           0%, 100% { opacity: 0.14; transform: translateX(-50%) scale(1); }
@@ -407,12 +407,12 @@ export default function Hero({ spotsLeft, onGetStarted, onSignIn }) {
             <span
               className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-[12px] font-semibold"
               style={{
-                background: isDark ? 'rgba(255,77,0,0.08)' : 'rgba(255,77,0,0.06)',
-                border: `1px solid ${isDark ? 'rgba(255,77,0,0.2)' : 'rgba(255,77,0,0.15)'}`,
-                color: isDark ? '#FF7A00' : '#CC3D00',
+                background: isDark ? 'rgba(202,138,4,0.08)' : 'rgba(202,138,4,0.06)',
+                border: `1px solid ${isDark ? 'rgba(202,138,4,0.2)' : 'rgba(202,138,4,0.15)'}`,
+                color: isDark ? '#FBBF24' : '#854D0E',
               }}
             >
-              <span className="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse" />
+              <span className="w-1.5 h-1.5 rounded-full bg-yellow-500 animate-pulse" />
               AI-Powered Trading Analytics Platform
             </span>
           </motion.div>
@@ -431,8 +431,8 @@ export default function Hero({ spotsLeft, onGetStarted, onSignIn }) {
               fontWeight: 800, lineHeight: 1.06, letterSpacing: '-0.04em',
               marginBottom: 24,
               backgroundImage: isDark
-                ? 'linear-gradient(90deg, #FF4D00 0%, #FF7A00 25%, #FFB366 50%, #FF7A00 75%, #FF4D00 100%)'
-                : 'linear-gradient(135deg, #FF4D00 0%, #FF7A00 100%)',
+                ? 'linear-gradient(90deg, #CA8A04 0%, #FBBF24 25%, #FFB366 50%, #FBBF24 75%, #CA8A04 100%)'
+                : 'linear-gradient(135deg, #CA8A04 0%, #FBBF24 100%)',
               backgroundSize: isDark ? '200% auto' : '100% auto',
               animation: isDark ? 'hero-shimmer 4s ease-in-out infinite' : 'none',
               WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
@@ -456,11 +456,11 @@ export default function Hero({ spotsLeft, onGetStarted, onSignIn }) {
               className="group inline-flex items-center gap-2.5"
               style={{
                 padding: '16px 32px', borderRadius: 50,
-                background: 'linear-gradient(135deg, #FF4D00 0%, #FF7A00 100%)',
+                background: 'linear-gradient(135deg, #CA8A04 0%, #FBBF24 100%)',
                 color: '#ffffff',
                 fontSize: 15, fontWeight: 700, border: 'none', cursor: 'pointer',
                 animation: isDark ? 'hero-glow-pulse 2.5s ease-in-out infinite' : 'none',
-                boxShadow: '0 4px 28px rgba(255,77,0,0.4), 0 0 0 1px rgba(255,120,0,0.15)',
+                boxShadow: '0 4px 28px rgba(202,138,4,0.4), 0 0 0 1px rgba(255,120,0,0.15)',
                 transition: 'transform 0.2s ease',
               }}
               onMouseEnter={e => {
@@ -471,7 +471,7 @@ export default function Hero({ spotsLeft, onGetStarted, onSignIn }) {
               }}
             >
               Get Started
-              <ArrowRight size={16} className="transition-transform duration-300 group-hover:translate-x-0.5" />
+              <ArrowRight size={16} className="transition-transform duration-300 group-hover:tranzinc-x-0.5" />
             </button>
           </motion.div>
         </div>
@@ -559,7 +559,7 @@ export default function Hero({ spotsLeft, onGetStarted, onSignIn }) {
             backdropFilter: isDark ? 'blur(16px)' : 'none',
             transition: 'border-color 0.4s ease, box-shadow 0.4s ease',
           }}
-          onMouseEnter={e => { if (isDark) { e.currentTarget.style.borderColor = 'rgba(255,100,0,0.15)'; e.currentTarget.style.boxShadow = '0 0 40px rgba(255,77,0,0.06)'; } }}
+          onMouseEnter={e => { if (isDark) { e.currentTarget.style.borderColor = 'rgba(255,100,0,0.15)'; e.currentTarget.style.boxShadow = '0 0 40px rgba(202,138,4,0.06)'; } }}
           onMouseLeave={e => { if (isDark) { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.06)'; e.currentTarget.style.boxShadow = 'none'; } }}
         >
           {[
@@ -574,7 +574,7 @@ export default function Hero({ spotsLeft, onGetStarted, onSignIn }) {
             }}>
               <div style={{
                 fontSize: 'clamp(22px, 2.5vw, 30px)', fontWeight: 800, letterSpacing: '-0.03em',
-                backgroundImage: isDark ? 'linear-gradient(135deg, #FF6B35, #FF9A5C)' : undefined,
+                backgroundImage: isDark ? 'linear-gradient(135deg, #EAB308, #FBBF24)' : undefined,
                 WebkitBackgroundClip: isDark ? 'text' : undefined,
                 WebkitTextFillColor: isDark ? 'transparent' : undefined,
                 color: isDark ? undefined : '#09090b', lineHeight: 1, marginBottom: 7,

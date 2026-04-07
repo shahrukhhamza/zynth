@@ -6,7 +6,7 @@ export default function RefundPage({ onBack }) {
   const bg     = isDark ? '#0a0a0a' : '#f4f6f9';
   const navBg  = isDark ? 'rgba(10,10,10,0.92)' : 'rgba(244,246,249,0.92)';
   const border = isDark ? 'rgba(255,255,255,0.06)' : '#e2e8f0';
-  const text   = isDark ? '#f1f5f9' : '#0f172a';
+  const text   = isDark ? '#fafaf9' : '#0b0b0f';
   const muted  = isDark ? '#6b7280' : '#64748b';
   const prose  = isDark ? '#9ca3af' : '#374151';
 
@@ -48,12 +48,12 @@ export default function RefundPage({ onBack }) {
           {/* 7-Day Guarantee callout */}
           <div style={{ padding: '22px 24px', borderRadius: 14, background: isDark ? 'rgba(22,163,74,0.07)' : 'rgba(22,163,74,0.05)', border: `1px solid ${isDark ? 'rgba(22,163,74,0.25)' : 'rgba(22,163,74,0.2)'}` }}>
             <p style={{ margin: '0 0 10px', fontWeight: 800, fontSize: 17, color: isDark ? '#4ade80' : '#16a34a' }}>7-Day Money-Back Guarantee</p>
-            <p style={{ margin: 0 }}>If you are not satisfied with your subscription, you may request a full refund within <strong style={{ color: isDark ? '#e2e8f0' : '#0f172a' }}>7 days</strong> of your initial payment.</p>
+            <p style={{ margin: 0 }}>If you are not satisfied with your subscription, you may request a full refund within <strong style={{ color: isDark ? '#e2e8f0' : '#0b0b0f' }}>7 days</strong> of your initial payment.</p>
           </div>
 
           {/* Eligibility */}
           <div>
-            <p style={{ fontWeight: 700, color: isDark ? '#e2e8f0' : '#0f172a', marginBottom: 8 }}>Eligibility</p>
+            <p style={{ fontWeight: 700, color: isDark ? '#e2e8f0' : '#0b0b0f', marginBottom: 8 }}>Eligibility</p>
             <ul style={{ paddingLeft: 20, margin: 0, display: 'flex', flexDirection: 'column', gap: 4 }}>
               <li>Refunds are only available for first-time subscriptions within the 7-day period.</li>
               <li>Refund requests submitted after 7 days are not eligible.</li>
@@ -62,7 +62,7 @@ export default function RefundPage({ onBack }) {
 
           {/* Abuse Prevention */}
           <div>
-            <p style={{ fontWeight: 700, color: isDark ? '#e2e8f0' : '#0f172a', marginBottom: 8 }}>Abuse Prevention</p>
+            <p style={{ fontWeight: 700, color: isDark ? '#e2e8f0' : '#0b0b0f', marginBottom: 8 }}>Abuse Prevention</p>
             <p style={{ margin: '0 0 8px' }}>To maintain fairness, Zynth reserves the right to deny refund requests in cases of abuse, including but not limited to:</p>
             <ul style={{ paddingLeft: 20, margin: 0, display: 'flex', flexDirection: 'column', gap: 4 }}>
               <li>Repeated subscription and refund attempts</li>
@@ -72,7 +72,7 @@ export default function RefundPage({ onBack }) {
 
           {/* Billing and Cancellation */}
           <div>
-            <p style={{ fontWeight: 700, color: isDark ? '#e2e8f0' : '#0f172a', marginBottom: 8 }}>Billing and Cancellation</p>
+            <p style={{ fontWeight: 700, color: isDark ? '#e2e8f0' : '#0b0b0f', marginBottom: 8 }}>Billing and Cancellation</p>
             <ul style={{ paddingLeft: 20, margin: 0, display: 'flex', flexDirection: 'column', gap: 4 }}>
               <li>All subscriptions are billed in advance on a recurring monthly basis.</li>
               <li>You may cancel your subscription at any time.</li>
@@ -83,13 +83,13 @@ export default function RefundPage({ onBack }) {
 
           {/* Payment Processing */}
           <div>
-            <p style={{ fontWeight: 700, color: isDark ? '#e2e8f0' : '#0f172a', marginBottom: 8 }}>Payment Processing</p>
+            <p style={{ fontWeight: 700, color: isDark ? '#e2e8f0' : '#0b0b0f', marginBottom: 8 }}>Payment Processing</p>
             <p style={{ margin: 0 }}>Payments are submitted through Zynth's secure in-app payment flow and verified manually. Zynth does not store card details, and uploaded payment proof is used only for verification and account activation.</p>
           </div>
 
           {/* Refund Processing */}
           <div>
-            <p style={{ fontWeight: 700, color: isDark ? '#e2e8f0' : '#0f172a', marginBottom: 8 }}>Refund Processing</p>
+            <p style={{ fontWeight: 700, color: isDark ? '#e2e8f0' : '#0b0b0f', marginBottom: 8 }}>Refund Processing</p>
             <ul style={{ paddingLeft: 20, margin: 0, display: 'flex', flexDirection: 'column', gap: 4 }}>
               <li>Approved refunds are typically processed within 3–5 business days.</li>
               <li>The time it takes for funds to appear in your account may vary depending on your payment provider.</li>
@@ -97,9 +97,9 @@ export default function RefundPage({ onBack }) {
           </div>
 
           {/* How to Request */}
-          <div style={{ padding: '20px 24px', borderRadius: 12, background: isDark ? 'rgba(59,130,246,0.07)' : 'rgba(59,130,246,0.05)', border: `1px solid ${isDark ? 'rgba(59,130,246,0.18)' : 'rgba(59,130,246,0.15)'}` }}>
-            <p style={{ margin: '0 0 6px', fontWeight: 700, color: isDark ? '#93c5fd' : '#2563eb' }}>How to Request a Refund</p>
-            <p style={{ margin: '0 0 10px' }}>Email us at <a href="mailto:getzynth@gmail.com" style={{ color: '#3b82f6', textDecoration: 'none', fontWeight: 600 }}>getzynth@gmail.com</a></p>
+          <div style={{ padding: '20px 24px', borderRadius: 12, background: isDark ? 'rgba(202,138,4,0.07)' : 'rgba(202,138,4,0.05)', border: `1px solid ${isDark ? 'rgba(202,138,4,0.18)' : 'rgba(202,138,4,0.15)'}` }}>
+            <p style={{ margin: '0 0 6px', fontWeight: 700, color: isDark ? '#FBBF24' : '#CA8A04' }}>How to Request a Refund</p>
+            <p style={{ margin: '0 0 10px' }}>Email us at <a href="mailto:getzynth@gmail.com" style={{ color: '#CA8A04', textDecoration: 'none', fontWeight: 600 }}>getzynth@gmail.com</a></p>
             <p style={{ margin: '0 0 4px', fontSize: 13, color: muted }}><strong style={{ color: isDark ? '#d1d5db' : '#374151' }}>Subject:</strong> Refund Request</p>
             <p style={{ margin: 0, fontSize: 13, color: muted }}><strong style={{ color: isDark ? '#d1d5db' : '#374151' }}>Include:</strong> your registered email address</p>
             <p style={{ margin: '10px 0 0', fontSize: 13, color: muted }}>We typically respond within 1–2 business days.</p>

@@ -85,7 +85,7 @@ export function Modal({
               background: theme.surface,
               border: `1px solid ${theme.border}`,
               boxShadow: theme.isDark
-                ? `${theme.shadowLg}, 0 0 0 1px rgba(255,255,255,0.04), 0 0 60px rgba(59,130,246,0.06)`
+                ? `${theme.shadowLg}, 0 0 0 1px rgba(255,255,255,0.04), 0 0 60px rgba(202,138,4,0.06)`
                 : theme.shadowLg,
             }}
           >
@@ -93,7 +93,7 @@ export function Modal({
             {topBand && (
               <div
                 className="h-[3px] w-full shrink-0"
-                style={{ background: 'linear-gradient(90deg,#1D4ED8,#3B82F6,#06B6D4)' }}
+                style={{ background: 'linear-gradient(90deg,#CA8A04,#EAB308,#FBBF24)' }}
               />
             )}
 

@@ -63,8 +63,8 @@ const MOCK_INSIGHTS = [
     severity: 'low',
     icon: AlertTriangle,
     variant: 'blue',
-    color: '#3b82f6',
-    colorBg: 'rgba(59,130,246,0.1)',
+    color: '#CA8A04',
+    colorBg: 'rgba(202,138,4,0.1)',
     title: 'Strong setup — but entry timing was late',
     detail: 'The macro environment was favorable when you entered (CPI beat + DXY weakness). The setup was solid, but entering after the first 30-min candle close would have improved your risk profile.',
     locked: true,
@@ -77,7 +77,7 @@ function SeverityBadge({ severity }) {
   const MAP = {
     high:   { label: 'High Priority', color: '#ef4444', bg: 'rgba(239,68,68,0.1)' },
     medium: { label: 'Review',         color: '#f59e0b', bg: 'rgba(245,158,11,0.1)' },
-    low:    { label: 'Positive',       color: '#3b82f6', bg: 'rgba(59,130,246,0.1)' },
+    low:    { label: 'Positive',       color: '#CA8A04', bg: 'rgba(202,138,4,0.1)' },
   };
   const s = MAP[severity] ?? MAP.low;
   return (
@@ -182,16 +182,16 @@ export default function FirstTradeInsightCard({ trade, onDismiss, onUpgrade }) {
           className="rounded-2xl border overflow-hidden"
           style={{
             background: theme.isDark ? '#141414' : '#ffffff',
-            borderColor: 'rgba(59,130,246,0.25)',
+            borderColor: 'rgba(202,138,4,0.25)',
             boxShadow: theme.isDark
-              ? '0 0 0 1px rgba(59,130,246,0.1), 0 8px 32px rgba(0,0,0,0.4)'
-              : '0 4px 24px rgba(59,130,246,0.12)',
+              ? '0 0 0 1px rgba(202,138,4,0.1), 0 8px 32px rgba(0,0,0,0.4)'
+              : '0 4px 24px rgba(202,138,4,0.12)',
           }}
         >
           {/* Blue top strip */}
           <div
             className="h-[3px]"
-            style={{ background: 'linear-gradient(90deg,#1d4ed8,#3b82f6,#06b6d4)' }}
+            style={{ background: 'linear-gradient(90deg,#CA8A04,#EAB308,#FBBF24)' }}
           />
 
           {/* Header */}
@@ -200,11 +200,11 @@ export default function FirstTradeInsightCard({ trade, onDismiss, onUpgrade }) {
               <div
                 className="w-8 h-8 rounded-lg flex items-center justify-center"
                 style={{
-                  background: 'linear-gradient(135deg,rgba(59,130,246,0.18),rgba(6,182,212,0.1))',
-                  border: '1px solid rgba(59,130,246,0.2)',
+                  background: 'linear-gradient(135deg,rgba(202,138,4,0.18),rgba(6,182,212,0.1))',
+                  border: '1px solid rgba(202,138,4,0.2)',
                 }}
               >
-                <Sparkles size={16} style={{ color: '#3b82f6' }} />
+                <Sparkles size={16} style={{ color: '#CA8A04' }} />
               </div>
               <div>
                 <p className="text-[13px] font-bold" style={{ color: theme.text }}>
@@ -248,8 +248,8 @@ export default function FirstTradeInsightCard({ trade, onDismiss, onUpgrade }) {
             <div
               className="mx-5 mb-5 rounded-xl px-4 py-4 border"
               style={{
-                background: theme.isDark ? 'rgba(59,130,246,0.05)' : 'rgba(59,130,246,0.04)',
-                borderColor: 'rgba(59,130,246,0.15)',
+                background: theme.isDark ? 'rgba(202,138,4,0.05)' : 'rgba(202,138,4,0.04)',
+                borderColor: 'rgba(202,138,4,0.15)',
               }}
             >
               <div className="flex items-center justify-between gap-3">
@@ -265,8 +265,8 @@ export default function FirstTradeInsightCard({ trade, onDismiss, onUpgrade }) {
                   onClick={onUpgrade}
                   className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-[13px] font-bold text-white shrink-0 transition-all hover:scale-[1.03]"
                   style={{
-                    background: 'linear-gradient(135deg,#1d4ed8,#0284c7)',
-                    boxShadow: '0 4px 14px rgba(59,130,246,0.35)',
+                    background: 'linear-gradient(135deg,#CA8A04,#EAB308)',
+                    boxShadow: '0 4px 14px rgba(202,138,4,0.35)',
                   }}
                 >
                   <Zap size={13} />

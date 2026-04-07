@@ -10,9 +10,9 @@ import { BrandMark } from './BrandLogo';
 import { resolveMediaUrl } from '../utils/mediaUrl';
 
 const AVATAR_COLOR_MAP = {
-  emerald: '#10b981', blue: '#3b82f6', purple: '#0ea5e9',
+  emerald: '#10b981', blue: '#CA8A04', purple: '#8b5cf6',
   orange: '#f97316', rose: '#f43f5e', amber: '#f59e0b',
-  cyan: '#06b6d4', indigo: '#6366f1',
+  cyan: '#06b6d4', indigo: '#CA8A04',
 };
 
 const VIEW_LABELS = {
@@ -54,7 +54,7 @@ function Header({
   const [showSettingsModal, setShowSettingsModal] = useState(false);
   const [avatarError, setAvatarError] = useState(false);
 
-  const avatarBg  = AVATAR_COLOR_MAP[user?.avatar_color] ?? '#10b981';
+  const avatarBg  = AVATAR_COLOR_MAP[user?.avatar_color] ?? '#CA8A04';
   const avatarSrc = user?.avatar_url ? resolveMediaUrl(user.avatar_url) : (user?.avatar ?? null);
   const dropdownRef = useRef(null);
   const userMenuRef = useRef(null);
@@ -139,7 +139,7 @@ function Header({
                     cursor: 'pointer', color: H_MUTED,
                     transition: 'all 0.15s ease',
                   }}
-                  onMouseEnter={e => { e.currentTarget.style.color = '#3b82f6'; e.currentTarget.style.borderColor = '#3b82f640'; }}
+                  onMouseEnter={e => { e.currentTarget.style.color = '#CA8A04'; e.currentTarget.style.borderColor = '#CA8A0440'; }}
                   onMouseLeave={e => { e.currentTarget.style.color = H_MUTED; e.currentTarget.style.borderColor = H_BORDER; }}
                 >
                   <ChevronRight style={{ width: 14, height: 14 }} />
@@ -205,7 +205,7 @@ function Header({
               onMouseEnter={e => { if (!showTimezoneDropdown) e.currentTarget.style.background = theme.isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.06)'; }}
               onMouseLeave={e => { if (!showTimezoneDropdown) e.currentTarget.style.background = theme.isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)'; }}
             >
-              <Globe style={{ width: 13, height: 13, color: '#3b82f6' }} />
+              <Globe style={{ width: 13, height: 13, color: '#CA8A04' }} />
               {!isMobile && (
                 <span style={{ fontSize: 12, fontWeight: 500, color: H_TEXT }}>
                   {currentTz?.id?.toUpperCase() ?? 'UTC'}
@@ -251,11 +251,11 @@ function Header({
                       onMouseEnter={e => { if (selectedTimezone !== tz.id) e.currentTarget.style.background = theme.isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)'; }}
                       onMouseLeave={e => { if (selectedTimezone !== tz.id) e.currentTarget.style.background = 'transparent'; }}
                     >
-                      <span style={{ fontSize: 12, color: selectedTimezone === tz.id ? '#3b82f6' : H_MUTED }}>
+                      <span style={{ fontSize: 12, color: selectedTimezone === tz.id ? '#CA8A04' : H_MUTED }}>
                         {tz.name || tz.label || tz.id?.toUpperCase()}
                       </span>
                       {selectedTimezone === tz.id && (
-                        <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#3b82f6', display: 'block' }} />
+                        <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#CA8A04', display: 'block' }} />
                       )}
                     </button>
                   ))}

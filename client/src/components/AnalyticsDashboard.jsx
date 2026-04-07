@@ -114,7 +114,7 @@ function DropoffCard({ stage, count, label, hint, color, loading, theme }) {
 
 // ── Trigger bar ───────────────────────────────────────────────────────────────
 
-const TRIGGER_COLORS = ['#2563eb', '#059669', '#3b82f6', '#10b981', '#1d4ed8'];
+const TRIGGER_COLORS = ['#CA8A04', '#059669', '#CA8A04', '#10b981', '#854D0E'];
 const TRIGGER_LABELS = {
   ai_limit: 'AI limit hit', journal_limit: 'Journal limit hit',
   advancedAnalytics: 'Advanced analytics gate', behavioralInsights: 'Behavioral insights gate',
@@ -217,21 +217,21 @@ export default function AnalyticsDashboard() {
   const relWidths    = funnelCounts.map(c => Math.max(4, Math.round((c / maxCount) * 100)));
 
   const FUNNEL_STEPS = [
-    { label: 'AI Analyses',     color: '#3B82F6', pct: 100,                          count: aiUsed,      relativeWidth: relWidths[0] },
+    { label: 'AI Analyses',     color: '#CA8A04', pct: 100,                          count: aiUsed,      relativeWidth: relWidths[0] },
     { label: 'Limit Hit',       color: '#DC2626', pct: funnel.aiToLimit      ?? 0,   count: totalLimits, relativeWidth: relWidths[1] },
-    { label: 'Modal Opened',    color: '#2563EB', pct: funnel.limitToModal    ?? 0,   count: modalOpens,  relativeWidth: relWidths[2] },
-    { label: 'Clicked Upgrade', color: '#1D4ED8', pct: funnel.modalToClick    ?? 0,   count: clicks,      relativeWidth: relWidths[3] },
+    { label: 'Modal Opened',    color: '#A16207', pct: funnel.limitToModal    ?? 0,   count: modalOpens,  relativeWidth: relWidths[2] },
+    { label: 'Clicked Upgrade', color: '#854D0E', pct: funnel.modalToClick    ?? 0,   count: clicks,      relativeWidth: relWidths[3] },
     { label: 'Subscribed',      color: '#059669', pct: funnel.clickToSubscribe ?? 0,  count: subs,        relativeWidth: relWidths[4] },
   ];
 
   const KPI_CARDS = [
     { label: 'Signups',         value: tot.signups         ?? data?.signups,         color: '#059669', Icon: UserPlus },
-    { label: 'Trades Logged',   value: tot.tradesAdded     ?? data?.trades_added,    color: '#2563EB', Icon: BookOpen },
-    { label: 'AI Analyses',     value: aiUsed,                                       color: '#3B82F6', Icon: Zap },
+    { label: 'Trades Logged',   value: tot.tradesAdded     ?? data?.trades_added,    color: '#A16207', Icon: BookOpen },
+    { label: 'AI Analyses',     value: aiUsed,                                       color: '#CA8A04', Icon: Zap },
     { label: 'Limit Hits',      value: totalLimits,                                  color: '#DC2626', Icon: AlertTriangle,
       sub: `AI ${tot.aiLimitHits ?? data?.ai_limit_hits ?? 0}  ·  Journal ${tot.journalLimitHits ?? data?.journal_limit_hits ?? 0}` },
-    { label: 'Modal Opens',     value: modalOpens,                                   color: '#2563EB', Icon: Eye },
-    { label: 'Upgrade Clicks',  value: clicks,                                       color: '#1D4ED8', Icon: MousePointerClick },
+    { label: 'Modal Opens',     value: modalOpens,                                   color: '#A16207', Icon: Eye },
+    { label: 'Upgrade Clicks',  value: clicks,                                       color: '#854D0E', Icon: MousePointerClick },
     { label: 'Subscriptions',   value: subs,                                         color: '#059669', Icon: ShoppingCart,
       sub: `${funnel.signupToConvert ?? data?.conversionRate ?? 0}% of signups` },
     { label: 'Click → Sub',     value: `${funnel.clickToSubscribe ?? 0}%`,           color: '#059669', Icon: TrendingUp,
@@ -246,7 +246,7 @@ export default function AnalyticsDashboard() {
       {/* ── Header ── */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <TrendingUp size={16} color="#3B82F6" />
+          <TrendingUp size={16} color="#CA8A04" />
           <span style={{ fontSize: 15, fontWeight: 700, color: theme.text }}>Conversion Intelligence</span>
         </div>
         <button
@@ -290,10 +290,10 @@ export default function AnalyticsDashboard() {
           <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', paddingTop: 10, borderTop: `1px solid ${theme.border}` }}>
             {[
               { label: 'AI → Limit',    value: `${funnel.aiToLimit ?? 0}%`,        color: '#DC2626' },
-              { label: 'Limit → Modal', value: `${funnel.limitToModal ?? 0}%`,      color: '#2563EB' },
-              { label: 'Modal → Click', value: `${funnel.modalToClick ?? 0}%`,      color: '#1D4ED8' },
+              { label: 'Limit → Modal', value: `${funnel.limitToModal ?? 0}%`,      color: '#A16207' },
+              { label: 'Modal → Click', value: `${funnel.modalToClick ?? 0}%`,      color: '#854D0E' },
               { label: 'Click → Sub',   value: `${funnel.clickToSubscribe ?? 0}%`,  color: '#059669' },
-              { label: 'Signup → Paid', value: `${funnel.signupToConvert ?? 0}%`,   color: '#3B82F6' },
+              { label: 'Signup → Paid', value: `${funnel.signupToConvert ?? 0}%`,   color: '#CA8A04' },
             ].map(({ label, value, color }) => (
               <div key={label} style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                 <span style={{ fontSize: 10, color: theme.muted, textTransform: 'uppercase', letterSpacing: 0.4 }}>{label}</span>
@@ -309,13 +309,13 @@ export default function AnalyticsDashboard() {
         extra={<span style={{ fontSize: 11, color: theme.muted }}>Users lost at each stage</span>}
       >
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: 10 }}>
-          <DropoffCard stage="After AI Usage"      count={drops.afterAI    ?? (aiUsed - totalLimits)} color="#3B82F6"
+          <DropoffCard stage="After AI Usage"      count={drops.afterAI    ?? (aiUsed - totalLimits)} color="#CA8A04"
             label="Used AI but never hit a limit"  hint={aiUsed > 0 ? `${100 - (funnel.aiToLimit ?? 0)}% didn't trigger` : undefined} loading={loading} theme={theme} />
           <DropoffCard stage="After Limit Hit"     count={drops.afterLimit  ?? (totalLimits - modalOpens)} color="#DC2626"
             label="Hit limit but never saw modal"  hint="Optimize: surface modal faster" loading={loading} theme={theme} />
-          <DropoffCard stage="After Modal Opened"  count={drops.afterModal  ?? (modalOpens - clicks)} color="#2563EB"
+          <DropoffCard stage="After Modal Opened"  count={drops.afterModal  ?? (modalOpens - clicks)} color="#A16207"
             label="Saw modal but didn't click"     hint="Optimize: modal copy / CTA" loading={loading} theme={theme} />
-          <DropoffCard stage="After Clicking"      count={drops.afterClick  ?? (clicks - subs)} color="#1D4ED8"
+          <DropoffCard stage="After Clicking"      count={drops.afterClick  ?? (clicks - subs)} color="#854D0E"
             label="Clicked but didn't subscribe"   hint="Optimize: reduce checkout friction" loading={loading} theme={theme} />
         </div>
       </Section>
@@ -353,8 +353,8 @@ export default function AnalyticsDashboard() {
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                 {insights.map((ins, i) => (
                   <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
-                    <div style={{ flexShrink: 0, width: 18, height: 18, borderRadius: 5, background: 'rgba(59,130,246,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: 1 }}>
-                      <Target size={10} color="#3B82F6" />
+                    <div style={{ flexShrink: 0, width: 18, height: 18, borderRadius: 5, background: 'rgba(202,138,4,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: 1 }}>
+                      <Target size={10} color="#CA8A04" />
                     </div>
                     <span style={{ fontSize: 12.5, color: theme.text, lineHeight: 1.5 }}>{ins}</span>
                   </div>

@@ -1,4 +1,4 @@
-﻿import { Clock, AlertCircle } from 'lucide-react';
+import { Clock, AlertCircle } from 'lucide-react';
 
 function relativeTime(iso) {
   if (!iso) return null;
@@ -21,7 +21,7 @@ function qualityColor(n) {
 function signalColor(level) {
   if (level === 'High') return 'text-emerald-400 border-emerald-500/20 bg-emerald-500/10';
   if (level === 'Medium') return 'text-amber-300 border-amber-500/20 bg-amber-500/10';
-  return 'text-slate-400 border-slate-500/20 bg-slate-500/10';
+  return 'text-zinc-400 border-zinc-500/20 bg-zinc-500/10';
 }
 
 function statusInfo(s) {
@@ -44,19 +44,19 @@ export default function DataTrustPanel({ dataInfo, macroScore }) {
 
   return (
     <section>
-      <p className="mb-3 text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-500">Data Reliability</p>
+      <p className="mb-3 text-[10px] font-semibold uppercase tracking-[0.16em] text-zinc-500">Data Reliability</p>
 
       <div className="rounded-2xl border border-white/[0.06] bg-[#0c1018] px-5 py-5 space-y-4">
         {/* Status line */}
         <div className="space-y-1.5">
           <p className="text-[13px] text-white/80">{dataInfo?.dataDelay || 'Latest available economic data'}</p>
           {dataInfo?.nextUpdateExpected && (
-            <div className="flex items-center gap-1.5 text-[11px] text-slate-400">
+            <div className="flex items-center gap-1.5 text-[11px] text-zinc-400">
               <Clock size={11} className="shrink-0" />
               <span>Next update: {dataInfo.nextUpdateExpected}</span>
             </div>
           )}
-          <div className="flex gap-4 text-[10px] text-slate-500">
+          <div className="flex gap-4 text-[10px] text-zinc-500">
             {released && <span>Released {released}</span>}
             {fetched && <span>Fetched {fetched}</span>}
             {!released && !fetched && <span>Timing data pending</span>}
@@ -68,30 +68,30 @@ export default function DataTrustPanel({ dataInfo, macroScore }) {
           {/* Data Quality */}
           <div className="space-y-1.5">
             <div className="flex items-center justify-between">
-              <p className="text-[10px] font-semibold uppercase tracking-[0.1em] text-slate-400">Data Quality</p>
+              <p className="text-[10px] font-semibold uppercase tracking-[0.1em] text-zinc-400">Data Quality</p>
               <span className={`text-lg font-bold tabular-nums ${qc.text}`}>{dataConfidence}%</span>
             </div>
             <div className="h-1 w-full rounded-full bg-white/5">
               <div className={`h-full rounded-full ${qc.bg}`} style={{ width: `${Math.min(100, dataConfidence)}%` }} />
             </div>
-            <p className="text-[9px] text-slate-500">{qc.label} &#183; freshness + completeness + validity</p>
+            <p className="text-[9px] text-zinc-500">{qc.label} &#183; freshness + completeness + validity</p>
           </div>
 
           {/* Signal Alignment */}
           <div className="space-y-1.5">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.1em] text-slate-400">Signal Alignment</p>
+            <p className="text-[10px] font-semibold uppercase tracking-[0.1em] text-zinc-400">Signal Alignment</p>
             <span className={`inline-block rounded-md border px-2 py-1 text-[11px] font-bold ${signalColor(signalConfidence)}`}>{signalConfidence}</span>
-            <p className="text-[9px] text-slate-500">Directional coherence</p>
+            <p className="text-[9px] text-zinc-500">Directional coherence</p>
           </div>
 
           {/* System Status */}
           <div className="space-y-1.5">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.1em] text-slate-400">System Status</p>
+            <p className="text-[10px] font-semibold uppercase tracking-[0.1em] text-zinc-400">System Status</p>
             <div className="flex items-center gap-1.5">
               <span className={`h-2 w-2 rounded-full ${sc.dot}`} />
               <span className={`text-[11px] font-bold ${sc.text}`}>{sc.label}</span>
             </div>
-            <p className="text-[9px] text-slate-500">Overall health</p>
+            <p className="text-[9px] text-zinc-500">Overall health</p>
           </div>
         </div>
 
@@ -111,9 +111,9 @@ export default function DataTrustPanel({ dataInfo, macroScore }) {
               )}
             </div>
 
-            <div className="rounded-xl border border-cyan-500/15 bg-cyan-500/[0.04] px-3.5 py-3">
-              <p className="text-[9px] font-semibold uppercase tracking-[0.1em] text-cyan-400">Score Formula</p>
-              <p className="mt-1.5 text-[10px] leading-relaxed text-cyan-200/80 line-clamp-3">{macroScore.formula || 'Deterministic weighted sum'}</p>
+            <div className="rounded-xl border border-yellow-500/15 bg-yellow-500/[0.04] px-3.5 py-3">
+              <p className="text-[9px] font-semibold uppercase tracking-[0.1em] text-yellow-400">Score Formula</p>
+              <p className="mt-1.5 text-[10px] leading-relaxed text-yellow-200/80 line-clamp-3">{macroScore.formula || 'Deterministic weighted sum'}</p>
             </div>
           </div>
         )}
@@ -132,8 +132,8 @@ export default function DataTrustPanel({ dataInfo, macroScore }) {
         )}
 
         {dataInfo?.uncertainty && (
-          <div className="flex items-start gap-2 text-[10px] text-slate-400">
-            <AlertCircle size={11} className="mt-0.5 shrink-0 text-slate-500" />
+          <div className="flex items-start gap-2 text-[10px] text-zinc-400">
+            <AlertCircle size={11} className="mt-0.5 shrink-0 text-zinc-500" />
             <p>{dataInfo.uncertainty}</p>
           </div>
         )}

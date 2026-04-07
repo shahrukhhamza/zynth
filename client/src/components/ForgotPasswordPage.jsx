@@ -60,7 +60,7 @@ export default function ForgotPasswordPage({ onBack }) {
       <div style={{ position:'fixed', top:'-220px', left:'-180px', width:'720px', height:'720px',
         pointerEvents:'none', zIndex:0,
         background: isDark
-          ? 'radial-gradient(circle, rgba(255,77,0,0.07) 0%, rgba(255,122,0,0.03) 35%, transparent 65%)'
+          ? 'radial-gradient(circle, rgba(202,138,4,0.07) 0%, rgba(255,122,0,0.03) 35%, transparent 65%)'
           : 'radial-gradient(circle, rgba(99,102,241,0.09) 0%, rgba(168,85,247,0.04) 35%, transparent 65%)',
         filter:'blur(82px)', animation:'blobDrift 18s ease-in-out infinite',
       }} />
@@ -69,8 +69,8 @@ export default function ForgotPasswordPage({ onBack }) {
       <div style={{ position:'fixed', bottom:'-200px', right:'-180px', width:'640px', height:'640px',
         pointerEvents:'none', zIndex:0,
         background: isDark
-          ? 'radial-gradient(circle, rgba(255,122,0,0.05) 0%, rgba(255,77,0,0.02) 35%, transparent 65%)'
-          : 'radial-gradient(circle, rgba(59,130,246,0.07) 0%, rgba(99,102,241,0.03) 35%, transparent 65%)',
+          ? 'radial-gradient(circle, rgba(255,122,0,0.05) 0%, rgba(202,138,4,0.02) 35%, transparent 65%)'
+          : 'radial-gradient(circle, rgba(202,138,4,0.07) 0%, rgba(99,102,241,0.03) 35%, transparent 65%)',
         filter:'blur(82px)', animation:'blobDrift2 22s ease-in-out infinite',
       }} />
 
@@ -98,7 +98,7 @@ export default function ForgotPasswordPage({ onBack }) {
         </button>
         <div style={{ position:'absolute', left:'50%', transform:'translateX(-50%)', display:'flex', alignItems:'center', gap:'7px' }}>
           <BrandMark size={22} />
-          <span style={{ fontSize:'14px', fontWeight:700, color: isDark?'rgba(255,255,255,0.88)':'#0f172a', letterSpacing:'-0.02em' }}>Zynth</span>
+          <span style={{ fontSize:'14px', fontWeight:700, color: isDark?'rgba(255,255,255,0.88)':'#0b0b0f', letterSpacing:'-0.02em' }}>Zynth</span>
         </div>
         <div style={{ width:'60px' }} />
       </div>
@@ -109,7 +109,7 @@ export default function ForgotPasswordPage({ onBack }) {
         {/* Logotype above card */}
         <div style={{ display:'flex', alignItems:'center', gap:'10px', marginBottom:'24px', animation:'cardIn 0.38s ease both' }}>
           <BrandMark size={34} />
-          <span style={{ fontSize:'19px', fontWeight:800, letterSpacing:'-0.035em', color: isDark?'#fff':'#0f172a' }}>Zynth</span>
+          <span style={{ fontSize:'19px', fontWeight:800, letterSpacing:'-0.035em', color: isDark?'#fff':'#0b0b0f' }}>Zynth</span>
         </div>
 
         {/* Card */}
@@ -120,37 +120,37 @@ export default function ForgotPasswordPage({ onBack }) {
           border: isDark?'1px solid rgba(255,255,255,0.076)':'1px solid rgba(0,0,0,0.06)',
           borderRadius:'18px', padding:'30px 28px 26px',
           boxShadow: isDark
-            ? '0 0 0 0.5px rgba(255,255,255,0.055) inset, 0 20px 60px rgba(0,0,0,0.82), 0 0 0 1px rgba(255,77,0,0.07)'
+            ? '0 0 0 0.5px rgba(255,255,255,0.055) inset, 0 20px 60px rgba(0,0,0,0.82), 0 0 0 1px rgba(202,138,4,0.07)'
             : '0 0 0 1px rgba(0,0,0,0.035), 0 6px 28px rgba(15,23,42,0.09), 0 1.5px 6px rgba(15,23,42,0.04)',
           animation:'cardIn 0.45s cubic-bezier(0.22,1,0.36,1) 0.06s both',
         }}>
           {success ? (
             <div style={{ textAlign:'center', padding:'8px 0' }}>
               <div style={{ width:'58px', height:'58px', borderRadius:'50%',
-                background:'linear-gradient(135deg, #FF4D00, #FF7A00)',
+                background:'linear-gradient(135deg, #CA8A04, #FBBF24)',
                 display:'flex', alignItems:'center', justifyContent:'center', margin:'0 auto 18px',
-                boxShadow:'0 0 32px rgba(255,77,0,0.35)' }}>
+                boxShadow:'0 0 32px rgba(202,138,4,0.35)' }}>
                 <CheckCircle2 size={26} color="#fff" />
               </div>
-              <h2 style={{ fontSize:'20px', fontWeight:700, letterSpacing:'-0.025em', color: isDark?'#f1f5f9':'#0f172a', marginBottom:'8px' }}>Check your email</h2>
+              <h2 style={{ fontSize:'20px', fontWeight:700, letterSpacing:'-0.025em', color: isDark?'#fafaf9':'#0b0b0f', marginBottom:'8px' }}>Check your email</h2>
               <p style={{ fontSize:'13.5px', color: isDark?'rgba(255,255,255,0.42)':'#64748b', lineHeight:1.65, marginBottom:'6px' }}>
                 If an account exists for
               </p>
-              <p style={{ fontSize:'13.5px', fontWeight:600, color: isDark?'rgba(255,255,255,0.78)':'#0f172a', marginBottom:'12px' }}>{email}</p>
+              <p style={{ fontSize:'13.5px', fontWeight:600, color: isDark?'rgba(255,255,255,0.78)':'#0b0b0f', marginBottom:'12px' }}>{email}</p>
               <p style={{ fontSize:'13.5px', color: isDark?'rgba(255,255,255,0.42)':'#64748b', lineHeight:1.65, marginBottom:'22px' }}>
                 you'll receive a reset link shortly. Check your spam folder too.
               </p>
               <button onClick={onBack}
-                style={{ fontSize:'13px', fontWeight:500, color:'#FF7A00', background:'none', border:'none', cursor:'pointer', padding:0, transition:'color 0.12s' }}
+                style={{ fontSize:'13px', fontWeight:500, color:'#FBBF24', background:'none', border:'none', cursor:'pointer', padding:0, transition:'color 0.12s' }}
                 onMouseEnter={e => e.currentTarget.style.color='#FF9A40'}
-                onMouseLeave={e => e.currentTarget.style.color='#FF7A00'}>
+                onMouseLeave={e => e.currentTarget.style.color='#FBBF24'}>
                 ← Back to sign in
               </button>
             </div>
           ) : (
             <>
               <div style={{ marginBottom:'22px' }}>
-                <h1 style={{ fontSize:'21px', fontWeight:700, letterSpacing:'-0.028em', margin:'0 0 5px', color: isDark?'#f1f5f9':'#0f172a', lineHeight:1.2 }}>
+                <h1 style={{ fontSize:'21px', fontWeight:700, letterSpacing:'-0.028em', margin:'0 0 5px', color: isDark?'#fafaf9':'#0b0b0f', lineHeight:1.2 }}>
                   Reset password.
                 </h1>
                 <p style={{ fontSize:'13.5px', color: isDark?'rgba(255,255,255,0.38)':'#94a3b8', margin:0 }}>
@@ -170,22 +170,22 @@ export default function ForgotPasswordPage({ onBack }) {
                       background: isDark?'rgba(255,255,255,0.044)':'rgba(0,0,0,0.024)',
                       border: isDark?'1px solid rgba(255,255,255,0.088)':'1px solid rgba(0,0,0,0.088)',
                       borderRadius:'10px', padding:'10px 13px',
-                      color: isDark?'#f1f5f9':'#0f172a' }}
-                    onFocus={e => { e.target.style.borderColor='rgba(255,77,0,0.52)'; e.target.style.boxShadow='0 0 0 3px rgba(255,77,0,0.10)'; e.target.style.background=isDark?'rgba(255,255,255,0.06)':'#fff'; }}
+                      color: isDark?'#fafaf9':'#0b0b0f' }}
+                    onFocus={e => { e.target.style.borderColor='rgba(202,138,4,0.52)'; e.target.style.boxShadow='0 0 0 3px rgba(202,138,4,0.10)'; e.target.style.background=isDark?'rgba(255,255,255,0.06)':'#fff'; }}
                     onBlur={e => { e.target.style.borderColor=isDark?'rgba(255,255,255,0.088)':'rgba(0,0,0,0.088)'; e.target.style.boxShadow='none'; e.target.style.background=isDark?'rgba(255,255,255,0.044)':'rgba(0,0,0,0.024)'; }}
                   />
                 </div>
 
                 <button type="submit" disabled={loading}
                   style={{ width:'100%', padding:'11px',
-                    background: loading?'rgba(255,77,0,0.45)':'linear-gradient(135deg,#FF4D00 0%,#FF7A00 100%)',
+                    background: loading?'rgba(202,138,4,0.45)':'linear-gradient(135deg,#CA8A04 0%,#FBBF24 100%)',
                     border:'none', borderRadius:'11px', color:'#fff', fontSize:'13.5px', fontWeight:600,
                     cursor: loading?'not-allowed':'pointer', transition:'all 0.18s ease',
                     display:'flex', alignItems:'center', justifyContent:'center', gap:'7px',
-                    boxShadow: loading?'none':'0 2px 14px rgba(255,77,0,0.38), 0 1px 3px rgba(255,77,0,0.22)',
+                    boxShadow: loading?'none':'0 2px 14px rgba(202,138,4,0.38), 0 1px 3px rgba(202,138,4,0.22)',
                     letterSpacing:'0.01em' }}
-                  onMouseEnter={e => { if(!loading){ e.currentTarget.style.transform='translateY(-1.5px)'; e.currentTarget.style.boxShadow='0 8px 28px rgba(255,77,0,0.50), 0 2px 8px rgba(255,77,0,0.28)'; }}}
-                  onMouseLeave={e => { e.currentTarget.style.transform=''; e.currentTarget.style.boxShadow=loading?'none':'0 2px 14px rgba(255,77,0,0.38), 0 1px 3px rgba(255,77,0,0.22)'; }}
+                  onMouseEnter={e => { if(!loading){ e.currentTarget.style.transform='translateY(-1.5px)'; e.currentTarget.style.boxShadow='0 8px 28px rgba(202,138,4,0.50), 0 2px 8px rgba(202,138,4,0.28)'; }}}
+                  onMouseLeave={e => { e.currentTarget.style.transform=''; e.currentTarget.style.boxShadow=loading?'none':'0 2px 14px rgba(202,138,4,0.38), 0 1px 3px rgba(202,138,4,0.22)'; }}
                   onMouseDown={e => { if(!loading) e.currentTarget.style.transform='scale(0.985)'; }}
                   onMouseUp={e => { if(!loading) e.currentTarget.style.transform='translateY(-1.5px)'; }}>
                   {loading ? <><Loader2 size={14} className="animate-spin"/><span>Sending…</span></> : <span>Send reset link</span>}
@@ -208,9 +208,9 @@ export default function ForgotPasswordPage({ onBack }) {
         <p style={{ marginTop:'20px', fontSize:'13px', color: isDark?'rgba(255,255,255,0.32)':'#94a3b8', animation:'cardIn 0.45s ease 0.1s both' }}>
           Remember it?{' '}
           <button onClick={onBack}
-            style={{ color:'#FF7A00', background:'none', border:'none', cursor:'pointer', fontSize:'13px', padding:0, fontWeight:500, transition:'color 0.12s' }}
+            style={{ color:'#FBBF24', background:'none', border:'none', cursor:'pointer', fontSize:'13px', padding:0, fontWeight:500, transition:'color 0.12s' }}
             onMouseEnter={e => e.currentTarget.style.color='#FF9A40'}
-            onMouseLeave={e => e.currentTarget.style.color='#FF7A00'}>
+            onMouseLeave={e => e.currentTarget.style.color='#FBBF24'}>
             Back to sign in →
           </button>
         </p>

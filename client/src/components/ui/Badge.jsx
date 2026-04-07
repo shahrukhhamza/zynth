@@ -43,7 +43,7 @@ export function Badge({
     primary: {
       background: theme.accentGlow,
       color:      theme.primary,
-      borderColor: `rgba(59,130,246,0.25)`,
+      borderColor: `rgba(202,138,4,0.25)`,
     },
     success: {
       background: 'rgba(16,185,129,0.1)',

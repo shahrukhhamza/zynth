@@ -25,7 +25,7 @@ function sentimentColor(sentiment) {
   const s = String(sentiment || '').toLowerCase();
   if (s.includes('bull')) return 'text-emerald-500';
   if (s.includes('bear')) return 'text-red-500';
-  return 'text-slate-400 dark:text-slate-400';
+  return 'text-zinc-400 dark:text-zinc-400';
 }
 
 export default function HeroSummary({ macroData }) {
@@ -36,13 +36,13 @@ export default function HeroSummary({ macroData }) {
   const confCfg   = CONF_COLOR[conf.level]                 ?? CONF_COLOR.Medium;
   const statusCfg = STATUS_CONFIG[macroData.status ?? 'live'] ?? STATUS_CONFIG.live;
   const score     = macroData.score ?? 0;
-  const scoreColor = score > 0 ? 'text-emerald-500' : score < 0 ? 'text-red-500' : 'text-slate-400';
+  const scoreColor = score > 0 ? 'text-emerald-500' : score < 0 ? 'text-red-500' : 'text-zinc-400';
 
   const { bullishCount = 0, bearishCount = 0, neutralCount = 0, totalIndicators = 0 } =
     macroData.summary ?? {};
 
   return (
-    <section className="relative overflow-hidden rounded-2xl border border-slate-200 bg-white dark:border-white/[0.07] dark:bg-slate-900">
+    <section className="relative overflow-hidden rounded-2xl border border-zinc-200 bg-white dark:border-white/[0.07] dark:bg-zinc-900">
       {/* Directional gradient tint */}
       <div
         className="pointer-events-none absolute inset-0 opacity-[0.05]"
@@ -71,7 +71,7 @@ export default function HeroSummary({ macroData }) {
               {conf.level} Confidence · {conf.value}%
             </span>
           </div>
-          <time className="text-[11px] tabular-nums text-slate-400 dark:text-slate-500">
+          <time className="text-[11px] tabular-nums text-zinc-400 dark:text-zinc-500">
             {formatRelativeTime(macroData.meta?.lastUpdated)}
           </time>
         </div>
@@ -83,10 +83,10 @@ export default function HeroSummary({ macroData }) {
               {score > 0 ? '+' : ''}{score}
             </span>
             <div className="flex flex-col gap-0.5 pb-1.5">
-              <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500">
+              <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-400 dark:text-zinc-500">
                 Macro Score
               </span>
-              <span className="text-[11px] text-slate-400 dark:text-slate-500">/ 10 scale</span>
+              <span className="text-[11px] text-zinc-400 dark:text-zinc-500">/ 10 scale</span>
             </div>
           </div>
 
@@ -94,7 +94,7 @@ export default function HeroSummary({ macroData }) {
             <p className={`text-2xl font-bold tracking-tight ${sentimentColor(macroData.sentiment)}`}>
               {macroData.sentiment}
             </p>
-            <p className="mt-0.5 text-[11px] text-slate-400 dark:text-slate-500 tabular-nums">
+            <p className="mt-0.5 text-[11px] text-zinc-400 dark:text-zinc-500 tabular-nums">
               {totalIndicators} indicators
               &thinsp;&middot;&thinsp;
               <span className="text-emerald-500">{bullishCount} bullish</span>
@@ -108,14 +108,14 @@ export default function HeroSummary({ macroData }) {
 
         {/* ── Confidence bar ───────────────────────────────────────────────── */}
         <div className="mt-5 max-w-xs">
-          <div className="h-[3px] overflow-hidden rounded-full bg-slate-100 dark:bg-white/8">
+          <div className="h-[3px] overflow-hidden rounded-full bg-zinc-100 dark:bg-white/8">
             <div
               className={`h-full rounded-full transition-all duration-500 ${confCfg.bar}`}
               style={{ width: `${conf.value}%` }}
             />
           </div>
           {conf.label && (
-            <p className="mt-1.5 text-[11px] italic text-slate-400 dark:text-slate-500">{conf.label}</p>
+            <p className="mt-1.5 text-[11px] italic text-zinc-400 dark:text-zinc-500">{conf.label}</p>
           )}
         </div>
       </div>

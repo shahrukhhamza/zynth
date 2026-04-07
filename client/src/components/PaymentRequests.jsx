@@ -42,7 +42,7 @@ function StatusBadge({ status }) {
 
 // ── Plan badge ────────────────────────────────────────────────────────────────
 const PLAN_STYLES = {
-  pro:   { bg: 'rgba(59,130,246,0.12)', color: '#60a5fa', border: 'rgba(59,130,246,0.3)' },
+  pro:   { bg: 'rgba(202,138,4,0.12)', color: '#CA8A04', border: 'rgba(202,138,4,0.3)' },
   elite: { bg: 'rgba(245,158,11,0.12)', color: '#fbbf24', border: 'rgba(245,158,11,0.3)' },
 };
 function PlanBadge({ plan }) {
@@ -151,7 +151,7 @@ export default function PaymentRequests() {
         style={{ borderBottom: collapsed ? 'none' : `1px solid ${theme.border}` }}
       >
         <div className="flex items-center gap-3">
-          <div style={{ padding: '7px', borderRadius: 10, background: 'rgba(59,130,246,0.12)', color: '#3b82f6', display: 'flex' }}>
+          <div style={{ padding: '7px', borderRadius: 10, background: 'rgba(202,138,4,0.12)', color: '#CA8A04', display: 'flex' }}>
             <CreditCard size={16} />
           </div>
           <div>
@@ -193,9 +193,9 @@ export default function PaymentRequests() {
                 onClick={() => setFilter(f)}
                 className="px-3 py-1.5 rounded-lg text-[11px] font-semibold capitalize transition-all"
                 style={{
-                  background:  filter === f ? 'rgba(59,130,246,0.12)' : 'transparent',
-                  color:       filter === f ? '#60a5fa' : theme.muted,
-                  border:      `1px solid ${filter === f ? 'rgba(59,130,246,0.3)' : 'transparent'}`,
+                  background:  filter === f ? 'rgba(202,138,4,0.12)' : 'transparent',
+                  color:       filter === f ? '#CA8A04' : theme.muted,
+                  border:      `1px solid ${filter === f ? 'rgba(202,138,4,0.3)' : 'transparent'}`,
                 }}
               >
                 {f === 'all' ? `All (${requests.length})` : (
@@ -285,7 +285,7 @@ export default function PaymentRequests() {
                                   target="_blank"
                                   rel="noopener noreferrer"
                                   title="View screenshot"
-                                  style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '4px 8px', borderRadius: 8, background: 'rgba(59,130,246,0.10)', color: '#60a5fa', fontSize: 11, fontWeight: 600, textDecoration: 'none', border: '1px solid rgba(59,130,246,0.2)' }}
+                                  style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '4px 8px', borderRadius: 8, background: 'rgba(202,138,4,0.10)', color: '#CA8A04', fontSize: 11, fontWeight: 600, textDecoration: 'none', border: '1px solid rgba(202,138,4,0.2)' }}
                                 >
                                   <Image size={12} />
                                   View

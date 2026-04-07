@@ -104,16 +104,16 @@ export default function SocialProofToast() {
               }}
             >
               {/* Left accent bar */}
-              <div className="w-[3px] self-stretch rounded-r-full shrink-0 bg-gradient-to-b from-blue-500 to-violet-500" />
+              <div className="w-[3px] self-stretch rounded-r-full shrink-0 bg-gradient-to-b from-yellow-500 to-yellow-400" />
 
               {/* Icon */}
               <div
                 className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg"
                 style={{
-                  background: isDark ? 'rgba(99,102,241,0.15)' : 'rgba(99,102,241,0.09)',
+                  background: isDark ? 'rgba(202,138,4,0.15)' : 'rgba(202,138,4,0.09)',
                 }}
               >
-                <current.Icon size={13} className="text-indigo-500" />
+                <current.Icon size={13} className="text-yellow-500" />
               </div>
 
               {/* Text */}
@@ -126,14 +126,14 @@ export default function SocialProofToast() {
                   </span>
                   <span
                     className="text-[10px] font-bold uppercase tracking-[0.1em]"
-                    style={{ color: isDark ? '#6366f1' : '#6366f1' }}
+                    style={{ color: isDark ? '#CA8A04' : '#A16207' }}
                   >
                     {current.label}
                   </span>
                 </div>
                 <p
                   className="text-[12px] leading-snug"
-                  style={{ color: isDark ? '#d1d5db' : '#374151' }}
+                  style={{ color: isDark ? '#a1a1aa' : '#3f3f46' }}
                 >
                   {current.text}
                 </p>

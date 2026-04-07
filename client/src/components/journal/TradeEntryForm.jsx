@@ -122,15 +122,15 @@ export default function TradeEntryForm({ onSaved, editTrade = null }) {
   const theme = useTheme();
   const isDark = !!theme.isDark;
   const palette = {
-    page: isDark ? '#0b1220' : '#f8fafc',
-    card: isDark ? '#111827' : '#ffffff',
+    page: isDark ? '#0b0b0f' : '#f8fafc',
+    card: isDark ? '#0b0b0f' : '#ffffff',
     soft: isDark ? 'rgba(255,255,255,0.05)' : '#f8fafc',
-    text: isDark ? '#f9fafb' : '#111827',
+    text: isDark ? '#f9fafb' : '#0b0b0f',
     sub: isDark ? '#9ca3af' : '#6b7280',
     muted: isDark ? '#6b7280' : '#94a3b8',
     green: isDark ? '#10b981' : '#059669',
     red: isDark ? '#ef4444' : '#dc2626',
-    blue: isDark ? '#60a5fa' : '#2563eb',
+    blue: isDark ? '#CA8A04' : '#CA8A04',
   };
 
   const fileRef = useRef(null);
@@ -303,13 +303,13 @@ export default function TradeEntryForm({ onSaved, editTrade = null }) {
       <div className="max-w-3xl mx-auto">
         {successTrade ? (
           <div
-            className="rounded-[28px] transition-all duration-200 hover:-translate-y-[2px]"
+            className="rounded-[28px] transition-all duration-200 hover:-tranzinc-y-[2px]"
             style={{ background: palette.card, boxShadow: cardShadow(isDark), padding: 20 }}
           >
             <div className="flex items-start gap-3 mb-5">
               <div
                 className="w-11 h-11 rounded-2xl flex items-center justify-center flex-shrink-0"
-                style={{ background: isDark ? 'rgba(37,99,235,0.18)' : 'rgba(37,99,235,0.12)' }}
+                style={{ background: isDark ? 'rgba(161,98,7,0.18)' : 'rgba(161,98,7,0.12)' }}
               >
                 <Check size={20} style={{ color: palette.blue }} />
               </div>
@@ -327,7 +327,7 @@ export default function TradeEntryForm({ onSaved, editTrade = null }) {
                 <p className="text-[11px] font-semibold uppercase tracking-widest m-0" style={{ color: palette.sub }}>Trade Quality</p>
                 <p className="text-4xl font-bold tracking-tight m-0 mt-2" style={{ color: palette.blue }}>{aiInsight.quality}</p>
               </div>
-              <div className="rounded-2xl p-4" style={{ background: isDark ? 'rgba(37,99,235,0.16)' : 'rgba(37,99,235,0.10)' }}>
+              <div className="rounded-2xl p-4" style={{ background: isDark ? 'rgba(161,98,7,0.16)' : 'rgba(161,98,7,0.10)' }}>
                 <p className="text-[11px] font-semibold uppercase tracking-widest m-0" style={{ color: palette.sub }}>Psychology</p>
                 <p className="text-4xl font-bold tracking-tight m-0 mt-2" style={{ color: palette.blue }}>{aiInsight.psychology}</p>
               </div>
@@ -367,8 +367,8 @@ export default function TradeEntryForm({ onSaved, editTrade = null }) {
                 style={{
                   border: 'none',
                   color: '#ffffff',
-                  background: '#2563eb',
-                  boxShadow: '0 10px 24px rgba(37,99,235,0.30)',
+                  background: '#CA8A04',
+                  boxShadow: '0 10px 24px rgba(161,98,7,0.30)',
                   opacity: savingReflection ? 0.6 : 1,
                 }}
               >
@@ -396,7 +396,7 @@ export default function TradeEntryForm({ onSaved, editTrade = null }) {
         ) : (
           <form onSubmit={handleSubmit}>
             <div
-              className="rounded-[28px] transition-all duration-200 hover:-translate-y-[2px]"
+              className="rounded-[28px] transition-all duration-200 hover:-tranzinc-y-[2px]"
               style={{ background: palette.card, boxShadow: cardShadow(isDark), padding: 20 }}
             >
               <div className="mb-5">
@@ -413,7 +413,7 @@ export default function TradeEntryForm({ onSaved, editTrade = null }) {
                     onChange={(e) => set('pair', e.target.value.toUpperCase())}
                     placeholder="e.g. XAU"
                     style={inputStyle(isDark, palette.text)}
-                    onFocus={(e) => { e.currentTarget.style.boxShadow = 'inset 0 0 0 2px #2563eb'; }}
+                    onFocus={(e) => { e.currentTarget.style.boxShadow = 'inset 0 0 0 2px #CA8A04'; }}
                     onBlur={(e) => { e.currentTarget.style.boxShadow = isDark ? 'inset 0 0 0 1px rgba(255,255,255,0.04)' : 'inset 0 0 0 1px rgba(15,23,42,0.05)'; }}
                   />
                   {suggestions.length > 0 && !suggestions.includes((form.pair || '').trim().toUpperCase()) && (
@@ -427,7 +427,7 @@ export default function TradeEntryForm({ onSaved, editTrade = null }) {
                           style={{
                             border: 'none',
                             color: palette.blue,
-                            background: isDark ? 'rgba(96,165,250,0.16)' : 'rgba(37,99,235,0.10)',
+                            background: isDark ? 'rgba(96,165,250,0.16)' : 'rgba(161,98,7,0.10)',
                           }}
                         >
                           {suggestion}
@@ -451,8 +451,8 @@ export default function TradeEntryForm({ onSaved, editTrade = null }) {
                           style={{
                             border: 'none',
                             color: active ? '#ffffff' : palette.sub,
-                            background: active ? '#2563eb' : palette.soft,
-                            boxShadow: active ? '0 10px 20px rgba(37,99,235,0.28)' : 'none',
+                            background: active ? '#CA8A04' : palette.soft,
+                            boxShadow: active ? '0 10px 20px rgba(161,98,7,0.28)' : 'none',
                           }}
                         >
                           {direction === 'buy' ? <TrendingUp size={14} /> : <TrendingDown size={14} />}
@@ -466,7 +466,7 @@ export default function TradeEntryForm({ onSaved, editTrade = null }) {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <div>
                     <label style={labelStyle(palette.sub)}>Entry Price</label>
-                    <input type="number" step="any" value={form.entry_price} onChange={(e) => set('entry_price', e.target.value)} placeholder="0.00" style={inputStyle(isDark, palette.text)} onFocus={(e) => { e.currentTarget.style.boxShadow = 'inset 0 0 0 2px #2563eb'; }} onBlur={(e) => { e.currentTarget.style.boxShadow = isDark ? 'inset 0 0 0 1px rgba(255,255,255,0.04)' : 'inset 0 0 0 1px rgba(15,23,42,0.05)'; }} />
+                    <input type="number" step="any" value={form.entry_price} onChange={(e) => set('entry_price', e.target.value)} placeholder="0.00" style={inputStyle(isDark, palette.text)} onFocus={(e) => { e.currentTarget.style.boxShadow = 'inset 0 0 0 2px #CA8A04'; }} onBlur={(e) => { e.currentTarget.style.boxShadow = isDark ? 'inset 0 0 0 1px rgba(255,255,255,0.04)' : 'inset 0 0 0 1px rgba(15,23,42,0.05)'; }} />
                   </div>
                   <div>
                     <label style={labelStyle(palette.sub)}>Profit / Loss</label>
@@ -480,7 +480,7 @@ export default function TradeEntryForm({ onSaved, editTrade = null }) {
                         ...inputStyle(isDark, palette.text),
                         color: Number.parseFloat(form.profit_loss) > 0 ? palette.green : Number.parseFloat(form.profit_loss) < 0 ? palette.red : palette.text,
                       }}
-                      onFocus={(e) => { e.currentTarget.style.boxShadow = 'inset 0 0 0 2px #2563eb'; }}
+                      onFocus={(e) => { e.currentTarget.style.boxShadow = 'inset 0 0 0 2px #CA8A04'; }}
                       onBlur={(e) => { e.currentTarget.style.boxShadow = isDark ? 'inset 0 0 0 1px rgba(255,255,255,0.04)' : 'inset 0 0 0 1px rgba(15,23,42,0.05)'; }}
                     />
                   </div>
@@ -512,22 +512,22 @@ export default function TradeEntryForm({ onSaved, editTrade = null }) {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     <div>
                       <label style={labelStyle(palette.sub)}>Stop Loss</label>
-                      <input type="number" step="any" value={form.sl} onChange={(e) => set('sl', e.target.value)} placeholder="0.00" style={inputStyle(isDark, palette.text)} onFocus={(e) => { e.currentTarget.style.boxShadow = 'inset 0 0 0 2px #2563eb'; }} onBlur={(e) => { e.currentTarget.style.boxShadow = isDark ? 'inset 0 0 0 1px rgba(255,255,255,0.04)' : 'inset 0 0 0 1px rgba(15,23,42,0.05)'; }} />
+                      <input type="number" step="any" value={form.sl} onChange={(e) => set('sl', e.target.value)} placeholder="0.00" style={inputStyle(isDark, palette.text)} onFocus={(e) => { e.currentTarget.style.boxShadow = 'inset 0 0 0 2px #CA8A04'; }} onBlur={(e) => { e.currentTarget.style.boxShadow = isDark ? 'inset 0 0 0 1px rgba(255,255,255,0.04)' : 'inset 0 0 0 1px rgba(15,23,42,0.05)'; }} />
                     </div>
                     <div>
                       <label style={labelStyle(palette.sub)}>Take Profit</label>
-                      <input type="number" step="any" value={form.tp} onChange={(e) => set('tp', e.target.value)} placeholder="0.00" style={inputStyle(isDark, palette.text)} onFocus={(e) => { e.currentTarget.style.boxShadow = 'inset 0 0 0 2px #2563eb'; }} onBlur={(e) => { e.currentTarget.style.boxShadow = isDark ? 'inset 0 0 0 1px rgba(255,255,255,0.04)' : 'inset 0 0 0 1px rgba(15,23,42,0.05)'; }} />
+                      <input type="number" step="any" value={form.tp} onChange={(e) => set('tp', e.target.value)} placeholder="0.00" style={inputStyle(isDark, palette.text)} onFocus={(e) => { e.currentTarget.style.boxShadow = 'inset 0 0 0 2px #CA8A04'; }} onBlur={(e) => { e.currentTarget.style.boxShadow = isDark ? 'inset 0 0 0 1px rgba(255,255,255,0.04)' : 'inset 0 0 0 1px rgba(15,23,42,0.05)'; }} />
                     </div>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     <div>
                       <label style={labelStyle(palette.sub)}>Position Size</label>
-                      <input type="number" step="0.01" value={form.position_size} onChange={(e) => set('position_size', e.target.value)} placeholder="0.01" style={inputStyle(isDark, palette.text)} onFocus={(e) => { e.currentTarget.style.boxShadow = 'inset 0 0 0 2px #2563eb'; }} onBlur={(e) => { e.currentTarget.style.boxShadow = isDark ? 'inset 0 0 0 1px rgba(255,255,255,0.04)' : 'inset 0 0 0 1px rgba(15,23,42,0.05)'; }} />
+                      <input type="number" step="0.01" value={form.position_size} onChange={(e) => set('position_size', e.target.value)} placeholder="0.01" style={inputStyle(isDark, palette.text)} onFocus={(e) => { e.currentTarget.style.boxShadow = 'inset 0 0 0 2px #CA8A04'; }} onBlur={(e) => { e.currentTarget.style.boxShadow = isDark ? 'inset 0 0 0 1px rgba(255,255,255,0.04)' : 'inset 0 0 0 1px rgba(15,23,42,0.05)'; }} />
                     </div>
                     <div>
                       <label style={labelStyle(palette.sub)}>Session</label>
-                      <select value={form.session} onChange={(e) => set('session', e.target.value)} style={inputStyle(isDark, palette.text)} onFocus={(e) => { e.currentTarget.style.boxShadow = 'inset 0 0 0 2px #2563eb'; }} onBlur={(e) => { e.currentTarget.style.boxShadow = isDark ? 'inset 0 0 0 1px rgba(255,255,255,0.04)' : 'inset 0 0 0 1px rgba(15,23,42,0.05)'; }}>
+                      <select value={form.session} onChange={(e) => set('session', e.target.value)} style={inputStyle(isDark, palette.text)} onFocus={(e) => { e.currentTarget.style.boxShadow = 'inset 0 0 0 2px #CA8A04'; }} onBlur={(e) => { e.currentTarget.style.boxShadow = isDark ? 'inset 0 0 0 1px rgba(255,255,255,0.04)' : 'inset 0 0 0 1px rgba(15,23,42,0.05)'; }}>
                         <option value="">Select session</option>
                         {SESSIONS.map((session) => <option key={session.value} value={session.value}>{session.label}</option>)}
                       </select>
@@ -537,7 +537,7 @@ export default function TradeEntryForm({ onSaved, editTrade = null }) {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     <div>
                       <label style={labelStyle(palette.sub)}>Strategy</label>
-                      <select value={form.strategy} onChange={(e) => set('strategy', e.target.value)} style={inputStyle(isDark, palette.text)} onFocus={(e) => { e.currentTarget.style.boxShadow = 'inset 0 0 0 2px #2563eb'; }} onBlur={(e) => { e.currentTarget.style.boxShadow = isDark ? 'inset 0 0 0 1px rgba(255,255,255,0.04)' : 'inset 0 0 0 1px rgba(15,23,42,0.05)'; }}>
+                      <select value={form.strategy} onChange={(e) => set('strategy', e.target.value)} style={inputStyle(isDark, palette.text)} onFocus={(e) => { e.currentTarget.style.boxShadow = 'inset 0 0 0 2px #CA8A04'; }} onBlur={(e) => { e.currentTarget.style.boxShadow = isDark ? 'inset 0 0 0 1px rgba(255,255,255,0.04)' : 'inset 0 0 0 1px rgba(15,23,42,0.05)'; }}>
                         <option value="">Select strategy</option>
                         {STRATEGIES.map((strategy) => <option key={strategy} value={strategy}>{strategy}</option>)}
                       </select>
@@ -545,7 +545,7 @@ export default function TradeEntryForm({ onSaved, editTrade = null }) {
 
                     <div>
                       <label style={labelStyle(palette.sub)}>Emotional State</label>
-                      <select value={form.emotional_state} onChange={(e) => set('emotional_state', e.target.value)} style={inputStyle(isDark, palette.text)} onFocus={(e) => { e.currentTarget.style.boxShadow = 'inset 0 0 0 2px #2563eb'; }} onBlur={(e) => { e.currentTarget.style.boxShadow = isDark ? 'inset 0 0 0 1px rgba(255,255,255,0.04)' : 'inset 0 0 0 1px rgba(15,23,42,0.05)'; }}>
+                      <select value={form.emotional_state} onChange={(e) => set('emotional_state', e.target.value)} style={inputStyle(isDark, palette.text)} onFocus={(e) => { e.currentTarget.style.boxShadow = 'inset 0 0 0 2px #CA8A04'; }} onBlur={(e) => { e.currentTarget.style.boxShadow = isDark ? 'inset 0 0 0 1px rgba(255,255,255,0.04)' : 'inset 0 0 0 1px rgba(15,23,42,0.05)'; }}>
                         <option value="">Select emotion</option>
                         {EMOTIONS.map((emotion) => <option key={emotion} value={emotion}>{emotion}</option>)}
                       </select>
@@ -585,7 +585,7 @@ export default function TradeEntryForm({ onSaved, editTrade = null }) {
                         className="w-full rounded-2xl p-4 text-center transition-all duration-200"
                         style={{
                           border: 'none',
-                          background: dragging ? (isDark ? 'rgba(96,165,250,0.18)' : 'rgba(37,99,235,0.10)') : palette.soft,
+                          background: dragging ? (isDark ? 'rgba(96,165,250,0.18)' : 'rgba(161,98,7,0.10)') : palette.soft,
                           color: palette.sub,
                         }}
                       >
@@ -606,8 +606,8 @@ export default function TradeEntryForm({ onSaved, editTrade = null }) {
                   border: 'none',
                   color: '#ffffff',
                   opacity: !canSubmit || saving ? 0.55 : 1,
-                  background: '#2563eb',
-                  boxShadow: !canSubmit || saving ? 'none' : '0 12px 28px rgba(37,99,235,0.30)',
+                  background: '#CA8A04',
+                  boxShadow: !canSubmit || saving ? 'none' : '0 12px 28px rgba(161,98,7,0.30)',
                   cursor: !canSubmit || saving ? 'not-allowed' : 'pointer',
                 }}
               >

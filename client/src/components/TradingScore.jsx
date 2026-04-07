@@ -53,7 +53,7 @@ function getTier(score) {
   if (score === null) return { label: 'No data yet', color: '#4b5563', hint: 'Add trades to generate your score' };
   if (score < 30)  return { label: 'Needs Work',    color: '#ef4444', hint: 'Focus on risk management first' };
   if (score < 50)  return { label: 'Developing',    color: '#f59e0b', hint: 'You\'re building the right habits' };
-  if (score < 70)  return { label: 'Improving',     color: '#3b82f6', hint: 'Improve to 75+ to become consistent' };
+  if (score < 70)  return { label: 'Improving',     color: '#CA8A04', hint: 'Improve to 75+ to become consistent' };
   if (score < 85)  return { label: 'Consistent',    color: '#10b981', hint: 'Solid. Push for elite-level discipline' };
   return           { label: 'Elite',              color: '#8b5cf6', hint: 'Exceptional consistency and execution' };
 }
@@ -127,9 +127,9 @@ export default function TradingScore({ analytics, onUpgrade, className = '' }) {
         <div className="flex items-center gap-2">
           <div
             className="w-7 h-7 rounded-lg flex items-center justify-center"
-            style={{ background: 'rgba(59,130,246,0.12)', border: '1px solid rgba(59,130,246,0.18)' }}
+            style={{ background: 'rgba(202,138,4,0.12)', border: '1px solid rgba(202,138,4,0.18)' }}
           >
-            <TrendingUp size={14} style={{ color: '#3b82f6' }} />
+            <TrendingUp size={14} style={{ color: '#CA8A04' }} />
           </div>
           <span className="text-[13px] font-semibold" style={{ color: theme.text }}>
             Trading Score
@@ -217,19 +217,19 @@ export default function TradingScore({ analytics, onUpgrade, className = '' }) {
         {!isPro && (
           <button
             onClick={onUpgrade}
-            className="mt-4 w-full flex items-center justify-between gap-2 px-3.5 py-3 rounded-xl border transition-all hover:-translate-y-0.5"
+            className="mt-4 w-full flex items-center justify-between gap-2 px-3.5 py-3 rounded-xl border transition-all hover:-tranzinc-y-0.5"
             style={{
-              background: theme.isDark ? 'rgba(59,130,246,0.06)' : 'rgba(59,130,246,0.04)',
-              borderColor: 'rgba(59,130,246,0.18)',
+              background: theme.isDark ? 'rgba(202,138,4,0.06)' : 'rgba(202,138,4,0.04)',
+              borderColor: 'rgba(202,138,4,0.18)',
             }}
           >
             <div className="flex items-center gap-2">
-              <Lock size={12} style={{ color: '#3b82f6' }} />
+              <Lock size={12} style={{ color: '#CA8A04' }} />
               <span className="text-[12px] font-medium" style={{ color: theme.text }}>
                 Get your real score
               </span>
             </div>
-            <div className="flex items-center gap-1 text-[11px] font-semibold" style={{ color: '#3b82f6' }}>
+            <div className="flex items-center gap-1 text-[11px] font-semibold" style={{ color: '#CA8A04' }}>
               Upgrade <ArrowRight size={11} />
             </div>
           </button>

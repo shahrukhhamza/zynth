@@ -44,10 +44,10 @@ export function Card({
       cursor: onClick ? 'pointer' : undefined,
     },
     highlighted: {
-      borderColor: 'rgba(59,130,246,0.35)',
+      borderColor: 'rgba(202,138,4,0.35)',
       boxShadow: theme.isDark
-        ? `${theme.shadowMd}, 0 0 0 1px rgba(59,130,246,0.2), 0 0 40px rgba(59,130,246,0.08)`
-        : `${theme.shadow}, 0 0 0 1px rgba(37,99,235,0.12)`,
+        ? `${theme.shadowMd}, 0 0 0 1px rgba(202,138,4,0.2), 0 0 40px rgba(202,138,4,0.08)`
+        : `${theme.shadow}, 0 0 0 1px rgba(161,98,7,0.12)`,
     },
   };
 
@@ -57,10 +57,10 @@ export function Card({
       e.currentTarget.style.transform = 'translateY(-2px)';
     }
     if (variant === 'highlighted') {
-      e.currentTarget.style.borderColor = 'rgba(59,130,246,0.6)';
+      e.currentTarget.style.borderColor = 'rgba(202,138,4,0.6)';
       e.currentTarget.style.boxShadow = theme.isDark
-        ? `${theme.shadowLg}, 0 0 0 1px rgba(59,130,246,0.4), 0 0 60px rgba(59,130,246,0.12)`
-        : `${theme.shadowMd}, 0 0 0 1px rgba(37,99,235,0.25)`;
+        ? `${theme.shadowLg}, 0 0 0 1px rgba(202,138,4,0.4), 0 0 60px rgba(202,138,4,0.12)`
+        : `${theme.shadowMd}, 0 0 0 1px rgba(161,98,7,0.25)`;
     }
   }
   function handleMouseLeave(e) {

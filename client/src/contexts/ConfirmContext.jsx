@@ -20,7 +20,7 @@ const ConfirmContext = createContext(null);
 const VARIANT = {
   danger:  { icon: Trash2,         iconColor: '#ef4444', confirmBg: '#ef4444', confirmHover: '#dc2626' },
   warning: { icon: AlertTriangle,  iconColor: '#f59e0b', confirmBg: '#f59e0b', confirmHover: '#d97706' },
-  default: { icon: Info,           iconColor: '#3b82f6', confirmBg: '#3b82f6', confirmHover: '#2563eb' },
+  default: { icon: Info,           iconColor: '#CA8A04', confirmBg: '#CA8A04', confirmHover: '#A16207' },
 };
 
 export function ConfirmProvider({ children }) {

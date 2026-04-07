@@ -1,4 +1,4 @@
-﻿import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { BookOpen, Search, ChevronRight, ArrowLeft, Rocket, BookMarked, Bot, BarChart2, Calendar, Camera, Calculator, CreditCard, Settings, Shield, Star, X, Home, Mail, LifeBuoy, Clock3, ArrowUpRight, Bug, Lightbulb, MessageSquare } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 import { getPlanMonthlyLabel } from '../config/pricingPlans';
@@ -9,7 +9,7 @@ const ELITE_MONTHLY_PRICE = getPlanMonthlyLabel('elite');
 // -- Article database ---------------------------------------------------------
 const CATEGORIES = [
   {
-    key: 'getting-started', icon: Rocket, color: '#3b82f6', title: 'Getting Started',
+    key: 'getting-started', icon: Rocket, color: '#CA8A04', title: 'Getting Started',
     description: 'New to Zynth? Start here to set up your account and learn the basics.',
     articles: [
       {
@@ -108,7 +108,7 @@ You can skip onboarding and complete it later from your Profile.
     ],
   },
   {
-    key: 'journal', icon: BookMarked, color: '#6366f1', title: 'Trade Journal',
+    key: 'journal', icon: BookMarked, color: '#CA8A04', title: 'Trade Journal',
     description: 'Learn how to log trades, read analytics, and use AI coaching.',
     articles: [
       {
@@ -426,7 +426,7 @@ This feature requires an Elite subscription. Open the upgrade modal to continue.
     ],
   },
   {
-    key: 'markets', icon: BarChart2, color: '#0ea5e9', title: 'Market Data',
+    key: 'markets', icon: BarChart2, color: '#CA8A04', title: 'Market Data',
     description: 'Live data tiers, the TradingView chart, and the market session guide.',
     articles: [
       {
@@ -1039,7 +1039,7 @@ const POPULAR_ARTICLE_IDS = ['welcome', 'first-trade', 'ai-analysis', 'how-to-up
 
 // -- Markdown-like renderer ----------------------------------------------------
 function RenderContent({ content, theme }) {
-  const surface2 = theme.isDark ? '#1a2436' : '#f1f5f9';
+  const surface2 = theme.isDark ? '#1a2436' : '#fafaf9';
   const border   = theme.border;
 
   const lines = content.split('\n');
@@ -1060,8 +1060,8 @@ function RenderContent({ content, theme }) {
       }
       elements.push(
         <div key={i} style={{
-          borderLeft: `3px solid ${isWarn ? '#f59e0b' : '#3b82f6'}`,
-          background: isWarn ? 'rgba(245,158,11,0.08)' : 'rgba(59,130,246,0.08)',
+          borderLeft: `3px solid ${isWarn ? '#f59e0b' : '#CA8A04'}`,
+          background: isWarn ? 'rgba(245,158,11,0.08)' : 'rgba(202,138,4,0.08)',
           borderRadius: '0 8px 8px 0',
           padding: '10px 16px',
           margin: '14px 0',
@@ -1089,7 +1089,7 @@ function RenderContent({ content, theme }) {
           <table style={{ borderCollapse: 'collapse', width: '100%', minWidth: 620 }}>
             <thead>
               <tr>{(tableRows[0] || []).map((c, j) => (
-                <th key={j} style={{ padding: '8px 12px', textAlign: 'left', fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: theme.muted, borderBottom: `2px solid #3b82f6`, whiteSpace: 'nowrap' }}>{c.trim()}</th>
+                <th key={j} style={{ padding: '8px 12px', textAlign: 'left', fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: theme.muted, borderBottom: `2px solid #CA8A04`, whiteSpace: 'nowrap' }}>{c.trim()}</th>
               ))}</tr>
             </thead>
             <tbody>
@@ -1192,7 +1192,7 @@ function renderInline(text, theme) {
   while ((m = re.exec(text)) !== null) {
     if (m.index > last) parts.push(text.slice(last, m.index));
     if (m[2]) parts.push(<strong key={m.index} style={{ fontWeight: 700 }}>{m[2]}</strong>);
-    else if (m[3]) parts.push(<code key={m.index} style={{ fontFamily: 'monospace', fontSize: 13, background: theme.isDark ? theme.surface2 : '#f1f5f9', padding: '1px 6px', borderRadius: 4, color: '#3b82f6' }}>{m[3]}</code>);
+    else if (m[3]) parts.push(<code key={m.index} style={{ fontFamily: 'monospace', fontSize: 13, background: theme.isDark ? theme.surface2 : '#fafaf9', padding: '1px 6px', borderRadius: 4, color: '#CA8A04' }}>{m[3]}</code>);
     last = m.index + m[0].length;
   }
   if (last < text.length) parts.push(text.slice(last));
@@ -1220,7 +1220,7 @@ export default function HelpCenter() {
   const border    = theme.border;
   const text0     = theme.text;
   const textMuted = theme.muted;
-  const accent    = '#3b82f6';
+  const accent    = '#CA8A04';
 
   const searchResults = useMemo(() => {
     if (!query.trim()) return [];
@@ -1249,7 +1249,7 @@ export default function HelpCenter() {
   const feedbackActions = [
     { key: 'feature', title: 'Request a Feature',  description: 'Share product ideas and workflow improvements.', icon: Lightbulb,    color: '#f59e0b', href: 'mailto:getzynth@gmail.com?subject=Feature%20Request' },
     { key: 'bug',     title: 'Report a Bug',        description: 'Send issues, screenshots and steps to reproduce.', icon: Bug,      color: '#ef4444', href: 'mailto:getzynth@gmail.com?subject=Bug%20Report' },
-    { key: 'product', title: 'General Feedback',    description: "Tell us what's confusing or should improve.",  icon: MessageSquare, color: '#3b82f6', href: 'mailto:getzynth@gmail.com?subject=Product%20Feedback' },
+    { key: 'product', title: 'General Feedback',    description: "Tell us what's confusing or should improve.",  icon: MessageSquare, color: '#CA8A04', href: 'mailto:getzynth@gmail.com?subject=Product%20Feedback' },
   ];
 
   return (
@@ -1269,7 +1269,7 @@ export default function HelpCenter() {
                 onChange={e => setQuery(e.target.value)}
                 placeholder="Search..."
                 style={{ width: '100%', padding: '8px 10px 8px 30px', borderRadius: 8, border: `1px solid ${border}`, background: bg1, color: text0, fontSize: 14, outline: 'none', boxSizing: 'border-box' }}
-                onFocus={e => { e.target.style.borderColor = accent; e.target.style.boxShadow = '0 0 0 3px rgba(59,130,246,0.14)'; }}
+                onFocus={e => { e.target.style.borderColor = accent; e.target.style.boxShadow = '0 0 0 3px rgba(202,138,4,0.14)'; }}
                 onBlur={e => { e.target.style.borderColor = border; e.target.style.boxShadow = 'none'; }}
               />
             </div>
@@ -1324,7 +1324,7 @@ export default function HelpCenter() {
                       key={art.id}
                       onClick={() => openArticle(art.id, currentCategory.key)}
                       style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, padding: '13px 16px', borderRadius: 10, background: bg1, border: `1px solid ${border}`, cursor: 'pointer', textAlign: 'left', transition: 'border-color 0.15s, background 0.15s, transform 0.15s' }}
-                      onMouseOver={e => { e.currentTarget.style.borderColor = accent; e.currentTarget.style.background = isDark ? 'rgba(59,130,246,0.04)' : 'rgba(59,130,246,0.02)'; e.currentTarget.style.transform = 'translateX(3px)'; }}
+                      onMouseOver={e => { e.currentTarget.style.borderColor = accent; e.currentTarget.style.background = isDark ? 'rgba(202,138,4,0.04)' : 'rgba(202,138,4,0.02)'; e.currentTarget.style.transform = 'translateX(3px)'; }}
                       onMouseOut={e => { e.currentTarget.style.borderColor = border; e.currentTarget.style.background = bg1; e.currentTarget.style.transform = 'translateX(0)'; }}
                     >
                       <div style={{ minWidth: 0 }}>
@@ -1339,7 +1339,7 @@ export default function HelpCenter() {
             )}
 
             {/* Still need help CTA */}
-            <div style={{ marginTop: 52, padding: '20px 24px', borderRadius: 14, background: isDark ? 'rgba(59,130,246,0.06)' : 'rgba(59,130,246,0.04)', border: '1px solid rgba(59,130,246,0.16)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap' }}>
+            <div style={{ marginTop: 52, padding: '20px 24px', borderRadius: 14, background: isDark ? 'rgba(202,138,4,0.06)' : 'rgba(202,138,4,0.04)', border: '1px solid rgba(202,138,4,0.16)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap' }}>
               <div>
                 <div style={{ color: text0, fontWeight: 700, fontSize: 14, marginBottom: 3 }}>Still need help?</div>
                 <div style={{ color: textMuted, fontSize: 13 }}>Our support team typically replies within 24 hours.</div>
@@ -1384,7 +1384,7 @@ export default function HelpCenter() {
                   key={art.id}
                   onClick={() => openArticle(art.id, currentCategory.key)}
                   style={{ display: 'flex', alignItems: 'center', gap: 16, padding: '16px 20px', borderRadius: 12, background: bg1, border: `1px solid ${border}`, cursor: 'pointer', textAlign: 'left', transition: 'border-color 0.15s, box-shadow 0.15s, transform 0.15s' }}
-                  onMouseOver={e => { e.currentTarget.style.borderColor = accent; e.currentTarget.style.boxShadow = `0 4px 20px rgba(59,130,246,0.1)`; e.currentTarget.style.transform = 'translateY(-1px)'; }}
+                  onMouseOver={e => { e.currentTarget.style.borderColor = accent; e.currentTarget.style.boxShadow = `0 4px 20px rgba(202,138,4,0.1)`; e.currentTarget.style.transform = 'translateY(-1px)'; }}
                   onMouseOut={e => { e.currentTarget.style.borderColor = border; e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.transform = 'translateY(0)'; }}
                 >
                   <div style={{ width: 36, height: 36, borderRadius: 10, background: `${currentCategory.color}14`, border: `1px solid ${currentCategory.color}22`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, color: currentCategory.color, fontSize: 13, fontWeight: 700 }}>
@@ -1420,7 +1420,7 @@ export default function HelpCenter() {
 
             {searchResults.length === 0 ? (
               <div style={{ textAlign: 'center', padding: '60px 28px', background: bg1, border: `1px solid ${border}`, borderRadius: 16 }}>
-                <div style={{ width: 50, height: 50, margin: '0 auto 14px', borderRadius: 14, background: 'rgba(59,130,246,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <div style={{ width: 50, height: 50, margin: '0 auto 14px', borderRadius: 14, background: 'rgba(202,138,4,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <Search size={22} color={accent} />
                 </div>
                 <div style={{ color: text0, fontSize: 18, fontWeight: 700, marginBottom: 8 }}>No results found</div>
@@ -1462,13 +1462,13 @@ export default function HelpCenter() {
             {/* Hero banner */}
             <div style={{
               background: isDark ? 'linear-gradient(135deg, rgba(21,33,69,0.97) 0%, rgba(10,14,29,0.99) 60%, rgba(4,10,24,1) 100%)' : 'linear-gradient(135deg, #eff6ff 0%, #f8fbff 100%)',
-              border: `1px solid ${isDark ? 'rgba(59,130,246,0.2)' : 'rgba(59,130,246,0.14)'}`,
+              border: `1px solid ${isDark ? 'rgba(202,138,4,0.2)' : 'rgba(202,138,4,0.14)'}`,
               borderRadius: isMobile ? 16 : 22,
               padding: isMobile ? '28px 20px' : '42px 44px',
               marginBottom: 32,
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 16 }}>
-                <div style={{ width: 52, height: 52, borderRadius: 16, background: 'linear-gradient(135deg, #2563eb, #06b6d4)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 12px 28px rgba(37,99,235,0.28)', flexShrink: 0 }}>
+                <div style={{ width: 52, height: 52, borderRadius: 16, background: 'linear-gradient(135deg, #CA8A04, #EAB308)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 12px 28px rgba(161,98,7,0.28)', flexShrink: 0 }}>
                   <LifeBuoy size={26} color="#fff" />
                 </div>
                 <div>
@@ -1503,7 +1503,7 @@ export default function HelpCenter() {
                     boxShadow: isDark ? '0 8px 28px rgba(2,6,23,0.32)' : '0 8px 22px rgba(15,23,42,0.07)',
                     transition: 'border-color 0.15s, box-shadow 0.15s',
                   }}
-                  onFocus={e => { e.target.style.borderColor = accent; e.target.style.boxShadow = `0 0 0 3px rgba(59,130,246,0.15), ${isDark ? '0 8px 28px rgba(2,6,23,0.32)' : '0 8px 22px rgba(15,23,42,0.07)'}`; }}
+                  onFocus={e => { e.target.style.borderColor = accent; e.target.style.boxShadow = `0 0 0 3px rgba(202,138,4,0.15), ${isDark ? '0 8px 28px rgba(2,6,23,0.32)' : '0 8px 22px rgba(15,23,42,0.07)'}`; }}
                   onBlur={e => { e.target.style.borderColor = isDark ? 'rgba(148,163,184,0.18)' : border; e.target.style.boxShadow = isDark ? '0 8px 28px rgba(2,6,23,0.32)' : '0 8px 22px rgba(15,23,42,0.07)'; }}
                 />
                 <div style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', display: 'flex', alignItems: 'center', gap: 6 }}>
@@ -1529,7 +1529,7 @@ export default function HelpCenter() {
                       key={art.id}
                       onClick={() => openArticle(art.id, art.categoryKey)}
                       style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '14px 16px', borderRadius: 12, background: bg1, border: `1px solid ${border}`, cursor: 'pointer', textAlign: 'left', transition: 'border-color 0.15s, box-shadow 0.15s, transform 0.15s' }}
-                      onMouseOver={e => { e.currentTarget.style.borderColor = accent; e.currentTarget.style.boxShadow = `0 4px 18px rgba(59,130,246,0.1)`; e.currentTarget.style.transform = 'translateY(-1px)'; }}
+                      onMouseOver={e => { e.currentTarget.style.borderColor = accent; e.currentTarget.style.boxShadow = `0 4px 18px rgba(202,138,4,0.1)`; e.currentTarget.style.transform = 'translateY(-1px)'; }}
                       onMouseOut={e => { e.currentTarget.style.borderColor = border; e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.transform = 'translateY(0)'; }}
                     >
                       <div style={{ width: 38, height: 38, borderRadius: 10, background: `${cat?.color || accent}14`, border: `1px solid ${cat?.color || accent}22`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
@@ -1578,7 +1578,7 @@ export default function HelpCenter() {
               {/* Contact Support */}
               <div style={{ background: bg1, border: `1px solid ${border}`, borderRadius: 16, padding: '24px 22px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 18 }}>
-                  <div style={{ width: 40, height: 40, borderRadius: 12, background: 'rgba(59,130,246,0.12)', border: '1px solid rgba(59,130,246,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <div style={{ width: 40, height: 40, borderRadius: 12, background: 'rgba(202,138,4,0.12)', border: '1px solid rgba(202,138,4,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <Mail size={18} color={accent} />
                   </div>
                   <div>
@@ -1588,11 +1588,11 @@ export default function HelpCenter() {
                 </div>
                 <a
                   href="mailto:getzynth@gmail.com"
-                  style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '14px 16px', borderRadius: 10, textDecoration: 'none', background: isDark ? 'rgba(15,23,42,0.6)' : '#f8fbff', border: '1px solid rgba(59,130,246,0.16)', marginBottom: 12, transition: 'border-color 0.15s' }}
+                  style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '14px 16px', borderRadius: 10, textDecoration: 'none', background: isDark ? 'rgba(15,23,42,0.6)' : '#f8fbff', border: '1px solid rgba(202,138,4,0.16)', marginBottom: 12, transition: 'border-color 0.15s' }}
                   onMouseOver={e => { e.currentTarget.style.borderColor = accent; }}
-                  onMouseOut={e => { e.currentTarget.style.borderColor = 'rgba(59,130,246,0.16)'; }}
+                  onMouseOut={e => { e.currentTarget.style.borderColor = 'rgba(202,138,4,0.16)'; }}
                 >
-                  <div style={{ width: 40, height: 40, borderRadius: 11, background: 'linear-gradient(135deg, #2563eb, #3b82f6)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <div style={{ width: 40, height: 40, borderRadius: 11, background: 'linear-gradient(135deg, #CA8A04, #EAB308)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                     <Mail size={18} color="#fff" />
                   </div>
                   <div style={{ flex: 1 }}>
@@ -1615,7 +1615,7 @@ export default function HelpCenter() {
               <div style={{ background: bg1, border: `1px solid ${border}`, borderRadius: 16, padding: '24px 22px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 18 }}>
                   <div style={{ width: 40, height: 40, borderRadius: 12, background: 'rgba(99,102,241,0.12)', border: '1px solid rgba(99,102,241,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <MessageSquare size={18} color="#6366f1" />
+                    <MessageSquare size={18} color="#CA8A04" />
                   </div>
                   <div>
                     <div style={{ color: text0, fontSize: 16, fontWeight: 800 }}>Feedback & Ideas</div>

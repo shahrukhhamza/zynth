@@ -92,7 +92,7 @@ export default function PaywallModal({ open, onClose, onUpgrade, feature, proble
     setTimeout(() => onUpgrade?.({ plan: selectedPlan, billingCycle }), 240);
   }
 
-  const headingColor = theme.isDark ? '#ffffff' : '#0f172a';
+  const headingColor = theme.isDark ? '#ffffff' : '#0b0b0f';
   const mutedColor   = theme.isDark ? '#9ca3af' : '#64748b';
 
   return (
@@ -119,14 +119,14 @@ export default function PaywallModal({ open, onClose, onUpgrade, feature, proble
               background: theme.surface,
               border: `1px solid ${theme.border}`,
               boxShadow: theme.isDark
-                ? '0 32px 80px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.04), 0 0 60px rgba(59,130,246,0.08)'
+                ? '0 32px 80px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.04), 0 0 60px rgba(202,138,4,0.08)'
                 : '0 32px 80px rgba(0,0,0,0.18)',
             }}
           >
             {/* Gradient top band */}
             <div
               className="h-[3px] w-full"
-              style={{ background: 'linear-gradient(90deg,#1d4ed8,#3b82f6,#06b6d4)' }}
+              style={{ background: 'linear-gradient(90deg,#CA8A04,#EAB308,#FBBF24)' }}
             />
 
             {/* Close button */}
@@ -149,12 +149,12 @@ export default function PaywallModal({ open, onClose, onUpgrade, feature, proble
                 <div
                   className="w-14 h-14 rounded-2xl flex items-center justify-center"
                   style={{
-                    background: 'linear-gradient(135deg,rgba(59,130,246,0.18),rgba(6,182,212,0.10))',
-                    border: '1px solid rgba(59,130,246,0.22)',
-                    boxShadow: '0 0 30px rgba(59,130,246,0.15)',
+                    background: 'linear-gradient(135deg,rgba(202,138,4,0.18),rgba(6,182,212,0.10))',
+                    border: '1px solid rgba(202,138,4,0.22)',
+                    boxShadow: '0 0 30px rgba(202,138,4,0.15)',
                   }}
                 >
-                  <FeatureIcon size={26} style={{ color: '#3b82f6' }} />
+                  <FeatureIcon size={26} style={{ color: '#CA8A04' }} />
                 </div>
               </div>
 

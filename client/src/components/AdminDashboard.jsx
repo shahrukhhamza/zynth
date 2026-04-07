@@ -18,7 +18,7 @@ import {
 /* ── helpers ─────────────────────────────────────────────────────── */
 const PLAN_BADGE = {
   free:  { bg: 'rgba(107,114,128,0.15)', color: '#9ca3af', border: 'rgba(107,114,128,0.25)' },
-  pro:   { bg: 'rgba(59,130,246,0.15)',  color: '#34d399', border: 'rgba(59,130,246,0.35)'  },
+  pro:   { bg: 'rgba(202,138,4,0.15)',  color: '#CA8A04', border: 'rgba(202,138,4,0.35)'  },
   elite: { bg: 'rgba(245,158,11,0.15)',  color: '#fbbf24', border: 'rgba(245,158,11,0.35)'  },
 };
 
@@ -198,10 +198,10 @@ function AdminDashboardInner() {
   }
 
   const STAT_CARDS = [
-    { label: 'Total Signups', value: stats?.totalUsers  ?? '—', color: '#60a5fa', Icon: Users         },
-    { label: 'Today',        value: stats?.todaySignups ?? '—', color: '#34d399', Icon: CalendarCheck  },
-    { label: 'This Week',    value: stats?.weekSignups  ?? '—', color: '#0ea5e9', Icon: CalendarDays   },
-    { label: 'Pro Users',    value: stats?.proUsers     ?? '—', color: '#3b82f6', Icon: Zap            },
+    { label: 'Total Signups', value: stats?.totalUsers  ?? '—', color: '#CA8A04', Icon: Users         },
+    { label: 'Today',        value: stats?.todaySignups ?? '—', color: '#f59e0b', Icon: CalendarCheck  },
+    { label: 'This Week',    value: stats?.weekSignups  ?? '—', color: '#CA8A04', Icon: CalendarDays   },
+    { label: 'Pro Users',    value: stats?.proUsers     ?? '—', color: '#CA8A04', Icon: Zap            },
     { label: 'Elite Users',  value: stats?.eliteUsers   ?? '—', color: '#fbbf24', Icon: Crown          },
     { label: 'Free Users',   value: stats?.freeUsers    ?? '—', color: '#9ca3af', Icon: Shield         },
     { label: 'Est. Revenue', value: stats ? `$${estRevenue}/mo` : '—', color: '#f59e0b', Icon: DollarSign },
@@ -210,7 +210,7 @@ function AdminDashboardInner() {
   const QA_ACTIONS = [
     { key: 'pro',   label: 'Grant Pro',   btnBg: 'linear-gradient(135deg,#059669,#0d9488)' },
     { key: 'elite', label: 'Grant Elite', btnBg: 'linear-gradient(135deg,#d97706,#b45309)' },
-    { key: 'reset', label: 'Reset Tries', btnBg: 'linear-gradient(135deg,#3b82f6,#6366f1)' },
+    { key: 'reset', label: 'Reset Tries', btnBg: 'linear-gradient(135deg,#CA8A04,#EAB308)' },
   ];
 
   /* ── render ────────────────────────────────────────────────────── */
@@ -224,7 +224,7 @@ function AdminDashboardInner() {
         <div className="flex items-center justify-between">
           <div>
             <div className="flex items-center gap-2 mb-0.5">
-              <Crown className="w-5 h-5" style={{ color: '#0ea5e9' }} />
+              <Crown className="w-5 h-5" style={{ color: '#CA8A04' }} />
               <h1 className="text-[22px] font-extrabold" style={{ color: theme.text }}>
                 Admin Dashboard
               </h1>
@@ -237,7 +237,7 @@ function AdminDashboardInner() {
             <button
               onClick={exportCSV}
               className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-[13px] font-semibold border transition-all hover:brightness-110"
-              style={{ background: 'rgba(59,130,246,0.10)', color: '#34d399', borderColor: 'rgba(59,130,246,0.3)' }}
+              style={{ background: 'rgba(202,138,4,0.10)', color: '#CA8A04', borderColor: 'rgba(202,138,4,0.3)' }}
             >
               <Download className="w-4 h-4" />
               Export CSV
@@ -308,7 +308,7 @@ function AdminDashboardInner() {
                   {(stats?.signupsByDay ?? []).map((entry, i) => (
                     <Cell
                       key={i}
-                      fill={entry.count > 0 ? '#3b82f6' : (theme.isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.08)')}
+                      fill={entry.count > 0 ? '#CA8A04' : (theme.isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.08)')}
                     />
                   ))}
                 </Bar>
@@ -327,7 +327,7 @@ function AdminDashboardInner() {
             <div className="flex flex-wrap items-center justify-between gap-3 px-5 py-4 border-b" style={{ borderColor: theme.border }}>
               <h2 className="text-[15px] font-bold" style={{ color: theme.text }}>Users</h2>
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5" style={{ color: theme.muted }} />
+                <Search className="absolute left-3 top-1/2 -tranzinc-y-1/2 w-3.5 h-3.5" style={{ color: theme.muted }} />
                 <input
                   type="text"
                   value={search}
@@ -335,7 +335,7 @@ function AdminDashboardInner() {
                   placeholder="Search name or email…"
                   className="pl-9 pr-4 py-2 rounded-xl text-[13px] border focus:outline-none"
                   style={{ background: theme.bg, borderColor: theme.border, color: theme.text, width: '100%', maxWidth: '220px' }}
-                  onFocus={e => (e.currentTarget.style.borderColor = '#3b82f6')}
+                  onFocus={e => (e.currentTarget.style.borderColor = '#CA8A04')}
                   onBlur={e => (e.currentTarget.style.borderColor = theme.border)}
                 />
               </div>
@@ -389,14 +389,14 @@ function AdminDashboardInner() {
                           <div className="flex items-center gap-2.5">
                             <div
                               className="w-7 h-7 rounded-lg flex items-center justify-center text-[11px] font-bold text-white flex-shrink-0"
-                              style={{ background: isAdminUser ? 'linear-gradient(135deg,#0ea5e9,#0284c7)' : 'linear-gradient(135deg,#3b82f6,#6366f1)' }}
+                              style={{ background: isAdminUser ? 'linear-gradient(135deg,#CA8A04,#EAB308)' : 'linear-gradient(135deg,#CA8A04,#EAB308)' }}            
                             >
                               {u.name?.charAt(0).toUpperCase() || '?'}
                             </div>
                             <div className="min-w-0">
                               <div className="font-semibold text-[13px] flex items-center gap-1" style={{ color: theme.text }}>
                                 <span className="truncate" style={{ maxWidth: 110 }}>{u.name}</span>
-                                {isAdminUser && <Crown className="w-3 h-3 flex-shrink-0" style={{ color: '#0ea5e9' }} />}
+                                {isAdminUser && <Crown className="w-3 h-3 flex-shrink-0" style={{ color: '#fbbf24' }} />}
                               </div>
                               <div className="text-[11px] truncate" style={{ color: theme.muted, maxWidth: 160 }}>{u.email}</div>
                             </div>
@@ -434,9 +434,9 @@ function AdminDashboardInner() {
                                 disabled={isMutating}
                                 title="View activity timeline"
                                 className="w-7 h-7 rounded-lg flex items-center justify-center transition-all"
-                                style={{ background: 'rgba(99,102,241,0.12)', color: '#818cf8' }}
-                                onMouseEnter={e => { e.currentTarget.style.background = 'rgba(99,102,241,0.25)'; }}
-                                onMouseLeave={e => { e.currentTarget.style.background = 'rgba(99,102,241,0.12)'; }}
+                                style={{ background: 'rgba(202,138,4,0.12)', color: '#CA8A04' }}
+                                onMouseEnter={e => { e.currentTarget.style.background = 'rgba(202,138,4,0.25)'; }}
+                              onMouseLeave={e => { e.currentTarget.style.background = 'rgba(202,138,4,0.12)'; }}
                               >
                                 <Activity className="w-3.5 h-3.5" />
                               </button>
@@ -459,13 +459,13 @@ function AdminDashboardInner() {
                                 title={isAdminUser ? 'Revoke admin' : 'Grant admin'}
                                 className="w-7 h-7 rounded-lg flex items-center justify-center transition-all"
                                 style={{
-                                  background: isAdminUser ? 'rgba(14,165,233,0.22)' : (theme.isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)'),
-                                  color: isAdminUser ? '#0ea5e9' : theme.muted,
+                                  background: isAdminUser ? 'rgba(202,138,4,0.22)' : (theme.isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)'),
+                                  color: isAdminUser ? '#CA8A04' : theme.muted,
                                 }}
-                                onMouseEnter={e => { e.currentTarget.style.background = 'rgba(14,165,233,0.3)'; e.currentTarget.style.color = '#7dd3fc'; }}
+                                onMouseEnter={e => { e.currentTarget.style.background = 'rgba(202,138,4,0.3)'; e.currentTarget.style.color = '#EAB308'; }}
                                 onMouseLeave={e => {
-                                  e.currentTarget.style.background = isAdminUser ? 'rgba(14,165,233,0.22)' : (theme.isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)');
-                                  e.currentTarget.style.color = isAdminUser ? '#0ea5e9' : theme.muted;
+                                  e.currentTarget.style.background = isAdminUser ? 'rgba(202,138,4,0.22)' : (theme.isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)');
+                                  e.currentTarget.style.color = isAdminUser ? '#CA8A04' : theme.muted;
                                 }}
                               >
                                 <Crown className="w-3.5 h-3.5" />
@@ -520,7 +520,7 @@ function AdminDashboardInner() {
                     placeholder="user@email.com"
                     className="flex-1 min-w-0 px-3 py-2 rounded-xl text-[12px] border focus:outline-none"
                     style={{ background: theme.bg, borderColor: theme.border, color: theme.text }}
-                    onFocus={e => (e.currentTarget.style.borderColor = '#3b82f6')}
+                    onFocus={e => (e.currentTarget.style.borderColor = '#CA8A04')}
                     onBlur={e => (e.currentTarget.style.borderColor = theme.border)}
                   />
                   <button

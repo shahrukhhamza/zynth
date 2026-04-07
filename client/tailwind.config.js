@@ -10,24 +10,22 @@ export default {
       // ── Zynth Design System ─────────────────────────────────────────────
       colors: {
         // ── Semantic surface tokens: use as bg-surface, dark:bg-surface ──
-        // (override via Tailwind's color pipeline)
-        // NOTE: these are CSS-var–free; they work with JIT.
 
         // Page / layout backgrounds
         bg: {
-          DEFAULT: '#F8FAFC',   // slate-50
-          dark:    '#020617',   // slate-950
+          DEFAULT: '#fafaf9',   // stone-50
+          dark:    '#0b0b0f',   // zinc-black
         },
         surface: {
           DEFAULT: '#FFFFFF',
-          dark:    '#0B1220',   // slate-900 tinted
-          2:       '#F1F5F9',   // slate-100 — inset cells
-          '2-dark':'#111827',   // gray-900
+          dark:    '#161618',   // zinc-card
+          2:       '#f5f5f4',   // stone-100 — inset cells
+          '2-dark':'#1c1c1e',   // zinc-inset
         },
 
         // Border
         border: {
-          DEFAULT: 'rgba(0,0,0,0.07)',    // near-invisible light border
+          DEFAULT: 'rgba(0,0,0,0.08)',
           dark:    'rgba(255,255,255,0.08)',
           subtle:  'rgba(0,0,0,0.04)',
           strong:  'rgba(0,0,0,0.12)',
@@ -35,23 +33,23 @@ export default {
 
         // Text hierarchy
         text: {
-          DEFAULT:  '#0F172A',   // slate-900
-          dark:     '#E2E8F0',   // slate-200
-          sub:      '#334155',   // slate-700
-          'sub-dark':'#CBD5E1',  // slate-300
-          muted:    '#64748B',   // slate-500
-          'muted-dark':'#94A3B8',// slate-400
-          micro:    '#94A3B8',   // slate-400
-          'micro-dark':'#64748B',
+          DEFAULT:  '#09090b',   // zinc-950
+          dark:     '#f4f4f5',   // zinc-100
+          sub:      '#3f3f46',   // zinc-700
+          'sub-dark':'#a1a1aa',  // zinc-400
+          muted:    '#52525b',   // zinc-600
+          'muted-dark':'#71717a',// zinc-500
+          micro:    '#71717a',   // zinc-500
+          'micro-dark':'#52525b',
         },
 
         // Brand / interactive
         primary: {
-          DEFAULT:  '#2563EB',   // blue-600
-          dark:     '#3B82F6',   // blue-500
-          hover:    '#1D4ED8',   // blue-700
-          muted:    '#EFF6FF',   // blue-50
-          'muted-dark': 'rgba(59,130,246,0.12)',
+          DEFAULT:  '#A16207',   // deep-gold
+          dark:     '#CA8A04',   // executive-gold
+          hover:    '#854D0E',   // darker-gold
+          muted:    '#fefce8',   // yellow-50
+          'muted-dark': 'rgba(202,138,4,0.12)',
         },
 
         // Semantic statuses
@@ -81,35 +79,35 @@ export default {
         // Charts & trading
         bullish:  '#10B981',
         bearish:  '#EF4444',
-        neutral:  '#64748B',
+        neutral:  '#71717a',
 
         // ── Legacy aliases (kept for backward compat) ───────────────────
         z: {
-          'dark-bg':       '#020617',
-          'dark-surface':  '#0B1220',
-          'dark-surface2': '#111827',
+          'dark-bg':       '#0b0b0f',
+          'dark-surface':  '#161618',
+          'dark-surface2': '#1c1c1e',
           'dark-border':   'rgba(255,255,255,0.08)',
-          'dark-text':     '#E2E8F0',
-          'dark-secondary':'#CBD5E1',
-          'dark-muted':    '#94A3B8',
-          'dark-primary':  '#3B82F6',
-          'light-bg':      '#F8FAFC',
+          'dark-text':     '#f4f4f5',
+          'dark-secondary':'#a1a1aa',
+          'dark-muted':    '#71717a',
+          'dark-primary':  '#CA8A04',
+          'light-bg':      '#fafaf9',
           'light-surface': '#FFFFFF',
-          'light-surface2':'#F1F5F9',
-          'light-text':    '#0F172A',
-          'light-secondary':'#334155',
-          'light-muted':   '#64748B',
-          'light-primary': '#2563EB',
+          'light-surface2':'#f5f5f4',
+          'light-text':    '#09090b',
+          'light-secondary':'#3f3f46',
+          'light-muted':   '#52525b',
+          'light-primary': '#A16207',
         },
         terminal: {
-          bg: '#020617', surface: '#0B1220', border: '#1e2538',
-          text: '#E2E8F0', muted: '#94A3B8', accent: '#3B82F6',
+          bg: '#0b0b0f', surface: '#161618', border: '#27272a',
+          text: '#f4f4f5', muted: '#71717a', accent: '#CA8A04',
           success: '#10B981', warning: '#F59E0B', danger: '#ef4444',
-          error: '#ef4444', bullish: '#10B981', bearish: '#ef4444', neutral: '#94A3B8',
+          error: '#ef4444', bullish: '#10B981', bearish: '#ef4444', neutral: '#71717a',
         },
         light: {
-          bg: '#F8FAFC', surface: '#FFFFFF', border: 'rgba(0,0,0,0.06)',
-          text: '#0F172A', muted: '#64748B',
+          bg: '#fafaf9', surface: '#FFFFFF', border: 'rgba(0,0,0,0.08)',
+          text: '#09090b', muted: '#52525b',
         },
       },
 
@@ -161,11 +159,11 @@ export default {
         'z-modal': '0 24px 80px rgba(15,23,42,0.18)',
         'z-dark':  '0 2px 8px rgba(0,0,0,0.25), 0 1px 2px rgba(0,0,0,0.15)',
         // Focus
-        'z-focus': '0 0 0 3px rgba(59,130,246,0.15)',
-        'z-focus-dark': '0 0 0 3px rgba(59,130,246,0.22)',
+        'z-focus': '0 0 0 3px rgba(202,138,4,0.15)',
+        'z-focus-dark': '0 0 0 3px rgba(202,138,4,0.22)',
         // Primary button
-        'z-btn-primary': '0 2px 12px rgba(37,99,235,0.30)',
-        'z-btn-primary-hover': '0 4px 20px rgba(37,99,235,0.42)',
+        'z-btn-primary': '0 2px 12px rgba(202,138,4,0.30)',
+        'z-btn-primary-hover': '0 4px 20px rgba(202,138,4,0.42)',
       },
 
       // ── Transitions ──────────────────────────────────────────────────────

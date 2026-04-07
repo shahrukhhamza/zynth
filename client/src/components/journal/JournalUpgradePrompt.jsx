@@ -151,7 +151,7 @@ export default function JournalUpgradePrompt({
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               background: 'rgba(99,102,241,0.12)', border: '1px solid rgba(99,102,241,0.2)',
             }}>
-              <Icon size={15} color="#818cf8" />
+              <Icon size={15} color="#CA8A04" />
             </div>
             <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--z-text2)', flex: 1 }}>{text}</span>
             <CheckCircle2 size={14} color="#34d399" style={{ flexShrink: 0 }} />
@@ -169,7 +169,7 @@ export default function JournalUpgradePrompt({
           width: '100%', maxWidth: 340, padding: '15px 32px',
           borderRadius: 14, border: 'none', cursor: 'pointer',
           fontSize: 15, fontWeight: 800, color: '#fff', zIndex: 1,
-          background: hovered ? 'linear-gradient(135deg, #4f46e5, #7c3aed)' : 'linear-gradient(135deg, #6366f1, #8b5cf6)',
+          background: hovered ? 'linear-gradient(135deg, #A16207, #7c3aed)' : 'linear-gradient(135deg, #CA8A04, #8b5cf6)',
           boxShadow: hovered ? '0 8px 32px rgba(99,102,241,0.55)' : '0 4px 20px rgba(99,102,241,0.38)',
           transform: hovered ? 'translateY(-2px)' : 'translateY(0)',
           transition: 'all 0.18s ease',

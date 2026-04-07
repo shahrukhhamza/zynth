@@ -89,7 +89,7 @@ function ProgressRail({ value, color, background }) {
 function SoftPanel({ children, palette, className = '' }) {
   return (
     <div
-      className={`rounded-3xl transition-all duration-200 hover:-translate-y-[2px] ${className}`}
+      className={`rounded-3xl transition-all duration-200 hover:-tranzinc-y-[2px] ${className}`}
       style={{
         background: palette.card,
         boxShadow: palette.shadow,
@@ -402,13 +402,13 @@ export default function AiInsightsPanel({ trades, metrics, onReportGenerated }) 
   const [macroScore, setMacroScore] = useState(null);
 
   const palette = {
-    page: theme.isDark ? '#0b1220' : '#f8fafc',
-    card: theme.isDark ? '#111827' : '#ffffff',
+    page: theme.isDark ? '#0b0b0f' : '#f8fafc',
+    card: theme.isDark ? '#0b0b0f' : '#ffffff',
     soft: theme.isDark ? 'rgba(255,255,255,0.05)' : '#f8fafc',
     track: theme.isDark ? 'rgba(255,255,255,0.08)' : '#e2e8f0',
-    text: theme.isDark ? '#f9fafb' : '#111827',
+    text: theme.isDark ? '#f9fafb' : '#0b0b0f',
     sub: theme.isDark ? '#9ca3af' : '#6b7280',
-    blue: '#2563eb',
+    blue: '#CA8A04',
     green: '#10b981',
     red: '#ef4444',
     shadow: theme.isDark
@@ -591,7 +591,7 @@ export default function AiInsightsPanel({ trades, metrics, onReportGenerated }) 
               color: '#ffffff',
               background: palette.blue,
               opacity: generating || !metrics?.totalTrades ? 0.5 : 1,
-              boxShadow: generating || !metrics?.totalTrades ? 'none' : '0 10px 24px rgba(37,99,235,0.25)',
+              boxShadow: generating || !metrics?.totalTrades ? 'none' : '0 10px 24px rgba(161,98,7,0.25)',
             }}
           >
             {generating ? <Loader2 size={14} className="animate-spin" /> : <Sparkles size={14} />}

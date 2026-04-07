@@ -59,8 +59,8 @@ export function Button({
       background: `linear-gradient(135deg, ${theme.primary} 0%, #0284C7 100%)`,
       color: '#fff',
       boxShadow: theme.isDark
-        ? `0 4px 16px rgba(59,130,246,0.35)`
-        : `0 4px 14px rgba(37,99,235,0.28)`,
+        ? `0 4px 16px rgba(202,138,4,0.35)`
+        : `0 4px 14px rgba(161,98,7,0.28)`,
       borderColor: 'transparent',
     },
     secondary: {
@@ -89,8 +89,8 @@ export function Button({
     if (disabled || loading) return;
     if (variant === 'primary') {
       e.currentTarget.style.boxShadow = theme.isDark
-        ? '0 8px 28px rgba(59,130,246,0.55)'
-        : '0 8px 24px rgba(37,99,235,0.40)';
+        ? '0 8px 28px rgba(202,138,4,0.55)'
+        : '0 8px 24px rgba(161,98,7,0.40)';
       e.currentTarget.style.transform = 'translateY(-1px) scale(1.02)';
     }
     if (variant === 'secondary') {

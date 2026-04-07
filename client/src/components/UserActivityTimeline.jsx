@@ -19,11 +19,11 @@ import ErrorBar from './ErrorBar';
 
 const EVENT_CONFIG = {
   user_signup:          { label: 'Account created',         Icon: UserPlus,        color: '#10B981' },
-  trade_added:          { label: 'Trade logged',            Icon: BookOpen,        color: '#3B82F6' },
+  trade_added:          { label: 'Trade logged',            Icon: BookOpen,        color: '#CA8A04' },
   ai_used:              { label: 'AI analysis used',        Icon: Zap,             color: '#8B5CF6' },
   ai_limit_hit:         { label: 'Hit AI limit',            Icon: AlertTriangle,   color: '#F59E0B' },
   journal_limit_hit:    { label: 'Hit journal limit',       Icon: AlertTriangle,   color: '#F59E0B' },
-  upgrade_modal_opened: { label: 'Viewed upgrade modal',    Icon: Eye,             color: '#0EA5E9' },
+  upgrade_modal_opened: { label: 'Viewed upgrade modal',    Icon: Eye,             color: '#CA8A04' },
   upgrade_clicked:      { label: 'Clicked upgrade CTA',     Icon: MousePointerClick, color: '#6366F1' },
   subscription_started: { label: 'Subscription started',   Icon: ShoppingCart,    color: '#F59E0B' },
 };
@@ -130,7 +130,7 @@ export default function UserActivityTimeline({ userId, onClose }) {
             {user && (
               <div style={{ fontSize: 12, color: theme.muted, marginTop: 2 }}>
                 {user.name} · {user.email} ·{' '}
-                <span style={{ color: '#3B82F6', textTransform: 'uppercase', fontSize: 10, fontWeight: 700 }}>
+                <span style={{ color: '#CA8A04', textTransform: 'uppercase', fontSize: 10, fontWeight: 700 }}>
                   {user.plan}
                 </span>
               </div>

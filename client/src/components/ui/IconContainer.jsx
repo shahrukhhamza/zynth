@@ -20,16 +20,16 @@ import { useState } from 'react';
 
 const VARIANTS = {
   blue: {
-    bg:           'rgba(59,130,246,0.10)',
-    border:       'rgba(59,130,246,0.20)',
-    iconColor:    '#3b82f6',
-    hoverBg:      'rgba(59,130,246,0.16)',
-    hoverBorder:  'rgba(59,130,246,0.45)',
-    hoverGlow:    '0 0 0 1px rgba(59,130,246,0.35), 0 0 20px rgba(59,130,246,0.18)',
-    selBg:        'linear-gradient(135deg,rgba(59,130,246,0.22),rgba(6,182,212,0.12))',
-    selBorder:    'rgba(59,130,246,0.60)',
-    selGlow:      '0 0 0 1px rgba(59,130,246,0.50), 0 0 22px rgba(59,130,246,0.25)',
-    selIconColor: '#93c5fd',
+    bg:           'rgba(202,138,4,0.10)',
+    border:       'rgba(202,138,4,0.20)',
+    iconColor:    '#CA8A04',
+    hoverBg:      'rgba(202,138,4,0.16)',
+    hoverBorder:  'rgba(202,138,4,0.45)',
+    hoverGlow:    '0 0 0 1px rgba(202,138,4,0.35), 0 0 20px rgba(202,138,4,0.18)',
+    selBg:        'linear-gradient(135deg,rgba(202,138,4,0.22),rgba(6,182,212,0.12))',
+    selBorder:    'rgba(202,138,4,0.60)',
+    selGlow:      '0 0 0 1px rgba(202,138,4,0.50), 0 0 22px rgba(202,138,4,0.25)',
+    selIconColor: '#CA8A04',
   },
   purple: {
     bg:           'rgba(139,92,246,0.10)',

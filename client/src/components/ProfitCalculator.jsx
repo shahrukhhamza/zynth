@@ -118,7 +118,7 @@ export default function ProfitCalculator() {
   };
 
   const isDark = theme.isDark;
-  const bg = isDark ? '#0f172a' : '#f1f5f9';
+  const bg = isDark ? '#0b0b0f' : '#fafaf9';
   const card = isDark ? 'rgba(255,255,255,0.035)' : '#ffffff';
   const cardBorder = isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.06)';
   const inputBg = isDark ? 'rgba(255,255,255,0.06)' : '#f8fafc';
@@ -137,7 +137,7 @@ export default function ProfitCalculator() {
         {/* Header */}
         <div className="flex items-center gap-3 mb-8">
           <div className="w-11 h-11 rounded-2xl flex items-center justify-center shrink-0"
-            style={{ background: 'linear-gradient(135deg, #3b82f6, #6366f1)', boxShadow: '0 4px 14px rgba(59,130,246,0.35)' }}>
+            style={{ background: 'linear-gradient(135deg, #CA8A04, #CA8A04)', boxShadow: '0 4px 14px rgba(202,138,4,0.35)' }}>
             <TrendingUp className="w-5 h-5 text-white" />
           </div>
           <div>
@@ -167,7 +167,7 @@ export default function ProfitCalculator() {
                   <button type="button"
                     onClick={() => { setDropdownOpen((o) => !o); setSearch(''); }}
                     className="w-full h-11 px-3 rounded-xl border text-sm outline-none transition-all flex items-center justify-between"
-                    style={{ background: inputBg, borderColor: dropdownOpen ? '#3b82f6' : cardBorder, color: theme.text, boxShadow: dropdownOpen ? '0 0 0 3px rgba(59,130,246,0.15)' : 'none' }}>
+                    style={{ background: inputBg, borderColor: dropdownOpen ? '#CA8A04' : cardBorder, color: theme.text, boxShadow: dropdownOpen ? '0 0 0 3px rgba(202,138,4,0.15)' : 'none' }}>
                     <span className="truncate font-medium">{selectedLabel}</span>
                     <ChevronDown className="w-3.5 h-3.5 shrink-0 ml-2 transition-transform duration-200" style={{ color: theme.muted, transform: dropdownOpen ? 'rotate(180deg)' : 'none' }} />
                   </button>
@@ -221,9 +221,9 @@ export default function ProfitCalculator() {
                                     }}
                                     className="w-full text-left px-3 py-[7px] text-[13px] transition-all duration-100 rounded-md mx-0"
                                     style={{
-                                      color: isSelected ? '#60a5fa' : (isDark ? '#cbd5e1' : '#334155'),
+                                      color: isSelected ? '#CA8A04' : (isDark ? '#cbd5e1' : '#334155'),
                                       background: isSelected
-                                        ? (isDark ? 'rgba(59,130,246,0.1)' : 'rgba(59,130,246,0.05)')
+                                        ? (isDark ? 'rgba(202,138,4,0.1)' : 'rgba(202,138,4,0.05)')
                                         : 'transparent',
                                       fontWeight: isSelected ? 500 : 400,
                                       letterSpacing: '0.01em',
@@ -252,7 +252,7 @@ export default function ProfitCalculator() {
                 <label className="block text-[11px] font-semibold uppercase tracking-wide mb-1.5"
                   style={{ color: theme.muted }}>Lot Size</label>
                 <input type="number" step="0.01" min="0.01" value={form.lotSize} onChange={set('lotSize')}
-                  className="w-full h-11 px-3 rounded-xl border text-sm outline-none transition-all focus:ring-2 focus:ring-blue-500/30"
+                  className="w-full h-11 px-3 rounded-xl border text-sm outline-none transition-all focus:ring-2 focus:ring-yellow-500/30"
                   placeholder="1.00"
                   style={{ background: inputBg, borderColor: cardBorder, color: theme.text }} />
               </div>
@@ -262,7 +262,7 @@ export default function ProfitCalculator() {
                 <label className="block text-[11px] font-semibold uppercase tracking-wide mb-1.5"
                   style={{ color: theme.muted }}>Entry Price</label>
                 <input type="number" step="any" value={form.entryPrice} onChange={set('entryPrice')}
-                  className="w-full h-11 px-3 rounded-xl border text-sm outline-none transition-all focus:ring-2 focus:ring-blue-500/30"
+                  className="w-full h-11 px-3 rounded-xl border text-sm outline-none transition-all focus:ring-2 focus:ring-yellow-500/30"
                   placeholder="1.08500"
                   style={{ background: inputBg, borderColor: cardBorder, color: theme.text }} />
               </div>
@@ -272,7 +272,7 @@ export default function ProfitCalculator() {
                 <label className="block text-[11px] font-semibold uppercase tracking-wide mb-1.5"
                   style={{ color: theme.muted }}>Exit Price</label>
                 <input type="number" step="any" value={form.exitPrice} onChange={set('exitPrice')}
-                  className="w-full h-11 px-3 rounded-xl border text-sm outline-none transition-all focus:ring-2 focus:ring-blue-500/30"
+                  className="w-full h-11 px-3 rounded-xl border text-sm outline-none transition-all focus:ring-2 focus:ring-yellow-500/30"
                   placeholder="1.09000"
                   style={{ background: inputBg, borderColor: cardBorder, color: theme.text }} />
               </div>
@@ -307,7 +307,7 @@ export default function ProfitCalculator() {
                 <label className="block text-[11px] font-semibold uppercase tracking-wide mb-1.5"
                   style={{ color: theme.muted }}>Account Balance <span className="opacity-40">(optional)</span></label>
                 <input type="number" step="any" value={form.balance} onChange={set('balance')}
-                  className="w-full h-11 px-3 rounded-xl border text-sm outline-none transition-all focus:ring-2 focus:ring-blue-500/30"
+                  className="w-full h-11 px-3 rounded-xl border text-sm outline-none transition-all focus:ring-2 focus:ring-yellow-500/30"
                   placeholder="10,000"
                   style={{ background: inputBg, borderColor: cardBorder, color: theme.text }} />
               </div>
@@ -323,8 +323,8 @@ export default function ProfitCalculator() {
             <button onClick={calculate}
               className="w-full h-12 mt-6 rounded-xl text-sm font-bold text-white transition-all hover:brightness-110 active:scale-[0.98] flex items-center justify-center gap-2"
               style={{
-                background: 'linear-gradient(135deg, #3b82f6, #6366f1)',
-                boxShadow: '0 4px 14px rgba(59,130,246,0.3)',
+                background: 'linear-gradient(135deg, #CA8A04, #CA8A04)',
+                boxShadow: '0 4px 14px rgba(202,138,4,0.3)',
               }}>
               <DollarSign className="w-4 h-4" /> Calculate Profit / Loss
             </button>

@@ -1,4 +1,4 @@
-﻿/**
+/**
  * TradingDNA.jsx
  * Elite-only: deep AI-generated personality profile for the trader.
  * Generates once per month from all journal data.
@@ -24,45 +24,45 @@ import JournalUpgradePrompt, { DNA_FEATURES } from './journal/JournalUpgradeProm
 const ARCHETYPES = {
   'The Sniper': {
     icon: Target,
-    gradient: 'from-indigo-600 to-purple-700',
-    textColor: 'text-indigo-200',
-    accentColor: '#818cf8',
-    glowColor: 'rgba(99,102,241,0.3)',
+    gradient: 'from-violet-600 to-purple-700',
+    textColor: 'text-violet-200',
+    accentColor: '#a78bfa',
+    glowColor: 'rgba(167,139,250,0.3)',
   },
   'The Momentum Rider': {
     icon: TrendingUp,
-    gradient: 'from-emerald-600 to-teal-700',
-    textColor: 'text-emerald-200',
-    accentColor: '#34d399',
-    glowColor: 'rgba(52,211,153,0.3)',
+    gradient: 'from-yellow-600 to-amber-700',
+    textColor: 'text-yellow-200',
+    accentColor: '#CA8A04',
+    glowColor: 'rgba(202,138,4,0.3)',
   },
   'The Contrarian': {
     icon: RefreshCw,
-    gradient: 'from-orange-600 to-red-700',
-    textColor: 'text-orange-200',
+    gradient: 'from-yellow-600 to-red-700',
+    textColor: 'text-yellow-200',
     accentColor: '#fb923c',
     glowColor: 'rgba(251,146,60,0.3)',
   },
   'The News Trader': {
     icon: Newspaper,
-    gradient: 'from-blue-600 to-cyan-700',
-    textColor: 'text-blue-200',
-    accentColor: '#38bdf8',
-    glowColor: 'rgba(56,189,248,0.3)',
+    gradient: 'from-yellow-600 to-amber-700',
+    textColor: 'text-yellow-200',
+    accentColor: '#fbbf24',
+    glowColor: 'rgba(251,191,36,0.3)',
   },
   'The Scalper': {
     icon: Zap,
-    gradient: 'from-yellow-500 to-orange-600',
+    gradient: 'from-yellow-500 to-yellow-600',
     textColor: 'text-yellow-100',
     accentColor: '#fbbf24',
     glowColor: 'rgba(251,191,36,0.3)',
   },
   'The Swing Trader': {
     icon: BarChart2,
-    gradient: 'from-teal-600 to-blue-700',
-    textColor: 'text-teal-200',
-    accentColor: '#2dd4bf',
-    glowColor: 'rgba(45,212,191,0.3)',
+    gradient: 'from-amber-600 to-yellow-700',
+    textColor: 'text-amber-200',
+    accentColor: '#f59e0b',
+    glowColor: 'rgba(245,158,11,0.3)',
   },
   'The Gambler': {
     icon: AlertTriangle,
@@ -75,8 +75,8 @@ const ARCHETYPES = {
 
 const DEFAULT_ARCHETYPE = {
   icon: Brain,
-  gradient: 'from-gray-700 to-slate-800',
-  textColor: 'text-gray-300',
+  gradient: 'from-zinc-700 to-zinc-800',
+  textColor: 'text-zinc-300',
   accentColor: '#9ca3af',
   glowColor: 'rgba(156,163,175,0.2)',
 };
@@ -116,7 +116,7 @@ function downloadDnaCard(archetype, traits, stats) {
 
   // Top accent line
   const accent = ctx.createLinearGradient(0, 0, W, 0);
-  accent.addColorStop(0, '#3b82f6');
+  accent.addColorStop(0, '#CA8A04');
   accent.addColorStop(1, '#6366f1');
   ctx.fillStyle = accent;
   ctx.fillRect(0, 0, W, 4);
@@ -137,7 +137,7 @@ function downloadDnaCard(archetype, traits, stats) {
     ctx.fillStyle = '#6b7280';
     ctx.font = '11px system-ui, sans-serif';
     ctx.fillText(label, x, y);
-    ctx.fillStyle = '#3b82f6';
+    ctx.fillStyle = '#CA8A04';
     ctx.font = 'bold 22px system-ui, sans-serif';
     ctx.fillText(String(value), x, y + 26);
   };
@@ -264,14 +264,14 @@ function TraitBar({ trait, value, delay = 0 }) {
       <div className="flex items-center justify-between mb-1.5">
         <div>
           <span className="text-sm font-semibold text-white">{trait.label}</span>
-          <span className="hidden md:inline text-xs text-gray-500 ml-2">— {trait.sub}</span>
+          <span className="hidden md:inline text-xs text-zinc-500 ml-2">— {trait.sub}</span>
         </div>
         <div className="flex items-center gap-2">
           <span className="text-xs font-medium" style={{ color }}>{label}</span>
           <span className="text-sm font-bold" style={{ color }}>{value}</span>
         </div>
       </div>
-      <div className="h-2.5 bg-gray-800 rounded-full overflow-hidden">
+      <div className="h-2.5 bg-zinc-800 rounded-full overflow-hidden">
         <div
           className="h-full rounded-full transition-all duration-1000 ease-out"
           style={{ width: `${value}%`, backgroundColor: color, transitionDelay: `${delay}ms` }}
@@ -283,9 +283,9 @@ function TraitBar({ trait, value, delay = 0 }) {
 
 function DnaStrands({ traits }) {
   return (
-    <div className="bg-gray-900/60 border border-gray-800 rounded-2xl p-6">
+    <div className="bg-zinc-900/60 border border-zinc-800 rounded-2xl p-6">
       <h2 className="text-lg font-bold text-white mb-5 flex items-center gap-2">
-        <Fingerprint className="w-5 h-5 text-emerald-400" />
+        <Fingerprint className="w-5 h-5 text-yellow-400" />
         DNA Trait Profile
       </h2>
       <div className="grid md:grid-cols-2 gap-x-10 gap-y-5">
@@ -301,22 +301,22 @@ function StrengthsWeaknesses({ strengths = [], weaknesses = [] }) {
   return (
     <div className="grid md:grid-cols-2 gap-4">
       {/* Strengths */}
-      <div className="bg-emerald-900/20 border border-emerald-800/40 rounded-2xl p-5">
-        <h3 className="text-sm font-bold text-emerald-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+      <div className="bg-yellow-900/20 border border-yellow-800/40 rounded-2xl p-5">
+        <h3 className="text-sm font-bold text-yellow-400 uppercase tracking-wider mb-4 flex items-center gap-2">
           <CheckCircle className="w-4 h-4" /> Strengths
         </h3>
         <div className="space-y-3">
           {strengths.length === 0 && (
-            <p className="text-gray-500 text-sm">No data yet</p>
+            <p className="text-zinc-500 text-sm">No data yet</p>
           )}
           {strengths.map((s, i) => (
             <div key={i} className="flex gap-3">
-              <div className="mt-0.5 w-5 h-5 rounded-full bg-emerald-500/20 flex items-center justify-center flex-shrink-0">
-                <span className="text-xs font-bold text-emerald-400">{i + 1}</span>
+              <div className="mt-0.5 w-5 h-5 rounded-full bg-yellow-500/20 flex items-center justify-center flex-shrink-0">
+                <span className="text-xs font-bold text-yellow-400">{i + 1}</span>
               </div>
               <div>
                 <p className="text-sm font-semibold text-white">{s.title}</p>
-                <p className="text-xs text-gray-400 mt-0.5">{s.description}</p>
+                <p className="text-xs text-zinc-400 mt-0.5">{s.description}</p>
               </div>
             </div>
           ))}
@@ -330,7 +330,7 @@ function StrengthsWeaknesses({ strengths = [], weaknesses = [] }) {
         </h3>
         <div className="space-y-3">
           {weaknesses.length === 0 && (
-            <p className="text-gray-500 text-sm">No data yet</p>
+            <p className="text-zinc-500 text-sm">No data yet</p>
           )}
           {weaknesses.map((w, i) => (
             <div key={i} className="flex gap-3">
@@ -339,7 +339,7 @@ function StrengthsWeaknesses({ strengths = [], weaknesses = [] }) {
               </div>
               <div>
                 <p className="text-sm font-semibold text-white">{w.title}</p>
-                <p className="text-xs text-gray-400 mt-0.5">{w.description}</p>
+                <p className="text-xs text-zinc-400 mt-0.5">{w.description}</p>
               </div>
             </div>
           ))}
@@ -353,7 +353,7 @@ function RadarFingerprint({ radarData = [] }) {
   if (!radarData.length) return null;
   const chartData = radarData.map(d => ({ ...d, subject: d.axis }));
   return (
-    <div className="bg-gray-900/60 border border-gray-800 rounded-2xl p-6">
+    <div className="bg-zinc-900/60 border border-zinc-800 rounded-2xl p-6">
       <h2 className="text-lg font-bold text-white mb-5 flex items-center gap-2">
         <Sparkles className="w-5 h-5 text-purple-400" />
         Performance Fingerprint
@@ -375,11 +375,11 @@ function RadarFingerprint({ radarData = [] }) {
             <Radar
               name="Score"
               dataKey="value"
-              stroke="#3b82f6"
-              fill="#3b82f6"
+              stroke="#CA8A04"
+              fill="#CA8A04"
               fillOpacity={0.15}
               strokeWidth={2}
-              dot={{ fill: '#3b82f6', strokeWidth: 0, r: 4 }}
+              dot={{ fill: '#CA8A04', strokeWidth: 0, r: 4 }}
             />
           </RadarChart>
         </ResponsiveContainer>
@@ -389,15 +389,15 @@ function RadarFingerprint({ radarData = [] }) {
 }
 
 function ImprovementPlan({ plan = [] }) {
-  const colors = ['emerald', 'blue', 'purple', 'amber'];
+  const colors = ['orange', 'amber', 'purple', 'yellow'];
   return (
-    <div className="bg-gray-900/60 border border-gray-800 rounded-2xl p-6">
+    <div className="bg-zinc-900/60 border border-zinc-800 rounded-2xl p-6">
       <h2 className="text-lg font-bold text-white mb-5 flex items-center gap-2">
-        <Calendar className="w-5 h-5 text-blue-400" />
+        <Calendar className="w-5 h-5 text-yellow-400" />
         30-Day Improvement Plan
       </h2>
       {plan.length === 0 ? (
-        <p className="text-gray-500 text-sm">No plan generated.</p>
+        <p className="text-zinc-500 text-sm">No plan generated.</p>
       ) : (
         <div className="grid sm:grid-cols-2 xl:grid-cols-4 gap-4">
           {plan.map((week, i) => {
@@ -410,7 +410,7 @@ function ImprovementPlan({ plan = [] }) {
                 <div className="text-sm font-semibold text-white mb-2">{week.focus}</div>
                 <div className="flex gap-2">
                   <ChevronRight className={`w-4 h-4 text-${c}-400 flex-shrink-0 mt-0.5`} />
-                  <p className="text-xs text-gray-400 leading-relaxed">{week.action}</p>
+                  <p className="text-xs text-zinc-400 leading-relaxed">{week.action}</p>
                 </div>
               </div>
             );
@@ -424,19 +424,19 @@ function ImprovementPlan({ plan = [] }) {
 function CoachMessage({ message, userName }) {
   if (!message) return null;
   return (
-    <div className="bg-gradient-to-br from-gray-900 to-slate-900 border border-gray-700 rounded-2xl p-6 md:p-8">
+    <div className="bg-gradient-to-br from-zinc-900 to-zinc-900 border border-zinc-700 rounded-2xl p-6 md:p-8">
       <h2 className="text-lg font-bold text-white mb-6 flex items-center gap-2">
-        <Brain className="w-5 h-5 text-emerald-400" />
+        <Brain className="w-5 h-5 text-yellow-400" />
         Personal Message from Your AI Coach
       </h2>
       <div className="relative">
-        <div className="absolute -top-2 -left-1 text-6xl text-emerald-800/40 font-serif leading-none select-none">"</div>
+        <div className="absolute -top-2 -left-1 text-6xl text-yellow-800/40 font-serif leading-none select-none">"</div>
         <div className="pl-8 space-y-4">
           {message.split('\n\n').filter(Boolean).map((para, i) => (
-            <p key={i} className="text-gray-300 text-sm leading-relaxed">{para}</p>
+            <p key={i} className="text-zinc-300 text-sm leading-relaxed">{para}</p>
           ))}
         </div>
-        <div className="absolute -bottom-4 right-0 text-6xl text-emerald-800/40 font-serif leading-none select-none">"</div>
+        <div className="absolute -bottom-4 right-0 text-6xl text-yellow-800/40 font-serif leading-none select-none">"</div>
       </div>
     </div>
   );
@@ -447,28 +447,28 @@ function EmptyState({ tradeCount, closedCount = 0, canGenerate, generating, next
   const hasClosed = closedCount > 0;
   return (
     <div className="flex flex-col items-center justify-center py-16 px-6 text-center">
-      <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-emerald-600 to-blue-700 flex items-center justify-center mb-6 shadow-2xl">
+      <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-yellow-600 to-yellow-700 flex items-center justify-center mb-6 shadow-2xl">
         <Fingerprint className="w-10 h-10 text-white" />
       </div>
       <h2 className="text-2xl font-bold text-white mb-2">Discover Your Trading Identity</h2>
-      <p className="text-gray-400 max-w-lg mb-6">
+      <p className="text-zinc-400 max-w-lg mb-6">
         Based on your complete trade history, our AI will generate a deep personality profile: your archetype, 8 DNA trait scores, strengths &amp; weaknesses, and a personalised 30-day plan.
       </p>
 
       {/* Progress bar */}
       <div className="w-full max-w-xs mb-6">
-        <div className="flex justify-between text-sm text-gray-500 mb-2">
+        <div className="flex justify-between text-sm text-zinc-500 mb-2">
           <span>Trade history</span>
           <span>{Math.min(tradeCount, 10)}/10</span>
         </div>
-        <div className="h-2 bg-gray-800 rounded-full overflow-hidden">
+        <div className="h-2 bg-zinc-800 rounded-full overflow-hidden">
           <div
-            className="h-full bg-gradient-to-r from-emerald-500 to-blue-500 rounded-full transition-all duration-700"
+            className="h-full bg-gradient-to-r from-yellow-500 to-yellow-400 rounded-full transition-all duration-700"
             style={{ width: `${Math.min((tradeCount / 10) * 100, 100)}%` }}
           />
         </div>
         {!enough && (
-          <p className="text-xs text-gray-500 mt-2">Log {10 - tradeCount} more trades to unlock generation</p>
+          <p className="text-xs text-zinc-500 mt-2">Log {10 - tradeCount} more trades to unlock generation</p>
         )}
       </div>
 
@@ -489,7 +489,7 @@ function EmptyState({ tradeCount, closedCount = 0, canGenerate, generating, next
       <button
         onClick={onGenerate}
         disabled={!enough || !hasClosed || !canGenerate || generating}
-        className="flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-emerald-500 to-blue-600 text-white font-semibold rounded-xl shadow-lg hover:from-emerald-600 hover:to-blue-700 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+        className="flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-yellow-500 to-yellow-600 text-white font-semibold rounded-xl shadow-lg hover:from-yellow-600 hover:to-yellow-700 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
       >
         {generating ? (
           <><Loader2 className="w-4 h-4 animate-spin" /> Analysing your trades...</>
@@ -578,7 +578,7 @@ export default function TradingDNA() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-24">
-        <Loader2 className="w-8 h-8 text-emerald-400 animate-spin" />
+        <Loader2 className="w-8 h-8 text-yellow-400 animate-spin" />
       </div>
     );
   }
@@ -618,7 +618,7 @@ export default function TradingDNA() {
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
           <h1 className="text-xl font-bold text-white">Trading DNA Report</h1>
-          <p className="text-xs text-gray-500 mt-0.5">
+          <p className="text-xs text-zinc-500 mt-0.5">
             Generated {new Date(report.generated_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
             {!canGenerate && nextAvailable && (
               <span className="ml-2 text-amber-400">
@@ -632,7 +632,7 @@ export default function TradingDNA() {
             <button
               onClick={handleGenerate}
               disabled={generating || tradeCount < 10}
-              className="flex items-center gap-1.5 px-4 py-2 bg-emerald-600/20 border border-emerald-600/40 text-emerald-400 text-sm font-medium rounded-xl hover:bg-emerald-600/30 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+              className="flex items-center gap-1.5 px-4 py-2 bg-yellow-600/20 border border-yellow-600/40 text-yellow-400 text-sm font-medium rounded-xl hover:bg-yellow-600/30 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
             >
               {generating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
               Regenerate
@@ -640,7 +640,7 @@ export default function TradingDNA() {
           )}
           <button
             onClick={handleShare}
-            className="flex items-center gap-1.5 px-4 py-2 bg-blue-600/20 border border-blue-600/40 text-blue-400 text-sm font-medium rounded-xl hover:bg-blue-600/30 transition-all"
+            className="flex items-center gap-1.5 px-4 py-2 bg-yellow-600/20 border border-yellow-600/40 text-yellow-400 text-sm font-medium rounded-xl hover:bg-yellow-600/30 transition-all"
           >
             <Download className="w-4 h-4" />
             Share Card

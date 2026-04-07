@@ -192,12 +192,12 @@ function AiNarrative({ text, theme }) {
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
         <div style={{
           width: 26, height: 26, borderRadius: 7,
-          backgroundColor: 'rgba(14,165,233,0.14)',
+          backgroundColor: 'rgba(202,138,4,0.14)',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
         }}>
-          <Brain style={{ width: 13, height: 13, color: '#0ea5e9' }} />
+          <Brain style={{ width: 13, height: 13, color: '#CA8A04' }} />
         </div>
-        <span style={{ fontSize: 11, fontWeight: 700, color: '#0ea5e9', letterSpacing: '0.06em' }}>
+        <span style={{ fontSize: 11, fontWeight: 700, color: '#CA8A04', letterSpacing: '0.06em' }}>
           ZYNTH MACRO BRIEF
         </span>
         <span style={{ fontSize: 10, color: theme.muted, marginLeft: 'auto' }}>✦ AI Analysis</span>

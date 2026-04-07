@@ -13,8 +13,8 @@ import { resolveMediaUrl } from '../utils/mediaUrl';
 import { setAuthSession } from '../utils/authStorage';
 
 const AVATAR_COLOR_MAP = {
-  emerald: '#3b82f6', blue: '#3b82f6', purple: '#0ea5e9', orange: '#f97316',
-  rose: '#f43f5e', amber: '#f59e0b', cyan: '#06b6d4', indigo: '#6366f1',
+  emerald: '#CA8A04', blue: '#CA8A04', purple: '#8b5cf6', orange: '#f97316',
+  rose: '#f43f5e', amber: '#f59e0b', cyan: '#06b6d4', indigo: '#CA8A04',
 };
 
 function readFileAsBase64(file) {
@@ -28,9 +28,9 @@ function readFileAsBase64(file) {
 
 const PLAN_INFO = {
   free:  { label: 'Basic Plan', sub: 'Free forever',                     color: '#9ca3af' },
-  pro:   { label: 'Pro Plan',   sub: getPlanMonthlyLabel('pro'),         color: '#34d399' },
+  pro:   { label: 'Pro Plan',   sub: getPlanMonthlyLabel('pro'),         color: '#CA8A04' },
   elite: { label: 'Elite Plan', sub: getPlanMonthlyLabel('elite'),       color: '#fbbf24' },
-  admin: { label: 'Admin',      sub: 'Full Access',                       color: '#0ea5e9' },
+  admin: { label: 'Admin',      sub: 'Full Access',                       color: '#CA8A04' },
 };
 
 export default function ProfileModal({ onClose, onForgotPassword }) {
@@ -60,7 +60,7 @@ export default function ProfileModal({ onClose, onForgotPassword }) {
   const planKey = isAdmin ? 'admin' : (isPro ? 'pro' : (isElite ? 'elite' : 'free'));
   const planInfo = PLAN_INFO[planKey];
 
-  const avatarBg   = AVATAR_COLOR_MAP[user?.avatar_color] ?? '#3b82f6';
+  const avatarBg   = AVATAR_COLOR_MAP[user?.avatar_color] ?? '#CA8A04';
   const avatarSrc  = user?.avatar_url ? resolveMediaUrl(user.avatar_url) : (user?.avatar ?? null);
 
   useEffect(() => {
@@ -444,14 +444,14 @@ export default function ProfileModal({ onClose, onForgotPassword }) {
               {tradingStats ? (
                 <div className="grid grid-cols-3 gap-2">
                   <div className="text-center">
-                    <p className="text-[14px] font-bold" style={{ color: '#34d399' }}>
+                    <p className="text-[14px] font-bold" style={{ color: '#10b981' }}>
                       {tradingStats.win_rate != null ? `${tradingStats.win_rate.toFixed(1)}%` : '--'}
                     </p>
                     <p className="text-[10px] mt-0.5" style={{ color: theme.muted }}>Win Rate</p>
                   </div>
                   <div className="text-center">
                     <p className="text-[14px] font-bold"
-                       style={{ color: tradingStats.total_pnl != null && tradingStats.total_pnl >= 0 ? '#34d399' : '#ef4444' }}>
+                       style={{ color: tradingStats.total_pnl != null && tradingStats.total_pnl >= 0 ? '#10b981' : '#ef4444' }}>
                       {tradingStats.total_pnl != null
                         ? `${tradingStats.total_pnl >= 0 ? '+' : ''}${tradingStats.total_pnl.toFixed(2)}`
                         : '--'}

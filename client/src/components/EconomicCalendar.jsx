@@ -1,15 +1,15 @@
-﻿import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useTheme } from '../contexts/ThemeContext';
 
 const CURRENCIES = [
-  { code: 'USD', flag: '🇺🇸', tv: 'us' },
-  { code: 'EUR', flag: '🇪🇺', tv: 'eu' },
-  { code: 'GBP', flag: '🇬🇧', tv: 'gb' },
-  { code: 'JPY', flag: '🇯🇵', tv: 'jp' },
-  { code: 'CAD', flag: '🇨🇦', tv: 'ca' },
-  { code: 'AUD', flag: '🇦🇺', tv: 'au' },
-  { code: 'CHF', flag: '🇨🇭', tv: 'ch' },
-  { code: 'NZD', flag: '🇳🇿', tv: 'nz' },
+  { code: 'USD', flag: '????', tv: 'us' },
+  { code: 'EUR', flag: '????', tv: 'eu' },
+  { code: 'GBP', flag: '????', tv: 'gb' },
+  { code: 'JPY', flag: '????', tv: 'jp' },
+  { code: 'CAD', flag: '????', tv: 'ca' },
+  { code: 'AUD', flag: '????', tv: 'au' },
+  { code: 'CHF', flag: '????', tv: 'ch' },
+  { code: 'NZD', flag: '????', tv: 'nz' },
 ];
 
 // TradingView importance values: -1=low, 0=medium, 1=high
@@ -43,12 +43,12 @@ function getDateRange(filter) {
   mon.setDate(today.getDate() - ((today.getDay() + 6) % 7));
   if (filter === 'this_week') {
     const sun = new Date(mon); sun.setDate(mon.getDate() + 6);
-    return `${fmt(mon)} – ${fmt(sun)}`;
+    return `${fmt(mon)} � ${fmt(sun)}`;
   }
   // next_week
   const nxtMon = new Date(mon); nxtMon.setDate(mon.getDate() + 7);
   const nxtSun = new Date(nxtMon); nxtSun.setDate(nxtMon.getDate() + 6);
-  return `${fmt(nxtMon)} – ${fmt(nxtSun)}`;
+  return `${fmt(nxtMon)} � ${fmt(nxtSun)}`;
 }
 
 /**
@@ -129,10 +129,10 @@ export default function EconomicCalendar() {
     cardBg2: theme.isDark ? theme.surface2  : '#f7f8fa',
     border:  theme.isDark ? theme.border    : '#e5e8ed',
     border2: theme.isDark ? 'rgba(255,255,255,0.10)' : '#d0d5de',
-    text:    theme.isDark ? theme.text      : '#0d1117',
+    text:    theme.isDark ? theme.text      : '#0b0b0f',
     textSub: theme.isDark ? '#8892a4'       : '#5a6472',
-    accent:  '#3b82f6',
-    accentDim: theme.isDark ? '#3b82f615' : '#3b82f612',
+    accent:  '#CA8A04',
+    accentDim: theme.isDark ? '#CA8A0415' : '#CA8A0412',
   };
 
   const now = new Date();
@@ -191,7 +191,7 @@ export default function EconomicCalendar() {
         @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
       `}</style>
 
-      {/* ══ Header card ═══════════════════════════════════════════════════ */}
+      {/* -- Header card --------------------------------------------------- */}
       <div style={{
         background: D.cardBg,
         borderBottom: `1px solid ${D.border}`,
@@ -236,7 +236,7 @@ export default function EconomicCalendar() {
             }}>
               <div style={{ width: 6, height: 6, borderRadius: '50%', background: D.accent }} />
               <span style={{ fontSize: 11, fontWeight: 600, color: D.accent, letterSpacing: '0.02em' }}>
-                Live · TradingView
+                Live � TradingView
               </span>
             </div>
           </div>
@@ -371,7 +371,7 @@ export default function EconomicCalendar() {
         </div>
       </div>
 
-      {/* ══ TradingView widget ════════════════════════════════════════════ */}
+      {/* -- TradingView widget -------------------------------------------- */}
       <div style={{ flex: 1, minHeight: 0 }}>
         <TradingViewCalendar
           colorTheme={colorTheme}

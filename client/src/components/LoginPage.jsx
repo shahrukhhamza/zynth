@@ -1,4 +1,4 @@
-﻿import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { API_URL } from '../config/api';
 import { getPublicStats } from '../utils/publicStats';
@@ -177,32 +177,32 @@ export default function LoginPage({ onSwitchToSignup, onBack, onForgotPassword }
         }
       `}</style>
 
-      {/* ── Blob 1 – top-left drift ─────────────────────────────────────── */}
+      {/* -- Blob 1 � top-left drift --------------------------------------- */}
       <div style={{ position:'fixed', top:'-220px', left:'-180px', width:'720px', height:'720px',
         pointerEvents:'none', zIndex:0,
         background: isDark
-          ? 'radial-gradient(circle, rgba(255,77,0,0.07) 0%, rgba(255,122,0,0.03) 35%, transparent 65%)'
+          ? 'radial-gradient(circle, rgba(202,138,4,0.07) 0%, rgba(255,122,0,0.03) 35%, transparent 65%)'
           : 'radial-gradient(circle, rgba(0,0,0,0.04) 0%, rgba(0,0,0,0.02) 35%, transparent 65%)',
         filter:'blur(82px)', animation:'blobDrift 18s ease-in-out infinite',
       }} />
 
-      {/* ── Blob 2 – bottom-right drift ─────────────────────────────────── */}
+      {/* -- Blob 2 � bottom-right drift ----------------------------------- */}
       <div style={{ position:'fixed', bottom:'-200px', right:'-180px', width:'640px', height:'640px',
         pointerEvents:'none', zIndex:0,
         background: isDark
-          ? 'radial-gradient(circle, rgba(255,122,0,0.05) 0%, rgba(255,77,0,0.02) 35%, transparent 65%)'
+          ? 'radial-gradient(circle, rgba(255,122,0,0.05) 0%, rgba(202,138,4,0.02) 35%, transparent 65%)'
           : 'radial-gradient(circle, rgba(0,0,0,0.03) 0%, rgba(0,0,0,0.015) 35%, transparent 65%)',
         filter:'blur(82px)', animation:'blobDrift2 22s ease-in-out infinite',
       }} />
 
-      {/* ── Corner vignette ─────────────────────────────────────────────── */}
+      {/* -- Corner vignette ----------------------------------------------- */}
       <div style={{ position:'fixed', inset:0, pointerEvents:'none', zIndex:0,
         background: isDark
           ? 'radial-gradient(ellipse 100% 100% at 50% 50%, transparent 40%, rgba(11,11,15,0.62) 100%)'
           : 'radial-gradient(ellipse 100% 100% at 50% 50%, transparent 34%, rgba(223,232,245,0.78) 100%)',
       }} />
 
-      {/* ── Nav bar ─────────────────────────────────────────────────────── */}
+      {/* -- Nav bar ------------------------------------------------------- */}
       <div style={{ position:'fixed', top:0, left:0, right:0, zIndex:20, height:'52px',
         display:'flex', alignItems:'center', justifyContent:'space-between', padding:'0 24px',
         borderBottom: isDark?'1px solid rgba(255,255,255,0.06)':'1px solid rgba(148,163,184,0.28)',
@@ -224,23 +224,23 @@ export default function LoginPage({ onSwitchToSignup, onBack, onForgotPassword }
         </div>
         <div style={{ position:'absolute', left:'50%', transform:'translateX(-50%)', display:'flex', alignItems:'center', gap:'7px' }}>
           <BrandMark size={21} />
-          <span style={{ fontSize:'14px', fontWeight:700, letterSpacing:'-0.022em', color: isDark?'rgba(255,255,255,0.86)':'#0f172a' }}>Zynth</span>
+          <span style={{ fontSize:'14px', fontWeight:700, letterSpacing:'-0.022em', color: isDark?'rgba(255,255,255,0.86)':'#0b0b0f' }}>Zynth</span>
         </div>
         <button onClick={onSwitchToSignup}
           style={{ fontSize:'12.5px', fontWeight:500, color: isDark?'rgba(255,255,255,0.36)':'#64748b', background:'none', border:'none', cursor:'pointer', padding:'4px 2px', transition:'color 0.12s' }}
-          onMouseEnter={e => e.currentTarget.style.color=isDark?'rgba(255,255,255,0.86)':'#0f172a'}
+          onMouseEnter={e => e.currentTarget.style.color=isDark?'rgba(255,255,255,0.86)':'#0b0b0f'}
           onMouseLeave={e => e.currentTarget.style.color=isDark?'rgba(255,255,255,0.36)':'#64748b'}>
-          Sign up →
+          Sign up ?
         </button>
       </div>
 
-      {/* ── Page body ───────────────────────────────────────────────────── */}
+      {/* -- Page body ----------------------------------------------------- */}
       <div style={{ position:'relative', zIndex:1, minHeight:'100vh', padding:'76px 24px 48px', boxSizing:'border-box' }}>
         <div style={{ width:'100%', maxWidth:'1240px', margin:'0 auto', minHeight:'calc(100vh - 124px)', display:'grid', gridTemplateColumns:isMobile?'1fr':'1.05fr 0.95fr', alignItems:'center', gap:isMobile?'0':'52px' }}>
 
           {!isMobile && (
             <div style={{ paddingRight:'24px', animation:'fadeUp 0.52s ease both', display:'flex', flexDirection:'column', justifyContent:'center' }}>
-              <h1 style={{ fontSize:'clamp(36px,3.8vw,56px)', lineHeight:1.04, margin:'0 0 18px', letterSpacing:'-0.04em', fontWeight:800, color:isDark?'#f8fafc':'#0f172a', maxWidth:'560px' }}>
+              <h1 style={{ fontSize:'clamp(36px,3.8vw,56px)', lineHeight:1.04, margin:'0 0 18px', letterSpacing:'-0.04em', fontWeight:800, color:isDark?'#f8fafc':'#0b0b0f', maxWidth:'560px' }}>
                 Trade with clarity,<br />not guesswork.
               </h1>
               <p style={{ margin:'0 0 44px', fontSize:'16px', lineHeight:1.68, maxWidth:'460px', color:isDark?'rgba(255,255,255,0.46)':'#5a6a82', fontWeight:400 }}>
@@ -285,11 +285,11 @@ export default function LoginPage({ onSwitchToSignup, onBack, onForgotPassword }
                     transform:'translateX(-100%)', animation:'blobDrift2 11s ease-in-out infinite' }} />
                   <div style={{ display:'flex', justifyContent:'space-between', alignItems:'baseline', marginBottom:'10px' }}>
                     <div>
-                      <div style={{ fontSize:'11px', fontWeight:500, color:isDark?'rgba(255,255,255,0.28)':'#94a3b8', marginBottom:'3px' }}>DXY Index · 30 days</div>
-                      <div style={{ fontSize:'22px', fontWeight:700, letterSpacing:'-0.03em', color:isDark?'#f1f5f9':'#0f172a', lineHeight:1 }}>99.26</div>
+                      <div style={{ fontSize:'11px', fontWeight:500, color:isDark?'rgba(255,255,255,0.28)':'#94a3b8', marginBottom:'3px' }}>DXY Index � 30 days</div>
+                      <div style={{ fontSize:'22px', fontWeight:700, letterSpacing:'-0.03em', color:isDark?'#fafaf9':'#0b0b0f', lineHeight:1 }}>99.26</div>
                     </div>
                     <div style={{ textAlign:'right' }}>
-                      <div style={{ fontSize:'12.5px', fontWeight:700, color:'#10b981' }}>▲ +0.44%</div>
+                      <div style={{ fontSize:'12.5px', fontWeight:700, color:'#10b981' }}>? +0.44%</div>
                       <div style={{ fontSize:'11px', color:isDark?'rgba(255,255,255,0.22)':'#94a3b8', marginTop:'2px' }}>vs prior close</div>
                     </div>
                   </div>
@@ -309,9 +309,9 @@ export default function LoginPage({ onSwitchToSignup, onBack, onForgotPassword }
 
                 {/* Data rows */}
                 {[
-                  { name:'CPI  (Core YoY)',    val:'3.2%',   tag:'↓ Beat',    tagUp:false, dot:'#ef4444', hi:true  },
-                  { name:'Non-Farm Payrolls', val:'272K',   tag:'↑ Strong',  tagUp:true,  dot:'#ef4444', hi:true  },
-                  { name:'Fed Funds Rate',    val:'5.25%',  tag:'Hold',      tagUp:null,  dot:'#FF7A00', hi:false },
+                  { name:'CPI  (Core YoY)',    val:'3.2%',   tag:'? Beat',    tagUp:false, dot:'#ef4444', hi:true  },
+                  { name:'Non-Farm Payrolls', val:'272K',   tag:'? Strong',  tagUp:true,  dot:'#ef4444', hi:true  },
+                  { name:'Fed Funds Rate',    val:'5.25%',  tag:'Hold',      tagUp:null,  dot:'#FBBF24', hi:false },
                 ].map((row, i) => (
                   <div key={i} style={{ display:'flex', alignItems:'center', padding:'9px 16px',
                     borderTop: isDark?'1px solid rgba(255,255,255,0.038)':'1px solid rgba(203,213,225,0.44)',
@@ -322,7 +322,7 @@ export default function LoginPage({ onSwitchToSignup, onBack, onForgotPassword }
                       background:row.dot, boxShadow:`0 0 6px ${row.dot}88`, animation:'liveBlink 2.6s ease-in-out infinite',
                     }} />
                     <span style={{ flex:1, fontSize:'12.5px', fontWeight:500, color:isDark?'rgba(255,255,255,0.68)':'#334155' }}>{row.name}</span>
-                    <span style={{ fontSize:'13px', fontWeight:700, color:isDark?'#f1f5f9':'#0f172a', marginRight:'12px' }}>{row.val}</span>
+                    <span style={{ fontSize:'13px', fontWeight:700, color:isDark?'#fafaf9':'#0b0b0f', marginRight:'12px' }}>{row.val}</span>
                     <span style={{ fontSize:'11px', fontWeight:600, padding:'2.5px 8px', borderRadius:'7px', whiteSpace:'nowrap',
                       color: row.tagUp===true?'#10b981':row.tagUp===false?'#f87171':'#94a3b8',
                       background: row.tagUp===true?(isDark?'rgba(16,185,129,0.12)':'rgba(16,185,129,0.09)'):
@@ -354,10 +354,10 @@ export default function LoginPage({ onSwitchToSignup, onBack, onForgotPassword }
             {/* Logotype above card */}
             <div style={{ display:'flex', alignItems:'center', gap:'10px', marginBottom:'26px', animation:'cardIn 0.38s ease both' }}>
               <BrandMark size={33} />
-              <span style={{ fontSize:'19px', fontWeight:800, letterSpacing:'-0.035em', color: isDark?'#fff':'#0f172a' }}>Zynth</span>
+              <span style={{ fontSize:'19px', fontWeight:800, letterSpacing:'-0.035em', color: isDark?'#fff':'#0b0b0f' }}>Zynth</span>
             </div>
 
-        {/* ── Auth card ───────────────────────────────────────────────── */}
+        {/* -- Auth card ------------------------------------------------- */}
         <div ref={formRef} style={{
           width:'100%', maxWidth:'400px',
           background: isDark?'rgba(17,17,19,0.85)':'linear-gradient(168deg, rgba(255,255,255,0.97) 0%, rgba(246,250,255,0.95) 52%, rgba(241,247,255,0.93) 100%)',
@@ -377,7 +377,7 @@ export default function LoginPage({ onSwitchToSignup, onBack, onForgotPassword }
 
           {/* Heading */}
           <div style={{ marginBottom:'22px', animation:'fadeUp 0.45s ease 0.11s both' }}>
-            <h1 style={{ fontSize:'21px', fontWeight:700, letterSpacing:'-0.028em', margin:'0 0 5px', color: isDark?'#f1f5f9':'#0f172a', lineHeight:1.2 }}>
+            <h1 style={{ fontSize:'21px', fontWeight:700, letterSpacing:'-0.028em', margin:'0 0 5px', color: isDark?'#fafaf9':'#0b0b0f', lineHeight:1.2 }}>
               Welcome back.
             </h1>
             <p style={{ fontSize:'13.5px', color: isDark?'rgba(255,255,255,0.38)':'#64748b', margin:0, lineHeight:1.5 }}>
@@ -413,7 +413,7 @@ export default function LoginPage({ onSwitchToSignup, onBack, onForgotPassword }
               background: isDark?'rgba(251,191,36,0.08)':'rgba(254,252,232,0.9)',
               animation:'fadeUp 0.45s ease 0.15s both' }}>
               <div style={{ padding:'11px 14px', display:'flex', alignItems:'flex-start', gap:'10px' }}>
-                <span style={{ fontSize:'15px', flexShrink:0, marginTop:'1px' }}>⚠️</span>
+                <span style={{ fontSize:'15px', flexShrink:0, marginTop:'1px' }}>??</span>
                 <div style={{ flex:1 }}>
                   <p style={{ margin:'0 0 4px', fontSize:'12.5px', fontWeight:600, color: isDark?'#fcd34d':'#92400e', lineHeight:1.4 }}>
                     Google Sign-in is blocked in Instagram's browser
@@ -432,7 +432,7 @@ export default function LoginPage({ onSwitchToSignup, onBack, onForgotPassword }
                     style={{ fontSize:'12px', fontWeight:600, padding:'6px 12px', borderRadius:'7px', border:'none', cursor:'pointer',
                       background: isDark?'rgba(251,191,36,0.22)':'rgba(251,191,36,0.30)',
                       color: isDark?'#fcd34d':'#92400e', transition:'opacity 0.15s' }}>
-                    {linkCopied ? '✓ Link copied!' : 'Copy Link'}
+                    {linkCopied ? '? Link copied!' : 'Copy Link'}
                   </button>
                 </div>
               </div>
@@ -442,7 +442,7 @@ export default function LoginPage({ onSwitchToSignup, onBack, onForgotPassword }
             style={{ width:'100%', padding:'10px 16px',
               background: isDark?'rgba(255,255,255,0.96)':'#ffffff',
               border: isDark?'1px solid rgba(255,255,255,0.10)':'1px solid rgba(148,163,184,0.34)',
-              borderRadius:'11px', color:!GOOGLE_CLIENT_ID?'rgba(0,0,0,0.3)':'#1e293b',
+              borderRadius:'11px', color:!GOOGLE_CLIENT_ID?'rgba(0,0,0,0.3)':'#161618',
               fontSize:'13.5px', fontWeight:500,
               display:'flex', alignItems:'center', justifyContent:'center', gap:'10px',
               cursor:loading||googleLoading||!GOOGLE_CLIENT_ID?'not-allowed':'pointer',
@@ -459,7 +459,7 @@ export default function LoginPage({ onSwitchToSignup, onBack, onForgotPassword }
                 <path fill="#4A90E2" d="M19.834 21c2.195-2.048 3.62-5.096 3.62-9 0-.71-.109-1.473-.272-2.182H12v4.637h6.436c-.317 1.559-1.17 2.766-2.395 3.558L19.834 21z"/>
                 <path fill="#FBBC05" d="M5.277 14.268A7.12 7.12 0 0 1 4.909 12c0-.782.125-1.533.357-2.235L1.24 6.65A11.934 11.934 0 0 0 0 12c0 1.92.445 3.73 1.237 5.335l4.04-3.067z"/>
               </svg>}
-            <span>{googleLoading ? 'Signing in…' : 'Continue with Google'}</span>
+            <span>{googleLoading ? 'Signing in�' : 'Continue with Google'}</span>
           </button>
           )}
 
@@ -482,8 +482,8 @@ export default function LoginPage({ onSwitchToSignup, onBack, onForgotPassword }
                 style={{ width:'100%', boxSizing:'border-box', outline:'none', fontSize:'14px', transition:'all 0.18s ease',
                   background: isDark?'rgba(255,255,255,0.044)':'rgba(255,255,255,0.84)',
                   border: fieldErrors.email?'1px solid rgba(239,68,68,0.55)':isDark?'1px solid rgba(255,255,255,0.088)':'1px solid rgba(148,163,184,0.42)',
-                  borderRadius:'10px', padding:'10px 13px', color: isDark?'#f1f5f9':'#0f172a' }}
-                onFocus={e => { e.target.style.borderColor=isDark?'rgba(255,77,0,0.5)':'rgba(0,0,0,0.3)'; e.target.style.boxShadow=isDark?'0 0 0 3px rgba(255,77,0,0.1)':'0 0 0 3px rgba(0,0,0,0.06)'; e.target.style.background=isDark?'rgba(255,255,255,0.06)':'#ffffff'; }}
+                  borderRadius:'10px', padding:'10px 13px', color: isDark?'#fafaf9':'#0b0b0f' }}
+                onFocus={e => { e.target.style.borderColor=isDark?'rgba(202,138,4,0.5)':'rgba(0,0,0,0.3)'; e.target.style.boxShadow=isDark?'0 0 0 3px rgba(202,138,4,0.1)':'0 0 0 3px rgba(0,0,0,0.06)'; e.target.style.background=isDark?'rgba(255,255,255,0.06)':'#ffffff'; }}
                 onBlur={e => { if(!fieldErrors.email){ e.target.style.borderColor=isDark?'rgba(255,255,255,0.088)':'rgba(148,163,184,0.42)'; e.target.style.boxShadow='none'; e.target.style.background=isDark?'rgba(255,255,255,0.044)':'rgba(255,255,255,0.84)'; }}}
               />
               {fieldErrors.email?.trim() && <div style={{ display:'flex', alignItems:'center', gap:'4px', marginTop:'5px' }}><AlertCircle size={11} color="#ef4444"/><span style={{ fontSize:'11px', color:'#ef4444' }}>{fieldErrors.email}</span></div>}
@@ -501,12 +501,12 @@ export default function LoginPage({ onSwitchToSignup, onBack, onForgotPassword }
               <div style={{ position:'relative' }}>
                 <input type={showPass?'text':'password'} autoComplete="current-password" value={password} required
                   onChange={e => { setPassword(e.target.value); setFieldErrors(fe => ({...fe, password:''})); }}
-                  placeholder="••••••••"
+                  placeholder="��������"
                   style={{ width:'100%', boxSizing:'border-box', outline:'none', fontSize:'14px', transition:'all 0.18s ease',
                     background: isDark?'rgba(255,255,255,0.044)':'rgba(255,255,255,0.84)',
                     border: fieldErrors.password?'1px solid rgba(239,68,68,0.55)':isDark?'1px solid rgba(255,255,255,0.088)':'1px solid rgba(148,163,184,0.42)',
-                    borderRadius:'10px', padding:'10px 36px 10px 13px', color: isDark?'#f1f5f9':'#0f172a' }}
-                  onFocus={e => { e.target.style.borderColor=isDark?'rgba(255,77,0,0.5)':'rgba(0,0,0,0.3)'; e.target.style.boxShadow=isDark?'0 0 0 3px rgba(255,77,0,0.1)':'0 0 0 3px rgba(0,0,0,0.06)'; e.target.style.background=isDark?'rgba(255,255,255,0.06)':'#ffffff'; }}
+                    borderRadius:'10px', padding:'10px 36px 10px 13px', color: isDark?'#fafaf9':'#0b0b0f' }}
+                  onFocus={e => { e.target.style.borderColor=isDark?'rgba(202,138,4,0.5)':'rgba(0,0,0,0.3)'; e.target.style.boxShadow=isDark?'0 0 0 3px rgba(202,138,4,0.1)':'0 0 0 3px rgba(0,0,0,0.06)'; e.target.style.background=isDark?'rgba(255,255,255,0.06)':'#ffffff'; }}
                   onBlur={e => { if(!fieldErrors.password){ e.target.style.borderColor=isDark?'rgba(255,255,255,0.088)':'rgba(148,163,184,0.42)'; e.target.style.boxShadow='none'; e.target.style.background=isDark?'rgba(255,255,255,0.044)':'rgba(255,255,255,0.84)'; }}}
                 />
                 <button type="button" onClick={() => setShowPass(v=>!v)} tabIndex={-1}
@@ -522,17 +522,17 @@ export default function LoginPage({ onSwitchToSignup, onBack, onForgotPassword }
             {/* Submit */}
             <button type="submit" disabled={loading}
               style={{ width:'100%', padding:'11px',
-                background: loading?(isDark?'rgba(255,77,0,0.3)':'rgba(0,0,0,0.3)'):(isDark?'linear-gradient(135deg, #FF4D00 0%, #FF7A00 100%)':'linear-gradient(135deg, #18181b 0%, #27272a 100%)'),
+                background: loading?(isDark?'rgba(202,138,4,0.3)':'rgba(0,0,0,0.3)'):(isDark?'linear-gradient(135deg, #CA8A04 0%, #FBBF24 100%)':'linear-gradient(135deg, #18181b 0%, #27272a 100%)'),
                 border:'none', borderRadius:'11px', color:'#fff', fontSize:'13.5px', fontWeight:600,
                 cursor:loading?'not-allowed':'pointer', transition:'all 0.18s ease',
                 display:'flex', alignItems:'center', justifyContent:'center', gap:'7px',
-                boxShadow: loading?'none':(isDark?'0 2px 14px rgba(255,77,0,0.3), 0 1px 3px rgba(0,0,0,0.2)':'0 2px 14px rgba(0,0,0,0.18), 0 1px 3px rgba(0,0,0,0.1)'),
+                boxShadow: loading?'none':(isDark?'0 2px 14px rgba(202,138,4,0.3), 0 1px 3px rgba(0,0,0,0.2)':'0 2px 14px rgba(0,0,0,0.18), 0 1px 3px rgba(0,0,0,0.1)'),
                 letterSpacing:'0.01em' }}
-              onMouseEnter={e => { if(!loading){ e.currentTarget.style.transform='translateY(-1.5px)'; e.currentTarget.style.boxShadow=isDark?'0 8px 28px rgba(255,77,0,0.4), 0 2px 8px rgba(0,0,0,0.2)':'0 8px 28px rgba(0,0,0,0.25), 0 2px 8px rgba(0,0,0,0.12)'; }}}
-              onMouseLeave={e => { e.currentTarget.style.transform=''; e.currentTarget.style.boxShadow=loading?'none':(isDark?'0 2px 14px rgba(255,77,0,0.3), 0 1px 3px rgba(0,0,0,0.2)':'0 2px 14px rgba(0,0,0,0.18), 0 1px 3px rgba(0,0,0,0.1)'); }}
+              onMouseEnter={e => { if(!loading){ e.currentTarget.style.transform='translateY(-1.5px)'; e.currentTarget.style.boxShadow=isDark?'0 8px 28px rgba(202,138,4,0.4), 0 2px 8px rgba(0,0,0,0.2)':'0 8px 28px rgba(0,0,0,0.25), 0 2px 8px rgba(0,0,0,0.12)'; }}}
+              onMouseLeave={e => { e.currentTarget.style.transform=''; e.currentTarget.style.boxShadow=loading?'none':(isDark?'0 2px 14px rgba(202,138,4,0.3), 0 1px 3px rgba(0,0,0,0.2)':'0 2px 14px rgba(0,0,0,0.18), 0 1px 3px rgba(0,0,0,0.1)'); }}
               onMouseDown={e => { if(!loading) e.currentTarget.style.transform='scale(0.985)'; }}
               onMouseUp={e => { if(!loading) e.currentTarget.style.transform='translateY(-1.5px)'; }}>
-              {loading ? <><Loader2 size={14} className="animate-spin"/><span>Signing in…</span></> : <><span>Sign in</span><ArrowRight size={14}/></>}
+              {loading ? <><Loader2 size={14} className="animate-spin"/><span>Signing in�</span></> : <><span>Sign in</span><ArrowRight size={14}/></>}
             </button>
           </form>
 
@@ -554,7 +554,7 @@ export default function LoginPage({ onSwitchToSignup, onBack, onForgotPassword }
             style={{ color: isDark?'#a1a1aa':'#52525b', background:'none', border:'none', cursor:'pointer', fontSize:'13px', padding:0, fontWeight:500, transition:'color 0.12s' }}
             onMouseEnter={e => e.currentTarget.style.color=isDark?'#ffffff':'#09090b'}
             onMouseLeave={e => e.currentTarget.style.color=isDark?'#a1a1aa':'#52525b'}>
-            Create one free →
+            Create one free ?
           </button>
             </p>
           </div>

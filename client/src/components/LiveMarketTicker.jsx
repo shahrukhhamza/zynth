@@ -12,7 +12,7 @@ const FLASH_MS   = 700;
 const CATEGORIES = ['All', 'Stocks', 'Forex', 'Crypto'];
 
 const CATEGORY_META = {
-  stocks: { label: 'Stocks',     color: '#3b82f6', bg: 'rgba(59,130,246,0.15)'  },
+  stocks: { label: 'Stocks',     color: '#CA8A04', bg: 'rgba(202,138,4,0.15)'  },
   forex:  { label: 'Forex',      color: '#22c55e', bg: 'rgba(34,197,94,0.15)'   },
   crypto: { label: 'Crypto',     color: '#f59e0b', bg: 'rgba(245,158,11,0.15)'  },
 };
@@ -274,7 +274,7 @@ export default function LiveMarketTicker() {
           <div>
             <div className="flex items-center gap-3 mb-1">
               <div className="w-9 h-9 rounded-xl flex items-center justify-center"
-                style={{ background: 'linear-gradient(135deg,#3b82f6,#6366f1)' }}>
+                style={{ background: 'linear-gradient(135deg,#CA8A04,#EAB308)' }}>
                 <Activity className="w-5 h-5 text-white" style={{ color: '#fff' }} />
               </div>
               <h2 className="text-2xl font-bold" style={{ color: theme.text }}>Live Market Data</h2>
@@ -288,10 +288,10 @@ export default function LiveMarketTicker() {
 
         {/* ── Summary cards ───────────────────────────────────────────── */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <SummaryCard label="Instruments" value={loaded} sub={`of ${allSymbols.length} loaded`} color="#3b82f6" icon={Activity}    theme={theme} />
+          <SummaryCard label="Instruments" value={loaded} sub={`of ${allSymbols.length} loaded`} color="#CA8A04" icon={Activity}    theme={theme} />
           <SummaryCard label="Gainers"     value={gainers} sub="positive today"                  color="#22c55e" icon={TrendingUp}  theme={theme} />
           <SummaryCard label="Losers"      value={losers}  sub="negative today"                  color="#ef4444" icon={TrendingDown} theme={theme} />
-          <SummaryCard label="Stream"      value="Live"    sub="WebSocket feed"                  color="#0ea5e9" icon={Wifi}        theme={theme} />
+          <SummaryCard label="Stream"      value="Live"    sub="WebSocket feed"                  color="#8b5cf6" icon={Wifi}        theme={theme} />
         </div>
 
         {/* ── Filters + search ────────────────────────────────────────── */}
@@ -312,7 +312,7 @@ export default function LiveMarketTicker() {
 
           {/* Search */}
           <div className="relative flex-1 min-w-[180px] max-w-xs">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: theme.muted }} />
+            <Search className="absolute left-3 top-1/2 -tranzinc-y-1/2 w-4 h-4" style={{ color: theme.muted }} />
             <input
               value={search}
               onChange={e => setSearch(e.target.value)}

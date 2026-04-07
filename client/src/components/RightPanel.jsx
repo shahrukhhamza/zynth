@@ -20,7 +20,7 @@ function RightPanel({ sentimentStats, highImpactNews, totalNews }) {
   const getSentimentStyle = (sentiment) => {
     switch (sentiment) {
       case 'Bullish':
-        return { color: '#3b82f6', backgroundColor: 'rgba(16,185,129,0.10)', borderColor: 'rgba(16,185,129,0.25)' };
+        return { color: '#CA8A04', backgroundColor: 'rgba(202,138,4,0.10)', borderColor: 'rgba(202,138,4,0.25)' };
       case 'Bearish':
         return { color: '#ef4444', backgroundColor: 'rgba(239,68,68,0.10)', borderColor: 'rgba(239,68,68,0.25)' };
       default:
@@ -59,13 +59,13 @@ function RightPanel({ sentimentStats, highImpactNews, totalNews }) {
               {/* Bullish */}
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <div style={{ width: 28, height: 28, borderRadius: 7, backgroundColor: 'rgba(16,185,129,0.10)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <TrendingUp className="w-3.5 h-3.5" style={{ color: '#3b82f6' }} />
+                  <div style={{ width: 28, height: 28, borderRadius: 7, backgroundColor: 'rgba(202,138,4,0.10)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <TrendingUp className="w-3.5 h-3.5" style={{ color: '#CA8A04' }} />
                   </div>
                   <span style={{ fontSize: 13, color: theme.text }}>Bullish</span>
                 </div>
                 <div style={{ textAlign: 'right' }}>
-                  <div style={{ fontSize: 22, fontWeight: 700, color: '#3b82f6', lineHeight: 1, fontVariantNumeric: 'tabular-nums' }}>{sentimentStats.bullish}</div>
+                  <div style={{ fontSize: 22, fontWeight: 700, color: '#CA8A04', lineHeight: 1, fontVariantNumeric: 'tabular-nums' }}>{sentimentStats.bullish}</div>
                   <div style={{ fontSize: 10, color: theme.muted, marginTop: 1 }}>
                     {totalNews > 0 ? Math.round((sentimentStats.bullish / totalNews) * 100) : 0}%
                   </div>

@@ -1,4 +1,4 @@
-﻿import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { API_URL } from '../config/api';
 import { getPublicStats } from '../utils/publicStats';
@@ -111,7 +111,7 @@ export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess })
   const inputStyle = {
     background: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.03)',
     border: isDark ? '1px solid rgba(255,255,255,0.1)' : '1px solid rgba(0,0,0,0.12)',
-    borderRadius: '10px', color: isDark ? '#fff' : '#0f172a', width: '100%', fontSize: '14px',
+    borderRadius: '10px', color: isDark ? '#fff' : '#0b0b0f', width: '100%', fontSize: '14px',
     outline: 'none', transition: 'all 0.2s ease',
   };
   const focusIn  = e => { e.target.style.background = isDark ? 'rgba(255,255,255,0.06)' : '#ffffff'; e.target.style.borderColor = isDark?'rgba(255,255,255,0.28)':'rgba(0,0,0,0.3)'; e.target.style.boxShadow = isDark?'0 0 0 3px rgba(255,255,255,0.06)':'0 0 0 3px rgba(0,0,0,0.06)'; };
@@ -211,7 +211,7 @@ export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess })
           cursor:pointer; position:relative; margin-top:1px;
           transition:background 0.14s, border-color 0.14s; background:transparent;
         }
-        .sp-checkbox:checked { background:#FF4D00; border-color:#FF4D00 !important; }
+        .sp-checkbox:checked { background:#CA8A04; border-color:#CA8A04 !important; }
         .sp-checkbox:checked::after {
           content:''; position:absolute; left:3px; top:1px;
           width:9px; height:5px;
@@ -220,25 +220,25 @@ export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess })
         }
       `}</style>
 
-      {/* ── Blob 1 – top-left drift ─────────────────────────────────────── */}
+      {/* -- Blob 1 � top-left drift --------------------------------------- */}
       <div style={{ position:'fixed', top:'-220px', left:'-180px', width:'720px', height:'720px',
         pointerEvents:'none', zIndex:0,
         background: isDark
-          ? 'radial-gradient(circle, rgba(255,77,0,0.07) 0%, rgba(255,122,0,0.03) 35%, transparent 65%)'
+          ? 'radial-gradient(circle, rgba(202,138,4,0.07) 0%, rgba(255,122,0,0.03) 35%, transparent 65%)'
           : 'radial-gradient(circle, rgba(0,0,0,0.04) 0%, rgba(0,0,0,0.02) 35%, transparent 65%)',
         filter:'blur(82px)', animation:'blobDrift 18s ease-in-out infinite',
       }} />
 
-      {/* ── Blob 2 – bottom-right drift ─────────────────────────────────── */}
+      {/* -- Blob 2 � bottom-right drift ----------------------------------- */}
       <div style={{ position:'fixed', bottom:'-200px', right:'-180px', width:'640px', height:'640px',
         pointerEvents:'none', zIndex:0,
         background: isDark
-          ? 'radial-gradient(circle, rgba(255,122,0,0.05) 0%, rgba(255,77,0,0.02) 35%, transparent 65%)'
+          ? 'radial-gradient(circle, rgba(255,122,0,0.05) 0%, rgba(202,138,4,0.02) 35%, transparent 65%)'
           : 'radial-gradient(circle, rgba(0,0,0,0.03) 0%, rgba(0,0,0,0.015) 35%, transparent 65%)',
         filter:'blur(82px)', animation:'blobDrift2 22s ease-in-out infinite',
       }} />
 
-      {/* ── Corner vignette ─────────────────────────────────────────────── */}
+      {/* -- Corner vignette ----------------------------------------------- */}
       <div style={{ position:'fixed', inset:0, pointerEvents:'none', zIndex:0,
         background: isDark
           ? 'radial-gradient(ellipse 100% 100% at 50% 50%, transparent 40%, rgba(11,11,15,0.62) 100%)'
@@ -267,13 +267,13 @@ export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess })
         </div>
         <div style={{ position:'absolute', left:'50%', transform:'translateX(-50%)', display:'flex', alignItems:'center', gap:'7px' }}>
           <BrandMark size={21} />
-          <span style={{ fontSize:'14px', fontWeight:700, letterSpacing:'-0.022em', color: isDark?'rgba(255,255,255,0.86)':'#0f172a' }}>Zynth</span>
+          <span style={{ fontSize:'14px', fontWeight:700, letterSpacing:'-0.022em', color: isDark?'rgba(255,255,255,0.86)':'#0b0b0f' }}>Zynth</span>
         </div>
         <button onClick={onSwitchToLogin}
           style={{ fontSize:'12.5px', fontWeight:500, color: isDark?'rgba(255,255,255,0.36)':'#64748b', background:'none', border:'none', cursor:'pointer', padding:'4px 2px', transition:'color 0.12s' }}
-          onMouseEnter={e => e.currentTarget.style.color=isDark?'rgba(255,255,255,0.86)':'#0f172a'}
+          onMouseEnter={e => e.currentTarget.style.color=isDark?'rgba(255,255,255,0.86)':'#0b0b0f'}
           onMouseLeave={e => e.currentTarget.style.color=isDark?'rgba(255,255,255,0.36)':'#64748b'}>
-          Sign in →
+          Sign in ?
         </button>
       </div>
 
@@ -283,11 +283,11 @@ export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess })
 
           {!isMobile && (
             <div style={{ paddingRight:'24px', animation:'fadeUp 0.52s ease both', display:'flex', flexDirection:'column', justifyContent:'center' }}>
-              <h1 style={{ fontSize:'clamp(36px,3.8vw,56px)', lineHeight:1.04, margin:'0 0 18px', letterSpacing:'-0.04em', fontWeight:800, color:isDark?'#f8fafc':'#0f172a', maxWidth:'560px' }}>
+              <h1 style={{ fontSize:'clamp(36px,3.8vw,56px)', lineHeight:1.04, margin:'0 0 18px', letterSpacing:'-0.04em', fontWeight:800, color:isDark?'#f8fafc':'#0b0b0f', maxWidth:'560px' }}>
                 See the macro picture.<br />Act with precision.
               </h1>
               <p style={{ margin:'0 0 44px', fontSize:'16px', lineHeight:1.68, maxWidth:'460px', color:isDark?'rgba(255,255,255,0.46)':'#5a6a82', fontWeight:400 }}>
-                Turn economic data into structured trade context — with AI interpretation built into your workflow.
+                Turn economic data into structured trade context � with AI interpretation built into your workflow.
               </p>
 
               {/* Product calendar preview */}
@@ -329,9 +329,9 @@ export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess })
                 {/* Calendar rows */}
                 {[
                   { date:'Mar 28', day:'Fri', name:'Core PCE Price Index',     impact:'high',   expect:'2.7%',  prev:'2.8%',  ai:true  },
-                  { date:'Apr 02', day:'Wed', name:'FOMC Meeting Minutes',      impact:'high',   expect:'—',     prev:'—',     ai:true  },
+                  { date:'Apr 02', day:'Wed', name:'FOMC Meeting Minutes',      impact:'high',   expect:'�',     prev:'�',     ai:true  },
                   { date:'Apr 04', day:'Fri', name:'Non-Farm Payrolls',         impact:'high',   expect:'215K',  prev:'272K',  ai:false },
-                  { date:'Apr 10', day:'Thu', name:'CPI · Consumer Price Index', impact:'medium', expect:'3.1%',  prev:'3.2%',  ai:true  },
+                  { date:'Apr 10', day:'Thu', name:'CPI � Consumer Price Index', impact:'medium', expect:'3.1%',  prev:'3.2%',  ai:true  },
                 ].map((ev, i) => (
                   <div key={i} style={{ display:'flex', alignItems:'center', padding:'10px 16px', gap:'12px',
                     borderTop: i===0?'none':(isDark?'1px solid rgba(255,255,255,0.038)':'1px solid rgba(203,213,225,0.44)'),
@@ -341,7 +341,7 @@ export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess })
                     {/* Date badge */}
                     <div style={{ minWidth:'40px', textAlign:'center', flexShrink:0 }}>
                       <div style={{ fontSize:'10px', fontWeight:600, color:isDark?'rgba(255,255,255,0.28)':'#94a3b8', textTransform:'uppercase', letterSpacing:'0.04em' }}>{ev.day}</div>
-                      <div style={{ fontSize:'13px', fontWeight:700, color:isDark?'#e2e8f0':'#1e293b', letterSpacing:'-0.01em' }}>{ev.date.split(' ')[1]}</div>
+                      <div style={{ fontSize:'13px', fontWeight:700, color:isDark?'#e2e8f0':'#161618', letterSpacing:'-0.01em' }}>{ev.date.split(' ')[1]}</div>
                     </div>
                     {/* Impact dot */}
                     <span style={{ width:'7px', height:'7px', borderRadius:'50%', flexShrink:0,
@@ -351,7 +351,7 @@ export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess })
                     }} />
                     {/* Event name */}
                     <div style={{ flex:1, minWidth:0 }}>
-                      <div style={{ fontSize:'12.5px', fontWeight:600, color:isDark?'rgba(255,255,255,0.76)':'#1e293b', whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>{ev.name}</div>
+                      <div style={{ fontSize:'12.5px', fontWeight:600, color:isDark?'rgba(255,255,255,0.76)':'#161618', whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>{ev.name}</div>
                       <div style={{ fontSize:'11px', color:isDark?'rgba(255,255,255,0.28)':'#94a3b8', marginTop:'1px' }}>Est. {ev.expect} &middot; Prev. {ev.prev}</div>
                     </div>
                     {/* AI tag */}
@@ -360,7 +360,7 @@ export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess })
                         color: isDark?'rgba(255,255,255,0.55)':'#52525b',
                         background: isDark?'rgba(255,255,255,0.06)':'rgba(0,0,0,0.04)',
                         border: isDark?'1px solid rgba(255,255,255,0.10)':'1px solid rgba(0,0,0,0.08)',
-                      }}>AI ⚡</div>
+                      }}>AI ?</div>
                     )}
                   </div>
                 ))}
@@ -385,27 +385,27 @@ export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess })
           <div style={{ display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', minHeight:isMobile?'auto':'calc(100vh - 160px)' }}>
 
         {success ? (
-          /* ── Success screen ─────────────────────────────────────────── */
+          /* -- Success screen ------------------------------------------- */
           <div style={{ textAlign:'center', animation:'cardIn 0.4s ease both' }}>
-            <div style={{ width:'68px', height:'68px', borderRadius:'50%', background: isDark?'linear-gradient(135deg,#FF4D00,#FF7A00)':'linear-gradient(135deg,#18181b,#27272a)',
+            <div style={{ width:'68px', height:'68px', borderRadius:'50%', background: isDark?'linear-gradient(135deg,#CA8A04,#FBBF24)':'linear-gradient(135deg,#18181b,#27272a)',
               display:'flex', alignItems:'center', justifyContent:'center', margin:'0 auto 20px',
-              boxShadow: isDark?'0 0 40px rgba(255,77,0,0.3)':'0 0 40px rgba(0,0,0,0.20)' }}>
+              boxShadow: isDark?'0 0 40px rgba(202,138,4,0.3)':'0 0 40px rgba(0,0,0,0.20)' }}>
               <CheckCircle size={32} color='#ffffff' />
             </div>
-            <h2 style={{ fontSize:'22px', fontWeight:700, letterSpacing:'-0.025em', color: isDark?'#f1f5f9':'#0f172a', marginBottom:'8px' }}>
+            <h2 style={{ fontSize:'22px', fontWeight:700, letterSpacing:'-0.025em', color: isDark?'#fafaf9':'#0b0b0f', marginBottom:'8px' }}>
               Account created!
             </h2>
             <p style={{ fontSize:'14px', color: isDark?'rgba(255,255,255,0.48)':'#64748b', marginBottom:0 }}>
-              Redirecting you to your dashboard…
+              Redirecting you to your dashboard�
             </p>
-            <div style={{ width:'36px', height:'2.5px', background: isDark?'linear-gradient(90deg,#FF4D00,#FF7A00)':'linear-gradient(90deg,#18181b,#52525b)', borderRadius:'2px', margin:'18px auto 0', animation:'blobDrift2 1.6s ease-in-out infinite' }} />
+            <div style={{ width:'36px', height:'2.5px', background: isDark?'linear-gradient(90deg,#CA8A04,#FBBF24)':'linear-gradient(90deg,#18181b,#52525b)', borderRadius:'2px', margin:'18px auto 0', animation:'blobDrift2 1.6s ease-in-out infinite' }} />
           </div>
         ) : (
           <>
             {/* Logotype above card */}
             <div style={{ display:'flex', alignItems:'center', gap:'10px', marginBottom:'26px', animation:'cardIn 0.38s ease both' }}>
               <BrandMark size={33} />
-              <span style={{ fontSize:'19px', fontWeight:800, letterSpacing:'-0.035em', color: isDark?'#fff':'#0f172a' }}>Zynth</span>
+              <span style={{ fontSize:'19px', fontWeight:800, letterSpacing:'-0.035em', color: isDark?'#fff':'#0b0b0f' }}>Zynth</span>
             </div>
 
             {/* Card */}
@@ -428,11 +428,11 @@ export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess })
 
               {/* Heading */}
               <div style={{ marginBottom:'20px', animation:'fadeUp 0.45s ease 0.11s both' }}>
-                <h1 style={{ fontSize:'21px', fontWeight:700, letterSpacing:'-0.028em', margin:'0 0 5px', color: isDark?'#f1f5f9':'#0f172a', lineHeight:1.2 }}>
+                <h1 style={{ fontSize:'21px', fontWeight:700, letterSpacing:'-0.028em', margin:'0 0 5px', color: isDark?'#fafaf9':'#0b0b0f', lineHeight:1.2 }}>
                   Create your account.
                 </h1>
                 <p style={{ fontSize:'13.5px', color: isDark?'rgba(255,255,255,0.38)':'#64748b', margin:0 }}>
-                  {spotsLeft != null && <><span style={{ color:'#FF7A00', fontWeight:600 }}>{spotsLeft} spots</span> left at this price.{' '}</>}
+                  {spotsLeft != null && <><span style={{ color:'#FBBF24', fontWeight:600 }}>{spotsLeft} spots</span> left at this price.{' '}</>}
                   Already on Zynth?{' '}
                   <button onClick={onSwitchToLogin}
                     style={{ color: isDark?'#a1a1aa':'#52525b', background:'none', border:'none', cursor:'pointer', fontSize:'13.5px', padding:0, fontWeight:500, transition:'color 0.12s' }}
@@ -452,7 +452,7 @@ export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess })
                   background: isDark?'rgba(251,191,36,0.08)':'rgba(254,252,232,0.9)',
                   animation:'fadeUp 0.45s ease 0.15s both' }}>
                   <div style={{ padding:'11px 14px', display:'flex', alignItems:'flex-start', gap:'10px' }}>
-                    <span style={{ fontSize:'15px', flexShrink:0, marginTop:'1px' }}>⚠️</span>
+                    <span style={{ fontSize:'15px', flexShrink:0, marginTop:'1px' }}>??</span>
                     <div style={{ flex:1 }}>
                       <p style={{ margin:'0 0 4px', fontSize:'12.5px', fontWeight:600, color: isDark?'#fcd34d':'#92400e', lineHeight:1.4 }}>
                         Google Sign-in is blocked in Instagram's browser
@@ -471,7 +471,7 @@ export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess })
                         style={{ fontSize:'12px', fontWeight:600, padding:'6px 12px', borderRadius:'7px', border:'none', cursor:'pointer',
                           background: isDark?'rgba(251,191,36,0.22)':'rgba(251,191,36,0.30)',
                           color: isDark?'#fcd34d':'#92400e', transition:'opacity 0.15s' }}>
-                        {linkCopied ? '✓ Link copied!' : 'Copy Link'}
+                        {linkCopied ? '? Link copied!' : 'Copy Link'}
                       </button>
                     </div>
                   </div>
@@ -481,7 +481,7 @@ export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess })
                 style={{ width:'100%', padding:'10px 16px',
                   background: isDark?'rgba(255,255,255,0.96)':'#ffffff',
                   border: isDark?'1px solid rgba(255,255,255,0.10)':'1px solid rgba(148,163,184,0.34)',
-                  borderRadius:'11px', color:!GOOGLE_CLIENT_ID?'rgba(0,0,0,0.3)':'#1e293b',
+                  borderRadius:'11px', color:!GOOGLE_CLIENT_ID?'rgba(0,0,0,0.3)':'#161618',
                   fontSize:'13.5px', fontWeight:500,
                   display:'flex', alignItems:'center', justifyContent:'center', gap:'10px',
                   cursor:loading||googleLoading||!GOOGLE_CLIENT_ID?'not-allowed':'pointer',
@@ -498,7 +498,7 @@ export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess })
                 <path fill="#4A90E2" d="M19.834 21c2.195-2.048 3.62-5.096 3.62-9 0-.71-.109-1.473-.272-2.182H12v4.637h6.436c-.317 1.559-1.17 2.766-2.395 3.558L19.834 21z"/>
                 <path fill="#FBBC05" d="M5.277 14.268A7.12 7.12 0 0 1 4.909 12c0-.782.125-1.533.357-2.235L1.24 6.65A11.934 11.934 0 0 0 0 12c0 1.92.445 3.73 1.237 5.335l4.04-3.067z"/>
               </svg>}
-                <span>{googleLoading ? 'Signing up…' : 'Continue with Google'}</span>
+                <span>{googleLoading ? 'Signing up�' : 'Continue with Google'}</span>
               </button>
               )}
 
@@ -521,8 +521,8 @@ export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess })
                     style={{ width:'100%', boxSizing:'border-box', outline:'none', fontSize:'14px', transition:'all 0.18s ease',
                       background: isDark?'rgba(255,255,255,0.044)':'rgba(255,255,255,0.84)',
                       border: fieldErrors.name?'1px solid rgba(239,68,68,0.55)':isDark?'1px solid rgba(255,255,255,0.088)':'1px solid rgba(148,163,184,0.42)',
-                      borderRadius:'10px', padding:'10px 13px', color: isDark?'#f1f5f9':'#0f172a' }}
-                    onFocus={e => { e.target.style.borderColor=isDark?'rgba(255,77,0,0.5)':'rgba(0,0,0,0.3)'; e.target.style.boxShadow=isDark?'0 0 0 3px rgba(255,77,0,0.1)':'0 0 0 3px rgba(0,0,0,0.06)'; e.target.style.background=isDark?'rgba(255,255,255,0.06)':'#ffffff'; }}
+                      borderRadius:'10px', padding:'10px 13px', color: isDark?'#fafaf9':'#0b0b0f' }}
+                    onFocus={e => { e.target.style.borderColor=isDark?'rgba(202,138,4,0.5)':'rgba(0,0,0,0.3)'; e.target.style.boxShadow=isDark?'0 0 0 3px rgba(202,138,4,0.1)':'0 0 0 3px rgba(0,0,0,0.06)'; e.target.style.background=isDark?'rgba(255,255,255,0.06)':'#ffffff'; }}
                     onBlur={e => { if(!fieldErrors.name){ e.target.style.borderColor=isDark?'rgba(255,255,255,0.088)':'rgba(148,163,184,0.42)'; e.target.style.boxShadow='none'; e.target.style.background=isDark?'rgba(255,255,255,0.044)':'rgba(255,255,255,0.84)'; }}}
                   />
                   {fieldErrors.name && <div style={{ display:'flex', alignItems:'center', gap:'4px', marginTop:'5px' }}><AlertCircle size={11} color="#ef4444"/><span style={{ fontSize:'11px', color:'#ef4444' }}>{fieldErrors.name}</span></div>}
@@ -537,8 +537,8 @@ export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess })
                     style={{ width:'100%', boxSizing:'border-box', outline:'none', fontSize:'14px', transition:'all 0.18s ease',
                       background: isDark?'rgba(255,255,255,0.044)':'rgba(255,255,255,0.84)',
                       border: fieldErrors.email?'1px solid rgba(239,68,68,0.55)':isDark?'1px solid rgba(255,255,255,0.088)':'1px solid rgba(148,163,184,0.42)',
-                      borderRadius:'10px', padding:'10px 13px', color: isDark?'#f1f5f9':'#0f172a' }}
-                    onFocus={e => { e.target.style.borderColor=isDark?'rgba(255,77,0,0.5)':'rgba(0,0,0,0.3)'; e.target.style.boxShadow=isDark?'0 0 0 3px rgba(255,77,0,0.1)':'0 0 0 3px rgba(0,0,0,0.06)'; e.target.style.background=isDark?'rgba(255,255,255,0.06)':'#ffffff'; }}
+                      borderRadius:'10px', padding:'10px 13px', color: isDark?'#fafaf9':'#0b0b0f' }}
+                    onFocus={e => { e.target.style.borderColor=isDark?'rgba(202,138,4,0.5)':'rgba(0,0,0,0.3)'; e.target.style.boxShadow=isDark?'0 0 0 3px rgba(202,138,4,0.1)':'0 0 0 3px rgba(0,0,0,0.06)'; e.target.style.background=isDark?'rgba(255,255,255,0.06)':'#ffffff'; }}
                     onBlur={e => { if(!fieldErrors.email){ e.target.style.borderColor=isDark?'rgba(255,255,255,0.088)':'rgba(148,163,184,0.42)'; e.target.style.boxShadow='none'; e.target.style.background=isDark?'rgba(255,255,255,0.044)':'rgba(255,255,255,0.84)'; }}}
                   />
                   {fieldErrors.email && <div style={{ display:'flex', alignItems:'center', gap:'4px', marginTop:'5px' }}><AlertCircle size={11} color="#ef4444"/><span style={{ fontSize:'11px', color:'#ef4444' }}>{fieldErrors.email}</span></div>}
@@ -554,8 +554,8 @@ export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess })
                       style={{ width:'100%', boxSizing:'border-box', outline:'none', fontSize:'14px', transition:'all 0.18s ease',
                         background: isDark?'rgba(255,255,255,0.044)':'rgba(255,255,255,0.84)',
                         border: fieldErrors.password?'1px solid rgba(239,68,68,0.55)':isDark?'1px solid rgba(255,255,255,0.088)':'1px solid rgba(148,163,184,0.42)',
-                        borderRadius:'10px', padding:'10px 36px 10px 13px', color: isDark?'#f1f5f9':'#0f172a' }}
-                      onFocus={e => { e.target.style.borderColor=isDark?'rgba(255,77,0,0.5)':'rgba(0,0,0,0.3)'; e.target.style.boxShadow=isDark?'0 0 0 3px rgba(255,77,0,0.1)':'0 0 0 3px rgba(0,0,0,0.06)'; e.target.style.background=isDark?'rgba(255,255,255,0.06)':'#ffffff'; }}
+                        borderRadius:'10px', padding:'10px 36px 10px 13px', color: isDark?'#fafaf9':'#0b0b0f' }}
+                      onFocus={e => { e.target.style.borderColor=isDark?'rgba(202,138,4,0.5)':'rgba(0,0,0,0.3)'; e.target.style.boxShadow=isDark?'0 0 0 3px rgba(202,138,4,0.1)':'0 0 0 3px rgba(0,0,0,0.06)'; e.target.style.background=isDark?'rgba(255,255,255,0.06)':'#ffffff'; }}
                       onBlur={e => { if(!fieldErrors.password){ e.target.style.borderColor=isDark?'rgba(255,255,255,0.088)':'rgba(148,163,184,0.42)'; e.target.style.boxShadow='none'; e.target.style.background=isDark?'rgba(255,255,255,0.044)':'rgba(255,255,255,0.84)'; }}}
                     />
                     <button type="button" onClick={() => setShowPass(v=>!v)} tabIndex={-1}
@@ -593,12 +593,12 @@ export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess })
                   <div style={{ position:'relative' }}>
                     <input type={showConfirm?'text':'password'} autoComplete="new-password" value={form.confirm} required
                       onChange={e => { setField('confirm', e.target.value); setFieldErrors(fe => ({...fe, confirm:''})); }}
-                      placeholder="••••••••"
+                      placeholder="��������"
                       style={{ width:'100%', boxSizing:'border-box', outline:'none', fontSize:'14px', transition:'all 0.18s ease',
                         background: isDark?'rgba(255,255,255,0.044)':'rgba(255,255,255,0.84)',
                         border: fieldErrors.confirm?'1px solid rgba(239,68,68,0.55)':isDark?'1px solid rgba(255,255,255,0.088)':'1px solid rgba(148,163,184,0.42)',
-                        borderRadius:'10px', padding:'10px 36px 10px 13px', color: isDark?'#f1f5f9':'#0f172a' }}
-                      onFocus={e => { e.target.style.borderColor=isDark?'rgba(255,77,0,0.5)':'rgba(0,0,0,0.3)'; e.target.style.boxShadow=isDark?'0 0 0 3px rgba(255,77,0,0.1)':'0 0 0 3px rgba(0,0,0,0.06)'; e.target.style.background=isDark?'rgba(255,255,255,0.06)':'#ffffff'; }}
+                        borderRadius:'10px', padding:'10px 36px 10px 13px', color: isDark?'#fafaf9':'#0b0b0f' }}
+                      onFocus={e => { e.target.style.borderColor=isDark?'rgba(202,138,4,0.5)':'rgba(0,0,0,0.3)'; e.target.style.boxShadow=isDark?'0 0 0 3px rgba(202,138,4,0.1)':'0 0 0 3px rgba(0,0,0,0.06)'; e.target.style.background=isDark?'rgba(255,255,255,0.06)':'#ffffff'; }}
                       onBlur={e => { if(!fieldErrors.confirm){ e.target.style.borderColor=isDark?'rgba(255,255,255,0.088)':'rgba(148,163,184,0.42)'; e.target.style.boxShadow='none'; e.target.style.background=isDark?'rgba(255,255,255,0.044)':'rgba(255,255,255,0.84)'; }}}
                     />
                     <button type="button" onClick={() => setShowConfirm(v=>!v)} tabIndex={-1}
@@ -631,17 +631,17 @@ export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess })
                 {/* Submit */}
                 <button type="submit" disabled={loading}
                   style={{ width:'100%', padding:'11px',
-                    background: loading?(isDark?'rgba(255,77,0,0.3)':'rgba(0,0,0,0.3)'):(isDark?'linear-gradient(135deg, #FF4D00 0%, #FF7A00 100%)':'linear-gradient(135deg, #18181b 0%, #27272a 100%)'),
+                    background: loading?(isDark?'rgba(202,138,4,0.3)':'rgba(0,0,0,0.3)'):(isDark?'linear-gradient(135deg, #CA8A04 0%, #FBBF24 100%)':'linear-gradient(135deg, #18181b 0%, #27272a 100%)'),
                     border:'none', borderRadius:'11px', color:'#fff', fontSize:'13.5px', fontWeight:600,
                     cursor:loading?'not-allowed':'pointer', transition:'all 0.18s ease',
                     display:'flex', alignItems:'center', justifyContent:'center', gap:'7px',
-                    boxShadow: loading?'none':(isDark?'0 2px 14px rgba(255,77,0,0.3), 0 1px 3px rgba(0,0,0,0.2)':'0 2px 14px rgba(0,0,0,0.18), 0 1px 3px rgba(0,0,0,0.1)'),
+                    boxShadow: loading?'none':(isDark?'0 2px 14px rgba(202,138,4,0.3), 0 1px 3px rgba(0,0,0,0.2)':'0 2px 14px rgba(0,0,0,0.18), 0 1px 3px rgba(0,0,0,0.1)'),
                     letterSpacing:'0.01em' }}
-                  onMouseEnter={e => { if(!loading){ e.currentTarget.style.transform='translateY(-1.5px)'; e.currentTarget.style.boxShadow=isDark?'0 8px 28px rgba(255,77,0,0.4), 0 2px 8px rgba(0,0,0,0.2)':'0 8px 28px rgba(0,0,0,0.25), 0 2px 8px rgba(0,0,0,0.12)'; }}}
-                  onMouseLeave={e => { e.currentTarget.style.transform=''; e.currentTarget.style.boxShadow=loading?'none':(isDark?'0 2px 14px rgba(255,77,0,0.3), 0 1px 3px rgba(0,0,0,0.2)':'0 2px 14px rgba(0,0,0,0.18), 0 1px 3px rgba(0,0,0,0.1)'); }}
+                  onMouseEnter={e => { if(!loading){ e.currentTarget.style.transform='translateY(-1.5px)'; e.currentTarget.style.boxShadow=isDark?'0 8px 28px rgba(202,138,4,0.4), 0 2px 8px rgba(0,0,0,0.2)':'0 8px 28px rgba(0,0,0,0.25), 0 2px 8px rgba(0,0,0,0.12)'; }}}
+                  onMouseLeave={e => { e.currentTarget.style.transform=''; e.currentTarget.style.boxShadow=loading?'none':(isDark?'0 2px 14px rgba(202,138,4,0.3), 0 1px 3px rgba(0,0,0,0.2)':'0 2px 14px rgba(0,0,0,0.18), 0 1px 3px rgba(0,0,0,0.1)'); }}
                   onMouseDown={e => { if(!loading) e.currentTarget.style.transform='scale(0.985)'; }}
                   onMouseUp={e => { if(!loading) e.currentTarget.style.transform='translateY(-1.5px)'; }}>
-                  {loading ? <><Loader2 size={14} className="animate-spin"/><span>Creating account…</span></> : <><span>Create account</span><ArrowRight size={14}/></>}
+                  {loading ? <><Loader2 size={14} className="animate-spin"/><span>Creating account�</span></> : <><span>Create account</span><ArrowRight size={14}/></>}
                 </button>
               </form>
 
@@ -663,7 +663,7 @@ export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess })
                 style={{ color:isDark?'#a1a1aa':'#52525b', background:'none', border:'none', cursor:'pointer', fontSize:'13px', padding:0, fontWeight:500, transition:'color 0.12s' }}
                 onMouseEnter={e => e.currentTarget.style.color=isDark?'#ffffff':'#09090b'}
                 onMouseLeave={e => e.currentTarget.style.color=isDark?'#a1a1aa':'#52525b'}>
-                Sign in →
+                Sign in ?
               </button>
             </p>
           </>

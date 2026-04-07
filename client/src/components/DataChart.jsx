@@ -50,7 +50,7 @@ function DataChart({
   data, 
   title, 
   dataKey = 'value', 
-  color = '#3b82f6',
+  color = '#CA8A04',
   height = 300,
   type = 'line',
   showGrid = true,

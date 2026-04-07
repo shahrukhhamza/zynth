@@ -13,7 +13,7 @@ export default function Pricing({ onGetStarted, spotsLeft }) {
   };
 
   return (
-    <section className="relative overflow-hidden bg-slate-950 px-6 py-24">
+    <section className="relative overflow-hidden bg-zinc-950 px-6 py-24">
       <div
         className="pointer-events-none absolute inset-0 opacity-70"
         aria-hidden
@@ -28,7 +28,7 @@ export default function Pricing({ onGetStarted, spotsLeft }) {
           <h2 className="text-4xl font-black tracking-tight text-white sm:text-5xl">
             Institutional tools, retail pricing.
           </h2>
-          <p className="mx-auto mt-3 max-w-2xl text-sm leading-7 text-slate-300 sm:text-[15px]">
+          <p className="mx-auto mt-3 max-w-2xl text-sm leading-7 text-zinc-300 sm:text-[15px]">
             Choose your plan and unlock the same intelligence stack used across the full Zynth workflow.
           </p>
           {typeof spotsLeft === 'number' && spotsLeft > 0 && (

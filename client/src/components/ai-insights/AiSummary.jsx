@@ -1,13 +1,13 @@
-﻿export default function AiSummary({ aiSummary, aiStatus, actionContext }) {
+export default function AiSummary({ aiSummary, aiStatus, actionContext }) {
   const hasAi = aiSummary && !aiSummary.error && aiSummary.summary;
   if (!hasAi && !actionContext) return null;
 
   return (
     <section>
       <div className="flex items-center justify-between mb-3">
-        <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-500">Analysis Summary</p>
+        <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-zinc-500">Analysis Summary</p>
         {aiStatus && (
-          <span className={`text-[9px] font-semibold uppercase tracking-wider ${aiStatus === 'ai_generated' ? 'text-violet-400' : aiStatus === 'ai_fallback' ? 'text-amber-400' : 'text-slate-500'}`}>
+          <span className={`text-[9px] font-semibold uppercase tracking-wider ${aiStatus === 'ai_generated' ? 'text-violet-400' : aiStatus === 'ai_fallback' ? 'text-amber-400' : 'text-zinc-500'}`}>
             {aiStatus === 'ai_generated' ? 'AI-Powered' : aiStatus === 'ai_fallback' ? 'Algorithmic' : 'Analysis'}
           </span>
         )}
@@ -30,7 +30,7 @@
           </div>
         )}
         {actionContext && (
-          <p className={`text-[11px] leading-relaxed italic ${hasAi ? 'text-slate-500 border-t border-white/[0.04] pt-3' : 'text-white/70'}`}>{actionContext}</p>
+          <p className={`text-[11px] leading-relaxed italic ${hasAi ? 'text-zinc-500 border-t border-white/[0.04] pt-3' : 'text-white/70'}`}>{actionContext}</p>
         )}
       </div>
     </section>
