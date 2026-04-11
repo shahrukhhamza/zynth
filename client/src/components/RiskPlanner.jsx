@@ -19,7 +19,7 @@ api.interceptors.request.use((c) => {
 
 /* â”€â”€ helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 /* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-   MATH ENGINE â€” pure functions, all client-side
+   MATH ENGINE — pure functions, all client-side
 â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
 function runMonteCarlo({ balance, winRate, riskPct, trades, rrRatio = 2, sims = 1000 }) {
@@ -106,25 +106,25 @@ function generateSmartInsights({ winRate, riskPct, rrRatio, ruinPct, expectancy,
   if (kelly <= 0) {
     insights.push({ type: 'error', text: `Negative edge detected. Kelly Criterion = ${(kelly*100).toFixed(1)}%. No risk size makes this profitable long-term.` });
   } else if (riskPct > kelly * 100 * 1.1) {
-    insights.push({ type: 'error', text: `Over-leveraged. You're risking ${riskPct}% per trade â€” Kelly optimal is ${(kelly*100).toFixed(1)}% (Half-Kelly: ${(halfKelly*100).toFixed(1)}%). Reduce size.` });
+    insights.push({ type: 'error', text: `Over-leveraged. You're risking ${riskPct}% per trade — Kelly optimal is ${(kelly*100).toFixed(1)}% (Half-Kelly: ${(halfKelly*100).toFixed(1)}%). Reduce size.` });
   } else if (riskPct <= halfKelly * 100) {
-    insights.push({ type: 'success', text: `${riskPct}% risk sits below Half-Kelly (${(halfKelly*100).toFixed(1)}%) â€” conservative and sustainable for long-term compounding.` });
+    insights.push({ type: 'success', text: `${riskPct}% risk sits below Half-Kelly (${(halfKelly*100).toFixed(1)}%) — conservative and sustainable for long-term compounding.` });
   } else {
     insights.push({ type: 'info', text: `Risk is between Half-Kelly and Full-Kelly. Consider reducing to ${(halfKelly*100).toFixed(1)}% for safer compounding.` });
   }
   if (ruinPct > 50) {
-    insights.push({ type: 'error', text: `${ruinPct.toFixed(0)}% blowup probability â€” 1-in-2 traders with these parameters lose everything. Reduce risk immediately.` });
+    insights.push({ type: 'error', text: `${ruinPct.toFixed(0)}% blowup probability — 1-in-2 traders with these parameters lose everything. Reduce risk immediately.` });
   } else if (ruinPct > 20) {
     insights.push({ type: 'error', text: `${ruinPct.toFixed(0)}% ruin probability. 1-in-5 paths end in account loss. Reduce risk to 2% or below.` });
   } else if (ruinPct > 5) {
-    insights.push({ type: 'warn', text: `${ruinPct.toFixed(0)}% ruin probability â€” elevated. Acceptable only for aggressive accounts with strict stop rules.` });
+    insights.push({ type: 'warn', text: `${ruinPct.toFixed(0)}% ruin probability — elevated. Acceptable only for aggressive accounts with strict stop rules.` });
   } else {
-    insights.push({ type: 'success', text: `${ruinPct.toFixed(1)}% ruin probability â€” excellent. This risk level is sustainable over a long trading career.` });
+    insights.push({ type: 'success', text: `${ruinPct.toFixed(1)}% ruin probability — excellent. This risk level is sustainable over a long trading career.` });
   }
   if (expectancy && expectancy.expectancyR < 0) {
     const minWR = (100 / (1 + rrRatio)).toFixed(0);
     const minRR = (1 / wr - 1).toFixed(2);
-    insights.push({ type: 'error', text: `Negative expectancy (${expectancy.expectancyR.toFixed(3)}R). You need Win Rate â‰¥ ${minWR}% OR R:R â‰¥ ${minRR}:1 to break even.` });
+    insights.push({ type: 'error', text: `Negative expectancy (${expectancy.expectancyR.toFixed(3)}R). You need Win Rate ≥ ${minWR}% OR R:R ≥ ${minRR}:1 to break even.` });
   }
   if (streak && streak.impact > 50) {
     insights.push({ type: 'error', text: `Worst-case losing streak (${streak.worst} losses) wipes ${streak.impact.toFixed(0)}% of your account at ${riskPct}% per trade. Normal variance can destroy this account.` });
@@ -164,15 +164,15 @@ function getWarnings(form, result) {
   const trades = parseInt(form.trades, 10) || 0;
   const growth = tgt && bal ? ((tgt - bal) / bal) * 100 : 0;
 
-  if (growth > 100) w.push({ type: 'error', text: `Targeting ${growth.toFixed(0)}% growth â€” extremely ambitious. Consider smaller milestones.` });
+  if (growth > 100) w.push({ type: 'error', text: `Targeting ${growth.toFixed(0)}% growth — extremely ambitious. Consider smaller milestones.` });
   else if (growth > 50) w.push({ type: 'warn', text: `${growth.toFixed(0)}% growth target is aggressive. Ensure your edge supports it.` });
 
-  if (trades < 20) w.push({ type: 'warn', text: 'Very few trades â€” results will have high variance. Try 50+.' });
+  if (trades < 20) w.push({ type: 'warn', text: 'Very few trades — results will have high variance. Try 50+.' });
   if (trades > 500) w.push({ type: 'info', text: 'Large trade count gives reliable projections, but execution consistency matters.' });
 
   if (result) {
     if (result.suggestedRiskPerTrade > 5) w.push({ type: 'error', text: `${result.suggestedRiskPerTrade}% risk per trade risks rapid drawdown. Pro traders rarely exceed 2%.` });
-    else if (result.suggestedRiskPerTrade > 3) w.push({ type: 'warn', text: 'Risk per trade is above 3% â€” only sustainable with a strong win rate.' });
+    else if (result.suggestedRiskPerTrade > 3) w.push({ type: 'warn', text: 'Risk per trade is above 3% — only sustainable with a strong win rate.' });
     if (result.realismScore < 30) w.push({ type: 'error', text: 'This plan has a low probability of success. Reduce target or increase trades.' });
   }
   return w;
@@ -187,7 +187,7 @@ const PRESETS = [
 ];
 
 /* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-SVG CHART â€” EQUITY CURVE FAN
+SVG CHART — EQUITY CURVE FAN
 â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function EquityCurveChart({ sampleCurves, initialBalance, isDark }) {
   if (!sampleCurves?.length) return null;
@@ -333,7 +333,7 @@ export default function RiskPlanner() {
       if (sliderActive && form.riskOverride) body.riskOverride = parseFloat(form.riskOverride);
       const { data } = await api.post('/calc/risk-plan', body);
       setResult(data.data);
-      // â€” client-side advanced analysis â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”
+      // — client-side advanced analysis ————————————————————————
       const balance  = parseFloat(form.balance);
       const target   = parseFloat(form.target);
       const winRate  = parseFloat(form.winRate) || 55;
@@ -458,7 +458,7 @@ export default function RiskPlanner() {
         {/* â”€â”€ Main Grid â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-5">
 
-          {/* â•â•â•â• LEFT â€” Inputs (3 cols) â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
+          {/* â•â•â•â• LEFT — Inputs (3 cols) â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
           <div className="lg:col-span-3 space-y-5">
 
             {/* Account Setup */}
@@ -498,7 +498,7 @@ export default function RiskPlanner() {
               )}
             </div>
 
-            {/* Trade Parameters â€” 4-col grid */}
+            {/* Trade Parameters — 4-col grid */}
             <div className="rounded-2xl border p-5 shadow-sm" style={{ background: card, borderColor: border }}>
               <div className="flex items-center gap-2 mb-4">
                 <BarChart3 className="w-4 h-4" style={{ color: '#CA8A04' }} />
@@ -596,7 +596,7 @@ export default function RiskPlanner() {
               {loading ? (
                 <div className="flex items-center gap-2">
                   <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  Running 1,000 simulationsâ€¦
+                  Running 1,000 simulations…
                 </div>
               ) : (
                 <><Zap className="w-4 h-4" /> Run Full Analysis</>
@@ -613,7 +613,7 @@ export default function RiskPlanner() {
             </div>
           </div>
 
-          {/* â•â•â•â• RIGHT â€” Results (2 cols) â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
+          {/* â•â•â•â• RIGHT — Results (2 cols) â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
           <div className="lg:col-span-2 space-y-5">
             {!result ? (
               <div className="rounded-2xl border p-8 flex flex-col items-center justify-center text-center min-h-[440px]"
@@ -647,7 +647,7 @@ export default function RiskPlanner() {
                     <div className="px-3 py-4 text-center" style={{ background: card }}>
                       <p className="text-[9px] font-bold uppercase tracking-wider mb-1.5" style={{ color: theme.muted }}>Risk of Ruin</p>
                       <p className="text-[26px] font-black tabular-nums leading-none mb-1" style={{ color: ruinColor }}>
-                        {mcData ? fmtPct(mcData.ruinPct, 1) : 'â€”'}
+                        {mcData ? fmtPct(mcData.ruinPct, 1) : '—'}
                       </p>
                       <p className="text-[8px]" style={{ color: theme.muted }}>blowup probability</p>
                     </div>
@@ -655,7 +655,7 @@ export default function RiskPlanner() {
                       <p className="text-[9px] font-bold uppercase tracking-wider mb-1.5" style={{ color: theme.muted }}>Survival Prob.</p>
                       <p className="text-[26px] font-black tabular-nums leading-none mb-1"
                         style={{ color: mcData ? (100 - mcData.ruinPct > 90 ? '#10b981' : '#f59e0b') : theme.text }}>
-                        {mcData ? fmtPct(100 - mcData.ruinPct, 1) : 'â€”'}
+                        {mcData ? fmtPct(100 - mcData.ruinPct, 1) : '—'}
                       </p>
                       <p className="text-[8px]" style={{ color: theme.muted }}>of capital preserved</p>
                     </div>
@@ -663,7 +663,7 @@ export default function RiskPlanner() {
                       <p className="text-[9px] font-bold uppercase tracking-wider mb-1.5" style={{ color: theme.muted }}>Expectancy</p>
                       <p className="text-[26px] font-black tabular-nums leading-none mb-1"
                         style={{ color: expectancy ? expectancy.edgeColor : theme.text }}>
-                        {expectancy ? `${expectancy.expectancyR >= 0 ? '+' : ''}${expectancy.expectancyR.toFixed(2)}R` : 'â€”'}
+                        {expectancy ? `${expectancy.expectancyR >= 0 ? '+' : ''}${expectancy.expectancyR.toFixed(2)}R` : '—'}
                       </p>
                       {expectancy && (
                         <span className="inline-block text-[8px] font-bold uppercase px-1.5 py-0.5 rounded-full"
@@ -758,13 +758,13 @@ export default function RiskPlanner() {
                       <div className="rounded-xl p-3 text-center" style={{ background: isDark ? 'rgba(16,185,129,0.06)' : '#ecfdf5' }}>
                         <p className="text-[9px] font-bold uppercase mb-1" style={{ color: theme.muted }}>Per Trade ($)</p>
                         <p className="text-xl font-black tabular-nums" style={{ color: expectancy.expectancyDollar >= 0 ? '#10b981' : '#ef4444' }}>
-                          {expectancy.expectancyDollar >= 0 ? '+' : 'âˆ’'}{fmtUsd(Math.abs(expectancy.expectancyDollar))}
+                          {expectancy.expectancyDollar >= 0 ? '+' : '−'}{fmtUsd(Math.abs(expectancy.expectancyDollar))}
                         </p>
                       </div>
                     </div>
                     <p className="text-[10px] leading-relaxed" style={{ color: theme.muted }}>
-                      E = (WR Ã— AvgWin) âˆ’ (LR Ã— AvgLoss)
-                      = ({parseFloat(form.winRate) || 55}% Ã— {parseFloat(form.rrRatio || 2).toFixed(1)}R) âˆ’ ({100 - (parseFloat(form.winRate) || 55)}% Ã— 1R)
+                      E = (WR × AvgWin) - (LR × AvgLoss)
+                      = ({parseFloat(form.winRate) || 55}% × {parseFloat(form.rrRatio || 2).toFixed(1)}R) - ({100 - (parseFloat(form.winRate) || 55)}% × 1R)
                       = <strong style={{ color: expectancy.edgeColor }}>{expectancy.label}</strong>
                     </p>
                   </div>
@@ -777,7 +777,7 @@ export default function RiskPlanner() {
                       <Crosshair className="w-4 h-4" style={{ color: '#CA8A04' }} />
                       <span className="text-[11px] font-bold uppercase tracking-wider" style={{ color: theme.muted }}>Risk % vs Target Success</span>
                     </div>
-                    <p className="text-[10px] mb-3" style={{ color: theme.muted }}>Higher risk â‰  higher success â€” the curve shows the optimal point</p>
+                    <p className="text-[10px] mb-3" style={{ color: theme.muted }}>Higher risk ≠ higher success — the curve shows the optimal point</p>
                     <div className="rounded-xl overflow-hidden" style={{ background: isDark ? 'rgba(0,0,0,0.2)' : '#f8fafc', border: `1px solid ${border}` }}>
                       <div className="p-3">
                         <RiskSuccessChart curve={rscData} activeRisk={riskPct} isDark={isDark} />
@@ -787,11 +787,11 @@ export default function RiskPlanner() {
                       <div className="mt-2 flex items-center gap-2">
                         <div className="w-2.5 h-2.5 rounded-full" style={{ background: '#f59e0b' }} />
                         <span className="text-[10px]" style={{ color: theme.muted }}>
-                          At {riskPct}% risk â†’{' '}
+                          At {riskPct}% risk →{' '}
                           <strong style={{ color: theme.text }}>
                             {(() => {
                               const p = rscData.reduce((n, pt) => Math.abs(pt.riskPct - riskPct) < Math.abs(n.riskPct - riskPct) ? pt : n);
-                              return p ? `${p.successPct.toFixed(0)}% success probability` : 'â€”';
+                              return p ? `${p.successPct.toFixed(0)}% success probability` : '—';
                             })()}
                           </strong>
                         </span>
@@ -832,7 +832,7 @@ export default function RiskPlanner() {
                       </div>
                     </div>
                     <p className="mt-3 text-[10px] leading-relaxed" style={{ color: theme.muted }}>
-                      Based on {form.winRate || 55}% win rate over {form.trades} trades. Worst-case â‰ˆ 1.75Ã— expected streak length.
+                      Based on {form.winRate || 55}% win rate over {form.trades} trades. Worst-case ≈ 1.75× expected streak length.
                     </p>
                   </div>
                 )}
@@ -879,7 +879,7 @@ export default function RiskPlanner() {
                     {result.reachable === false && (
                       <div className="mt-2 flex items-center justify-center gap-1.5 px-2 py-1 rounded-md" style={{ background: isDark ? 'rgba(239,68,68,0.1)' : '#fef2f2' }}>
                         <AlertTriangle className="w-3 h-3" style={{ color: '#ef4444' }} />
-                        <span className="text-[10px] font-semibold" style={{ color: '#ef4444' }}>Target unreachable at â‰¤5% risk.</span>
+                        <span className="text-[10px] font-semibold" style={{ color: '#ef4444' }}>Target unreachable at ≤5% risk.</span>
                       </div>
                     )}
                   </div>

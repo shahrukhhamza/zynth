@@ -2,14 +2,14 @@ import { useState, useEffect, useRef } from 'react';
 import { useTheme } from '../contexts/ThemeContext';
 
 const CURRENCIES = [
-  { code: 'USD', flag: '????', tv: 'us' },
-  { code: 'EUR', flag: '????', tv: 'eu' },
-  { code: 'GBP', flag: '????', tv: 'gb' },
-  { code: 'JPY', flag: '????', tv: 'jp' },
-  { code: 'CAD', flag: '????', tv: 'ca' },
-  { code: 'AUD', flag: '????', tv: 'au' },
-  { code: 'CHF', flag: '????', tv: 'ch' },
-  { code: 'NZD', flag: '????', tv: 'nz' },
+  { code: 'USD', flag: '🇺🇸', tv: 'us' },
+  { code: 'EUR', flag: '🇪🇺', tv: 'eu' },
+  { code: 'GBP', flag: '🇬🇧', tv: 'gb' },
+  { code: 'JPY', flag: '🇯🇵', tv: 'jp' },
+  { code: 'CAD', flag: '🇨🇦', tv: 'ca' },
+  { code: 'AUD', flag: '🇦🇺', tv: 'au' },
+  { code: 'CHF', flag: '🇨🇭', tv: 'ch' },
+  { code: 'NZD', flag: '🇳🇿', tv: 'nz' },
 ];
 
 // TradingView importance values: -1=low, 0=medium, 1=high
