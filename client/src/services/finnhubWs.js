@@ -18,6 +18,7 @@
  */
 
 import { API_URL } from '../config/api';
+import { getAuthToken } from '../utils/authStorage';
 
 const RECONNECT_DELAYS = [1_000, 2_000, 5_000, 10_000, 30_000];
 
@@ -36,7 +37,9 @@ class FinnhubWsClient {
 
   /** Build WS URL — works in both dev (Vite proxy) and production (Render) */
   _url() {
-    return API_URL.replace(/^http/, 'ws') + '/ws/market';
+    const base = API_URL.replace(/^http/, 'ws') + '/ws/market';
+    const token = getAuthToken();
+    return token ? `${base}?token=${encodeURIComponent(token)}` : base;
   }
 
   connect() {

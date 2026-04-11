@@ -32,7 +32,7 @@ function normalizePlan(plan) {
 }
 
 export function signToken(payload) {
-  return jwt.sign(payload, getSecret(), { expiresIn: JWT_EXPIRES });
+  return jwt.sign(payload, getSecret(), { algorithm: 'HS256', expiresIn: JWT_EXPIRES });
 }
 
 export async function requireAuth(req, res, next) {
@@ -42,16 +42,20 @@ export async function requireAuth(req, res, next) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
   try {
-    const decoded = jwt.verify(auth.slice(7), getSecret());
+    const decoded = jwt.verify(auth.slice(7), getSecret(), { algorithms: ['HS256'] });
     const currentUser = decoded?.id ? await Users.findById(decoded.id) : null;
     if (!currentUser) {
       logAuthFailure(req, 'user_not_found_for_token');
       return res.status(401).json({ error: 'Unauthorized' });
     }
+    if (currentUser.is_banned) {
+      logAuthFailure(req, 'user_banned');
+      return res.status(403).json({ error: 'Account suspended.' });
+    }
 
     req.user = {
-      ...decoded,
       ...(currentUser ?? {}),
+      ...{ id: currentUser.id },
       plan: normalizePlan(currentUser?.plan ?? decoded?.plan),
       is_admin: Number(currentUser?.is_admin ?? decoded?.is_admin ?? 0),
       ai_analysis_tries: currentUser?.ai_analysis_tries ?? decoded?.ai_analysis_tries ?? 0,
@@ -101,6 +105,7 @@ export async function checkAiTries(req, res, next) {
   const plan = normalizePlan(req.user?.plan);
   const userId = req.user?.id;
 
+  if (!userId) return res.status(401).json({ error: 'Unauthorized' });
   if (is_admin === 1 || plan === 'elite') return next();
 
   if (plan === 'pro') {

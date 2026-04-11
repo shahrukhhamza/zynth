@@ -31,14 +31,17 @@ function fmtDate(str) {
   } catch { return str; }
 }
 
-function InlinePlanBadge({ plan }) {
+function InlinePlanBadge({ plan, expiresAt }) {
   const s = PLAN_BADGE[plan] || PLAN_BADGE.free;
+  const isExpired = expiresAt && new Date(expiresAt) < new Date();
   return (
-    <span
-      className="inline-flex px-2 py-0.5 rounded-md text-[10px] font-bold tracking-wider"
-      style={{ background: s.bg, color: s.color, border: `1px solid ${s.border}` }}
-    >
-      {(plan || 'free').toUpperCase()}
+    <span className="inline-flex flex-col items-start gap-0.5">
+      <span
+        className="inline-flex px-2 py-0.5 rounded-md text-[10px] font-bold tracking-wider"
+        style={{ background: isExpired ? 'rgba(239,68,68,0.12)' : s.bg, color: isExpired ? '#f87171' : s.color, border: `1px solid ${isExpired ? 'rgba(239,68,68,0.3)' : s.border}` }}
+      >
+        {(plan || 'free').toUpperCase()}{isExpired ? ' (EXP)' : ''}
+      </span>
     </span>
   );
 }
@@ -147,6 +150,7 @@ function AdminDashboardInner() {
       setUsers(us => us.filter(u => u.id !== userId));
       toast.success('User deleted');
       loadStats();
+      loadUsers();
     } catch (e) { toast.error(e.message); }
     finally { setMutating(null); }
   }
@@ -186,7 +190,12 @@ function AdminDashboardInner() {
   async function exportCSV() {
     try {
       const r = await fetch(`${API_URL}/api/admin/export-emails`, { headers: authH() });
-      if (!r.ok) throw new Error('Export failed');
+      if (!r.ok) {
+        const d = await r.json().catch(() => ({}));
+        throw new Error(d.error || 'Export failed');
+      }
+      const ct = r.headers.get('content-type') || '';
+      if (!ct.includes('text/csv')) throw new Error('Unexpected response format');
       const blob = await r.blob();
       const url  = URL.createObjectURL(blob);
       const a    = document.createElement('a');
@@ -404,7 +413,7 @@ function AdminDashboardInner() {
                         </td>
 
                         {/* Plan */}
-                        <td className="px-4 py-3"><InlinePlanBadge plan={u.plan} /></td>
+                        <td className="px-4 py-3"><InlinePlanBadge plan={u.plan} expiresAt={u.plan_expires_at} /></td>
 
                         {/* AI Tries */}
                         <td className="px-4 py-3 text-[12px]">

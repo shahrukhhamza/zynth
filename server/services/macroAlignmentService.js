@@ -295,9 +295,9 @@ INSTRUCTIONS:
   try {
     const GEMINI_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent';
     const res = await axios.post(
-      `${GEMINI_URL}?key=${key}`,
+      GEMINI_URL,
       { contents: [{ parts: [{ text: prompt }] }], generationConfig: { temperature: 0.55, maxOutputTokens: 600 } },
-      { headers: { 'Content-Type': 'application/json' }, timeout: 25000 }
+      { headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key }, timeout: 25000 }
     );
     const text = res.data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
     if (text) bumpGemini('macro_context');

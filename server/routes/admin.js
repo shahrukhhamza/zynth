@@ -133,11 +133,21 @@ router.get('/stats', async (req, res) => {
       count,
     }));
 
+    // Consider expired plans as effectively free
+    const now_ts = now.getTime();
+    const effectivePlan = (u) => {
+      if (u.plan_expires_at) {
+        const exp = new Date(u.plan_expires_at).getTime();
+        if (!isNaN(exp) && exp < now_ts) return 'free';
+      }
+      return u.plan || 'free';
+    };
+
     res.json({
       totalUsers:   users.length,
-      freeUsers:    users.filter(u => u.plan === 'free').length,
-      proUsers:     users.filter(u => u.plan === 'pro').length,
-      eliteUsers:   users.filter(u => u.plan === 'elite').length,
+      freeUsers:    users.filter(u => effectivePlan(u) === 'free').length,
+      proUsers:     users.filter(u => effectivePlan(u) === 'pro').length,
+      eliteUsers:   users.filter(u => effectivePlan(u) === 'elite').length,
       adminUsers:   users.filter(u => u.is_admin === 1).length,
       todaySignups,
       weekSignups,
@@ -156,9 +166,9 @@ router.get('/export-emails', async (req, res) => {
 
     // Build CSV — escape any commas / quotes in field values
     const esc = (v) => `"${String(v ?? '').replace(/"/g, '""')}"`;
-    const header = 'email,name,plan,created_at,ai_tries,screenshot_tries';
+    const header = 'email,name,plan,plan_expires_at,created_at,ai_tries,screenshot_tries';
     const rows = users.map(u =>
-      [u.email, u.name, u.plan ?? 'free', u.created_at ?? '', u.ai_analysis_tries ?? 0, u.screenshot_tries ?? 0]
+      [u.email, u.name, u.plan ?? 'free', u.plan_expires_at ?? '', u.created_at ?? '', u.ai_analysis_tries ?? 0, u.screenshot_tries ?? 0]
         .map(esc).join(',')
     );
     const csv = [header, ...rows].join('\r\n');
@@ -186,7 +196,7 @@ router.get('/user/:id/events', async (req, res) => {
     ]);
     if (!user) return res.status(404).json({ error: 'User not found.' });
 
-    res.json({ user: { id: user.id, name: user.name, email: user.email, plan: user.plan }, events });
+    res.json({ user: { id: user.id, name: user.name, email: user.email, plan: user.plan, plan_expires_at: user.plan_expires_at }, events });
   } catch (err) {
     console.error('admin/user-events error:', err);
     res.status(500).json({ error: 'Failed to fetch user events.' });

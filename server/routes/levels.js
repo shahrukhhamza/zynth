@@ -35,7 +35,7 @@ router.get('/', async (req, res) => {
     const levels = await getLevelsForUserSymbol(userId, symbol);
     res.json({ levels });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: 'Internal server error.' });
   }
 });
 
@@ -60,7 +60,7 @@ router.post('/', async (req, res) => {
     const level = await createLevel({ user_id: userId, symbol, type, price: priceNum, note: cleanNote });
     res.status(201).json(level);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: 'Internal server error.' });
   }
 });
 
@@ -77,7 +77,7 @@ router.delete('/:id', async (req, res) => {
     await deleteLevelById(id);
     res.json({ success: true });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: 'Internal server error.' });
   }
 });
 

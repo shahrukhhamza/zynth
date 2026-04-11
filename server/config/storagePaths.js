@@ -1,5 +1,5 @@
 import { mkdirSync, existsSync } from 'fs';
-import { dirname, isAbsolute, join } from 'path';
+import { dirname, isAbsolute, join, resolve, normalize } from 'path';
 import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -9,7 +9,13 @@ const SERVER_ROOT = join(__dirname, '..');
 function resolveUploadsRoot() {
   const configured = process.env.UPLOADS_DIR?.trim();
   if (!configured) return join(SERVER_ROOT, 'uploads');
-  return isAbsolute(configured) ? configured : join(SERVER_ROOT, configured);
+  // Block path traversal sequences
+  if (configured.includes('..')) {
+    console.warn('[security] UPLOADS_DIR contains path traversal — using default');
+    return join(SERVER_ROOT, 'uploads');
+  }
+  const resolved = isAbsolute(configured) ? resolve(configured) : resolve(SERVER_ROOT, configured);
+  return normalize(resolved);
 }
 
 export const UPLOADS_DIR = resolveUploadsRoot();

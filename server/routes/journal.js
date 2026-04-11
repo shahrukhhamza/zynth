@@ -112,7 +112,7 @@ router.post('/trades', checkJournalLimit, upload.single('screenshot'), async (re
     res.status(201).json({ success: true, data: trade });
   } catch (err) {
     console.error('POST /journal/trades error:', err);
-    res.status(500).json({ success: false, error: err.message });
+    res.status(500).json({ success: false, error: 'Internal server error.' });
   }
 });
 
@@ -131,7 +131,7 @@ router.get('/trades', async (req, res) => {
       : await countTrades(userId);
     res.json({ success: true, data: trades, total, page, limit });
   } catch (err) {
-    res.status(500).json({ success: false, error: err.message });
+    res.status(500).json({ success: false, error: 'Internal server error.' });
   }
 });
 
@@ -203,9 +203,9 @@ Be direct, specific, and data-driven. No generic advice. Format as plain text wi
     const axios = (await import('axios')).default;
     const geminiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent';
     const gemRes = await axios.post(
-      `${geminiUrl}?key=${key}`,
+      geminiUrl,
       { contents: [{ parts: [{ text: prompt }] }], generationConfig: { temperature: 0.7, maxOutputTokens: 1024 } },
-      { headers: { 'Content-Type': 'application/json' }, timeout: 30000 }
+      { headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key }, timeout: 30000 }
     );
     const analysis = gemRes.data?.candidates?.[0]?.content?.parts?.[0]?.text;
     if (!analysis) return res.status(500).json({ success: false, error: 'Empty AI response' });
@@ -221,7 +221,7 @@ Be direct, specific, and data-driven. No generic advice. Format as plain text wi
     res.json({ success: true, analysis, symbol, tradeCount: trades.length });
   } catch (err) {
     console.error('chart-analysis error:', err.message);
-    res.status(500).json({ success: false, error: err.message });
+    res.status(500).json({ success: false, error: 'Internal server error.' });
   }
 });
 
@@ -230,9 +230,12 @@ router.get('/trades/:id', async (req, res) => {
   try {
     const trade = await getTradeById(parseInt(req.params.id));
     if (!trade) return res.status(404).json({ success: false, error: 'Trade not found' });
+    if (String(trade.user_id) !== String(getUserId(req))) {
+      return res.status(403).json({ success: false, error: 'Forbidden' });
+    }
     res.json({ success: true, data: trade });
   } catch (err) {
-    res.status(500).json({ success: false, error: err.message });
+    res.status(500).json({ success: false, error: 'Internal server error.' });
   }
 });
 
@@ -240,6 +243,15 @@ router.get('/trades/:id', async (req, res) => {
 router.put('/trades/:id', upload.single('screenshot'), async (req, res) => {
   try {
     const id   = parseInt(req.params.id);
+    const userId = getUserId(req);
+
+    // Ownership check
+    const existing = await getTradeById(id);
+    if (!existing) return res.status(404).json({ success: false, error: 'Trade not found' });
+    if (String(existing.user_id) !== String(userId)) {
+      return res.status(403).json({ success: false, error: 'Forbidden' });
+    }
+
     const body = req.body;
 
     const tradeFields = ['pair','direction','position_size','entry_price','exit_price','tp','sl','outcome','profit_loss','session'];
@@ -255,7 +267,7 @@ router.put('/trades/:id', upload.single('screenshot'), async (req, res) => {
       }
     }
     if (req.file) {
-      tradeUpdate.screenshot_path = await saveJournalScreenshot(getUserId(req), req.file);
+      tradeUpdate.screenshot_path = await saveJournalScreenshot(userId, req.file);
     }
     if (body.pair) tradeUpdate.pair = body.pair.toUpperCase();
 
@@ -269,7 +281,7 @@ router.put('/trades/:id', upload.single('screenshot'), async (req, res) => {
     const trade = await getTradeById(id);
     res.json({ success: true, data: trade });
   } catch (err) {
-    res.status(500).json({ success: false, error: err.message });
+    res.status(500).json({ success: false, error: 'Internal server error.' });
   }
 });
 
@@ -281,7 +293,7 @@ router.delete('/trades/:id', async (req, res) => {
     if (!deleted) return res.status(404).json({ success: false, error: 'Trade not found' });
     res.json({ success: true });
   } catch (err) {
-    res.status(500).json({ success: false, error: err.message });
+    res.status(500).json({ success: false, error: 'Internal server error.' });
   }
 });
 
@@ -291,6 +303,9 @@ router.post('/trades/:id/analyze', requireAuth, checkAiTries, async (req, res) =
     const id    = parseInt(req.params.id);
     const trade = await getTradeById(id);
     if (!trade) return res.status(404).json({ success: false, error: 'Trade not found' });
+    if (String(trade.user_id) !== String(getUserId(req))) {
+      return res.status(403).json({ success: false, error: 'Forbidden' });
+    }
 
     const analysis = await analyzeJournalEntry(trade, {
       strategy:       trade.strategy,
@@ -317,7 +332,7 @@ router.post('/trades/:id/analyze', requireAuth, checkAiTries, async (req, res) =
     res.json({ success: true, data: analysis });
   } catch (err) {
     console.error('Analyze error:', err);
-    res.status(500).json({ success: false, error: err.message });
+    res.status(500).json({ success: false, error: 'Internal server error.' });
   }
 });
 
@@ -329,7 +344,7 @@ router.get('/analytics', requirePro, async (req, res) => {
     const metrics = calcMetrics(trades);
     res.json({ success: true, data: metrics });
   } catch (err) {
-    res.status(500).json({ success: false, error: err.message });
+    res.status(500).json({ success: false, error: 'Internal server error.' });
   }
 });
 
@@ -343,7 +358,7 @@ router.get('/reports', async (req, res) => {
     }));
     res.json({ success: true, data: reports });
   } catch (err) {
-    res.status(500).json({ success: false, error: err.message });
+    res.status(500).json({ success: false, error: 'Internal server error.' });
   }
 });
 
@@ -368,7 +383,7 @@ router.post('/reports', requirePro, checkAiTries, async (req, res) => {
     res.json({ success: true, data: { id, user_id: userId, report_type: reportType, created_at: new Date().toISOString(), report_data: reportData } });
   } catch (err) {
     console.error('Report generation error:', err);
-    res.status(500).json({ success: false, error: err.message });
+    res.status(500).json({ success: false, error: 'Internal server error.' });
   }
 });
 
@@ -379,6 +394,9 @@ router.get('/trades/:id/macro-context', async (req, res) => {
     const id    = parseInt(req.params.id);
     const trade = await getTradeById(id);
     if (!trade) return res.status(404).json({ success: false, error: 'Trade not found' });
+    if (String(trade.user_id) !== String(getUserId(req))) {
+      return res.status(403).json({ success: false, error: 'Forbidden' });
+    }
 
     // Return cached context if already analysed (unless ?refresh=1)
     if (trade.macro_alignment && !req.query.refresh) {
@@ -409,7 +427,7 @@ router.get('/trades/:id/macro-context', async (req, res) => {
     res.json({ success: true, cached: false, ...context });
   } catch (err) {
     console.error('macro-context error:', err);
-    res.status(500).json({ success: false, error: err.message });
+    res.status(500).json({ success: false, error: 'Internal server error.' });
   }
 });
 
@@ -422,7 +440,7 @@ router.get('/macro-stats', async (req, res) => {
     res.json({ success: true, data: stats });
   } catch (err) {
     console.error('macro-stats error:', err);
-    res.status(500).json({ success: false, error: err.message });
+    res.status(500).json({ success: false, error: 'Internal server error.' });
   }
 });
 

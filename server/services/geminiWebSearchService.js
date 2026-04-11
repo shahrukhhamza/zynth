@@ -81,7 +81,7 @@ async function callGeminiWithSearch(promptText, maxOutputTokens = 2048) {
 
   for (const model of MODELS) {
     try {
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/${model.id}:generateContent?key=${key}`;
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${model.id}:generateContent`;
 
       const body = {
         contents: [{ role: 'user', parts: [{ text: promptText }] }],
@@ -94,7 +94,7 @@ async function callGeminiWithSearch(promptText, maxOutputTokens = 2048) {
       };
 
       const response = await axios.post(url, body, {
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
         timeout: 45000,
       });
 

@@ -89,7 +89,7 @@ Return ONLY valid JSON in this EXACT format (no markdown, no explanations):
 }`;
 
     const response = await axios.post(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`,
+      'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent',
       {
         contents: [{
           parts: [{
@@ -102,7 +102,7 @@ Return ONLY valid JSON in this EXACT format (no markdown, no explanations):
         }
       },
       {
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'x-goog-api-key': apiKey },
         timeout: 30000,
       }
     );
@@ -113,7 +113,6 @@ Return ONLY valid JSON in this EXACT format (no markdown, no explanations):
     }
 
     const textResponse = response.data.candidates[0].content.parts[0].text;
-    console.log('✓ Gemini response received:', textResponse.substring(0, 200) + '...');
 
     // Extract JSON from response (Gemini might wrap it in markdown)
     let jsonText = textResponse.trim();
@@ -168,7 +167,7 @@ async function callGeminiForAnalysis(prompt) {
     }
 
     const response = await axios.post(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
+      'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent',
       {
         contents: [{
           parts: [{
@@ -181,7 +180,7 @@ async function callGeminiForAnalysis(prompt) {
         }
       },
       {
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'x-goog-api-key': apiKey },
         timeout: 15000,
       }
     );
@@ -456,8 +455,7 @@ Return this exact JSON object and nothing else:
         },
       },
       {
-        params:  { key: apiKey },
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'x-goog-api-key': apiKey },
         timeout: 15000,
       }
     );

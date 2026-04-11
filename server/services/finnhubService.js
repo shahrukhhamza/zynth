@@ -119,7 +119,7 @@ class FinnhubService extends EventEmitter {
   }
 
   _onTrade({ p: price, s: symbol, t: timestamp, v: volume }) {
-    if (!price || !symbol) return;
+    if (!symbol || typeof price !== 'number' || price <= 0) return;
     this.hasLiveTick = true;
     const prev      = this.prices[symbol] || {};
     const prevClose = prev.prevClose ?? prev.price ?? null;   // best known baseline

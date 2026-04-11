@@ -272,13 +272,9 @@ router.put('/update-profile', requireAuth, async (req, res) => {
     const safeColor = allowedColors.includes(avatar_color) ? avatar_color : 'emerald';
 
     if (avatar_base64) {
-      console.log('[avatar] received — length:', avatar_base64?.length);
       const avatarUrl = await saveAvatarFromBase64(req.user.id, avatar_base64);
       if (avatarUrl) {
         await Users.updateAvatarUrl(req.user.id, avatarUrl);
-        console.log('[avatar] saved OK — url:', avatarUrl);
-      } else {
-        console.warn('[avatar] WARNING: base64 regex did not match');
       }
     }
 
@@ -290,7 +286,8 @@ router.put('/update-profile', requireAuth, async (req, res) => {
     });
 
     if (name?.trim()) {
-      await Users.updateName(req.user.id, name.trim());
+      const safeName = String(name).trim().slice(0, 80);
+      await Users.updateName(req.user.id, safeName);
     }
 
     await Users.setOnboardingDone(req.user.id);

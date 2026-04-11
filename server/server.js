@@ -53,6 +53,7 @@ import paymentsRouter from './routes/payments.js';
 import paymentRouter  from './routes/payment.js';
 import tradingRouter from './routes/trading.js';
 import { requireAuth, requireAdmin } from './middleware/authMiddleware.js';
+import jwt from 'jsonwebtoken';
 import * as Users from './db/users.js';
 import { initDb } from './db/users.js';
 import { initEventsDb } from './db/events.js';
@@ -242,6 +243,11 @@ app.use(helmet({
       upgradeInsecureRequests: [],
     },
   },
+  hsts: {
+    maxAge: 31536000,
+    includeSubDomains: true,
+    preload: true,
+  },
   crossOriginEmbedderPolicy: false,
   referrerPolicy: { policy: 'no-referrer' },
 }));
@@ -296,7 +302,7 @@ app.post('/api/economic/trigger-update', requireAuth, requireAdmin, async (req, 
     return res.json(result);
   } catch (err) {
     console.error('trigger-update error:', err.message);
-    return res.status(500).json({ error: err.message });
+    return res.status(500).json({ error: 'Failed to trigger update.' });
   }
 });
 
@@ -321,6 +327,13 @@ app.use('/uploads', requireAuth, (req, res, next) => {
   if (req.path.startsWith('/payments/') && req.user?.is_admin !== 1) {
     return res.status(403).json({ error: 'Forbidden' });
   }
+  // Prevent browser from rendering uploaded HTML/SVG — force download for non-image types
+  const ext = req.path.split('.').pop()?.toLowerCase();
+  const safeImageExts = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+  if (!safeImageExts.includes(ext)) {
+    res.setHeader('Content-Disposition', 'attachment');
+  }
+  res.setHeader('X-Content-Type-Options', 'nosniff');
   next();
 }, express.static(UPLOADS_DIR));
 
@@ -340,7 +353,24 @@ app.use(errorHandler);
 
 // ── HTTP + WebSocket server ───────────────────────────────────────────────────
 const httpServer = createServer(app);
+httpServer.setTimeout(30000); // 30s request timeout
 const wss = new WebSocketServer({ server: httpServer, path: '/ws/market' });
+
+// WebSocket authentication — verify JWT on upgrade
+wss.on('connection', (ws, req) => {
+  const url = new URL(req.url, `http://${req.headers.host}`);
+  const token = url.searchParams.get('token');
+  if (!token) {
+    ws.close(4001, 'Authentication required');
+    return;
+  }
+  try {
+    jwt.verify(token, process.env.JWT_SECRET, { algorithms: ['HS256'] });
+  } catch {
+    ws.close(4001, 'Invalid token');
+    return;
+  }
+});
 
 httpServer.on('error', (err) => {
   if (err.code === 'EADDRINUSE') {
@@ -359,7 +389,7 @@ function startListening() {
   httpServer.listen(PORT, HOST, () => {
     console.log(`🚀 Server running on ${HOST}:${PORT}`);
     console.log(`📊 Financial News Dashboard API`);
-    console.log(`🔑 Polygon API Key: ${process.env.POLYGON_API_KEY ? 'Yes' : 'No'}`);
+    console.log(`🔑 Polygon API Key: ${process.env.POLYGON_API_KEY ? 'configured' : 'missing'}`);
     console.log('Twelve Data key loaded:', !!process.env.TWELVE_DATA_API_KEY);
 
     startAutoReleaseScheduler(wss);

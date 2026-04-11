@@ -222,9 +222,9 @@ Be concise, data-driven and direct. No generic advice. Use plain text, no markdo
 
   try {
     const resp = await axios.post(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`,
+      'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent',
       { contents: [{ parts: [{ text: prompt }] }], generationConfig: { temperature: 0.6, maxOutputTokens: 650 } },
-      { timeout: 28000 }
+      { headers: { 'x-goog-api-key': key }, timeout: 28000 }
     );
     return resp.data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim() ?? null;
   } catch (err) {
@@ -321,7 +321,7 @@ router.get('/macro-correlation', async (req, res) => {
     });
   } catch (err) {
     console.error('GET /analysis/macro-correlation error:', err);
-    res.status(500).json({ success: false, error: err.message });
+    res.status(500).json({ success: false, error: 'Internal server error.' });
   }
 });
 
@@ -509,9 +509,9 @@ Return ONLY valid JSON (no markdown, no code fences):
 }`;
   try {
     const resp = await axios.post(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`,
+      'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent',
       { contents: [{ parts: [{ text: prompt }] }], generationConfig: { temperature: 0.7, maxOutputTokens: 1200 } },
-      { timeout: 35000 }
+      { headers: { 'x-goog-api-key': key }, timeout: 35000 }
     );
     const raw = resp.data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim() ?? '';
     const cleaned = raw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '');
@@ -552,7 +552,7 @@ router.get('/trading-dna/latest', requireElite, async (req, res) => {
     });
   } catch (err) {
     console.error('GET /analysis/trading-dna/latest error:', err);
-    res.status(500).json({ success: false, error: err.message });
+    res.status(500).json({ success: false, error: 'Internal server error.' });
   }
 });
 
@@ -631,7 +631,7 @@ router.post('/trading-dna', requireElite, async (req, res) => {
     return res.json({ success: true, data: reportData });
   } catch (err) {
     console.error('POST /analysis/trading-dna error:', err);
-    res.status(500).json({ success: false, error: err.message });
+    res.status(500).json({ success: false, error: 'Internal server error.' });
   }
 });
 

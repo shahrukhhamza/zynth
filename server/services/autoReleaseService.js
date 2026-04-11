@@ -350,7 +350,7 @@ export async function fetchLatestRelease(indicatorId, indicatorName, unit) {
     // Inner loop: try each model with this key
     for (const model of GEMINI_MODELS) {
       try {
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/${model.id}:generateContent?key=${apiKey}`;
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/${model.id}:generateContent`;
 
         const body = {
           contents: [{ role: 'user', parts: [{ text: prompt }] }],
@@ -362,7 +362,7 @@ export async function fetchLatestRelease(indicatorId, indicatorName, unit) {
         };
 
         const resp = await axios.post(url, body, {
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 'Content-Type': 'application/json', 'x-goog-api-key': apiKey },
           timeout: 25000,
         });
 
@@ -466,7 +466,11 @@ export async function updateIndicatorInConfig(indicatorId, newData) {
 
     // 5) Splice updated block back into the full file text
     text = text.slice(0, openBrace) + block + text.slice(blockEnd + 1);
-    fs.writeFileSync(ECONOMIC_DATA_PATH, text, 'utf8');
+
+    // Write to temp file then rename for crash-safe update
+    const tmpPath = ECONOMIC_DATA_PATH + '.tmp';
+    fs.writeFileSync(tmpPath, text, 'utf8');
+    fs.renameSync(tmpPath, ECONOMIC_DATA_PATH);
 
     console.log(`✅ autoRelease: economicData.js updated — '${indicatorId}' actual=${newData.actual}, date=${newData.date}`);
     return true;

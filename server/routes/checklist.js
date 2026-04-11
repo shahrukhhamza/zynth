@@ -32,7 +32,7 @@ router.post('/', async (req, res) => {
     res.status(201).json({ success: true, id });
   } catch (err) {
     console.error('POST /checklist error:', err);
-    res.status(500).json({ success: false, error: err.message });
+    res.status(500).json({ success: false, error: 'Internal server error.' });
   }
 });
 
@@ -42,7 +42,7 @@ router.get('/history', async (req, res) => {
     const rows = await getChecklistHistory(getUserId(req));
     res.json({ success: true, data: rows });
   } catch (err) {
-    res.status(500).json({ success: false, error: err.message });
+    res.status(500).json({ success: false, error: 'Internal server error.' });
   }
 });
 
@@ -67,7 +67,7 @@ router.get('/stats', async (req, res) => {
       data: { totalChecks: total, avgScore, greenLights: green, cautionLights: caution, redLights: red, proceededDespiteRed: ignoreRed },
     });
   } catch (err) {
-    res.status(500).json({ success: false, error: err.message });
+    res.status(500).json({ success: false, error: 'Internal server error.' });
   }
 });
 

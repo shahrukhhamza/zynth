@@ -12,12 +12,12 @@ async function callGemini(prompt) {
   if (!key || key === 'demo') throw new Error('GEMINI_API_KEY not configured');
 
   const res = await axios.post(
-    `${GEMINI_URL}?key=${key}`,
+    GEMINI_URL,
     {
       contents: [{ parts: [{ text: prompt }] }],
       generationConfig: { temperature: 0.7, topP: 0.95, maxOutputTokens: 2048 },
     },
-    { headers: { 'Content-Type': 'application/json' }, timeout: 35000 }
+    { headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key }, timeout: 35000 }
   );
 
   const text = res.data?.candidates?.[0]?.content?.parts?.[0]?.text;

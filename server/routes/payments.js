@@ -95,7 +95,7 @@ router.post('/submit', requireAuth, upload.single('proof'), async (req, res) => 
     res.status(201).json({ ok: true, request });
   } catch (err) {
     console.error('payments/submit error:', err);
-    res.status(500).json({ error: err.message || 'Failed to submit payment request.' });
+    res.status(500).json({ error: 'Failed to submit payment request.' });
   }
 });
 
@@ -144,7 +144,14 @@ router.put('/:id/approve', requireAuth, requireAdmin, async (req, res) => {
       expiresAt.setMonth(expiresAt.getMonth() + 1);
     }
 
-    await activateUserSubscription(existing.user_id, existing.plan, expiresAt.toISOString());
+    try {
+      await activateUserSubscription(existing.user_id, existing.plan, expiresAt.toISOString());
+    } catch (activationErr) {
+      // Revert payment status so admin can retry
+      console.error('Subscription activation failed, reverting payment status:', activationErr);
+      await Payments.updatePaymentStatus(id, 'pending', req.user.id);
+      return res.status(500).json({ error: 'Payment verified but subscription activation failed. Status reverted to pending — please retry.' });
+    }
 
     trackEvent(req.user.id, 'payment_verified', {
       requestId:    existing.id,

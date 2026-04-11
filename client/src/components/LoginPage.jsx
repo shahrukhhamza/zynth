@@ -501,7 +501,7 @@ export default function LoginPage({ onSwitchToSignup, onBack, onForgotPassword }
               <div style={{ position:'relative' }}>
                 <input type={showPass?'text':'password'} autoComplete="current-password" value={password} required
                   onChange={e => { setPassword(e.target.value); setFieldErrors(fe => ({...fe, password:''})); }}
-                  placeholder="��������"
+                  placeholder="Enter your password"
                   style={{ width:'100%', boxSizing:'border-box', outline:'none', fontSize:'14px', transition:'all 0.18s ease',
                     background: isDark?'rgba(255,255,255,0.044)':'rgba(255,255,255,0.84)',
                     border: fieldErrors.password?'1px solid rgba(239,68,68,0.55)':isDark?'1px solid rgba(255,255,255,0.088)':'1px solid rgba(148,163,184,0.42)',

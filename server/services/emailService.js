@@ -1,7 +1,22 @@
 ﻿import axios from 'axios';
 
+function escapeHtml(text) {
+  return String(text)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
 export async function sendPasswordResetEmail(toEmail, resetLink, userName) {
-  const displayName = userName || 'Trader';
+  const displayName = escapeHtml(userName || 'Trader');
+
+  // Validate reset link starts with expected origin
+  const clientUrl = process.env.CLIENT_URL || '';
+  if (clientUrl && !resetLink.startsWith(clientUrl)) {
+    throw new Error('Invalid reset link origin');
+  }
 
   const html = `<!DOCTYPE html>
 <html lang="en">

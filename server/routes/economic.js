@@ -50,10 +50,7 @@ router.get('/nfp', async (req, res) => {
     res.json(analysis);
   } catch (error) {
     console.error('NFP endpoint error:', error);
-    res.status(500).json({
-      error: 'Internal server error',
-      message: error.message,
-    });
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
@@ -75,10 +72,7 @@ router.get('/cpi', async (req, res) => {
     res.json(analysis);
   } catch (error) {
     console.error('CPI endpoint error:', error);
-    res.status(500).json({
-      error: 'Internal server error',
-      message: error.message,
-    });
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
@@ -100,10 +94,7 @@ router.get('/unemployment', async (req, res) => {
     res.json(analysis);
   } catch (error) {
     console.error('Unemployment endpoint error:', error);
-    res.status(500).json({
-      error: 'Internal server error',
-      message: error.message,
-    });
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
@@ -129,7 +120,7 @@ newIndicators.forEach(({ path, fn, name }) => {
       res.json(analysis);
     } catch (error) {
       console.error(`${name} endpoint error:`, error);
-      res.status(500).json({ error: 'Internal server error', message: error.message });
+      res.status(500).json({ error: 'Internal server error' });
     }
   });
 });
@@ -165,7 +156,6 @@ router.get('/dashboard', async (req, res) => {
         // Don't block dashboard if Gemini fails - it's an enhancement
         dashboard.aiAnalysis = {
           error: 'AI analysis unavailable',
-          message: error.message,
         };
       }
     }
@@ -173,10 +163,7 @@ router.get('/dashboard', async (req, res) => {
     res.json(dashboard);
   } catch (error) {
     console.error('Dashboard endpoint error:', error);
-    res.status(500).json({
-      error: 'Internal server error',
-      message: error.message,
-    });
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
@@ -195,10 +182,7 @@ router.post('/refresh', async (req, res) => {
     });
   } catch (error) {
     console.error('Cache refresh error:', error);
-    res.status(500).json({
-      error: 'Failed to refresh cache',
-      message: error.message,
-    });
+    res.status(500).json({ error: 'Failed to refresh cache' });
   }
 });
 
@@ -251,7 +235,7 @@ router.get('/ai-insights', async (req, res) => {
     res.json(payload);
   } catch (error) {
     console.error('AI Insights endpoint error:', error);
-    res.status(500).json({ error: 'Internal server error', message: error.message });
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
@@ -272,7 +256,7 @@ router.get('/macro-score', async (req, res) => {
     res.json(result);
   } catch (error) {
     console.error('Macro score endpoint error:', error);
-    res.status(500).json({ error: 'Internal server error', message: error.message });
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
@@ -291,8 +275,6 @@ router.get('/health', (req, res) => {
     timestamp: new Date().toISOString(),
   });
 });
-
-export default router;
 
 router.get('/ai-insights-with-price', async (req, res) => {
   try {
@@ -331,28 +313,8 @@ router.get('/ai-insights-with-price', async (req, res) => {
     res.json(payload);
   } catch (error) {
     console.error('AI Insights endpoint error:', error);
-    res.status(500).json({ error: 'Internal server error', message: error.message });
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
-/**
- * GET /api/economic/macro-score
- * Composite macro surprise score for gold (-10 to +10)
- */
-router.get('/macro-score', async (req, res) => {
-  try {
-    const result = await calculateMacroSurpriseScore();
-
-    if (result.error) {
-      return res.status(503).json({
-        error: 'Failed to calculate macro score',
-        details: result.error,
-      });
-    }
-
-    res.json(result);
-  } catch (error) {
-    console.error('Macro score endpoint error:', error);
-    res.status(500).json({ error: 'Internal server error', message: error.message });
-  }
-});
+export default router;
