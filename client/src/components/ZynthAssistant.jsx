@@ -33,7 +33,7 @@ function TypingDots() {
           key={i}
           style={{
             width: 7, height: 7, borderRadius: '50%',
-            backgroundColor: '#CA8A04',
+            backgroundColor: '#059669',
             display: 'inline-block',
             animation: `assistantBounce 1.2s ease-in-out ${i * 0.2}s infinite`,
           }}
@@ -175,7 +175,7 @@ export default function ZynthAssistant() {
   const headerSubtitleColor = theme.isDark ? 'rgba(239,246,255,0.82)' : '#475569';
   const headerCloseColor = theme.isDark ? 'rgba(239,246,255,0.78)' : '#64748b';
   const assistantBubbleBg = theme.isDark ? 'rgba(15,23,42,0.72)' : '#fafaf9';
-  const assistantBubbleBorder = theme.isDark ? '1px solid rgba(202,138,4,0.14)' : `1px solid rgba(0,0,0,0.06)`;
+  const assistantBubbleBorder = theme.isDark ? '1px solid rgba(148,163,184,0.14)' : `1px solid rgba(0,0,0,0.06)`;
 
   // ── Render ────────────────────────────────────────────────────────────────
   return createPortal(
@@ -183,19 +183,19 @@ export default function ZynthAssistant() {
       {/* Keyframe injection */}
       <style>{`
         @keyframes assistantPulse {
-          0%, 100% { box-shadow: 0 0 0 0 rgba(202,138,4,0.55); }
-          50%       { box-shadow: 0 0 0 12px rgba(202,138,4,0); }
+          0%, 100% { box-shadow: 0 0 0 0 rgba(5,150,105,0.55); }
+          50%       { box-shadow: 0 0 0 12px rgba(5,150,105,0); }
         }
         @keyframes assistantBounce {
           0%, 80%, 100% { transform: scale(0.6); opacity: 0.5; }
           40%           { transform: scale(1);   opacity: 1;   }
         }
         .zynth-chip:hover {
-          background: rgba(202,138,4,0.18) !important;
-          border-color: #CA8A04 !important;
-          color: #CA8A04 !important;
+          background: rgba(5,150,105,0.12) !important;
+          border-color: #059669 !important;
+          color: #059669 !important;
         }
-        .zynth-send:hover { background: #A16207 !important; }
+        .zynth-send:hover { background: #047857 !important; }
         .zynth-close:hover { background: rgba(255,255,255,0.1) !important; }
         .zynth-fab:hover { transform: scale(1.08); }
         .zynth-fab { transition: transform 0.15s ease; }
@@ -212,7 +212,7 @@ export default function ZynthAssistant() {
           box-shadow: 0 1px 3px rgba(0,0,0,0.06);
         }
         .zynth-bubble.user {
-          background: linear-gradient(135deg, #CA8A04, #EAB308);
+          background: linear-gradient(135deg, #059669, #10b981);
           color: #ffffff;
           border-top-right-radius: 6px;
         }
@@ -266,14 +266,14 @@ export default function ZynthAssistant() {
             alignItems: 'center',
             gap: 10,
             background: theme.isDark
-              ? 'linear-gradient(135deg, #992900 0%, #CA8A04 100%)'
-              : 'linear-gradient(135deg, #CA8A04 0%, #EAB308 100%)',
+              ? 'linear-gradient(135deg, #1e293b 0%, #334155 100%)'
+              : 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
             flexShrink: 0,
           }}>
             {/* Logo icon */}
             <div style={{
               width: 32, height: 32, borderRadius: 8,
-              background: 'linear-gradient(135deg, #CA8A04, #EAB308)',
+              background: 'rgba(255,255,255,0.12)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               flexShrink: 0,
             }}>
@@ -408,7 +408,7 @@ export default function ZynthAssistant() {
                 opacity: loading ? 0.6 : 1,
                 boxShadow: theme.isDark ? 'inset 0 1px 2px rgba(0,0,0,0.25)' : 'inset 0 1px 2px rgba(15,23,42,0.05)',
               }}
-              onFocus={e => { e.target.style.borderColor = '#CA8A04'; e.target.style.boxShadow = '0 0 0 3px rgba(202,138,4,0.16)'; }}
+              onFocus={e => { e.target.style.borderColor = '#059669'; e.target.style.boxShadow = '0 0 0 3px rgba(5,150,105,0.16)'; }}
               onBlur={e => { e.target.style.borderColor = borderColor; e.target.style.boxShadow = theme.isDark ? 'inset 0 1px 2px rgba(0,0,0,0.25)' : 'inset 0 1px 2px rgba(15,23,42,0.05)'; }}
               onInput={e => {
                 e.target.style.height = 'auto';
@@ -421,7 +421,7 @@ export default function ZynthAssistant() {
               disabled={!input.trim() || loading}
               style={{
                 width: 38, height: 38, borderRadius: 12, border: 'none',
-                background: 'linear-gradient(135deg, #CA8A04, #EAB308)',
+                background: 'linear-gradient(135deg, #059669, #10b981)',
                 cursor: input.trim() && !loading ? 'pointer' : 'not-allowed',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 flexShrink: 0,
@@ -475,15 +475,15 @@ export default function ZynthAssistant() {
               borderRadius: '50%',
               border: 'none',
               background: open
-                ? 'linear-gradient(135deg, #374151, #1f2937)'
-                : 'linear-gradient(135deg, #CA8A04, #EAB308)',
+                ? (theme.isDark ? 'linear-gradient(135deg, #374151, #1f2937)' : 'linear-gradient(135deg, #1e293b, #334155)')
+                : 'linear-gradient(135deg, #059669, #10b981)',
               cursor: 'pointer',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               boxShadow: open
                 ? '0 4px 20px rgba(0,0,0,0.3)'
                 : showPulse
-                  ? '0 4px 20px rgba(202,138,4,0.5)'
-                  : '0 4px 20px rgba(202,138,4,0.35)',
+                  ? '0 4px 20px rgba(5,150,105,0.5)'
+                  : '0 4px 20px rgba(5,150,105,0.35)',
               animation: showPulse && !open ? 'assistantPulse 2s ease-in-out infinite' : 'none',
               position: 'relative',
             }}
@@ -496,8 +496,8 @@ export default function ZynthAssistant() {
             {!open && (
               <span style={{
                 position: 'absolute', top: -4, left: -2,
-                background: '#f59e0b',
-                color: '#1c1917',
+                background: '#ffffff',
+                color: '#059669',
                 fontSize: 9, fontWeight: 800,
                 padding: '1px 5px',
                 borderRadius: 10,
@@ -505,7 +505,7 @@ export default function ZynthAssistant() {
                 lineHeight: 1.6,
                 pointerEvents: 'none',
                 userSelect: 'none',
-                boxShadow: '0 1px 4px rgba(0,0,0,0.35)',
+                boxShadow: '0 1px 4px rgba(0,0,0,0.2)',
               }}>BETA</span>
             )}
           </button>

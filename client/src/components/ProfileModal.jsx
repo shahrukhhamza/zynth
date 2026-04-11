@@ -269,6 +269,7 @@ export default function ProfileModal({ onClose, onForgotPassword }) {
                   className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full flex items-center justify-center shadow-md transition-transform hover:scale-110 disabled:opacity-70"
                   style={{ backgroundColor: theme.accent, color: '#fff' }}
                   title="Change photo"
+                  aria-label="Upload new profile photo"
                 >
                   {avatarUploading
                     ? <Loader2 className="w-3 h-3 animate-spin" />

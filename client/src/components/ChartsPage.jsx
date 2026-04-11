@@ -327,7 +327,7 @@ export default function ChartsPage({ onNavigate, initialTab }) {
             >
               <div
                 className="w-16 h-16 rounded-full flex items-center justify-center"
-                style={{ background: 'rgba(202,138,4,0.15)' }}
+                style={{ background: 'rgba(100,116,139,0.2)' }}
               >
                 <Lock size={28} style={{ color: 'rgba(255,255,255,0.6)' }} />
               </div>
@@ -335,7 +335,7 @@ export default function ChartsPage({ onNavigate, initialTab }) {
                 <h3 className="text-xl font-bold mb-1" style={{ color: '#fff' }}>Coming Soon</h3>
                 <p className="text-sm leading-relaxed" style={{ color: 'rgba(255,255,255,0.55)' }}>
                   Automated backtesting is under development.<br />
-                  In the meantime, use <strong style={{ color: '#CA8A04' }}>TradingView Bar Replay</strong> on
+                  In the meantime, use <strong style={{ color: 'rgba(255,255,255,0.85)' }}>TradingView Bar Replay</strong> on
                   the Live Chart to backtest manually.
                 </p>
               </div>
@@ -343,7 +343,7 @@ export default function ChartsPage({ onNavigate, initialTab }) {
                 onClick={() => setActiveTab('live')}
                 style={{
                   padding: '10px 24px', borderRadius: 10, border: 'none', cursor: 'pointer',
-                  background: '#CA8A04', color: '#fff', fontWeight: 700, fontSize: 14,
+                  background: '#059669', color: '#fff', fontWeight: 700, fontSize: 14,
                 }}
               >
                 Go to Live Chart →

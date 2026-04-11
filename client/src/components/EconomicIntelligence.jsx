@@ -538,7 +538,7 @@ export default function EconomicIntelligence() {
           <button
             onClick={handleRefresh}
             disabled={refreshing}
-            className="flex items-center gap-2 rounded-lg bg-[#CA8A04] px-4 py-2 text-xs font-bold text-white transition-colors hover:bg-[#A16207] disabled:opacity-60"
+            className="flex items-center gap-2 rounded-lg bg-[#059669] px-4 py-2 text-xs font-bold text-white transition-colors hover:bg-[#047857] disabled:opacity-60"
           >
             <RefreshCcw size={12} className={refreshing ? 'animate-spin' : ''} />
             Refresh

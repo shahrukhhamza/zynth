@@ -413,7 +413,7 @@ export default function LoginPage({ onSwitchToSignup, onBack, onForgotPassword }
               background: isDark?'rgba(251,191,36,0.08)':'rgba(254,252,232,0.9)',
               animation:'fadeUp 0.45s ease 0.15s both' }}>
               <div style={{ padding:'11px 14px', display:'flex', alignItems:'flex-start', gap:'10px' }}>
-                <span style={{ fontSize:'15px', flexShrink:0, marginTop:'1px' }}>??</span>
+                <span style={{ fontSize:'15px', flexShrink:0, marginTop:'1px' }}>⚠️</span>
                 <div style={{ flex:1 }}>
                   <p style={{ margin:'0 0 4px', fontSize:'12.5px', fontWeight:600, color: isDark?'#fcd34d':'#92400e', lineHeight:1.4 }}>
                     Google Sign-in is blocked in Instagram's browser

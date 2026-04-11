@@ -400,7 +400,7 @@ export default function PreTradeChecklist({ direction, entry_price, tp, sl, stra
 
                 {allAnswered
                   ? <button type="button" onClick={() => setScreen('result')}
-                      style={{ width: '100%', padding: '12px 0', borderRadius: 10, border: 'none', cursor: 'pointer', fontWeight: 700, fontSize: 14, backgroundColor: '#CA8A04', color: '#fff', marginTop: 4 }}>
+                      style={{ width: '100%', padding: '12px 0', borderRadius: 10, border: 'none', cursor: 'pointer', fontWeight: 700, fontSize: 14, backgroundColor: '#059669', color: '#fff', marginTop: 4 }}>
                       See My Score →
                     </button>
                   : <div style={{ textAlign: 'center', fontSize: 12, color: theme.muted, padding: '6px 0 2px' }}>Answer all questions to see your score</div>
