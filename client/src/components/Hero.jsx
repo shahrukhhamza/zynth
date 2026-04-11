@@ -413,23 +413,23 @@ export default function Hero({ spotsLeft, onGetStarted, onSignIn }) {
               }}
             >
               <span className="w-1.5 h-1.5 rounded-full bg-yellow-500 animate-pulse" />
-              AI-Powered Trading Analytics Platform
+              AI-Powered Trading Intelligence
             </span>
           </motion.div>
 
           <motion.div {...fadeUp(0.07)}>
             <h1 style={{
-              fontSize: 'clamp(38px, 6vw, 72px)',
-              fontWeight: 800, lineHeight: 1.06, letterSpacing: '-0.04em',
+              fontSize: 'clamp(40px, 6.4vw, 78px)',
+              fontWeight: 800, lineHeight: 1.02, letterSpacing: '-0.045em',
               color: isDark ? '#f4f4f5' : '#09090b',
               marginBottom: 0,
             }}>
-              Trade Smarter with
+              Stop Guessing.
             </h1>
             <h1 style={{
-              fontSize: 'clamp(38px, 6vw, 72px)',
-              fontWeight: 800, lineHeight: 1.06, letterSpacing: '-0.04em',
-              marginBottom: 24,
+              fontSize: 'clamp(40px, 6.4vw, 78px)',
+              fontWeight: 800, lineHeight: 1.02, letterSpacing: '-0.045em',
+              marginBottom: 28,
               backgroundImage: isDark
                 ? 'linear-gradient(90deg, #CA8A04 0%, #FBBF24 25%, #FFB366 50%, #FBBF24 75%, #CA8A04 100%)'
                 : 'linear-gradient(135deg, #CA8A04 0%, #FBBF24 100%)',
@@ -437,28 +437,45 @@ export default function Hero({ spotsLeft, onGetStarted, onSignIn }) {
               animation: isDark ? 'hero-shimmer 4s ease-in-out infinite' : 'none',
               WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
             }}>
-              AI-Powered Insights
+              Start Trading With An Edge.
             </h1>
           </motion.div>
 
           <motion.p {...fadeUp(0.14)} style={{
-            fontSize: 17, lineHeight: 1.68,
+            fontSize: 18, lineHeight: 1.72,
             color: isDark ? '#71717a' : '#52525b',
-            maxWidth: 520, margin: '0 auto 36px',
+            maxWidth: 640, margin: '0 auto 24px',
           }}>
-            Track performance, analyze strategies, and improve every trade with Zynth — your AI-powered trading companion.
+            Zynth turns every trade into a measurable feedback loop so you can spot costly patterns, tighten risk, and grow consistency faster.
           </motion.p>
 
+          <motion.div {...fadeUp(0.16)} className="flex items-center justify-center gap-3 mb-8 flex-wrap">
+            {["Detect emotional mistakes earlier", "Know which setups actually pay", "Improve win quality, not just win rate"].map((point) => (
+              <span
+                key={point}
+                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[11px] sm:text-[12px]"
+                style={{
+                  background: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)',
+                  border: `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)'}`,
+                  color: isDark ? '#a1a1aa' : '#52525b',
+                }}
+              >
+                <span style={{ color: '#22c55e', fontWeight: 700 }}>●</span>
+                {point}
+              </span>
+            ))}
+          </motion.div>
+
           {/* CTA */}
-          <motion.div {...fadeUp(0.2)} className="flex items-center justify-center gap-4 mb-16">
+          <motion.div {...fadeUp(0.2)} className="flex flex-col items-center justify-center gap-3 mb-16">
             <button
               onClick={() => onGetStarted()}
               className="group inline-flex items-center gap-2.5"
               style={{
-                padding: '16px 32px', borderRadius: 50,
+                padding: '16px 34px', borderRadius: 50,
                 background: 'linear-gradient(135deg, #CA8A04 0%, #FBBF24 100%)',
                 color: '#ffffff',
-                fontSize: 15, fontWeight: 700, border: 'none', cursor: 'pointer',
+                fontSize: 15, fontWeight: 800, border: 'none', cursor: 'pointer',
                 animation: isDark ? 'hero-glow-pulse 2.5s ease-in-out infinite' : 'none',
                 boxShadow: '0 4px 28px rgba(202,138,4,0.4), 0 0 0 1px rgba(255,120,0,0.15)',
                 transition: 'transform 0.2s ease',
@@ -470,9 +487,16 @@ export default function Hero({ spotsLeft, onGetStarted, onSignIn }) {
                 e.currentTarget.style.transform = '';
               }}
             >
-              Get Started
-              <ArrowRight size={16} className="transition-transform duration-300 group-hover:tranzinc-x-0.5" />
+              Unlock My Trading Edge
+              <ArrowRight size={16} className="transition-transform duration-300 group-hover:translate-x-0.5" />
             </button>
+
+            <div className="text-center" style={{ color: isDark ? '#71717a' : '#52525b' }}>
+              <p style={{ fontSize: 13, fontWeight: 600 }}>
+                {spotsLeft > 0 ? `${spotsLeft} onboarding spots left this week` : 'Limited onboarding spots this week'}
+              </p>
+              <p style={{ fontSize: 12, marginTop: 3 }}>No credit card required</p>
+            </div>
           </motion.div>
         </div>
 
