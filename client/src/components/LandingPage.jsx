@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+﻿import { useState, useEffect, useRef } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { motion, useInView, useScroll, AnimatePresence, useTransform, useSpring } from 'framer-motion';
 import {
@@ -88,7 +88,7 @@ function ProblemSection({ isDark }) {
             className="mt-4 text-[16px] max-w-md mx-auto leading-relaxed"
             style={{ color: isDark ? '#71717a' : '#52525b' }}
           >
-            Inconsistency isn't bad luck � it's untracked behavior.
+            Inconsistency isn't bad luck — it's untracked behavior.
           </p>
         </Reveal>
 
@@ -277,7 +277,7 @@ function FeaturesGrid({ isDark, onGetStarted }) {
                 style={{ color: '#71717a', maxWidth: 420 }}
               >
                 Track your metrics in real-time with our AI-powered dashboard. Visualize patterns, 
-                spot weaknesses, and build consistency � all in one unified view.
+                spot weaknesses, and build consistency — all in one unified view.
               </p>
               <button
                 onClick={() => onGetStarted()}
@@ -333,7 +333,7 @@ function FeaturesGrid({ isDark, onGetStarted }) {
                   <div style={{ fontSize: 28, fontWeight: 800, color: '#f4f4f5', letterSpacing: '-0.03em' }}>
                     $12,847.50
                   </div>
-                  <span style={{ fontSize: 12, color: '#22c55e', fontWeight: 600 }}>+12.4% ?</span>
+                  <span style={{ fontSize: 12, color: '#22c55e', fontWeight: 600 }}>+12.4% ↑</span>
                 </div>
 
                 {/* Bar chart */}
@@ -398,7 +398,7 @@ const TESTIMONIALS = [
     stars: 5,
   },
   {
-    quote: "I used to think I had a clear approach. Turns out I had a collection of habits � some good and some not. The pattern analysis made that unmistakably clear within the first two weeks.",
+    quote: "I used to think I had a clear approach. Turns out I had a collection of habits — some good and some not. The pattern analysis made that unmistakably clear within the first two weeks.",
     name: 'Tom B.',
     role: 'Operations manager, decision-maker',
     avatarColor: 'linear-gradient(135deg,#b45309,#f59e0b)',
@@ -412,7 +412,7 @@ const TESTIMONIALS = [
     stars: 5,
   },
   {
-    quote: "I was tracking everything in a spreadsheet before. This is a completely different experience. The AI feedback doesn't just describe what happened � it asks the kind of questions I should be asking myself.",
+    quote: "I was tracking everything in a spreadsheet before. This is a completely different experience. The AI feedback doesn't just describe what happened — it asks the kind of questions I should be asking myself.",
     name: 'Chris A.',
     role: 'Strategic planner, productivity enthusiast',
     avatarColor: 'linear-gradient(135deg,#166534,#22c55e)',
@@ -460,7 +460,7 @@ function TestimonialsGrid({ isDark }) {
                 {/* Stars */}
                 <div className="flex gap-0.5 mb-4">
                   {Array.from({ length: t.stars }).map((_, s) => (
-                    <span key={s} style={{ color: '#EAB308', fontSize: '12px' }}>?</span>
+                    <span key={s} style={{ color: '#EAB308', fontSize: '12px' }}>★</span>
                   ))}
                 </div>
 
@@ -649,7 +649,7 @@ function LandingPricing({ isDark, onGetStarted }) {
                         : { background: 'rgba(202,138,4,0.1)', border: '1px solid rgba(202,138,4,0.3)', color: '#854D0E', boxShadow: '0 1px 4px rgba(202,138,4,0.1)' }
                       }
                     >
-                      ?? Most Popular
+                      ⭐ Most Popular
                     </span>
                     <h3
                       className="text-[22px] font-extrabold tracking-tight"
@@ -784,7 +784,7 @@ function LandingPricing({ isDark, onGetStarted }) {
                         : { background: 'rgba(0,0,0,0.04)', border: '1px solid rgba(0,0,0,0.1)', color: '#3f3f46' }
                       }
                     >
-                      ? Great Value
+                      ✶ Great Value
                     </span>
                     <h3
                       className="text-[22px] font-extrabold tracking-tight"
@@ -901,10 +901,10 @@ function LandingPricing({ isDark, onGetStarted }) {
         {/* Trust signals */}
         <Reveal className="mt-8 flex flex-wrap items-center justify-center gap-x-7 gap-y-2">
           {[
-            { label: 'Cancel anytime', icon: '?' },
-            { label: 'No hidden fees', icon: '?' },
-            { label: 'Secure checkout', icon: '??' },
-            { label: 'Instant access', icon: '?' },
+            { label: 'Cancel anytime', icon: '✓' },
+            { label: 'No hidden fees', icon: '✓' },
+            { label: 'Secure checkout', icon: '🔒' },
+            { label: 'Instant access', icon: '⚡' },
           ].map((t) => (
             <span
               key={t.label}
@@ -935,7 +935,7 @@ function LandingPricing({ isDark, onGetStarted }) {
               className="text-[13px] font-semibold transition-opacity hover:opacity-70"
               style={{ color: isDark ? '#f4f4f5' : '#18181b' }}
             >
-              Start Free ?
+              Start Free →
             </button>
           </div>
         </Reveal>
@@ -948,9 +948,9 @@ function LandingPricing({ isDark, onGetStarted }) {
 const FAQS = [
   { q: 'What is Zynth?', a: 'Zynth is an AI-powered performance analytics platform that helps you understand your behavioral patterns, track activities, and improve your outcomes over time. Zynth is not a financial advisory tool and does not provide investment or trading advice of any kind.' },
   { q: 'Is my data safe?', a: 'Yes. All data is encrypted in transit (TLS 1.3) and stored securely. We never share or sell your personal data to third parties.' },
-  { q: 'What is the Context Awareness Score?', a: 'The Context Awareness Score analyzes key data inputs and summarizes external conditions relevant to your logged activities. It helps you understand how surrounding context may have influenced your decisions � without providing financial advice.' },
+  { q: 'What is the Context Awareness Score?', a: 'The Context Awareness Score analyzes key data inputs and summarizes external conditions relevant to your logged activities. It helps you understand how surrounding context may have influenced your decisions — without providing financial advice.' },
   { q: 'Is there a free plan?', a: 'Absolutely. The Free plan includes core features with no credit card required: 5 lifetime activity logs, 2 lifetime AI analyses, and access to the core analytics dashboard.' },
-  { q: 'What does the AI analysis include?', a: 'Our AI reads your activity logs and identifies behavioral patterns, recurring tendencies, and areas of inconsistency � then delivers personalized improvement suggestions to help you make more deliberate decisions.' },
+  { q: 'What does the AI analysis include?', a: 'Our AI reads your activity logs and identifies behavioral patterns, recurring tendencies, and areas of inconsistency — then delivers personalized improvement suggestions to help you make more deliberate decisions.' },
   { q: 'What data does Zynth work with?', a: 'Zynth works with user-logged activity data and contextual signals. You log what you do, and Zynth surfaces patterns across time, context, and outcome to help you understand what drives your performance.' },
   { q: 'What are the subscription prices?', a: `Pro is ${getPlanMonthlyLabel('pro')} and Elite is ${getPlanMonthlyLabel('elite')}. Both are billed monthly and you can cancel anytime. A free plan is available with no credit card required.` },
 ];
@@ -1176,7 +1176,7 @@ function FinalCTA({ isDark, onGetStarted }) {
           className="mt-5 text-[12px]"
           style={{ color: isDark ? '#52525b' : '#a1a1aa' }}
         >
-          No credit card required � Free plan available � Cancel anytime
+          No credit card required · Free plan available · Cancel anytime
         </p>
       </Reveal>
     </section>
@@ -1234,7 +1234,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
       </Helmet>
 
       <div
-        className={`min-h-screen overflow-x-hidden ${isDark ? 'bg-[#0b0b0f] text-white' : 'bg-[#f6f5f3] text-[#18181b]'}`}
+        className={`min-h-screen overflow-x-hidden ${isDark ? 'bg-[#0b0b0f] text-white' : 'bg-[#fafaf9] text-[#18181b]'}`}
         style={{
           backgroundImage: isDark
             ? 'radial-gradient(ellipse 80% 40% at 50% -5%, rgba(255,90,0,0.07) 0%, transparent 70%)'
