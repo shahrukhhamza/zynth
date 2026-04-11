@@ -420,7 +420,34 @@ const TESTIMONIALS = [
   },
 ];
 
+const testimonialCardVariants = {
+  hidden: { opacity: 0, y: 28, scale: 0.97 },
+  visible: (i) => ({
+    opacity: 1, y: 0, scale: 1,
+    transition: { duration: 0.55, delay: i * 0.09, ease: [0.22, 1, 0.36, 1] },
+  }),
+};
+
+const starVariants = {
+  hidden: { opacity: 0, scale: 0.3 },
+  visible: (s) => ({
+    opacity: 1, scale: 1,
+    transition: { duration: 0.28, delay: s * 0.055, ease: [0.34, 1.56, 0.64, 1] },
+  }),
+};
+
+const avatarVariants = {
+  hidden: { opacity: 0, scale: 0.6 },
+  visible: (i) => ({
+    opacity: 1, scale: 1,
+    transition: { duration: 0.38, delay: 0.18 + i * 0.09, ease: [0.34, 1.56, 0.64, 1] },
+  }),
+};
+
 function TestimonialsGrid({ isDark }) {
+  const gridRef = useRef(null);
+  const gridInView = useInView(gridRef, { once: true, margin: '-80px' });
+
   return (
     <section className="py-24 px-6">
       <div className="max-w-6xl mx-auto">
@@ -444,57 +471,76 @@ function TestimonialsGrid({ isDark }) {
           </p>
         </Reveal>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div ref={gridRef} className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {TESTIMONIALS.map((t, i) => (
-            <Reveal key={t.name} delay={i * 0.05}>
-              <div
-                className={`rounded-2xl p-7 flex flex-col h-full border ${isDark ? 'premium-card-glow premium-card-shine' : ''}`}
-                style={{
-                  background: isDark ? 'rgba(255,255,255,0.03)' : '#ffffff',
-                  borderColor: isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.07)',
-                  backdropFilter: isDark ? 'blur(10px)' : 'none',
-                  boxShadow: isDark ? '0 4px 24px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.04)' : '0 1px 3px rgba(0,0,0,0.04)',
-                  transition: 'all 0.4s cubic-bezier(0.22, 1, 0.36, 1)',
-                }}
-              >
-                {/* Stars */}
-                <div className="flex gap-0.5 mb-4">
-                  {Array.from({ length: t.stars }).map((_, s) => (
-                    <span key={s} style={{ color: '#EAB308', fontSize: '12px' }}>★</span>
-                  ))}
-                </div>
-
-                <p
-                  className="text-[13.5px] leading-relaxed flex-1 mb-6"
-                  style={{ color: isDark ? '#71717a' : '#52525b' }}
-                >
-                  "{t.quote}"
-                </p>
-
-                <div className="flex items-center gap-3">
-                  <div
-                    className="w-8 h-8 rounded-full flex items-center justify-center text-[12px] font-bold text-white shrink-0"
-                    style={{ background: t.avatarColor }}
+            <motion.div
+              key={t.name}
+              custom={i}
+              variants={testimonialCardVariants}
+              initial="hidden"
+              animate={gridInView ? 'visible' : 'hidden'}
+              whileHover={{
+                y: -5,
+                boxShadow: isDark
+                  ? '0 16px 48px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06)'
+                  : '0 10px 32px rgba(0,0,0,0.10)',
+                transition: { duration: 0.22, ease: 'easeOut' },
+              }}
+              className={`rounded-2xl p-7 flex flex-col h-full border ${isDark ? 'premium-card-glow premium-card-shine' : ''}`}
+              style={{
+                background: isDark ? 'rgba(255,255,255,0.03)' : '#ffffff',
+                borderColor: isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.07)',
+                backdropFilter: isDark ? 'blur(10px)' : 'none',
+                boxShadow: isDark ? '0 4px 24px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.04)' : '0 1px 3px rgba(0,0,0,0.04)',
+                cursor: 'default',
+              }}
+            >
+              {/* Stars */}
+              <div className="flex gap-0.5 mb-4" aria-label={`${t.stars} out of 5 stars`}>
+                {Array.from({ length: t.stars }).map((_, s) => (
+                  <motion.span
+                    key={s}
+                    custom={s}
+                    variants={starVariants}
+                    initial="hidden"
+                    animate={gridInView ? 'visible' : 'hidden'}
+                    style={{ color: '#EAB308', fontSize: '12px', display: 'inline-block' }}
+                    aria-hidden="true"
                   >
-                    {t.name[0]}
-                  </div>
-                  <div>
-                    <p
-                      className="text-[13px] font-medium"
-                      style={{ color: isDark ? '#a1a1aa' : '#52525b' }}
-                    >
-                      {t.name}
-                    </p>
-                    <p
-                      className="text-[11px] mt-0.5"
-                      style={{ color: isDark ? '#3f3f46' : '#a1a1aa' }}
-                    >
-                      {t.role}
-                    </p>
-                  </div>
+                    ★
+                  </motion.span>
+                ))}
+              </div>
+
+              <p
+                className="text-[13.5px] leading-relaxed flex-1 mb-6"
+                style={{ color: isDark ? '#71717a' : '#52525b' }}
+              >
+                "{t.quote}"
+              </p>
+
+              <div className="flex items-center gap-3">
+                <motion.div
+                  custom={i}
+                  variants={avatarVariants}
+                  initial="hidden"
+                  animate={gridInView ? 'visible' : 'hidden'}
+                  className="w-8 h-8 rounded-full flex items-center justify-center text-[12px] font-bold text-white shrink-0"
+                  style={{ background: t.avatarColor }}
+                  aria-hidden="true"
+                >
+                  {t.name[0]}
+                </motion.div>
+                <div>
+                  <p className="text-[13px] font-medium" style={{ color: isDark ? '#a1a1aa' : '#52525b' }}>
+                    {t.name}
+                  </p>
+                  <p className="text-[11px] mt-0.5" style={{ color: isDark ? '#3f3f46' : '#a1a1aa' }}>
+                    {t.role}
+                  </p>
                 </div>
               </div>
-            </Reveal>
+            </motion.div>
           ))}
         </div>
       </div>
