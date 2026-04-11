@@ -10,11 +10,7 @@ import {
   AlertTriangle, Brain, Download, Loader2, ChevronRight, CheckCircle,
   XCircle, Lock, Sparkles, Calendar, TrendingDown,
 } from 'lucide-react';
-import {
-  RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
-  Radar, ResponsiveContainer,
-} from 'recharts';
-import { useAuth } from '../contexts/AuthContext';
+import { useTheme } from '../contexts/ThemeContext';
 import { usePlanGate } from '../hooks/usePlanGate';
 import { API_URL } from '../config/api';
 import ErrorBar from './ErrorBar';
@@ -257,21 +253,22 @@ function ArchetypeCard({ archetype, tagline, archetypeDescription }) {
 }
 
 function TraitBar({ trait, value, delay = 0 }) {
+  const theme = useTheme();
   const color = traitBarColor(value);
   const label = value >= 70 ? 'Strong' : value >= 40 ? 'Moderate' : 'Needs Work';
   return (
     <div className="group">
       <div className="flex items-center justify-between mb-1.5">
         <div>
-          <span className="text-sm font-semibold text-white">{trait.label}</span>
-          <span className="hidden md:inline text-xs text-zinc-500 ml-2">— {trait.sub}</span>
+          <span className="text-sm font-semibold" style={{ color: theme.text }}>{trait.label}</span>
+          <span className="hidden md:inline text-xs ml-2" style={{ color: theme.muted }}>— {trait.sub}</span>
         </div>
         <div className="flex items-center gap-2">
           <span className="text-xs font-medium" style={{ color }}>{label}</span>
           <span className="text-sm font-bold" style={{ color }}>{value}</span>
         </div>
       </div>
-      <div className="h-2.5 bg-zinc-800 rounded-full overflow-hidden">
+      <div className="h-2.5 rounded-full overflow-hidden" style={{ background: theme.isDark ? '#27272a' : '#e4e4e7' }}>
         <div
           className="h-full rounded-full transition-all duration-1000 ease-out"
           style={{ width: `${value}%`, backgroundColor: color, transitionDelay: `${delay}ms` }}
@@ -282,9 +279,10 @@ function TraitBar({ trait, value, delay = 0 }) {
 }
 
 function DnaStrands({ traits }) {
+  const theme = useTheme();
   return (
-    <div className="bg-zinc-900/60 border border-zinc-800 rounded-2xl p-6">
-      <h2 className="text-lg font-bold text-white mb-5 flex items-center gap-2">
+    <div className="rounded-2xl p-6" style={{ background: theme.isDark ? 'rgba(39,39,42,0.6)' : theme.surface, border: `1px solid ${theme.border}` }}>
+      <h2 className="text-lg font-bold mb-5 flex items-center gap-2" style={{ color: theme.text }}>
         <Fingerprint className="w-5 h-5 text-yellow-400" />
         DNA Trait Profile
       </h2>
@@ -298,25 +296,26 @@ function DnaStrands({ traits }) {
 }
 
 function StrengthsWeaknesses({ strengths = [], weaknesses = [] }) {
+  const theme = useTheme();
   return (
     <div className="grid md:grid-cols-2 gap-4">
       {/* Strengths */}
-      <div className="bg-yellow-900/20 border border-yellow-800/40 rounded-2xl p-5">
-        <h3 className="text-sm font-bold text-yellow-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+      <div className="rounded-2xl p-5" style={{ background: theme.isDark ? 'rgba(161,98,7,0.12)' : '#fefce8', border: `1px solid ${theme.isDark ? 'rgba(161,98,7,0.3)' : '#fde68a'}` }}>
+        <h3 className="text-sm font-bold text-yellow-600 dark:text-yellow-400 uppercase tracking-wider mb-4 flex items-center gap-2">
           <CheckCircle className="w-4 h-4" /> Strengths
         </h3>
         <div className="space-y-3">
           {strengths.length === 0 && (
-            <p className="text-zinc-500 text-sm">No data yet</p>
+            <p className="text-sm" style={{ color: theme.muted }}>No data yet</p>
           )}
           {strengths.map((s, i) => (
             <div key={i} className="flex gap-3">
-              <div className="mt-0.5 w-5 h-5 rounded-full bg-yellow-500/20 flex items-center justify-center flex-shrink-0">
-                <span className="text-xs font-bold text-yellow-400">{i + 1}</span>
+              <div className="mt-0.5 w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(234,179,8,0.2)' }}>
+                <span className="text-xs font-bold text-yellow-500">{i + 1}</span>
               </div>
               <div>
-                <p className="text-sm font-semibold text-white">{s.title}</p>
-                <p className="text-xs text-zinc-400 mt-0.5">{s.description}</p>
+                <p className="text-sm font-semibold" style={{ color: theme.text }}>{s.title}</p>
+                <p className="text-xs mt-0.5" style={{ color: theme.muted }}>{s.description}</p>
               </div>
             </div>
           ))}
@@ -324,22 +323,22 @@ function StrengthsWeaknesses({ strengths = [], weaknesses = [] }) {
       </div>
 
       {/* Weaknesses */}
-      <div className="bg-red-900/20 border border-red-800/40 rounded-2xl p-5">
-        <h3 className="text-sm font-bold text-red-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+      <div className="rounded-2xl p-5" style={{ background: theme.isDark ? 'rgba(220,38,38,0.1)' : '#fff1f2', border: `1px solid ${theme.isDark ? 'rgba(220,38,38,0.25)' : '#fecdd3'}` }}>
+        <h3 className="text-sm font-bold text-red-500 dark:text-red-400 uppercase tracking-wider mb-4 flex items-center gap-2">
           <XCircle className="w-4 h-4" /> Areas to Improve
         </h3>
         <div className="space-y-3">
           {weaknesses.length === 0 && (
-            <p className="text-zinc-500 text-sm">No data yet</p>
+            <p className="text-sm" style={{ color: theme.muted }}>No data yet</p>
           )}
           {weaknesses.map((w, i) => (
             <div key={i} className="flex gap-3">
-              <div className="mt-0.5 w-5 h-5 rounded-full bg-red-500/20 flex items-center justify-center flex-shrink-0">
-                <span className="text-xs font-bold text-red-400">{i + 1}</span>
+              <div className="mt-0.5 w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(239,68,68,0.15)' }}>
+                <span className="text-xs font-bold text-red-500">{i + 1}</span>
               </div>
               <div>
-                <p className="text-sm font-semibold text-white">{w.title}</p>
-                <p className="text-xs text-zinc-400 mt-0.5">{w.description}</p>
+                <p className="text-sm font-semibold" style={{ color: theme.text }}>{w.title}</p>
+                <p className="text-xs mt-0.5" style={{ color: theme.muted }}>{w.description}</p>
               </div>
             </div>
           ))}
@@ -350,26 +349,30 @@ function StrengthsWeaknesses({ strengths = [], weaknesses = [] }) {
 }
 
 function RadarFingerprint({ radarData = [] }) {
+  const theme = useTheme();
   if (!radarData.length) return null;
   const chartData = radarData.map(d => ({ ...d, subject: d.axis }));
+  const gridColor = theme.isDark ? '#1f2937' : '#e4e4e7';
+  const tickColor = theme.isDark ? '#9ca3af' : '#52525b';
+  const tickColorSub = theme.isDark ? '#4b5563' : '#71717a';
   return (
-    <div className="bg-zinc-900/60 border border-zinc-800 rounded-2xl p-6">
-      <h2 className="text-lg font-bold text-white mb-5 flex items-center gap-2">
+    <div className="rounded-2xl p-6" style={{ background: theme.isDark ? 'rgba(39,39,42,0.6)' : theme.surface, border: `1px solid ${theme.border}` }}>
+      <h2 className="text-lg font-bold mb-5 flex items-center gap-2" style={{ color: theme.text }}>
         <Sparkles className="w-5 h-5 text-purple-400" />
         Performance Fingerprint
       </h2>
       <div className="h-80">
         <ResponsiveContainer width="100%" height="100%">
           <RadarChart data={chartData} margin={{ top: 10, right: 30, bottom: 10, left: 30 }}>
-            <PolarGrid stroke="#1f2937" />
+            <PolarGrid stroke={gridColor} />
             <PolarAngleAxis
               dataKey="subject"
-              tick={{ fill: '#9ca3af', fontSize: 12, fontWeight: 500 }}
+              tick={{ fill: tickColor, fontSize: 12, fontWeight: 500 }}
             />
             <PolarRadiusAxis
               angle={30}
               domain={[0, 100]}
-              tick={{ fill: '#4b5563', fontSize: 10 }}
+              tick={{ fill: tickColorSub, fontSize: 10 }}
               tickCount={5}
             />
             <Radar
@@ -389,28 +392,29 @@ function RadarFingerprint({ radarData = [] }) {
 }
 
 function ImprovementPlan({ plan = [] }) {
+  const theme = useTheme();
   const colors = ['orange', 'amber', 'purple', 'yellow'];
   return (
-    <div className="bg-zinc-900/60 border border-zinc-800 rounded-2xl p-6">
-      <h2 className="text-lg font-bold text-white mb-5 flex items-center gap-2">
+    <div className="rounded-2xl p-6" style={{ background: theme.isDark ? 'rgba(39,39,42,0.6)' : theme.surface, border: `1px solid ${theme.border}` }}>
+      <h2 className="text-lg font-bold mb-5 flex items-center gap-2" style={{ color: theme.text }}>
         <Calendar className="w-5 h-5 text-yellow-400" />
         30-Day Improvement Plan
       </h2>
       {plan.length === 0 ? (
-        <p className="text-zinc-500 text-sm">No plan generated.</p>
+        <p className="text-sm" style={{ color: theme.muted }}>No plan generated.</p>
       ) : (
         <div className="grid sm:grid-cols-2 xl:grid-cols-4 gap-4">
           {plan.map((week, i) => {
             const c = colors[i % colors.length];
             return (
-              <div key={i} className={`relative bg-${c}-900/20 border border-${c}-800/30 rounded-xl p-4`}>
-                <div className={`text-xs font-bold text-${c}-400 uppercase tracking-wider mb-2`}>
+              <div key={i} className={`relative rounded-xl p-4 bg-${c}-50 dark:bg-${c}-900/20 border border-${c}-200 dark:border-${c}-800/30`}>
+                <div className={`text-xs font-bold uppercase tracking-wider mb-2 text-${c}-600 dark:text-${c}-400`}>
                   Week {week.week}
                 </div>
-                <div className="text-sm font-semibold text-white mb-2">{week.focus}</div>
+                <div className="text-sm font-semibold mb-2" style={{ color: theme.text }}>{week.focus}</div>
                 <div className="flex gap-2">
-                  <ChevronRight className={`w-4 h-4 text-${c}-400 flex-shrink-0 mt-0.5`} />
-                  <p className="text-xs text-zinc-400 leading-relaxed">{week.action}</p>
+                  <ChevronRight className={`w-4 h-4 text-${c}-500 dark:text-${c}-400 flex-shrink-0 mt-0.5`} />
+                  <p className="text-xs leading-relaxed" style={{ color: theme.muted }}>{week.action}</p>
                 </div>
               </div>
             );
@@ -422,65 +426,67 @@ function ImprovementPlan({ plan = [] }) {
 }
 
 function CoachMessage({ message, userName }) {
+  const theme = useTheme();
   if (!message) return null;
   return (
-    <div className="bg-gradient-to-br from-zinc-900 to-zinc-900 border border-zinc-700 rounded-2xl p-6 md:p-8">
-      <h2 className="text-lg font-bold text-white mb-6 flex items-center gap-2">
+    <div className="rounded-2xl p-6 md:p-8" style={{ background: theme.isDark ? 'linear-gradient(135deg, #18181b, #18181b)' : theme.surface, border: `1px solid ${theme.isDark ? '#3f3f46' : theme.border}` }}>
+      <h2 className="text-lg font-bold mb-6 flex items-center gap-2" style={{ color: theme.text }}>
         <Brain className="w-5 h-5 text-yellow-400" />
         Personal Message from Your AI Coach
       </h2>
       <div className="relative">
-        <div className="absolute -top-2 -left-1 text-6xl text-yellow-800/40 font-serif leading-none select-none">"</div>
+        <div className="absolute -top-2 -left-1 text-6xl font-serif leading-none select-none" style={{ color: theme.isDark ? 'rgba(161,98,7,0.3)' : 'rgba(161,98,7,0.2)' }}>&ldquo;</div>
         <div className="pl-8 space-y-4">
           {message.split('\n\n').filter(Boolean).map((para, i) => (
-            <p key={i} className="text-zinc-300 text-sm leading-relaxed">{para}</p>
+            <p key={i} className="text-sm leading-relaxed" style={{ color: theme.isDark ? '#d4d4d8' : theme.text }}>{para}</p>
           ))}
         </div>
-        <div className="absolute -bottom-4 right-0 text-6xl text-yellow-800/40 font-serif leading-none select-none">"</div>
+        <div className="absolute -bottom-4 right-0 text-6xl font-serif leading-none select-none" style={{ color: theme.isDark ? 'rgba(161,98,7,0.3)' : 'rgba(161,98,7,0.2)' }}>&rdquo;</div>
       </div>
     </div>
   );
 }
 
 function EmptyState({ tradeCount, closedCount = 0, canGenerate, generating, nextAvailable, onGenerate }) {
+  const theme = useTheme();
   const enough = tradeCount >= 10;
   const hasClosed = closedCount > 0;
   return (
     <div className="flex flex-col items-center justify-center py-16 px-6 text-center">
-      <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-yellow-600 to-yellow-700 flex items-center justify-center mb-6 shadow-2xl">
+      <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-yellow-500 to-yellow-600 flex items-center justify-center mb-6 shadow-2xl">
         <Fingerprint className="w-10 h-10 text-white" />
       </div>
-      <h2 className="text-2xl font-bold text-white mb-2">Discover Your Trading Identity</h2>
-      <p className="text-zinc-400 max-w-lg mb-6">
+      <h2 className="text-2xl font-bold mb-2" style={{ color: theme.text }}>Discover Your Trading Identity</h2>
+      <p className="max-w-lg mb-6" style={{ color: theme.muted }}>
         Based on your complete trade history, our AI will generate a deep personality profile: your archetype, 8 DNA trait scores, strengths &amp; weaknesses, and a personalised 30-day plan.
       </p>
 
       {/* Progress bar */}
       <div className="w-full max-w-xs mb-6">
-        <div className="flex justify-between text-sm text-zinc-500 mb-2">
+        <div className="flex justify-between text-sm mb-2" style={{ color: theme.muted }}>
           <span>Trade history</span>
           <span>{Math.min(tradeCount, 10)}/10</span>
         </div>
-        <div className="h-2 bg-zinc-800 rounded-full overflow-hidden">
+        <div className="h-2 rounded-full overflow-hidden" style={{ background: theme.isDark ? '#27272a' : '#e4e4e7' }}>
           <div
             className="h-full bg-gradient-to-r from-yellow-500 to-yellow-400 rounded-full transition-all duration-700"
             style={{ width: `${Math.min((tradeCount / 10) * 100, 100)}%` }}
           />
         </div>
         {!enough && (
-          <p className="text-xs text-zinc-500 mt-2">Log {10 - tradeCount} more trades to unlock generation</p>
+          <p className="text-xs mt-2" style={{ color: theme.muted }}>Log {10 - tradeCount} more trades to unlock generation</p>
         )}
       </div>
 
       {!canGenerate && enough && nextAvailable && (
-        <div className="flex items-center gap-2 px-4 py-2 bg-amber-900/30 border border-amber-700/40 rounded-xl text-amber-400 text-sm mb-6">
+        <div className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm mb-6" style={{ background: theme.isDark ? 'rgba(120,53,15,0.3)' : '#fffbeb', border: `1px solid ${theme.isDark ? 'rgba(180,83,9,0.4)' : '#fcd34d'}`, color: theme.isDark ? '#fbbf24' : '#92400e' }}>
           <Calendar className="w-4 h-4" />
           <span>Next generation available {new Date(nextAvailable).toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}</span>
         </div>
       )}
 
       {enough && !hasClosed && (
-        <div className="flex items-center gap-2 px-4 py-2 bg-red-900/30 border border-red-700/40 rounded-xl text-red-400 text-sm mb-4">
+        <div className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm mb-4" style={{ background: theme.isDark ? 'rgba(127,29,29,0.3)' : '#fff1f2', border: `1px solid ${theme.isDark ? 'rgba(185,28,28,0.4)' : '#fecdd3'}`, color: theme.isDark ? '#f87171' : '#be123c' }}>
           <AlertTriangle className="w-4 h-4 flex-shrink-0" />
           <span>All your trades are open — close some trades (mark as win/loss) first</span>
         </div>
@@ -612,13 +618,14 @@ export default function TradingDNA() {
   }
 
   // ── Report view ──
+  const theme = useTheme();
   return (
     <div className="space-y-6 max-w-5xl mx-auto pb-10">
       {/* Header row */}
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
-          <h1 className="text-xl font-bold text-white">Trading DNA Report</h1>
-          <p className="text-xs text-zinc-500 mt-0.5">
+          <h1 className="text-xl font-bold" style={{ color: theme.text }}>Trading DNA Report</h1>
+          <p className="text-xs mt-0.5" style={{ color: theme.muted }}>
             Generated {new Date(report.generated_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
             {!canGenerate && nextAvailable && (
               <span className="ml-2 text-amber-400">

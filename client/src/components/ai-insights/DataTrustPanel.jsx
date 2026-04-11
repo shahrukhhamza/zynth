@@ -46,10 +46,10 @@ export default function DataTrustPanel({ dataInfo, macroScore }) {
     <section>
       <p className="mb-3 text-[10px] font-semibold uppercase tracking-[0.16em] text-zinc-500">Data Reliability</p>
 
-      <div className="rounded-2xl border border-white/[0.06] bg-[#0c1018] px-5 py-5 space-y-4">
+      <div className="rounded-2xl border border-zinc-200 dark:border-white/[0.06] bg-white dark:bg-[#0c1018] px-5 py-5 space-y-4">
         {/* Status line */}
         <div className="space-y-1.5">
-          <p className="text-[13px] text-white/80">{dataInfo?.dataDelay || 'Latest available economic data'}</p>
+          <p className="text-[13px] text-zinc-800 dark:text-white/80">{dataInfo?.dataDelay || 'Latest available economic data'}</p>
           {dataInfo?.nextUpdateExpected && (
             <div className="flex items-center gap-1.5 text-[11px] text-zinc-400">
               <Clock size={11} className="shrink-0" />
@@ -71,7 +71,7 @@ export default function DataTrustPanel({ dataInfo, macroScore }) {
               <p className="text-[10px] font-semibold uppercase tracking-[0.1em] text-zinc-400">Data Quality</p>
               <span className={`text-lg font-bold tabular-nums ${qc.text}`}>{dataConfidence}%</span>
             </div>
-            <div className="h-1 w-full rounded-full bg-white/5">
+            <div className="h-1 w-full rounded-full bg-zinc-100 dark:bg-white/5">
               <div className={`h-full rounded-full ${qc.bg}`} style={{ width: `${Math.min(100, dataConfidence)}%` }} />
             </div>
             <p className="text-[9px] text-zinc-500">{qc.label} &#183; freshness + completeness + validity</p>

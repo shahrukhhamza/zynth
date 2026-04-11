@@ -41,16 +41,16 @@ export default function KeyDrivers({ drivers, macroScore }) {
 
   if (!drivers || drivers.length === 0) {
     return (
-      <div className="rounded-2xl border border-white/[0.06] bg-[#0c1018] px-5 py-4">
+      <div className="rounded-2xl border border-zinc-200 dark:border-white/[0.06] bg-white dark:bg-[#0c1018] px-5 py-4">
         <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-zinc-500">Key Drivers</p>
-        <p className="mt-2 text-[12px] text-zinc-400">No driver data available yet.</p>
+        <p className="mt-2 text-[12px] text-zinc-500">No driver data available yet.</p>
       </div>
     );
   }
 
   return (
-    <div className="rounded-2xl border border-white/[0.06] bg-[#0c1018] overflow-hidden">
-      <div className="border-b border-white/[0.04] px-5 py-3 space-y-1">
+    <div className="rounded-2xl border border-zinc-200 dark:border-white/[0.06] bg-white dark:bg-[#0c1018] overflow-hidden">
+      <div className="border-b border-zinc-100 dark:border-white/[0.04] px-5 py-3 space-y-1">
         <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-zinc-500">Key Drivers</p>
         <p className="text-[10px] text-zinc-500">Actual, forecast, surprise, weighted contribution, bias, reasoning.</p>
       </div>
@@ -62,12 +62,12 @@ export default function KeyDrivers({ drivers, macroScore }) {
         const vl = validLabel(d.validation);
 
         return (
-          <div key={d.code} className="border-b border-white/[0.03] last:border-0">
-            <button type="button" onClick={() => setOpenCode(prev => prev === d.code ? null : d.code)} className="w-full px-5 py-3 text-left hover:bg-white/[0.015] transition-colors">
+          <div key={d.code} className="border-b border-zinc-100 dark:border-white/[0.03] last:border-0">
+            <button type="button" onClick={() => setOpenCode(prev => prev === d.code ? null : d.code)} className="w-full px-5 py-3 text-left hover:bg-zinc-50 dark:hover:bg-white/[0.015] transition-colors">
               <div className="grid grid-cols-[20px_1fr_70px_60px_20px_20px] items-center gap-2">
                 <span className="text-[10px] font-mono text-zinc-500">{String(i + 1).padStart(2, '0')}</span>
                 <div className="min-w-0">
-                  <p className="truncate text-[13px] font-semibold text-white">{d.name}</p>
+                  <p className="truncate text-[13px] font-semibold text-zinc-900 dark:text-white">{d.name}</p>
                   <p className="text-[10px] tabular-nums text-zinc-400">{d.value ?? '\u2014'}</p>
                 </div>
                 <span className="text-right text-[11px] tabular-nums text-yellow-300">{Number.isFinite(d.contribution) ? `${d.contribution > 0 ? '+' : ''}${d.contribution}` : '\u2013'}</span>
@@ -92,9 +92,9 @@ export default function KeyDrivers({ drivers, macroScore }) {
                   {!fmtDate(d.releaseTime) && !fmtDate(d.fetchedAt) && <span className="text-zinc-500">Timing data pending</span>}
                 </div>
 
-                <div className="rounded-lg border border-white/[0.05] bg-white/[0.02] px-3 py-2.5">
+                <div className="rounded-lg border border-zinc-200 dark:border-white/[0.05] bg-zinc-50 dark:bg-white/[0.02] px-3 py-2.5">
                   <p className="text-[9px] font-semibold uppercase tracking-[0.1em] text-zinc-500 mb-1">Why this matters</p>
-                  <p className="text-[11px] leading-relaxed text-zinc-200">{d.reasoning || 'Analysis pending \u2014 data being validated.'}</p>
+                  <p className="text-[11px] leading-relaxed text-zinc-700 dark:text-zinc-200">{d.reasoning || 'Analysis pending \u2014 data being validated.'}</p>
                 </div>
 
                 {d.historicalValidation && (

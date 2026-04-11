@@ -36,10 +36,10 @@ function getCurrentSessions() {
 const LIGHT = {
   page:        '#f8fafc',
   card:        '#ffffff',
-  cardInner:   '#f8fafc',
+  cardInner:   '#eef2f7',
   text:        '#0b0b0f',
-  textSub:     '#6b7280',
-  textMute:    '#9ca3af',
+  textSub:     '#52525b',
+  textMute:    '#71717a',
   green:       '#059669',
   red:         '#dc2626',
   blue:        '#CA8A04',
@@ -209,9 +209,9 @@ function MonthlyCalendar({ trades, D }) {
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr) 64px', gap: 3, marginBottom: 4 }}>
         {['Su','Mo','Tu','We','Th','Fr','Sa'].map(d => (
-          <div key={d} className="text-center text-[10px] font-semibold text-zinc-400 dark:text-zinc-500 py-1 uppercase tracking-wider">{d}</div>
+          <div key={d} className="text-center text-[10px] font-semibold text-zinc-500 dark:text-zinc-400 py-1 uppercase tracking-wider">{d}</div>
         ))}
-        <div className="text-center text-[10px] font-semibold text-zinc-400 dark:text-zinc-500 py-1 uppercase tracking-wider">Wk</div>
+        <div className="text-center text-[10px] font-semibold text-zinc-500 dark:text-zinc-400 py-1 uppercase tracking-wider">Wk</div>
       </div>
 
       {weeks.map((week, wi) => {
@@ -279,12 +279,12 @@ function MonthlyCalendar({ trades, D }) {
         {[{ color: D.green, label: 'Profit' }, { color: D.red, label: 'Loss' }].map(l => (
           <div key={l.label} className="flex items-center gap-1.5">
             <div style={{ width: 8, height: 8, borderRadius: 2, background: l.color, opacity: 0.7 }} />
-            <span className="text-[10px] text-zinc-400 dark:text-zinc-500">{l.label}</span>
+            <span className="text-[10px] text-zinc-500 dark:text-zinc-400">{l.label}</span>
           </div>
         ))}
         <div className="flex items-center gap-1.5">
           <div style={{ width: 8, height: 8, borderRadius: 2, boxShadow: `0 0 0 1.5px ${D.blue}` }} />
-          <span className="text-[10px] text-zinc-400 dark:text-zinc-500">Today</span>
+          <span className="text-[10px] text-zinc-500 dark:text-zinc-400">Today</span>
         </div>
       </div>
     </Card>

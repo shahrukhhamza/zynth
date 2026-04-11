@@ -27,8 +27,8 @@ export default function MarketValidationPanel({ marketValidation, macroScore }) 
     return (
       <section>
         <p className="mb-3 text-[10px] font-semibold uppercase tracking-[0.16em] text-zinc-500">Market Validation</p>
-        <div className="rounded-2xl border border-white/[0.06] bg-[#0c1018] px-5 py-4">
-          <div className="flex items-center gap-2 text-[11px] text-zinc-400">
+        <div className="rounded-2xl border border-zinc-200 dark:border-white/[0.06] bg-white dark:bg-[#0c1018] px-5 py-4">
+          <div className="flex items-center gap-2 text-[11px] text-zinc-500">
             <AlertCircle size={13} />
             <span>{message || 'Awaiting price data for validation.'}</span>
           </div>
@@ -42,11 +42,11 @@ export default function MarketValidationPanel({ marketValidation, macroScore }) 
   return (
     <section>
       <p className="mb-3 text-[10px] font-semibold uppercase tracking-[0.16em] text-zinc-500">Market Validation</p>
-      <div className="rounded-2xl border border-white/[0.06] bg-[#0c1018] px-5 py-4 space-y-3">
+      <div className="rounded-2xl border border-zinc-200 dark:border-white/[0.06] bg-white dark:bg-[#0c1018] px-5 py-4 space-y-3">
 
         {/* Price vs Macro */}
         <div className="flex items-center gap-4">
-          <div className="flex items-center gap-1.5 rounded-lg bg-white/[0.03] px-2.5 py-1.5">
+          <div className="flex items-center gap-1.5 rounded-lg bg-zinc-100 dark:bg-white/[0.03] px-2.5 py-1.5">
             {priceIcon(priceDirection)}
             <span className={`text-[11px] font-semibold ${priceDirection === 'UP' ? 'text-emerald-300' : priceDirection === 'DOWN' ? 'text-red-300' : 'text-zinc-300'}`}>Price {priceDirection}</span>
           </div>

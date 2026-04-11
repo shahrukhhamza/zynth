@@ -55,7 +55,7 @@ export default function RiskPanel({ summary }) {
       </button>
 
       {open && (
-        <div className="space-y-1.5 border-t border-white/[0.04] px-4 pb-3 pt-2">
+        <div className="space-y-1.5 border-t border-zinc-100 dark:border-white/[0.04] px-4 pb-3 pt-2">
           {items.map((item, i) => {
             const sev = item.severity || alertSeverity(item.text);
             const cls = sev === 'high' ? 'text-red-400' : sev === 'medium' ? 'text-amber-400' : 'text-zinc-400';

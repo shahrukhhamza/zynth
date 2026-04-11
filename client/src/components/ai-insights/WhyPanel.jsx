@@ -44,7 +44,7 @@ export default function WhyPanel({ summary }) {
           const ac = biasConfig(s?.bias);
           const isActive = a === active;
           return (
-            <button key={a} onClick={() => setActive(a)} className={`rounded-lg px-3 py-1.5 text-[10px] font-semibold transition-all ${isActive ? `${ac.bg} border ${ac.border} ${ac.color}` : 'border border-white/[0.05] text-zinc-500 hover:text-zinc-300'}`}>
+            <button key={a} onClick={() => setActive(a)} className={`rounded-lg px-3 py-1.5 text-[10px] font-semibold transition-all ${isActive ? `${ac.bg} border ${ac.border} ${ac.color}` : 'border border-zinc-200 dark:border-white/[0.05] text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300'}`}>
               {ASSET_LABEL[a]}
             </button>
           );
@@ -52,14 +52,14 @@ export default function WhyPanel({ summary }) {
       </div>
 
       <div className={`rounded-2xl border ${bc.border} ${bc.bg} px-5 py-4 space-y-3`}>
-        <p className="text-[13px] leading-relaxed text-white/80">{expl.summary}</p>
+        <p className="text-[13px] leading-relaxed text-zinc-800 dark:text-white/80">{expl.summary}</p>
 
         {reasons.length > 0 && (
           <ul className="space-y-2">
             {reasons.map((line, i) => (
               <li key={i} className="flex items-start gap-2">
                 <span className={`mt-[5px] h-1.5 w-1.5 shrink-0 rounded-full ${bc.color.replace('text-', 'bg-')}`} />
-                <span className="text-[12px] text-white/70 leading-relaxed">{line}</span>
+                <span className="text-[12px] text-zinc-600 dark:text-white/70 leading-relaxed">{line}</span>
               </li>
             ))}
           </ul>

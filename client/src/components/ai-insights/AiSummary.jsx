@@ -13,14 +13,14 @@ export default function AiSummary({ aiSummary, aiStatus, actionContext }) {
         )}
       </div>
 
-      <div className="rounded-2xl border border-white/[0.06] bg-[#0c1018] px-5 py-4 space-y-3">
+      <div className="rounded-2xl border border-zinc-200 dark:border-white/[0.06] bg-white dark:bg-[#0c1018] px-5 py-4 space-y-3">
         {hasAi && (
           <div>
-            <p className="text-[13px] leading-relaxed text-white/80">{aiSummary.summary}</p>
+            <p className="text-[13px] leading-relaxed text-zinc-800 dark:text-white/80">{aiSummary.summary}</p>
             {Array.isArray(aiSummary.keyPoints) && aiSummary.keyPoints.length > 0 && (
               <ul className="mt-2 space-y-1">
                 {aiSummary.keyPoints.slice(0, 2).map((pt, i) => (
-                  <li key={i} className="flex items-start gap-2 text-[11px] text-white/60">
+                  <li key={i} className="flex items-start gap-2 text-[11px] text-zinc-500 dark:text-white/60">
                     <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-violet-500" />
                     {pt}
                   </li>
@@ -30,7 +30,7 @@ export default function AiSummary({ aiSummary, aiStatus, actionContext }) {
           </div>
         )}
         {actionContext && (
-          <p className={`text-[11px] leading-relaxed italic ${hasAi ? 'text-zinc-500 border-t border-white/[0.04] pt-3' : 'text-white/70'}`}>{actionContext}</p>
+          <p className={`text-[11px] leading-relaxed italic ${hasAi ? 'text-zinc-500 border-t border-zinc-100 dark:border-white/[0.04] pt-3' : 'text-zinc-600 dark:text-white/70'}`}>{actionContext}</p>
         )}
       </div>
     </section>

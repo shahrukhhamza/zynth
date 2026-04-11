@@ -2,27 +2,32 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Brain, Search, LineChart, Shield, Zap, Cpu, BarChart3 } from 'lucide-react';
 import { IconContainer } from './ui';
+import { useTheme } from '../contexts/ThemeContext';
 
-const FeatureCard = ({ title, description, icon: Icon, iconVariant = 'blue', className, children }) => (
-  <motion.div 
-    whileHover={{ y: -5 }}
-    className={`relative overflow-hidden rounded-3xl border border-white/10 bg-[#0A0A0B] p-8 glass-card ${className}`}
-  >
-    <div className="relative z-10">
-      <div className="mb-5">
-        <IconContainer icon={Icon} variant={iconVariant} size="lg" />
+const FeatureCard = ({ title, description, icon: Icon, iconVariant = 'blue', className, children }) => {
+  const { isDark } = useTheme();
+  return (
+    <motion.div 
+      whileHover={{ y: -5 }}
+      className={`relative overflow-hidden rounded-3xl border p-8 glass-card ${isDark ? 'border-white/10 bg-[#0A0A0B]' : 'border-zinc-200 bg-white'} ${className}`}
+    >
+      <div className="relative z-10">
+        <div className="mb-5">
+          <IconContainer icon={Icon} variant={iconVariant} size="lg" />
+        </div>
+        <h3 className={`mb-2 text-xl font-bold ${isDark ? 'text-white' : 'text-zinc-900'}`}>{title}</h3>
+        <p className={`text-sm leading-relaxed ${isDark ? 'text-zinc-400' : 'text-zinc-600'}`}>{description}</p>
       </div>
-      <h3 className="mb-2 text-xl font-bold text-white">{title}</h3>
-      <p className="text-sm leading-relaxed text-zinc-400">{description}</p>
-    </div>
-    {children}
-    <div className="absolute inset-0 z-0 bg-gradient-to-br from-emerald-500/5 via-transparent to-transparent opacity-0 transition-opacity hover:opacity-100" />
-  </motion.div>
-);
+      {children}
+      <div className="absolute inset-0 z-0 bg-gradient-to-br from-emerald-500/5 via-transparent to-transparent opacity-0 transition-opacity hover:opacity-100" />
+    </motion.div>
+  );
+};
 
 const FeaturesBento = () => {
+  const { isDark } = useTheme();
   return (
-    <section className="relative bg-[#030303] py-24 px-6 overflow-hidden">
+    <section className={`relative py-24 px-6 overflow-hidden ${isDark ? 'bg-[#030303]' : 'bg-zinc-50'}`}>
       {/* Background Orbs */}
       <div className="absolute top-1/2 left-1/2 -tranzinc-x-1/2 -tranzinc-y-1/2 w-[800px] h-[800px] bg-emerald-500/5 rounded-full blur-[120px] pointer-events-none" />
 
@@ -31,11 +36,11 @@ const FeaturesBento = () => {
           <motion.h2 
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            className="text-4xl md:text-5xl font-black tracking-tight text-white mb-4"
+            className={`text-4xl md:text-5xl font-black tracking-tight mb-4 ${isDark ? 'text-white' : 'text-zinc-900'}`}
           >
             Everything a <span className="text-emerald-400">Serious</span> Trader Needs
           </motion.h2>
-          <p className="text-zinc-400 max-w-2xl mx-auto">
+          <p className={`max-w-2xl mx-auto ${isDark ? 'text-zinc-400' : 'text-zinc-600'}`}>
             Stop guessing. Start using institutional-grade data and behavioral science to fix your edge.
           </p>
         </div>

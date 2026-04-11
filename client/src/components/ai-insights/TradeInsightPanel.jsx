@@ -34,7 +34,7 @@ export default function TradeInsightPanel({ tradeInsight, tradeNarrative }) {
         </span>
       </div>
       <p className={`mt-2 text-sm font-semibold ${biasColor(bias)}`}>{headline}</p>
-      {traderExplanation && <p className="mt-1.5 text-[11px] leading-relaxed text-zinc-300">{traderExplanation}</p>}
+      {traderExplanation && <p className="mt-1.5 text-[11px] leading-relaxed text-zinc-600 dark:text-zinc-300">{traderExplanation}</p>}
     </section>
   );
 }

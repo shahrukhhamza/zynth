@@ -75,20 +75,20 @@ export default function HeroSection({ summary, generatedAt, macroScore }) {
   const Icon = bias.icon;
 
   return (
-    <section className="rounded-2xl border border-white/[0.06] bg-[#0c1018]" aria-label="Market bias summary">
+    <section className="rounded-2xl border border-zinc-200 dark:border-white/[0.06] bg-white dark:bg-[#0c1018]" aria-label="Market bias summary">
       <div className="px-6 py-6 space-y-5">
 
         {/* Header */}
         <div className="flex items-center justify-between">
-          <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-zinc-500">Macro Intelligence</span>
-          <div className="flex items-center gap-3 text-[10px] tabular-nums text-zinc-500">
+          <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-zinc-500 dark:text-zinc-500">Macro Intelligence</span>
+          <div className="flex items-center gap-3 text-[10px] tabular-nums text-zinc-500 dark:text-zinc-500">
             {releasedAt && (
               <span className="flex items-center gap-1">
-                <Clock size={10} className="text-zinc-600" />
+                <Clock size={10} className="text-zinc-500 dark:text-zinc-600" />
                 Released {releasedAt}
               </span>
             )}
-            {fetchedAt && <span className="text-zinc-600">&#183; Fetched {fetchedAt}</span>}
+            {fetchedAt && <span className="text-zinc-500 dark:text-zinc-600">&#183; Fetched {fetchedAt}</span>}
           </div>
         </div>
 
@@ -100,7 +100,7 @@ export default function HeroSection({ summary, generatedAt, macroScore }) {
           <div>
             <div className="flex items-baseline gap-2">
               <span className={`text-3xl font-bold tracking-tight ${bias.text}`}>{bias.label}</span>
-              <span className="text-base text-white/50">({strength})</span>
+              <span className="text-base text-zinc-500 dark:text-white/50">({strength})</span>
             </div>
             <p className="text-[11px] text-zinc-500 mt-0.5">Overall macro market bias</p>
           </div>
@@ -109,7 +109,7 @@ export default function HeroSection({ summary, generatedAt, macroScore }) {
         {/* Metrics strip */}
         <div className="flex flex-wrap items-center gap-2">
           <Pill label="Signal" value={`${signalStrength} \u00b7 ${signalConfidence}`} cls={confidenceColor(signalConfidence)} />
-          <Pill label="Uncertainty" value={uncertainty} cls={uncertainty === 'High' ? 'text-amber-400' : uncertainty === 'Low' ? 'text-emerald-400' : 'text-zinc-300'} />
+          <Pill label="Uncertainty" value={uncertainty} cls={uncertainty === 'High' ? 'text-amber-400' : uncertainty === 'Low' ? 'text-emerald-400' : 'text-zinc-600 dark:text-zinc-300'} />
           <Pill label="System" value={systemStatus} cls={systemStatus === 'OK' ? 'text-emerald-400' : systemStatus === 'Warning' ? 'text-amber-400' : 'text-red-400'} prefix={<span className={`h-1.5 w-1.5 rounded-full ${statusDot(systemStatus)}`} />} />
           <Pill label="Regime" value={regime.replace(/_/g, ' ')} cls="text-purple-300" sub={`${regimeConfidence}%`} />
           <div className="ml-auto hidden sm:block">
@@ -130,15 +130,15 @@ export default function HeroSection({ summary, generatedAt, macroScore }) {
   );
 }
 
-function Pill({ label, value, cls = 'text-white/80', prefix, sub }) {
+function Pill({ label, value, cls = 'text-zinc-700 dark:text-white/80', prefix, sub }) {
   return (
-    <div className="flex items-center gap-1.5 rounded-lg border border-white/[0.05] bg-white/[0.02] px-2.5 py-1.5">
+    <div className="flex items-center gap-1.5 rounded-lg border border-zinc-200 dark:border-white/[0.05] bg-zinc-50 dark:bg-white/[0.02] px-2.5 py-1.5">
       {prefix}
       <div>
-        <p className="text-[8px] font-semibold uppercase tracking-[0.1em] text-zinc-600">{label}</p>
+        <p className="text-[8px] font-semibold uppercase tracking-[0.1em] text-zinc-500 dark:text-zinc-600">{label}</p>
         <p className={`text-[11px] font-bold leading-none ${cls}`}>
           {value}
-          {sub && <span className="text-[9px] font-normal text-zinc-500 ml-1">{sub}</span>}
+          {sub && <span className="text-[9px] font-normal text-zinc-400 dark:text-zinc-500 ml-1">{sub}</span>}
         </p>
       </div>
     </div>

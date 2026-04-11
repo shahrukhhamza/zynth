@@ -20,13 +20,13 @@ function AssetRow({ name, signal }) {
   const bc = biasConfig(signal.bias);
   const Icon = bc.icon;
   return (
-    <div className="flex items-center justify-between gap-3 py-2.5 border-b border-white/[0.04] last:border-0 px-4">
-      <span className="w-20 text-[12px] font-medium text-white/70">{name}</span>
+    <div className="flex items-center justify-between gap-3 py-2.5 border-b border-zinc-100 dark:border-white/[0.04] last:border-0 px-4">
+      <span className="w-20 text-[12px] font-medium text-zinc-600 dark:text-white/70">{name}</span>
       <div className="flex items-center gap-2">
         <div className={`inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 ${bc.bg}`}>
           <Icon size={12} className={bc.text} />
           <span className={`text-[11px] font-semibold ${bc.text}`}>{String(signal.bias || 'Neutral')}</span>
-          <span className="text-[10px] text-white/40">({strengthLabel(signal.strength)})</span>
+          <span className="text-[10px] text-zinc-400 dark:text-white/40">({strengthLabel(signal.strength)})</span>
         </div>
       </div>
     </div>
@@ -43,7 +43,7 @@ export default function MultiAssetImpact({ summary }) {
   return (
     <section>
       <p className="mb-3 text-[10px] font-semibold uppercase tracking-[0.16em] text-zinc-500">Market Impact</p>
-      <div className="rounded-2xl border border-white/[0.06] bg-[#0c1018] overflow-hidden">
+      <div className="rounded-2xl border border-zinc-200 dark:border-white/[0.06] bg-white dark:bg-[#0c1018] overflow-hidden">
         <AssetRow name="Gold" signal={gold} />
         <AssetRow name="EUR/USD" signal={forex.EURUSD} />
         <AssetRow name="GBP/USD" signal={forex.GBPUSD} />
@@ -52,8 +52,8 @@ export default function MultiAssetImpact({ summary }) {
       </div>
 
       {(forex.AUDUSD || forex.USDCHF) && (
-        <div className="mt-3 rounded-2xl border border-white/[0.06] bg-[#0c1018] overflow-hidden">
-          <div className="px-4 py-2.5 text-[9px] font-semibold uppercase tracking-[0.14em] text-zinc-600 border-b border-white/[0.04]">Derived Pairs</div>
+        <div className="mt-3 rounded-2xl border border-zinc-200 dark:border-white/[0.06] bg-white dark:bg-[#0c1018] overflow-hidden">
+          <div className="px-4 py-2.5 text-[9px] font-semibold uppercase tracking-[0.14em] text-zinc-500 dark:text-zinc-600 border-b border-zinc-100 dark:border-white/[0.04]">Derived Pairs</div>
           <AssetRow name="AUD/USD" signal={forex.AUDUSD} />
           <AssetRow name="USD/CHF" signal={forex.USDCHF} />
         </div>

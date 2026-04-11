@@ -3,6 +3,7 @@ import axios from 'axios';
 import { API_URL } from '../config/api';
 import { TrendingUp, TrendingDown, AlertCircle, CheckCircle2, Loader2, Lock, Eye, EyeOff, ArrowLeft, Shield, BarChart2, Activity } from 'lucide-react';
 import { BrandMark } from './BrandLogo';
+import { useTheme } from '../contexts/ThemeContext';
 
 const TICKERS = [
   { sym: 'GOLD', val: '$5,168', chg: '+0.82%', up: true,  top: '5%',  left: '4%',  delay: '0s',   dur: '4.2s' },
@@ -20,6 +21,7 @@ const FEATURES = [
 
 export default function ResetPasswordPage({ onBack }) {
   const token = new URLSearchParams(window.location.search).get('token') || '';
+  const { isDark } = useTheme();
 
   const [password, setPassword]   = useState('');
   const [confirm, setConfirm]     = useState('');
@@ -68,7 +70,7 @@ export default function ResetPasswordPage({ onBack }) {
   }
 
   return (
-    <div className="h-screen overflow-hidden flex flex-col bg-[#0B0B0F]">
+    <div className={`h-screen overflow-hidden flex flex-col ${isDark ? 'bg-[#0B0B0F]' : 'bg-[#f8fafc]'}`}>
       <style>{`
         @keyframes floatCard {
           0%,100% { transform: translateY(0px);   }
@@ -94,16 +96,16 @@ export default function ResetPasswordPage({ onBack }) {
       `}</style>
 
       {/* ── Top nav ─────────────────────────────────────────────────────── */}
-      <div className="shrink-0 flex items-center justify-between px-8 h-[52px] border-b border-white/[0.06]"
-           style={{background:'rgba(11,11,15,0.98)'}}>
+      <div className="shrink-0 flex items-center justify-between px-8 h-[52px]"
+           style={{background: isDark ? 'rgba(11,11,15,0.98)' : 'rgba(255,255,255,0.98)', borderBottom: isDark ? '1px solid rgba(255,255,255,0.06)' : '1px solid rgba(148,163,184,0.2)' }}>
         <button onClick={onBack}
-                className="group flex items-center gap-2 text-[13px] font-medium text-zinc-400 hover:text-white transition-all duration-200 px-3 py-1.5 rounded-lg hover:bg-white/[0.05]">
+                className={`group flex items-center gap-2 text-[13px] font-medium transition-all duration-200 px-3 py-1.5 rounded-lg ${isDark ? 'text-zinc-400 hover:text-white hover:bg-white/[0.05]' : 'text-zinc-500 hover:text-zinc-900 hover:bg-zinc-100'}`}>
           <ArrowLeft className="w-4 h-4 transition-transform group-hover:-tranzinc-x-0.5" />
           Back to login
         </button>
         <div className="flex items-center gap-2 select-none">
           <BrandMark size={28} />
-          <span className="text-[15px] font-bold text-white tracking-tight">Zynth</span>
+          <span className={`text-[15px] font-bold tracking-tight ${isDark ? 'text-white' : 'text-zinc-900'}`}>Zynth</span>
         </div>
       </div>
 
@@ -197,7 +199,7 @@ export default function ResetPasswordPage({ onBack }) {
 
         {/* ── RIGHT: Form panel ────────────────────────────────────────── */}
         <div className="w-full lg:w-[460px] shrink-0 flex flex-col h-full items-center justify-center relative overflow-hidden"
-             style={{borderLeft:'1px solid rgba(255,255,255,0.04)',background:'linear-gradient(180deg,#0B0B0F 0%,#0B0B0F 100%)'}}>
+             style={{borderLeft: isDark ? '1px solid rgba(255,255,255,0.04)' : '1px solid rgba(148,163,184,0.2)', background: isDark ? 'linear-gradient(180deg,#0B0B0F 0%,#0B0B0F 100%)' : 'linear-gradient(180deg,#f8fafc 0%,#f8fafc 100%)'}}>
 
           <div className="pointer-events-none absolute -top-16 left-1/2 -tranzinc-x-1/2 w-64 h-36"
                style={{background:'radial-gradient(ellipse,rgba(202,138,4,0.13) 0%,transparent 70%)'}} />
@@ -207,7 +209,7 @@ export default function ResetPasswordPage({ onBack }) {
             {/* Card */}
             <div className="rounded-2xl p-px"
                  style={{background:'linear-gradient(135deg,rgba(202,138,4,0.18) 0%,rgba(255,255,255,0.04) 50%,rgba(255,122,0,0.09) 100%)',boxShadow:'0 24px 60px rgba(0,0,0,0.55)'}}>
-              <div className="relative rounded-2xl px-5 py-5 bg-[#111111]">
+              <div className="relative rounded-2xl px-5 py-5" style={{ background: isDark ? '#111111' : '#ffffff' }}>
                 <div className="absolute top-0 left-[12%] right-[12%] h-px"
                      style={{background:'linear-gradient(90deg,transparent,rgba(202,138,4,0.35),transparent)'}} />
 
@@ -218,7 +220,7 @@ export default function ResetPasswordPage({ onBack }) {
                          style={{background:'rgba(239,68,68,0.08)',border:'1px solid rgba(239,68,68,0.2)'}}>
                       <AlertCircle className="w-6 h-6 text-red-400" />
                     </div>
-                    <h2 className="text-[16px] font-semibold text-white mb-2">Invalid reset link</h2>
+                    <h2 className={`text-[16px] font-semibold mb-2 ${isDark ? 'text-white' : 'text-zinc-900'}`}>Invalid reset link</h2>
                     <p className="text-zinc-500 text-[12px] leading-relaxed mb-5">
                       This link is missing or invalid. Please request a new password reset.
                     </p>
@@ -236,7 +238,7 @@ export default function ResetPasswordPage({ onBack }) {
                          style={{background:'rgba(202,138,4,0.1)',border:'1px solid rgba(202,138,4,0.2)'}}>
                       <CheckCircle2 className="w-6 h-6 text-yellow-400" />
                     </div>
-                    <h2 className="text-[16px] font-semibold text-white mb-1">Password updated!</h2>
+                    <h2 className={`text-[16px] font-semibold mb-1 ${isDark ? 'text-white' : 'text-zinc-900'}`}>Password updated!</h2>
                     <p className="text-zinc-500 text-[12px] mt-1">Redirecting you to login…</p>
                     <Loader2 className="w-4 h-4 text-yellow-500 animate-spin mt-4" />
                   </div>
@@ -244,7 +246,7 @@ export default function ResetPasswordPage({ onBack }) {
                 ) : (
                   /* ── Form state ──────────────────────────────────────── */
                   <>
-                    <h2 className="text-[16px] font-semibold text-white">Set new password</h2>
+                    <h2 className={`text-[16px] font-semibold ${isDark ? 'text-white' : 'text-zinc-900'}`}>Set new password</h2>
                     <p className="text-zinc-500 text-[11px] mt-0.5 mb-4">Choose a strong password for your account</p>
 
                     {error && (
@@ -272,7 +274,7 @@ export default function ResetPasswordPage({ onBack }) {
                           <input
                             type={showPass ? 'text' : 'password'} autoComplete="new-password"
                             value={password} onChange={e => setPassword(e.target.value)} required placeholder="••••••••••"
-                            className="w-full pl-8 pr-10 py-[8px] rounded-xl text-[13px] text-white placeholder-zinc-700 bg-[#131313] border border-white/[0.06] focus:outline-none focus:border-yellow-500/40 focus:ring-2 focus:ring-yellow-500/[0.09] transition-all duration-200"
+                            className={`w-full pl-8 pr-10 py-[8px] rounded-xl text-[13px] placeholder-zinc-500 border focus:outline-none focus:border-yellow-500/40 focus:ring-2 focus:ring-yellow-500/[0.09] transition-all duration-200 ${isDark ? 'text-white bg-[#131313] border-white/[0.06]' : 'text-zinc-900 bg-zinc-50 border-zinc-200'}`}
                           />
                           <button type="button" onClick={() => setShowPass(v => !v)} tabIndex={-1}
                                   className="absolute right-3 top-1/2 -tranzinc-y-1/2 text-zinc-600 hover:text-zinc-400 transition-colors">
@@ -284,7 +286,7 @@ export default function ResetPasswordPage({ onBack }) {
                           <div className="space-y-1 pt-0.5">
                             <div className="flex gap-1">
                               {[1,2,3,4].map(i => (
-                                <div key={i} className={`flex-1 h-1 rounded-full transition-all duration-300 ${i <= strength ? strengthColor : 'bg-white/[0.06]'}`} />
+                                <div key={i} className={`flex-1 h-1 rounded-full transition-all duration-300 ${i <= strength ? strengthColor : isDark ? 'bg-white/[0.06]' : 'bg-zinc-200'}`} />
                               ))}
                             </div>
                             <p className={`text-[10px] font-medium ${strengthText}`}>{strengthLabel}</p>
@@ -300,7 +302,7 @@ export default function ResetPasswordPage({ onBack }) {
                           <input
                             type={showConf ? 'text' : 'password'} autoComplete="new-password"
                             value={confirm} onChange={e => setConfirm(e.target.value)} required placeholder="••••••••••"
-                            className="w-full pl-8 pr-10 py-[8px] rounded-xl text-[13px] text-white placeholder-zinc-700 bg-[#131313] border border-white/[0.06] focus:outline-none focus:border-yellow-500/40 focus:ring-2 focus:ring-yellow-500/[0.09] transition-all duration-200"
+                            className={`w-full pl-8 pr-10 py-[8px] rounded-xl text-[13px] placeholder-zinc-500 border focus:outline-none focus:border-yellow-500/40 focus:ring-2 focus:ring-yellow-500/[0.09] transition-all duration-200 ${isDark ? 'text-white bg-[#131313] border-white/[0.06]' : 'text-zinc-900 bg-zinc-50 border-zinc-200'}`}
                           />
                           <button type="button" onClick={() => setShowConf(v => !v)} tabIndex={-1}
                                   className="absolute right-3 top-1/2 -tranzinc-y-1/2 text-zinc-600 hover:text-zinc-400 transition-colors">
