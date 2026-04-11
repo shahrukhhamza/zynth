@@ -151,7 +151,7 @@ export default function ZynthAssistant() {
       const errMsg = {
         id: Date.now() + 1,
         role: 'assistant',
-        content: `I am still learning and could not find a good answer for that.\n\nFor reliable help:\n- Email: getzynth@gmail.com\n- Or browse the sidebar to find what you are looking for\n\nI will get better over time!`,
+        content: `I am still learning and could not find a good answer for that.\n\nFor reliable help:\n- Use the Help Center from the sidebar\n- Or contact support at support@zynth.com\n\nI will get better over time!`,
         timestamp: new Date().toISOString(),
         isError: true,
       };

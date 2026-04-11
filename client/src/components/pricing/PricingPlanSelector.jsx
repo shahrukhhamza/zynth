@@ -589,7 +589,7 @@ export default function PricingPlanSelector({
                 7-day risk-free · Cancel anytime
               </p>
               <p className="text-sm text-zinc-500 dark:text-zinc-400">
-                Payment not working? Email us at getzynth@gmail.com and we&apos;ll assist you.
+                Payment not working? Email us at support@zynth.com and we&apos;ll assist you.
               </p>
             </div>
           ) : (
@@ -598,7 +598,7 @@ export default function PricingPlanSelector({
                 7-day risk-free • Cancel anytime
               </p>
               <p className="text-sm text-zinc-500 dark:text-zinc-400">
-                Payment not working? Email us at getzynth@gmail.com and we&apos;ll assist you.
+                Payment not working? Email us at support@zynth.com and we&apos;ll assist you.
               </p>
             </div>
           )}

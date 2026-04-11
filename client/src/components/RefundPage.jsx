@@ -99,7 +99,7 @@ export default function RefundPage({ onBack }) {
           {/* How to Request */}
           <div style={{ padding: '20px 24px', borderRadius: 12, background: isDark ? 'rgba(202,138,4,0.07)' : 'rgba(202,138,4,0.05)', border: `1px solid ${isDark ? 'rgba(202,138,4,0.18)' : 'rgba(202,138,4,0.15)'}` }}>
             <p style={{ margin: '0 0 6px', fontWeight: 700, color: isDark ? '#FBBF24' : '#CA8A04' }}>How to Request a Refund</p>
-            <p style={{ margin: '0 0 10px' }}>Email us at <a href="mailto:getzynth@gmail.com" style={{ color: '#CA8A04', textDecoration: 'none', fontWeight: 600 }}>getzynth@gmail.com</a></p>
+            <p style={{ margin: '0 0 10px' }}>Email us at <a href="mailto:support@zynth.com" style={{ color: '#CA8A04', textDecoration: 'none', fontWeight: 600 }}>support@zynth.com</a></p>
             <p style={{ margin: '0 0 4px', fontSize: 13, color: muted }}><strong style={{ color: isDark ? '#d1d5db' : '#374151' }}>Subject:</strong> Refund Request</p>
             <p style={{ margin: 0, fontSize: 13, color: muted }}><strong style={{ color: isDark ? '#d1d5db' : '#374151' }}>Include:</strong> your registered email address</p>
             <p style={{ margin: '10px 0 0', fontSize: 13, color: muted }}>We typically respond within 1–2 business days.</p>

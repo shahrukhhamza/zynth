@@ -754,7 +754,7 @@ export default function UpgradeModal({
             {submitting ? <><Loader2 size={15} style={{ animation: 'spin 1s linear infinite' }} /> Submitting&hellip;</> : 'Complete Secure Payment \u2192'}
           </button>
           <p style={{ textAlign: 'center', fontSize: 11, color: 'var(--z-muted)', margin: 0 }}>
-            Need help? <a href="mailto:getzynth@gmail.com" style={{ color: 'var(--z-progress-txt)', textDecoration: 'none' }}>getzynth@gmail.com</a> &mdash; we respond fast.
+            Need help? <a href="mailto:support@zynth.com" style={{ color: 'var(--z-progress-txt)', textDecoration: 'none' }}>support@zynth.com</a> &mdash; we respond fast.
           </p>
         </div>
 

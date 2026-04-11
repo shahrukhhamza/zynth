@@ -182,11 +182,11 @@ const QA = [
     a: 'To sign out: click your name/avatar in the top right -> scroll to bottom of profile panel -> click the red Sign Out button.' },
 
   { q: ['delete account', 'remove account', 'close account'],
-    a: 'To delete your account contact us at getzynth@gmail.com with the subject "Delete Account". We will process it within 24 hours.' },
+    a: 'To delete your account contact us at support@zynth.com with the subject "Delete Account". We will process it within 24 hours.' },
 
   // PLANS & BILLING
   { q: ['upgrade', 'upgrade plan', 'get pro', 'get elite', 'subscribe', 'buy plan', 'purchase', 'how to upgrade', 'upgrade my plan', 'upgrading plan'],
-    a: `To upgrade: click your avatar top right -> Profile -> click Upgrade Plan button -> choose Pro (${PRO_MONTHLY_PRICE}) or Elite (${ELITE_MONTHLY_PRICE}) -> email us at getzynth@gmail.com with your chosen plan. We activate within 24 hours.` },
+    a: `To upgrade: click your avatar top right -> Profile -> click Upgrade Plan button -> choose Pro (${PRO_MONTHLY_PRICE}) or Elite (${ELITE_MONTHLY_PRICE}) -> email us at support@zynth.com with your chosen plan. We activate within 24 hours.` },
 
   { q: ['how much', 'price', 'cost', 'pricing', 'how much does it cost', 'subscription cost'],
     a: `Zynth pricing: Free ($0 forever), Pro (${PRO_MONTHLY_PRICE}), Elite (${ELITE_MONTHLY_PRICE}).` },
@@ -204,10 +204,10 @@ const QA = [
     a: `Current pricing: Pro is ${PRO_MONTHLY_PRICE} and Elite is ${ELITE_MONTHLY_PRICE}. Check the pricing section in-app for the latest billing options.` },
 
   { q: ['payment', 'how to pay', 'pay for pro', 'billing', 'invoice'],
-    a: 'To pay: email getzynth@gmail.com with subject "Pro Upgrade" or "Elite Upgrade" and your registered email. We will process your upgrade within 24 hours at the founding member price.' },
+    a: 'To pay: email support@zynth.com with subject "Pro Upgrade" or "Elite Upgrade" and your registered email. We will process your upgrade within 24 hours at the founding member price.' },
 
   { q: ['refund', 'money back', 'cancel subscription', 'cancel plan'],
-    a: 'We offer a 7-day money back guarantee. To cancel or request a refund email getzynth@gmail.com. No questions asked within 7 days of payment.' },
+    a: 'We offer a 7-day money back guarantee. To cancel or request a refund email support@zynth.com. No questions asked within 7 days of payment.' },
 
   // ONBOARDING
   { q: ['onboarding', 'setup', 'profile setup', 'initial setup', 'first setup'],
@@ -215,20 +215,20 @@ const QA = [
 
   // ERRORS & SUPPORT
   { q: ['not working', 'broken', 'bug', 'error', 'issue', 'problem', 'glitch', 'something wrong'],
-    a: 'Sorry to hear something is not working! Try refreshing the page first. If the issue persists email us at getzynth@gmail.com with a description of the problem and we will fix it right away.' },
+    a: 'Sorry to hear something is not working! Try refreshing the page first. If the issue persists email us at support@zynth.com with a description of the problem and we will fix it right away.' },
 
   { q: ['contact', 'support', 'help', 'reach you', 'talk to someone', 'customer service'],
-    a: 'For support email getzynth@gmail.com. We typically respond within 24 hours. For urgent issues write URGENT in the subject line.' },
+    a: 'For support email support@zynth.com. We typically respond within 24 hours. For urgent issues write URGENT in the subject line.' },
 
   { q: ['feature request', 'suggestion', 'idea', 'feedback', 'improve'],
-    a: 'We love feedback! Email your suggestions to getzynth@gmail.com. Elite members get priority feature requests - your ideas get built first.' },
+    a: 'We love feedback! Email your suggestions to support@zynth.com. Elite members get priority feature requests - your ideas get built first.' },
 
   // ABOUT ZYNTH
   { q: ['what is zynth', 'about zynth', 'zynth platform', 'what does zynth do', 'tell me about zynth'],
     a: 'Zynth is a trading intelligence platform for serious traders. It combines: smart trade journal with AI coaching, live market data, economic intelligence, Macro Surprise Score, and behavioral pattern detection - all in one place. Tagline: Intelligence Behind Every Trade.' },
 
   { q: ['who made zynth', 'who built zynth', 'founder', 'developer', 'team'],
-    a: 'Zynth was built by Shahrukh Hamza, an independent developer passionate about helping traders improve. Contact: getzynth@gmail.com' },
+    a: 'Zynth was built by an independent team focused on helping traders improve. Contact: support@zynth.com' },
 
   { q: ['is zynth safe', 'data privacy', 'my data', 'secure', 'privacy'],
     a: 'Your data is stored securely with encryption in transit (TLS). We never share or sell your trading data to anyone. Your journal entries and performance data are private to your account only.' },
@@ -274,16 +274,16 @@ const ZYNTH_SYSTEM_PROMPT = `You are the Zynth Assistant — a helpful, friendly
 ## WHAT IS ZYNTH
 Zynth is a trading intelligence platform for serious traders. It is a web app (not a broker — you cannot place trades or deposit money here). It gives traders: a smart trade journal with AI coaching, live market data, economic intelligence, Macro Surprise Score, behavioral pattern detection, and Trading Desk calculators.
 Tagline: "Intelligence Behind Every Trade."
-Contact: getzynth@gmail.com | Website: getzynth.com
+Contact: support@zynth.com | Website: getzynth.com
 
 ## PLANS & PRICING
 - Free ($0 forever): 10 journal entries lifetime, 3 AI analyses lifetime, today's US economic events, live market overview, market news.
 - Pro (${PRO_MONTHLY_PRICE}): unlimited journal entries, 50 AI analyses/month, full Economic Calendar (all countries), Macro Surprise Score, Economic Intelligence page, real-time streaming, advanced analytics.
 - Elite (${ELITE_MONTHLY_PRICE}): everything in Pro + unlimited AI analyses, unlimited OCR, Trading DNA Report, beta feature access, 4-hour dedicated support.
 - Founding Member offer: first 100 users lock in the founding price FOREVER.
-- To upgrade: click avatar (top right) → Profile → Upgrade Plan → email getzynth@gmail.com with your chosen plan. Activation within 24 hours.
-- Payment is manual via email (getzynth@gmail.com). 7-day money-back guarantee, no questions asked.
-- To cancel: email getzynth@gmail.com.
+- To upgrade: click avatar (top right) → Profile → Upgrade Plan → email support@zynth.com with your chosen plan. Activation within 24 hours.
+- Payment is manual via email (support@zynth.com). 7-day money-back guarantee, no questions asked.
+- To cancel: email support@zynth.com.
 
 ## TRADE JOURNAL
 - Access: left sidebar → "Trade Journal".
@@ -347,7 +347,7 @@ Contact: getzynth@gmail.com | Website: getzynth.com
 - Change password: Profile → Change Password → a reset email is sent. Click the link to set new password.
 - Change profile picture: Profile → click camera icon on avatar → upload photo (max 2MB) or choose from 8 color options.
 - Sign out: Profile → red Sign Out button.
-- Delete account: email getzynth@gmail.com with subject "Delete Account".
+- Delete account: email support@zynth.com with subject "Delete Account".
 
 ## ONBOARDING & SETUP
 - First-time 4-step setup: trading experience, markets traded, goals, profile personalization.
@@ -369,7 +369,7 @@ Contact: getzynth@gmail.com | Website: getzynth.com
 - Be friendly, concise, and direct.
 - Use bullet points or numbered steps for instructions.
 - Bold key terms like **Trade Journal**, **Performance tab**, **sidebar** to help users navigate.
-- If a user asks about something you are not sure about, say so and suggest they email getzynth@gmail.com.
+- If a user asks about something you are not sure about, say so and suggest they email support@zynth.com.
 - Never make up features or prices that are not listed above.
 - Keep responses under 200 words unless a topic genuinely requires more detail.
 - Do not mention that you are powered by Gemini or any other AI model. You are the Zynth Assistant.`;
@@ -471,7 +471,7 @@ router.post('/chat', requireAuth, async (req, res) => {
 
     // Final fallback if Gemini is unavailable
     return res.json({
-      reply: 'I could not find a specific answer for that right now.\n\nFor instant help, try asking:\n\u2022 "How do I log a trade?"\n\u2022 "How do I change my timezone?"\n\u2022 "What is the Macro Score?"\n\u2022 "How do I upgrade to Pro?"\n\nOr email us at getzynth@gmail.com and we will help right away!',
+      reply: 'I could not find a specific answer for that right now.\n\nFor instant help, try asking:\n\u2022 "How do I log a trade?"\n\u2022 "How do I change my timezone?"\n\u2022 "What is the Macro Score?"\n\u2022 "How do I upgrade to Pro?"\n\nOr email us at support@zynth.com and we will help right away!',
     });
 
   } catch (error) {

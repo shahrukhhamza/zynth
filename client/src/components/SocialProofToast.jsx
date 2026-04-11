@@ -79,7 +79,7 @@ export default function SocialProofToast() {
   };
 
   return (
-    <div className="fixed bottom-6 left-6 z-50 pointer-events-none" aria-live="polite">
+    <div className="pointer-events-none fixed bottom-6 right-6 z-40 hidden sm:block" aria-live="polite">
       <AnimatePresence>
         {visible && current && (
           <motion.div

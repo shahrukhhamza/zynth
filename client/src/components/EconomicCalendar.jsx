@@ -43,12 +43,12 @@ function getDateRange(filter) {
   mon.setDate(today.getDate() - ((today.getDay() + 6) % 7));
   if (filter === 'this_week') {
     const sun = new Date(mon); sun.setDate(mon.getDate() + 6);
-    return `${fmt(mon)} � ${fmt(sun)}`;
+    return `${fmt(mon)} – ${fmt(sun)}`;
   }
   // next_week
   const nxtMon = new Date(mon); nxtMon.setDate(mon.getDate() + 7);
   const nxtSun = new Date(nxtMon); nxtSun.setDate(nxtMon.getDate() + 6);
-  return `${fmt(nxtMon)} � ${fmt(nxtSun)}`;
+  return `${fmt(nxtMon)} – ${fmt(nxtSun)}`;
 }
 
 /**
@@ -236,7 +236,7 @@ export default function EconomicCalendar() {
             }}>
               <div style={{ width: 6, height: 6, borderRadius: '50%', background: D.accent }} />
               <span style={{ fontSize: 11, fontWeight: 600, color: D.accent, letterSpacing: '0.02em' }}>
-                Live � TradingView
+                Live · TradingView
               </span>
             </div>
           </div>

@@ -146,7 +146,7 @@ function SecondaryKPICard({ label, value, sub, color, icon: Icon }) {
 }
 
 // ── Monthly P&L Calendar ──────────────────────────────────────────────────────
-function MonthlyCalendar({ trades, D }) {
+function MonthlyCalendar({ trades, D, isMobile = false }) {
   const now   = new Date();
   const year  = now.getFullYear();
   const month = now.getMonth();
@@ -207,7 +207,7 @@ function MonthlyCalendar({ trades, D }) {
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr) 64px', gap: 3, marginBottom: 4 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: `repeat(7, 1fr) ${isMobile ? '48px' : '64px'}`, gap: 3, marginBottom: 4 }}>
         {['Su','Mo','Tu','We','Th','Fr','Sa'].map(d => (
           <div key={d} className="text-center text-[10px] font-semibold text-zinc-500 dark:text-zinc-400 py-1 uppercase tracking-wider">{d}</div>
         ))}
@@ -217,7 +217,7 @@ function MonthlyCalendar({ trades, D }) {
       {weeks.map((week, wi) => {
         const wPnl = weeklyPnl[wi + 1] ?? null;
         return (
-          <div key={wi} style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr) 64px', gap: 3, marginBottom: 3 }}>
+          <div key={wi} style={{ display: 'grid', gridTemplateColumns: `repeat(7, 1fr) ${isMobile ? '48px' : '64px'}`, gap: 3, marginBottom: 3 }}>
             {week.map((day, di) => {
               if (!day) return <div key={di} />;
               const pnl      = dailyPnl[day];
@@ -239,7 +239,7 @@ function MonthlyCalendar({ trades, D }) {
                     : D.cardInner,
                   boxShadow: isToday ? `0 0 0 1.5px ${D.blue}50` : 'none',
                   opacity: isFuture ? 0.3 : 1,
-                  minHeight: 48,
+                  minHeight: isMobile ? 42 : 48,
                   display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 2,
                   transition: 'transform 0.12s ease',
                 }}>
@@ -261,7 +261,7 @@ function MonthlyCalendar({ trades, D }) {
               borderRadius: 8, padding: '6px 4px',
               background: wPnl != null ? (wPnl >= 0 ? `${D.green}10` : `${D.red}08`) : D.cardInner,
               display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 2,
-              minHeight: 48,
+              minHeight: isMobile ? 42 : 48,
             }}>
               {wPnl != null ? (
                 <span style={{ fontSize: 10, fontWeight: 700, color: wPnl >= 0 ? D.green : D.red }}>
@@ -311,6 +311,7 @@ export default function EconomicDashboard({ onViewChange }) {
   const [allTrades,  setAllTrades]  = useState(null);
   const [keyEvent,   setKeyEvent]   = useState(null);
   const [loading,    setLoading]    = useState(true);
+  const [isMobile,   setIsMobile]   = useState(() => window.innerWidth < 768);
 
   const D = theme.isDark ? DARK : LIGHT;
 
@@ -319,6 +320,14 @@ export default function EconomicDashboard({ onViewChange }) {
     window.history.pushState({ view }, '', `/${view}`);
     window.dispatchEvent(new PopStateEvent('popstate', { state: { view } }));
   };
+
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 767px)');
+    setIsMobile(mq.matches);
+    const handler = (e) => setIsMobile(e.matches);
+    mq.addEventListener('change', handler);
+    return () => mq.removeEventListener('change', handler);
+  }, []);
 
   useEffect(() => {
     const token = getAuthToken();
@@ -423,13 +432,13 @@ export default function EconomicDashboard({ onViewChange }) {
   );
 
   return (
-    <div style={{ flex: 1, overflowY: 'auto', background: D.page, padding: '32px 24px 64px' }}>
+    <div style={{ flex: 1, overflowY: 'auto', background: D.page, padding: isMobile ? '20px 12px 56px' : '32px 24px 64px' }}>
       <style>{`
         @keyframes spin { to { transform: rotate(360deg); } }
         .trade-row:hover { background: ${D.cardInner} !important; }
       `}</style>
 
-      <div style={{ maxWidth: 1280, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 24 }}>
+      <div style={{ maxWidth: 1280, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: isMobile ? 14 : 24 }}>
 
         {/* ══ HEADER ════════════════════════════════════════════════════ */}
         <div className="flex items-start justify-between flex-wrap gap-4">
@@ -469,8 +478,8 @@ export default function EconomicDashboard({ onViewChange }) {
         </div>
 
         {/* ══ ROW 1: KPI GRID 6/2/2/2 ═══════════════════════════════════ */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(12, 1fr)', gap: 16 }}>
-          <div style={{ gridColumn: 'span 6' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2, minmax(0, 1fr))' : 'repeat(12, 1fr)', gap: 12 }}>
+          <div style={{ gridColumn: isMobile ? 'span 2' : 'span 6' }}>
             <PrimaryKPICard
               label="Total P&L"
               value={allTrades?.length ? `${totalPnl >= 0 ? '+' : ''}$${Math.abs(totalPnl).toFixed(2)}` : '$0.00'}
@@ -481,7 +490,7 @@ export default function EconomicDashboard({ onViewChange }) {
               badgeColor={D.blue}
             />
           </div>
-          <div style={{ gridColumn: 'span 2' }}>
+          <div style={{ gridColumn: isMobile ? 'span 1' : 'span 2' }}>
             <SecondaryKPICard
               label="Win Rate"
               value={allTrades?.length ? `${wr}%` : '—'}
@@ -490,7 +499,7 @@ export default function EconomicDashboard({ onViewChange }) {
               icon={Percent}
             />
           </div>
-          <div style={{ gridColumn: 'span 2' }}>
+          <div style={{ gridColumn: isMobile ? 'span 1' : 'span 2' }}>
             <SecondaryKPICard
               label="This Week"
               value={weekStats?.total > 0 ? `${weekStats.pnl >= 0 ? '+' : ''}$${Math.abs(weekStats.pnl).toFixed(0)}` : '$0'}
@@ -499,7 +508,7 @@ export default function EconomicDashboard({ onViewChange }) {
               icon={weekStats?.pnl >= 0 ? TrendingUp : TrendingDown}
             />
           </div>
-          <div style={{ gridColumn: 'span 2' }}>
+          <div style={{ gridColumn: isMobile ? 'span 2' : 'span 2' }}>
             <SecondaryKPICard
               label="Profit Factor"
               value={quickStats?.pf > 0 ? quickStats.pf.toFixed(2) : '—'}
@@ -511,11 +520,11 @@ export default function EconomicDashboard({ onViewChange }) {
         </div>
 
         {/* ══ ROW 2: CALENDAR 8 / MINDSET+STATS 4 ══════════════════════ */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(12, 1fr)', gap: 16 }}>
-          <div style={{ gridColumn: 'span 8' }}>
-            <MonthlyCalendar trades={allTrades} D={D} />
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(12, 1fr)', gap: 12 }}>
+          <div style={{ gridColumn: isMobile ? 'span 1' : 'span 8' }}>
+            <MonthlyCalendar trades={allTrades} D={D} isMobile={isMobile} />
           </div>
-          <div style={{ gridColumn: 'span 4', display: 'flex', flexDirection: 'column', gap: 16 }}>
+          <div style={{ gridColumn: isMobile ? 'span 1' : 'span 4', display: 'flex', flexDirection: 'column', gap: 12 }}>
             <Card style={{ padding: '24px 20px', borderLeft: `3px solid ${D.blue}` }}>
               <p className="text-xs font-semibold uppercase tracking-widest mb-3 m-0" style={{ color: D.textSub }}>
                 Today&apos;s Mindset
@@ -556,8 +565,8 @@ export default function EconomicDashboard({ onViewChange }) {
         </div>
 
         {/* ══ ROW 3: EDGE 6 / RECENT ACTIVITY 6 ════════════════════════ */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(12, 1fr)', gap: 16 }}>
-          <div style={{ gridColumn: 'span 6' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(12, 1fr)', gap: 12 }}>
+          <div style={{ gridColumn: isMobile ? 'span 1' : 'span 6' }}>
             <Card style={{ padding: '24px' }}>
               <SectionHeader
                 title="Your Edge"
@@ -618,7 +627,7 @@ export default function EconomicDashboard({ onViewChange }) {
             </Card>
           </div>
 
-          <div style={{ gridColumn: 'span 6' }}>
+          <div style={{ gridColumn: isMobile ? 'span 1' : 'span 6' }}>
             <Card style={{ padding: '24px' }}>
               <SectionHeader
                 title="Recent Activity"
@@ -634,20 +643,28 @@ export default function EconomicDashboard({ onViewChange }) {
                 const dir     = (t.direction ?? '').toUpperCase();
                 const outcome = (t.outcome ?? (pnl > 0 ? 'WIN' : pnl < 0 ? 'LOSS' : '')).toUpperCase();
                 const isWin   = outcome === 'WIN';
+                const dateLabel = t.date ? new Date(t.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '—';
                 return (
                   <div key={t.id ?? i} className="trade-row flex items-center gap-3 px-2 py-3 rounded-xl cursor-pointer" style={{ marginBottom: 2 }}>
                     <div style={{ width: 7, height: 7, borderRadius: '50%', flexShrink: 0, background: isWin ? D.green : outcome === 'LOSS' ? D.red : D.textMute }} />
-                    <span style={{ fontSize: 11, color: D.textSub, width: 52, flexShrink: 0 }}>
-                      {t.date ? new Date(t.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '—'}
-                    </span>
-                    <span style={{ fontSize: 13, fontWeight: 700, color: D.text, width: 72, flexShrink: 0 }}>{t.pair ?? '—'}</span>
-                    {dir && (
-                      <span style={{ fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 99, flexShrink: 0, background: dir === 'BUY' ? `${D.green}12` : `${D.red}12`, color: dir === 'BUY' ? D.green : D.red }}>
-                        {dir}
-                      </span>
-                    )}
-                    {t.session && (
-                      <span style={{ fontSize: 10, color: D.textSub, background: D.cardInner, padding: '2px 7px', borderRadius: 99, flexShrink: 0 }}>{t.session}</span>
+                    {isMobile ? (
+                      <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0, gap: 2 }}>
+                        <span style={{ fontSize: 13, fontWeight: 700, color: D.text, lineHeight: 1.2 }}>{t.pair ?? '—'}</span>
+                        <span style={{ fontSize: 11, color: D.textSub }}>{dateLabel}{dir ? ` · ${dir}` : ''}</span>
+                      </div>
+                    ) : (
+                      <>
+                        <span style={{ fontSize: 11, color: D.textSub, width: 52, flexShrink: 0 }}>{dateLabel}</span>
+                        <span style={{ fontSize: 13, fontWeight: 700, color: D.text, width: 72, flexShrink: 0 }}>{t.pair ?? '—'}</span>
+                        {dir && (
+                          <span style={{ fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 99, flexShrink: 0, background: dir === 'BUY' ? `${D.green}12` : `${D.red}12`, color: dir === 'BUY' ? D.green : D.red }}>
+                            {dir}
+                          </span>
+                        )}
+                        {t.session && (
+                          <span style={{ fontSize: 10, color: D.textSub, background: D.cardInner, padding: '2px 7px', borderRadius: 99, flexShrink: 0 }}>{t.session}</span>
+                        )}
+                      </>
                     )}
                     <span style={{ marginLeft: 'auto', fontSize: 14, fontWeight: 700, color: pnl > 0 ? D.green : pnl < 0 ? D.red : D.textSub, letterSpacing: '-0.02em', flexShrink: 0 }}>
                       {pnl !== 0 ? `${pnl > 0 ? '+' : ''}$${Math.abs(pnl).toFixed(2)}` : '—'}
@@ -673,7 +690,7 @@ export default function EconomicDashboard({ onViewChange }) {
         </div>
 
         {/* ══ ROW 4: QUICK ACCESS ════════════════════════════════════════ */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 16 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(2, 1fr)', gap: 12 }}>
           {[
             { view: 'intelligence', Icon: Zap,      color: D.blue, title: 'AI Insights',       desc: 'Macro surprise scores and market intelligence', badge: 'AI' },
             { view: 'calendar',     Icon: Calendar, color: D.blue, title: 'Economic Calendar', desc: 'High-impact events and their market effects',    badge: null },

@@ -133,7 +133,7 @@ export default function HowItWorks({ onGetStarted }) {
             onMouseLeave={e => { e.currentTarget.style.color = isDark ? '#52525b' : '#a1a1aa'; }}
           >
             Get started free
-            <ArrowRight size={15} className="group-hover:tranzinc-x-1 transition-transform" />
+            <ArrowRight size={15} className="transition-transform group-hover:translate-x-1" />
           </button>
         </Reveal>
       </div>

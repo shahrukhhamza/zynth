@@ -285,7 +285,7 @@ export default function LoginPage({ onSwitchToSignup, onBack, onForgotPassword }
                     transform:'translateX(-100%)', animation:'blobDrift2 11s ease-in-out infinite' }} />
                   <div style={{ display:'flex', justifyContent:'space-between', alignItems:'baseline', marginBottom:'10px' }}>
                     <div>
-                      <div style={{ fontSize:'11px', fontWeight:500, color:isDark?'rgba(255,255,255,0.28)':'#94a3b8', marginBottom:'3px' }}>DXY Index � 30 days</div>
+                      <div style={{ fontSize:'11px', fontWeight:500, color:isDark?'rgba(255,255,255,0.28)':'#94a3b8', marginBottom:'3px' }}>DXY Index · 30 days</div>
                       <div style={{ fontSize:'22px', fontWeight:700, letterSpacing:'-0.03em', color:isDark?'#fafaf9':'#0b0b0f', lineHeight:1 }}>99.26</div>
                     </div>
                     <div style={{ textAlign:'right' }}>
@@ -459,7 +459,7 @@ export default function LoginPage({ onSwitchToSignup, onBack, onForgotPassword }
                 <path fill="#4A90E2" d="M19.834 21c2.195-2.048 3.62-5.096 3.62-9 0-.71-.109-1.473-.272-2.182H12v4.637h6.436c-.317 1.559-1.17 2.766-2.395 3.558L19.834 21z"/>
                 <path fill="#FBBC05" d="M5.277 14.268A7.12 7.12 0 0 1 4.909 12c0-.782.125-1.533.357-2.235L1.24 6.65A11.934 11.934 0 0 0 0 12c0 1.92.445 3.73 1.237 5.335l4.04-3.067z"/>
               </svg>}
-            <span>{googleLoading ? 'Signing in�' : 'Continue with Google'}</span>
+            <span>{googleLoading ? 'Signing in...' : 'Continue with Google'}</span>
           </button>
           )}
 
@@ -532,7 +532,7 @@ export default function LoginPage({ onSwitchToSignup, onBack, onForgotPassword }
               onMouseLeave={e => { e.currentTarget.style.transform=''; e.currentTarget.style.boxShadow=loading?'none':(isDark?'0 2px 14px rgba(202,138,4,0.3), 0 1px 3px rgba(0,0,0,0.2)':'0 2px 14px rgba(0,0,0,0.18), 0 1px 3px rgba(0,0,0,0.1)'); }}
               onMouseDown={e => { if(!loading) e.currentTarget.style.transform='scale(0.985)'; }}
               onMouseUp={e => { if(!loading) e.currentTarget.style.transform='translateY(-1.5px)'; }}>
-              {loading ? <><Loader2 size={14} className="animate-spin"/><span>Signing in�</span></> : <><span>Sign in</span><ArrowRight size={14}/></>}
+              {loading ? <><Loader2 size={14} className="animate-spin"/><span>Signing in...</span></> : <><span>Sign in</span><ArrowRight size={14}/></>}
             </button>
           </form>
 

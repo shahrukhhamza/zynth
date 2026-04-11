@@ -797,7 +797,7 @@ If you are not satisfied within the first 7 days of your subscription we will re
 
 ## How to Request a Refund
 
-Contact **getzynth@gmail.com** with:
+Contact **support@zynth.com** with:
 - Subject: \`Refund Request\`
 - Include your registered email and reason (optional)
 
@@ -855,7 +855,7 @@ If you signed up with Google, your account uses Google's security. Enable 2FA on
 - Screenshots are stored securely
 
 ::warning
-If your account is compromised, email getzynth@gmail.com immediately with subject "Account Security Issue".
+If your account is compromised, email support@zynth.com immediately with subject "Account Security Issue".
 ::`,
       },
       {
@@ -966,7 +966,7 @@ When collapsed, only icons are shown - hover to see labels.`,
 
 ## Data Deletion
 
-Email **getzynth@gmail.com** to delete your account and all data.`,
+Email **support@zynth.com** to delete your account and all data.`,
       },
       {
         id: 'terms-summary', title: 'Terms of Service Summary',
@@ -1247,9 +1247,9 @@ export default function HelpCenter() {
   const popularArticles = POPULAR_ARTICLE_IDS.map(id => ALL_ARTICLES.find(a => a.id === id)).filter(Boolean);
 
   const feedbackActions = [
-    { key: 'feature', title: 'Request a Feature',  description: 'Share product ideas and workflow improvements.', icon: Lightbulb,    color: '#f59e0b', href: 'mailto:getzynth@gmail.com?subject=Feature%20Request' },
-    { key: 'bug',     title: 'Report a Bug',        description: 'Send issues, screenshots and steps to reproduce.', icon: Bug,      color: '#ef4444', href: 'mailto:getzynth@gmail.com?subject=Bug%20Report' },
-    { key: 'product', title: 'General Feedback',    description: "Tell us what's confusing or should improve.",  icon: MessageSquare, color: '#CA8A04', href: 'mailto:getzynth@gmail.com?subject=Product%20Feedback' },
+    { key: 'feature', title: 'Request a Feature',  description: 'Share product ideas and workflow improvements.', icon: Lightbulb,    color: '#f59e0b', href: 'mailto:support@zynth.com?subject=Feature%20Request' },
+    { key: 'bug',     title: 'Report a Bug',        description: 'Send issues, screenshots and steps to reproduce.', icon: Bug,      color: '#ef4444', href: 'mailto:support@zynth.com?subject=Bug%20Report' },
+    { key: 'product', title: 'General Feedback',    description: "Tell us what's confusing or should improve.",  icon: MessageSquare, color: '#CA8A04', href: 'mailto:support@zynth.com?subject=Product%20Feedback' },
   ];
 
   return (
@@ -1344,7 +1344,7 @@ export default function HelpCenter() {
                 <div style={{ color: text0, fontWeight: 700, fontSize: 14, marginBottom: 3 }}>Still need help?</div>
                 <div style={{ color: textMuted, fontSize: 13 }}>Our support team typically replies within 24 hours.</div>
               </div>
-              <a href="mailto:getzynth@gmail.com" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '9px 18px', borderRadius: 8, background: accent, color: '#fff', fontSize: 13, fontWeight: 700, textDecoration: 'none', flexShrink: 0, transition: 'opacity 0.15s' }} onMouseOver={e => { e.currentTarget.style.opacity = '0.88'; }} onMouseOut={e => { e.currentTarget.style.opacity = '1'; }}>
+              <a href="mailto:support@zynth.com" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '9px 18px', borderRadius: 8, background: accent, color: '#fff', fontSize: 13, fontWeight: 700, textDecoration: 'none', flexShrink: 0, transition: 'opacity 0.15s' }} onMouseOver={e => { e.currentTarget.style.opacity = '0.88'; }} onMouseOut={e => { e.currentTarget.style.opacity = '1'; }}>
                 <Mail size={14} />
                 Contact Support
               </a>
@@ -1425,7 +1425,7 @@ export default function HelpCenter() {
                 </div>
                 <div style={{ color: text0, fontSize: 18, fontWeight: 700, marginBottom: 8 }}>No results found</div>
                 <div style={{ color: textMuted, fontSize: 14, lineHeight: 1.65, marginBottom: 14 }}>Try different keywords, or contact support directly.</div>
-                <a href="mailto:getzynth@gmail.com" style={{ color: accent, fontSize: 14, fontWeight: 700, textDecoration: 'none' }}>getzynth@gmail.com</a>
+                <a href="mailto:support@zynth.com" style={{ color: accent, fontSize: 14, fontWeight: 700, textDecoration: 'none' }}>support@zynth.com</a>
               </div>
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
@@ -1587,7 +1587,7 @@ export default function HelpCenter() {
                   </div>
                 </div>
                 <a
-                  href="mailto:getzynth@gmail.com"
+                  href="mailto:support@zynth.com"
                   style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '14px 16px', borderRadius: 10, textDecoration: 'none', background: isDark ? 'rgba(15,23,42,0.6)' : '#f8fbff', border: '1px solid rgba(202,138,4,0.16)', marginBottom: 12, transition: 'border-color 0.15s' }}
                   onMouseOver={e => { e.currentTarget.style.borderColor = accent; }}
                   onMouseOut={e => { e.currentTarget.style.borderColor = 'rgba(202,138,4,0.16)'; }}
@@ -1596,7 +1596,7 @@ export default function HelpCenter() {
                     <Mail size={18} color="#fff" />
                   </div>
                   <div style={{ flex: 1 }}>
-                    <div style={{ color: text0, fontWeight: 700, fontSize: 14 }}>getzynth@gmail.com</div>
+                    <div style={{ color: text0, fontWeight: 700, fontSize: 14 }}>support@zynth.com</div>
                     <div style={{ color: textMuted, fontSize: 12, marginTop: 2 }}>General support and account help</div>
                   </div>
                   <ArrowUpRight size={16} color={textMuted} />

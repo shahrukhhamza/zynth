@@ -287,7 +287,7 @@ export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess })
                 See the macro picture.<br />Act with precision.
               </h1>
               <p style={{ margin:'0 0 44px', fontSize:'16px', lineHeight:1.68, maxWidth:'460px', color:isDark?'rgba(255,255,255,0.46)':'#5a6a82', fontWeight:400 }}>
-                Turn economic data into structured trade context � with AI interpretation built into your workflow.
+                Turn economic data into structured trade context — with AI interpretation built into your workflow.
               </p>
 
               {/* Product calendar preview */}
@@ -329,9 +329,9 @@ export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess })
                 {/* Calendar rows */}
                 {[
                   { date:'Mar 28', day:'Fri', name:'Core PCE Price Index',     impact:'high',   expect:'2.7%',  prev:'2.8%',  ai:true  },
-                  { date:'Apr 02', day:'Wed', name:'FOMC Meeting Minutes',      impact:'high',   expect:'�',     prev:'�',     ai:true  },
+                  { date:'Apr 02', day:'Wed', name:'FOMC Meeting Minutes',      impact:'high',   expect:'—',     prev:'—',     ai:true  },
                   { date:'Apr 04', day:'Fri', name:'Non-Farm Payrolls',         impact:'high',   expect:'215K',  prev:'272K',  ai:false },
-                  { date:'Apr 10', day:'Thu', name:'CPI � Consumer Price Index', impact:'medium', expect:'3.1%',  prev:'3.2%',  ai:true  },
+                  { date:'Apr 10', day:'Thu', name:'CPI – Consumer Price Index', impact:'medium', expect:'3.1%',  prev:'3.2%',  ai:true  },
                 ].map((ev, i) => (
                   <div key={i} style={{ display:'flex', alignItems:'center', padding:'10px 16px', gap:'12px',
                     borderTop: i===0?'none':(isDark?'1px solid rgba(255,255,255,0.038)':'1px solid rgba(203,213,225,0.44)'),
@@ -396,7 +396,7 @@ export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess })
               Account created!
             </h2>
             <p style={{ fontSize:'14px', color: isDark?'rgba(255,255,255,0.48)':'#64748b', marginBottom:0 }}>
-              Redirecting you to your dashboard�
+              Redirecting you to your dashboard...
             </p>
             <div style={{ width:'36px', height:'2.5px', background: isDark?'linear-gradient(90deg,#CA8A04,#FBBF24)':'linear-gradient(90deg,#18181b,#52525b)', borderRadius:'2px', margin:'18px auto 0', animation:'blobDrift2 1.6s ease-in-out infinite' }} />
           </div>
@@ -498,7 +498,7 @@ export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess })
                 <path fill="#4A90E2" d="M19.834 21c2.195-2.048 3.62-5.096 3.62-9 0-.71-.109-1.473-.272-2.182H12v4.637h6.436c-.317 1.559-1.17 2.766-2.395 3.558L19.834 21z"/>
                 <path fill="#FBBC05" d="M5.277 14.268A7.12 7.12 0 0 1 4.909 12c0-.782.125-1.533.357-2.235L1.24 6.65A11.934 11.934 0 0 0 0 12c0 1.92.445 3.73 1.237 5.335l4.04-3.067z"/>
               </svg>}
-                <span>{googleLoading ? 'Signing up�' : 'Continue with Google'}</span>
+                <span>{googleLoading ? 'Signing up...' : 'Continue with Google'}</span>
               </button>
               )}
 
@@ -593,7 +593,7 @@ export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess })
                   <div style={{ position:'relative' }}>
                     <input type={showConfirm?'text':'password'} autoComplete="new-password" value={form.confirm} required
                       onChange={e => { setField('confirm', e.target.value); setFieldErrors(fe => ({...fe, confirm:''})); }}
-                      placeholder="��������"
+                      placeholder="Re-enter password"
                       style={{ width:'100%', boxSizing:'border-box', outline:'none', fontSize:'14px', transition:'all 0.18s ease',
                         background: isDark?'rgba(255,255,255,0.044)':'rgba(255,255,255,0.84)',
                         border: fieldErrors.confirm?'1px solid rgba(239,68,68,0.55)':isDark?'1px solid rgba(255,255,255,0.088)':'1px solid rgba(148,163,184,0.42)',

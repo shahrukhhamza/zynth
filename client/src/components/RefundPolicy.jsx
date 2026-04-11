@@ -122,7 +122,7 @@ export default function RefundPolicy({ onBack }) {
             <p>To request a refund, please contact us within the eligible timeframe:</p>
             <div style={{ backgroundColor: isDark ? 'rgba(202,138,4,0.06)' : 'rgba(202,138,4,0.04)', border: `1px solid ${isDark ? 'rgba(202,138,4,0.15)' : 'rgba(202,138,4,0.2)'}`, borderRadius: 8, padding: '16px 20px', display: 'flex', flexDirection: 'column', gap: 6 }}>
               <p style={{ fontSize: 13, fontWeight: 700, color: '#FBBF24' }}>Contact Zynth Support</p>
-              <p style={{ fontSize: 13, color: isDark ? '#9ca3af' : '#4b5563' }}>Email: <a href="mailto:getzynth@gmail.com" style={{ color: '#FBBF24', textDecoration: 'none' }}>getzynth@gmail.com</a></p>
+              <p style={{ fontSize: 13, color: isDark ? '#9ca3af' : '#4b5563' }}>Email: <a href="mailto:support@zynth.com" style={{ color: '#FBBF24', textDecoration: 'none' }}>support@zynth.com</a></p>
               <p style={{ fontSize: 13, color: isDark ? '#9ca3af' : '#4b5563' }}>Subject line: <em style={{ color: isDark ? '#d1d5db' : '#374151' }}>Refund Request — [Your Account Email]</em></p>
             </div>
             <p>Please include in your message:</p>
@@ -138,7 +138,7 @@ export default function RefundPolicy({ onBack }) {
             <p>You can cancel your Zynth subscription at any time:</p>
             <ul style={{ paddingLeft: 20, display: 'flex', flexDirection: 'column', gap: 6 }}>
               <li>Go to <strong style={{ color: '#e2e8f0' }}>Settings</strong> inside the Zynth platform and select <strong style={{ color: '#e2e8f0' }}>Manage Subscription</strong></li>
-              <li>Alternatively, email <a href="mailto:getzynth@gmail.com" style={{ color: '#FBBF24', textDecoration: 'none' }}>getzynth@gmail.com</a> with your cancellation request</li>
+              <li>Alternatively, email <a href="mailto:support@zynth.com" style={{ color: '#FBBF24', textDecoration: 'none' }}>support@zynth.com</a> with your cancellation request</li>
             </ul>
             <p>After cancellation, you will retain access to your paid plan features until the end of your current billing period. Your account will then automatically revert to the Free plan. Your trade journal data is preserved and accessible on the Free plan.</p>
           </Section>
@@ -162,9 +162,8 @@ export default function RefundPolicy({ onBack }) {
             <p>For all refund, billing, or cancellation queries:</p>
             <div style={{ backgroundColor: isDark ? 'rgba(202,138,4,0.06)' : 'rgba(202,138,4,0.04)', border: `1px solid ${isDark ? 'rgba(202,138,4,0.15)' : 'rgba(202,138,4,0.2)'}`, borderRadius: 8, padding: '16px 20px', marginTop: 6, display: 'flex', flexDirection: 'column', gap: 6 }}>
               <p style={{ fontSize: 14, color: '#FBBF24', fontWeight: 700 }}>Zynth Billing Support</p>
-              <p style={{ fontSize: 13, color: isDark ? '#9ca3af' : '#4b5563' }}>Email: <a href="mailto:getzynth@gmail.com" style={{ color: '#FBBF24', textDecoration: 'none' }}>getzynth@gmail.com</a></p>
-              <p style={{ fontSize: 13, color: isDark ? '#9ca3af' : '#4b5563' }}>Address: Zynth, Azeem Town, Sihala Street 2, Islamabad, Pakistan</p>
-              <p style={{ fontSize: 13, color: isDark ? '#9ca3af' : '#4b5563' }}>Phone: <a href="tel:+923175516692" style={{ color: '#FBBF24', textDecoration: 'none' }}>+92 317 5516692</a></p>
+              <p style={{ fontSize: 13, color: isDark ? '#9ca3af' : '#4b5563' }}>Email: <a href="mailto:support@zynth.com" style={{ color: '#FBBF24', textDecoration: 'none' }}>support@zynth.com</a></p>
+              <p style={{ fontSize: 13, color: isDark ? '#9ca3af' : '#4b5563' }}>Support is available through the in-app Help Center.</p>
               <p style={{ fontSize: 13, color: isDark ? '#9ca3af' : '#4b5563' }}>Response time: Within 1–2 business days</p>
             </div>
           </Section>

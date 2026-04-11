@@ -39,7 +39,7 @@ function SectionLabel({ text, isDark }) {
   return (
     <p
       className="text-[11px] font-semibold tracking-[0.2em] uppercase mb-4"
-      style={{ color: isDark ? '#52525b' : '#a1a1aa' }}
+      style={{ color: isDark ? '#71717a' : '#a1a1aa' }}
     >
       {text}
     </p>
@@ -70,7 +70,7 @@ function ProblemSection({ isDark }) {
   ];
 
   return (
-    <section className="py-28 px-6">
+    <section className="py-24 px-6">
       <div className="max-w-6xl mx-auto">
         <Reveal className="text-center mb-16">
           <SectionLabel text="The Problem" isDark={isDark} />
@@ -182,7 +182,7 @@ function FeaturesGrid({ isDark, onGetStarted }) {
   const BARS = [30, 55, 40, 70, 48, 85, 62, 45, 72, 58, 90, 65];
 
   return (
-    <section id="features" className="py-28 px-6">
+    <section id="features" className="py-24 px-6">
       <div className="max-w-6xl mx-auto">
         <Reveal className="text-center mb-14">
           <SectionLabel text="Features" isDark={isDark} />
@@ -422,7 +422,7 @@ const TESTIMONIALS = [
 
 function TestimonialsGrid({ isDark }) {
   return (
-    <section className="py-28 px-6">
+    <section className="py-24 px-6">
       <div className="max-w-6xl mx-auto">
         <Reveal className="text-center mb-14">
           <SectionLabel text="Testimonials" isDark={isDark} />
@@ -511,7 +511,7 @@ function LandingPricing({ isDark, onGetStarted }) {
   const pro = getPlanDisplay('pro', cycle);
 
   const eliteFeatures = [
-    'Unlimited AI insights � no daily limits',
+    'Unlimited AI insights - no daily limits',
     'Premium behavioral breakdowns & reports',
     'Advanced analytics dashboard',
     'Context intelligence & awareness scoring',
@@ -527,7 +527,7 @@ function LandingPricing({ isDark, onGetStarted }) {
   ];
 
   return (
-    <section id="pricing" className="relative py-28 px-6 overflow-hidden">
+    <section id="pricing" className="relative py-24 px-6 overflow-hidden">
       <div className="absolute inset-0 pointer-events-none">
         <div style={{
           position: 'absolute', top: '0', left: '50%', transform: 'translateX(-50%)',
@@ -959,7 +959,7 @@ function FAQSection({ isDark }) {
   const [openFaq, setOpenFaq] = useState(null);
 
   return (
-    <section id="faq" className="py-28 px-6 relative overflow-hidden">
+    <section id="faq" className="py-24 px-6 relative overflow-hidden">
       <div className="max-w-5xl mx-auto">
         <Reveal className="text-center mb-16">
           <SectionLabel text="Support" isDark={isDark} />
@@ -1055,7 +1055,7 @@ function FAQSection({ isDark }) {
 // --- Final CTA ----------------------------------------------------------------
 function FinalCTA({ isDark, onGetStarted }) {
   return (
-    <section className="py-28 px-6 relative overflow-hidden">
+    <section className="py-24 px-6 relative overflow-hidden">
       {/* Centered orange glow - breathing */}
       {isDark && (
         <>
@@ -1066,31 +1066,6 @@ function FinalCTA({ isDark, onGetStarted }) {
             filter: 'blur(50px)',
             animation: 'hero-orb-breathe 5s ease-in-out infinite',
           }} />
-          {/* Floating particles */}
-          {[...Array(6)].map((_, i) => (
-            <motion.div
-              key={i}
-              className="absolute pointer-events-none rounded-full"
-              style={{
-                width: 3 + Math.random() * 4,
-                height: 3 + Math.random() * 4,
-                background: `rgba(255,${80 + i * 15},0,${0.15 + Math.random() * 0.15})`,
-                left: `${15 + i * 12}%`,
-                top: `${20 + (i % 3) * 25}%`,
-              }}
-              animate={{
-                y: [0, -30 - Math.random() * 20, 0],
-                x: [0, (i % 2 === 0 ? 10 : -10), 0],
-                opacity: [0.3, 0.7, 0.3],
-              }}
-              transition={{
-                duration: 4 + Math.random() * 3,
-                repeat: Infinity,
-                ease: 'easeInOut',
-                delay: i * 0.5,
-              }}
-            />
-          ))}
         </>
       )}
       <Reveal className="relative z-10 max-w-3xl mx-auto text-center">
@@ -1145,7 +1120,6 @@ function FinalCTA({ isDark, onGetStarted }) {
             style={{
               background: 'linear-gradient(135deg, #CA8A04, #FBBF24)',
               color: '#ffffff',
-              animation: isDark ? 'premium-pulse-ring 2s ease-out infinite' : 'none',
               boxShadow: isDark
                 ? '0 4px 28px rgba(202,138,4,0.4)'
                 : '0 4px 24px rgba(202,138,4,0.35)',
@@ -1475,7 +1449,6 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
                 style={{
                   background: 'linear-gradient(135deg, #CA8A04, #FBBF24)',
                   color: '#ffffff',
-                  animation: isDark ? 'premium-pulse-ring 2.5s ease-out infinite' : 'none',
                   boxShadow: isDark
                     ? '0 4px 18px rgba(202,138,4,0.35)'
                     : '0 4px 16px rgba(202,138,4,0.3)',
@@ -1675,16 +1648,21 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
                 Product
               </p>
               <ul className="space-y-2.5">
-                {['Features', 'Pricing', 'FAQ', 'Changelog'].map(item => (
-                  <li key={item}>
+                {[
+                  { label: 'Features', href: '#features' },
+                  { label: 'Pricing', href: '#pricing' },
+                  { label: 'FAQ', href: '#faq' },
+                  { label: 'Changelog', href: '#' },
+                ].map(item => (
+                  <li key={item.label}>
                     <a
-                      href={item === 'Pricing' ? '/pricing' : '#'}
+                      href={item.href}
                       className="text-[13px] transition-colors"
                       style={{ color: isDark ? '#71717a' : '#52525b' }}
                       onMouseEnter={e => e.currentTarget.style.color = isDark ? '#f4f4f5' : '#18181b'}
                       onMouseLeave={e => e.currentTarget.style.color = isDark ? '#71717a' : '#52525b'}
                     >
-                      {item}
+                      {item.label}
                     </a>
                   </li>
                 ))}
@@ -1733,13 +1711,13 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
               <ul className="space-y-2.5">
                 <li>
                   <a
-                    href="mailto:getzynth@gmail.com"
+                    href="mailto:support@zynth.com"
                     className="text-[13px] transition-colors"
                     style={{ color: isDark ? '#71717a' : '#52525b' }}
                     onMouseEnter={e => e.currentTarget.style.color = isDark ? '#f4f4f5' : '#18181b'}
                     onMouseLeave={e => e.currentTarget.style.color = isDark ? '#71717a' : '#52525b'}
                   >
-                    getzynth@gmail.com
+                    support@zynth.com
                   </a>
                 </li>
               </ul>
@@ -1753,14 +1731,11 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
           >
             <div className="flex flex-col gap-1.5">
               <p className="text-[11px]" style={{ color: isDark ? '#52525b' : '#a1a1aa' }}>
-                � 2026 Zynth. All rights reserved.
+                Copyright 2026 Zynth. All rights reserved.
               </p>
               <p className="text-[11px]" style={{ color: isDark ? '#2d3748' : '#94a3b8' }}>
-                Azeem Town, Sihala Street 2, Islamabad, Pakistan
-                {' � '}
-                <a href="tel:+923175516692" style={{ color: 'inherit', textDecoration: 'none' }}>+92 317 5516692</a>
-                {' � '}
-                <a href="mailto:getzynth@gmail.com" style={{ color: 'inherit', textDecoration: 'none' }}>getzynth@gmail.com</a>
+                Support available via Help Center and{' '}
+                <a href="mailto:support@zynth.com" style={{ color: 'inherit', textDecoration: 'none' }}>support@zynth.com</a>
               </p>
             </div>
             <div className="flex flex-wrap gap-5">
@@ -1769,7 +1744,7 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
                 { href: '/terms', label: 'Terms' },
                 { href: '/refund', label: 'Refund' },
                 { href: '/service-policy', label: 'Service Policy' },
-                { href: 'mailto:getzynth@gmail.com', label: 'Contact' },
+                { href: 'mailto:support@zynth.com', label: 'Contact' },
               ].map(({ href, label }) => (
                 <a
                   key={label}

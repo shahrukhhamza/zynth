@@ -348,7 +348,7 @@ export default function PaymentOptionsModal({ plan: initialPlan = DEFAULT_SELECT
           </div>
 
           <p style={{ fontSize: 14, color: theme.muted, textAlign: 'center', marginTop: -4 }}>
-            Having trouble with payment? Reach out at getzynth@gmail.com — we&apos;ll help you get access quickly.
+            Having trouble with payment? Reach out at support@zynth.com — we&apos;ll help you get access quickly.
           </p>
 
           {/* Note field */}

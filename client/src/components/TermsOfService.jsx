@@ -269,7 +269,7 @@ export default function TermsOfService({ onBack }) {
               <li style={{ marginBottom: 6 }}>Abuse of the refund policy (e.g., repeated usage and refund requests) may result in denial of future refunds.</li>
             </ul>
 
-            <p>To request a refund or cancel your subscription, contact: <a href="mailto:getzynth@gmail.com" style={{ color: '#FBBF24', textDecoration: 'none' }} onMouseEnter={e => (e.currentTarget.style.textDecoration = 'underline')} onMouseLeave={e => (e.currentTarget.style.textDecoration = 'none')}>getzynth@gmail.com</a></p>
+            <p>To request a refund or cancel your subscription, contact: <a href="mailto:support@zynth.com" style={{ color: '#FBBF24', textDecoration: 'none' }} onMouseEnter={e => (e.currentTarget.style.textDecoration = 'underline')} onMouseLeave={e => (e.currentTarget.style.textDecoration = 'none')}>support@zynth.com</a></p>
 
             <p style={{ fontWeight: 700, marginTop: 14 }}>Cancellation</p>
             <ul style={{ paddingLeft: 20, margin: '8px 0' }}>
@@ -298,22 +298,15 @@ export default function TermsOfService({ onBack }) {
               <p style={{ fontSize: 13, color: '#9ca3af' }}>
                 Email:{' '}
                 <a
-                  href="mailto:getzynth@gmail.com"
+                  href="mailto:support@zynth.com"
                   style={{ color: '#FBBF24', textDecoration: 'none' }}
                   onMouseEnter={e => (e.currentTarget.style.textDecoration = 'underline')}
                   onMouseLeave={e => (e.currentTarget.style.textDecoration = 'none')}
                 >
-                  getzynth@gmail.com
+                  support@zynth.com
                 </a>
               </p>
-              <p style={{ fontSize: 13, color: '#9ca3af' }}>Address: Zynth, Azeem Town, Sihala Street 2, Islamabad, Pakistan</p>
-              <p style={{ fontSize: 13, color: '#9ca3af' }}>
-                Phone:{' '}
-                <a href="tel:+923175516692" style={{ color: '#FBBF24', textDecoration: 'none' }}
-                  onMouseEnter={e => (e.currentTarget.style.textDecoration = 'underline')}
-                  onMouseLeave={e => (e.currentTarget.style.textDecoration = 'none')}
-                >+92 317 5516692</a>
-              </p>
+              <p style={{ fontSize: 13, color: '#9ca3af' }}>Support is available through the in-app Help Center.</p>
             </div>
           </Section>
 

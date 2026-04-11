@@ -110,7 +110,7 @@ export async function sendPasswordResetEmail(toEmail, resetLink, userName) {
 </html>`;
 
   const body = {
-    sender:      { name: 'Zynth', email: 'getzynth@gmail.com' },
+    sender:      { name: 'Zynth', email: 'support@zynth.com' },
     to:          [{ email: toEmail }],
     subject:     'Reset your Zynth password',
     htmlContent: html,
