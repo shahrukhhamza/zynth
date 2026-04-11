@@ -54,7 +54,9 @@ function AnimatedStat({ stat, index, isDark }) {
       initial={{ opacity: 0, y: 8 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.45, delay: index * 0.1, ease: 'easeOut' }}
-      className={index > 0 ? 'sm:border-l sm:pl-6' : 'sm:pr-6'}
+      className={[
+        index > 0 ? 'border-t pt-4 sm:border-t-0 sm:border-l sm:pt-0 sm:pl-6' : 'sm:pr-6',
+      ].join(' ')}
       style={{ borderColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(15,23,42,0.09)' }}
     >
       <p className="text-[11px] uppercase tracking-[0.16em]" style={{ color: isDark ? '#9ca3af' : '#64748b' }}>{stat.label}</p>
@@ -86,6 +88,73 @@ function FloatingChip({ icon: Icon, text, delay = 0, isDark }) {
     >
       <Icon size={13} className={isDark ? 'text-amber-300' : 'text-amber-600'} />
       {text}
+    </motion.div>
+  );
+}
+
+function MobileDashboardSnapshot({ isDark }) {
+  const toneMap = {
+    positive: isDark ? '#34d399' : '#059669',
+    accent: isDark ? '#fcd34d' : '#b45309',
+    neutral: isDark ? '#e4e4e7' : '#0f172a',
+  };
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, delay: 0.42 }}
+      className="mt-6 rounded-2xl p-4 lg:hidden"
+      style={{
+        border: `1px solid ${isDark ? 'rgba(255,255,255,0.1)' : 'rgba(15,23,42,0.09)'}`,
+        background: isDark
+          ? 'linear-gradient(180deg, rgba(20,20,23,0.96), rgba(12,12,15,0.98))'
+          : 'rgba(255,255,255,0.95)',
+        boxShadow: isDark
+          ? '0 8px 28px rgba(0,0,0,0.38)'
+          : '0 6px 20px rgba(15,23,42,0.08)',
+      }}
+    >
+      <div className="mb-3 flex items-center justify-between">
+        <p className="text-sm font-semibold" style={{ color: isDark ? '#f4f4f5' : '#0f172a' }}>Performance Overview</p>
+        <span
+          className="flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider"
+          style={{
+            border: `1px solid ${isDark ? 'rgba(16,185,129,0.35)' : 'rgba(5,150,105,0.25)'}`,
+            background: isDark ? 'rgba(16,185,129,0.12)' : 'rgba(16,185,129,0.1)',
+            color: isDark ? '#6ee7b7' : '#047857',
+          }}
+        >
+          <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+          Live
+        </span>
+      </div>
+      <div className="grid grid-cols-2 gap-2">
+        {DASHBOARD_STATS.map((item) => (
+          <div
+            key={item.label}
+            className="rounded-xl p-3"
+            style={{
+              border: `1px solid ${isDark ? 'rgba(255,255,255,0.06)' : 'rgba(15,23,42,0.08)'}`,
+              background: isDark ? 'rgba(255,255,255,0.025)' : 'rgba(255,255,255,0.88)',
+            }}
+          >
+            <p className="text-[10px] uppercase tracking-wider" style={{ color: isDark ? '#9ca3af' : '#64748b' }}>{item.label}</p>
+            <p className="mt-1 text-base font-bold tracking-tight" style={{ color: toneMap[item.tone] }}>{item.value}</p>
+          </div>
+        ))}
+      </div>
+      <div
+        className="mt-2.5 flex items-start gap-2 rounded-lg p-2.5"
+        style={{
+          border: `1px solid ${isDark ? 'rgba(252,211,77,0.15)' : 'rgba(202,138,4,0.15)'}`,
+          background: isDark ? 'rgba(251,191,36,0.05)' : 'rgba(254,249,195,0.35)',
+        }}
+      >
+        <Sparkles size={11} className={`mt-0.5 flex-shrink-0 ${isDark ? 'text-amber-300' : 'text-amber-600'}`} />
+        <p className="text-[11px] leading-snug" style={{ color: isDark ? '#d4d4d8' : '#78350f' }}>
+          <span className="font-semibold">AI:</span>{' '}You exit winners 38% too early. Best setups cluster Mon 9–11am.
+        </p>
+      </div>
     </motion.div>
   );
 }
@@ -251,10 +320,10 @@ export default function Hero({ spotsLeft, onGetStarted, onSignIn }) {
             ))}
           </ul>
 
-          <div className="mt-8 flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:gap-4">
+          <div className="mt-8 flex flex-col items-stretch gap-3 sm:flex-row sm:items-center sm:gap-4">
             <button
               onClick={onGetStarted}
-              className="group inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-amber-500 to-yellow-400 px-6 py-3.5 text-sm font-bold tracking-wide text-black shadow-[0_8px_24px_rgba(202,138,4,0.28)] transition-all hover:scale-[1.01] hover:shadow-[0_12px_30px_rgba(202,138,4,0.34)] focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
+              className="group inline-flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-amber-500 to-yellow-400 px-6 py-3.5 text-sm font-bold tracking-wide text-black shadow-[0_8px_24px_rgba(202,138,4,0.28)] transition-all hover:scale-[1.01] hover:shadow-[0_12px_30px_rgba(202,138,4,0.34)] focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950 sm:w-auto"
             >
               Reveal My Trading Edge
               <ArrowRight size={16} className="transition-transform duration-200 group-hover:translate-x-0.5" />
@@ -263,9 +332,9 @@ export default function Hero({ spotsLeft, onGetStarted, onSignIn }) {
             {onSignIn && (
               <button
                 onClick={onSignIn}
-                className={isDark
+                className={`w-full text-center sm:w-auto ${isDark
                   ? 'rounded-full border border-zinc-700/70 bg-zinc-900/70 px-5 py-3 text-sm font-semibold text-zinc-200 transition-colors hover:border-zinc-500 hover:text-zinc-50'
-                  : 'rounded-full border border-zinc-300 bg-white px-5 py-3 text-sm font-semibold text-zinc-700 transition-colors hover:border-zinc-400 hover:text-zinc-900'}
+                  : 'rounded-full border border-zinc-300 bg-white px-5 py-3 text-sm font-semibold text-zinc-700 transition-colors hover:border-zinc-400 hover:text-zinc-900'}`}
               >
                 I Already Have an Account
               </button>
@@ -276,9 +345,11 @@ export default function Hero({ spotsLeft, onGetStarted, onSignIn }) {
             No credit card required
             {typeof spotsLeft === 'number' ? ` · ${Math.max(0, spotsLeft)} onboarding spots left this week` : ''}
           </p>
+
+          <MobileDashboardSnapshot isDark={isDark} />
         </motion.div>
 
-        <div>
+        <div className="hidden lg:block">
           <div className="mb-3 hidden justify-end gap-2 lg:flex">
             <FloatingChip icon={ShieldAlert} text="Risk Alerts" delay={0.3} isDark={isDark} />
             <FloatingChip icon={Bot} text="AI Analysis" delay={0.45} isDark={isDark} />
