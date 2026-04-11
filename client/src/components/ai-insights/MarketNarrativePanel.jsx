@@ -7,15 +7,15 @@ function biasColor(bias) {
 }
 
 function categoryBadge(cat) {
-  if (cat === 'primary') return 'text-amber-300 border-amber-500/30 bg-amber-500/10';
-  if (cat === 'secondary') return 'text-yellow-300 border-yellow-500/30 bg-yellow-500/10';
-  return 'text-zinc-400 border-zinc-500/20 bg-zinc-500/[0.06]';
+  if (cat === 'primary') return 'text-amber-700 dark:text-amber-300 border-amber-500/30 bg-amber-500/10';
+  if (cat === 'secondary') return 'text-yellow-700 dark:text-yellow-300 border-yellow-500/30 bg-yellow-500/10';
+  return 'text-zinc-500 dark:text-zinc-400 border-zinc-500/20 bg-zinc-500/[0.06]';
 }
 
 function confColor(level) {
   if (level === 'High') return 'text-emerald-400';
-  if (level === 'Medium') return 'text-amber-300';
-  return 'text-zinc-400';
+  if (level === 'Medium') return 'text-amber-600 dark:text-amber-300';
+  return 'text-zinc-500 dark:text-zinc-400';
 }
 
 export default function MarketNarrativePanel({ narrative }) {
@@ -61,7 +61,7 @@ export default function MarketNarrativePanel({ narrative }) {
               <div className="flex items-center gap-3 mt-2">
                 <span className={`text-[10px] font-semibold ${confColor(maxConfidence)}`}>Confidence: {maxConfidence}</span>
                 {regime && regime !== 'NEUTRAL' && (
-                  <span className="text-[10px] text-purple-300">Regime: {regime.replace(/_/g, ' ')}</span>
+                  <span className="text-[10px] text-purple-700 dark:text-purple-300">Regime: {regime.replace(/_/g, ' ')}</span>
                 )}
               </div>
             </div>
@@ -91,7 +91,7 @@ export default function MarketNarrativePanel({ narrative }) {
                         </span>
                       )}
                     </div>
-                    <span className="text-[10px] font-mono text-yellow-300">{d.contribution > 0 ? '+' : ''}{d.contribution?.toFixed(2)}</span>
+                    <span className="text-[10px] font-mono text-yellow-700 dark:text-yellow-300">{d.contribution > 0 ? '+' : ''}{d.contribution?.toFixed(2)}</span>
                   </div>
                   <p className="text-[11px] leading-relaxed text-zinc-600 dark:text-zinc-300 ml-5">{d.explanation}</p>
                 </div>

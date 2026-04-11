@@ -32,8 +32,8 @@ function fmtDate(iso) {
 
 function validLabel(v) {
   if (!v) return { label: 'Unchecked', cls: 'text-zinc-400 border-zinc-500/20 bg-zinc-500/[0.06]' };
-  if (v.valid) return { label: 'Valid', cls: 'text-emerald-300 border-emerald-500/20 bg-emerald-500/[0.06]' };
-  return { label: 'Partial', cls: 'text-amber-300 border-amber-500/20 bg-amber-500/[0.06]' };
+  if (v.valid) return { label: 'Valid', cls: 'text-emerald-700 dark:text-emerald-300 border-emerald-500/20 bg-emerald-500/[0.06]' };
+  return { label: 'Partial', cls: 'text-amber-700 dark:text-amber-300 border-amber-500/20 bg-amber-500/[0.06]' };
 }
 
 export default function KeyDrivers({ drivers, macroScore }) {
@@ -70,7 +70,7 @@ export default function KeyDrivers({ drivers, macroScore }) {
                   <p className="truncate text-[13px] font-semibold text-zinc-900 dark:text-white">{d.name}</p>
                   <p className="text-[10px] tabular-nums text-zinc-400">{d.value ?? '\u2014'}</p>
                 </div>
-                <span className="text-right text-[11px] tabular-nums text-yellow-300">{Number.isFinite(d.contribution) ? `${d.contribution > 0 ? '+' : ''}${d.contribution}` : '\u2013'}</span>
+                <span className="text-right text-[11px] tabular-nums text-yellow-700 dark:text-yellow-300">{Number.isFinite(d.contribution) ? `${d.contribution > 0 ? '+' : ''}${d.contribution}` : '\u2013'}</span>
                 <span className={`text-right text-[11px] font-semibold ${biasColor(d.bias)}`}>{d.bias || 'Neutral'}</span>
                 <span className={`text-center text-[10px] ${fresh.cls}`} title={fresh.title}>{'\u2022'}</span>
                 <span className={`text-center text-[11px] ${trend.cls}`}>{trend.sym}</span>
@@ -81,9 +81,9 @@ export default function KeyDrivers({ drivers, macroScore }) {
               <div className="px-5 pb-4 space-y-2.5">
                 <div className="flex flex-wrap gap-1.5 text-[9px] uppercase tracking-[0.1em]">
                   <span className={`rounded-md border px-1.5 py-0.5 ${vl.cls}`}>{vl.label}</span>
-                  <span className="rounded-md border border-yellow-500/15 bg-yellow-500/[0.06] px-1.5 py-0.5 text-yellow-200">{d.dataSource || 'FRED API'}</span>
-                  <span className="rounded-md border border-violet-500/15 bg-violet-500/[0.06] px-1.5 py-0.5 text-violet-200">Reliability: {d.sourceReliability || 'medium'}</span>
-                  <span className="rounded-md border border-zinc-500/15 bg-zinc-500/[0.06] px-1.5 py-0.5 text-zinc-300">Weight: {d.weight || BASELINE_WEIGHTS[d.code] || '\u2014'}</span>
+                  <span className="rounded-md border border-yellow-500/15 bg-yellow-500/[0.06] px-1.5 py-0.5 text-yellow-700 dark:text-yellow-200">{d.dataSource || 'FRED API'}</span>
+                  <span className="rounded-md border border-violet-500/15 bg-violet-500/[0.06] px-1.5 py-0.5 text-violet-700 dark:text-violet-200">Reliability: {d.sourceReliability || 'medium'}</span>
+                  <span className="rounded-md border border-zinc-500/15 bg-zinc-500/[0.06] px-1.5 py-0.5 text-zinc-600 dark:text-zinc-300">Weight: {d.weight || BASELINE_WEIGHTS[d.code] || '\u2014'}</span>
                 </div>
 
                 <div className="flex gap-4 text-[10px] text-zinc-400">

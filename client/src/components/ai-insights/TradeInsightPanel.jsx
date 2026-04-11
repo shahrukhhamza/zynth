@@ -1,15 +1,15 @@
 import { Compass, ShieldAlert, Search, PauseCircle } from 'lucide-react';
 
 function actionStyle(action) {
-  if (action === 'No Trade') return { icon: ShieldAlert, text: 'text-red-300', bg: 'bg-red-500/8', border: 'border-red-500/20', badge: 'bg-red-500/15 text-red-300 border-red-500/25' };
-  if (action === 'Wait') return { icon: PauseCircle, text: 'text-amber-300', bg: 'bg-amber-500/8', border: 'border-amber-500/20', badge: 'bg-amber-500/15 text-amber-300 border-amber-500/25' };
-  return { icon: Search, text: 'text-emerald-300', bg: 'bg-emerald-500/8', border: 'border-emerald-500/20', badge: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/25' };
+  if (action === 'No Trade') return { icon: ShieldAlert, text: 'text-red-700 dark:text-red-300', bg: 'bg-red-500/8', border: 'border-red-500/20', badge: 'bg-red-500/15 text-red-700 dark:text-red-300 border-red-500/25' };
+  if (action === 'Wait') return { icon: PauseCircle, text: 'text-amber-700 dark:text-amber-300', bg: 'bg-amber-500/8', border: 'border-amber-500/20', badge: 'bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/25' };
+  return { icon: Search, text: 'text-emerald-700 dark:text-emerald-300', bg: 'bg-emerald-500/8', border: 'border-emerald-500/20', badge: 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border-emerald-500/25' };
 }
 
 function biasColor(bias) {
-  if (bias === 'Bullish') return 'text-emerald-300';
-  if (bias === 'Bearish') return 'text-red-300';
-  return 'text-zinc-300';
+  if (bias === 'Bullish') return 'text-emerald-700 dark:text-emerald-300';
+  if (bias === 'Bearish') return 'text-red-700 dark:text-red-300';
+  return 'text-zinc-600 dark:text-zinc-300';
 }
 
 export default function TradeInsightPanel({ tradeInsight, tradeNarrative }) {

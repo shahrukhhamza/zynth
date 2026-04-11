@@ -75,7 +75,7 @@ export default function WhyPanel({ summary }) {
         {signal?.hasConflict && signal?.conflictExplanation && (
           <div className="flex gap-2 rounded-lg border border-amber-500/15 bg-amber-500/[0.05] px-3.5 py-2.5">
             <AlertTriangle size={12} className="mt-0.5 shrink-0 text-amber-400" />
-            <p className="text-[11px] text-amber-300 leading-relaxed">{signal.conflictExplanation}</p>
+            <p className="text-[11px] text-amber-700 dark:text-amber-300 leading-relaxed">{signal.conflictExplanation}</p>
           </div>
         )}
       </div>

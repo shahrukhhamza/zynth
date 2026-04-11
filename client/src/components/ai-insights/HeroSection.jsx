@@ -33,8 +33,8 @@ function deriveStrength(s) {
 
 function confidenceColor(level) {
   if (level === 'High') return 'text-emerald-400';
-  if (level === 'Medium') return 'text-amber-300';
-  return 'text-zinc-400';
+  if (level === 'Medium') return 'text-amber-600 dark:text-amber-300';
+  return 'text-zinc-500 dark:text-zinc-400';
 }
 
 function statusDot(status) {
@@ -111,10 +111,10 @@ export default function HeroSection({ summary, generatedAt, macroScore }) {
           <Pill label="Signal" value={`${signalStrength} \u00b7 ${signalConfidence}`} cls={confidenceColor(signalConfidence)} />
           <Pill label="Uncertainty" value={uncertainty} cls={uncertainty === 'High' ? 'text-amber-400' : uncertainty === 'Low' ? 'text-emerald-400' : 'text-zinc-600 dark:text-zinc-300'} />
           <Pill label="System" value={systemStatus} cls={systemStatus === 'OK' ? 'text-emerald-400' : systemStatus === 'Warning' ? 'text-amber-400' : 'text-red-400'} prefix={<span className={`h-1.5 w-1.5 rounded-full ${statusDot(systemStatus)}`} />} />
-          <Pill label="Regime" value={regime.replace(/_/g, ' ')} cls="text-purple-300" sub={`${regimeConfidence}%`} />
+          <Pill label="Regime" value={regime.replace(/_/g, ' ')} cls="text-purple-700 dark:text-purple-300" sub={`${regimeConfidence}%`} />
           <div className="ml-auto hidden sm:block">
             <span className="text-[10px] text-zinc-500">
-              Quality: <span className={dataConfidence >= 70 ? 'text-emerald-400' : dataConfidence >= 55 ? 'text-amber-300' : 'text-red-400'}>{dataConfidence}%</span>
+              Quality: <span className={dataConfidence >= 70 ? 'text-emerald-600 dark:text-emerald-400' : dataConfidence >= 55 ? 'text-amber-600 dark:text-amber-300' : 'text-red-600 dark:text-red-400'}>{dataConfidence}%</span>
             </span>
           </div>
         </div>

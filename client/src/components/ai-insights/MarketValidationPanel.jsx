@@ -1,9 +1,9 @@
 import { AlertCircle, TrendingUp, TrendingDown, Zap } from 'lucide-react';
 
 function conflictColor(severity) {
-  if (severity === 'high') return { bg: 'bg-red-500/15', border: 'border-red-500/25', text: 'text-red-300' };
-  if (severity === 'moderate') return { bg: 'bg-amber-500/15', border: 'border-amber-500/25', text: 'text-amber-300' };
-  return { bg: 'bg-yellow-500/15', border: 'border-yellow-500/25', text: 'text-yellow-300' };
+  if (severity === 'high') return { bg: 'bg-red-500/15', border: 'border-red-500/25', text: 'text-red-700 dark:text-red-300' };
+  if (severity === 'moderate') return { bg: 'bg-amber-500/15', border: 'border-amber-500/25', text: 'text-amber-700 dark:text-amber-300' };
+  return { bg: 'bg-yellow-500/15', border: 'border-yellow-500/25', text: 'text-yellow-700 dark:text-yellow-300' };
 }
 
 function priceIcon(dir) {
@@ -13,9 +13,9 @@ function priceIcon(dir) {
 }
 
 function biasText(b) {
-  if (b === 'Bullish') return 'text-emerald-300';
-  if (b === 'Bearish') return 'text-red-300';
-  return 'text-zinc-300';
+  if (b === 'Bullish') return 'text-emerald-700 dark:text-emerald-300';
+  if (b === 'Bearish') return 'text-red-700 dark:text-red-300';
+  return 'text-zinc-600 dark:text-zinc-300';
 }
 
 export default function MarketValidationPanel({ marketValidation, macroScore }) {
@@ -48,7 +48,7 @@ export default function MarketValidationPanel({ marketValidation, macroScore }) 
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-1.5 rounded-lg bg-zinc-100 dark:bg-white/[0.03] px-2.5 py-1.5">
             {priceIcon(priceDirection)}
-            <span className={`text-[11px] font-semibold ${priceDirection === 'UP' ? 'text-emerald-300' : priceDirection === 'DOWN' ? 'text-red-300' : 'text-zinc-300'}`}>Price {priceDirection}</span>
+            <span className={`text-[11px] font-semibold ${priceDirection === 'UP' ? 'text-emerald-700 dark:text-emerald-300' : priceDirection === 'DOWN' ? 'text-red-700 dark:text-red-300' : 'text-zinc-600 dark:text-zinc-300'}`}>Price {priceDirection}</span>
           </div>
           <span className="text-[11px] text-zinc-500">vs</span>
           <div className={`flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 ${macroBias === 'Bullish' ? 'bg-emerald-500/10' : macroBias === 'Bearish' ? 'bg-red-500/10' : 'bg-zinc-500/10'}`}>
@@ -62,15 +62,15 @@ export default function MarketValidationPanel({ marketValidation, macroScore }) 
         </div>
 
         {/* Message */}
-        <div className={`rounded-lg border px-3.5 py-2.5 text-[11px] leading-relaxed ${conflict ? 'border-amber-500/20 bg-amber-500/[0.05] text-amber-100' : 'border-emerald-500/20 bg-emerald-500/[0.05] text-emerald-100'}`}>
+        <div className={`rounded-lg border px-3.5 py-2.5 text-[11px] leading-relaxed ${conflict ? 'border-amber-500/20 bg-amber-500/[0.05] text-amber-800 dark:text-amber-100' : 'border-emerald-500/20 bg-emerald-500/[0.05] text-emerald-800 dark:text-emerald-100'}`}>
           {message}
         </div>
 
         {/* Data context */}
         {macroScore && (
           <div className="flex items-center gap-4 text-[10px] text-zinc-400">
-            <span>Score: <span className={macroScore.score > 0 ? 'text-emerald-300' : macroScore.score < 0 ? 'text-red-300' : 'text-zinc-300'}>{macroScore.score > 0 ? '+' : ''}{macroScore.score}</span></span>
-            <span>Quality: <span className={macroScore.dataConfidence >= 70 ? 'text-emerald-300' : macroScore.dataConfidence >= 55 ? 'text-amber-300' : 'text-red-300'}>{macroScore.dataConfidence ?? 45}%</span></span>
+            <span>Score: <span className={macroScore.score > 0 ? 'text-emerald-700 dark:text-emerald-300' : macroScore.score < 0 ? 'text-red-700 dark:text-red-300' : 'text-zinc-600 dark:text-zinc-300'}>{macroScore.score > 0 ? '+' : ''}{macroScore.score}</span></span>
+            <span>Quality: <span className={macroScore.dataConfidence >= 70 ? 'text-emerald-700 dark:text-emerald-300' : macroScore.dataConfidence >= 55 ? 'text-amber-700 dark:text-amber-300' : 'text-red-700 dark:text-red-300'}>{macroScore.dataConfidence ?? 45}%</span></span>
             <span>Signal: {macroScore.signalStrength || 'Moderate'} &#183; {macroScore.signalConfidence || 'Medium'}</span>
           </div>
         )}

@@ -13,20 +13,20 @@ function relativeTime(iso) {
 }
 
 function qualityColor(n) {
-  if (n >= 70) return { bg: 'bg-emerald-500', text: 'text-emerald-400', label: 'Good' };
-  if (n >= 55) return { bg: 'bg-amber-400', text: 'text-amber-300', label: 'Fair' };
-  return { bg: 'bg-red-500', text: 'text-red-400', label: 'Low' };
+  if (n >= 70) return { bg: 'bg-emerald-500', text: 'text-emerald-600 dark:text-emerald-400', label: 'Good' };
+  if (n >= 55) return { bg: 'bg-amber-400', text: 'text-amber-600 dark:text-amber-300', label: 'Fair' };
+  return { bg: 'bg-red-500', text: 'text-red-600 dark:text-red-400', label: 'Low' };
 }
 
 function signalColor(level) {
-  if (level === 'High') return 'text-emerald-400 border-emerald-500/20 bg-emerald-500/10';
-  if (level === 'Medium') return 'text-amber-300 border-amber-500/20 bg-amber-500/10';
-  return 'text-zinc-400 border-zinc-500/20 bg-zinc-500/10';
+  if (level === 'High') return 'text-emerald-700 dark:text-emerald-400 border-emerald-500/20 bg-emerald-500/10';
+  if (level === 'Medium') return 'text-amber-700 dark:text-amber-300 border-amber-500/20 bg-amber-500/10';
+  return 'text-zinc-600 dark:text-zinc-400 border-zinc-500/20 bg-zinc-500/10';
 }
 
 function statusInfo(s) {
   if (s === 'OK') return { dot: 'bg-emerald-500', text: 'text-emerald-400', label: 'OK' };
-  if (s === 'Warning') return { dot: 'bg-amber-400', text: 'text-amber-300', label: 'Warning' };
+  if (s === 'Warning') return { dot: 'bg-amber-400', text: 'text-amber-700 dark:text-amber-300', label: 'Warning' };
   return { dot: 'bg-red-500', text: 'text-red-400', label: 'Degraded' };
 }
 
@@ -101,11 +101,11 @@ export default function DataTrustPanel({ dataInfo, macroScore }) {
             <div className="rounded-xl border border-purple-500/15 bg-purple-500/[0.04] px-3.5 py-3">
               <p className="text-[9px] font-semibold uppercase tracking-[0.1em] text-purple-400">Market Regime</p>
               <div className="flex items-center justify-between mt-1.5">
-                <p className="text-[12px] font-bold text-purple-200">{(macroScore.regime || 'MIXED').replace(/_/g, ' ')}</p>
-                <span className="text-[10px] text-purple-300 font-mono">{macroScore.regimeConfidence ?? 25}%</span>
+                <p className="text-[12px] font-bold text-purple-800 dark:text-purple-200">{(macroScore.regime || 'MIXED').replace(/_/g, ' ')}</p>
+                <span className="text-[10px] text-purple-700 dark:text-purple-300 font-mono">{macroScore.regimeConfidence ?? 25}%</span>
               </div>
               {macroScore.regimeBreakdown && (
-                <p className="text-[9px] text-purple-300/70 font-mono mt-1">
+                <p className="text-[9px] text-purple-600 dark:text-purple-300/70 font-mono mt-1">
                   Inf: {macroScore.regimeBreakdown.inflationScore || 0} | Lab: {macroScore.regimeBreakdown.laborScore || 0} | Gr: {macroScore.regimeBreakdown.growthScore || 0}
                 </p>
               )}
@@ -113,7 +113,7 @@ export default function DataTrustPanel({ dataInfo, macroScore }) {
 
             <div className="rounded-xl border border-yellow-500/15 bg-yellow-500/[0.04] px-3.5 py-3">
               <p className="text-[9px] font-semibold uppercase tracking-[0.1em] text-yellow-400">Score Formula</p>
-              <p className="mt-1.5 text-[10px] leading-relaxed text-yellow-200/80 line-clamp-3">{macroScore.formula || 'Deterministic weighted sum'}</p>
+              <p className="mt-1.5 text-[10px] leading-relaxed text-yellow-700 dark:text-yellow-200/80 line-clamp-3">{macroScore.formula || 'Deterministic weighted sum'}</p>
             </div>
           </div>
         )}
@@ -123,10 +123,10 @@ export default function DataTrustPanel({ dataInfo, macroScore }) {
           <div className="rounded-lg border border-amber-500/15 bg-amber-500/[0.04] px-3.5 py-2.5">
             <p className="text-[9px] font-semibold uppercase tracking-[0.1em] text-amber-400">Data Quality Notes</p>
             {Array.isArray(dataInfo.outdatedCodes) && dataInfo.outdatedCodes.length > 0 && (
-              <p className="mt-1 text-[11px] text-amber-200/80">Outdated: {dataInfo.outdatedCodes.join(', ')}</p>
+              <p className="mt-1 text-[11px] text-amber-700 dark:text-amber-200/80">Outdated: {dataInfo.outdatedCodes.join(', ')}</p>
             )}
             {Array.isArray(dataInfo.missingCodes) && dataInfo.missingCodes.length > 0 && (
-              <p className="mt-1 text-[11px] text-amber-200/80">Missing: {dataInfo.missingCodes.join(', ')}</p>
+              <p className="mt-1 text-[11px] text-amber-700 dark:text-amber-200/80">Missing: {dataInfo.missingCodes.join(', ')}</p>
             )}
           </div>
         )}
