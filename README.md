@@ -357,6 +357,20 @@ Start from .env.example, then extend as needed.
 
 ## Deployment
 
+### Render (recommended)
+
+- Uses render.yaml for Blueprint-based deploys
+- Single Render web service: builds client/ and runs server/ behind one URL
+- Includes a Render PostgreSQL database wired into DATABASE_URL
+- No separate frontend URL is required
+- The frontend uses same-origin API calls in production
+
+Migration notes from Railway:
+
+- Railway config is still present in railway.toml for rollback safety
+- Previous hardcoded Railway API fallback has been removed from frontend runtime config
+- If login still fails after deploy, check Render service logs for DATABASE_URL or GOOGLE_CLIENT_ID errors first
+
 ### Frontend (Vercel)
 
 - Uses vercel.json

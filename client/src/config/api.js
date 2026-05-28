@@ -1,4 +1,4 @@
-const PRODUCTION_API_URL = 'https://ai-dashboard-production-c844.up.railway.app';
+const LOCAL_API_URL = 'http://localhost:5000';
 
 function resolveApiUrl() {
 	const explicitApiUrl = import.meta.env.VITE_API_URL;
@@ -7,11 +7,14 @@ function resolveApiUrl() {
 	if (typeof window !== 'undefined') {
 		const { hostname } = window.location;
 		if (hostname === 'localhost' || hostname === '127.0.0.1') {
-			return 'http://localhost:5000';
+			return LOCAL_API_URL;
 		}
+
+		// Production fallback: use same-origin API when deployed behind one domain.
+		return window.location.origin;
 	}
 
-	return PRODUCTION_API_URL;
+	return LOCAL_API_URL;
 }
 
 export const API_URL = resolveApiUrl();

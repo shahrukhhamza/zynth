@@ -123,7 +123,12 @@ router.post('/login', async (req, res) => {
     const token = signToken(user);
     res.json({ user, token });
   } catch (err) {
-    console.error('Login error:', err?.message || 'unknown');
+    console.error('[Auth Login] error:', {
+      message: err?.message || 'unknown',
+      name: err?.name || 'unknown',
+      code: err?.code || 'unknown',
+      stack: err?.stack || null,
+    });
     res.status(500).json({ error: 'Login failed. Please try again.' });
   }
 });
@@ -152,17 +157,74 @@ router.post('/google', async (req, res) => {
     }
 
     const payload = ticket.getPayload();
-    const { sub: googleId, email, name, picture } = payload;
+    if (!payload) {
+      return res.status(401).json({ error: 'Google credential payload is invalid. Please try again.' });
+    }
+
+    const {
+      sub: googleId,
+      email,
+      name,
+      picture,
+      email_verified: emailVerified,
+    } = payload;
+
+    if (!googleId) {
+      return res.status(401).json({ error: 'Google account id is missing. Please try again.' });
+    }
+
+    if (!email || typeof email !== 'string') {
+      return res.status(400).json({ error: 'Google account did not provide an email address.' });
+    }
+
+    if (emailVerified === false) {
+      return res.status(403).json({ error: 'Google email is not verified. Please verify your Google account email first.' });
+    }
 
     let row = await Users.findByGoogleId(googleId);
     if (!row) {
       row = await Users.findByEmail(email);
       if (row) {
-        await Users.linkGoogleId(row.id, googleId, picture);
+        try {
+          await Users.linkGoogleId(row.id, googleId, picture);
+        } catch (dbErr) {
+          if (dbErr?.code === '23505') {
+            return res.status(409).json({ error: 'This Google account is already linked to another user.' });
+          }
+          throw dbErr;
+        }
       } else {
-        const result = await Users.createUser({ name, email, google_id: googleId, avatar: picture });
-        row = await Users.findById(result.id);
+        const safeName = String(name || email.split('@')[0] || 'Google User').trim().slice(0, 80);
+        let result;
+        try {
+          result = await Users.createUser({
+            name: safeName,
+            email,
+            google_id: googleId,
+            avatar: picture || null,
+          });
+        } catch (dbErr) {
+          if (dbErr?.code === '23505') {
+            // Race condition: user might have been created in another request.
+            row = await Users.findByEmail(email);
+            if (!row) {
+              row = await Users.findByGoogleId(googleId);
+            }
+            if (!row) {
+              return res.status(409).json({ error: 'Account already exists. Please retry sign-in.' });
+            }
+          } else {
+            throw dbErr;
+          }
+        }
+        if (!row && result?.id) {
+          row = await Users.findById(result.id);
+        }
       }
+    }
+
+    if (!row?.id) {
+      return res.status(500).json({ error: 'Unable to complete Google sign-in. Please try again.' });
     }
 
     const freshRow = await Users.findById(row.id);
@@ -170,7 +232,12 @@ router.post('/google', async (req, res) => {
     const token = signToken(user);
     res.json({ user, token });
   } catch (err) {
-    console.error('[Google OAuth] unexpected error:', err?.message || 'unknown');
+    console.error('[Google OAuth] unexpected error:', {
+      message: err?.message || 'unknown',
+      name: err?.name || 'unknown',
+      code: err?.code || 'unknown',
+      stack: err?.stack || null,
+    });
     res.status(500).json({ error: 'Google sign-in failed due to a server error. Please try again.' });
   }
 });

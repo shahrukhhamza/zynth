@@ -2,6 +2,10 @@ import pg from 'pg';
 
 const { Pool } = pg;
 
+if (!process.env.DATABASE_URL) {
+  console.error('❌ DATABASE_URL is not set. Auth and all database-backed features will fail.');
+}
+
 // Railway injects DATABASE_URL automatically
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,

@@ -65,6 +65,10 @@ const PORT = process.env.PORT || 5000;
 const HOST = process.env.HOST || '0.0.0.0';
 const isPreflightRequest = (req) => req.method === 'OPTIONS';
 
+if (!process.env.GOOGLE_CLIENT_ID) {
+  console.error('⚠️ GOOGLE_CLIENT_ID is not set. Google sign-in will fail until it is configured.');
+}
+
 app.disable('x-powered-by');
 
 const getForwardedIp = (req) => {
@@ -203,6 +207,15 @@ const _isAllowedZynthDomain = (origin) => {
   }
 };
 
+const _isAllowedRenderDomain = (origin) => {
+  try {
+    const { protocol, hostname } = new URL(origin);
+    return protocol === 'https:' && hostname.endsWith('.onrender.com');
+  } catch {
+    return false;
+  }
+};
+
 const corsOptions = {
   origin: (origin, callback) => {
     // Allow non-browser clients and server-to-server requests.
@@ -213,6 +226,7 @@ const corsOptions = {
       _ALLOWED_ORIGINS.has(normalized)
       || _isAllowedVercelPreview(normalized)
       || _isAllowedZynthDomain(normalized)
+      || _isAllowedRenderDomain(normalized)
     )) {
       return callback(null, true);
     }
@@ -263,7 +277,7 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(mongoSanitize());
 
 // ── Routes ────────────────────────────────────────────────────────────────────
-app.get('/api/health', requireAuth, (req, res) => {
+app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', message: 'Server is running', geminiCallsToday: getGeminiCount() });
 });
 
