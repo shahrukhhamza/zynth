@@ -2,16 +2,8 @@
  * journalDb.js — PostgreSQL persistence for journal, checklist, macro snapshots,
  * DNA reports, and saved levels.
  */
-import pg from 'pg';
 
-const { Pool } = pg;
-
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: process.env.NODE_ENV === 'production'
-    ? { rejectUnauthorized: false }
-    : false,
-});
+import pool from '../db/pool.js';
 
 let initPromise;
 
@@ -198,7 +190,7 @@ export async function getTradeById(id) {
             j.id AS journal_id
      FROM trades t
      LEFT JOIN trade_journals j ON j.trade_id = t.id
-     WHERE t.id = $1`,
+     WHERE t.id = $1 AND t.deleted_at IS NULL`,
     [id]
   );
   return serializeRow(rows[0] ?? null);

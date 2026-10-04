@@ -32,7 +32,12 @@ export function AuthProvider({ children }) {
         setUser(r.data.user);
         setAuthSession(r.data.user, token);
       })
-      .catch(() => { clearSession(); })
+      .catch((err) => {
+        // Only an explicit auth rejection ends the session. A cold-starting backend, a dropped
+        // connection or a 5xx must not silently log the user out.
+        const status = err?.response?.status;
+        if (status === 401 || status === 403 || status === 404) clearSession();
+      })
       .finally(() => setLoading(false));
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 

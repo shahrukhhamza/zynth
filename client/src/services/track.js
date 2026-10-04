@@ -9,7 +9,6 @@
  *
  *   track('upgrade_modal_opened', { source: 'ai_limit' });
  *   track('upgrade_clicked',      { plan: 'pro' });
- *   track('subscription_started', { plan: 'pro' });
  */
 import { API_URL } from '../config/api';
 import { getAuthToken } from '../utils/authStorage';

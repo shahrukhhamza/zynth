@@ -55,3 +55,12 @@ test_output.json
 
 # OS
 Thumbs.db
+
+# Editor backups & runtime logs
+*.bak
+server-err.txt
+server-out.txt
+
+# Local dev databases / personal backups
+zynth_local.db
+sqlite-dev-swap.patch

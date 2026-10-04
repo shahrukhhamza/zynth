@@ -11,10 +11,6 @@ function getSecret() {
 }
 
 function getClientIp(req) {
-  const forwardedFor = req.headers['x-forwarded-for'];
-  if (typeof forwardedFor === 'string' && forwardedFor.trim()) {
-    return forwardedFor.split(',')[0].trim();
-  }
   return req.ip || req.socket?.remoteAddress || 'unknown';
 }
 
@@ -48,7 +44,11 @@ export async function requireAuth(req, res, next) {
       logAuthFailure(req, 'user_not_found_for_token');
       return res.status(401).json({ error: 'Unauthorized' });
     }
-    if (currentUser.is_banned) {
+    if (currentUser.password_changed_at && decoded.iat * 1000 < new Date(currentUser.password_changed_at).getTime() - 1000) {
+      logAuthFailure(req, 'token_issued_before_password_change');
+      return res.status(401).json({ error: 'Session expired. Please sign in again.' });
+    }
+    if (Number(currentUser.is_banned) === 1) {
       logAuthFailure(req, 'user_banned');
       return res.status(403).json({ error: 'Account suspended.' });
     }

@@ -89,14 +89,14 @@ Return ONLY valid JSON in this EXACT format (no markdown, no explanations):
 }`;
 
     const response = await axios.post(
-      'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent',
+      'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent',
       {
         contents: [{
           parts: [{
             text: prompt
           }]
         }],
-        generationConfig: {
+        generationConfig: { thinkingConfig: { thinkingBudget: 0 }, 
           temperature: 0.1, // Low temperature for factual data
           maxOutputTokens: 2000,
         }
@@ -167,14 +167,14 @@ async function callGeminiForAnalysis(prompt) {
     }
 
     const response = await axios.post(
-      'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent',
+      'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent',
       {
         contents: [{
           parts: [{
             text: prompt
           }]
         }],
-        generationConfig: {
+        generationConfig: { thinkingConfig: { thinkingBudget: 0 }, 
           temperature: 0.7,
           maxOutputTokens: 500,
         }
@@ -446,10 +446,10 @@ Return this exact JSON object and nothing else:
 }`;
 
     const response = await axios.post(
-      'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent',
+      'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent',
       {
         contents: [{ parts: [{ text: prompt }] }],
-        generationConfig: {
+        generationConfig: { thinkingConfig: { thinkingBudget: 0 }, 
           temperature: 0.2,
           maxOutputTokens: 400,
         },
@@ -499,7 +499,7 @@ Return this exact JSON object and nothing else:
       marketImpact: parsed.marketImpact || '',
       whyItMatters: parsed.whyItMatters || '',
       riskNote:     parsed.riskNote     || '',
-      model:        'gemini-1.5-flash',
+      model:        'gemini-2.5-flash',
       timestamp:    new Date().toISOString(),
     };
 

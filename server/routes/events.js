@@ -17,7 +17,8 @@ const router = Router();
 const ALLOWED_CLIENT_EVENTS = new Set([
   'upgrade_modal_opened',
   'upgrade_clicked',
-  'subscription_started',
+  // 'subscription_started' is emitted server-side when a payment is verified; accepting it from
+  // the browser would let anyone inflate the admin conversion numbers.
 ]);
 
 router.post('/track', requireAuth, (req, res) => {

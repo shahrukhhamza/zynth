@@ -2395,7 +2395,7 @@ export async function buildAiInsightsPayload(dashboard, macroScore, aiAnalysis, 
         marketImpact: aiAnalysis.marketImpact || '',
         whyItMatters: aiAnalysis.whyItMatters || '',
         riskNote:     aiAnalysis.riskNote     || '',
-        model:        aiAnalysis.model        || 'gemini-1.5-flash',
+        model:        aiAnalysis.model        || 'gemini-2.5-flash',
         generatedAt:  aiAnalysis.timestamp    || now,
         warnings: [
           'AI commentary is generated using only the data listed above — no external sources were used.',

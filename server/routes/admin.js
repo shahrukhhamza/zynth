@@ -32,8 +32,12 @@ router.post('/users/:id/plan', async (req, res) => {
     const id = Number(req.params.id);
     const { plan, expiresAt = null } = req.body;
     const validPlans = ['free', 'pro', 'elite'];
+    if (!Number.isInteger(id) || id < 1)
+      return res.status(400).json({ error: 'Invalid user id.' });
     if (!validPlans.includes(plan))
       return res.status(400).json({ error: `Invalid plan. Must be one of: ${validPlans.join(', ')}` });
+    if (expiresAt !== null && Number.isNaN(new Date(expiresAt).getTime()))
+      return res.status(400).json({ error: 'expiresAt must be a valid date.' });
 
     await Users.updateUserPlan(id, plan, expiresAt);
     const row = await Users.findById(id);
@@ -60,6 +64,29 @@ router.post('/users/:id/admin', async (req, res) => {
   } catch (err) {
     console.error('admin/set-admin error:', err);
     res.status(500).json({ error: 'Failed to update admin status.' });
+  }
+});
+
+// ── POST /api/admin/users/:id/ban ─────────────────────────────────────────
+router.post('/users/:id/ban', async (req, res) => {
+  try {
+    const id = Number(req.params.id);
+    const { banned } = req.body;
+    if (!Number.isInteger(id) || id < 1)
+      return res.status(400).json({ error: 'Invalid user id.' });
+    if (typeof banned !== 'boolean')
+      return res.status(400).json({ error: 'banned must be true or false.' });
+    if (id === req.user.id)
+      return res.status(400).json({ error: 'Cannot suspend your own account.' });
+
+    const existing = await Users.findById(id);
+    if (!existing) return res.status(404).json({ error: 'User not found.' });
+
+    await Users.setBanned(id, banned);
+    res.json({ user: await Users.findById(id) });
+  } catch (err) {
+    console.error('admin/ban error:', err);
+    res.status(500).json({ error: 'Failed to update suspension.' });
   }
 });
 

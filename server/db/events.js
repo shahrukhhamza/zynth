@@ -11,16 +11,8 @@
  *   upgrade_clicked      – user clicked an upgrade CTA (client-side)
  *   subscription_started – plan upgraded (can be set via admin/webhook)
  */
-import pg from 'pg';
 
-const { Pool } = pg;
-
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: process.env.NODE_ENV === 'production'
-    ? { rejectUnauthorized: false }
-    : false,
-});
+import pool from './pool.js';
 
 // ── Schema init ───────────────────────────────────────────────────────────────
 

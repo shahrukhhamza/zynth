@@ -4,7 +4,7 @@
 import axios from 'axios';
 import { bumpGemini } from '../utils/geminiCounter.js';
 
-const GEMINI_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent';
+const GEMINI_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
 
 async function callGemini(prompt) {
   // Key 1 is dedicated to journal (user-triggered, unpredictable volume)
@@ -15,7 +15,7 @@ async function callGemini(prompt) {
     GEMINI_URL,
     {
       contents: [{ parts: [{ text: prompt }] }],
-      generationConfig: { temperature: 0.7, topP: 0.95, maxOutputTokens: 2048 },
+      generationConfig: { thinkingConfig: { thinkingBudget: 0 },  temperature: 0.7, topP: 0.95, maxOutputTokens: 2048 },
     },
     { headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key }, timeout: 35000 }
   );

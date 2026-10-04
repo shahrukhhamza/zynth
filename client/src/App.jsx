@@ -19,41 +19,55 @@ import NewsFeed from './components/NewsFeed'
 import RightPanel from './components/RightPanel'
 import EconomicDashboard from './components/EconomicDashboard'
 import EconomicCalendar from './components/EconomicCalendar'
-import EconomicIntelligence from './components/EconomicIntelligence'
 
 import LiveMarketTicker from './components/LiveMarketTicker'
-import TradeJournal from './components/TradeJournal'
-import ChartsPage from './components/ChartsPage'
-import TradingDesk from './components/TradingDesk'
-import HelpCenter from './components/HelpCenter'
-import ProfitCalculator from './components/ProfitCalculator'
-import RiskPlanner from './components/RiskPlanner'
 import ZynthAssistant from './components/ZynthAssistant'
 import LoginPage from './components/LoginPage'
 import SignupPage from './components/SignupPage'
-import LandingPage from './components/LandingPage'
+const LandingPage = lazy(() => import('./components/LandingPage'))
 import ForgotPasswordPage from './components/ForgotPasswordPage'
 import ResetPasswordPage from './components/ResetPasswordPage'
 import OnboardingFlow from './components/OnboardingFlow'
 import PreSignupOnboarding from './components/PreSignupOnboarding'
 import WelcomeScreen from './components/WelcomeScreen'
-import TermsOfService from './components/TermsOfService'
-import PrivacyPolicy from './components/PrivacyPolicy'
-import RefundPolicy from './components/RefundPolicy'
-import PricingPage from './components/PricingPage'
-import RefundPage from './components/RefundPage'
-import ServicePolicy from './components/ServicePolicy'
-import ServicesPage from './components/ServicesPage'
-import PaymentPage from './components/PaymentPage'
 import { fetchNews } from './services/api'
 import { UpgradeProvider, useUpgrade } from './contexts/UpgradeContext'
 import { useUpgradeIntelligence } from './hooks/useUpgradeIntelligence'
 import UpgradeNudgeBanner from './components/UpgradeNudgeBanner'
+import PromoBanner from './components/PromoBanner'
 import { Loader2, Sparkles } from 'lucide-react'
+
+// Heavy views are split into their own chunks and downloaded on first visit.
+const EconomicIntelligence = lazy(() => import('./components/EconomicIntelligence'))
+const TradeJournal = lazy(() => import('./components/TradeJournal'))
+const ChartsPage = lazy(() => import('./components/ChartsPage'))
+const TradingDesk = lazy(() => import('./components/TradingDesk'))
+const HelpCenter = lazy(() => import('./components/HelpCenter'))
+const ProfitCalculator = lazy(() => import('./components/ProfitCalculator'))
+const RiskPlanner = lazy(() => import('./components/RiskPlanner'))
+const PaymentPage = lazy(() => import('./components/PaymentPage'))
+const TermsOfService = lazy(() => import('./components/TermsOfService'))
+const PrivacyPolicy = lazy(() => import('./components/PrivacyPolicy'))
+const RefundPolicy = lazy(() => import('./components/RefundPolicy'))
+const PricingPage = lazy(() => import('./components/PricingPage'))
+const RefundPage = lazy(() => import('./components/RefundPage'))
+const ServicePolicy = lazy(() => import('./components/ServicePolicy'))
+const ServicesPage = lazy(() => import('./components/ServicesPage'))
 
 // Lazily loaded — chunk is only downloaded when an admin user navigates to the admin view.
 // Non-admin users will never trigger this import.
 const AdminDashboard = lazy(() => import('./components/AdminDashboard'))
+
+const VALID_VIEWS = [
+  'data', 'journal', 'intelligence', 'markets', 'calendar',
+  'news', 'tools', 'help', 'charts', 'backtesting', 'admin', 'payment',
+  'calculator/profit', 'calculator/risk',
+];
+
+function getInitialView() {
+  const path = window.location.pathname.replace(/^\//, '');
+  return VALID_VIEWS.includes(path) ? path : 'data';
+}
 
 // The main dashboard shell (only shown when authenticated)
 function AppShell() {
@@ -61,7 +75,9 @@ function AppShell() {
   const { user } = useAuth();
   const { openUpgradeModal } = useUpgrade();
   const intel = useUpgradeIntelligence();
-  const [currentView, setCurrentView] = useState('data'); // Start with data view
+  // Resolve the view from the URL up-front so a deep link (/journal, /charts…) does not briefly
+  // mount the dashboard first and fire its (plan-gated) API calls.
+  const [currentView, setCurrentView] = useState(getInitialView);
 
   // Wrap setCurrentView so all navigation automatically syncs the browser URL
   const navigate = (view) => {
@@ -145,11 +161,7 @@ function AppShell() {
   // On initial load: read view from URL so bookmarks / direct links work
   useEffect(() => {
     const path = window.location.pathname.replace(/^\//, '');
-    const validViews = [
-      'data', 'journal', 'intelligence', 'markets', 'calendar',
-      'news', 'tools', 'help', 'charts', 'backtesting', 'admin', 'payment',
-    ];
-    if (path && validViews.includes(path)) {
+    if (path && VALID_VIEWS.includes(path)) {
       setCurrentView(path);
       window.history.replaceState({ view: path }, '', '/' + path);
     } else {
@@ -301,7 +313,9 @@ function AppShell() {
           overflow: 'hidden',
         }}
       >
+        <PromoBanner />
         <div key={currentView} className="flex flex-1 overflow-hidden relative page-enter">
+          <Suspense fallback={<div className="flex-1 flex items-center justify-center"><Loader2 className="w-8 h-8 animate-spin" style={{ color: theme.accent }} /></div>}>
           {/* Main Content Area */}
           {currentView === 'admin' && user?.is_admin === 1 ? (
             // Suspense boundary — AdminDashboard chunk loads on-demand only for admins
@@ -358,6 +372,7 @@ function AppShell() {
               />
             </>
           )}
+          </Suspense>
         </div>
       </div>
       <ZynthAssistant />
@@ -371,7 +386,9 @@ export default function App() {
     <HelmetProvider>
       <AuthProvider>
         <UpgradeProvider>
-          <AuthGate />
+          <Suspense fallback={null}>
+            <AuthGate />
+          </Suspense>
         </UpgradeProvider>
       </AuthProvider>
     </HelmetProvider>
@@ -425,6 +442,7 @@ function SetupReminderBanner({ onSetup, onDismiss }) {
 
 function AuthGate() {
   const { user, loading } = useAuth()
+  const theme = useTheme();
   const [view, setView] = useState(() => {
     const path = window.location.pathname;
     if (path === '/reset-password') return 'resetPassword';
@@ -484,7 +502,6 @@ function AuthGate() {
   }
 
   if (loading) {
-    const theme = useTheme();
     return (
       <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: theme.bg }}>
         <div style={{ backgroundColor: theme.surface, border: `1px solid ${theme.border}`, padding: 24, borderRadius: 12, boxShadow: theme.isDark ? '0 6px 20px rgba(0,0,0,0.6)' : '0 6px 20px rgba(16,24,40,0.04)', display: 'flex', alignItems: 'center', gap: 14, minWidth: 260, justifyContent: 'center' }}>

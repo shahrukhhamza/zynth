@@ -33,9 +33,26 @@ const SYMBOLS = {
   indices: ['SPX', 'NDX', 'DJI'],
 };
 
+// Twelve Data returns UTC wall-clock strings ("2024-05-01 13:00:00" or "2024-05-01"). Parse them
+// explicitly as UTC so the result does not depend on the server's timezone.
+function toUnixSeconds(datetime) {
+  const iso = String(datetime).trim().replace(' ', 'T');
+  const withTime = iso.length === 10 ? `${iso}T00:00:00` : iso;
+  return Math.floor(new Date(`${withTime}Z`).getTime() / 1000);
+}
+
 // ── Helper: fetch candles from Twelve Data ───────────────────────────────────
+const ALLOWED_SYMBOLS = new Set(Object.values(SYMBOLS).flat());
+
 async function fetchTwelveData(symbol, interval, outputsize) {
-  const key = btoa(`${symbol}_${interval}_${outputsize}`);
+  // Only symbols the UI offers may reach the paid upstream API (and btoa() would throw on
+  // non-Latin1 input).
+  if (!ALLOWED_SYMBOLS.has(symbol)) {
+    const err = new Error(`Unsupported symbol. Use one of: ${[...ALLOWED_SYMBOLS].join(', ')}`);
+    err.statusCode = 400;
+    throw err;
+  }
+  const key = `${symbol}_${interval}_${outputsize}`;
   const cached = cacheGet(key);
   if (cached) return cached;
 
@@ -48,7 +65,7 @@ async function fetchTwelveData(symbol, interval, outputsize) {
 
   // Twelve Data returns newest-first → reverse to oldest-first
   const candles = (json.values || []).reverse().map(v => ({
-    time:   Math.floor(new Date(v.datetime).getTime() / 1000), // Unix seconds for lightweight-charts
+    time:   toUnixSeconds(v.datetime), // Unix seconds for lightweight-charts
     open:   parseFloat(v.open),
     high:   parseFloat(v.high),
     low:    parseFloat(v.low),
@@ -85,7 +102,7 @@ router.get('/candles', requirePro, async (req, res) => {
     res.json({ success: true, data: candles, symbol, interval, count: candles.length });
   } catch (err) {
     console.error('[charts/candles]', err.message);
-    res.status(502).json({ success: false, error: err.message });
+    res.status(err.statusCode || 502).json({ success: false, error: err.message });
   }
 });
 
@@ -176,7 +193,23 @@ function calcSMA(closes, period) {
 // BACKTEST ENGINE
 // ═══════════════════════════════════════════════════════════════════════════
 
-function runBacktest(candles, strategy, params, startCapital = 10000, riskMgmt = {}) {
+// Client-supplied indicator params: strings would turn `period + 1` into "91" and non-positive
+// periods would produce NaN series, so coerce everything to a bounded number.
+function sanitizeParams(raw) {
+  const out = {};
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return out;
+  for (const [key, value] of Object.entries(raw).slice(0, 20)) {
+    const n = Number(value);
+    if (Number.isFinite(n)) out[key] = Math.min(Math.max(n, 0), 1000);
+  }
+  for (const periodKey of ['fastEMA', 'slowEMA', 'period', 'fast', 'slow', 'signal', 'lookback', 'maPeriod', 'rsiPeriod']) {
+    if (periodKey in out) out[periodKey] = Math.max(1, Math.round(out[periodKey]));
+  }
+  return out;
+}
+
+function runBacktest(candles, strategy, rawParams, startCapital = 10000, riskMgmt = {}) {
+  const params = sanitizeParams(rawParams);
   const closes = candles.map(c => c.close);
   const trades = [];
   let capital  = startCapital;
@@ -466,7 +499,7 @@ router.get('/backtest', requirePro, async (req, res) => {
     res.json({ success: true, data: results, meta: { symbol, interval, strategy, candleCount: candles.length } });
   } catch (err) {
     console.error('[charts/backtest]', err.message);
-    res.status(502).json({ success: false, error: err.message });
+    res.status(err.statusCode || 502).json({ success: false, error: err.message });
   }
 });
 

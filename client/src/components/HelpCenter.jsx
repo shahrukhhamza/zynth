@@ -1566,7 +1566,7 @@ export default function HelpCenter() {
                     </div>
                     <div style={{ color: text0, fontWeight: 700, fontSize: 13, marginBottom: 5 }}>{cat.title}</div>
                     <div style={{ color: textMuted, fontSize: 11, lineHeight: 1.55, marginBottom: 8 }}>{cat.description}</div>
-                    <div style={{ color: cat.color, fontSize: 11, fontWeight: 700 }}>{cat.articles.length} articles ?</div>
+                    <div style={{ color: cat.color, fontSize: 11, fontWeight: 700 }}>{cat.articles.length} articles →</div>
                   </button>
                 ))}
               </div>

@@ -10,30 +10,18 @@
 
 import { Router }                from 'express';
 import multer                    from 'multer';
-import { extname, join }         from 'path';
-import { existsSync, mkdirSync } from 'fs';
-import { randomUUID }            from 'crypto';
 import { requireAuth, requireAdmin } from '../middleware/authMiddleware.js';
 import * as Payments             from '../db/payments.js';
 import { trackEvent }            from '../db/events.js';
-import { UPLOADS_DIR }           from '../config/storagePaths.js';
+import { savePaymentProof }       from '../services/fileStorageService.js';
 
 const router = Router();
 
-// ── Multer — same payments uploads folder ─────────────────────────────────────
-const PAYMENTS_DIR = join(UPLOADS_DIR, 'payments');
-if (!existsSync(PAYMENTS_DIR)) mkdirSync(PAYMENTS_DIR, { recursive: true });
+// ── Multer — in memory; the file is persisted (Supabase / local) only after validation passes ──
 
 const ALLOWED_MIME = new Set(['image/jpeg', 'image/png', 'image/webp', 'image/gif']);
 
-const storage = multer.diskStorage({
-  destination: (_req, _file, cb) => cb(null, PAYMENTS_DIR),
-  filename:    (_req, file, cb) => {
-    const raw = extname(file.originalname).toLowerCase();
-    const ext = /^\.[a-z0-9]+$/.test(raw) ? raw : '.jpg';
-    cb(null, `pay_${randomUUID()}${ext}`);
-  },
-});
+const storage = multer.memoryStorage();
 
 const upload = multer({
   storage,
@@ -83,6 +71,11 @@ router.post('/crypto', requireAuth, async (req, res) => {
     if (!VALID_PLANS.has(cleanPlan))           return res.status(400).json({ error: 'plan must be "pro" or "elite".' });
     if (!VALID_CYCLES.has(cleanCycle))         return res.status(400).json({ error: 'billingCycle must be "monthly" or "annual".' });
     if (cleanAmt && !AMOUNT_RE.test(cleanAmt)) return res.status(400).json({ error: 'amount format is invalid.' });
+
+    // The same on-chain transaction must never unlock more than one subscription.
+    if (await Payments.isTxidInUse(cleanTxid)) {
+      return res.status(409).json({ error: 'This transaction ID has already been submitted.' });
+    }
 
     // ── Persist ─────────────────────────────────────────────────────────────
     const request = await Payments.createPaymentRequest({
@@ -144,7 +137,7 @@ router.post('/jazzcash', requireAuth, upload.single('screenshot'), async (req, r
     if (cleanAmt && !AMOUNT_RE.test(cleanAmt)) return res.status(400).json({ error: 'amount format is invalid.' });
     if (!req.file)                             return res.status(400).json({ error: 'screenshot image is required.' });
 
-    const screenshotUrl = `/uploads/payments/${req.file.filename}`;
+    const screenshotUrl = await savePaymentProof(req.file);
 
     // ── Persist ─────────────────────────────────────────────────────────────
     const request = await Payments.createPaymentRequest({

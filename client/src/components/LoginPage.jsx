@@ -53,7 +53,7 @@ export default function LoginPage({ onSwitchToSignup, onBack, onForgotPassword }
 
   useEffect(() => {
     getPublicStats()
-      .then(d => { if (d?.totalUsers != null) setSpotsLeft(Math.max(0, 100 - d.totalUsers)); })
+      .then(d => { if (typeof d?.promoSpotsLeft === 'number') setSpotsLeft(d.promoSpotsLeft); })
       .catch(() => {});
   }, []);
 
@@ -177,7 +177,7 @@ export default function LoginPage({ onSwitchToSignup, onBack, onForgotPassword }
         }
       `}</style>
 
-      {/* -- Blob 1 � top-left drift --------------------------------------- */}
+      {/* -- Blob 1 — top-left drift --------------------------------------- */}
       <div style={{ position:'fixed', top:'-220px', left:'-180px', width:'720px', height:'720px',
         pointerEvents:'none', zIndex:0,
         background: isDark
@@ -186,7 +186,7 @@ export default function LoginPage({ onSwitchToSignup, onBack, onForgotPassword }
         filter:'blur(82px)', animation:'blobDrift 18s ease-in-out infinite',
       }} />
 
-      {/* -- Blob 2 � bottom-right drift ----------------------------------- */}
+      {/* -- Blob 2 — bottom-right drift ----------------------------------- */}
       <div style={{ position:'fixed', bottom:'-200px', right:'-180px', width:'640px', height:'640px',
         pointerEvents:'none', zIndex:0,
         background: isDark
@@ -230,7 +230,7 @@ export default function LoginPage({ onSwitchToSignup, onBack, onForgotPassword }
           style={{ fontSize:'12.5px', fontWeight:500, color: isDark?'rgba(255,255,255,0.36)':'#64748b', background:'none', border:'none', cursor:'pointer', padding:'4px 2px', transition:'color 0.12s' }}
           onMouseEnter={e => e.currentTarget.style.color=isDark?'rgba(255,255,255,0.86)':'#0b0b0f'}
           onMouseLeave={e => e.currentTarget.style.color=isDark?'rgba(255,255,255,0.36)':'#64748b'}>
-          Sign up ?
+          Sign up →
         </button>
       </div>
 
@@ -289,7 +289,7 @@ export default function LoginPage({ onSwitchToSignup, onBack, onForgotPassword }
                       <div style={{ fontSize:'22px', fontWeight:700, letterSpacing:'-0.03em', color:isDark?'#fafaf9':'#0b0b0f', lineHeight:1 }}>99.26</div>
                     </div>
                     <div style={{ textAlign:'right' }}>
-                      <div style={{ fontSize:'12.5px', fontWeight:700, color:'#10b981' }}>? +0.44%</div>
+                      <div style={{ fontSize:'12.5px', fontWeight:700, color:'#10b981' }}>▲ +0.44%</div>
                       <div style={{ fontSize:'11px', color:isDark?'rgba(255,255,255,0.22)':'#94a3b8', marginTop:'2px' }}>vs prior close</div>
                     </div>
                   </div>
@@ -309,8 +309,8 @@ export default function LoginPage({ onSwitchToSignup, onBack, onForgotPassword }
 
                 {/* Data rows */}
                 {[
-                  { name:'CPI  (Core YoY)',    val:'3.2%',   tag:'? Beat',    tagUp:false, dot:'#ef4444', hi:true  },
-                  { name:'Non-Farm Payrolls', val:'272K',   tag:'? Strong',  tagUp:true,  dot:'#ef4444', hi:true  },
+                  { name:'CPI  (Core YoY)',    val:'3.2%',   tag:'▼ Beat',    tagUp:false, dot:'#ef4444', hi:true  },
+                  { name:'Non-Farm Payrolls', val:'272K',   tag:'▲ Strong',  tagUp:true,  dot:'#ef4444', hi:true  },
                   { name:'Fed Funds Rate',    val:'5.25%',  tag:'Hold',      tagUp:null,  dot:'#FBBF24', hi:false },
                 ].map((row, i) => (
                   <div key={i} style={{ display:'flex', alignItems:'center', padding:'9px 16px',
@@ -432,7 +432,7 @@ export default function LoginPage({ onSwitchToSignup, onBack, onForgotPassword }
                     style={{ fontSize:'12px', fontWeight:600, padding:'6px 12px', borderRadius:'7px', border:'none', cursor:'pointer',
                       background: isDark?'rgba(251,191,36,0.22)':'rgba(251,191,36,0.30)',
                       color: isDark?'#fcd34d':'#92400e', transition:'opacity 0.15s' }}>
-                    {linkCopied ? '? Link copied!' : 'Copy Link'}
+                    {linkCopied ? '✓ Link copied!' : 'Copy Link'}
                   </button>
                 </div>
               </div>
@@ -554,7 +554,7 @@ export default function LoginPage({ onSwitchToSignup, onBack, onForgotPassword }
             style={{ color: isDark?'#a1a1aa':'#52525b', background:'none', border:'none', cursor:'pointer', fontSize:'13px', padding:0, fontWeight:500, transition:'color 0.12s' }}
             onMouseEnter={e => e.currentTarget.style.color=isDark?'#ffffff':'#09090b'}
             onMouseLeave={e => e.currentTarget.style.color=isDark?'#a1a1aa':'#52525b'}>
-            Create one free ?
+            Create one free →
           </button>
             </p>
           </div>

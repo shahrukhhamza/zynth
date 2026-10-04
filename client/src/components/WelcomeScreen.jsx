@@ -17,6 +17,8 @@ import {
   Shuffle, HelpCircle, Flame, Check,
 } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
+import { useAuth } from '../contexts/AuthContext';
+import { PROMO_HEADLINE, PROMO_MESSAGE } from './PromoBanner';
 
 // ── Personalisation helpers ───────────────────────────────────────────────────
 
@@ -75,6 +77,7 @@ const WHAT_TO_EXPECT = [
 
 export default function WelcomeScreen({ onAddFirstTrade, onSkip, userName = 'Trader' }) {
   const theme = useTheme();
+  const { user } = useAuth();
   const [visible, setVisible] = useState(false);
 
   // Read pre-signup answers
@@ -149,6 +152,22 @@ export default function WelcomeScreen({ onAddFirstTrade, onSkip, userName = 'Tra
               : "Let's analyse your trading behaviour."}
           </p>
         </motion.div>
+
+        {/* ── Launch promotion: free Elite ── */}
+        {user?.promo_elite && (
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.28 }}
+            className="mt-5 mb-2 rounded-2xl px-5 py-4 text-center border"
+            style={{ background: 'rgba(202,138,4,0.10)', borderColor: 'rgba(202,138,4,0.35)' }}
+          >
+            <div className="text-[15px] font-bold" style={{ color: '#CA8A04' }}>
+              {PROMO_HEADLINE}
+            </div>
+            <div className="text-[13px] mt-1" style={{ color: theme.muted }}>{PROMO_MESSAGE}</div>
+          </motion.div>
+        )}
 
         {/* ── Personalised problem badge ── */}
         {problemData && (

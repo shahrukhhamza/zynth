@@ -1,22 +1,48 @@
-databases:
-  - name: zynth-db
-    databaseName: zynth
-    user: zynth
-
 services:
   - type: web
     name: zynth-app
     runtime: node
+    plan: free
     rootDir: .
-    buildCommand: npm install && cd server && npm install && cd ../client && npm install && npm run build
+    # --include=dev: NODE_ENV=production would otherwise skip Vite/Tailwind, which the client build needs
+    buildCommand: npm install && cd server && npm install && cd ../client && npm install --include=dev && npm run build
     startCommand: cd server && npm start
+    healthCheckPath: /api/health
     autoDeploy: true
     envVars:
+      # Required at boot: the server refuses to start without it. Render generates a random value.
+      - key: JWT_SECRET
+        generateValue: true
+      # Secrets below are entered once in the Render dashboard (sync: false = never stored in git).
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: FINNHUB_API_KEY
+        sync: false
+      - key: POLYGON_API_KEY
+        sync: false
+      - key: TWELVE_DATA_API_KEY
+        sync: false
+      - key: BREVO_API_KEY
+        sync: false
+      # Build-time (Vite) variable: the Google Sign-In button is hidden when it is empty.
+      - key: VITE_GOOGLE_CLIENT_ID
+        sync: false
       - key: NODE_ENV
         value: production
+      - key: NODE_VERSION
+        value: 20
       - key: HOST
         value: 0.0.0.0
+      # Supabase → Project Settings → Database → Connection string → "Session pooler" (see SUPABASE_SETUP.md)
       - key: DATABASE_URL
-        fromDatabase:
-          name: zynth-db
-          property: connectionString
+        sync: false
+      # Supabase Storage (avatars, journal screenshots, payment proofs)
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      # Public site address, used in password-reset emails and CORS (e.g. https://zynth-app.onrender.com)
+      - key: CLIENT_URL
+        sync: false

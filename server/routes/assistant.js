@@ -6,7 +6,7 @@
  *   Returns: { reply }
  *
  * Fast path: static keyword KB (instant, no API call)
- * AI path: Gemini 1.5 Flash with full Zynth knowledge (2-4s, cached)
+ * AI path: Gemini Flash with full Zynth knowledge (2-4s, cached)
  * Rate limit: 30 messages per user per hour (in-memory)
  */
 
@@ -242,10 +242,15 @@ function findAnswer(userMessage) {
   const clean = (s) => s.toLowerCase().replace(/[?!.,;:]/g, ' ').replace(/\s+/g, ' ').trim();
   const msg = clean(userMessage);
 
-  // Pass 1: direct substring
+  // Pass 1: whole-word/phrase match. Single-word keywords ("help", "price"…) only count for short
+  // messages — inside a long, specific question they would hijack it with a canned answer.
+  const padded = ` ${msg} `;
+  const msgWordCount = msg ? msg.split(' ').length : 0;
   for (const item of QA) {
     for (const kw of item.q) {
-      if (msg.includes(kw)) return item.a;
+      const isSingleWord = !kw.includes(' ');
+      if (isSingleWord && msgWordCount > 4) continue;
+      if (padded.includes(` ${kw} `)) return item.a;
     }
   }
 
@@ -383,11 +388,14 @@ async function askGemini(userMessage, history = []) {
     // Build conversation contents
     const contents = [];
 
-    // Add prior turns (last 6 messages to stay within token limits)
-    for (const turn of history.slice(-6)) {
+    // Add prior turns (last 6 messages to stay within token limits). History comes from the
+    // client, so only well-formed string turns are forwarded.
+    const safeHistory = Array.isArray(history) ? history : [];
+    for (const turn of safeHistory.slice(-6)) {
+      if (!turn || typeof turn.content !== 'string' || !turn.content.trim()) continue;
       contents.push({
         role: turn.role === 'user' ? 'user' : 'model',
-        parts: [{ text: turn.content }],
+        parts: [{ text: turn.content.slice(0, 1000) }],
       });
     }
 
@@ -395,14 +403,14 @@ async function askGemini(userMessage, history = []) {
     contents.push({ role: 'user', parts: [{ text: userMessage }] });
 
     const response = await fetch(
-      'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent',
+      'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent',
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'x-goog-api-key': apiKey },
         body: JSON.stringify({
           systemInstruction: { parts: [{ text: ZYNTH_SYSTEM_PROMPT }] },
           contents,
-          generationConfig: {
+          generationConfig: { thinkingConfig: { thinkingBudget: 0 }, 
             temperature: 0.4,
             maxOutputTokens: 350,
           },
@@ -437,7 +445,7 @@ router.post('/chat', requireAuth, async (req, res) => {
 
     const { message, history = [] } = req.body;
 
-    if (!message?.trim()) {
+    if (typeof message !== 'string' || !message.trim()) {
       return res.status(400).json({ error: 'Message required' });
     }
     if (message.trim().length > 1000) {
@@ -465,6 +473,7 @@ router.post('/chat', requireAuth, async (req, res) => {
     console.log('[Assistant] Falling back to Gemini');
     const geminiReply = await askGemini(message, history);
     if (geminiReply) {
+      if (geminiCache.size >= 500) geminiCache.delete(geminiCache.keys().next().value); // cap memory
       geminiCache.set(ck, { reply: geminiReply, ts: Date.now() });
       return res.json({ reply: geminiReply });
     }

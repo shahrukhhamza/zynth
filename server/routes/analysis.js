@@ -222,8 +222,8 @@ Be concise, data-driven and direct. No generic advice. Use plain text, no markdo
 
   try {
     const resp = await axios.post(
-      'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent',
-      { contents: [{ parts: [{ text: prompt }] }], generationConfig: { temperature: 0.6, maxOutputTokens: 650 } },
+      'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent',
+      { contents: [{ parts: [{ text: prompt }] }], generationConfig: { thinkingConfig: { thinkingBudget: 0 },  temperature: 0.6, maxOutputTokens: 650 } },
       { headers: { 'x-goog-api-key': key }, timeout: 28000 }
     );
     return resp.data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim() ?? null;
@@ -509,8 +509,8 @@ Return ONLY valid JSON (no markdown, no code fences):
 }`;
   try {
     const resp = await axios.post(
-      'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent',
-      { contents: [{ parts: [{ text: prompt }] }], generationConfig: { temperature: 0.7, maxOutputTokens: 1200 } },
+      'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent',
+      { contents: [{ parts: [{ text: prompt }] }], generationConfig: { thinkingConfig: { thinkingBudget: 0 },  temperature: 0.7, maxOutputTokens: 1200 } },
       { headers: { 'x-goog-api-key': key }, timeout: 35000 }
     );
     const raw = resp.data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim() ?? '';

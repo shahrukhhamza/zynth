@@ -1,6 +1,6 @@
 import express from 'express';
 import { getEconomicCalendar, getIndicatorDetails, forceRefreshCalendar } from '../services/economicCalendarService.js';
-import { requireAuth } from '../middleware/authMiddleware.js';
+import { requireAuth, requireAdmin } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 router.use(requireAuth);
@@ -26,7 +26,7 @@ router.get('/', async (req, res, next) => {
 /**
  * POST /api/calendar/refresh
  */
-router.post('/refresh', async (req, res, next) => {
+router.post('/refresh', requireAdmin, async (req, res, next) => {
   try {
     const result = await forceRefreshCalendar();
     res.json({ success: true, count: result.indicators.length, fetchedAt: result.fetchedAt });

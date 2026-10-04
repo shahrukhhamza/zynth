@@ -10,6 +10,9 @@ import { trackEvent } from '../db/events.js';
 
 const router = Router();
 
+// bcrypt only uses the first 72 bytes and hashing huge inputs is a cheap CPU-exhaustion vector.
+const MAX_PASSWORD_LENGTH = 128;
+
 function normalizePlan(plan) {
   return String(plan || 'free').trim().toLowerCase();
 }
@@ -34,6 +37,7 @@ function buildUser(row) {
     avatar_color:        row.avatar_color ?? 'emerald',
     onboarding_done:     row.onboarding_done ?? 0,
     journal_count:       row.journal_count ?? 0,
+    promo_elite:         !!row.promo_elite, // Elite granted by the launch promotion, not purchased
   };
 }
 
@@ -46,6 +50,12 @@ router.post('/register', async (req, res) => {
 
     if (!safeName || !safeEmail || !password)
       return res.status(400).json({ error: 'Name, email and password are required.' });
+
+    if (typeof password !== 'string')
+      return res.status(400).json({ error: 'Password must be a string.' });
+
+    if (password.length > MAX_PASSWORD_LENGTH)
+      return res.status(400).json({ error: `Password must be at most ${MAX_PASSWORD_LENGTH} characters.` });
 
     if (!terms_accepted)
       return res.status(400).json({ error: 'You must accept the Terms of Service to create an account.' });
@@ -100,7 +110,7 @@ router.post('/login', async (req, res) => {
     const { email, password } = req.body;
     const safeEmail = String(email || '').trim().toLowerCase();
 
-    if (!safeEmail || !password)
+    if (!safeEmail || !password || typeof password !== 'string')
       return res.status(400).json({ error: 'Email and password are required.' });
 
     const row = await Users.findByEmail(safeEmail);
@@ -117,6 +127,9 @@ router.post('/login', async (req, res) => {
     const valid = await bcrypt.compare(password, row.password_hash);
     if (!valid)
       return res.status(401).json({ error: 'Invalid email or password.' });
+
+    if (Number(row.is_banned) === 1)
+      return res.status(403).json({ error: 'Account suspended.' });
 
     const freshRow = await Users.findById(row.id);
     const user = buildUser(freshRow);
@@ -177,7 +190,7 @@ router.post('/google', async (req, res) => {
       return res.status(400).json({ error: 'Google account did not provide an email address.' });
     }
 
-    if (emailVerified === false) {
+    if (emailVerified !== true && emailVerified !== 'true') {
       return res.status(403).json({ error: 'Google email is not verified. Please verify your Google account email first.' });
     }
 
@@ -225,6 +238,10 @@ router.post('/google', async (req, res) => {
 
     if (!row?.id) {
       return res.status(500).json({ error: 'Unable to complete Google sign-in. Please try again.' });
+    }
+
+    if (Number(row.is_banned) === 1) {
+      return res.status(403).json({ error: 'Account suspended.' });
     }
 
     const freshRow = await Users.findById(row.id);
@@ -278,9 +295,10 @@ router.post('/upgrade-plan', requireAuth, requireAdmin, async (req, res) => {
 
 // ── POST /api/auth/forgot-password ────────────────────────────────────────
 router.post('/forgot-password', async (req, res) => {
+  const genericReply = { message: 'If this email exists you will receive a reset link.' };
   try {
     const { email } = req.body;
-    if (!email?.trim())
+    if (typeof email !== 'string' || !email.trim())
       return res.status(400).json({ error: 'Email is required.' });
 
     const row = await Users.findByEmail(email);
@@ -289,14 +307,20 @@ router.post('/forgot-password', async (req, res) => {
       const expires = new Date(Date.now() + 3_600_000).toISOString();
       await Users.setResetToken(email, token, expires);
 
-      const resetLink = `${process.env.CLIENT_URL}/reset-password?token=${token}`;
-      await sendPasswordResetEmail(email, resetLink, row.name);
+      const base = (process.env.CLIENT_URL || process.env.RENDER_EXTERNAL_URL || '').replace(/\/+$/, '');
+      const resetLink = `${base}/reset-password?token=${token}`;
+      try {
+        await sendPasswordResetEmail(email, resetLink, row.name);
+      } catch (mailErr) {
+        // Never surface mail failures: a 500 only for existing accounts would reveal which
+        // emails are registered.
+        console.error('forgot-password email failed:', JSON.stringify(mailErr.response?.data ?? mailErr.message));
+      }
     }
 
-    res.json({ message: 'If this email exists you will receive a reset link.' });
+    res.json(genericReply);
   } catch (err) {
-    const detail = err.response?.data ?? err.message;
-    console.error('forgot-password error:', JSON.stringify(detail));
+    console.error('forgot-password error:', err.message);
     res.status(500).json({ error: 'Failed to process request. Please try again.' });
   }
 });
@@ -306,8 +330,11 @@ router.post('/reset-password', async (req, res) => {
   try {
     const { token, newPassword } = req.body;
 
-    if (!token || !newPassword)
+    if (typeof token !== 'string' || typeof newPassword !== 'string' || !token || !newPassword)
       return res.status(400).json({ error: 'Token and new password are required.' });
+
+    if (newPassword.length > MAX_PASSWORD_LENGTH)
+      return res.status(400).json({ error: `Password must be at most ${MAX_PASSWORD_LENGTH} characters.` });
 
     if (newPassword.length < 8)
       return res.status(400).json({ error: 'Password must be at least 8 characters.' });
@@ -336,7 +363,9 @@ router.put('/update-profile', requireAuth, async (req, res) => {
     const { trading_experience, markets_traded, goals, avatar_color, name, avatar_base64 } = req.body;
 
     const allowedColors = ['emerald', 'blue', 'purple', 'orange', 'rose', 'amber', 'cyan', 'indigo'];
-    const safeColor = allowedColors.includes(avatar_color) ? avatar_color : 'emerald';
+    // Only touch what the client actually sent — a name-only update must not wipe the profile.
+    const safeColor = allowedColors.includes(avatar_color) ? avatar_color : undefined;
+    const joinList = (v) => (Array.isArray(v) ? v.join(',') : (typeof v === 'string' ? v : undefined));
 
     if (avatar_base64) {
       const avatarUrl = await saveAvatarFromBase64(req.user.id, avatar_base64);
@@ -346,9 +375,9 @@ router.put('/update-profile', requireAuth, async (req, res) => {
     }
 
     await Users.updateProfile(req.user.id, {
-      trading_experience: trading_experience ?? null,
-      markets_traded: Array.isArray(markets_traded) ? markets_traded.join(',') : (markets_traded ?? null),
-      goals: Array.isArray(goals) ? goals.join(',') : (goals ?? null),
+      trading_experience: typeof trading_experience === 'string' ? trading_experience.slice(0, 100) : undefined,
+      markets_traded: joinList(markets_traded)?.slice(0, 500),
+      goals: joinList(goals)?.slice(0, 500),
       avatar_color: safeColor,
     });
 

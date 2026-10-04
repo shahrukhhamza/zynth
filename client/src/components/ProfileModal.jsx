@@ -261,7 +261,7 @@ export default function ProfileModal({ onClose, onForgotPassword }) {
                     ? <img src={avatarSrc} alt="Avatar" className="w-full h-full object-cover" onError={() => setAvatarError(true)} />
                     : (user?.name?.[0] ?? 'U').toUpperCase()}
               </div>
-              {/* Camera overlay � hidden while pending */}
+              {/* Camera overlay — hidden while pending */}
               {!pendingAvatar && (
                 <button
                   onClick={() => avatarFileRef.current?.click()}

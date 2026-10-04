@@ -3,7 +3,7 @@
  *
  * Watches known US economic release schedules via node-cron.
  * When a release window fires:
- *   1. Queries Gemini (gemini-2.0-flash with google_search grounding) for the
+ *   1. Queries Gemini (gemini-2.5-flash with google_search grounding) for the
  *      latest actual/forecast/previous value.
  *   2. Validates the returned data.
  *   3. Updates server/config/economicData.js in-place (text manipulation).
@@ -292,16 +292,12 @@ function getAvailableKey() {
 
 const GEMINI_MODELS = [
   {
-    id:   'gemini-2.0-flash',
+    id:   'gemini-2.5-flash',
     tool: { google_search: {} },
   },
   {
-    id:   'gemini-1.5-flash-latest',
-    tool: {
-      google_search_retrieval: {
-        dynamic_retrieval_config: { mode: 'MODE_DYNAMIC', dynamic_threshold: 0.0 },
-      },
-    },
+    id:   'gemini-flash-latest',
+    tool: { google_search: {} },
   },
 ];
 
@@ -355,7 +351,7 @@ export async function fetchLatestRelease(indicatorId, indicatorName, unit) {
         const body = {
           contents: [{ role: 'user', parts: [{ text: prompt }] }],
           tools: [model.tool],
-          generationConfig: {
+          generationConfig: { thinkingConfig: { thinkingBudget: 0 }, 
             temperature:     0.05,
             maxOutputTokens: 256,
           },

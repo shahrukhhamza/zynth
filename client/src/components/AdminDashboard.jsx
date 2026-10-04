@@ -14,6 +14,10 @@ import {
   Users, Crown, Trash2, Search, RefreshCw,
   DollarSign, Zap, Shield, Download, CalendarDays, CalendarCheck, Activity,
 } from 'lucide-react';
+import { PLANS_CONFIG } from '../config/planFeatures';
+
+// Free-plan lifetime AI analyses (must match the server-side check in authMiddleware.checkAiTries)
+const FREE_AI_LIMIT = PLANS_CONFIG.free.aiAnalysesLifetime;
 
 /* ── helpers ─────────────────────────────────────────────────────── */
 const PLAN_BADGE = {
@@ -417,8 +421,8 @@ function AdminDashboardInner() {
 
                         {/* AI Tries */}
                         <td className="px-4 py-3 text-[12px]">
-                          <span style={{ color: (u.ai_analysis_tries ?? 0) >= 3 ? '#f87171' : theme.muted }}>
-                            {u.ai_analysis_tries ?? 0}/3
+                          <span style={{ color: (u.ai_analysis_tries ?? 0) >= FREE_AI_LIMIT ? '#f87171' : theme.muted }}>
+                            {u.ai_analysis_tries ?? 0}/{FREE_AI_LIMIT}
                           </span>
                         </td>
 

@@ -45,7 +45,7 @@ export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess })
 
   useEffect(() => {
     getPublicStats()
-      .then(d => { if (d?.totalUsers != null) setSpotsLeft(Math.max(0, 100 - d.totalUsers)); })
+      .then(d => { if (typeof d?.promoSpotsLeft === 'number') setSpotsLeft(d.promoSpotsLeft); })
       .catch(() => {});
   }, []);
 
@@ -220,7 +220,7 @@ export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess })
         }
       `}</style>
 
-      {/* -- Blob 1 � top-left drift --------------------------------------- */}
+      {/* -- Blob 1 — top-left drift --------------------------------------- */}
       <div style={{ position:'fixed', top:'-220px', left:'-180px', width:'720px', height:'720px',
         pointerEvents:'none', zIndex:0,
         background: isDark
@@ -229,7 +229,7 @@ export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess })
         filter:'blur(82px)', animation:'blobDrift 18s ease-in-out infinite',
       }} />
 
-      {/* -- Blob 2 � bottom-right drift ----------------------------------- */}
+      {/* -- Blob 2 — bottom-right drift ----------------------------------- */}
       <div style={{ position:'fixed', bottom:'-200px', right:'-180px', width:'640px', height:'640px',
         pointerEvents:'none', zIndex:0,
         background: isDark
@@ -273,7 +273,7 @@ export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess })
           style={{ fontSize:'12.5px', fontWeight:500, color: isDark?'rgba(255,255,255,0.36)':'#64748b', background:'none', border:'none', cursor:'pointer', padding:'4px 2px', transition:'color 0.12s' }}
           onMouseEnter={e => e.currentTarget.style.color=isDark?'rgba(255,255,255,0.86)':'#0b0b0f'}
           onMouseLeave={e => e.currentTarget.style.color=isDark?'rgba(255,255,255,0.36)':'#64748b'}>
-          Sign in ?
+          Sign in →
         </button>
       </div>
 
@@ -360,7 +360,7 @@ export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess })
                         color: isDark?'rgba(255,255,255,0.55)':'#52525b',
                         background: isDark?'rgba(255,255,255,0.06)':'rgba(0,0,0,0.04)',
                         border: isDark?'1px solid rgba(255,255,255,0.10)':'1px solid rgba(0,0,0,0.08)',
-                      }}>AI ?</div>
+                      }}>AI ✦</div>
                     )}
                   </div>
                 ))}
@@ -432,7 +432,7 @@ export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess })
                   Create your account.
                 </h1>
                 <p style={{ fontSize:'13.5px', color: isDark?'rgba(255,255,255,0.38)':'#64748b', margin:0 }}>
-                  {spotsLeft != null && <><span style={{ color:'#FBBF24', fontWeight:600 }}>{spotsLeft} spots</span> left at this price.{' '}</>}
+                  {spotsLeft != null && spotsLeft > 0 && <><span style={{ color:'#FBBF24', fontWeight:600 }}>{spotsLeft} free Elite spots</span> left for early users.{' '}</>}
                   Already on Zynth?{' '}
                   <button onClick={onSwitchToLogin}
                     style={{ color: isDark?'#a1a1aa':'#52525b', background:'none', border:'none', cursor:'pointer', fontSize:'13.5px', padding:0, fontWeight:500, transition:'color 0.12s' }}
@@ -471,7 +471,7 @@ export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess })
                         style={{ fontSize:'12px', fontWeight:600, padding:'6px 12px', borderRadius:'7px', border:'none', cursor:'pointer',
                           background: isDark?'rgba(251,191,36,0.22)':'rgba(251,191,36,0.30)',
                           color: isDark?'#fcd34d':'#92400e', transition:'opacity 0.15s' }}>
-                        {linkCopied ? '? Link copied!' : 'Copy Link'}
+                        {linkCopied ? '✓ Link copied!' : 'Copy Link'}
                       </button>
                     </div>
                   </div>
@@ -641,7 +641,7 @@ export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess })
                   onMouseLeave={e => { e.currentTarget.style.transform=''; e.currentTarget.style.boxShadow=loading?'none':(isDark?'0 2px 14px rgba(202,138,4,0.3), 0 1px 3px rgba(0,0,0,0.2)':'0 2px 14px rgba(0,0,0,0.18), 0 1px 3px rgba(0,0,0,0.1)'); }}
                   onMouseDown={e => { if(!loading) e.currentTarget.style.transform='scale(0.985)'; }}
                   onMouseUp={e => { if(!loading) e.currentTarget.style.transform='translateY(-1.5px)'; }}>
-                  {loading ? <><Loader2 size={14} className="animate-spin"/><span>Creating account�</span></> : <><span>Create account</span><ArrowRight size={14}/></>}
+                  {loading ? <><Loader2 size={14} className="animate-spin"/><span>Creating account…</span></> : <><span>Create account</span><ArrowRight size={14}/></>}
                 </button>
               </form>
 
@@ -663,7 +663,7 @@ export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess })
                 style={{ color:isDark?'#a1a1aa':'#52525b', background:'none', border:'none', cursor:'pointer', fontSize:'13px', padding:0, fontWeight:500, transition:'color 0.12s' }}
                 onMouseEnter={e => e.currentTarget.style.color=isDark?'#ffffff':'#09090b'}
                 onMouseLeave={e => e.currentTarget.style.color=isDark?'#a1a1aa':'#52525b'}>
-                Sign in ?
+                Sign in →
               </button>
             </p>
           </>

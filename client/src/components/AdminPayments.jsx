@@ -10,6 +10,7 @@
  * The `proof_url` field stores the screenshot path for JazzCash payments.
  */
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { fetchProtectedMediaUrl } from '../utils/mediaUrl';
 import {
   CheckCircle, XCircle, Clock, RefreshCw, Loader2,
   CreditCard, Image, X, Search, AlertTriangle,
@@ -465,7 +466,11 @@ export default function AdminPayments() {
                             </div>
                           ) : proofHref ? (
                             <button
-                              onClick={() => setLightbox(proofHref)}
+                              onClick={async () => {
+                                const blobUrl = await fetchProtectedMediaUrl(req.proof_url);
+                                if (blobUrl) setLightbox(blobUrl);
+                                else window.alert('Could not load the screenshot.');
+                              }}
                               title="View screenshot"
                               style={{
                                 display: 'inline-flex', alignItems: 'center', gap: 5,
@@ -551,7 +556,7 @@ export default function AdminPayments() {
       </div>
 
       {/* Screenshot lightbox */}
-      {lightbox && <Lightbox src={lightbox} onClose={() => setLightbox(null)} />}
+      {lightbox && <Lightbox src={lightbox} onClose={() => { URL.revokeObjectURL(lightbox); setLightbox(null); }} />}
     </div>
   );
 }

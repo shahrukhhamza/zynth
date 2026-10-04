@@ -89,6 +89,5 @@ export function usePlan() {
 
     // Backward compat aliases
     aiTriesLeft: aiRemaining,
-    canUseAI,
   };
 }

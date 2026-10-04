@@ -11,10 +11,6 @@ export async function getPublicStats() {
   const now = Date.now();
   const token = getAuthToken();
 
-  if (!token) {
-    return { totalUsers: 0 };
-  }
-
   try {
     const cachedRaw = sessionStorage.getItem(CACHE_KEY);
     if (cachedRaw) {
@@ -30,7 +26,7 @@ export async function getPublicStats() {
   if (_inflight) return _inflight;
 
   _inflight = fetch(`${API_URL}/api/public-stats`, {
-    headers: { Authorization: `Bearer ${token}` },
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
   })
     .then(res => {
       if (!res.ok) throw new Error('Failed to fetch public stats');

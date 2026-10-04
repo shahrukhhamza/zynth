@@ -339,7 +339,7 @@ export default function EconomicDashboard({ onViewChange }) {
     const headers = { Authorization: `Bearer ${token}` };
     Promise.allSettled([
       fetch(`${API_URL}/api/journal/trades?limit=200`, { headers }).then(r => r.ok ? r.json() : null),
-      fetch(`${API_URL}/api/economic/dashboard`, { headers }).then(r => r.ok ? r.json() : null),
+      fetch(`${API_URL}/api/calendar?filter=week`, { headers }).then(r => r.ok ? r.json() : null),
     ]).then(([allResult, eco]) => {
       const normalize = (t) => {
         const rawPnl = parseFloat(t.profit_loss) || 0;
@@ -359,9 +359,12 @@ export default function EconomicDashboard({ onViewChange }) {
         setMonthStats(calc(allData.filter(t => new Date(t.created_at) >= new Date(now.getFullYear(), now.getMonth(), 1))));
       }
       if (eco.status === 'fulfilled' && eco.value) {
-        const events = Array.isArray(eco.value) ? eco.value : (eco.value?.events ?? []);
-        const high = events.find(e => (e.impact ?? '').toLowerCase() === 'high');
-        if (high) setKeyEvent({ title: high.event ?? high.title ?? 'High Impact Event', time: high.time ?? '' });
+        // /api/calendar returns an array of events sorted by time. Prefer the next upcoming
+        // high-impact release; fall back to the first high-impact one of the week.
+        const events = Array.isArray(eco.value) ? eco.value : [];
+        const highs = events.filter(e => (e.impact ?? '').toLowerCase() === 'high');
+        const high = highs.find(e => new Date(e.time).getTime() >= Date.now()) ?? highs[0];
+        if (high) setKeyEvent({ title: high.event ?? high.title ?? 'High Impact Event', time: Number.isNaN(new Date(high.time).getTime()) ? (high.time ?? '') : new Date(high.time).toLocaleString('en-US', { weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) });
       }
       setLoading(false);
     });

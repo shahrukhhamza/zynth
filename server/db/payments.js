@@ -4,16 +4,8 @@
  * Table: payment_requests
  *   id, user_id, plan, billing_cycle, method, amount, note, proof_url, status, reviewed_by, reviewed_at, created_at
  */
-import pg from 'pg';
 
-const { Pool } = pg;
-
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: process.env.NODE_ENV === 'production'
-    ? { rejectUnauthorized: false }
-    : false,
-});
+import pool from './pool.js';
 
 // ── Init / migrate ────────────────────────────────────────────────────────────
 
@@ -59,6 +51,17 @@ export async function createPaymentRequest({ userId, plan, billingCycle = 'month
     [userId, plan, billingCycle, method, amount ?? null, note ?? null, proofUrl ?? null],
   );
   return rows[0];
+}
+
+/** True when this TXID is already attached to a pending/verified crypto request. */
+export async function isTxidInUse(txid) {
+  const { rows } = await pool.query(
+    `SELECT 1 FROM payment_requests
+     WHERE LOWER(note) = LOWER($1) AND method ~* '(crypto|usdt|trc20)' AND status <> 'rejected'
+     LIMIT 1`,
+    [txid],
+  );
+  return rows.length > 0;
 }
 
 export async function updatePaymentStatus(id, status, reviewedBy) {

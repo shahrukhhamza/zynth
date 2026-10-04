@@ -10,7 +10,11 @@ import {
   AlertTriangle, Brain, Download, Loader2, ChevronRight, CheckCircle,
   XCircle, Lock, Sparkles, Calendar, TrendingDown,
 } from 'lucide-react';
+import {
+  ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar,
+} from 'recharts';
 import { useTheme } from '../contexts/ThemeContext';
+import { useAuth } from '../contexts/AuthContext';
 import { usePlanGate } from '../hooks/usePlanGate';
 import { API_URL } from '../config/api';
 import ErrorBar from './ErrorBar';
@@ -509,6 +513,7 @@ function EmptyState({ tradeCount, closedCount = 0, canGenerate, generating, next
 
 // ── Main component ────────────────────────────────────────────────────────────
 export default function TradingDNA() {
+  const theme = useTheme();
   const { token, user } = useAuth();
   const { isElite, isAdmin } = usePlanGate();
 
@@ -618,7 +623,6 @@ export default function TradingDNA() {
   }
 
   // ── Report view ──
-  const theme = useTheme();
   return (
     <div className="space-y-6 max-w-5xl mx-auto pb-10">
       {/* Header row */}

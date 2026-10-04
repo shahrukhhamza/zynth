@@ -19,7 +19,7 @@ import * as Users from '../db/users.js';
 import { trackEvent } from '../db/events.js';
 import {
   insertTrade, getTrades, getTradeById, updateTrade, deleteTrade, countTrades,
-  countTradesThisMonth, getTradesBySymbol, countTradesBySymbol,
+  getTradesBySymbol, countTradesBySymbol,
   upsertJournal, setJournalAiAnalysis, setMacroContext,
   getAllTradesForUser, insertReport, getReports,
 } from '../services/journalDb.js';
@@ -43,16 +43,54 @@ function getUserId(req) {
   return req.user?.userId || req.user?.id || 'default';
 }
 
-/** Free users: max 10 journal entries per calendar month. Pro/Elite/Admin: unlimited. */
+// Must match PLANS_CONFIG.free.maxJournalEntries on the client (shown in the UI, pricing and Help).
+const FREE_JOURNAL_LIMIT = 5;
+
+/** Free users: max 5 journal entries in total (deleting one frees a slot). Pro/Elite/Admin: unlimited. */
 async function checkJournalLimit(req, res, next) {
   const { plan, is_admin } = req.user || {};
   if (is_admin === 1 || plan === 'pro' || plan === 'elite') return next();
-  const count = await countTradesThisMonth(getUserId(req));
-  if (count >= 10) {
+  const count = await countTrades(getUserId(req));
+  if (count >= FREE_JOURNAL_LIMIT) {
     trackEvent(req.user?.id, 'journal_limit_hit', { count, plan: plan ?? 'free' });
-    return res.status(403).json({ error: 'journal_limit_reached', limit: 10, upgrade: true });
+    return res.status(403).json({ error: 'journal_limit_reached', limit: FREE_JOURNAL_LIMIT, upgrade: true });
   }
   next();
+}
+
+// ── Input helpers ─────────────────────────────────────────────────────────────
+const DIRECTIONS = new Set(['buy', 'sell']);
+const OUTCOMES   = new Set(['win', 'loss', 'breakeven']);
+const NUMERIC_TRADE_FIELDS = ['position_size', 'entry_price', 'exit_price', 'tp', 'sl', 'profit_loss'];
+
+/** '' / null / undefined -> null; a finite number -> number; anything else -> NaN (caller rejects). */
+function toNumberOrNull(value) {
+  if (value === undefined || value === null || value === '') return null;
+  const n = Number(value);
+  return Number.isFinite(n) ? n : NaN;
+}
+
+function parseId(raw) {
+  const n = Number(raw);
+  return Number.isInteger(n) && n > 0 ? n : null;
+}
+
+/** Returns an error message if any provided trade field is malformed, otherwise null. */
+function validateTradeInput(body, { partial }) {
+  for (const key of NUMERIC_TRADE_FIELDS) {
+    if (body[key] !== undefined && Number.isNaN(toNumberOrNull(body[key]))) return `${key} must be a number`;
+  }
+  if (body.pair !== undefined && (typeof body.pair !== 'string' || !body.pair.trim() || body.pair.length > 30)) {
+    return 'pair must be a non-empty string (max 30 chars)';
+  }
+  if (body.direction !== undefined && !DIRECTIONS.has(String(body.direction).toLowerCase())) {
+    return 'direction must be "buy" or "sell"';
+  }
+  if (body.outcome !== undefined && body.outcome !== '' && !OUTCOMES.has(String(body.outcome).toLowerCase())) {
+    return 'outcome must be "win", "loss" or "breakeven"';
+  }
+  if (!partial && (!body.pair || !body.direction)) return 'pair and direction are required';
+  return null;
 }
 
 const router = Router();
@@ -66,33 +104,32 @@ router.post('/trades', checkJournalLimit, upload.single('screenshot'), async (re
     const body = req.body;
     const userId = getUserId(req);
 
-    if (!body.pair || !body.direction) {
-      return res.status(400).json({ success: false, error: 'pair and direction are required' });
-    }
+    const invalid = validateTradeInput(body, { partial: false });
+    if (invalid) return res.status(400).json({ success: false, error: invalid });
 
     const screenshotPath = req.file
       ? await saveJournalScreenshot(userId, req.file)
       : null;
 
+    const outcome = body.outcome ? String(body.outcome).toLowerCase() : null;
     const tradeData = {
       user_id:       userId,
-      pair:          body.pair.toUpperCase(),
-      direction:     body.direction.toLowerCase(),
-      position_size: body.position_size ? parseFloat(body.position_size) : null,
-      entry_price:   body.entry_price   ? parseFloat(body.entry_price)   : null,
-      exit_price:    body.exit_price    ? parseFloat(body.exit_price)    : null,
-      tp:            body.tp            ? parseFloat(body.tp)            : null,
-      sl:            body.sl            ? parseFloat(body.sl)            : null,
-      outcome:       body.outcome       || null,
+      pair:          body.pair.trim().toUpperCase(),
+      direction:     String(body.direction).toLowerCase(),
+      position_size: toNumberOrNull(body.position_size),
+      entry_price:   toNumberOrNull(body.entry_price),
+      exit_price:    toNumberOrNull(body.exit_price),
+      tp:            toNumberOrNull(body.tp),
+      sl:            toNumberOrNull(body.sl),
+      outcome,
       profit_loss:   (() => {
-        const raw = body.profit_loss ? parseFloat(body.profit_loss) : null;
+        const raw = toNumberOrNull(body.profit_loss);
         if (raw == null) return null;
-        const outcome = (body.outcome || '').toLowerCase();
-        if (outcome === 'loss')      return -Math.abs(raw);
-        if (outcome === 'win')       return  Math.abs(raw);
-        return raw; // breakeven or unset — keep as-is
+        if (outcome === 'loss') return -Math.abs(raw);
+        if (outcome === 'win')  return  Math.abs(raw);
+        return raw; // breakeven or unset: keep as-is
       })(),
-      session:       body.session       || null,
+      session:       body.session ? String(body.session).slice(0, 50) : null,
       screenshot_path: screenshotPath,
     };
 
@@ -121,7 +158,7 @@ router.get('/trades', async (req, res) => {
   try {
     const userId = getUserId(req);
     const page   = Math.max(0, parseInt(req.query.page)  || 0);
-    const limit  = Math.min(200, parseInt(req.query.limit) || 50);
+    const limit  = Math.min(200, Math.max(1, parseInt(req.query.limit) || 50));
     const symbol = req.query.symbol ? String(req.query.symbol).trim() : null;
     const trades = symbol
       ? await getTradesBySymbol(userId, symbol, limit, page * limit)
@@ -201,10 +238,10 @@ Provide a concise pattern analysis (4-6 bullet points max). Focus on:
 Be direct, specific, and data-driven. No generic advice. Format as plain text with bullet points starting with •.`;
 
     const axios = (await import('axios')).default;
-    const geminiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent';
+    const geminiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
     const gemRes = await axios.post(
       geminiUrl,
-      { contents: [{ parts: [{ text: prompt }] }], generationConfig: { temperature: 0.7, maxOutputTokens: 1024 } },
+      { contents: [{ parts: [{ text: prompt }] }], generationConfig: { thinkingConfig: { thinkingBudget: 0 },  temperature: 0.7, maxOutputTokens: 1024 } },
       { headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key }, timeout: 30000 }
     );
     const analysis = gemRes.data?.candidates?.[0]?.content?.parts?.[0]?.text;
@@ -228,7 +265,9 @@ Be direct, specific, and data-driven. No generic advice. Format as plain text wi
 // ── GET /trades/:id ───────────────────────────────────────────────────────────
 router.get('/trades/:id', async (req, res) => {
   try {
-    const trade = await getTradeById(parseInt(req.params.id));
+    const id = parseId(req.params.id);
+    if (!id) return res.status(400).json({ success: false, error: 'Invalid trade id' });
+    const trade = await getTradeById(id);
     if (!trade) return res.status(404).json({ success: false, error: 'Trade not found' });
     if (String(trade.user_id) !== String(getUserId(req))) {
       return res.status(403).json({ success: false, error: 'Forbidden' });
@@ -242,8 +281,9 @@ router.get('/trades/:id', async (req, res) => {
 // ── PUT /trades/:id ───────────────────────────────────────────────────────────
 router.put('/trades/:id', upload.single('screenshot'), async (req, res) => {
   try {
-    const id   = parseInt(req.params.id);
+    const id   = parseId(req.params.id);
     const userId = getUserId(req);
+    if (!id) return res.status(400).json({ success: false, error: 'Invalid trade id' });
 
     // Ownership check
     const existing = await getTradeById(id);
@@ -254,22 +294,25 @@ router.put('/trades/:id', upload.single('screenshot'), async (req, res) => {
 
     const body = req.body;
 
+    const invalid = validateTradeInput(body, { partial: true });
+    if (invalid) return res.status(400).json({ success: false, error: invalid });
+
     const tradeFields = ['pair','direction','position_size','entry_price','exit_price','tp','sl','outcome','profit_loss','session'];
     const tradeUpdate = {};
     tradeFields.forEach(k => { if (body[k] !== undefined) tradeUpdate[k] = body[k]; });
-    // Enforce P&L sign based on outcome
-    if (tradeUpdate.profit_loss !== undefined) {
-      const raw     = parseFloat(tradeUpdate.profit_loss);
-      const outcome = (tradeUpdate.outcome || body.outcome || '').toLowerCase();
-      if (!isNaN(raw)) {
-        if (outcome === 'loss') tradeUpdate.profit_loss = -Math.abs(raw);
-        else if (outcome === 'win') tradeUpdate.profit_loss = Math.abs(raw);
-      }
+    NUMERIC_TRADE_FIELDS.forEach(k => { if (k in tradeUpdate) tradeUpdate[k] = toNumberOrNull(tradeUpdate[k]); });
+    if (tradeUpdate.direction !== undefined) tradeUpdate.direction = String(tradeUpdate.direction).toLowerCase();
+    if (tradeUpdate.outcome !== undefined) tradeUpdate.outcome = tradeUpdate.outcome ? String(tradeUpdate.outcome).toLowerCase() : null;
+    // Enforce P&L sign based on outcome (the stored outcome applies when it is not being changed)
+    if (tradeUpdate.profit_loss != null) {
+      const outcome = String(tradeUpdate.outcome ?? existing.outcome ?? '').toLowerCase();
+      if (outcome === 'loss') tradeUpdate.profit_loss = -Math.abs(tradeUpdate.profit_loss);
+      else if (outcome === 'win') tradeUpdate.profit_loss = Math.abs(tradeUpdate.profit_loss);
     }
     if (req.file) {
       tradeUpdate.screenshot_path = await saveJournalScreenshot(userId, req.file);
     }
-    if (body.pair) tradeUpdate.pair = body.pair.toUpperCase();
+    if (tradeUpdate.pair !== undefined) tradeUpdate.pair = tradeUpdate.pair.trim().toUpperCase();
 
     if (Object.keys(tradeUpdate).length) await updateTrade(id, tradeUpdate);
 
@@ -289,7 +332,9 @@ router.put('/trades/:id', upload.single('screenshot'), async (req, res) => {
 router.delete('/trades/:id', async (req, res) => {
   try {
     const userId = getUserId(req);
-    const deleted = await deleteTrade(parseInt(req.params.id), userId);
+    const tradeId = parseId(req.params.id);
+    if (!tradeId) return res.status(400).json({ success: false, error: 'Invalid trade id' });
+    const deleted = await deleteTrade(tradeId, userId);
     if (!deleted) return res.status(404).json({ success: false, error: 'Trade not found' });
     res.json({ success: true });
   } catch (err) {
@@ -300,7 +345,8 @@ router.delete('/trades/:id', async (req, res) => {
 // ── POST /trades/:id/analyze — AI journal analysis ────────────────────────────
 router.post('/trades/:id/analyze', requireAuth, checkAiTries, async (req, res) => {
   try {
-    const id    = parseInt(req.params.id);
+    const id    = parseId(req.params.id);
+    if (!id) return res.status(400).json({ success: false, error: 'Invalid trade id' });
     const trade = await getTradeById(id);
     if (!trade) return res.status(404).json({ success: false, error: 'Trade not found' });
     if (String(trade.user_id) !== String(getUserId(req))) {
@@ -380,6 +426,14 @@ router.post('/reports', requirePro, checkAiTries, async (req, res) => {
       report_data: JSON.stringify(reportData),
     });
 
+    // Reports consume an AI try like every other AI feature (Pro: monthly quota)
+    const reportPlan = String(req.user?.plan ?? 'free').toLowerCase();
+    if (reportPlan === 'pro') {
+      await Users.incrementMonthlyAiCount(req.user.id);
+    } else if (reportPlan !== 'elite' && req.user?.is_admin !== 1) {
+      await Users.incrementAiTries(req.user.id);
+    }
+
     res.json({ success: true, data: { id, user_id: userId, report_type: reportType, created_at: new Date().toISOString(), report_data: reportData } });
   } catch (err) {
     console.error('Report generation error:', err);
@@ -391,7 +445,8 @@ router.post('/reports', requirePro, checkAiTries, async (req, res) => {
 // No AI-try gate: event fetching is free; Gemini narrative is optional + lightweight.
 router.get('/trades/:id/macro-context', async (req, res) => {
   try {
-    const id    = parseInt(req.params.id);
+    const id    = parseId(req.params.id);
+    if (!id) return res.status(400).json({ success: false, error: 'Invalid trade id' });
     const trade = await getTradeById(id);
     if (!trade) return res.status(404).json({ success: false, error: 'Trade not found' });
     if (String(trade.user_id) !== String(getUserId(req))) {

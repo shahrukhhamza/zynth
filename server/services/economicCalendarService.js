@@ -150,6 +150,7 @@ function getRange(filter = 'week') {
  * Accepts optional { from, to } date strings or a filter string
  */
 async function getEconomicCalendar(options = {}) {
+  let cacheKey = null;
   try {
     // Build date range
     let from, to;
@@ -162,7 +163,7 @@ async function getEconomicCalendar(options = {}) {
       to   = range.to;
     }
 
-    const cacheKey = `calendar_${from}_${to}`;
+    cacheKey = `calendar_${from}_${to}`;
     const cached   = cache.get(cacheKey);
     if (cached) {
       console.log(`✓ Calendar cache hit: ${from} → ${to}`);
@@ -201,7 +202,9 @@ async function getEconomicCalendar(options = {}) {
 
   } catch (error) {
     console.error('✗ Calendar service error:', error.message);
-    // Return empty array — don't crash, let frontend show empty state
+    // Return empty array — don't crash, let frontend show empty state. Cache the failure briefly so
+    // every page view doesn't re-hit two failing upstream APIs (and burn their rate limits).
+    if (cacheKey) cache.set(cacheKey, [], 60);
     return [];
   }
 }

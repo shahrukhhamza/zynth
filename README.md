@@ -8,7 +8,7 @@ Full-stack trading web app for macro analysis, journaling, execution support, an
 - Node.js/Express API backend in server/
 - PostgreSQL data layer for users, journal, events, and payments
 - Python economic calendar toolkit in economic_calendar/
-- Deployment configs for Vercel (frontend) and Railway (backend)
+- Deployment: Render (API + built frontend) with Supabase (Postgres + Storage); see SUPABASE_SETUP.md
 
 ## Core Product Areas
 
@@ -43,7 +43,7 @@ Full-stack trading web app for macro analysis, journaling, execution support, an
 
 - PostgreSQL
 - File storage: local uploads or S3-compatible DigitalOcean Spaces (fallback: Cloudinary)
-- Deploy targets: Vercel + Railway
+- Deploy targets: Render + Supabase (Vercel/Railway configs are legacy)
 
 ### AI and External Data
 
@@ -361,7 +361,8 @@ Start from .env.example, then extend as needed.
 
 - Uses render.yaml for Blueprint-based deploys
 - Single Render web service: builds client/ and runs server/ behind one URL
-- Includes a Render PostgreSQL database wired into DATABASE_URL
+- Database and file storage run on Supabase (free tier): see [SUPABASE_SETUP.md](SUPABASE_SETUP.md) for the full step-by-step guide
+- Set DATABASE_URL (Supabase Session pooler string), SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY in the Render dashboard
 - No separate frontend URL is required
 - The frontend uses same-origin API calls in production
 

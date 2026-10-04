@@ -9,31 +9,18 @@
  */
 import { Router }         from 'express';
 import multer             from 'multer';
-import { extname, join }  from 'path';
-import { existsSync, mkdirSync } from 'fs';
-import { randomUUID }     from 'crypto';
 import { requireAuth, requireAdmin } from '../middleware/authMiddleware.js';
 import * as Payments      from '../db/payments.js';
 import * as Users         from '../db/users.js';
 import { activateUserSubscription } from '../db/users.js';
 import { trackEvent }     from '../db/events.js';
-import { UPLOADS_DIR }    from '../config/storagePaths.js';
+import { savePaymentProof } from '../services/fileStorageService.js';
 
-// ── Multer — disk storage under uploads/payments/ ────────────────────────────
-const PAYMENTS_DIR = join(UPLOADS_DIR, 'payments');
-if (!existsSync(PAYMENTS_DIR)) mkdirSync(PAYMENTS_DIR, { recursive: true });
+// ── Multer — in memory; the file is persisted (Supabase / local) only after validation passes ──
 
 const ALLOWED_MIME = new Set(['image/jpeg', 'image/png', 'image/webp', 'image/gif']);
 
-const storage = multer.diskStorage({
-  destination: (_req, _file, cb) => cb(null, PAYMENTS_DIR),
-  filename:    (_req, file, cb) => {
-    const raw = extname(file.originalname).toLowerCase();
-    // Only allow safe extension characters
-    const ext = /^\.[a-z0-9]+$/.test(raw) ? raw : '.jpg';
-    cb(null, `pay_${randomUUID()}${ext}`);
-  },
-});
+const storage = multer.memoryStorage();
 
 const upload = multer({
   storage,
@@ -73,7 +60,11 @@ router.post('/submit', requireAuth, upload.single('proof'), async (req, res) => 
       return res.status(400).json({ error: 'Invalid amount format.' });
     }
 
-    const proofUrl = req.file ? `/uploads/payments/${req.file.filename}` : null;
+    if (isCrypto && await Payments.isTxidInUse(note.trim())) {
+      return res.status(409).json({ error: 'This transaction ID has already been submitted.' });
+    }
+
+    const proofUrl = req.file ? await savePaymentProof(req.file) : null;
 
     const request = await Payments.createPaymentRequest({
       userId:   req.user.id,
@@ -153,6 +144,11 @@ router.put('/:id/approve', requireAuth, requireAdmin, async (req, res) => {
       return res.status(500).json({ error: 'Payment verified but subscription activation failed. Status reverted to pending — please retry.' });
     }
 
+    trackEvent(existing.user_id, 'subscription_started', {
+      plan:         existing.plan,
+      billingCycle: existing.billing_cycle,
+      requestId:    existing.id,
+    });
     trackEvent(req.user.id, 'payment_verified', {
       requestId:    existing.id,
       userId:       existing.user_id,

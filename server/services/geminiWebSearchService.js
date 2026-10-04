@@ -50,20 +50,16 @@ function checkDailyLimit() {
 // Key 2 is dedicated to web-search to avoid collisions with journal / assistant
 const GEMINI_API_KEY = () => process.env.GEMINI_API_KEY_2 || process.env.GEMINI_API_KEY || '';
 
-// We prefer gemini-2.0-flash (has native google_search tool).
-// Falls back to gemini-1.5-flash with google_search_retrieval grounding.
+// We prefer gemini-2.5-flash (native google_search tool).
+// Falls back to the gemini-flash-latest alias.
 const MODELS = [
   {
-    id: 'gemini-2.0-flash',
+    id: 'gemini-2.5-flash',
     tool: { google_search: {} },
   },
   {
-    id: 'gemini-1.5-flash',
-    tool: {
-      google_search_retrieval: {
-        dynamic_retrieval_config: { mode: 'MODE_DYNAMIC', dynamic_threshold: 0.0 },
-      },
-    },
+    id: 'gemini-flash-latest',
+    tool: { google_search: {} },
   },
 ];
 
@@ -86,7 +82,7 @@ async function callGeminiWithSearch(promptText, maxOutputTokens = 2048) {
       const body = {
         contents: [{ role: 'user', parts: [{ text: promptText }] }],
         tools: [model.tool],
-        generationConfig: {
+        generationConfig: { thinkingConfig: { thinkingBudget: 0 }, 
           temperature: 0.1,   // very low — we want facts, not creativity
           maxOutputTokens,
           responseMimeType: 'text/plain',

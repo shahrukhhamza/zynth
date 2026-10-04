@@ -2,7 +2,11 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://ai-dashboard-production-c844.up.railway.app/api/:path*"
+      "destination": "https://ai-dashboard-backend-kunc.onrender.com/api/:path*"
+    },
+    {
+      "source": "/uploads/:path*",
+      "destination": "https://ai-dashboard-backend-kunc.onrender.com/uploads/:path*"
     },
     {
       "source": "/(.*)",
