@@ -4,7 +4,6 @@ import { API_URL } from '../config/api';
 import { useUpgrade } from '../contexts/UpgradeContext';
 import { usePlanGate } from '../hooks/usePlanGate';
 import { getAuthToken } from '../utils/authStorage';
-import NewAiInsightsDashboard from './ai-insights/NewAiInsightsDashboard';
 import AIInsightsDashboard from './ai-insights/AIInsightsDashboard';
 
 // ── Macro Score Widget ────────────────────────────────────────────────────────
@@ -377,26 +376,32 @@ export default function EconomicIntelligence() {
 
   return (
     <div className="min-h-full">
-      <div className="mx-auto max-w-3xl px-4 py-6 pb-16">
+      <div className="mx-auto max-w-6xl px-4 py-6 pb-16 md:px-6">
 
         {/* ── Page header ─────────────────────────────────────────────── */}
-        <div className="mb-6 flex items-center justify-between gap-3">
-          <div>
-            <h1 className="font-display m-0 text-[26px] font-bold tracking-tight text-zinc-900 dark:text-white">
-              Economic Intelligence
-            </h1>
-            <p className="mt-0.5 text-xs text-zinc-400">
-              Macroeconomic surprise indicators for gold (XAUUSD)
-            </p>
+        <div className="mb-7 flex flex-wrap items-center justify-between gap-4">
+          <div className="flex items-center gap-3.5">
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border" style={{ background: 'rgba(202,138,4,0.12)', borderColor: 'rgba(202,138,4,0.3)', color: '#CA8A04' }}>
+              <Brain className="h-5 w-5" />
+            </span>
+            <div>
+              <h1 className="font-display m-0 text-[26px] font-bold tracking-tight text-zinc-900 dark:text-white">
+                Economic Intelligence
+              </h1>
+              <p className="m-0 mt-0.5 text-[13px] text-zinc-500 dark:text-zinc-400">
+                What the macro data says about gold and the majors, and what to do about it.
+              </p>
+            </div>
           </div>
           <button
+            data-tour="insights-refresh"
             onClick={handleRefresh}
             disabled={refreshing}
             className="flex items-center gap-2 rounded-xl px-4 py-2.5 text-[12px] font-bold uppercase tracking-[0.06em] text-[#1a1203] transition-all duration-150 hover:translate-y-[1px] active:translate-y-[2px] disabled:opacity-60"
             style={{ background: "linear-gradient(180deg,#E0A010,#C98A06)", boxShadow: "0 3px 0 #8a5a05" }}
           >
             <RefreshCcw size={12} className={refreshing ? 'animate-spin' : ''} />
-            Refresh
+            Refresh data
           </button>
         </div>
 

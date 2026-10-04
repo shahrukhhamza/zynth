@@ -196,6 +196,7 @@ function Header({
 
           {/* Command palette trigger */}
           <button
+            data-tour="search"
             onClick={() => setShowPalette(true)}
             title="Search (Ctrl K)"
             style={{
@@ -215,6 +216,7 @@ function Header({
 
           {/* Theme toggle */}
           <button
+            data-tour="theme"
             onClick={theme.toggleTheme}
             title={theme.isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
             style={{
@@ -314,6 +316,7 @@ function Header({
           {user && (
             <div ref={userMenuRef} style={{ position: 'relative' }}>
               <button
+                data-tour="profile"
                 onClick={() => setShowUserMenu(p => !p)}
                 style={{
                   height: 38, padding: '0 10px 0 6px',

@@ -37,9 +37,10 @@ const NAV_GROUPS = [
   },
 ];
 
-function NavButton({ icon: Icon, label, badge, active, collapsed, onClick, layoutGroup }) {
+function NavButton({ icon: Icon, label, badge, active, collapsed, onClick, layoutGroup, tourId }) {
   return (
     <button
+      data-tour={tourId}
       onClick={onClick}
       title={collapsed ? label : undefined}
       aria-current={active ? 'page' : undefined}
@@ -189,6 +190,7 @@ function SidebarInner({
       {/* ── Primary action ────────────────────────────────── */}
       <div className="flex-shrink-0" style={{ padding: collapsed ? '14px 10px 6px' : '14px 12px 6px' }}>
         <button
+          data-tour="new-entry"
           onClick={() => navigate('journal')}
           title="New journal entry"
           className="group relative flex w-full items-center justify-center gap-2 overflow-hidden rounded-xl font-bold text-[#1a1203] transition-all duration-150 hover:translate-y-[1px] active:translate-y-[3px]"
@@ -217,6 +219,7 @@ function SidebarInner({
               {group.items.map((item) => (
                 <NavButton
                   key={item.key}
+                  tourId={`nav-${item.key}`}
                   icon={item.icon}
                   label={item.label}
                   badge={item.badge}
@@ -234,8 +237,8 @@ function SidebarInner({
           {!collapsed && <p className="m-0 px-3 pb-1.5 pt-2 text-[10px] font-bold uppercase tracking-[0.16em]" style={{ color: theme.textMuted }}>Account</p>}
           {collapsed && <div className="mx-2 my-2 h-px" style={{ background: theme.border }} />}
           <nav className="flex flex-col gap-1">
-            <NavButton icon={HelpCircle} label="Help & Docs" active={currentView === 'help'} collapsed={collapsed} layoutGroup={isMobile ? 'm' : 'd'} onClick={() => navigate('help')} />
-            <NavButton icon={Settings} label="Settings" active={false} collapsed={collapsed} layoutGroup={isMobile ? 'm' : 'd'} onClick={() => setShowSettingsModal(true)} />
+            <NavButton tourId="nav-help" icon={HelpCircle} label="Help & Docs" active={currentView === 'help'} collapsed={collapsed} layoutGroup={isMobile ? 'm' : 'd'} onClick={() => navigate('help')} />
+            <NavButton tourId="nav-settings" icon={Settings} label="Settings" active={false} collapsed={collapsed} layoutGroup={isMobile ? 'm' : 'd'} onClick={() => setShowSettingsModal(true)} />
             {user?.is_admin === 1 && (
               <NavButton icon={Crown} label="Admin" active={currentView === 'admin'} collapsed={collapsed} layoutGroup={isMobile ? 'm' : 'd'} onClick={() => navigate('admin')} />
             )}

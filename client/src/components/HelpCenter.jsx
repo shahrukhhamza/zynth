@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from 'react';
-import { BookOpen, Search, ChevronRight, ArrowLeft, Rocket, BookMarked, Bot, BarChart2, Calendar, Camera, Calculator, CreditCard, Settings, Shield, Star, X, Home, Mail, LifeBuoy, Clock3, ArrowUpRight, Bug, Lightbulb, MessageSquare } from 'lucide-react';
+import { BookOpen, Search, ChevronRight, ArrowLeft, Rocket, BookMarked, Bot, BarChart2, Calendar, Camera, Calculator, CreditCard, Settings, Shield, Star, X, Home, Mail, LifeBuoy, Clock3, ArrowUpRight, Bug, Lightbulb, MessageSquare, Compass } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 import { getPlanMonthlyLabel } from '../config/pricingPlans';
 
@@ -1461,7 +1461,7 @@ export default function HelpCenter() {
 
             {/* Hero banner */}
             <div style={{
-              background: isDark ? 'linear-gradient(135deg, rgba(21,33,69,0.97) 0%, rgba(10,14,29,0.99) 60%, rgba(4,10,24,1) 100%)' : 'linear-gradient(135deg, #eff6ff 0%, #f8fbff 100%)',
+              background: isDark ? 'linear-gradient(135deg, rgba(42,31,10,0.95) 0%, rgba(19,19,22,0.99) 60%, rgba(11,11,15,1) 100%)' : 'linear-gradient(135deg, #fbf3df 0%, #fdfbf5 100%)',
               border: `1px solid ${isDark ? 'rgba(202,138,4,0.2)' : 'rgba(202,138,4,0.14)'}`,
               borderRadius: isMobile ? 16 : 22,
               padding: isMobile ? '28px 20px' : '42px 44px',
@@ -1513,6 +1513,13 @@ export default function HelpCenter() {
                   </div>
                 </div>
               </div>
+              <button
+                type="button"
+                onClick={() => window.dispatchEvent(new CustomEvent('zynth:start-tour'))}
+                style={{ marginTop: 18, display: 'inline-flex', alignItems: 'center', gap: 8, padding: '10px 16px', borderRadius: 12, border: `1px solid ${isDark ? 'rgba(202,138,4,0.4)' : 'rgba(202,138,4,0.35)'}`, background: isDark ? 'rgba(202,138,4,0.1)' : 'rgba(202,138,4,0.08)', color: isDark ? '#FBBF24' : '#8a5a05', fontSize: 13.5, fontWeight: 700, cursor: 'pointer' }}
+              >
+                <Compass size={16} /> Take the guided product tour
+              </button>
             </div>
 
             {/* Popular articles */}

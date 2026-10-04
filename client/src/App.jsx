@@ -30,6 +30,7 @@ import ResetPasswordPage from './components/ResetPasswordPage'
 import OnboardingFlow from './components/OnboardingFlow'
 import PreSignupOnboarding from './components/PreSignupOnboarding'
 import WelcomeScreen from './components/WelcomeScreen'
+import ProductTour, { TOUR_DONE_KEY } from './components/ProductTour'
 import { fetchNews } from './services/api'
 import { UpgradeProvider, useUpgrade } from './contexts/UpgradeContext'
 import { useUpgradeIntelligence } from './hooks/useUpgradeIntelligence'
@@ -459,6 +460,7 @@ function AuthGate() {
   const [showSkipBanner, setShowSkipBanner] = useState(false)
   const [showPreSignupOnboarding, setShowPreSignupOnboarding] = useState(false)
   const [showWelcomeScreen, setShowWelcomeScreen] = useState(false)
+  const [showTour, setShowTour] = useState(false)
 
   // Post-onboarding state (existing)
   useEffect(() => {
@@ -481,8 +483,27 @@ function AuthGate() {
     if (isNew) {
       sessionStorage.removeItem('zynth_new_user');
       setShowWelcomeScreen(true);
+      // a brand-new account gets the guided tour once the welcome screen and setup wizard are out of the way
+      try { localStorage.removeItem(TOUR_DONE_KEY); localStorage.setItem('zynth_tour_pending', '1'); } catch { /* ignore */ }
     }
   }, [user?.id]) // eslint-disable-line
+
+  // Start the tour automatically for new users, and on request (command palette / Help page)
+  useEffect(() => {
+    if (!user) return undefined;
+    const onStart = () => setShowTour(true);
+    window.addEventListener('zynth:start-tour', onStart);
+    return () => window.removeEventListener('zynth:start-tour', onStart);
+  }, [user?.id]) // eslint-disable-line
+
+  useEffect(() => {
+    if (!user || showWelcomeScreen || showOnboarding || showTour) return undefined;
+    let pending = false;
+    try { pending = localStorage.getItem('zynth_tour_pending') === '1' && localStorage.getItem(TOUR_DONE_KEY) !== '1'; } catch { /* ignore */ }
+    if (!pending) return undefined;
+    const t = setTimeout(() => setShowTour(true), 900);
+    return () => clearTimeout(t);
+  }, [user?.id, showWelcomeScreen, showOnboarding, showTour]) // eslint-disable-line
 
   // Track GA4 page view for pre-auth pages (landing, login, signup, etc.)
   useEffect(() => {
@@ -530,6 +551,7 @@ function AuthGate() {
         ) : (
           <AppShell />
         )}
+        {showTour && !showWelcomeScreen && !showOnboarding && <ProductTour onClose={() => setShowTour(false)} />}
         {showOnboarding && !showWelcomeScreen && (
           <OnboardingFlow onComplete={handleOnboardingComplete} onSkip={handleOnboardingSkip} />
         )}

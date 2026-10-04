@@ -463,7 +463,7 @@ export default function EconomicDashboard({ onViewChange }) {
         )}
 
         {/* ── KPIs ─────────────────────────────────────────────── */}
-        <Rise className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <Rise data-tour="dash-stats" className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           <StatCard
             label="Net P&L" color={totalColor} icon={DollarSign}
             value={stats.count ? stats.total : '$0.00'} format={(n) => money(n)}
@@ -492,7 +492,7 @@ export default function EconomicDashboard({ onViewChange }) {
         </Rise>
 
         {/* ── Equity + macro ───────────────────────────────────── */}
-        <Rise className="grid gap-4 xl:grid-cols-12">
+        <Rise data-tour="dash-equity" className="grid gap-4 xl:grid-cols-12">
           <Card style={{ padding: 24 }} className="xl:col-span-8">
             <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
               <SectionTitle icon={LineChartIcon}>Equity curve</SectionTitle>

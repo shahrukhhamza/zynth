@@ -338,7 +338,7 @@ export default function TradeJournal() {
   };
 
   const tabBar = (
-    <div className="-mx-1 overflow-x-auto px-1 pb-1" style={{ scrollbarWidth: 'none' }}>
+    <div data-tour="journal-tabs" className="-mx-1 overflow-x-auto px-1 pb-1" style={{ scrollbarWidth: 'none' }}>
       <Tabs tabs={TABS} value={tab} onChange={setTab} layoutId="journal-tabs" />
     </div>
   );
@@ -410,7 +410,7 @@ export default function TradeJournal() {
       </div>
 
       {tab === 'log' && (
-        <div className="max-w-3xl mx-auto mt-0">
+        <div data-tour="journal-form" className="max-w-3xl mx-auto mt-0">
           {isFree && journalLimitReached ? (
             <JournalUpgradePrompt total={total} />
           ) : (

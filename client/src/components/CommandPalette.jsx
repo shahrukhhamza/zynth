@@ -6,7 +6,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   Search, LayoutDashboard, BookOpen, Brain, Calendar, HelpCircle, TrendingUp, ShieldCheck,
-  CreditCard, Moon, Sun, LogOut, CornerDownLeft, Plus,
+  CreditCard, Moon, Sun, LogOut, CornerDownLeft, Plus, Compass,
 } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 import { useAuth } from '../contexts/AuthContext';
@@ -32,6 +32,7 @@ export default function CommandPalette({ open, onClose }) {
       { group: 'Go to', label: 'Risk Planner', icon: ShieldCheck, run: () => go('calculator/risk') },
       { group: 'Go to', label: 'Help & Docs', icon: HelpCircle, run: () => go('help') },
       { group: 'Go to', label: 'Plans & billing', icon: CreditCard, run: () => go('payment') },
+      { group: 'Help', label: 'Take the product tour', hint: 'A 1-minute guided walkthrough', icon: Compass, run: () => window.dispatchEvent(new CustomEvent('zynth:start-tour')) },
       { group: 'Preferences', label: theme.isDark ? 'Switch to light mode' : 'Switch to dark mode', icon: theme.isDark ? Sun : Moon, run: () => theme.toggleTheme() },
     ];
     if (user) list.push({ group: 'Account', label: 'Sign out', icon: LogOut, run: () => logout() });
