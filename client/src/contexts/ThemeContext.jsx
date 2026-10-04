@@ -69,16 +69,16 @@ export const ThemeProvider = ({ children }) => {
     toggleTheme,
 
     // ── Backgrounds ────────────────────────────────────────────────────────────
-    bg:              isDark ? '#0b0b0f' : '#fafaf9',
-    surface:         isDark ? '#161618' : '#FFFFFF',
-    surface2:        isDark ? '#1c1c1e' : '#f5f5f4',   // legacy alias
-    surfaceSecondary:isDark ? '#1c1c1e' : '#f5f5f4',   // canonical alias
+    bg:              isDark ? '#0b0b0f' : '#f6f5f2',
+    surface:         isDark ? '#131316' : '#FFFFFF',
+    surface2:        isDark ? '#1a1a1e' : '#f3f2ee',   // legacy alias
+    surfaceSecondary:isDark ? '#1a1a1e' : '#f3f2ee',   // canonical alias
 
     // ── Borders & shadows ─────────────────────────────────────────────────────
-    border:  isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)',
+    border:  isDark ? 'rgba(255,255,255,0.075)' : 'rgba(24,24,27,0.08)',
     shadow:  isDark
-      ? '0 4px 30px rgba(0,0,0,0.6)'
-      : '0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04)',
+      ? '0 1px 0 rgba(255,255,255,0.03) inset, 0 8px 30px -12px rgba(0,0,0,0.7)'
+      : '0 1px 2px rgba(24,24,27,0.04), 0 10px 30px -14px rgba(24,24,27,0.14)',
     shadowMd: isDark
       ? '0 12px 40px rgba(0,0,0,0.7)'
       : '0 4px 12px rgba(0,0,0,0.08), 0 12px 36px rgba(0,0,0,0.06)',

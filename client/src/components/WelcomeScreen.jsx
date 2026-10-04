@@ -10,15 +10,17 @@
  *   userName         — string       user's display name
  */
 
-import { useEffect, useState } from 'react';
+import { useMemo } from 'react';
 import { motion } from 'framer-motion';
 import {
-  Sparkles, BookOpen, ArrowRight, TrendingUp, Brain,
-  Shuffle, HelpCircle, Flame, Check,
+  Sparkles, BookOpen, ArrowRight, Brain, Shuffle, HelpCircle, Flame, Crown, ScanSearch, Radar, CalendarClock, FileText,
 } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 import { useAuth } from '../contexts/AuthContext';
 import { PROMO_HEADLINE, PROMO_MESSAGE } from './PromoBanner';
+import { sphereDataUri } from './ui/orbSvg';
+
+const EASE = [0.22, 1, 0.36, 1];
 
 // ── Personalisation helpers ───────────────────────────────────────────────────
 
@@ -26,51 +28,41 @@ const PROBLEM_COPY = {
   streaks: {
     label: 'Losing Streaks',
     icon: Flame,
-    headline: 'Let\'s find out what\'s behind your losing streaks.',
-    desc: 'We\'ll analyse your trades and pinpoint the exact patterns causing them.',
+    headline: "Let's find out what's behind your losing streaks.",
     color: '#ef4444',
-    colorBg: 'rgba(239,68,68,0.1)',
   },
   emotional: {
     label: 'Emotional Trading',
     icon: Brain,
-    headline: 'You struggle with emotional trading — let\'s fix that.',
-    desc: 'Zynth automatically flags FOMO entries, revenge trades, and overtrading sessions.',
+    headline: "You struggle with emotional trading, so let's fix that.",
     color: '#f59e0b',
-    colorBg: 'rgba(245,158,11,0.1)',
   },
   strategy: {
     label: 'Inconsistent Strategy',
     icon: Shuffle,
-    headline: 'Your strategy isn\'t broken — you just don\'t know what\'s working.',
-    desc: 'Zynth scores every setup you\'ve traded so you can double down on your edge.',
+    headline: "Your strategy isn't broken. You just don't know what's working.",
     color: '#CA8A04',
-    colorBg: 'rgba(202,138,4,0.1)',
   },
   unknown: {
     label: 'Finding Your Edge',
     icon: HelpCircle,
     headline: "Your best trades hold a pattern you've never seen.",
-    desc: 'Zynth extracts winning patterns from your trade history and shows you your real edge.',
     color: '#8b5cf6',
-    colorBg: 'rgba(139,92,246,0.1)',
   },
 };
 
 const MARKET_COPY = {
-  gold:    { label: 'Gold (XAU/USD)', tip: 'Macro conditions like CPI and NFP move gold the most — we track all of them.' },
-  forex:   { label: 'Forex',          tip: 'Session timing (London/New York overlap) is critical — we overlay it on every trade.' },
-  crypto:  { label: 'Crypto',         tip: 'We track BTC, ETH and major alts with live WebSocket data.' },
-  indices: { label: 'Indices',        tip: 'GDP, earnings seasons, and rate decisions drive indices — we score them all.' },
+  gold:    { label: 'Gold (XAU/USD)', tip: 'Macro conditions like CPI and NFP move gold the most. We track all of them.' },
+  forex:   { label: 'Forex',          tip: 'Session timing (London/New York overlap) is critical. We overlay it on every trade.' },
+  crypto:  { label: 'Crypto',         tip: 'We track BTC, ETH and major alts with live market data.' },
+  indices: { label: 'Indices',        tip: 'GDP, earnings seasons and rate decisions drive indices. We score them all.' },
 };
 
-// ── What to expect checklist ──────────────────────────────────────────────────
-
-const WHAT_TO_EXPECT = [
-  { text: 'AI analysis on every trade you add' },
-  { text: 'Behavioral pattern detection (FOMO, revenge, overtrading)' },
-  { text: 'Macro surprise scores for every major USD event' },
-  { text: 'Weekly performance reports powered by Gemini AI' },
+const UNLOCKS = [
+  { icon: ScanSearch, title: 'AI review of every trade', text: 'Instant feedback the moment you log a trade.' },
+  { icon: Radar, title: 'Behaviour detection', text: 'FOMO, revenge trades and overtrading, flagged automatically.' },
+  { icon: CalendarClock, title: 'Macro surprise scores', text: 'How each major USD event actually moved the market.' },
+  { icon: FileText, title: 'Weekly AI reports', text: 'A plain-English summary of what to repeat and what to stop.' },
 ];
 
 // ── Component ─────────────────────────────────────────────────────────────────
@@ -78,232 +70,126 @@ const WHAT_TO_EXPECT = [
 export default function WelcomeScreen({ onAddFirstTrade, onSkip, userName = 'Trader' }) {
   const theme = useTheme();
   const { user } = useAuth();
-  const [visible, setVisible] = useState(false);
+  const orb = useMemo(() => sphereDataUri(26), []);
 
   // Read pre-signup answers
-  const preMarket  = sessionStorage.getItem('zynth_pre_market') || '';
+  const preMarket = sessionStorage.getItem('zynth_pre_market') || '';
   const preProblem = sessionStorage.getItem('zynth_pre_problem') || '';
-
   const problemData = PROBLEM_COPY[preProblem] || null;
-  const marketData  = MARKET_COPY[preMarket] || null;
+  const marketData = MARKET_COPY[preMarket] || null;
   const ProblemIcon = problemData?.icon ?? Sparkles;
+  const firstName = (userName || 'Trader').split(' ')[0] || 'Trader';
 
-  const firstName = userName.split(' ')[0] || 'Trader';
-
-  useEffect(() => {
-    const t = setTimeout(() => setVisible(true), 80);
-    return () => clearTimeout(t);
-  }, []);
+  const rise = (i) => ({
+    initial: { opacity: 0, y: 18 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: 0.65, ease: EASE, delay: 0.1 + i * 0.09 },
+  });
 
   return (
-    <div
-      className="fixed inset-0 z-[9980] flex items-center justify-center p-4 overflow-y-auto"
-      style={{
-        background: theme.isDark ? '#0a0a0a' : '#f4f6f9',
-      }}
-    >
-      <motion.div
-        initial={{ opacity: 0, y: 24 }}
-        animate={{ opacity: visible ? 1 : 0, y: visible ? 0 : 24 }}
-        transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-        className="w-full max-w-xl py-10"
-      >
-        {/* Top glow orb */}
-        <div
-          className="absolute top-0 left-1/2 -tranzinc-x-1/2 w-[500px] h-[300px] pointer-events-none"
-          style={{
-            background: 'radial-gradient(ellipse at center, rgba(202,138,4,0.08) 0%, transparent 70%)',
-          }}
-        />
+    <div className="fixed inset-0 z-[9980] overflow-y-auto" style={{ background: theme.bg }}>
+      <div aria-hidden="true" className="app-ambient pointer-events-none absolute inset-0" />
+      <motion.img
+        src={orb} alt="" aria-hidden="true" draggable={false}
+        className="pointer-events-none absolute left-1/2 top-[-380px] w-[760px] max-w-none select-none"
+        style={{
+          x: "-50%",
+          opacity: theme.isDark ? 0.4 : 0.26,
+          maskImage: 'radial-gradient(closest-side, #000 60%, transparent 100%)',
+          WebkitMaskImage: 'radial-gradient(closest-side, #000 60%, transparent 100%)',
+        }}
+        initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: theme.isDark ? 0.4 : 0.26, scale: 1, y: [0, -12, 0] }}
+        transition={{ opacity: { duration: 1.2 }, scale: { duration: 1.4, ease: EASE }, y: { duration: 8, repeat: Infinity, ease: 'easeInOut', delay: 1 } }}
+      />
 
-        {/* ── Sparkle icon ── */}
-        <div className="flex justify-center mb-6">
-          <motion.div
-            initial={{ scale: 0.7, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ delay: 0.15, duration: 0.45, ease: [0.34, 1.56, 0.64, 1] }}
-            className="w-16 h-16 rounded-2xl flex items-center justify-center"
-            style={{
-              background: 'linear-gradient(135deg,rgba(202,138,4,0.18),rgba(6,182,212,0.12))',
-              border: '1px solid rgba(202,138,4,0.25)',
-              boxShadow: '0 0 40px rgba(202,138,4,0.2)',
-            }}
+      <div className="relative mx-auto flex min-h-full w-full max-w-[640px] flex-col justify-center px-5 py-14">
+        <motion.div {...rise(0)} className="mb-5 flex justify-center">
+          <span
+            className="inline-flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-[11.5px] font-bold uppercase tracking-[0.14em]"
+            style={{ borderColor: 'rgba(202,138,4,0.35)', background: 'rgba(202,138,4,0.1)', color: theme.isDark ? '#FBBF24' : '#A16207' }}
           >
-            <Sparkles size={30} style={{ color: '#CA8A04' }} />
-          </motion.div>
-        </div>
+            <Sparkles size={13} /> Account created
+          </span>
+        </motion.div>
 
-        {/* ── Headline ── */}
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.22 }}
-          className="text-center mb-2"
-        >
-          <h1
-            className="text-[32px] md:text-[38px] font-extrabold tracking-tight leading-tight"
-            style={{ color: theme.text }}
-          >
-            Welcome to Zynth, {firstName}.
+        <motion.div {...rise(1)} className="text-center">
+          <h1 className="font-display m-0 text-[38px] font-bold leading-[1.05] tracking-[-0.03em] md:text-[48px]" style={{ color: theme.text }}>
+            Welcome to Zynth, <span className="text-[#CA8A04]">{firstName}.</span>
           </h1>
-          <p className="text-[16px] mt-2 font-medium" style={{ color: theme.muted }}>
-            {problemData
-              ? problemData.headline
-              : "Let's analyse your trading behaviour."}
+          <p className="mx-auto m-0 mt-3 max-w-[480px] text-[16px] leading-relaxed" style={{ color: theme.isDark ? '#a1a1aa' : theme.textMuted }}>
+            {problemData ? problemData.headline : "Let's analyse your trading behaviour."}
           </p>
         </motion.div>
 
-        {/* ── Launch promotion: free Elite ── */}
         {user?.promo_elite && (
           <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.28 }}
-            className="mt-5 mb-2 rounded-2xl px-5 py-4 text-center border"
-            style={{ background: 'rgba(202,138,4,0.10)', borderColor: 'rgba(202,138,4,0.35)' }}
+            {...rise(2)}
+            className="mt-7 flex items-center gap-4 rounded-2xl border px-5 py-4"
+            style={{ background: 'rgba(202,138,4,0.1)', borderColor: 'rgba(202,138,4,0.35)' }}
           >
-            <div className="text-[15px] font-bold" style={{ color: '#CA8A04' }}>
-              {PROMO_HEADLINE}
-            </div>
-            <div className="text-[13px] mt-1" style={{ color: theme.muted }}>{PROMO_MESSAGE}</div>
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#CA8A04] text-[#1a1203]"><Crown size={20} /></span>
+            <span>
+              <span className="block text-[15px] font-bold" style={{ color: theme.isDark ? '#FBBF24' : '#8a5a05' }}>{PROMO_HEADLINE}</span>
+              <span className="block text-[13px] leading-snug" style={{ color: theme.textMuted }}>{PROMO_MESSAGE}</span>
+            </span>
           </motion.div>
         )}
 
-        {/* ── Personalised problem badge ── */}
-        {problemData && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.3 }}
-            className="flex justify-center mt-5 mb-6"
-          >
-            <div
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border"
-              style={{
-                background: problemData.colorBg,
-                borderColor: `${problemData.color}30`,
-              }}
-            >
-              <ProblemIcon size={14} style={{ color: problemData.color }} />
-              <span className="text-[13px] font-semibold" style={{ color: problemData.color }}>
-                Focus: {problemData.label}
-              </span>
-            </div>
-          </motion.div>
-        )}
-
-        {/* ── Market tip ── */}
-        {marketData && (
-          <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.35 }}
-            className="mx-auto max-w-md mb-6"
-          >
-            <div
-              className="px-4 py-3 rounded-xl border text-center"
-              style={{
-                background: theme.isDark ? 'rgba(202,138,4,0.05)' : 'rgba(202,138,4,0.04)',
-                borderColor: 'rgba(202,138,4,0.15)',
-              }}
-            >
-              <p className="text-[13px]" style={{ color: theme.muted }}>
-                <span className="font-semibold" style={{ color: theme.text }}>
-                  Trading {marketData.label}?
-                </span>{' '}
-                {marketData.tip}
+        {(problemData || marketData) && (
+          <motion.div {...rise(3)} className="mt-4 flex flex-col gap-3">
+            {problemData && (
+              <div className="inline-flex items-center gap-2 self-center rounded-full border px-4 py-1.5" style={{ background: `${problemData.color}14`, borderColor: `${problemData.color}40` }}>
+                <ProblemIcon size={14} style={{ color: problemData.color }} />
+                <span className="text-[12.5px] font-semibold" style={{ color: problemData.color }}>Focus: {problemData.label}</span>
+              </div>
+            )}
+            {marketData && (
+              <p className="m-0 text-center text-[13.5px] leading-relaxed" style={{ color: theme.textMuted }}>
+                <strong style={{ color: theme.text }}>Trading {marketData.label}?</strong> {marketData.tip}
               </p>
-            </div>
+            )}
           </motion.div>
         )}
 
-        {/* ── What to expect ── */}
         <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.38 }}
-          className="mx-auto max-w-md mb-8"
+          {...rise(4)}
+          className="mt-8 overflow-hidden rounded-[20px] border"
+          style={{ background: theme.surface, borderColor: theme.border, boxShadow: theme.shadow }}
         >
-          <div
-            className="rounded-2xl border p-5"
-            style={{
-              background: theme.isDark ? '#141414' : '#ffffff',
-              borderColor: theme.border,
-              boxShadow: theme.isDark ? 'none' : '0 4px 16px rgba(0,0,0,0.05)',
-            }}
-          >
-            <p
-              className="text-[11px] font-bold tracking-[0.16em] uppercase mb-4"
-              style={{ color: theme.muted }}
-            >
-              What you unlock today
-            </p>
-            <div className="space-y-3">
-              {WHAT_TO_EXPECT.map((item, i) => (
-                <motion.div
-                  key={item.text}
-                  initial={{ opacity: 0, x: -8 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.42 + i * 0.07 }}
-                  className="flex items-start gap-3"
-                >
-                  <div
-                    className="w-5 h-5 rounded-full flex items-center justify-center shrink-0 mt-px"
-                    style={{ background: 'rgba(202,138,4,0.12)', border: '1px solid rgba(202,138,4,0.2)' }}
-                  >
-                    <Check size={10} style={{ color: '#CA8A04' }} />
-                  </div>
-                  <p className="text-[13px] leading-snug" style={{ color: theme.text }}>
-                    {item.text}
-                  </p>
-                </motion.div>
-              ))}
-            </div>
+          <div className="border-b px-5 py-3.5 text-[11px] font-bold uppercase tracking-[0.16em]" style={{ borderColor: theme.border, color: theme.textMuted }}>
+            What you unlock today
           </div>
+          <ul className="m-0 grid list-none gap-px p-0 sm:grid-cols-2" style={{ background: theme.border }}>
+            {UNLOCKS.map((u) => (
+              <li key={u.title} className="flex items-start gap-3.5 p-5" style={{ background: theme.surface }}>
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border" style={{ background: 'rgba(202,138,4,0.1)', borderColor: 'rgba(202,138,4,0.25)', color: '#CA8A04' }}>
+                  <u.icon size={18} />
+                </span>
+                <span>
+                  <span className="block text-[14px] font-semibold" style={{ color: theme.text }}>{u.title}</span>
+                  <span className="mt-0.5 block text-[12.5px] leading-snug" style={{ color: theme.textMuted }}>{u.text}</span>
+                </span>
+              </li>
+            ))}
+          </ul>
         </motion.div>
 
-        {/* ── CTA ── */}
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.55 }}
-          className="flex flex-col items-center gap-3"
-        >
+        <motion.div {...rise(5)} className="mt-8 flex flex-col items-center gap-4">
           <button
             onClick={onAddFirstTrade}
-            className="group relative overflow-hidden inline-flex items-center gap-2.5 px-8 py-4 rounded-2xl text-[15px] font-bold text-white transition-all hover:scale-[1.03]"
-            style={{
-              background: 'linear-gradient(135deg,#CA8A04 0%,#EAB308 100%)',
-              boxShadow: '0 6px 28px rgba(202,138,4,0.40)',
-            }}
+            className="group relative flex h-[56px] w-full max-w-[360px] select-none items-center justify-center gap-2.5 overflow-hidden rounded-xl text-[14px] font-bold uppercase tracking-[0.06em] text-[#1a1203] transition-all duration-150 hover:translate-y-[1px] active:translate-y-[3px]"
+            style={{ background: 'linear-gradient(180deg,#E0A010,#C98A06)', boxShadow: '0 4px 0 #8a5a05, 0 18px 34px -10px rgba(202,138,4,0.7)' }}
           >
-            <BookOpen size={18} />
-            <span className="relative z-10 flex items-center gap-2">
-              Add My First Trade
-              <ArrowRight size={16} className="group-hover:tranzinc-x-1 transition-transform" />
-            </span>
-            {/* shimmer */}
-            <span
-              className="absolute inset-0 pointer-events-none"
-              style={{
-                background: 'linear-gradient(90deg,transparent 0%,rgba(255,255,255,0.12) 50%,transparent 100%)',
-                backgroundSize: '200% 100%',
-                animation: 'shimmerBtn 3s linear infinite',
-              }}
-            />
+            <span className="pointer-events-none absolute inset-y-0 -left-1/2 w-1/2 -skew-x-12 bg-white/40 opacity-0 transition-all duration-700 group-hover:left-[120%] group-hover:opacity-100" />
+            <BookOpen size={18} className="relative" />
+            <span className="relative">Add my first trade</span>
+            <ArrowRight size={17} className="relative transition-transform group-hover:translate-x-1" />
           </button>
-
-          <button
-            onClick={onSkip}
-            className="text-[13px] transition-colors"
-            style={{ color: theme.muted }}
-            onMouseEnter={e => (e.currentTarget.style.color = theme.text)}
-            onMouseLeave={e => (e.currentTarget.style.color = theme.muted)}
-          >
-            Explore dashboard first →
+          <button onClick={onSkip} className="border-0 bg-transparent text-[13.5px] font-medium transition-colors hover:underline" style={{ color: theme.textMuted }}>
+            Explore the dashboard first
           </button>
         </motion.div>
-      </motion.div>
+      </div>
     </div>
   );
 }

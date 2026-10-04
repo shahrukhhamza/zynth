@@ -1,4 +1,4 @@
-import { Sun, Moon, Globe, LogOut, ChevronDown, User, Settings, Shield, Menu, X, ChevronRight, Bell } from 'lucide-react';
+import { Sun, Moon, Globe, LogOut, ChevronDown, User, Settings, Menu, X, ChevronRight, Search } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 import { useTimezone } from '../contexts/TimezoneContext';
 import { useAuth } from '../contexts/AuthContext';
@@ -6,6 +6,7 @@ import { useState, useRef, useEffect } from 'react';
 import ProfileModal from './ProfileModal';
 import SettingsModal from './SettingsModal';
 import PlanBadge from './PlanBadge';
+import CommandPalette from './CommandPalette';
 import { BrandMark } from './BrandLogo';
 import { resolveMediaUrl } from '../utils/mediaUrl';
 
@@ -27,6 +28,10 @@ const VIEW_LABELS = {
   lounge:       'Traders Lounge',
   tools:        'Tools',
   admin:        'Admin',
+  charts:       'Charts',
+  payment:      'Upgrade',
+  'calculator/profit': 'Profit Calculator',
+  'calculator/risk':   'Risk Planner',
 };
 
 const VIEW_SUBTITLES = {
@@ -38,6 +43,10 @@ const VIEW_SUBTITLES = {
   news:         'Real-time financial news',
   help:         'Guides, support, and product help',
   admin:        'Platform administration',
+  charts:       'Live charts and analysis',
+  payment:      'Plans and billing',
+  'calculator/profit': 'P/L, pips and risk for any trade',
+  'calculator/risk':   'Size every position before you enter',
 };
 
 function Header({
@@ -53,6 +62,23 @@ function Header({
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
   const [avatarError, setAvatarError] = useState(false);
+  const [showPalette, setShowPalette] = useState(false);
+
+  // Other parts of the app (e.g. the dashboard checklist) can ask for the profile modal
+  useEffect(() => {
+    const open = () => setShowProfileModal(true);
+    window.addEventListener('zynth:open-profile', open);
+    return () => window.removeEventListener('zynth:open-profile', open);
+  }, []);
+
+  // Ctrl/⌘ + K opens the command palette from anywhere
+  useEffect(() => {
+    const onKey = (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); setShowPalette((v) => !v); }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
 
   const avatarBg  = AVATAR_COLOR_MAP[user?.avatar_color] ?? '#CA8A04';
   const avatarSrc = user?.avatar_url ? resolveMediaUrl(user.avatar_url) : (user?.avatar ?? null);
@@ -71,12 +97,11 @@ function Header({
   const currentTz = getTimezoneInfo();
 
   // Header always dark — premium feel
-  const H_BG     = theme.isDark ? theme.bg : theme.surface;
+  const H_BG     = theme.isDark ? 'rgba(11,11,15,0.78)' : 'rgba(246,245,242,0.82)';
   const H_BORDER = theme.border;
   const H_TEXT   = theme.text;
   const H_MUTED  = theme.muted;
 
-  const sidebarW = isMobile ? 0 : (sidebarCollapsed ? 60 : 236);
 
   return (
     <>
@@ -84,13 +109,15 @@ function Header({
         style={{
           position: 'fixed',
           top: 0,
-          left: isMobile ? 0 : (sidebarCollapsed ? 60 : 236),
-          width: isMobile ? '100%' : (sidebarCollapsed ? 'calc(100vw - 60px)' : 'calc(100vw - 236px)'),
-          height: isMobile ? 56 : 60,
-          padding: isMobile ? '0 14px' : '0 24px',
-          transition: 'left 0.22s cubic-bezier(0.4,0,0.2,1), width 0.22s cubic-bezier(0.4,0,0.2,1)',
+          left: isMobile ? 0 : (sidebarCollapsed ? 64 : 244),
+          width: isMobile ? '100%' : (sidebarCollapsed ? 'calc(100vw - 64px)' : 'calc(100vw - 244px)'),
+          height: 64,
+          padding: isMobile ? '0 14px' : '0 28px',
+          transition: 'left 0.28s cubic-bezier(0.22,1,0.36,1), width 0.28s cubic-bezier(0.22,1,0.36,1)',
           zIndex: 100,
           backgroundColor: H_BG,
+          backdropFilter: 'blur(14px) saturate(1.4)',
+          WebkitBackdropFilter: 'blur(14px) saturate(1.4)',
           borderBottom: `1px solid ${H_BORDER}`,
           display: 'flex',
           alignItems: 'center',
@@ -149,13 +176,13 @@ function Header({
               {/* Page title + subtitle */}
               <div>
                 <h1 style={{
-                  fontSize: 15, fontWeight: 600, color: H_TEXT,
-                  letterSpacing: '-0.01em', lineHeight: 1.2, margin: 0,
+                  fontSize: 19, fontWeight: 700, color: H_TEXT,
+                  letterSpacing: '-0.02em', lineHeight: 1.15, margin: 0,
                 }}>
                   {VIEW_LABELS[currentView] ?? 'Dashboard'}
                 </h1>
                 {VIEW_SUBTITLES[currentView] && (
-                  <p style={{ fontSize: 11, color: H_MUTED, margin: 0, lineHeight: 1 }}>
+                  <p style={{ fontSize: 12, color: H_MUTED, margin: '2px 0 0', lineHeight: 1.2 }}>
                     {VIEW_SUBTITLES[currentView]}
                   </p>
                 )}
@@ -167,14 +194,33 @@ function Header({
         {/* ── RIGHT ── */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
 
+          {/* Command palette trigger */}
+          <button
+            onClick={() => setShowPalette(true)}
+            title="Search (Ctrl K)"
+            style={{
+              height: 38, display: 'flex', alignItems: 'center', gap: 10,
+              padding: isMobile ? '0 11px' : '0 8px 0 12px', borderRadius: 11,
+              background: theme.isDark ? 'rgba(255,255,255,0.04)' : 'rgba(255,255,255,0.9)',
+              border: `1px solid ${H_BORDER}`, cursor: 'pointer', color: H_MUTED,
+              transition: 'all 0.15s ease', minWidth: isMobile ? 0 : 190,
+            }}
+            onMouseEnter={e => { e.currentTarget.style.borderColor = '#CA8A0466'; }}
+            onMouseLeave={e => { e.currentTarget.style.borderColor = H_BORDER; }}
+          >
+            <Search style={{ width: 14, height: 14 }} />
+            {!isMobile && <span style={{ fontSize: 13, flex: 1, textAlign: 'left' }}>Search…</span>}
+            {!isMobile && <kbd style={{ fontSize: 10, fontWeight: 600, padding: '2px 6px', borderRadius: 6, border: `1px solid ${H_BORDER}`, color: H_MUTED }}>Ctrl K</kbd>}
+          </button>
+
           {/* Theme toggle */}
           <button
             onClick={theme.toggleTheme}
             title={theme.isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
             style={{
-              width: 34, height: 34,
+              width: 38, height: 38,
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              borderRadius: 8,
+              borderRadius: 11,
               background: theme.isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)',
               border: `1px solid ${H_BORDER}`,
               cursor: 'pointer',
@@ -194,7 +240,7 @@ function Header({
             <button
               onClick={() => setShowTimezoneDropdown(p => !p)}
               style={{
-                height: 34, padding: '0 10px',
+                height: 38, padding: '0 11px',
                 display: 'flex', alignItems: 'center', gap: 6,
                 borderRadius: 8,
                 background: showTimezoneDropdown ? (theme.isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)') : (theme.isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)'),
@@ -270,7 +316,7 @@ function Header({
               <button
                 onClick={() => setShowUserMenu(p => !p)}
                 style={{
-                  height: 34, padding: '0 10px 0 6px',
+                  height: 38, padding: '0 10px 0 6px',
                   display: 'flex', alignItems: 'center', gap: 8,
                   borderRadius: 8,
                   background: showUserMenu ? (theme.isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)') : (theme.isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)'),
@@ -436,6 +482,7 @@ function Header({
         </div>
       </header>
 
+      <CommandPalette open={showPalette} onClose={() => setShowPalette(false)} />
       {showProfileModal && <ProfileModal onClose={() => setShowProfileModal(false)} />}
       {showSettingsModal && (
         <SettingsModal

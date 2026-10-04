@@ -16,6 +16,7 @@ import TradeDetailPage from './journal/TradeDetailPage';
 import JournalUpgradePrompt, { PERFORMANCE_FEATURES, INSIGHTS_FEATURES } from './journal/JournalUpgradePrompt';
 import UsageBanner from './journal/UsageBanner';
 import { usePlan } from '../hooks/usePlan';
+import { Tabs, Pill } from './ui/Widgets';
 
 const TABS = [
   { key: 'log',         label: 'Log Trade',          icon: BookOpen  },
@@ -337,45 +338,8 @@ export default function TradeJournal() {
   };
 
   const tabBar = (
-    <div
-      className="overflow-x-auto"
-      style={{
-        display: 'flex',
-        borderBottom: `2px solid ${theme.border}`,
-        marginBottom: 24,
-        scrollbarWidth: 'none',
-        msOverflowStyle: 'none',
-        gap: 0,
-      }}
-    >
-      {TABS.map(({ key, label, icon: Icon }) => {
-        const active = tab === key;
-        return (
-          <button key={key} onClick={() => setTab(key)}
-            className="flex items-center gap-2 transition-all whitespace-nowrap flex-shrink-0"
-            style={{
-              padding: '10px 16px',
-              borderRadius: 0,
-              fontSize: '13px',
-              backgroundColor: 'transparent',
-              color: active
-                ? (theme.isDark ? '#EAB308' : '#854D0E')
-                : theme.muted,
-              fontWeight: active ? 600 : 400,
-              border: 'none',
-              outline: 'none',
-              borderBottom: active
-                ? `2px solid ${theme.isDark ? '#CA8A04' : '#A16207'}`
-                : '2px solid transparent',
-              marginBottom: -2,
-              cursor: 'pointer',
-              transition: 'color 0.15s ease, border-color 0.15s ease',
-            }}>
-            <Icon className="w-3.5 h-3.5" />
-            {label}
-          </button>
-        );
-      })}
+    <div className="-mx-1 overflow-x-auto px-1 pb-1" style={{ scrollbarWidth: 'none' }}>
+      <Tabs tabs={TABS} value={tab} onChange={setTab} layoutId="journal-tabs" />
     </div>
   );
 
@@ -416,27 +380,28 @@ export default function TradeJournal() {
     <div className="p-4 md:p-6">
       {/* Header + tabs — constrained width */}
       <div className="max-w-6xl mx-auto">
-        <div
-          style={{
-            background: theme.surface,
-            border: `1px solid ${theme.border}`,
-            borderRadius: 16,
-            padding: '20px 24px 0',
-            marginBottom: 24,
-            boxShadow: theme.isDark ? 'none' : '0 1px 3px rgba(0,0,0,0.04), 0 4px 20px rgba(0,0,0,0.05)',
-          }}
-        >
-          <div className="flex items-center justify-between mb-5">
-            <div>
-              <h1 className="text-xl font-bold flex items-center gap-2" style={{ color: theme.text }}>
-                <Brain className="w-5 h-5" style={{ color: theme.accent }} />
-                AI Trading Journal
-              </h1>
-              <p className="text-xs mt-0.5" style={{ color: theme.muted }}>
-                {total} trade{total !== 1 ? 's' : ''} logged
-                {metrics?.winRate != null ? ` · ${metrics.winRate}% win rate` : ''}
-                {metrics?.netPnl != null ? ` · Net P&L: ${metrics.netPnl >= 0 ? '+' : ''}${metrics.netPnl}` : ''}
-              </p>
+        <div className="mb-6">
+          <div className="mb-5 flex flex-wrap items-start justify-between gap-4">
+            <div className="flex items-center gap-3.5">
+              <span
+                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border"
+                style={{ background: 'rgba(202,138,4,0.12)', borderColor: 'rgba(202,138,4,0.3)', color: '#CA8A04' }}
+              >
+                <Brain className="h-5 w-5" />
+              </span>
+              <div>
+                <h1 className="font-display m-0 text-[24px] font-bold tracking-tight" style={{ color: theme.text }}>AI Trading Journal</h1>
+                <p className="m-0 mt-0.5 text-[13px]" style={{ color: theme.textMuted }}>Log every trade, then let Zynth find the pattern behind your results.</p>
+              </div>
+            </div>
+            <div className="flex flex-wrap items-center gap-2">
+              <Pill color={theme.isDark ? '#a1a1aa' : '#52525b'}>{total} trade{total !== 1 ? 's' : ''}</Pill>
+              {metrics?.winRate != null && <Pill color="#10b981">{metrics.winRate}% win rate</Pill>}
+              {metrics?.netPnl != null && (
+                <Pill color={metrics.netPnl >= 0 ? '#10b981' : '#f43f5e'}>
+                  Net {metrics.netPnl >= 0 ? '+' : ''}{metrics.netPnl}
+                </Pill>
+              )}
             </div>
           </div>
 

@@ -270,7 +270,7 @@ function AppShell() {
   };
 
   return (
-    <div style={{ backgroundColor: theme.bg, color: theme.text, transition: 'background-color 0.25s ease, color 0.15s ease' }}>
+    <div className="app-ambient" style={{ backgroundColor: theme.bg, color: theme.text, minHeight: '100vh', transition: 'background-color 0.25s ease, color 0.15s ease' }}>
       {/* Fixed Sidebar */}
       <Sidebar 
         filters={filters}
@@ -304,9 +304,9 @@ function AppShell() {
       {/* Content: offset for fixed sidebar + 64px header */}
       <div
         style={{
-          marginLeft: isMobile ? 0 : (sidebarCollapsed ? 60 : 236),
+          marginLeft: isMobile ? 0 : (sidebarCollapsed ? 64 : 244),
           paddingTop: 64,
-          transition: 'margin-left 0.3s ease',
+          transition: 'margin-left 0.28s cubic-bezier(0.22,1,0.36,1)',
           height: '100vh',
           display: 'flex',
           flexDirection: 'column',
@@ -408,12 +408,11 @@ function SetupReminderBanner({ onSetup, onDismiss }) {
   }
   return (
     <div
-      className="fixed top-0 left-0 right-0 z-[200] flex items-center gap-3 px-4 py-2 text-sm"
+      className="fixed bottom-5 left-1/2 z-[200] flex max-w-[92vw] -translate-x-1/2 items-center gap-3 rounded-2xl px-4 py-3 text-sm"
       style={{
-        backgroundColor: theme.isDark ? 'rgba(202,138,4,0.12)' : 'rgba(29,78,216,0.06)',
-        borderBottom: `1px solid ${theme.isDark ? 'rgba(202,138,4,0.28)' : 'rgba(29,78,216,0.15)'}`,
-        backdropFilter: 'blur(8px)',
-        WebkitBackdropFilter: 'blur(8px)',
+        backgroundColor: theme.surface,
+        border: '1px solid rgba(202,138,4,0.35)',
+        boxShadow: theme.isDark ? '0 20px 60px -15px rgba(0,0,0,0.8)' : '0 20px 60px -20px rgba(24,24,27,0.35)',
       }}
     >
       <Sparkles size={14} style={{ color: '#CA8A04', flexShrink: 0 }} />
@@ -521,7 +520,11 @@ function AuthGate() {
         {showWelcomeScreen ? (
           <WelcomeScreen
             userName={user.name}
-            onAddFirstTrade={() => setShowWelcomeScreen(false)}
+            onAddFirstTrade={() => {
+              // AppShell resolves its first view from the URL, so land the user on the journal
+              window.history.replaceState({ view: 'journal' }, '', '/journal');
+              setShowWelcomeScreen(false);
+            }}
             onSkip={() => setShowWelcomeScreen(false)}
           />
         ) : (

@@ -250,8 +250,8 @@ export default function PaymentPage({ onBack }) {
 
         {/* ─── Card wrapper — gradient border matching UpgradeModal ─── */}
         <div className="rounded-2xl p-[1px]" style={{
-          background: 'linear-gradient(140deg, rgba(99,102,241,0.7), rgba(139,92,246,0.55), rgba(202,138,4,0.5))',
-          boxShadow:  '0 40px 120px rgba(0,0,0,0.7), 0 0 64px rgba(99,102,241,0.12)',
+          background: 'linear-gradient(140deg, rgba(202,138,4,0.7), rgba(234,179,8,0.55), rgba(202,138,4,0.5))',
+          boxShadow:  '0 40px 120px rgba(0,0,0,0.7), 0 0 64px rgba(202,138,4,0.12)',
         }}>
         <div className="rounded-2xl overflow-hidden" style={{ background: 'var(--z-modal)' }}>
 
@@ -260,9 +260,9 @@ export default function PaymentPage({ onBack }) {
           {/* Icon — matches modal's badge style */}
           <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl mb-4"
             style={{
-              background: 'linear-gradient(135deg, rgba(99,102,241,0.2), rgba(139,92,246,0.15))',
-              border: '1px solid rgba(99,102,241,0.35)',
-              boxShadow: '0 8px 32px rgba(99,102,241,0.2)',
+              background: 'linear-gradient(135deg, rgba(202,138,4,0.2), rgba(234,179,8,0.15))',
+              border: '1px solid rgba(202,138,4,0.35)',
+              boxShadow: '0 8px 32px rgba(202,138,4,0.2)',
             }}>
             <Sparkles className="w-6 h-6" style={{ color: '#a5b4fc' }} />
           </div>
@@ -303,10 +303,10 @@ export default function PaymentPage({ onBack }) {
                   style={{
                     padding: '1px',
                     background: active
-                      ? 'linear-gradient(135deg, #CA8A04, #8b5cf6, #a78bfa)'
+                      ? 'linear-gradient(135deg, #CA8A04, #EAB308, #FBBF24)'
                       : 'var(--z-border)',
                     boxShadow: active
-                      ? '0 0 28px rgba(99,102,241,0.35)'
+                      ? '0 0 28px rgba(202,138,4,0.35)'
                       : 'none',
                   }}>
                   {p.tag && (
@@ -350,7 +350,7 @@ export default function PaymentPage({ onBack }) {
                   background: activeMethod === m.id ? 'var(--z-badge-bg)' : 'transparent',
                   color:      activeMethod === m.id ? 'var(--z-soft-purple)' : 'var(--z-muted)',
                   border:     `1px solid ${activeMethod === m.id ? 'var(--z-badge-bdr)' : 'transparent'}`,
-                  boxShadow:  activeMethod === m.id ? '0 2px 8px rgba(99,102,241,0.15)' : 'none',
+                  boxShadow:  activeMethod === m.id ? '0 2px 8px rgba(202,138,4,0.15)' : 'none',
                 }}>
                 {m.label}
                 {m.rec && activeMethod === m.id && <span className="ml-1 opacity-70">★</span>}
@@ -361,7 +361,7 @@ export default function PaymentPage({ onBack }) {
 
         {/* ─── Crypto Panel ──────────────────────────────────────────── */}
         {activeMethod === 'crypto' && (
-          <div className="rounded-2xl overflow-hidden" style={{ background: 'var(--z-inner)', border: '1px solid rgba(99,102,241,0.3)' }}>
+          <div className="rounded-2xl overflow-hidden" style={{ background: 'var(--z-inner)', border: '1px solid rgba(202,138,4,0.3)' }}>
 
             {/* Header strip */}
             <div className="px-5 py-3 flex items-center gap-2"

@@ -4,6 +4,47 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ── App-wide typography ──────────────────────────────────────────────────
+   Inter for text, Space Grotesk for headings and big numerals (matches the landing page). */
+@layer base {
+  html, body {
+    font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    font-feature-settings: 'cv11', 'ss01';
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+  h1, h2, h3, .font-display {
+    font-family: 'Space Grotesk', 'Inter', system-ui, sans-serif;
+    font-feature-settings: normal;
+  }
+  ::selection { background: rgba(202,138,4,0.28); }
+  :focus-visible { outline: 2px solid rgba(202,138,4,0.7); outline-offset: 2px; }
+}
+
+/* Ambient glow behind the signed-in app */
+.app-ambient {
+  background-image:
+    radial-gradient(1100px 460px at 78% -8%, rgba(202,138,4,0.075), transparent 70%),
+    radial-gradient(800px 420px at -6% 108%, rgba(14,165,233,0.04), transparent 70%);
+}
+.dark .app-ambient {
+  background-image:
+    radial-gradient(1100px 480px at 78% -8%, rgba(202,138,4,0.10), transparent 70%),
+    radial-gradient(800px 420px at -6% 108%, rgba(14,165,233,0.06), transparent 70%);
+}
+
+/* Subtle, premium skeleton shimmer */
+@keyframes zshimmer { 100% { transform: translateX(100%); } }
+.z-skeleton { position: relative; overflow: hidden; background: rgba(120,113,108,0.12); }
+.z-skeleton::after {
+  content: ''; position: absolute; inset: 0; transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.35), transparent);
+  animation: zshimmer 1.6s infinite;
+}
+.dark .z-skeleton { background: rgba(255,255,255,0.06); }
+.dark .z-skeleton::after { background: linear-gradient(90deg, transparent, rgba(255,255,255,0.07), transparent); }
+
 /* ── Public landing page ──────────────────────────────────────────────────
    Inter for text, Space Grotesk for display headings; scoped to the landing
    root so the app keeps its own typography.                                  */
@@ -844,3 +885,11 @@ html, body {
 [style*="overflow: auto"] {
   -webkit-overflow-scrolling: touch;
 }
+
+/* Card spotlight reveals on hover */
+.z-card-glow { }
+*:hover > .z-card-glow { opacity: 1 !important; }
+
+/* Auth screens draw their own show/hide-password control */
+input::-ms-reveal,
+input::-ms-clear { display: none; }

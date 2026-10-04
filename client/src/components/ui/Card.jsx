@@ -28,7 +28,8 @@ export function Card({
   const theme = useTheme();
 
   const base = {
-    borderRadius: 16,
+    position: 'relative',
+    borderRadius: 20,
     border: `1px solid ${theme.border}`,
     background: theme.surface,
     transition: 'box-shadow 0.2s ease, transform 0.2s ease, border-color 0.2s ease',
@@ -50,6 +51,14 @@ export function Card({
         : `${theme.shadow}, 0 0 0 1px rgba(161,98,7,0.12)`,
     },
   };
+
+  // Cursor-following gold spotlight for interactive cards
+  function handleMouseMove(e) {
+    if (!onClick && variant !== 'elevated') return;
+    const r = e.currentTarget.getBoundingClientRect();
+    e.currentTarget.style.setProperty('--mx', `${e.clientX - r.left}px`);
+    e.currentTarget.style.setProperty('--my', `${e.clientY - r.top}px`);
+  }
 
   function handleMouseEnter(e) {
     if (variant === 'elevated') {
@@ -76,7 +85,18 @@ export function Card({
       onClick={onClick}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
+      onMouseMove={handleMouseMove}
     >
+      {(onClick || variant === 'elevated') && (
+        <span
+          aria-hidden="true"
+          style={{
+            position: 'absolute', inset: 0, pointerEvents: 'none', opacity: 0, transition: 'opacity 0.25s',
+            background: 'radial-gradient(360px circle at var(--mx, 50%) var(--my, 50%), rgba(202,138,4,0.10), transparent 65%)',
+          }}
+          className="z-card-glow"
+        />
+      )}
       {children}
     </Tag>
   );

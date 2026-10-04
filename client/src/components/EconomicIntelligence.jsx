@@ -296,6 +296,7 @@ function PaywallPricingBlock({ onUpgrade }) {
 
 // ── Main ──────────────────────────────────────────────────────────────────────
 export default function EconomicIntelligence() {
+  useEffect(() => { try { localStorage.setItem('zynth_seen_insights', '1'); } catch { /* ignore */ } }, []);
   const { openUpgradeModal } = useUpgrade();
   const { isPro, isElite, isAdmin } = usePlanGate();
   const [macroData,  setMacroData]  = useState(null);
@@ -375,13 +376,13 @@ export default function EconomicIntelligence() {
   );
 
   return (
-    <div className="min-h-full bg-zinc-50 dark:bg-zinc-950">
+    <div className="min-h-full">
       <div className="mx-auto max-w-3xl px-4 py-6 pb-16">
 
         {/* ── Page header ─────────────────────────────────────────────── */}
         <div className="mb-6 flex items-center justify-between gap-3">
           <div>
-            <h1 className="text-xl font-bold tracking-tight text-zinc-900 dark:text-white">
+            <h1 className="font-display m-0 text-[26px] font-bold tracking-tight text-zinc-900 dark:text-white">
               Economic Intelligence
             </h1>
             <p className="mt-0.5 text-xs text-zinc-400">
@@ -391,7 +392,8 @@ export default function EconomicIntelligence() {
           <button
             onClick={handleRefresh}
             disabled={refreshing}
-            className="flex items-center gap-2 rounded-lg bg-[#059669] px-4 py-2 text-xs font-bold text-white transition-colors hover:bg-[#047857] disabled:opacity-60"
+            className="flex items-center gap-2 rounded-xl px-4 py-2.5 text-[12px] font-bold uppercase tracking-[0.06em] text-[#1a1203] transition-all duration-150 hover:translate-y-[1px] active:translate-y-[2px] disabled:opacity-60"
+            style={{ background: "linear-gradient(180deg,#E0A010,#C98A06)", boxShadow: "0 3px 0 #8a5a05" }}
           >
             <RefreshCcw size={12} className={refreshing ? 'animate-spin' : ''} />
             Refresh

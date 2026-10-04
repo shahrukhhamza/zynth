@@ -56,12 +56,12 @@ export function Button({
 
   const VARIANTS = {
     primary: {
-      background: `linear-gradient(135deg, ${theme.primary} 0%, #0284C7 100%)`,
-      color: '#fff',
-      boxShadow: theme.isDark
-        ? `0 4px 16px rgba(202,138,4,0.35)`
-        : `0 4px 14px rgba(161,98,7,0.28)`,
+      // Brand gold with a solid pressed-depth edge (same language as the landing page buttons)
+      background: 'linear-gradient(180deg, #E0A010 0%, #C98A06 100%)',
+      color: '#1a1203',
+      boxShadow: '0 3px 0 #8a5a05, 0 12px 24px -10px rgba(202,138,4,0.7)',
       borderColor: 'transparent',
+      letterSpacing: '0.01em',
     },
     secondary: {
       background: theme.isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.03)',
@@ -76,9 +76,9 @@ export function Button({
       boxShadow: 'none',
     },
     danger: {
-      background: `linear-gradient(135deg, ${theme.danger} 0%, #9F1239 100%)`,
+      background: 'linear-gradient(180deg, #F43F5E 0%, #E11D48 100%)',
       color: '#fff',
-      boxShadow: '0 4px 16px rgba(244,63,94,0.30)',
+      boxShadow: '0 3px 0 #9F1239, 0 12px 24px -10px rgba(244,63,94,0.6)',
       borderColor: 'transparent',
     },
   };
@@ -88,10 +88,8 @@ export function Button({
   function handleMouseEnter(e) {
     if (disabled || loading) return;
     if (variant === 'primary') {
-      e.currentTarget.style.boxShadow = theme.isDark
-        ? '0 8px 28px rgba(202,138,4,0.55)'
-        : '0 8px 24px rgba(161,98,7,0.40)';
-      e.currentTarget.style.transform = 'translateY(-1px) scale(1.02)';
+      e.currentTarget.style.boxShadow = '0 2px 0 #8a5a05, 0 16px 30px -10px rgba(202,138,4,0.85)';
+      e.currentTarget.style.transform = 'translateY(1px)';
     }
     if (variant === 'secondary') {
       e.currentTarget.style.borderColor = theme.isDark ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.14)';
@@ -102,8 +100,8 @@ export function Button({
       e.currentTarget.style.background = theme.isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)';
     }
     if (variant === 'danger') {
-      e.currentTarget.style.boxShadow = '0 8px 28px rgba(244,63,94,0.45)';
-      e.currentTarget.style.transform = 'translateY(-1px) scale(1.02)';
+      e.currentTarget.style.boxShadow = '0 2px 0 #9F1239, 0 16px 30px -10px rgba(244,63,94,0.75)';
+      e.currentTarget.style.transform = 'translateY(1px)';
     }
   }
 
@@ -124,6 +122,8 @@ export function Button({
       style={{ ...base, ...variantStyle, ...style }}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
+      onMouseDown={e => { if (!disabled && !loading && (variant === 'primary' || variant === 'danger')) { e.currentTarget.style.transform = 'translateY(3px)'; e.currentTarget.style.boxShadow = '0 0 0 #8a5a05'; } }}
+      onMouseUp={e => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = variantStyle.boxShadow; }}
     >
       {loading ? (
         <span
