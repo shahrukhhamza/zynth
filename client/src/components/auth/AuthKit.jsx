@@ -316,11 +316,18 @@ export function PasswordField({ show, onToggle, ...props }) {
   const theme = useTheme();
   return (
     <Field
+      spellCheck={false} autoCapitalize="none" autoCorrect="off"
       {...props}
       type={show ? 'text' : 'password'}
       trailing={(
         <button
-          type="button" onClick={onToggle} tabIndex={-1} aria-label={show ? 'Hide password' : 'Show password'}
+          type="button" tabIndex={-1} aria-label={show ? 'Hide password' : 'Show password'}
+          onMouseDown={(e) => e.preventDefault()} // keep focus (and the caret) in the field instead of stealing it
+          onClick={() => {
+            const y = window.scrollY;
+            onToggle();
+            requestAnimationFrame(() => { if (Math.abs(window.scrollY - y) > 1) window.scrollTo(0, y); });
+          }}
           className="absolute right-2 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-lg border-0 bg-transparent transition-colors hover:bg-black/5 dark:hover:bg-white/10"
           style={{ color: theme.textMuted }}
         >
@@ -331,6 +338,10 @@ export function PasswordField({ show, onToggle, ...props }) {
   );
 }
 
+/**
+ * Always rendered (grey until the user types), so its height never changes while typing.
+ * An expanding/collapsing meter pushed the fields below it down and back up on the first keystroke.
+ */
 export function StrengthMeter({ password }) {
   const theme = useTheme();
   const checks = [password.length >= 8, /[0-9]/.test(password), /[A-Z]/.test(password), /[^A-Za-z0-9]/.test(password)];
@@ -341,27 +352,23 @@ export function StrengthMeter({ password }) {
   ][password ? score : 0];
   const hints = ['8+ characters', 'A number', 'A capital letter', 'A symbol'];
   return (
-    <AnimatePresence>
-      {password && (
-        <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="-mt-1 mb-4 overflow-hidden">
-          <div className="flex items-center gap-3">
-            <div className="flex flex-1 gap-1.5">
-              {[0, 1, 2, 3].map((i) => (
-                <motion.span key={i} className="h-1.5 flex-1 rounded-full" animate={{ background: i < score ? meta.color : theme.border }} transition={{ duration: 0.3 }} />
-              ))}
-            </div>
-            <span className="w-12 text-right text-[12px] font-bold" style={{ color: meta.color }}>{meta.label}</span>
-          </div>
-          <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1">
-            {hints.map((h, i) => (
-              <span key={h} className="flex items-center gap-1 text-[11.5px]" style={{ color: checks[i] ? '#10b981' : theme.textMuted }}>
-                <Check size={12} style={{ opacity: checks[i] ? 1 : 0.35 }} /> {h}
-              </span>
-            ))}
-          </div>
-        </motion.div>
-      )}
-    </AnimatePresence>
+    <div className="-mt-1 mb-4" aria-live="polite">
+      <div className="flex items-center gap-3">
+        <div className="flex flex-1 gap-1.5">
+          {[0, 1, 2, 3].map((i) => (
+            <motion.span key={i} className="h-1.5 flex-1 rounded-full" animate={{ background: password && i < score ? meta.color : theme.border }} transition={{ duration: 0.3 }} />
+          ))}
+        </div>
+        <span className="h-[18px] w-12 text-right text-[12px] font-bold leading-[18px]" style={{ color: meta.color }}>{meta.label || ' '}</span>
+      </div>
+      <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1">
+        {hints.map((h, i) => (
+          <span key={h} className="flex items-center gap-1 text-[11.5px] transition-colors" style={{ color: password && checks[i] ? '#10b981' : theme.textMuted }}>
+            <Check size={12} style={{ opacity: password && checks[i] ? 1 : 0.35 }} /> {h}
+          </span>
+        ))}
+      </div>
+    </div>
   );
 }
 

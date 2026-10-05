@@ -411,7 +411,16 @@ function AdminDashboardInner() {
                                 <span className="truncate" style={{ maxWidth: 110 }}>{u.name}</span>
                                 {isAdminUser && <Crown className="w-3 h-3 flex-shrink-0" style={{ color: '#fbbf24' }} />}
                               </div>
-                              <div className="text-[11px] truncate" style={{ color: theme.muted, maxWidth: 160 }}>{u.email}</div>
+                              <div className="flex items-center gap-1.5">
+                                <span className="text-[11px] truncate" style={{ color: theme.muted, maxWidth: 140 }}>{u.email}</span>
+                                <span
+                                  className="flex-shrink-0 rounded px-1.5 py-[1px] text-[9.5px] font-bold uppercase tracking-wide"
+                                  title={u.has_google && u.has_password ? 'Signed up with Google, also has a password' : u.has_google ? 'Signed up with Google' : 'Signed up with email and password'}
+                                  style={{ background: u.has_google ? 'rgba(66,133,244,0.14)' : 'rgba(202,138,4,0.14)', color: u.has_google ? '#4285f4' : '#A16207' }}
+                                >
+                                  {u.has_google && u.has_password ? 'Google + Email' : u.has_google ? 'Google' : 'Email'}
+                                </span>
+                              </div>
                             </div>
                           </div>
                         </td>

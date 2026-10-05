@@ -4,6 +4,7 @@ import { OAuth2Client } from 'google-auth-library';
 import * as Users from '../db/users.js';
 import { signToken, requireAuth, requireAdmin } from '../middleware/authMiddleware.js';
 import * as Codes from '../db/emailCodes.js';
+import { isAdminEmail } from '../services/admins.js';
 import {
   sendVerificationCodeEmail, sendPasswordResetCodeEmail, verificationEnabled, canDeliver, usesConsoleFallback,
 } from '../services/emailService.js';
@@ -48,6 +49,13 @@ function buildUser(row) {
 }
 
 const normalizeEmail = (v) => String(v || '').trim().toLowerCase();
+
+/** Owner emails (ADMIN_EMAILS) get the admin role once they have proven the address by signing in. */
+async function ensureAdminRole(row) {
+  if (row?.id && isAdminEmail(row.email) && Number(row.is_admin) !== 1) {
+    await Users.setAdmin(row.id, 1);
+  }
+}
 
 /**
  * Issue (or re-issue) a 6-digit code for (email, purpose) and email it.
@@ -96,7 +104,7 @@ async function checkCode(row, email, purpose, code) {
   return { ok: true };
 }
 
-async function finishSignup({ name, email, password_hash }) {
+async function finishSignup({ name, email, password_hash, emailVerified = false }) {
   const result = await Users.createUser({
     name,
     email,
@@ -104,6 +112,7 @@ async function finishSignup({ name, email, password_hash }) {
     terms_accepted: 1,
     terms_accepted_at: new Date().toISOString(),
   });
+  if (emailVerified) await ensureAdminRole({ id: result.id, email });
   const row = await Users.findById(result.id);
   const user = buildUser(row);
   const token = signToken(user);
@@ -211,7 +220,7 @@ router.post('/register/verify', async (req, res) => {
     if (!name || !password_hash)
       return res.status(400).json({ error: 'Your sign-up session expired. Please start again.', code: 'NO_PENDING' });
 
-    const { user, token } = await finishSignup({ name, email, password_hash });
+    const { user, token } = await finishSignup({ name, email, password_hash, emailVerified: true });
     await Codes.deleteCode(row.id);
     res.status(201).json({ user, token });
   } catch (err) {
@@ -279,6 +288,7 @@ router.post('/login', async (req, res) => {
     if (Number(row.is_banned) === 1)
       return res.status(403).json({ error: 'Account suspended.' });
 
+    await ensureAdminRole(row);
     const freshRow = await Users.findById(row.id);
     const user = buildUser(freshRow);
     const token = signToken(user);
@@ -392,6 +402,7 @@ router.post('/google', async (req, res) => {
       return res.status(403).json({ error: 'Account suspended.' });
     }
 
+    if (emailVerified) await ensureAdminRole(row);
     const freshRow = await Users.findById(row.id);
     const user = buildUser({ ...freshRow, avatar: picture || freshRow.avatar });
     const token = signToken(user);

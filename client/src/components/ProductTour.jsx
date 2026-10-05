@@ -254,7 +254,12 @@ export default function ProductTour({ onClose }) {
   /* the hand rests slightly inside the lower-right of the target, as if about to click it */
   useEffect(() => {
     if (!rect) { setHand(null); return; }
-    setHand({ x: rect.x + rect.w * 0.62, y: rect.y + rect.h * 0.62 });
+    // Wide items (sidebar rows, stat strips) get the hand at their empty right end so it never covers the label;
+    // small items (icon buttons) get it just inside the lower right.
+    const wide = rect.w > 160;
+    const x = wide ? rect.x + rect.w - Math.min(46, rect.w * 0.18) : rect.x + rect.w * 0.68;
+    const y = rect.y + rect.h * (wide ? 0.72 : 0.7);
+    setHand({ x: Math.max(24, Math.min(window.innerWidth - 60, x)), y: Math.max(8, y) });
   }, [rect]);
 
   /* keyboard */

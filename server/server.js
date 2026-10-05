@@ -54,7 +54,8 @@ import tradingRouter from './routes/trading.js';
 import { requireAuth, requireAdmin } from './middleware/authMiddleware.js';
 import jwt from 'jsonwebtoken';
 import * as Users from './db/users.js';
-import { initDb } from './db/users.js';
+import { initDb, promoteAdminEmails } from './db/users.js';
+import { adminEmails } from './services/admins.js';
 import { initEventsDb } from './db/events.js';
 import { initPaymentsDb } from './db/payments.js';
 import { UPLOADS_DIR, ensureUploadDirs } from './config/storagePaths.js';
@@ -495,6 +496,13 @@ function startListening() {
 
 Promise.all([initDb(), initJournalDb(), initEventsDb(), initPaymentsDb()])
   .then(() => secureSchema())
+  .then(async () => {
+    const owners = adminEmails();
+    if (owners.length) {
+      const n = await promoteAdminEmails(owners);
+      console.log(`[admin] ADMIN_EMAILS: ${owners.length} owner email(s) configured${n ? `, ${n} account(s) promoted` : ''}`);
+    }
+  })
   .then(() => ensureSupabaseBuckets())
   .then(() => startListening())
   .catch(err => {

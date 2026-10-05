@@ -26,6 +26,9 @@ services:
         sync: false
       # Email codes (sign-up verification + password reset). See EMAIL_SETUP.md. Verification turns on by itself
       # once EMAIL_FROM and one provider key are set; until then sign-up works without it.
+      # Owner accounts: these emails always get the admin role (see .env.example)
+      - key: ADMIN_EMAILS
+        sync: false
       - key: EMAIL_FROM
         sync: false
       - key: RESEND_API_KEY

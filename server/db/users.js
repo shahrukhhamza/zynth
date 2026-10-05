@@ -303,6 +303,16 @@ export async function setAdmin(id, isAdmin) {
   );
 }
 
+/** Grant the admin role to existing accounts whose email is in the given (already lower-cased) list. */
+export async function promoteAdminEmails(emails) {
+  if (!emails.length) return 0;
+  const { rowCount } = await pool.query(
+    'UPDATE users SET is_admin = 1 WHERE LOWER(email) = ANY($1::text[]) AND COALESCE(is_admin, 0) <> 1',
+    [emails]
+  );
+  return rowCount;
+}
+
 export async function countUsers() {
   const { rows } = await pool.query('SELECT COUNT(*)::int AS n FROM users');
   return rows[0].n;
@@ -311,7 +321,8 @@ export async function countUsers() {
 export async function findAll() {
   const { rows } = await pool.query(
     `SELECT id, name, email, plan, plan_expires_at, is_admin, is_banned, created_at,
-            ai_analysis_tries, screenshot_tries
+            ai_analysis_tries, screenshot_tries,
+            (google_id IS NOT NULL) AS has_google, (password_hash IS NOT NULL) AS has_password
      FROM users ORDER BY created_at DESC`
   );
   return rows;
