@@ -367,11 +367,19 @@ export function StrengthMeter({ password }) {
 
 export function Checkbox({ checked, onChange, children }) {
   const theme = useTheme();
+  const idle = theme.isDark ? 'rgba(255,255,255,0.45)' : '#8a8a93';
   return (
     <label className="group flex cursor-pointer items-start gap-3 text-[13px] leading-snug" style={{ color: theme.textMuted }}>
-      <span className="relative mt-0.5 flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-[6px] border transition-all" style={{ borderColor: checked ? '#CA8A04' : theme.border, background: checked ? '#CA8A04' : theme.surface }}>
+      <span
+        className="relative mt-[1px] flex h-5 w-5 shrink-0 items-center justify-center rounded-[6px] border-2 transition-all duration-150 group-hover:border-[#CA8A04] focus-within:ring-4 focus-within:ring-[#CA8A04]/25"
+        style={{
+          borderColor: checked ? '#CA8A04' : idle,
+          background: checked ? '#CA8A04' : (theme.isDark ? 'rgba(255,255,255,0.06)' : theme.surface2),
+          boxShadow: checked ? 'none' : 'inset 0 1px 2px rgba(24,24,27,0.08)',
+        }}
+      >
         <input type="checkbox" checked={checked} onChange={(e) => onChange(e.target.checked)} className="absolute inset-0 h-full w-full cursor-pointer opacity-0" />
-        <AnimatePresence>{checked && <motion.span initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }} transition={{ type: 'spring', stiffness: 500, damping: 28 }}><Check size={12} strokeWidth={3.4} className="text-[#1a1203]" /></motion.span>}</AnimatePresence>
+        <AnimatePresence>{checked && <motion.span initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }} transition={{ type: 'spring', stiffness: 500, damping: 28 }}><Check size={13} strokeWidth={3.6} className="text-[#1a1203]" /></motion.span>}</AnimatePresence>
       </span>
       <span>{children}</span>
     </label>
