@@ -8,9 +8,10 @@ import {
   AuthLayout, AuthHeading, Field, PasswordField, StrengthMeter, Checkbox, FormAlert, SubmitButton, PromoMeter, shake,
 } from './auth/AuthKit';
 import GoogleButton from './auth/GoogleButton';
+import CodeEntry from './auth/CodeEntry';
 
 export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess }) {
-  const { register, loginWithGoogle } = useAuth();
+  const { register, loginWithGoogle, verifySignup, resendSignupCode } = useAuth();
   const theme = useTheme();
 
   const [form, setForm] = useState({ name: '', email: '', password: '', confirm: '' });
@@ -23,6 +24,7 @@ export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess })
   const [consent, setConsent] = useState({ terms: false, risk: false });
   const [fieldErrors, setFieldErrors] = useState({ name: '', email: '', password: '', confirm: '' });
   const [success, setSuccess] = useState(false);
+  const [pending, setPending] = useState(null); // set once the server has emailed a verification code
   const [shakeKey, setShakeKey] = useState(0);
 
   useEffect(() => {
@@ -55,7 +57,11 @@ export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess })
     if (!consent.terms || !consent.risk) { setError('Please accept both agreements below to create your account.'); fail(); return; }
     setLoading(true);
     try {
-      await register({ name: form.name, email: form.email, password: form.password, terms_accepted: true });
+      const res = await register({ name: form.name, email: form.email, password: form.password, terms_accepted: true });
+      if (res.verification) {
+        setPending(res.verification);
+        return;
+      }
       onSignupSuccess?.();
       setSuccess(true);
     } catch (err) {
@@ -66,6 +72,29 @@ export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess })
     } finally {
       setLoading(false);
     }
+  }
+
+  if (pending && !success) {
+    return (
+      <AuthLayout onBack={() => setPending(null)} backLabel="Back">
+        <CodeEntry
+          title="Verify your email"
+          email={pending.email}
+          expiresInMinutes={pending.expiresInMinutes}
+          resendAfter={pending.resendAfter}
+          devCode={pending.devCode}
+          submitLabel="Verify and create account"
+          onSubmit={async (code) => {
+            await verifySignup({ email: pending.email, code });
+            onSignupSuccess?.();
+            setSuccess(true);
+          }}
+          onResend={() => resendSignupCode(pending.email)}
+          onChangeEmail={() => setPending(null)}
+          onFatal={(c) => { if (c === 'NO_PENDING') setPending(null); }}
+        />
+      </AuthLayout>
+    );
   }
 
   if (success) {

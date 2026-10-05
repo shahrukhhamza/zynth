@@ -99,7 +99,7 @@ const skipGlobalRateLimit = (req) => {
 
 // Only credential-guessing endpoints are throttled. Session endpoints (/me, /update-profile,
 // /upgrade-plan) are covered by the global limiter instead.
-const AUTH_ATTEMPT_PATHS = new Set(['/login', '/register', '/google', '/forgot-password', '/reset-password']);
+const AUTH_ATTEMPT_PATHS = new Set(['/login', '/register', '/register/verify', '/register/resend', '/google', '/forgot-password', '/reset-password', '/reset-password/verify']);
 const skipAuthAttemptRateLimit = (req) => {
   if (isPreflightRequest(req)) return true;
   return !AUTH_ATTEMPT_PATHS.has(req.path);

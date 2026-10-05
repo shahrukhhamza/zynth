@@ -24,6 +24,12 @@ services:
         sync: false
       - key: TWELVE_DATA_API_KEY
         sync: false
+      # Email codes (sign-up verification + password reset). See EMAIL_SETUP.md. Verification turns on by itself
+      # once EMAIL_FROM and one provider key are set; until then sign-up works without it.
+      - key: EMAIL_FROM
+        sync: false
+      - key: RESEND_API_KEY
+        sync: false
       - key: BREVO_API_KEY
         sync: false
       # Build-time (Vite) variables: the Google button shows whenever VITE_GOOGLE_CLIENT_ID is set (and the site origin is

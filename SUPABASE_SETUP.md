@@ -45,7 +45,7 @@ Security (so Supabase's public API can never read your users table), and creates
    | `SUPABASE_SERVICE_ROLE_KEY` | the `service_role` key |
    | `CLIENT_URL` | your Render URL, e.g. `https://zynth-app.onrender.com` (set after the first deploy, then redeploy) |
    | `GOOGLE_CLIENT_ID` and `VITE_GOOGLE_CLIENT_ID` | same Google OAuth client id (also add your Render URL under *Authorized JavaScript origins* in Google Cloud Console) |
-   | `GEMINI_API_KEY`, `FINNHUB_API_KEY`, `POLYGON_API_KEY`, `TWELVE_DATA_API_KEY`, `BREVO_API_KEY`, `FRED_API_KEY`, `BLS_API_KEY`, `BEA_API_KEY` | your existing keys |
+   | `GEMINI_API_KEY`, `FINNHUB_API_KEY`, `POLYGON_API_KEY`, `TWELVE_DATA_API_KEY`, `FRED_API_KEY`, `BLS_API_KEY`, `BEA_API_KEY` | your existing keys |
 
    `JWT_SECRET` is generated for you. Optional: `PROMO_ELITE_FREE=false` ends the launch promo, and
    `PROMO_ELITE_LIMIT=100` sets how many early users get free Elite.
@@ -68,7 +68,7 @@ One free monitor fixes both: create an [UptimeRobot](https://uptimerobot.com) (o
 
 - Database: 500 MB. Screenshots and proofs live in Storage (1 GB), not in the database, so the DB stays small.
 - Free Render: 512 MB RAM, ~750 instance-hours per month (enough for one always-on service).
-- Emails: set a verified sender in Brevo, otherwise password-reset mails will not be delivered.
+- Emails: sign-up verification codes and password reset need a verified sender. Follow `EMAIL_SETUP.md` (Resend or Brevo); until then sign-up works without verification.
 
 ## 5. Moving existing data (optional)
 

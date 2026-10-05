@@ -53,10 +53,27 @@ export function AuthProvider({ children }) {
     clearAuthSession();
   }
 
+  /**
+   * Starts sign-up. With email verification on, the server only emails a code and answers
+   * `{ verification_required: true, ... }`; the account exists after verifySignup() succeeds.
+   * Returns `{ verification }` in that case, or `{ user }` when the account was created immediately.
+   */
   const register = useCallback(async ({ name, email, password, terms_accepted }) => {
     const { data } = await api.post('/auth/register', { name, email, password, terms_accepted });
+    if (data.verification_required) return { verification: data };
+    saveSession(data.user, data.token);
+    return { user: data.user };
+  }, []);
+
+  const verifySignup = useCallback(async ({ email, code }) => {
+    const { data } = await api.post('/auth/register/verify', { email, code });
     saveSession(data.user, data.token);
     return data.user;
+  }, []);
+
+  const resendSignupCode = useCallback(async (email) => {
+    const { data } = await api.post('/auth/register/resend', { email });
+    return data;
   }, []);
 
   const login = useCallback(async ({ email, password }) => {
@@ -86,7 +103,7 @@ export function AuthProvider({ children }) {
   }, [token]);
 
   return (
-    <AuthContext.Provider value={{ user, token, loading, login, register, loginWithGoogle, logout, refreshUser }}>
+    <AuthContext.Provider value={{ user, token, loading, login, register, verifySignup, resendSignupCode, loginWithGoogle, logout, refreshUser }}>
       {children}
     </AuthContext.Provider>
   );

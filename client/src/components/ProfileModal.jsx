@@ -1,3 +1,4 @@
+import ChangePasswordPanel from './ChangePasswordPanel';
 import { useState, useEffect, useRef } from 'react';
 import { X, Check, ChevronDown, Key, LogOut, TrendingUp, Bell, Zap, Camera, Loader2, CheckCircle } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
@@ -44,7 +45,6 @@ export default function ProfileModal({ onClose, onForgotPassword }) {
   const [selectedPlan, setSelectedPlan]     = useState(DEFAULT_SELECTED_PLAN);
   const [billingCycle, setBillingCycle]     = useState(DEFAULT_BILLING_CYCLE);
   const [paymentPlan, setPaymentPlan]       = useState(null);
-  const [pwdStatus, setPwdStatus]           = useState(null);
   const [avatarUploading, setAvatarUploading] = useState(false);
   const [avatarUploadDone, setAvatarUploadDone] = useState(false);
   const [avatarUploadError, setAvatarUploadError] = useState('');
@@ -177,21 +177,6 @@ export default function ProfileModal({ onClose, onForgotPassword }) {
       setAvatarUploadError('Upload failed. Please try again.');
     } finally {
       setAvatarUploading(false);
-    }
-  }
-
-  async function handleChangePassword() {
-    if (!user?.email) return;
-    setPwdStatus('sending');
-    try {
-      const res = await fetch(`${API_URL}/api/auth/forgot-password`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: user.email }),
-      });
-      setPwdStatus(res.ok ? 'sent' : 'error');
-    } catch {
-      setPwdStatus('error');
     }
   }
 
@@ -485,20 +470,8 @@ export default function ProfileModal({ onClose, onForgotPassword }) {
               <span className="text-[12px]" style={{ color: theme.muted }}>Manage in Settings</span>
             </button>
 
-            {/* Change Password */}
-            <button
-              onClick={handleChangePassword}
-              disabled={pwdStatus === 'sending' || pwdStatus === 'sent'}
-              className="w-full flex items-center gap-2.5 px-4 py-3 rounded-xl text-[13px] font-medium text-left transition-all"
-              style={{ background: theme.isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)', border: `1px solid ${theme.border}`, color: theme.text, opacity: pwdStatus === 'sent' ? 0.7 : 1 }}
-              onMouseOver={e => { if (pwdStatus !== 'sent') e.currentTarget.style.opacity = '0.8'; }}
-              onMouseOut={e => e.currentTarget.style.opacity = pwdStatus === 'sent' ? '0.7' : '1'}>
-              <Key className="w-4 h-4 shrink-0" style={{ color: theme.muted }} />
-              {pwdStatus === 'sending' ? 'Sending reset email...'
-                : pwdStatus === 'sent'   ? `Reset email sent to ${user?.email}`
-                : pwdStatus === 'error'  ? 'Failed - try again'
-                : 'Change Password'}
-            </button>
+            {/* Change Password (emailed 6-digit code) */}
+            <ChangePasswordPanel email={user?.email} />
 
             {/* Sign Out */}
             <button

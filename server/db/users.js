@@ -1,5 +1,6 @@
 
 import pool from './pool.js';
+import { initEmailCodes } from './emailCodes.js';
 
 // Test connection on startup (non-fatal — initDb() will surface real errors)
 pool.connect()
@@ -88,6 +89,8 @@ export async function initDb() {
   } catch (err) {
     console.error('Promo backfill failed:', err.message);
   }
+
+  await initEmailCodes();
 
   console.log('✅ Database schema ready');
 }
@@ -330,28 +333,6 @@ export async function deleteUser(id) {
 export async function resetTries(id) {
   await pool.query(
     'UPDATE users SET ai_analysis_tries = 0, screenshot_tries = 0 WHERE id = $1',
-    [id]
-  );
-}
-
-export async function setResetToken(email, token, expires) {
-  await pool.query(
-    'UPDATE users SET reset_token = $1, reset_token_expires = $2 WHERE email = $3',
-    [token, expires, email.toLowerCase().trim()]
-  );
-}
-
-export async function findByResetToken(token) {
-  const { rows } = await pool.query(
-    'SELECT * FROM users WHERE reset_token = $1',
-    [token]
-  );
-  return rows[0] ?? null;
-}
-
-export async function clearResetToken(id) {
-  await pool.query(
-    'UPDATE users SET reset_token = NULL, reset_token_expires = NULL WHERE id = $1',
     [id]
   );
 }

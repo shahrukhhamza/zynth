@@ -337,7 +337,7 @@ Start from .env.example, then extend as needed.
 - GOOGLE_CLIENT_ID
 - BLS_API_KEY
 - BEA_API_KEY
-- RESEND_API_KEY or BREVO_API_KEY
+- EMAIL_FROM and RESEND_API_KEY or BREVO_API_KEY (see EMAIL_SETUP.md)
 - USE_GEMINI_AI
 
 ### Optional scaling and integrations

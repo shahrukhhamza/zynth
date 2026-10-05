@@ -46,7 +46,7 @@ export default pool;
 const APP_TABLES = [
   'users', 'user_events', 'payment_requests',
   'trades', 'trade_journals', 'performance_reports', 'checklist',
-  'macro_snapshots', 'dna_reports', 'levels',
+  'macro_snapshots', 'dna_reports', 'levels', 'email_codes',
 ];
 
 export async function secureSchema() {

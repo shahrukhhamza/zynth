@@ -9,6 +9,7 @@
  *   # terminal 2 (server/): DATABASE_URL=postgresql://user:pass@localhost:5432/zynth npm run test:e2e
  *
  * PROMO_ELITE_FREE=false is required: the suite asserts free-tier gating, which the launch promo opens up.
+ * Leave EMAIL_FROM unset (so sign-up creates accounts immediately); the email-code flow has its own checks in the reset section.
  * Restart the server between runs: the auth limiter keeps its counters in memory.
  */
 import pg from 'pg';
@@ -58,12 +59,17 @@ ok('profile set', r.status === 200 && r.json.user.avatar_color === 'blue');
 r = await req('PUT', '/auth/update-profile', { token, body: { name: 'Tester 2' } });
 ok('profile partial update keeps fields', r.json?.user?.trading_experience === 'beginner' && r.json?.user?.avatar_color === 'blue', JSON.stringify(r.json?.user));
 
-// ── forgot / reset
+// ── forgot / reset (emailed 6-digit code, then a one-time token for the new password)
+// A non-production server without an email provider returns the code as `devCode` so this can run without a mailbox.
 r = await req('POST', '/auth/forgot-password', { body: { email } }); ok('forgot 200', r.status === 200, r.text);
-const row = (await db.query('select reset_token, reset_token_expires from users where id=$1', [uid])).rows[0];
-ok('reset token stored', !!row.reset_token);
-r = await req('POST', '/auth/reset-password', { body: { token: row.reset_token, newPassword: 'NewPassw0rd!1' } }); ok('reset ok', r.status === 200, r.text);
-r = await req('POST', '/auth/reset-password', { body: { token: row.reset_token, newPassword: 'NewPassw0rd!1' } }); ok('reset token single-use', r.status === 400);
+const resetCode = r.json?.devCode; ok('dev server returns the reset code', /^\d{6}$/.test(resetCode || ''), r.text);
+r = await req('POST', '/auth/forgot-password', { body: { email: `nobody_${rnd}@test.com` } }); ok('forgot unknown email: same 200, no code leaked', r.status === 200 && !r.json?.devCode, r.text);
+r = await req('POST', '/auth/reset-password/verify', { body: { email, code: resetCode === '000000' ? '111111' : '000000' } }); ok('reset wrong code 400', r.status === 400);
+r = await req('POST', '/auth/reset-password', { body: { email, resetToken: 'x'.repeat(64), newPassword: 'NewPassw0rd!1' } }); ok('reset without verifying 400', r.status === 400);
+r = await req('POST', '/auth/reset-password/verify', { body: { email, code: resetCode } }); ok('reset code verified', r.status === 200 && r.json?.resetToken, r.text);
+const resetToken = r.json?.resetToken;
+r = await req('POST', '/auth/reset-password', { body: { email, resetToken, newPassword: 'NewPassw0rd!1' } }); ok('reset ok', r.status === 200, r.text);
+r = await req('POST', '/auth/reset-password', { body: { email, resetToken, newPassword: 'NewPassw0rd!1' } }); ok('reset token single-use', r.status === 400);
 r = await req('POST', '/auth/login', { body: { email, password: 'NewPassw0rd!1' } }); ok('login new pw', r.status === 200);
 r = await req('GET', '/auth/me', { token }); ok('old JWT revoked after pw reset', r.status === 401, r.status);
 const token2 = (await req('POST', '/auth/login', { body: { email, password: 'NewPassw0rd!1' } })).json.token;

@@ -26,7 +26,6 @@ import LoginPage from './components/LoginPage'
 import SignupPage from './components/SignupPage'
 const LandingPage = lazy(() => import('./components/LandingPage'))
 import ForgotPasswordPage from './components/ForgotPasswordPage'
-import ResetPasswordPage from './components/ResetPasswordPage'
 import OnboardingFlow from './components/OnboardingFlow'
 import WelcomeScreen from './components/WelcomeScreen'
 import ProductTour, { TOUR_DONE_KEY } from './components/ProductTour'
@@ -444,7 +443,7 @@ function AuthGate() {
   const theme = useTheme();
   const [view, setView] = useState(() => {
     const path = window.location.pathname;
-    if (path === '/reset-password') return 'resetPassword';
+    if (path === '/reset-password') return 'forgotPassword';
     if (path === '/forgot-password') return 'forgotPassword';
     if (path === '/terms') return 'terms';
     if (path === '/privacy') return 'privacy';
@@ -600,9 +599,6 @@ function AuthGate() {
 
   if (view === 'forgotPassword')
     return <ForgotPasswordPage onBack={() => setView('login')} />
-
-  if (view === 'resetPassword')
-    return <ResetPasswordPage onBack={() => setView('login')} />
 
   return (
     <LandingPage

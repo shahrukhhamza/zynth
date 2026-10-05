@@ -1,10 +1,16 @@
 import { Router } from 'express';
 import bcrypt from 'bcryptjs';
-import crypto from 'crypto';
 import { OAuth2Client } from 'google-auth-library';
 import * as Users from '../db/users.js';
 import { signToken, requireAuth, requireAdmin } from '../middleware/authMiddleware.js';
-import { sendPasswordResetEmail } from '../services/emailService.js';
+import * as Codes from '../db/emailCodes.js';
+import {
+  sendVerificationCodeEmail, sendPasswordResetCodeEmail, verificationEnabled, canDeliver, usesConsoleFallback,
+} from '../services/emailService.js';
+import {
+  generateCode, hashCode, hashToken, newToken, safeEqual, isValidCodeFormat, maskEmail,
+  CODE_TTL_MINUTES, MAX_ATTEMPTS, RESEND_COOLDOWN_SECONDS, MAX_SENDS_PER_HOUR,
+} from '../services/otp.js';
 import { saveAvatarFromBase64 } from '../services/fileStorageService.js';
 import { trackEvent } from '../db/events.js';
 
@@ -41,12 +47,78 @@ function buildUser(row) {
   };
 }
 
+const normalizeEmail = (v) => String(v || '').trim().toLowerCase();
+
+/**
+ * Issue (or re-issue) a 6-digit code for (email, purpose) and email it.
+ * Enforces a resend cooldown and an hourly cap. Returns { sent, code?, retryAfter?, limited? }.
+ */
+async function sendCode({ email, purpose, name, payload }) {
+  const existing = await Codes.getCode(email, purpose);
+  if (existing) {
+    const elapsed = (Date.now() - new Date(existing.last_sent_at).getTime()) / 1000;
+    if (elapsed < RESEND_COOLDOWN_SECONDS) {
+      // The earlier code is still valid; just keep the latest form details.
+      if (payload) await Codes.updatePayload(existing.id, payload);
+      return { sent: false, retryAfter: Math.ceil(RESEND_COOLDOWN_SECONDS - elapsed) };
+    }
+    const sameHour = Date.now() - new Date(existing.first_sent_at).getTime() < 3_600_000;
+    if (sameHour && existing.sends >= MAX_SENDS_PER_HOUR) return { sent: false, limited: true };
+  }
+
+  const code = generateCode();
+  await Codes.upsertCode({ email, purpose, codeHash: hashCode(email, purpose, code), payload, ttlMinutes: CODE_TTL_MINUTES });
+  if (Math.random() < 0.02) Codes.purgeExpired().catch(() => {});
+
+  const mail = purpose === 'signup' ? sendVerificationCodeEmail : sendPasswordResetCodeEmail;
+  await mail(email, name, code, CODE_TTL_MINUTES);
+  return { sent: true, code };
+}
+
+/** Check a submitted code against a stored row. Returns { ok } or { status, body } describing the failure. */
+async function checkCode(row, email, purpose, code) {
+  if (!row || new Date(row.expires_at) < new Date())
+    return { status: 400, body: { error: 'This code has expired. Request a new one.', code: 'CODE_EXPIRED' } };
+  if (row.attempts >= MAX_ATTEMPTS)
+    return { status: 429, body: { error: 'Too many incorrect attempts. Request a new code.', code: 'TOO_MANY_ATTEMPTS' } };
+  if (!safeEqual(hashCode(email, purpose, code), row.code_hash)) {
+    const used = await Codes.bumpAttempts(row.id);
+    const left = Math.max(0, MAX_ATTEMPTS - used);
+    return {
+      status: 400,
+      body: {
+        error: left > 0 ? `Incorrect code. ${left} attempt${left === 1 ? '' : 's'} left.` : 'Too many incorrect attempts. Request a new code.',
+        code: left > 0 ? 'BAD_CODE' : 'TOO_MANY_ATTEMPTS',
+        attemptsLeft: left,
+      },
+    };
+  }
+  return { ok: true };
+}
+
+async function finishSignup({ name, email, password_hash }) {
+  const result = await Users.createUser({
+    name,
+    email,
+    password_hash,
+    terms_accepted: 1,
+    terms_accepted_at: new Date().toISOString(),
+  });
+  const row = await Users.findById(result.id);
+  const user = buildUser(row);
+  const token = signToken(user);
+  trackEvent(result.id, 'user_signup', { name, email });
+  return { user, token };
+}
+
 // ── POST /api/auth/register ────────────────────────────────────────────────
+// With email verification on, this only validates the form and emails a 6-digit code; the account is
+// created by POST /register/verify once the address is proven. With it off, the account is created at once.
 router.post('/register', async (req, res) => {
   try {
     const { name, email, password, terms_accepted } = req.body;
     const safeName = String(name || '').trim();
-    const safeEmail = String(email || '').trim().toLowerCase();
+    const safeEmail = normalizeEmail(email);
 
     if (!safeName || !safeEmail || !password)
       return res.status(400).json({ error: 'Name, email and password are required.' });
@@ -84,23 +156,99 @@ router.post('/register', async (req, res) => {
     }
 
     const password_hash = await bcrypt.hash(password, 12);
-    const result = await Users.createUser({
-      name: safeName,
+
+    if (!verificationEnabled()) {
+      const { user, token } = await finishSignup({ name: safeName, email: safeEmail, password_hash });
+      return res.status(201).json({ user, token });
+    }
+
+    if (!canDeliver())
+      return res.status(503).json({ error: 'Email verification is temporarily unavailable. Please try again shortly.' });
+
+    let result;
+    try {
+      result = await sendCode({ email: safeEmail, purpose: 'signup', name: safeName, payload: { name: safeName, password_hash } });
+    } catch (mailErr) {
+      console.error('[signup] verification email failed:', JSON.stringify(mailErr.response?.data ?? mailErr.message));
+      return res.status(502).json({ error: 'We could not send the verification email. Please check the address and try again.' });
+    }
+    if (result.limited)
+      return res.status(429).json({ error: 'Too many codes requested for this email. Please try again in an hour.' });
+
+    res.json({
+      verification_required: true,
       email: safeEmail,
-      password_hash,
-      terms_accepted: 1,
-      terms_accepted_at: new Date().toISOString(),
+      maskedEmail: maskEmail(safeEmail),
+      expiresInMinutes: CODE_TTL_MINUTES,
+      resendAfter: result.retryAfter ?? RESEND_COOLDOWN_SECONDS,
+      ...(result.sent && usesConsoleFallback() ? { devCode: result.code } : {}),
     });
-    const row = await Users.findById(result.id);
-    const user = buildUser(row);
-    const token = signToken(user);
-
-    trackEvent(result.id, 'user_signup', { name: safeName, email: safeEmail });
-
-    res.status(201).json({ user, token });
   } catch (err) {
     console.error('Register error:', err?.message || 'unknown');
     res.status(500).json({ error: 'Registration failed. Please try again.' });
+  }
+});
+
+// ── POST /api/auth/register/verify ─────────────────────────────────────────
+router.post('/register/verify', async (req, res) => {
+  try {
+    const email = normalizeEmail(req.body?.email);
+    const code = String(req.body?.code ?? '').trim();
+    if (!email || !isValidCodeFormat(code))
+      return res.status(400).json({ error: 'Enter the 6-digit code from your email.', code: 'BAD_FORMAT' });
+
+    const row = await Codes.getCode(email, 'signup');
+    const check = await checkCode(row, email, 'signup', code);
+    if (!check.ok) return res.status(check.status).json(check.body);
+
+    // The address could have been registered (e.g. via Google) while the code was pending.
+    if (await Users.findByEmail(email)) {
+      await Codes.deleteCode(row.id);
+      return res.status(409).json({ error: 'An account with this email already exists.' });
+    }
+
+    const { name, password_hash } = row.payload || {};
+    if (!name || !password_hash)
+      return res.status(400).json({ error: 'Your sign-up session expired. Please start again.', code: 'NO_PENDING' });
+
+    const { user, token } = await finishSignup({ name, email, password_hash });
+    await Codes.deleteCode(row.id);
+    res.status(201).json({ user, token });
+  } catch (err) {
+    console.error('register/verify error:', err?.message || 'unknown');
+    res.status(500).json({ error: 'Verification failed. Please try again.' });
+  }
+});
+
+// ── POST /api/auth/register/resend ─────────────────────────────────────────
+router.post('/register/resend', async (req, res) => {
+  try {
+    const email = normalizeEmail(req.body?.email);
+    const row = email ? await Codes.getCode(email, 'signup') : null;
+    if (!row?.payload?.name)
+      return res.status(400).json({ error: 'Your sign-up session expired. Please start again.', code: 'NO_PENDING' });
+
+    let result;
+    try {
+      result = await sendCode({ email, purpose: 'signup', name: row.payload.name });
+    } catch (mailErr) {
+      console.error('[signup] resend email failed:', JSON.stringify(mailErr.response?.data ?? mailErr.message));
+      return res.status(502).json({ error: 'We could not send the email. Please try again.' });
+    }
+    if (result.limited)
+      return res.status(429).json({ error: 'Too many codes requested for this email. Please try again in an hour.' });
+    if (!result.sent)
+      return res.status(429).json({ error: `Please wait ${result.retryAfter}s before requesting another code.`, retryAfter: result.retryAfter });
+
+    res.json({
+      sent: true,
+      expiresInMinutes: CODE_TTL_MINUTES,
+      resendAfter: RESEND_COOLDOWN_SECONDS,
+      ...(usesConsoleFallback() ? { devCode: result.code } : {}),
+    });
+  } catch (err) {
+    console.error('register/resend error:', err?.message || 'unknown');
+    res.status(500).json({ error: 'Could not resend the code. Please try again.' });
   }
 });
 
@@ -294,44 +442,70 @@ router.post('/upgrade-plan', requireAuth, requireAdmin, async (req, res) => {
 });
 
 // ── POST /api/auth/forgot-password ────────────────────────────────────────
+// Emails a 6-digit code. The reply is the same whether or not the account exists.
 router.post('/forgot-password', async (req, res) => {
-  const genericReply = { message: 'If this email exists you will receive a reset link.' };
   try {
-    const { email } = req.body;
-    if (typeof email !== 'string' || !email.trim())
+    const email = normalizeEmail(req.body?.email);
+    if (!email || typeof req.body?.email !== 'string')
       return res.status(400).json({ error: 'Email is required.' });
+
+    if (!canDeliver())
+      return res.status(503).json({ error: 'Password reset by email is not available right now. Please contact support@zynth.com.' });
+
+    const reply = {
+      message: 'If an account exists for this email, a 6-digit code is on its way.',
+      expiresInMinutes: CODE_TTL_MINUTES,
+      resendAfter: RESEND_COOLDOWN_SECONDS,
+    };
 
     const row = await Users.findByEmail(email);
     if (row) {
-      const token   = crypto.randomBytes(32).toString('hex');
-      const expires = new Date(Date.now() + 3_600_000).toISOString();
-      await Users.setResetToken(email, token, expires);
-
-      const base = (process.env.CLIENT_URL || process.env.RENDER_EXTERNAL_URL || '').replace(/\/+$/, '');
-      const resetLink = `${base}/reset-password?token=${token}`;
       try {
-        await sendPasswordResetEmail(email, resetLink, row.name);
+        const result = await sendCode({ email, purpose: 'reset', name: row.name });
+        if (result.sent && usesConsoleFallback()) reply.devCode = result.code;
       } catch (mailErr) {
-        // Never surface mail failures: a 500 only for existing accounts would reveal which
-        // emails are registered.
+        // Never surface mail failures: an error only for existing accounts would reveal which emails are registered.
         console.error('forgot-password email failed:', JSON.stringify(mailErr.response?.data ?? mailErr.message));
       }
     }
-
-    res.json(genericReply);
+    res.json(reply);
   } catch (err) {
     console.error('forgot-password error:', err.message);
     res.status(500).json({ error: 'Failed to process request. Please try again.' });
   }
 });
 
+// ── POST /api/auth/reset-password/verify ──────────────────────────────────
+// Step 2: prove the code, receive a short-lived token for the final "set password" step.
+router.post('/reset-password/verify', async (req, res) => {
+  try {
+    const email = normalizeEmail(req.body?.email);
+    const code = String(req.body?.code ?? '').trim();
+    if (!email || !isValidCodeFormat(code))
+      return res.status(400).json({ error: 'Enter the 6-digit code from your email.', code: 'BAD_FORMAT' });
+
+    const row = await Codes.getCode(email, 'reset');
+    const check = await checkCode(row, email, 'reset', code);
+    if (!check.ok) return res.status(check.status).json(check.body);
+
+    const resetToken = newToken();
+    await Codes.markVerified(row.id, hashToken(resetToken), 15);
+    res.json({ resetToken, expiresInMinutes: 15 });
+  } catch (err) {
+    console.error('reset-password/verify error:', err?.message || 'unknown');
+    res.status(500).json({ error: 'Verification failed. Please try again.' });
+  }
+});
+
 // ── POST /api/auth/reset-password ─────────────────────────────────────────
+// Step 3: set the new password using the token from step 2.
 router.post('/reset-password', async (req, res) => {
   try {
-    const { token, newPassword } = req.body;
+    const email = normalizeEmail(req.body?.email);
+    const { resetToken, newPassword } = req.body || {};
 
-    if (typeof token !== 'string' || typeof newPassword !== 'string' || !token || !newPassword)
-      return res.status(400).json({ error: 'Token and new password are required.' });
+    if (!email || typeof resetToken !== 'string' || typeof newPassword !== 'string' || !resetToken || !newPassword)
+      return res.status(400).json({ error: 'Email, reset token and new password are required.' });
 
     if (newPassword.length > MAX_PASSWORD_LENGTH)
       return res.status(400).json({ error: `Password must be at most ${MAX_PASSWORD_LENGTH} characters.` });
@@ -339,20 +513,21 @@ router.post('/reset-password', async (req, res) => {
     if (newPassword.length < 8)
       return res.status(400).json({ error: 'Password must be at least 8 characters.' });
 
-    const row = await Users.findByResetToken(token);
-    if (!row)
-      return res.status(400).json({ error: 'Invalid or expired reset link.' });
+    const row = await Codes.getCode(email, 'reset');
+    const expired = !row || !row.verified_token_hash || new Date(row.expires_at) < new Date();
+    if (expired || !safeEqual(hashToken(resetToken), row.verified_token_hash))
+      return res.status(400).json({ error: 'Your reset session expired. Please start again.', code: 'NO_PENDING' });
 
-    if (new Date(row.reset_token_expires) < new Date())
-      return res.status(400).json({ error: 'Reset link has expired. Please request a new one.' });
+    const user = await Users.findByEmail(email);
+    if (!user) return res.status(400).json({ error: 'Your reset session expired. Please start again.', code: 'NO_PENDING' });
 
     const password_hash = await bcrypt.hash(newPassword, 12);
-    await Users.setPassword(row.id, password_hash);
-    await Users.clearResetToken(row.id);
+    await Users.setPassword(user.id, password_hash);
+    await Codes.deleteCode(row.id);
 
     res.json({ message: 'Password updated successfully.' });
   } catch (err) {
-    console.error('reset-password error:', err);
+    console.error('reset-password error:', err?.message || 'unknown');
     res.status(500).json({ error: 'Failed to reset password. Please try again.' });
   }
 });
