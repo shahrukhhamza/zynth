@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { Mail, Lock, ArrowRight } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useTheme } from '../contexts/ThemeContext';
-import { AuthLayout, AuthHeading, Field, PasswordField, FormAlert, SubmitButton, SwitchLine, shake } from './auth/AuthKit';
+import { AuthLayout, AuthHeading, Field, PasswordField, FormAlert, SubmitButton, shake } from './auth/AuthKit';
 import GoogleButton from './auth/GoogleButton';
 
 export default function LoginPage({ onSwitchToSignup, onBack, onForgotPassword }) {
@@ -55,7 +55,7 @@ export default function LoginPage({ onSwitchToSignup, onBack, onForgotPassword }
   }
 
   return (
-    <AuthLayout onBack={onBack}>
+    <AuthLayout onBack={onBack} tabs={{ active: 'login', onLogin: () => {}, onSignup: onSwitchToSignup }}>
       <AuthHeading title="Welcome back" subtitle="Sign in to continue to your dashboard." />
 
       <FormAlert tone={isGoogleOnlyError ? 'info' : 'error'}>{error}</FormAlert>
@@ -74,7 +74,6 @@ export default function LoginPage({ onSwitchToSignup, onBack, onForgotPassword }
         </div>
       </motion.form>
 
-      <SwitchLine action="Create one free" onClick={onSwitchToSignup}>New to Zynth?</SwitchLine>
     </AuthLayout>
   );
 }

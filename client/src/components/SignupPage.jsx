@@ -5,7 +5,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { useTheme } from '../contexts/ThemeContext';
 import { getPublicStats } from '../utils/publicStats';
 import {
-  AuthLayout, AuthHeading, Field, PasswordField, StrengthMeter, Checkbox, FormAlert, SubmitButton, SwitchLine, shake,
+  AuthLayout, AuthHeading, Field, PasswordField, StrengthMeter, Checkbox, FormAlert, SubmitButton, PromoMeter, shake,
 } from './auth/AuthKit';
 import GoogleButton from './auth/GoogleButton';
 
@@ -19,6 +19,7 @@ export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess })
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [spotsLeft, setSpotsLeft] = useState(null);
+  const [promoLimit, setPromoLimit] = useState(100);
   const [consent, setConsent] = useState({ terms: false, risk: false });
   const [fieldErrors, setFieldErrors] = useState({ name: '', email: '', password: '', confirm: '' });
   const [success, setSuccess] = useState(false);
@@ -26,7 +27,10 @@ export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess })
 
   useEffect(() => {
     getPublicStats()
-      .then((d) => { if (typeof d?.promoSpotsLeft === 'number') setSpotsLeft(d.promoSpotsLeft); })
+      .then((d) => {
+        if (typeof d?.promoSpotsLeft === 'number') setSpotsLeft(d.promoSpotsLeft);
+        if (typeof d?.promoLimit === 'number') setPromoLimit(d.promoLimit);
+      })
       .catch(() => {});
   }, []);
 
@@ -83,13 +87,13 @@ export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess })
   }
 
   return (
-    <AuthLayout onBack={onBack}>
+    <AuthLayout onBack={onBack} tabs={{ active: 'signup', onLogin: onSwitchToLogin, onSignup: () => {} }}>
       <AuthHeading
         title="Create your account"
-        subtitle={spotsLeft != null && spotsLeft > 0
-          ? `${spotsLeft} free Elite spots left for early users. No credit card needed.`
-          : 'Start journaling in under a minute. No credit card needed.'}
+        subtitle="Start journaling in under a minute. No credit card needed."
       />
+
+      <PromoMeter spotsLeft={spotsLeft} limit={promoLimit} />
 
       <FormAlert>{error}</FormAlert>
 
@@ -114,7 +118,6 @@ export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess })
         <SubmitButton loading={loading}>Create account {!loading && <ArrowRight size={17} />}</SubmitButton>
       </motion.form>
 
-      <SwitchLine action="Sign in" onClick={onSwitchToLogin}>Already on Zynth?</SwitchLine>
     </AuthLayout>
   );
 }

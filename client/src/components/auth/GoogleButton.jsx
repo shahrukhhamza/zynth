@@ -55,7 +55,7 @@ export default function GoogleButton({ onCredential, text = 'continue_with' }) {
       holder.current.innerHTML = '';
       window.google.accounts.id.renderButton(holder.current, {
         type: 'standard',
-        theme: theme.isDark ? 'filled_black' : 'outline',
+        theme: 'outline',
         size: 'large',
         text,
         shape: 'rectangular',
