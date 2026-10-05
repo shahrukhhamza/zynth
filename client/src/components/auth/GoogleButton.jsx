@@ -6,12 +6,12 @@
  * third-party sign-in is blocked), so the button appears to "randomly stop working". `renderButton`
  * opens the normal Google popup every time.
  *
- * Shown only when VITE_ENABLE_GOOGLE_SIGNIN=true and VITE_GOOGLE_CLIENT_ID is set.
+ * Shown whenever VITE_GOOGLE_CLIENT_ID is set. Set VITE_ENABLE_GOOGLE_SIGNIN=false to hide it again.
  */
 import { useEffect, useRef, useState } from 'react';
 import { useTheme } from '../../contexts/ThemeContext';
 
-export const GOOGLE_ENABLED = import.meta.env.VITE_ENABLE_GOOGLE_SIGNIN === 'true' && !!import.meta.env.VITE_GOOGLE_CLIENT_ID;
+export const GOOGLE_ENABLED = import.meta.env.VITE_ENABLE_GOOGLE_SIGNIN !== 'false' && !!import.meta.env.VITE_GOOGLE_CLIENT_ID;
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || '';
 
 // `google.accounts.id.initialize` must only run once per page load, so the latest callback lives in a module ref

@@ -26,8 +26,8 @@ services:
         sync: false
       - key: BREVO_API_KEY
         sync: false
-      # Build-time (Vite) variables: the Google button shows only when BOTH are set (and the site's origin is
-      # listed under "Authorized JavaScript origins" for this client id in Google Cloud Console).
+      # Build-time (Vite) variables: the Google button shows whenever VITE_GOOGLE_CLIENT_ID is set (and the site origin is
+      # listed under "Authorized JavaScript origins" for this client id). Set VITE_ENABLE_GOOGLE_SIGNIN=false to hide it.
       - key: VITE_GOOGLE_CLIENT_ID
         sync: false
       - key: VITE_ENABLE_GOOGLE_SIGNIN
