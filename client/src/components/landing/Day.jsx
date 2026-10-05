@@ -10,7 +10,7 @@ import { CalendarVisual, DnaRadar, MacroGauge, ScoreRing, SparkVisual } from './
 
 function Panel({ label, children, className = '' }) {
   return (
-    <div className={`rounded-2xl border border-zinc-200 bg-zinc-50/80 p-4 dark:border-white/[0.07] dark:bg-white/[0.03] ${className}`}>
+    <div className={`rounded-2xl border border-zinc-200 bg-zinc-50/80 p-4 transition-all duration-300 hover:-translate-y-1 hover:border-[#CA8A04]/45 hover:bg-white hover:shadow-[0_18px_36px_-18px_rgba(202,138,4,0.45)] dark:border-white/[0.07] dark:bg-white/[0.03] dark:hover:bg-white/[0.06] ${className}`}>
       {label && <div className="mb-3 text-[10px] font-bold uppercase tracking-[0.16em] text-zinc-500">{label}</div>}
       {children}
     </div>
@@ -129,14 +129,14 @@ export default function Day() {
             <li key={m.key} className="relative grid gap-5 md:grid-cols-[88px_1fr] md:gap-8">
               <div className="relative hidden md:block">
                 <Reveal y={10}>
-                  <span className="relative z-10 mx-auto flex h-[88px] w-[88px] items-center justify-center rounded-full border-4 border-[#fafaf9] bg-gradient-to-b from-[#E0A010] to-[#C98A06] text-[#1a1203] shadow-[0_8px_24px_-8px_rgba(202,138,4,0.8)] dark:border-[#0b0b0f]">
+                  <span className="relative z-10 mx-auto flex h-[88px] w-[88px] items-center justify-center rounded-full border-4 transition-transform duration-300 hover:scale-110 hover:rotate-6 border-[#fafaf9] bg-gradient-to-b from-[#E0A010] to-[#C98A06] text-[#1a1203] shadow-[0_8px_24px_-8px_rgba(202,138,4,0.8)] dark:border-[#0b0b0f]">
                     <m.icon size={32} />
                   </span>
                 </Reveal>
               </div>
 
               <Curtain from="bottom">
-                <Card hover={false} tilt={false} className="p-6 md:p-9">
+                <Card tilt={false} className="p-6 transition-shadow duration-300 hover:shadow-[0_28px_60px_-28px_rgba(202,138,4,0.5)] md:p-9">
                   <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
                     <div>
                       <span className="inline-flex items-center gap-2 rounded-full border border-[#CA8A04]/35 bg-[#CA8A04]/10 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.14em] text-[#8a5a05] dark:text-[#FBBF24]">
@@ -146,8 +146,8 @@ export default function Day() {
                       <p className="mt-4 text-[15px] leading-relaxed text-zinc-600 dark:text-zinc-400">{m.story}</p>
                       <ul className="m-0 mt-5 flex list-none flex-col gap-2.5 p-0">
                         {m.points.map(([Icon, text]) => (
-                          <li key={text} className="flex items-center gap-3 text-[14px] font-medium text-zinc-800 dark:text-zinc-200">
-                            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#CA8A04]/10 text-[#A16207] dark:text-[#FBBF24]"><Icon size={15} /></span>
+                          <li key={text} className="group/li flex cursor-default items-center gap-3 text-[14px] font-medium text-zinc-800 transition-transform duration-200 hover:translate-x-1 dark:text-zinc-200">
+                            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#CA8A04]/10 text-[#A16207] transition-colors duration-200 group-hover/li:bg-[#CA8A04] group-hover/li:text-[#1a1203] dark:text-[#FBBF24]"><Icon size={15} /></span>
                             {text}
                           </li>
                         ))}
@@ -167,7 +167,7 @@ export default function Day() {
           <p className="m-0 text-[15px] text-zinc-600 dark:text-zinc-400">Plus the details that make it a daily habit:</p>
           <ul className="m-0 flex list-none flex-wrap items-center justify-center gap-2.5 p-0">
             {EXTRAS.map(([Icon, label]) => (
-              <li key={label} className="inline-flex items-center gap-2 rounded-full border border-zinc-200 bg-white px-4 py-2 text-[13px] font-medium text-zinc-700 dark:border-white/10 dark:bg-white/[0.03] dark:text-zinc-300">
+              <li key={label} className="inline-flex cursor-default items-center gap-2 rounded-full border border-zinc-200 bg-white px-4 py-2 text-[13px] font-medium text-zinc-700 transition-all duration-200 hover:-translate-y-0.5 hover:border-[#CA8A04]/50 hover:text-zinc-950 hover:shadow-md dark:border-white/10 dark:bg-white/[0.03] dark:text-zinc-300 dark:hover:text-white">
                 <Icon size={15} className="text-[#CA8A04]" />{label}
               </li>
             ))}

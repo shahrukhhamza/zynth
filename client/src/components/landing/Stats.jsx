@@ -39,8 +39,8 @@ function Stat({ value, prefix = '', suffix = '', label, pct }) {
   }, [value, prefix, suffix, pct]);
 
   return (
-    <div ref={root} className="flex flex-col items-center text-center">
-      <div className="relative h-[150px] w-[150px] md:h-[170px] md:w-[170px]">
+    <div ref={root} className="group/stat flex cursor-default flex-col items-center text-center">
+      <div className="relative h-[150px] w-[150px] transition-transform duration-300 group-hover/stat:scale-105 md:h-[170px] md:w-[170px]">
         <svg viewBox="0 0 128 128" className="h-full w-full -rotate-90" aria-hidden="true">
           <circle cx="64" cy="64" r={R} fill="none" stroke="currentColor" strokeOpacity="0.1" strokeWidth="6" />
           <circle ref={ring} cx="64" cy="64" r={R} fill="none" stroke="#CA8A04" strokeWidth="6" strokeLinecap="round" strokeDasharray={CIRC} strokeDashoffset={CIRC} />
