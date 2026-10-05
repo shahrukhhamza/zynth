@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Mail, Lock, User, CheckCircle2, ArrowRight } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
@@ -7,11 +7,7 @@ import { getPublicStats } from '../utils/publicStats';
 import {
   AuthLayout, AuthHeading, Field, PasswordField, StrengthMeter, Checkbox, FormAlert, SubmitButton, SwitchLine, shake,
 } from './auth/AuthKit';
-
-// Google sign-in stays hidden until VITE_ENABLE_GOOGLE_SIGNIN=true. Enable it only after the site's
-// origin is added to "Authorized JavaScript origins" of the OAuth client in Google Cloud Console.
-const GOOGLE_ENABLED = import.meta.env.VITE_ENABLE_GOOGLE_SIGNIN === 'true';
-const GOOGLE_CLIENT_ID = GOOGLE_ENABLED ? (import.meta.env.VITE_GOOGLE_CLIENT_ID || '') : '';
+import GoogleButton from './auth/GoogleButton';
 
 export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess }) {
   const { register, loginWithGoogle } = useAuth();
@@ -27,8 +23,6 @@ export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess })
   const [fieldErrors, setFieldErrors] = useState({ name: '', email: '', password: '', confirm: '' });
   const [success, setSuccess] = useState(false);
   const [shakeKey, setShakeKey] = useState(0);
-  const [googleLoading, setGoogleLoading] = useState(false);
-  const initializedRef = useRef(false);
 
   useEffect(() => {
     getPublicStats()
@@ -36,38 +30,14 @@ export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess })
       .catch(() => {});
   }, []);
 
-  /* ── Google (hidden unless enabled) ── */
-  const handleGoogleCredential = useCallback(async (response) => {
+  async function handleGoogle(credential) {
     setError('');
-    setGoogleLoading(true);
     try {
-      await loginWithGoogle(response.credential);
+      await loginWithGoogle(credential);
     } catch (err) {
       setError(err.response?.data?.error || 'Google sign-in failed. Please try again.');
-    } finally {
-      setGoogleLoading(false);
     }
-  }, [loginWithGoogle]);
-
-  useEffect(() => {
-    if (!GOOGLE_CLIENT_ID) return undefined;
-    const initGoogle = () => {
-      if (initializedRef.current) return true;
-      if (!window.google?.accounts?.id) return false;
-      initializedRef.current = true;
-      window.google.accounts.id.initialize({ client_id: GOOGLE_CLIENT_ID, callback: handleGoogleCredential, auto_select: false, cancel_on_tap_outside: true });
-      return true;
-    };
-    if (initGoogle()) return undefined;
-    const interval = setInterval(() => { if (initGoogle()) clearInterval(interval); }, 100);
-    return () => clearInterval(interval);
-  }, [handleGoogleCredential]);
-
-  const handleGoogleClick = () => {
-    if (!GOOGLE_CLIENT_ID || !window.google?.accounts?.id) return;
-    setGoogleLoading(true);
-    window.google.accounts.id.prompt((n) => { if (n.isNotDisplayed() || n.isSkippedMoment()) setGoogleLoading(false); });
-  };
+  }
 
   const setField = (field, value) => setForm((f) => ({ ...f, [field]: value }));
   const fail = () => setShakeKey((k) => k + 1);
@@ -123,20 +93,7 @@ export default function SignupPage({ onSwitchToLogin, onBack, onSignupSuccess })
 
       <FormAlert>{error}</FormAlert>
 
-      {GOOGLE_ENABLED && (
-        <>
-          <button
-            type="button" onClick={handleGoogleClick} disabled={googleLoading || !GOOGLE_CLIENT_ID}
-            className="mb-5 flex h-12 w-full items-center justify-center gap-3 rounded-xl border text-[14px] font-semibold transition-colors hover:border-[#CA8A04]/50 disabled:opacity-60"
-            style={{ background: theme.surface, borderColor: theme.border, color: theme.text }}
-          >
-            {googleLoading ? 'Signing up…' : 'Continue with Google'}
-          </button>
-          <div className="mb-5 flex items-center gap-3 text-[11px] font-bold uppercase tracking-widest" style={{ color: theme.textMuted }}>
-            <span className="h-px flex-1" style={{ background: theme.border }} />or<span className="h-px flex-1" style={{ background: theme.border }} />
-          </div>
-        </>
-      )}
+      <GoogleButton onCredential={handleGoogle} text="signup_with" />
 
       <motion.form key={shakeKey} onSubmit={handleSubmit} animate={shakeKey ? shake : undefined} noValidate>
         <Field id="su-name" label="Full name" icon={User} type="text" autoComplete="name" required placeholder="Jane Smith" value={form.name} onChange={(e) => setField('name', e.target.value)} error={fieldErrors.name} />
