@@ -28,7 +28,6 @@ const LandingPage = lazy(() => import('./components/LandingPage'))
 import ForgotPasswordPage from './components/ForgotPasswordPage'
 import ResetPasswordPage from './components/ResetPasswordPage'
 import OnboardingFlow from './components/OnboardingFlow'
-import PreSignupOnboarding from './components/PreSignupOnboarding'
 import WelcomeScreen from './components/WelcomeScreen'
 import ProductTour, { TOUR_DONE_KEY } from './components/ProductTour'
 import { fetchNews } from './services/api'
@@ -458,7 +457,6 @@ function AuthGate() {
   })
   const [showOnboarding, setShowOnboarding] = useState(false)
   const [showSkipBanner, setShowSkipBanner] = useState(false)
-  const [showPreSignupOnboarding, setShowPreSignupOnboarding] = useState(false)
   const [showWelcomeScreen, setShowWelcomeScreen] = useState(false)
   const [showTour, setShowTour] = useState(false)
 
@@ -607,22 +605,14 @@ function AuthGate() {
     return <ResetPasswordPage onBack={() => setView('login')} />
 
   return (
-    <>
-      <LandingPage
-        onSignIn={() => setView('login')}
-        onGetStarted={(pricingSelection) => {
-          if (pricingSelection) {
-            sessionStorage.setItem('zynthPricingSelection', JSON.stringify(pricingSelection));
-          }
-          setShowPreSignupOnboarding(true);
-        }}
-      />
-      {showPreSignupOnboarding && (
-        <PreSignupOnboarding
-          onContinueToSignup={() => { setShowPreSignupOnboarding(false); setView('signup'); }}
-          onClose={() => setShowPreSignupOnboarding(false)}
-        />
-      )}
-    </>
+    <LandingPage
+      onSignIn={() => setView('login')}
+      onGetStarted={(pricingSelection) => {
+        if (pricingSelection) {
+          sessionStorage.setItem('zynthPricingSelection', JSON.stringify(pricingSelection));
+        }
+        setView('signup');
+      }}
+    />
   )
 }

@@ -176,7 +176,7 @@ export function Button({ children, variant = 'primary', size = 'md', className =
 /**
  * Surface card with a cursor-following gold spotlight and a subtle 3D tilt (fine pointers only).
  */
-export function Card({ children, className = '', hover = true, tilt = true, ...rest }) {
+export function Card({ children, className = '', inner = '', hover = true, tilt = true, ...rest }) {
   const ref = useRef(null);
 
   const onMove = (e) => {
@@ -214,7 +214,7 @@ export function Card({ children, className = '', hover = true, tilt = true, ...r
           style={{ background: 'radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%), rgba(202,138,4,0.16), transparent 62%)' }}
         />
       )}
-      <div className="relative">{children}</div>
+      <div className={`relative ${inner}`}>{children}</div>
     </div>
   );
 }

@@ -104,8 +104,8 @@ export default function Hero({ onGetStarted, promo }) {
             data-hero-in
             className="mx-auto mt-8 max-w-2xl text-base leading-relaxed text-zinc-600 dark:text-zinc-400 md:text-xl"
           >
-            Zynth pairs an AI-powered trade journal with live macro intelligence, so you can see why you win,
-            why you lose, and what the market was doing at the time.
+            Every trader has a story behind their results. Zynth pairs an AI-powered journal with live macro
+            intelligence, so you can finally read yours: why you win, why you lose, and what the market was doing.
           </p>
 
           <div data-hero-in className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
@@ -118,7 +118,7 @@ export default function Hero({ onGetStarted, promo }) {
           </div>
 
           <ul data-hero-in className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-[13px] text-zinc-500">
-            {['No credit card required', 'Set up in under a minute', 'Cancel anytime'].map((t) => (
+            {['No credit card required', 'Set up in under a minute', 'Nothing is ever charged automatically'].map((t) => (
               <li key={t} className="inline-flex items-center gap-1.5"><Check size={14} className="text-[#CA8A04]" />{t}</li>
             ))}
           </ul>

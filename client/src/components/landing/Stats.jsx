@@ -4,7 +4,8 @@
  */
 import { useLayoutEffect, useRef } from 'react';
 import { gsap, prefersReducedMotion } from './engine';
-import { Section } from './motion';
+import { Reveal, Section, SectionHeading } from './motion';
+import { DataSources } from './visuals';
 
 const STATS = [
   { value: 10, label: 'Macro indicators scored', pct: 0.84 },
@@ -55,10 +56,16 @@ function Stat({ value, prefix = '', suffix = '', label, pct }) {
 
 export default function Stats() {
   return (
-    <Section className="!py-16 md:!py-24">
+    <Section id="foundation" className="!pb-16">
+      <SectionHeading
+        eyebrow="Chapter 04 · Under the hood"
+        title={<>Built on real data, <span className="text-[#CA8A04]">not hunches.</span></>}
+        subtitle="Every score in Zynth traces back to a published source or to your own trades. No black boxes, no invented numbers."
+      />
       <div className="grid grid-cols-2 gap-x-6 gap-y-12 lg:grid-cols-4">
         {STATS.map((s) => <Stat key={s.label} {...s} />)}
       </div>
+      <Reveal><DataSources /></Reveal>
     </Section>
   );
 }

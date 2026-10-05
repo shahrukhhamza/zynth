@@ -312,7 +312,7 @@ export default function LiveMarketTicker() {
 
           {/* Search */}
           <div className="relative flex-1 min-w-[180px] max-w-xs">
-            <Search className="absolute left-3 top-1/2 -tranzinc-y-1/2 w-4 h-4" style={{ color: theme.muted }} />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: theme.muted }} />
             <input
               value={search}
               onChange={e => setSearch(e.target.value)}

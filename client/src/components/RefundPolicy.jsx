@@ -27,7 +27,7 @@ export default function RefundPolicy({ onBack }) {
   };
 
   return (
-    <div className={isDark ? '' : 'legal-light'} style={{ backgroundColor: isDark ? '#0B0B0F' : '#f8fafc', minHeight: '100vh', color: isDark ? '#e2e8f0' : '#161618' }}>
+    <div className={isDark ? '' : 'legal-light'} style={{ backgroundColor: isDark ? '#0B0B0F' : '#f6f5f2', minHeight: '100vh', color: isDark ? '#e2e8f0' : '#161618' }}>
       <style>{`
         .legal-light strong { color: #0b0b0f !important; }
         .legal-light ul li { color: #4b5563 !important; }
@@ -47,7 +47,7 @@ export default function RefundPolicy({ onBack }) {
           </button>
           <div style={{ width: 1, height: 18, backgroundColor: 'rgba(107,114,128,0.4)' }} />
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <RefreshCw size={16} style={{ color: '#FBBF24' }} />
+            <RefreshCw size={16} style={{ color: isDark ? '#FBBF24' : '#A16207' }} />
             <span style={{ fontSize: 14, fontWeight: 600, color: isDark ? '#e2e8f0' : '#0b0b0f' }}>Return &amp; Refund Policy</span>
           </div>
           <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 6 }}>
@@ -67,8 +67,8 @@ export default function RefundPolicy({ onBack }) {
         {/* Quick summary boxes */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 14, marginBottom: 36 }}>
           <div style={{ padding: '16px 18px', borderRadius: 10, backgroundColor: isDark ? 'rgba(16,185,129,0.07)' : 'rgba(16,185,129,0.05)', border: '1px solid rgba(16,185,129,0.2)' }}>
-            <CheckCircle2 size={18} style={{ color: '#FBBF24', marginBottom: 8 }} />
-            <p style={{ fontSize: 13, fontWeight: 700, color: '#FBBF24', marginBottom: 4 }}>7-Day Money Back</p>
+            <CheckCircle2 size={18} style={{ color: isDark ? '#FBBF24' : '#A16207', marginBottom: 8 }} />
+            <p style={{ fontSize: 13, fontWeight: 700, color: isDark ? '#FBBF24' : '#A16207', marginBottom: 4 }}>7-Day Money Back</p>
             <p style={{ fontSize: 12, color: isDark ? '#6b7280' : '#64748b', lineHeight: 1.6 }}>New subscribers are eligible for a full refund within 7 days of their first payment.</p>
           </div>
           <div style={{ padding: '16px 18px', borderRadius: 10, backgroundColor: isDark ? 'rgba(245,158,11,0.07)' : 'rgba(245,158,11,0.05)', border: '1px solid rgba(245,158,11,0.2)' }}>
@@ -93,7 +93,7 @@ export default function RefundPolicy({ onBack }) {
           </Section>
 
           <Section id="refund-eligibility" title="2. Refund Eligibility">
-            <p>You are eligible for a <strong style={{ color: '#FBBF24' }}>full refund</strong> if:</p>
+            <p>You are eligible for a <strong style={{ color: isDark ? '#FBBF24' : '#A16207' }}>full refund</strong> if:</p>
             <ul style={{ paddingLeft: 20, display: 'flex', flexDirection: 'column', gap: 6 }}>
               <li>You are a <strong style={{ color: '#e2e8f0' }}>new subscriber</strong> requesting a refund within <strong style={{ color: '#e2e8f0' }}>7 days</strong> of your first payment</li>
               <li>The service was not substantially used (fewer than 5 AI analyses consumed)</li>
@@ -121,8 +121,8 @@ export default function RefundPolicy({ onBack }) {
           <Section id="how-to-request" title="4. How to Request a Refund">
             <p>To request a refund, please contact us within the eligible timeframe:</p>
             <div style={{ backgroundColor: isDark ? 'rgba(202,138,4,0.06)' : 'rgba(202,138,4,0.04)', border: `1px solid ${isDark ? 'rgba(202,138,4,0.15)' : 'rgba(202,138,4,0.2)'}`, borderRadius: 8, padding: '16px 20px', display: 'flex', flexDirection: 'column', gap: 6 }}>
-              <p style={{ fontSize: 13, fontWeight: 700, color: '#FBBF24' }}>Contact Zynth Support</p>
-              <p style={{ fontSize: 13, color: isDark ? '#9ca3af' : '#4b5563' }}>Email: <a href="mailto:support@zynth.com" style={{ color: '#FBBF24', textDecoration: 'none' }}>support@zynth.com</a></p>
+              <p style={{ fontSize: 13, fontWeight: 700, color: isDark ? '#FBBF24' : '#A16207' }}>Contact Zynth Support</p>
+              <p style={{ fontSize: 13, color: isDark ? '#9ca3af' : '#4b5563' }}>Email: <a href="mailto:support@zynth.com" style={{ color: isDark ? '#FBBF24' : '#A16207', textDecoration: 'none' }}>support@zynth.com</a></p>
               <p style={{ fontSize: 13, color: isDark ? '#9ca3af' : '#4b5563' }}>Subject line: <em style={{ color: isDark ? '#d1d5db' : '#374151' }}>Refund Request — [Your Account Email]</em></p>
             </div>
             <p>Please include in your message:</p>
@@ -138,7 +138,7 @@ export default function RefundPolicy({ onBack }) {
             <p>You can cancel your Zynth subscription at any time:</p>
             <ul style={{ paddingLeft: 20, display: 'flex', flexDirection: 'column', gap: 6 }}>
               <li>Go to <strong style={{ color: '#e2e8f0' }}>Settings</strong> inside the Zynth platform and select <strong style={{ color: '#e2e8f0' }}>Manage Subscription</strong></li>
-              <li>Alternatively, email <a href="mailto:support@zynth.com" style={{ color: '#FBBF24', textDecoration: 'none' }}>support@zynth.com</a> with your cancellation request</li>
+              <li>Alternatively, email <a href="mailto:support@zynth.com" style={{ color: isDark ? '#FBBF24' : '#A16207', textDecoration: 'none' }}>support@zynth.com</a> with your cancellation request</li>
             </ul>
             <p>After cancellation, you will retain access to your paid plan features until the end of your current billing period. Your account will then automatically revert to the Free plan. Your trade journal data is preserved and accessible on the Free plan.</p>
           </Section>
@@ -161,8 +161,8 @@ export default function RefundPolicy({ onBack }) {
           <Section id="contact-refund" title="8. Contact">
             <p>For all refund, billing, or cancellation queries:</p>
             <div style={{ backgroundColor: isDark ? 'rgba(202,138,4,0.06)' : 'rgba(202,138,4,0.04)', border: `1px solid ${isDark ? 'rgba(202,138,4,0.15)' : 'rgba(202,138,4,0.2)'}`, borderRadius: 8, padding: '16px 20px', marginTop: 6, display: 'flex', flexDirection: 'column', gap: 6 }}>
-              <p style={{ fontSize: 14, color: '#FBBF24', fontWeight: 700 }}>Zynth Billing Support</p>
-              <p style={{ fontSize: 13, color: isDark ? '#9ca3af' : '#4b5563' }}>Email: <a href="mailto:support@zynth.com" style={{ color: '#FBBF24', textDecoration: 'none' }}>support@zynth.com</a></p>
+              <p style={{ fontSize: 14, color: isDark ? '#FBBF24' : '#A16207', fontWeight: 700 }}>Zynth Billing Support</p>
+              <p style={{ fontSize: 13, color: isDark ? '#9ca3af' : '#4b5563' }}>Email: <a href="mailto:support@zynth.com" style={{ color: isDark ? '#FBBF24' : '#A16207', textDecoration: 'none' }}>support@zynth.com</a></p>
               <p style={{ fontSize: 13, color: isDark ? '#9ca3af' : '#4b5563' }}>Support is available through the in-app Help Center.</p>
               <p style={{ fontSize: 13, color: isDark ? '#9ca3af' : '#4b5563' }}>Response time: Within 1–2 business days</p>
             </div>

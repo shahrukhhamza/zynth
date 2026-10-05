@@ -68,8 +68,8 @@ export default function Pricing({ onGetStarted, promo }) {
   return (
     <Section id="pricing">
       <SectionHeading
-        eyebrow="Pricing"
-        title="Simple pricing. Serious results."
+        eyebrow="Chapter 05 · Your turn"
+        title={<>Start free. <span className="text-[#CA8A04]">Go further when you are ready.</span></>}
         subtitle={promoOn
           ? 'Early users get the full Elite plan free. Everyone can start on the Free plan with no credit card.'
           : 'Start free and upgrade when you are ready. Cancel anytime — you are never billed automatically.'}

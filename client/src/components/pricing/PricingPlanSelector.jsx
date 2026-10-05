@@ -84,18 +84,18 @@ function CompactPlanCard({ plan, selected, billingCycle, onSelect, context, pric
       onClick={() => onSelect(plan.id)}
       className={`group relative flex flex-col rounded-2xl border p-3 text-left transition-all duration-200
         ${isElite
-          ? 'bg-gradient-to-br from-violet-500/8 via-purple-500/6 to-indigo-500/8 dark:from-violet-500/12 dark:via-purple-500/8 dark:to-indigo-500/10'
+          ? 'bg-gradient-to-br from-amber-500/8 via-yellow-500/6 to-amber-500/8 dark:from-amber-500/12 dark:via-yellow-500/8 dark:to-amber-500/10'
           : 'bg-white dark:bg-zinc-800/50'}
         ${selected
           ? isElite
-            ? 'border-violet-400/60 shadow-[0_8px_24px_rgba(109,40,217,0.18)] dark:border-violet-500/50'
+            ? 'border-amber-400/60 shadow-[0_8px_24px_rgba(202,138,4,0.18)] dark:border-amber-500/50'
             : 'border-zinc-400 shadow-md dark:border-zinc-500'
           : 'border-zinc-200/80 shadow-sm dark:border-zinc-700/60'}`}
     >
       {/* Header: badge + price */}
       <div className="flex items-start justify-between gap-1">
         {isElite ? (
-          <span className="inline-flex items-center gap-1 rounded-full border border-violet-300/40 bg-violet-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.12em] text-violet-700 dark:border-violet-400/40 dark:bg-violet-500/25 dark:text-violet-100">
+          <span className="inline-flex items-center gap-1 rounded-full border border-amber-300/40 bg-amber-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.12em] text-amber-700 dark:border-amber-400/40 dark:bg-amber-500/25 dark:text-amber-100">
             🔥 Most Popular
           </span>
         ) : (
@@ -123,11 +123,11 @@ function CompactPlanCard({ plan, selected, billingCycle, onSelect, context, pric
 
       {/* Psychological hook */}
       {isElite ? (
-        <div className="mt-2 rounded-lg border border-violet-200/70 bg-violet-50/70 px-2.5 py-1.5 dark:border-violet-400/35 dark:bg-violet-950/55">
-          <p className="text-[11px] font-semibold leading-4 text-violet-800 dark:text-violet-100">
+        <div className="mt-2 rounded-lg border border-amber-200/70 bg-amber-50/70 px-2.5 py-1.5 dark:border-amber-400/35 dark:bg-amber-950/55">
+          <p className="text-[11px] font-semibold leading-4 text-amber-800 dark:text-amber-100">
             {eliteHook.freedom}
           </p>
-          <p className="mt-0.5 text-[10px] text-violet-600/70 dark:text-violet-200/90">
+          <p className="mt-0.5 text-[10px] text-amber-600/70 dark:text-amber-200/90">
             {eliteHook.identity}
           </p>
         </div>
@@ -144,15 +144,15 @@ function CompactPlanCard({ plan, selected, billingCycle, onSelect, context, pric
 
       {/* Compact feature explanation */}
       {featurePreview.length > 0 && (
-        <div className={`mt-2 rounded-lg border px-2.5 py-2 ${isElite ? 'border-violet-200 bg-violet-50/80 dark:border-violet-400/30 dark:bg-violet-950/40' : 'border-zinc-200 bg-zinc-50/80 dark:border-zinc-500/45 dark:bg-zinc-800/70'}`}>
-          <p className={`text-[10px] font-bold uppercase tracking-[0.12em] ${isElite ? 'text-violet-700 dark:text-violet-200' : 'text-zinc-600 dark:text-zinc-200'}`}>
+        <div className={`mt-2 rounded-lg border px-2.5 py-2 ${isElite ? 'border-amber-200 bg-amber-50/80 dark:border-amber-400/30 dark:bg-amber-950/40' : 'border-zinc-200 bg-zinc-50/80 dark:border-zinc-500/45 dark:bg-zinc-800/70'}`}>
+          <p className={`text-[10px] font-bold uppercase tracking-[0.12em] ${isElite ? 'text-amber-700 dark:text-amber-200' : 'text-zinc-600 dark:text-zinc-200'}`}>
             What you get
           </p>
           <div className="mt-1.5 space-y-1">
             {featurePreview.map((feature) => (
               <div key={feature} className="flex items-start gap-1.5">
-                <Check size={11} className={`${isElite ? 'text-violet-500 dark:text-violet-300' : 'text-zinc-500 dark:text-zinc-300'} mt-[1px] shrink-0`} />
-                <span className={`${isElite ? 'text-violet-900 dark:text-violet-100/95' : 'text-zinc-700 dark:text-zinc-100'} text-[11px] leading-4`}>
+                <Check size={11} className={`${isElite ? 'text-amber-500 dark:text-amber-300' : 'text-zinc-500 dark:text-zinc-300'} mt-[1px] shrink-0`} />
+                <span className={`${isElite ? 'text-amber-900 dark:text-amber-100/95' : 'text-zinc-700 dark:text-zinc-100'} text-[11px] leading-4`}>
                   {feature}
                 </span>
               </div>
@@ -170,7 +170,7 @@ function CompactPlanCard({ plan, selected, billingCycle, onSelect, context, pric
 
       {/* Selected indicator */}
       {selected && (
-        <div className={`mt-auto pt-2 flex items-center gap-1 text-[10px] font-bold ${isElite ? 'text-violet-600 dark:text-violet-300' : 'text-zinc-500 dark:text-zinc-300'}`}>
+        <div className={`mt-auto pt-2 flex items-center gap-1 text-[10px] font-bold ${isElite ? 'text-amber-600 dark:text-amber-300' : 'text-zinc-500 dark:text-zinc-300'}`}>
           <Check size={10} />
           Selected
         </div>
@@ -193,14 +193,14 @@ function PlanCard({ plan, billingCycle, selected, onSelect, context, priceOverri
       <button
         type="button"
         onClick={() => onSelect(plan.id)}
-        className={`group relative overflow-hidden rounded-2xl bg-gradient-to-br from-violet-600 via-purple-600 to-indigo-600 p-[1.5px] text-left transition-all duration-200 hover:shadow-[0_16px_40px_rgba(109,40,217,0.25)] ${selected ? 'shadow-[0_12px_32px_rgba(109,40,217,0.3)]' : 'opacity-[0.98]'}`}
+        className={`group relative overflow-hidden rounded-2xl bg-gradient-to-br from-amber-600 via-yellow-600 to-amber-600 p-[1.5px] text-left transition-all duration-200 hover:shadow-[0_16px_40px_rgba(202,138,4,0.25)] ${selected ? 'shadow-[0_12px_32px_rgba(202,138,4,0.3)]' : 'opacity-[0.98]'}`}
       >
         <div className="relative h-full rounded-[13px] bg-white px-5 py-5 dark:bg-[#161618]">
           <div className="relative flex h-full flex-col">
             {/* Header: badge + urgency hook + icon */}
             <div className="flex items-start justify-between gap-2">
               <div className="flex flex-col gap-1.5">
-                <span className="inline-flex items-center rounded-full border border-violet-200 bg-violet-50 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-[0.14em] text-violet-700 dark:border-violet-500/25 dark:bg-violet-500/15 dark:text-violet-300">
+                <span className="inline-flex items-center rounded-full border border-amber-200 bg-amber-50 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-[0.14em] text-amber-700 dark:border-amber-500/25 dark:bg-amber-500/15 dark:text-amber-300">
                   {plan.badge}
                 </span>
                 {plan.urgency && (
@@ -209,7 +209,7 @@ function PlanCard({ plan, billingCycle, selected, onSelect, context, priceOverri
                   </span>
                 )}
               </div>
-              <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-violet-50 text-violet-600 dark:bg-violet-500/15 dark:text-violet-300">
+              <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-amber-50 text-amber-600 dark:bg-amber-500/15 dark:text-amber-300">
                 <Icon size={16} />
               </div>
             </div>
@@ -221,7 +221,7 @@ function PlanCard({ plan, billingCycle, selected, onSelect, context, priceOverri
             {/* Name + headline + reinforcing sub-line */}
             <div className="mt-1.5">
               <h3 className="text-lg font-bold tracking-tight text-zinc-900 dark:text-white">{plan.name}</h3>
-              <p className="mt-0.5 text-xs font-semibold leading-4 text-violet-700 dark:text-violet-400">
+              <p className="mt-0.5 text-xs font-semibold leading-4 text-amber-700 dark:text-amber-400">
                 {plan.headline}
               </p>
               <p className="mt-0.5 text-[11px] font-medium text-zinc-500 dark:text-zinc-400">
@@ -249,8 +249,8 @@ function PlanCard({ plan, billingCycle, selected, onSelect, context, priceOverri
             </div>
 
             {/* Core value — dominant, single mention */}
-            <div className="mt-3 rounded-xl border border-violet-200 bg-gradient-to-r from-violet-50 to-purple-50/60 px-3 py-2.5 dark:border-violet-500/25 dark:from-violet-500/15 dark:to-purple-500/10">
-              <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-violet-600 dark:text-violet-400">
+            <div className="mt-3 rounded-xl border border-amber-200 bg-gradient-to-r from-amber-50 to-yellow-50/60 px-3 py-2.5 dark:border-amber-500/25 dark:from-amber-500/15 dark:to-yellow-500/10">
+              <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-amber-600 dark:text-amber-400">
                 {plan.highlightLabel}
               </p>
               <p className="mt-0.5 text-xs font-semibold text-zinc-900 dark:text-white">{plan.highlightText}</p>
@@ -275,7 +275,7 @@ function PlanCard({ plan, billingCycle, selected, onSelect, context, priceOverri
                     key={feature}
                     className="flex items-center gap-2.5 rounded-lg border border-zinc-100 bg-zinc-50/60 px-2.5 py-1.5 dark:border-white/[0.06] dark:bg-white/[0.03]"
                   >
-                    <div className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-violet-100/80 text-violet-500 dark:bg-violet-500/20 dark:text-violet-400">
+                    <div className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-amber-100/80 text-amber-500 dark:bg-amber-500/20 dark:text-amber-400">
                       <Check size={10} />
                     </div>
                     <span className="text-xs text-zinc-600 dark:text-zinc-400">{feature}</span>
@@ -285,7 +285,7 @@ function PlanCard({ plan, billingCycle, selected, onSelect, context, priceOverri
 
             {/* Selection indicator */}
             <div className="mt-auto pt-3 flex justify-end">
-              <div className={`flex h-6 w-6 items-center justify-center rounded-full border transition-all ${selected ? 'border-violet-400 bg-violet-100 text-violet-700 dark:border-violet-500 dark:bg-violet-500/20 dark:text-violet-300' : 'border-zinc-200 bg-white text-zinc-300 dark:border-white/10 dark:bg-white/[0.04] dark:text-zinc-600'}`}>
+              <div className={`flex h-6 w-6 items-center justify-center rounded-full border transition-all ${selected ? 'border-amber-400 bg-amber-100 text-amber-700 dark:border-amber-500 dark:bg-amber-500/20 dark:text-amber-300' : 'border-zinc-200 bg-white text-zinc-300 dark:border-white/10 dark:bg-white/[0.04] dark:text-zinc-600'}`}>
                 <Check size={12} />
               </div>
             </div>
@@ -468,7 +468,7 @@ export default function PricingPlanSelector({
                       experimentVariant,
                     });
                   }}
-                  className={`rounded-xl border ${compactMode ? 'px-3 py-1.5 text-xs' : 'px-4 py-2 text-sm'} font-semibold transition-all ${active ? 'border-zinc-200 bg-white text-zinc-950 shadow-sm dark:border-indigo-400/45 dark:bg-indigo-500/20 dark:text-indigo-100' : 'border-transparent text-zinc-600 hover:bg-zinc-100 dark:text-zinc-200 dark:hover:bg-zinc-700/70'}`}
+                  className={`rounded-xl border ${compactMode ? 'px-3 py-1.5 text-xs' : 'px-4 py-2 text-sm'} font-semibold transition-all ${active ? 'border-zinc-200 bg-white text-zinc-950 shadow-sm dark:border-amber-400/45 dark:bg-amber-500/20 dark:text-amber-100' : 'border-transparent text-zinc-600 hover:bg-zinc-100 dark:text-zinc-200 dark:hover:bg-zinc-700/70'}`}
                 >
                   {cycle === 'monthly' ? 'Monthly' : 'Yearly'}
                 </button>
@@ -575,10 +575,10 @@ export default function PricingPlanSelector({
               onPrimaryAction?.(selectedPlanId, selectedBilling);
               onContinue?.(selectedPlanId, selectedBilling);
             }}
-            className={`group inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-violet-600 via-purple-600 to-indigo-500 text-sm font-bold text-white transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] ${compactMode ? 'px-4 py-2.5 shadow-[0_8px_20px_rgba(109,40,217,0.25)]' : 'px-5 py-3.5 shadow-[0_16px_40px_rgba(99,102,241,0.28)] hover:shadow-[0_22px_55px_rgba(202,138,4,0.34)]'}`}
+            className={`group inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-b from-[#E0A010] to-[#C98A06] text-sm font-bold text-[#1a1203] transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] ${compactMode ? 'px-4 py-2.5 shadow-[0_3px_0_#8a5a05,0_10px_20px_-8px_rgba(202,138,4,0.6)]' : 'px-5 py-3.5 shadow-[0_4px_0_#8a5a05,0_16px_30px_-10px_rgba(202,138,4,0.7)]'}`}
           >
             {selectedCta}
-            <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:tranzinc-x-1" />
+            <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
           </button>
           {compactMode ? (
             <div className="mt-2 space-y-0.5 text-center">

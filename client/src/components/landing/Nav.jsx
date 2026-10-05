@@ -7,7 +7,7 @@ import { Button, EASE } from './motion';
 import { scrollToTarget, setScrollLocked } from './engine';
 
 const LINKS = [
-  { id: 'features', label: 'Features' },
+  { id: 'why', label: 'Why Zynth' },
   { id: 'how-it-works', label: 'How it works' },
   { id: 'pricing', label: 'Pricing' },
   { id: 'faq', label: 'FAQ' },

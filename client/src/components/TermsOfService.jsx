@@ -13,11 +13,11 @@ export default function TermsOfService({ onBack }) {
   };
 
   return (
-    <div className={isDark ? '' : 'legal-light'} style={{ backgroundColor: isDark ? '#0B0B0F' : '#f8fafc', minHeight: '100vh', color: isDark ? '#e2e8f0' : '#161618' }}>
+    <div className={isDark ? '' : 'legal-light'} style={{ backgroundColor: isDark ? '#0B0B0F' : '#f6f5f2', minHeight: '100vh', color: isDark ? '#e2e8f0' : '#161618' }}>
       <style>{`
         .legal-light strong { color: #0b0b0f !important; }
         .legal-light .tos-section li, .legal-light .tos-section p { color: #4b5563 !important; }
-        .legal-light a[href^="mailto:"], .legal-light a[href^="tel:"] { color: #FBBF24 !important; }
+        .legal-light a[href^="mailto:"], .legal-light a[href^="tel:"] { color: #A16207 !important; }
       `}</style>
       {/* Sticky header */}
       <div
@@ -55,7 +55,7 @@ export default function TermsOfService({ onBack }) {
           </button>
           <div style={{ width: 1, height: 18, backgroundColor: isDark ? 'rgba(107,114,128,0.4)' : 'rgba(0,0,0,0.12)' }} />
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <FileText size={16} style={{ color: '#FBBF24' }} />
+            <FileText size={16} style={{ color: isDark ? '#FBBF24' : '#A16207' }} />
             <span style={{ fontSize: 14, fontWeight: 600, color: isDark ? '#e2e8f0' : '#0b0b0f' }}>Terms of Service</span>
           </div>
           <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -87,8 +87,8 @@ export default function TermsOfService({ onBack }) {
           <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
             <AlertTriangle size={18} style={{ color: '#f59e0b', flexShrink: 0, marginTop: 1 }} />
             <div>
-              <p style={{ fontSize: 13, fontWeight: 700, color: '#fbbf24', marginBottom: 4 }}>IMPORTANT RISK WARNING</p>
-              <p style={{ fontSize: 12, color: '#d1d5db', lineHeight: 1.7 }}>
+              <p style={{ fontSize: 13, fontWeight: 700, color: isDark ? '#fbbf24' : '#92400e', marginBottom: 4 }}>IMPORTANT RISK WARNING</p>
+              <p style={{ fontSize: 12, color: isDark ? '#d1d5db' : '#4b5563', lineHeight: 1.7 }}>
                 Trading foreign exchange, commodities (including gold), and other financial instruments involves substantial risk of loss and is not suitable for all investors.
                 Past performance is not indicative of future results. You may lose all or more than your initial investment.
                 Zynth provides information tools only; nothing on this platform constitutes financial advice, investment recommendations, or solicitation to trade.
@@ -107,7 +107,7 @@ export default function TermsOfService({ onBack }) {
 
           {/* Section 2 */}
           <Section id="service" title="2. Nature of Service">
-            <p>Zynth is a <strong style={{ color: '#FBBF24' }}>software information platform</strong> that aggregates and displays:</p>
+            <p>Zynth is a <strong style={{ color: isDark ? '#FBBF24' : '#A16207' }}>software information platform</strong> that aggregates and displays:</p>
             <ul>
               <li>Macroeconomic data from public and licensed sources (e.g. FRED, BLS, BEA)</li>
               <li>Market data feeds and price information</li>
@@ -129,8 +129,8 @@ export default function TermsOfService({ onBack }) {
                 marginBottom: 14,
               }}
             >
-              <p style={{ fontSize: 12, color: '#fbbf24', fontWeight: 600, marginBottom: 4 }}>AI-Generated Content Warning</p>
-              <p style={{ fontSize: 12, color: '#d1d5db', lineHeight: 1.7 }}>
+              <p style={{ fontSize: 12, color: isDark ? '#fbbf24' : '#92400e', fontWeight: 600, marginBottom: 4 }}>AI-Generated Content Warning</p>
+              <p style={{ fontSize: 12, color: isDark ? '#d1d5db' : '#4b5563', lineHeight: 1.7 }}>
                 AI-generated analysis on this platform is produced by large language models (Google Gemini and rule-based systems).
                 This content is experimental, may contain factual errors, hallucinations, or outdated information, and must not be used as the sole or primary basis for any trading decision.
               </p>
@@ -168,7 +168,7 @@ export default function TermsOfService({ onBack }) {
               }}
             >
               <p style={{ fontSize: 12, color: '#f87171', fontWeight: 600, marginBottom: 4 }}>High-Risk Activity Warning</p>
-              <p style={{ fontSize: 12, color: '#d1d5db', lineHeight: 1.7 }}>
+              <p style={{ fontSize: 12, color: isDark ? '#d1d5db' : '#4b5563', lineHeight: 1.7 }}>
                 Forex and commodities trading involves a high degree of risk. Many retail traders lose money. You should only trade with capital you can afford to lose entirely.
               </p>
             </div>
@@ -269,7 +269,7 @@ export default function TermsOfService({ onBack }) {
               <li style={{ marginBottom: 6 }}>Abuse of the refund policy (e.g., repeated usage and refund requests) may result in denial of future refunds.</li>
             </ul>
 
-            <p>To request a refund or cancel your subscription, contact: <a href="mailto:support@zynth.com" style={{ color: '#FBBF24', textDecoration: 'none' }} onMouseEnter={e => (e.currentTarget.style.textDecoration = 'underline')} onMouseLeave={e => (e.currentTarget.style.textDecoration = 'none')}>support@zynth.com</a></p>
+            <p>To request a refund or cancel your subscription, contact: <a href="mailto:support@zynth.com" style={{ color: isDark ? '#FBBF24' : '#A16207', textDecoration: 'none' }} onMouseEnter={e => (e.currentTarget.style.textDecoration = 'underline')} onMouseLeave={e => (e.currentTarget.style.textDecoration = 'none')}>support@zynth.com</a></p>
 
             <p style={{ fontWeight: 700, marginTop: 14 }}>Cancellation</p>
             <ul style={{ paddingLeft: 20, margin: '8px 0' }}>
@@ -294,19 +294,19 @@ export default function TermsOfService({ onBack }) {
                 gap: 6,
               }}
             >
-              <p style={{ fontSize: 14, color: '#FBBF24', fontWeight: 700 }}>Zynth</p>
-              <p style={{ fontSize: 13, color: '#9ca3af' }}>
+              <p style={{ fontSize: 14, color: isDark ? '#FBBF24' : '#A16207', fontWeight: 700 }}>Zynth</p>
+              <p style={{ fontSize: 13, color: isDark ? '#9ca3af' : '#4b5563' }}>
                 Email:{' '}
                 <a
                   href="mailto:support@zynth.com"
-                  style={{ color: '#FBBF24', textDecoration: 'none' }}
+                  style={{ color: isDark ? '#FBBF24' : '#A16207', textDecoration: 'none' }}
                   onMouseEnter={e => (e.currentTarget.style.textDecoration = 'underline')}
                   onMouseLeave={e => (e.currentTarget.style.textDecoration = 'none')}
                 >
                   support@zynth.com
                 </a>
               </p>
-              <p style={{ fontSize: 13, color: '#9ca3af' }}>Support is available through the in-app Help Center.</p>
+              <p style={{ fontSize: 13, color: isDark ? '#9ca3af' : '#4b5563' }}>Support is available through the in-app Help Center.</p>
             </div>
           </Section>
 
@@ -324,7 +324,7 @@ export default function TermsOfService({ onBack }) {
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <Shield size={14} style={{ color: '#FBBF24' }} />
+            <Shield size={14} style={{ color: isDark ? '#FBBF24' : '#A16207' }} />
             <span style={{ fontSize: 11, color: isDark ? '#4b5563' : '#94a3b8' }}>Zynth Trading Intelligence Platform</span>
           </div>
           <span style={{ fontSize: 11, color: isDark ? '#4b5563' : '#94a3b8' }}>&copy; {new Date().getFullYear()} Zynth. All rights reserved.</span>

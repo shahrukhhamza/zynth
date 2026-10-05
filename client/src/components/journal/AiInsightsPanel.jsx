@@ -89,7 +89,7 @@ function ProgressRail({ value, color, background }) {
 function SoftPanel({ children, palette, className = '' }) {
   return (
     <div
-      className={`rounded-3xl transition-all duration-200 hover:-tranzinc-y-[2px] ${className}`}
+      className={`rounded-3xl transition-all duration-200 hover:-translate-y-[2px] ${className}`}
       style={{
         background: palette.card,
         boxShadow: palette.shadow,

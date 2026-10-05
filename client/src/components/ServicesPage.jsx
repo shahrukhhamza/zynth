@@ -9,8 +9,8 @@ const SERVICES = [
     name: 'AI-Powered Trade Journal',
     tagline: 'Log, review, and grow from every trade',
     color: '#CA8A04',
-    bg: 'rgba(16,185,129,0.07)',
-    border: 'rgba(16,185,129,0.2)',
+    bg: 'rgba(202,138,4,0.08)',
+    border: 'rgba(202,138,4,0.28)',
     desc: 'A professional-grade digital trade journal that stores your complete trading history. Log entries manually or import from screenshots. Add notes, emotions, strategy tags, and session context. Gain a full picture of your trading behavior over time.',
     features: [
       'Unlimited trade entries (Pro & Elite)',
@@ -19,16 +19,16 @@ const SERVICES = [
       'Searchable and filterable trade history',
       'AI-generated macro context per trade',
     ],
-    plans: ['Free (10 entries)', 'Pro (Unlimited)', 'Elite (Unlimited)'],
+    plans: ['Free (5 entries)', 'Pro (Unlimited)', 'Elite (Unlimited)'],
   },
   {
     Icon: Brain,
     number: '02',
     name: 'AI Trade Analysis Reports',
     tagline: 'Personalized coaching powered by AI',
-    color: '#8b5cf6',
-    bg: 'rgba(139,92,246,0.07)',
-    border: 'rgba(139,92,246,0.2)',
+    color: '#CA8A04',
+    bg: 'rgba(202,138,4,0.08)',
+    border: 'rgba(202,138,4,0.28)',
     desc: 'Our AI reads through your complete trade history and journal entries to surface hidden patterns, identify recurring mistakes, and build a personalized improvement plan. Each report is unique to your trading style and data.',
     features: [
       'Full trade history pattern analysis',
@@ -37,7 +37,7 @@ const SERVICES = [
       'Personalized coaching recommendations',
       'Emotional trading pattern analysis',
     ],
-    plans: ['Free (3 tries)', 'Pro (50/month)', 'Elite (Unlimited)'],
+    plans: ['Free (2 tries)', 'Pro (50/month)', 'Elite (Unlimited)'],
   },
   {
     Icon: BarChart2,
@@ -45,8 +45,8 @@ const SERVICES = [
     name: 'Macro Surprise Score & Economic Intelligence',
     tagline: 'Know the macro before you trade',
     color: '#CA8A04',
-    bg: 'rgba(202,138,4,0.07)',
-    border: 'rgba(202,138,4,0.2)',
+    bg: 'rgba(202,138,4,0.08)',
+    border: 'rgba(202,138,4,0.28)',
     desc: 'A proprietary -10 to +10 Macro Surprise Score that aggregates 10 major US economic releases to give you an instant read on whether macro conditions are bullish or bearish for gold and risk assets. Updated automatically from official government sources.',
     features: [
       'Real-time score from NFP, CPI, PMI, GDP, Retail Sales, and more',
@@ -62,9 +62,9 @@ const SERVICES = [
     number: '04',
     name: 'Economic Calendar',
     tagline: 'Never miss a high-impact release',
-    color: '#ef4444',
-    bg: 'rgba(239,68,68,0.07)',
-    border: 'rgba(239,68,68,0.2)',
+    color: '#CA8A04',
+    bg: 'rgba(202,138,4,0.08)',
+    border: 'rgba(202,138,4,0.28)',
     desc: 'A real-time economic calendar showing upcoming and recent data releases with impact ratings, consensus forecasts, and actual values. Filter by currency, impact level, or date range to focus on what matters for your trades.',
     features: [
       'Full global economic calendar (USD, EUR, GBP, JPY, AUD, CAD, and more)',
@@ -81,8 +81,8 @@ const SERVICES = [
     name: 'Live Market Data & Price Feeds',
     tagline: 'Real-time prices for the markets you trade',
     color: '#CA8A04',
-    bg: 'rgba(16,185,129,0.07)',
-    border: 'rgba(16,185,129,0.2)',
+    bg: 'rgba(202,138,4,0.08)',
+    border: 'rgba(202,138,4,0.28)',
     desc: 'Live and near-real-time price feeds for Forex, Gold, Crypto, US Stocks, and Indices. Monitor the markets you trade directly inside Zynth — alongside your charts, news, and economic data — for a complete trading context view.',
     features: [
       'Forex: EUR/USD, GBP/USD, USD/JPY, XAU/USD, and more',
@@ -98,9 +98,9 @@ const SERVICES = [
     number: '06',
     name: 'Zynth AI Assistant',
     tagline: 'Your personal trading intelligence chatbot',
-    color: '#a78bfa',
-    bg: 'rgba(167,139,250,0.07)',
-    border: 'rgba(167,139,250,0.2)',
+    color: '#CA8A04',
+    bg: 'rgba(202,138,4,0.08)',
+    border: 'rgba(202,138,4,0.28)',
     desc: 'An AI chatbot embedded directly in the platform that has full context of your trade history, journal entries, and current macro conditions. Ask it about your performance, get trade coaching, or query the latest economic data — all in natural language.',
     features: [
       'Full access to your personal trade data and journals',
@@ -116,9 +116,9 @@ const SERVICES = [
     number: '07',
     name: 'Macro Correlation Analysis',
     tagline: 'See how macro aligns with your trades',
-    color: '#f97316',
-    bg: 'rgba(249,115,22,0.07)',
-    border: 'rgba(249,115,22,0.2)',
+    color: '#CA8A04',
+    bg: 'rgba(202,138,4,0.08)',
+    border: 'rgba(202,138,4,0.28)',
     desc: "For every trade in your journal, Zynth automatically analyses whether the economic events on that day supported or opposed your trade direction, calculates an alignment score and confidence level, and generates a coaching narrative explaining the macro context.",
     features: [
       'Per-trade macro alignment rating (Aligned / Misaligned / Neutral)',
@@ -134,9 +134,9 @@ const SERVICES = [
     number: '08',
     name: 'Pre-Trade Checklist',
     tagline: 'Build discipline before every entry',
-    color: '#f59e0b',
-    bg: 'rgba(245,158,11,0.07)',
-    border: 'rgba(245,158,11,0.2)',
+    color: '#CA8A04',
+    bg: 'rgba(202,138,4,0.08)',
+    border: 'rgba(202,138,4,0.28)',
     desc: 'A customizable pre-trade checklist that enforces trading discipline before you enter a position. The checklist uses your own historical data to warn you when you are about to trade in a session or macro context where your win rate is historically low.',
     features: [
       'Customizable checklist items',
@@ -151,9 +151,9 @@ const SERVICES = [
     number: '09',
     name: 'Backtesting & Advanced Charts',
     tagline: 'Test strategies on historical data',
-    color: '#6b7280',
-    bg: 'rgba(107,114,128,0.07)',
-    border: 'rgba(107,114,128,0.2)',
+    color: '#CA8A04',
+    bg: 'rgba(202,138,4,0.08)',
+    border: 'rgba(202,138,4,0.28)',
     desc: 'Integrated charting with backtesting capabilities. Test your trading strategies against historical price data, overlay economic event markers, and validate your setups before applying them in live markets.',
     features: [
       'Multi-timeframe charting',
@@ -172,7 +172,7 @@ export default function ServicesPage({ onBack }) {
   };
 
   return (
-    <div className={isDark ? '' : 'legal-light'} style={{ backgroundColor: isDark ? '#0B0B0F' : '#f8fafc', minHeight: '100vh', color: isDark ? '#e2e8f0' : '#161618' }}>
+    <div className={isDark ? '' : 'legal-light'} style={{ backgroundColor: isDark ? '#0B0B0F' : '#f6f5f2', minHeight: '100vh', color: isDark ? '#e2e8f0' : '#161618' }}>
       <style>{`
         .legal-light strong { color: #0b0b0f !important; }
         .legal-light ul li { color: #4b5563 !important; }
@@ -192,7 +192,7 @@ export default function ServicesPage({ onBack }) {
           </button>
           <div style={{ width: 1, height: 18, backgroundColor: 'rgba(107,114,128,0.4)' }} />
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <Layers size={16} style={{ color: '#FBBF24' }} />
+            <Layers size={16} style={{ color: isDark ? '#FBBF24' : '#A16207' }} />
             <span style={{ fontSize: 14, fontWeight: 600, color: isDark ? '#e2e8f0' : '#0b0b0f' }}>Services</span>
           </div>
           <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -206,11 +206,11 @@ export default function ServicesPage({ onBack }) {
       <div style={{ maxWidth: 1000, margin: '0 auto', padding: '56px 24px 0' }}>
         <div style={{ textAlign: 'center', marginBottom: 56 }}>
           <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '6px 14px', borderRadius: 20, backgroundColor: isDark ? 'rgba(202,138,4,0.1)' : 'rgba(202,138,4,0.06)', border: `1px solid ${isDark ? 'rgba(202,138,4,0.2)' : 'rgba(202,138,4,0.25)'}`, marginBottom: 20 }}>
-            <span style={{ fontSize: 12, fontWeight: 700, color: '#FBBF24', letterSpacing: '0.08em' }}>AI PERFORMANCE ANALYTICS PLATFORM</span>
+            <span style={{ fontSize: 12, fontWeight: 700, color: isDark ? '#FBBF24' : '#A16207', letterSpacing: '0.08em' }}>AI PERFORMANCE ANALYTICS PLATFORM</span>
           </div>
           <h1 style={{ fontSize: 36, fontWeight: 800, color: isDark ? '#fafaf9' : '#0b0b0f', marginBottom: 14, lineHeight: 1.2 }}>
             Everything You Need to<br />
-            <span style={{ color: '#FBBF24' }}>Understand Your Performance</span>
+            <span style={{ color: isDark ? '#FBBF24' : '#A16207' }}>Understand Your Performance</span>
           </h1>
           <p style={{ fontSize: 15, color: isDark ? '#6b7280' : '#64748b', maxWidth: 560, margin: '0 auto', lineHeight: 1.7 }}>
             Zynth combines AI-powered behavioral analytics, real-time contextual data, and activity logging into a single platform built for performance-focused professionals.

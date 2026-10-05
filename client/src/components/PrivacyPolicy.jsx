@@ -23,7 +23,7 @@ export default function PrivacyPolicy({ onBack }) {
   };
 
   return (
-    <div className={isDark ? '' : 'legal-light'} style={{ backgroundColor: isDark ? '#0B0B0F' : '#f8fafc', minHeight: '100vh', color: isDark ? '#e2e8f0' : '#161618' }}>
+    <div className={isDark ? '' : 'legal-light'} style={{ backgroundColor: isDark ? '#0B0B0F' : '#f6f5f2', minHeight: '100vh', color: isDark ? '#e2e8f0' : '#161618' }}>
       <style>{`
         .legal-light strong { color: #0b0b0f !important; }
         .legal-light ul li { color: #4b5563 !important; }
@@ -43,7 +43,7 @@ export default function PrivacyPolicy({ onBack }) {
           </button>
           <div style={{ width: 1, height: 18, backgroundColor: 'rgba(107,114,128,0.4)' }} />
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <Shield size={16} style={{ color: '#FBBF24' }} />
+            <Shield size={16} style={{ color: isDark ? '#FBBF24' : '#A16207' }} />
             <span style={{ fontSize: 14, fontWeight: 600, color: isDark ? '#e2e8f0' : '#0b0b0f' }}>Privacy Policy</span>
           </div>
           <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -62,7 +62,7 @@ export default function PrivacyPolicy({ onBack }) {
 
         <div style={{ backgroundColor: isDark ? 'rgba(202,138,4,0.06)' : 'rgba(202,138,4,0.04)', border: `1px solid ${isDark ? 'rgba(202,138,4,0.18)' : 'rgba(202,138,4,0.2)'}`, borderLeft: '4px solid #FBBF24', borderRadius: 10, padding: '16px 20px', marginBottom: 36 }}>
           <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
-            <Lock size={18} style={{ color: '#FBBF24', flexShrink: 0, marginTop: 1 }} />
+            <Lock size={18} style={{ color: isDark ? '#FBBF24' : '#A16207', flexShrink: 0, marginTop: 1 }} />
             <p style={{ fontSize: 13, color: isDark ? '#d1d5db' : '#4b5563', lineHeight: 1.7 }}>
               Your privacy matters to us. Zynth collects only what is necessary to operate the service. We do not sell, rent, or share your personal data with third parties for marketing purposes.
             </p>
@@ -160,7 +160,7 @@ export default function PrivacyPolicy({ onBack }) {
               <li><strong style={{ color: '#e2e8f0' }}>Right to Portability:</strong> Receive your trade journal data in a structured format</li>
               <li><strong style={{ color: '#e2e8f0' }}>Right to Object:</strong> Object to processing in certain circumstances</li>
             </ul>
-            <p>To exercise any of these rights, contact us at <a href="mailto:support@zynth.com" style={{ color: '#FBBF24', textDecoration: 'none' }}>support@zynth.com</a>. We will respond within 30 days.</p>
+            <p>To exercise any of these rights, contact us at <a href="mailto:support@zynth.com" style={{ color: isDark ? '#FBBF24' : '#A16207', textDecoration: 'none' }}>support@zynth.com</a>. We will respond within 30 days.</p>
           </Section>
 
           <Section id="children" title="9. Children's Privacy">
@@ -189,8 +189,8 @@ export default function PrivacyPolicy({ onBack }) {
           <Section id="contact-privacy" title="12. Contact Us">
             <p>For privacy-related questions, data deletion requests, or to exercise your rights, please contact:</p>
             <div style={{ backgroundColor: isDark ? 'rgba(202,138,4,0.06)' : 'rgba(202,138,4,0.04)', border: `1px solid ${isDark ? 'rgba(202,138,4,0.15)' : 'rgba(202,138,4,0.2)'}`, borderRadius: 8, padding: '16px 20px', marginTop: 10, display: 'flex', flexDirection: 'column', gap: 6 }}>
-              <p style={{ fontSize: 14, color: '#FBBF24', fontWeight: 700 }}>Zynth — Privacy Team</p>
-              <p style={{ fontSize: 13, color: isDark ? '#9ca3af' : '#4b5563' }}>Email: <a href="mailto:support@zynth.com" style={{ color: '#FBBF24', textDecoration: 'none' }}>support@zynth.com</a></p>
+              <p style={{ fontSize: 14, color: isDark ? '#FBBF24' : '#A16207', fontWeight: 700 }}>Zynth — Privacy Team</p>
+              <p style={{ fontSize: 13, color: isDark ? '#9ca3af' : '#4b5563' }}>Email: <a href="mailto:support@zynth.com" style={{ color: isDark ? '#FBBF24' : '#A16207', textDecoration: 'none' }}>support@zynth.com</a></p>
               <p style={{ fontSize: 13, color: isDark ? '#9ca3af' : '#4b5563' }}>Support is available through the in-app Help Center.</p>
             </div>
           </Section>

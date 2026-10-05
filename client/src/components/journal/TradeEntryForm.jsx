@@ -303,7 +303,7 @@ export default function TradeEntryForm({ onSaved, editTrade = null }) {
       <div className="max-w-3xl mx-auto">
         {successTrade ? (
           <div
-            className="rounded-[28px] transition-all duration-200 hover:-tranzinc-y-[2px]"
+            className="rounded-[28px] transition-all duration-200 hover:-translate-y-[2px]"
             style={{ background: palette.card, boxShadow: cardShadow(isDark), padding: 20 }}
           >
             <div className="flex items-start gap-3 mb-5">
@@ -396,7 +396,7 @@ export default function TradeEntryForm({ onSaved, editTrade = null }) {
         ) : (
           <form onSubmit={handleSubmit}>
             <div
-              className="rounded-[28px] transition-all duration-200 hover:-tranzinc-y-[2px]"
+              className="rounded-[28px] transition-all duration-200 hover:-translate-y-[2px]"
               style={{ background: palette.card, boxShadow: cardShadow(isDark), padding: 20 }}
             >
               <div className="mb-5">

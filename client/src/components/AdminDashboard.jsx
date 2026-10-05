@@ -340,7 +340,7 @@ function AdminDashboardInner() {
             <div className="flex flex-wrap items-center justify-between gap-3 px-5 py-4 border-b" style={{ borderColor: theme.border }}>
               <h2 className="text-[15px] font-bold" style={{ color: theme.text }}>Users</h2>
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 -tranzinc-y-1/2 w-3.5 h-3.5" style={{ color: theme.muted }} />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5" style={{ color: theme.muted }} />
                 <input
                   type="text"
                   value={search}

@@ -1,7 +1,10 @@
 import { useRef } from 'react';
 import { motion, useInView, useReducedMotion } from 'framer-motion';
-import { BarChart3, BookOpen, Brain, CalendarDays, Globe2, ListChecks, Calculator, Camera, Newspaper, Fingerprint } from 'lucide-react';
-import { Card, CountUp, Curtain, EASE, Item, Section, SectionHeading, Stagger, Reveal } from './motion';
+import { CountUp, EASE, Item, Stagger, Reveal } from './motion';
+
+/**
+ * Small animated product visuals shared by the landing chapters.
+ */
 
 /* ── Data sources ─────────────────────────────────────────────────────── */
 const SOURCES = ['FRED', 'U.S. Bureau of Labor Statistics', 'U.S. Bureau of Economic Analysis', 'Finnhub', 'Polygon.io', 'Twelve Data', 'Google Gemini'];
@@ -26,7 +29,7 @@ export function DataSources() {
 }
 
 /* ── Mini visuals ─────────────────────────────────────────────────────── */
-function ScoreRing({ value = 82 }) {
+export function ScoreRing({ value = 82 }) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true });
   const r = 34; const c = 2 * Math.PI * r;
@@ -50,35 +53,7 @@ function ScoreRing({ value = 82 }) {
   );
 }
 
-function JournalVisual() {
-  return (
-    <div className="flex flex-col gap-6 sm:flex-row sm:items-center">
-      <ScoreRing />
-      <div className="min-w-0 flex-1 space-y-2.5">
-        {[
-          ['Emotional state', 'Calm', 'emerald'],
-          ['Entry quality', 'Followed plan', 'emerald'],
-          ['Macro backdrop', 'Neutral · no events', 'emerald'],
-          ['Risk', 'Stop-loss missing', 'rose'],
-        ].map(([k, v, tone], i) => (
-          <motion.div
-            key={k}
-            initial={{ opacity: 0, x: 16 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, ease: EASE, delay: 0.25 + i * 0.12 }}
-            className="flex items-center justify-between rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2 text-xs dark:border-white/[0.07] dark:bg-white/[0.03]"
-          >
-            <span className="text-zinc-500">{k}</span>
-            <span className={`font-semibold ${tone === 'emerald' ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`}>{v}</span>
-          </motion.div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function MacroGauge() {
+export function MacroGauge() {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true });
   const angle = 28; // degrees right of centre (mildly bullish)
@@ -112,7 +87,7 @@ function MacroGauge() {
   );
 }
 
-function DnaRadar() {
+export function DnaRadar() {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true });
   const reduce = useReducedMotion();
@@ -144,7 +119,7 @@ function DnaRadar() {
   );
 }
 
-function CalendarVisual() {
+export function CalendarVisual() {
   const rows = [
     ['Non-Farm Payrolls', 'High'], ['CPI (YoY)', 'High'], ['FOMC Rate Decision', 'High'], ['Retail Sales', 'Medium'],
   ];
@@ -168,7 +143,7 @@ function CalendarVisual() {
   );
 }
 
-function SparkVisual() {
+export function SparkVisual() {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true });
   const items = [
@@ -192,76 +167,5 @@ function SparkVisual() {
         </div>
       ))}
     </div>
-  );
-}
-
-/* ── Bento ────────────────────────────────────────────────────────────── */
-function Tile({ icon: Icon, title, desc, children, className = '', delay = 0, from = 'left' }) {
-  return (
-    <Curtain className={className} delay={delay} from={from}>
-      <Card className="flex h-full flex-col p-6 md:p-8">
-        <div className="mb-5 flex items-center gap-3">
-          <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#CA8A04]/10 text-[#A16207] dark:text-[#FBBF24]">
-            <Icon size={21} />
-          </span>
-          <h3 className="font-display text-xl font-bold uppercase tracking-tight text-zinc-950 dark:text-white">{title}</h3>
-        </div>
-        <p className="mb-6 text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">{desc}</p>
-        <div className="mt-auto text-zinc-900 dark:text-white">{children}</div>
-      </Card>
-    </Curtain>
-  );
-}
-
-const EXTRAS = [
-  [ListChecks, 'Pre-trade checklist'], [Calculator, 'Position & risk calculators'], [Camera, 'Screenshot attachments'],
-  [Newspaper, 'Daily macro brief'], [BarChart3, 'Performance analytics'], [Globe2, 'Live market ticker'],
-];
-
-export default function Features() {
-  return (
-    <Section id="features">
-      <SectionHeading
-        eyebrow="Features"
-        title={<>Everything you need to trade with an <span className="text-[#CA8A04]">edge you can prove</span></>}
-        subtitle="One workspace that connects what you did, how you felt, and what the market was doing — so every review is based on evidence."
-      />
-      <div className="grid gap-5 md:grid-cols-3">
-        <Tile
-          className="md:col-span-2"
-          icon={BookOpen}
-          title="AI trade journal"
-          desc="Log a trade in seconds. Zynth reads your entries, emotions and execution to score your psychology and call out the habits costing you money."
-        >
-          <JournalVisual />
-        </Tile>
-        <Tile delay={0.12} icon={Brain} title="Macro intelligence" desc="A live macro surprise score built from CPI, payrolls, rates and more, so you know the backdrop before you click.">
-          <MacroGauge />
-        </Tile>
-        <Tile from="bottom" icon={Fingerprint} title="Trading DNA" desc="Eight behavioural traits distilled into one profile — patience, discipline, risk, emotional control and more.">
-          <DnaRadar />
-        </Tile>
-        <Tile from="bottom" delay={0.12} icon={CalendarDays} title="Economic calendar" desc="High-impact releases at a glance, tied back to the trades you took around them.">
-          <CalendarVisual />
-        </Tile>
-        <Tile from="bottom" delay={0.24} icon={Globe2} title="Markets & charts" desc="Gold, forex, crypto and index charts with live prices, right next to your journal.">
-          <SparkVisual />
-        </Tile>
-      </div>
-
-      <Reveal delay={0.1} className="mt-8">
-        <ul className="flex flex-wrap items-center justify-center gap-2.5">
-          {EXTRAS.map(([Icon, label]) => (
-            <li
-              key={label}
-              className="inline-flex items-center gap-2 rounded-full border border-zinc-200 bg-white px-4 py-2 text-[13px] font-medium text-zinc-700 transition-colors hover:border-[#CA8A04]/50 hover:text-zinc-950 dark:border-white/10 dark:bg-white/[0.03] dark:text-zinc-300 dark:hover:text-white"
-            >
-              <Icon size={15} className="text-[#CA8A04]" />{label}
-            </li>
-          ))}
-        </ul>
-      </Reveal>
-      <DataSources />
-    </Section>
   );
 }

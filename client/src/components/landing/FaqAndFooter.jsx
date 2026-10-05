@@ -130,7 +130,7 @@ const COLS = [
   {
     title: 'Product',
     links: [
-      { label: 'Features', id: 'features' },
+      { label: 'Why Zynth', id: 'why' },
       { label: 'How it works', id: 'how-it-works' },
       { label: 'Pricing', id: 'pricing' },
       { label: 'FAQ', id: 'faq' },

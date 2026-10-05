@@ -217,7 +217,7 @@ export default function TradingScore({ analytics, onUpgrade, className = '' }) {
         {!isPro && (
           <button
             onClick={onUpgrade}
-            className="mt-4 w-full flex items-center justify-between gap-2 px-3.5 py-3 rounded-xl border transition-all hover:-tranzinc-y-0.5"
+            className="mt-4 w-full flex items-center justify-between gap-2 px-3.5 py-3 rounded-xl border transition-all hover:-translate-y-0.5"
             style={{
               background: theme.isDark ? 'rgba(202,138,4,0.06)' : 'rgba(202,138,4,0.04)',
               borderColor: 'rgba(202,138,4,0.18)',

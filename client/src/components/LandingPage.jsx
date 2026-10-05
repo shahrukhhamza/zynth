@@ -3,12 +3,11 @@ import { Helmet } from 'react-helmet-async';
 import { MotionConfig } from 'framer-motion';
 import Nav from './landing/Nav';
 import Hero from './landing/Hero';
-import Features from './landing/Features';
-import Ticker from './landing/Ticker';
+import { ChapterContext, ChapterPattern } from './landing/Story';
+import Day from './landing/Day';
 import Stats from './landing/Stats';
 import ScrollTop from './landing/ScrollTop';
 import { ScrollTrigger, startSmoothScroll, whenFontsReady } from './landing/engine';
-import HowItWorks from './landing/HowItWorks';
 import Pricing from './landing/Pricing';
 import { Faq, FinalCta, Footer } from './landing/FaqAndFooter';
 import { getPublicStats } from '../utils/publicStats';
@@ -76,10 +75,10 @@ export default function LandingPage({ onSignIn, onGetStarted }) {
         <Nav onSignIn={onSignIn} onGetStarted={onGetStarted} />
         <main>
           <Hero onGetStarted={onGetStarted} promo={promo} />
-          <Ticker />
+          <ChapterPattern />
+          <ChapterContext />
+          <Day />
           <Stats />
-          <Features />
-          <HowItWorks onGetStarted={onGetStarted} />
           <Pricing onGetStarted={onGetStarted} promo={promo} />
           <Faq promo={promo} />
           <FinalCta onGetStarted={onGetStarted} promo={promo} />

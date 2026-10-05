@@ -2,7 +2,6 @@
  * WelcomeScreen
  *
  * Shown ONCE immediately after a new user signs up — before the main dashboard.
- * Reads pre-signup onboarding answers from sessionStorage to personalise copy.
  *
  * Props:
  *   onAddFirstTrade  — () => void   navigate to journal tab
@@ -12,51 +11,13 @@
 
 import { useMemo } from 'react';
 import { motion } from 'framer-motion';
-import {
-  Sparkles, BookOpen, ArrowRight, Brain, Shuffle, HelpCircle, Flame, Crown, ScanSearch, Radar, CalendarClock, FileText,
-} from 'lucide-react';
+import { Sparkles, BookOpen, ArrowRight, Crown, ScanSearch, Radar, CalendarClock, FileText } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 import { useAuth } from '../contexts/AuthContext';
 import { PROMO_HEADLINE, PROMO_MESSAGE } from './PromoBanner';
 import { sphereDataUri } from './ui/orbSvg';
 
 const EASE = [0.22, 1, 0.36, 1];
-
-// ── Personalisation helpers ───────────────────────────────────────────────────
-
-const PROBLEM_COPY = {
-  streaks: {
-    label: 'Losing Streaks',
-    icon: Flame,
-    headline: "Let's find out what's behind your losing streaks.",
-    color: '#ef4444',
-  },
-  emotional: {
-    label: 'Emotional Trading',
-    icon: Brain,
-    headline: "You struggle with emotional trading, so let's fix that.",
-    color: '#f59e0b',
-  },
-  strategy: {
-    label: 'Inconsistent Strategy',
-    icon: Shuffle,
-    headline: "Your strategy isn't broken. You just don't know what's working.",
-    color: '#CA8A04',
-  },
-  unknown: {
-    label: 'Finding Your Edge',
-    icon: HelpCircle,
-    headline: "Your best trades hold a pattern you've never seen.",
-    color: '#8b5cf6',
-  },
-};
-
-const MARKET_COPY = {
-  gold:    { label: 'Gold (XAU/USD)', tip: 'Macro conditions like CPI and NFP move gold the most. We track all of them.' },
-  forex:   { label: 'Forex',          tip: 'Session timing (London/New York overlap) is critical. We overlay it on every trade.' },
-  crypto:  { label: 'Crypto',         tip: 'We track BTC, ETH and major alts with live market data.' },
-  indices: { label: 'Indices',        tip: 'GDP, earnings seasons and rate decisions drive indices. We score them all.' },
-};
 
 const UNLOCKS = [
   { icon: ScanSearch, title: 'AI review of every trade', text: 'Instant feedback the moment you log a trade.' },
@@ -72,12 +33,6 @@ export default function WelcomeScreen({ onAddFirstTrade, onSkip, userName = 'Tra
   const { user } = useAuth();
   const orb = useMemo(() => sphereDataUri(26), []);
 
-  // Read pre-signup answers
-  const preMarket = sessionStorage.getItem('zynth_pre_market') || '';
-  const preProblem = sessionStorage.getItem('zynth_pre_problem') || '';
-  const problemData = PROBLEM_COPY[preProblem] || null;
-  const marketData = MARKET_COPY[preMarket] || null;
-  const ProblemIcon = problemData?.icon ?? Sparkles;
   const firstName = (userName || 'Trader').split(' ')[0] || 'Trader';
 
   const rise = (i) => ({
@@ -117,7 +72,7 @@ export default function WelcomeScreen({ onAddFirstTrade, onSkip, userName = 'Tra
             Welcome to Zynth, <span className="text-[#CA8A04]">{firstName}.</span>
           </h1>
           <p className="mx-auto m-0 mt-3 max-w-[480px] text-[16px] leading-relaxed" style={{ color: theme.isDark ? '#a1a1aa' : theme.textMuted }}>
-            {problemData ? problemData.headline : "Let's analyse your trading behaviour."}
+            Your account is ready. Log your first trade and Zynth starts finding the patterns behind your results.
           </p>
         </motion.div>
 
@@ -132,22 +87,6 @@ export default function WelcomeScreen({ onAddFirstTrade, onSkip, userName = 'Tra
               <span className="block text-[15px] font-bold" style={{ color: theme.isDark ? '#FBBF24' : '#8a5a05' }}>{PROMO_HEADLINE}</span>
               <span className="block text-[13px] leading-snug" style={{ color: theme.textMuted }}>{PROMO_MESSAGE}</span>
             </span>
-          </motion.div>
-        )}
-
-        {(problemData || marketData) && (
-          <motion.div {...rise(3)} className="mt-4 flex flex-col gap-3">
-            {problemData && (
-              <div className="inline-flex items-center gap-2 self-center rounded-full border px-4 py-1.5" style={{ background: `${problemData.color}14`, borderColor: `${problemData.color}40` }}>
-                <ProblemIcon size={14} style={{ color: problemData.color }} />
-                <span className="text-[12.5px] font-semibold" style={{ color: problemData.color }}>Focus: {problemData.label}</span>
-              </div>
-            )}
-            {marketData && (
-              <p className="m-0 text-center text-[13.5px] leading-relaxed" style={{ color: theme.textMuted }}>
-                <strong style={{ color: theme.text }}>Trading {marketData.label}?</strong> {marketData.tip}
-              </p>
-            )}
           </motion.div>
         )}
 

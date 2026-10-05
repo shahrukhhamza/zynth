@@ -105,7 +105,7 @@ const QA = [
     a: 'The AI Insights tab is inside Trade Journal. It contains: behavioral alerts, Generate AI Report button, past reports, and per-trade AI score cards for all analyzed trades.' },
 
   { q: ['ai tries', 'ai limit', 'out of ai', 'no more ai', 'ai quota', 'used up ai'],
-    a: 'Free plan: 3 lifetime AI analyses. Pro plan: 50 per month. Elite: unlimited. To get more AI analyses upgrade your plan. Click your avatar top right -> Profile -> Upgrade Plan.' },
+    a: 'Free plan: 2 lifetime AI analyses. Pro plan: 50 per month. Elite: unlimited. To get more AI analyses upgrade your plan. Click your avatar top right -> Profile -> Upgrade Plan.' },
 
   { q: ['per trade ai', 'trade score', 'psychology score', 'discipline rating'],
     a: 'Each trade can be analyzed individually by AI. In Trade History click any trade -> click the brain icon. You get: Psychology Score (1-10), Discipline Rating, Coach Message, Key Observations and Improvement Tips.' },
@@ -192,7 +192,7 @@ const QA = [
     a: `Zynth pricing: Free ($0 forever), Pro (${PRO_MONTHLY_PRICE}), Elite (${ELITE_MONTHLY_PRICE}).` },
 
   { q: ['free plan', 'what is free', 'free features', 'free limits', 'free tier'],
-    a: "Free plan: 10 journal entries lifetime, 3 AI analyses lifetime, live market overview, today's US economic events only, and market news. No credit card needed." },
+    a: "Free plan: 5 journal entries lifetime, 2 AI analyses lifetime, live market overview, today's US economic events only, and market news. No credit card needed." },
 
   { q: ['pro plan', 'what is pro', 'pro features', 'pro benefits'],
     a: `Pro plan (${PRO_MONTHLY_PRICE}): unlimited journal entries, 50 AI analyses per month, full Economic Calendar (all countries), Macro Surprise Score, Economic Intelligence, real-time market streaming, advanced analytics.` },
@@ -282,7 +282,7 @@ Tagline: "Intelligence Behind Every Trade."
 Contact: support@zynth.com | Website: getzynth.com
 
 ## PLANS & PRICING
-- Free ($0 forever): 10 journal entries lifetime, 3 AI analyses lifetime, today's US economic events, live market overview, market news.
+- Free ($0 forever): 5 journal entries lifetime, 2 AI analyses lifetime, today's US economic events, live market overview, market news.
 - Pro (${PRO_MONTHLY_PRICE}): unlimited journal entries, 50 AI analyses/month, full Economic Calendar (all countries), Macro Surprise Score, Economic Intelligence page, real-time streaming, advanced analytics.
 - Elite (${ELITE_MONTHLY_PRICE}): everything in Pro + unlimited AI analyses, unlimited OCR, Trading DNA Report, beta feature access, 4-hour dedicated support.
 - Founding Member offer: first 100 users lock in the founding price FOREVER.
@@ -314,7 +314,7 @@ Contact: support@zynth.com | Website: getzynth.com
 - Per-trade AI: Trade History → click trade → brain icon → get Psychology Score (1-10), Discipline Rating, Coach Message, Key Observations, Improvement Tips.
 - AI Insights tab: inside Trade Journal → behavioral alerts, Generate AI Report button, past reports, per-trade scores.
 - AI Report: click Generate AI Report → choose Weekly, Monthly, or Custom → get grade (A–F), highlights, concerns, psychological assessment, action items.
-- AI tries: Free = 3 lifetime, Pro = 50/month, Elite = unlimited.
+- AI tries: Free = 2 lifetime, Pro = 50/month, Elite = unlimited.
 
 ## ECONOMIC CALENDAR
 - Access: left sidebar → "Economic Calendar".

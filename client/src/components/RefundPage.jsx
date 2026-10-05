@@ -105,7 +105,7 @@ export default function RefundPage({ onBack }) {
             <p style={{ margin: '10px 0 0', fontSize: 13, color: muted }}>We typically respond within 1–2 business days.</p>
           </div>
 
-          <p style={{ padding: '16px 20px', borderRadius: 10, background: isDark ? 'rgba(255,255,255,0.03)' : '#f8fafc', border: `1px solid ${border}`, fontSize: 13, color: muted, margin: 0 }}>
+          <p style={{ padding: '16px 20px', borderRadius: 10, background: isDark ? 'rgba(255,255,255,0.03)' : '#f6f5f2', border: `1px solid ${border}`, fontSize: 13, color: muted, margin: 0 }}>
             Zynth is an analytics platform and does not provide financial advice.
           </p>
         </div>

@@ -27,7 +27,7 @@ export default function ServicePolicy({ onBack }) {
   };
 
   return (
-    <div className={isDark ? '' : 'legal-light'} style={{ backgroundColor: isDark ? '#0B0B0F' : '#f8fafc', minHeight: '100vh', color: isDark ? '#e2e8f0' : '#161618' }}>
+    <div className={isDark ? '' : 'legal-light'} style={{ backgroundColor: isDark ? '#0B0B0F' : '#f6f5f2', minHeight: '100vh', color: isDark ? '#e2e8f0' : '#161618' }}>
       <style>{`
         .legal-light strong { color: #0b0b0f !important; }
         .legal-light ul li { color: #4b5563 !important; }
@@ -47,7 +47,7 @@ export default function ServicePolicy({ onBack }) {
           </button>
           <div style={{ width: 1, height: 18, backgroundColor: 'rgba(107,114,128,0.4)' }} />
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <Zap size={16} style={{ color: '#FBBF24' }} />
+            <Zap size={16} style={{ color: isDark ? '#FBBF24' : '#A16207' }} />
             <span style={{ fontSize: 14, fontWeight: 600, color: isDark ? '#e2e8f0' : '#0b0b0f' }}>Service &amp; Delivery Policy</span>
           </div>
           <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -87,7 +87,7 @@ export default function ServicePolicy({ onBack }) {
 
           <Section id="service-description" title="1. Service Description">
             <p>
-              Zynth is an <strong style={{ color: isDark ? '#e2e8f0' : '#0b0b0f' }}>AI-powered performance analytics platform</strong> delivered as a Software-as-a-Service (SaaS). Zynth is not a financial advisory service and does not provide investment, trading, or financial advice of any kind. All services are provided exclusively through the Zynth web application accessible at <a href="https://app.zynth.io" style={{ color: '#FBBF24', textDecoration: 'none' }}>app.zynth.io</a>.
+              Zynth is an <strong style={{ color: isDark ? '#e2e8f0' : '#0b0b0f' }}>AI-powered performance analytics platform</strong> delivered as a Software-as-a-Service (SaaS). Zynth is not a financial advisory service and does not provide investment, trading, or financial advice of any kind. All services are provided exclusively through the Zynth web application accessible at <a href="https://app.zynth.io" style={{ color: isDark ? '#FBBF24' : '#A16207', textDecoration: 'none' }}>app.zynth.io</a>.
             </p>
             <p>The platform includes the following services depending on your subscription plan:</p>
             <ul style={{ paddingLeft: 20, display: 'flex', flexDirection: 'column', gap: 6 }}>
@@ -126,7 +126,7 @@ export default function ServicePolicy({ onBack }) {
               <li>AI analysis quotas (e.g. 50/month for Pro) reset on the 1st of each calendar month</li>
               <li>Unused quota does not roll over to the next month</li>
             </ul>
-            <p>AI-generated content is produced using Google Gemini and may occasionally produce inaccurate or incomplete results. See our <a href="/terms" style={{ color: '#FBBF24', textDecoration: 'none' }}>Terms of Service</a> AI disclaimer for full details.</p>
+            <p>AI-generated content is produced using Google Gemini and may occasionally produce inaccurate or incomplete results. See our <a href="/terms" style={{ color: isDark ? '#FBBF24' : '#A16207', textDecoration: 'none' }}>Terms of Service</a> AI disclaimer for full details.</p>
           </Section>
 
           <Section id="data-services" title="5. Contextual and Market Data Services">
@@ -163,8 +163,8 @@ export default function ServicePolicy({ onBack }) {
           <Section id="contact-service" title="8. Contact">
             <p>For service-related enquiries or technical support:</p>
             <div style={{ backgroundColor: isDark ? 'rgba(202,138,4,0.06)' : 'rgba(202,138,4,0.04)', border: `1px solid ${isDark ? 'rgba(202,138,4,0.15)' : 'rgba(202,138,4,0.2)'}`, borderRadius: 8, padding: '16px 20px', marginTop: 6, display: 'flex', flexDirection: 'column', gap: 6 }}>
-              <p style={{ fontSize: 14, color: '#FBBF24', fontWeight: 700 }}>Zynth Support</p>
-              <p style={{ fontSize: 13, color: isDark ? '#9ca3af' : '#4b5563' }}>Email: <a href="mailto:support@zynth.com" style={{ color: '#FBBF24', textDecoration: 'none' }}>support@zynth.com</a></p>
+              <p style={{ fontSize: 14, color: isDark ? '#FBBF24' : '#A16207', fontWeight: 700 }}>Zynth Support</p>
+              <p style={{ fontSize: 13, color: isDark ? '#9ca3af' : '#4b5563' }}>Email: <a href="mailto:support@zynth.com" style={{ color: isDark ? '#FBBF24' : '#A16207', textDecoration: 'none' }}>support@zynth.com</a></p>
               <p style={{ fontSize: 13, color: isDark ? '#9ca3af' : '#4b5563' }}>Support is available through the in-app Help Center.</p>
             </div>
           </Section>
